@@ -1,10 +1,17 @@
 package cucumber.runtime;
 
-import gherkin.formatter.AnsiFormats;
-import gherkin.formatter.Format;
-import gherkin.formatter.Formats;
-import gherkin.formatter.MonochromeFormats;
-import gherkin.formatter.model.Result;
+import cucumber.api.Result;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestRunStarted;
+import cucumber.api.event.TestStepFinished;
+import cucumber.runtime.formatter.AnsiFormats;
+import cucumber.runtime.formatter.Format;
+import cucumber.runtime.formatter.Formats;
+import cucumber.runtime.formatter.MonochromeFormats;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -13,19 +20,51 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class Stats {
+class Stats implements EventListener {
     public static final long ONE_SECOND = 1000000000;
     public static final long ONE_MINUTE = 60 * ONE_SECOND;
-    public static final String PENDING = "pending";
+    private static final byte ERRORS = 0x1;
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();
+    private long startTime = 0;
     private long totalDuration = 0;
     private Formats formats;
     private Locale locale;
-    private List<String> failedScenarios = new ArrayList<String>();
-    private List<String> pendingScenarios = new ArrayList<String>();
-    private List<String> undefinedScenarios = new ArrayList<String>();
-    private List<String> passedScenarios = new ArrayList<String>();
+    private final List<String> failedScenarios = new ArrayList<String>();
+    private List<String> ambiguousScenarios = new ArrayList<String>();
+    private final List<String> pendingScenarios = new ArrayList<String>();
+    private final List<String> undefinedScenarios = new ArrayList<String>();
+    private final List<Throwable> errors = new ArrayList<Throwable>();
+    private final EventHandler<TestRunStarted> testRunStartedHandler = new EventHandler<TestRunStarted>() {
+        @Override
+        public void receive(TestRunStarted event) {
+            setStartTime(event.getTimeStamp());
+        }
+    };
+    private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            Result result = event.result;
+            if (result.getError() != null) {
+                addError(result.getError());
+            }
+            if (!event.testStep.isHook()) {
+                addStep(result.getStatus());
+            }
+        }
+    };
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            addScenario(event.result.getStatus(), event.testCase.getScenarioDesignation());
+        }
+    };
+    private final EventHandler<TestRunFinished> testRunFinishedHandler = new EventHandler<TestRunFinished>() {
+        @Override
+        public void receive(TestRunFinished event) {
+            setFinishTime(event.getTimeStamp());
+        }
+    };
 
     public Stats(boolean monochrome) {
         this(monochrome, Locale.getDefault());
@@ -38,6 +77,27 @@ class Stats {
         } else {
             formats = new AnsiFormats();
         }
+    }
+
+
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestRunStarted.class, testRunStartedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+        publisher.registerHandlerFor(TestRunFinished.class, testRunFinishedHandler);
+    }
+
+    public List<Throwable> getErrors() {
+        return errors;
+    }
+
+    public byte exitStatus(boolean isStrict) {
+        byte result = 0x0;
+        if (!failedScenarios.isEmpty() || (isStrict && (!pendingScenarios.isEmpty() || !undefinedScenarios.isEmpty()))) {
+            result |= ERRORS;
+        }
+        return result;
     }
 
     public void printStats(PrintStream out, boolean isStrict) {
@@ -68,20 +128,21 @@ class Stats {
 
     private void printSubCounts(PrintStream out, SubCounts subCounts) {
         boolean addComma = false;
-        addComma = printSubCount(out, subCounts.failed, Result.FAILED, addComma);
-        addComma = printSubCount(out, subCounts.skipped, Result.SKIPPED.getStatus(), addComma);
-        addComma = printSubCount(out, subCounts.pending, PENDING, addComma);
-        addComma = printSubCount(out, subCounts.undefined, Result.UNDEFINED.getStatus(), addComma);
-        addComma = printSubCount(out, subCounts.passed, Result.PASSED, addComma);
+        addComma = printSubCount(out, subCounts.failed, Result.Type.FAILED, addComma);
+        addComma = printSubCount(out, subCounts.ambiguous, Result.Type.AMBIGUOUS, addComma);
+        addComma = printSubCount(out, subCounts.skipped, Result.Type.SKIPPED, addComma);
+        addComma = printSubCount(out, subCounts.pending, Result.Type.PENDING, addComma);
+        addComma = printSubCount(out, subCounts.undefined, Result.Type.UNDEFINED, addComma);
+        addComma = printSubCount(out, subCounts.passed, Result.Type.PASSED, addComma);
     }
 
-    private boolean printSubCount(PrintStream out, int count, String type, boolean addComma) {
+    private boolean printSubCount(PrintStream out, int count, Result.Type type, boolean addComma) {
         if (count != 0) {
             if (addComma) {
                 out.print(", ");
             }
-            Format format = formats.get(type);
-            out.print(format.text(count + " " + type));
+            Format format = formats.get(type.lowerCaseName());
+            out.print(format.text(count + " " + type.lowerCaseName()));
             addComma = true;
         }
         return addComma;
@@ -94,17 +155,18 @@ class Stats {
     }
 
     private void printNonZeroResultScenarios(PrintStream out, boolean isStrict) {
-        printScenarios(out, failedScenarios, Result.FAILED);
+        printScenarios(out, failedScenarios, Result.Type.FAILED);
+        printScenarios(out, ambiguousScenarios, Result.Type.AMBIGUOUS);
         if (isStrict) {
-            printScenarios(out, pendingScenarios, PENDING);
-            printScenarios(out, undefinedScenarios, Result.UNDEFINED.getStatus());
+            printScenarios(out, pendingScenarios, Result.Type.PENDING);
+            printScenarios(out, undefinedScenarios, Result.Type.UNDEFINED);
         }
     }
 
-    private void printScenarios(PrintStream out, List<String> scenarios, String type) {
-        Format format = formats.get(type);
+    private void printScenarios(PrintStream out, List<String> scenarios, Result.Type type) {
+        Format format = formats.get(type.lowerCaseName());
         if (!scenarios.isEmpty()) {
-            out.println(format.text(capitalizeFirstLetter(type) + " scenarios:"));
+            out.println(format.text(type.firstLetterCapitalizedName() + " scenarios:"));
         }
         for (String scenario : scenarios) {
             String[] parts = scenario.split("#");
@@ -118,63 +180,74 @@ class Stats {
         }
     }
 
-    private String capitalizeFirstLetter(String type) {
-        return type.substring(0, 1).toUpperCase(locale) + type.substring(1);
+    void addStep(Result.Type resultStatus) {
+        addResultToSubCount(stepSubCounts, resultStatus);
     }
 
-    public void addStep(Result result) {
-        addResultToSubCount(stepSubCounts, result.getStatus());
-        addTime(result.getDuration());
+    private void addError(Throwable error) {
+        errors.add(error);
     }
 
-    public void addScenario(String resultStatus) {
-        addResultToSubCount(scenarioSubCounts, resultStatus);
+    void setStartTime(Long startTime) {
+        this.startTime = startTime;
     }
 
-    public void addHookTime(Long duration) {
-        addTime(duration);
+    void setFinishTime(Long finishTime) {
+        this.totalDuration = finishTime - startTime;
     }
 
-    private void addTime(Long duration) {
-        totalDuration += duration != null ? duration : 0;
-    }
-
-    private void addResultToSubCount(SubCounts subCounts, String resultStatus) {
-        if (resultStatus.equals(Result.FAILED)) {
+    private void addResultToSubCount(SubCounts subCounts, Result.Type resultStatus) {
+        switch (resultStatus) {
+        case FAILED:
             subCounts.failed++;
-        } else if (resultStatus.equals(PENDING)) {
+            break;
+        case AMBIGUOUS:
+            subCounts.ambiguous++;
+            break;
+        case PENDING:
             subCounts.pending++;
-        } else if (resultStatus.equals(Result.UNDEFINED.getStatus())) {
+            break;
+        case UNDEFINED:
             subCounts.undefined++;
-        } else if (resultStatus.equals(Result.SKIPPED.getStatus())) {
+            break;
+        case SKIPPED:
             subCounts.skipped++;
-        } else if (resultStatus.equals(Result.PASSED)) {
+            break;
+        default:
             subCounts.passed++;
         }
     }
 
-    public void addScenario(String resultStatus, String scenarioDesignation) {
+    void addScenario(Result.Type resultStatus, String scenarioDesignation) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
-        if (resultStatus.equals(Result.FAILED)) {
+        switch (resultStatus) {
+        case FAILED:
             failedScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(PENDING)) {
+            break;
+        case AMBIGUOUS:
+            ambiguousScenarios.add(scenarioDesignation);
+            break;
+        case PENDING:
             pendingScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(Result.UNDEFINED.getStatus())) {
+            break;
+        case UNDEFINED:
             undefinedScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(Result.PASSED)) {
-            passedScenarios.add(scenarioDesignation);
+            break;
+        default:
+            // intentionally left blank
         }
     }
 
-    class SubCounts {
+    static class SubCounts {
         public int passed = 0;
         public int failed = 0;
+        public int ambiguous = 0;
         public int skipped = 0;
         public int pending = 0;
         public int undefined = 0;
 
         public int getTotal() {
-            return passed + failed + skipped + pending + undefined;
+            return passed + failed + ambiguous + skipped + pending + undefined;
         }
     }
 }

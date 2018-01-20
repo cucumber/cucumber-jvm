@@ -1,4 +1,4 @@
-package cucumber.api.java.${i18n.underscoredIsoCode};
+package cucumber.api.java.${lang};
 
 import cucumber.runtime.java.StepDefAnnotation;
 

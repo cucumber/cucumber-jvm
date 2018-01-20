@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.PickleTag;
 
 import java.util.Collection;
 
@@ -16,7 +16,7 @@ public interface HookDefinition {
 
     void execute(Scenario scenario) throws Throwable;
 
-    boolean matches(Collection<Tag> tags);
+    boolean matches(Collection<PickleTag> tags);
 
     int getOrder();
 

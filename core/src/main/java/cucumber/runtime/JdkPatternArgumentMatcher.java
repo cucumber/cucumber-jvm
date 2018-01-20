@@ -1,7 +1,5 @@
 package cucumber.runtime;
 
-import gherkin.formatter.Argument;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

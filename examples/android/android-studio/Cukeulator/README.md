@@ -9,7 +9,7 @@ The rest of the dependencies are added automatically in `app/build.gradle`.
 The cucumber-android dependency is added as (see `app/build.gradle`):
 
 ```
-androidTestCompile 'info.cukes:cucumber-android:<version>'
+androidTestCompile 'io.cucumber:cucumber-android:<version>'
 ```
 
 ### Using gradle

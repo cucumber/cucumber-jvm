@@ -1,7 +1,8 @@
 package cucumber.runtime.formatter;
 
-import cucumber.runtime.StepDefinitionMatch;
-import gherkin.formatter.model.Result;
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.api.event.TestStepFinished;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -25,7 +26,7 @@ public class UsageFormatterTest {
     public void close() throws IOException {
         Appendable out = mock(Appendable.class, withSettings().extraInterfaces(Closeable.class));
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        usageFormatter.close();
+        usageFormatter.finishReport();
         verify((Closeable) out).close();
     }
 
@@ -34,9 +35,9 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.SKIPPED.getStatus());
+        when(result.is(Result.Type.PASSED)).thenReturn(false);
 
-        usageFormatter.result(result);
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -45,14 +46,12 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        StepDefinitionMatch match = mockStepDefinitionMatch();
-        usageFormatter.match(match);
-
+        TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(12345L);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        when(result.is(Result.Type.PASSED)).thenReturn(true);
 
-        usageFormatter.result(result);
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -63,27 +62,17 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.valueOf(12345));
     }
 
-    private StepDefinitionMatch mockStepDefinitionMatch() {
-        StepDefinitionMatch match = mock(StepDefinitionMatch.class, Mockito.RETURNS_MOCKS);
-        when(match.getPattern()).thenReturn("stepDef");
-        when(match.getStepLocation()).thenReturn(new StackTraceElement("x", "y", "z", 3));
-        when(match.getStepName()).thenReturn("step");
-        return match;
-    }
-
     @Test
     public void resultWithZeroDuration() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        StepDefinitionMatch match = mockStepDefinitionMatch();
-        usageFormatter.match(match);
-
+        TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(0L);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        when(result.is(Result.Type.PASSED)).thenReturn(true);
 
-        usageFormatter.result(result);
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -99,14 +88,12 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        StepDefinitionMatch match = mockStepDefinitionMatch();
-        usageFormatter.match(match);
-
+        TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(null);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        when(result.is(Result.Type.PASSED)).thenReturn(true);
 
-        usageFormatter.result(result);
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -130,7 +117,7 @@ public class UsageFormatterTest {
 
         usageFormatter.usageMap.put("aStep", Arrays.asList(stepContainer));
 
-        usageFormatter.done();
+        usageFormatter.finishReport();
 
         assertTrue(out.toString().contains("0.012345678"));
     }
@@ -152,9 +139,16 @@ public class UsageFormatterTest {
         when(usageStatisticStrategy.calculate(Arrays.asList(12345678L))).thenReturn(23456L);
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
 
-        usageFormatter.done();
+        usageFormatter.finishReport();;
 
         assertTrue(out.toString().contains("0.000023456"));
         assertTrue(out.toString().contains("0.012345678"));
+    }
+
+    private TestStep mockTestStep() {
+        TestStep testStep = mock(TestStep.class, Mockito.RETURNS_MOCKS);
+        when(testStep.getPattern()).thenReturn("stepDef");
+        when(testStep.getStepText()).thenReturn("step");
+        return testStep;
     }
 }

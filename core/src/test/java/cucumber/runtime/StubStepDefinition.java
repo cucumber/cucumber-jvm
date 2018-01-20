@@ -1,8 +1,6 @@
 package cucumber.runtime;
 
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -22,7 +20,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(Step step) {
+    public List<Argument> matchedArguments(PickleStep step) {
         throw new UnsupportedOperationException();
     }
 
@@ -42,7 +40,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(I18n i18n, Object[] args) throws Throwable {
+    public void execute(String language, Object[] args) throws Throwable {
         Utils.invoke(target, method, 0, args);
     }
 

@@ -1,15 +1,19 @@
 package cucumber.runtime.xstream;
 
 import cucumber.deps.com.thoughtworks.xstream.XStream;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.Converter;
 import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterMatcher;
 import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.core.DefaultConverterLookup;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -17,16 +21,23 @@ import java.util.Map;
 
 public class LocalizedXStreams {
     private final Map<Locale, LocalizedXStream> xStreamsByLocale = new HashMap<Locale, LocalizedXStream>();
+    private final List<XStreamConverter> extraConverters;
     private final ClassLoader classLoader;
 
-    public LocalizedXStreams(ClassLoader classLoader) {
+    public LocalizedXStreams(ClassLoader classLoader, List<XStreamConverter> extraConverters) {
         this.classLoader = classLoader;
+        this.extraConverters = extraConverters;
+    }
+
+    public LocalizedXStreams(ClassLoader classLoader) {
+        this(classLoader, Collections.<XStreamConverter>emptyList());
     }
 
     public LocalizedXStream get(Locale locale) {
         LocalizedXStream xStream = xStreamsByLocale.get(locale);
         if (xStream == null) {
             xStream = newXStream(locale);
+            registerExtraConverters(xStream);
             xStreamsByLocale.put(locale, xStream);
         }
         return xStream;
@@ -35,6 +46,21 @@ public class LocalizedXStreams {
     private LocalizedXStream newXStream(Locale locale) {
         DefaultConverterLookup lookup = new DefaultConverterLookup();
         return new LocalizedXStream(classLoader, lookup, lookup, locale);
+    }
+
+    private void registerExtraConverters(LocalizedXStream xStream) {
+        for (XStreamConverter converter : extraConverters) {
+            try {
+                ConverterMatcher matcher = converter.value().newInstance();
+                if (matcher instanceof Converter) {
+                    xStream.registerConverter((Converter) matcher, converter.priority());
+                }
+            } catch (InstantiationException e) {
+                throw new CucumberException(e.getMessage(), e);
+            } catch (IllegalAccessException e) {
+                throw new CucumberException(e.getMessage(), e);
+            }
+        }
     }
 
     public static class LocalizedXStream extends XStream {

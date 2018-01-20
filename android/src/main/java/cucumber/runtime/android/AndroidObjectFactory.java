@@ -12,7 +12,7 @@ import cucumber.api.java.ObjectFactory;
  * make sure that created test classes have all necessary references to the executing {@link android.app.Instrumentation}
  * and the associated {@link android.content.Context}.
  */
-public class AndroidObjectFactory implements ObjectFactory {
+final class AndroidObjectFactory implements ObjectFactory {
 
     /**
      * The actual {@link ObjectFactory} responsible for creating instances.
@@ -32,7 +32,7 @@ public class AndroidObjectFactory implements ObjectFactory {
      * @param delegate the {@link ObjectFactory} to delegate to
      * @param instrumentation the {@link android.app.Instrumentation} to set to the tests
      */
-    public AndroidObjectFactory(final ObjectFactory delegate, final Instrumentation instrumentation) {
+    AndroidObjectFactory(final ObjectFactory delegate, final Instrumentation instrumentation) {
         this.delegate = delegate;
         this.instrumentation = instrumentation;
     }

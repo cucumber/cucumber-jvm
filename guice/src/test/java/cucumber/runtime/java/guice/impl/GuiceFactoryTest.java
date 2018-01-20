@@ -1,6 +1,12 @@
 package cucumber.runtime.java.guice.impl;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Scopes;
+import com.google.inject.Stage;
 import cucumber.api.guice.CucumberModules;
 import cucumber.api.guice.CucumberScopes;
 import cucumber.api.java.ObjectFactory;

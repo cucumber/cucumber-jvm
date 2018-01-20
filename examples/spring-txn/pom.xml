@@ -2,10 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../../pom.xml</relativePath>
-        <version>1.2.6-SNAPSHOT</version>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-examples</artifactId>
+        <version>2.3.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>spring-txn</artifactId>
@@ -17,6 +16,10 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
         </dependency>
 
         <dependency>
@@ -80,17 +83,17 @@
         </dependency>
 
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
             <scope>test</scope>
         </dependency>

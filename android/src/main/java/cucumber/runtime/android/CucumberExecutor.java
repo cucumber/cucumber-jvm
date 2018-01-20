@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.Log;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -12,14 +14,14 @@ import cucumber.runtime.Env;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
+import cucumber.runtime.formatter.AndroidInstrumentationReporter;
+import cucumber.runtime.formatter.AndroidLogcatReporter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.ObjectFactoryLoader;
 import cucumber.runtime.model.CucumberFeature;
 import dalvik.system.DexFile;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
+import gherkin.events.PickleEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,19 +29,19 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Executes the cucumber scnearios.
+ * Executes the cucumber scenarios.
  */
-public class CucumberExecutor {
+public final class CucumberExecutor {
 
     /**
      * The logcat tag to log all cucumber related information to.
      */
-    public static final String TAG = "cucumber-android";
+    static final String TAG = "cucumber-android";
 
     /**
      * The system property name of the cucumber options.
      */
-    public static final String CUCUMBER_OPTIONS_SYSTEM_PROPERTY = "cucumber.options";
+    private static final String CUCUMBER_OPTIONS_SYSTEM_PROPERTY = "cucumber.options";
 
     /**
      * The instrumentation to report to.
@@ -67,14 +69,15 @@ public class CucumberExecutor {
     private final Runtime runtime;
 
     /**
-     * The actual {@link CucumberFeature}s to run.
+     * The actual {@link PickleEvent}s to run stored in {@link PickleStruct}s.
      */
-    private final List<CucumberFeature> cucumberFeatures;
+    private final List<PickleEvent> pickleEvents;
 
     /**
      * Creates a new instance for the given parameters.
      *
-     * @param arguments       the {@link cucumber.runtime.android.Arguments} which configure this execution
+     * @param arguments       the {@link cucumber.runtime.android.Arguments} which configure this
+     *                        execution
      * @param instrumentation the {@link android.app.Instrumentation} to report to
      */
     public CucumberExecutor(final Arguments arguments, final Instrumentation instrumentation) {
@@ -89,7 +92,13 @@ public class CucumberExecutor {
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
         this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
-        this.cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
+        AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        runtimeOptions.addPlugin(instrumentationReporter);
+        runtimeOptions.addPlugin(new AndroidLogcatReporter(runtime, TAG));
+
+        List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
+        this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);
+        instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
 
     /**
@@ -97,30 +106,23 @@ public class CucumberExecutor {
      */
     public void execute() {
 
-        runtimeOptions.addPlugin(new AndroidInstrumentationReporter(runtime, instrumentation, getNumberOfConcreteScenarios()));
-        runtimeOptions.addPlugin(new AndroidLogcatReporter(runtime, TAG));
-
         // TODO: This is duplicated in info.cucumber.Runtime.
 
-        final Reporter reporter = runtimeOptions.reporter(classLoader);
-        final Formatter formatter = runtimeOptions.formatter(classLoader);
-
         final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
-        runtime.getGlue().reportStepDefinitions(stepDefinitionReporter);
+        runtime.reportStepDefinitions(stepDefinitionReporter);
 
-        for (final CucumberFeature cucumberFeature : cucumberFeatures) {
-            cucumberFeature.run(formatter, reporter, runtime);
+        for (final PickleEvent pickleEvent : pickleEvents) {
+            runtime.getRunner().runPickle(pickleEvent);
         }
 
-        formatter.done();
-        formatter.close();
+        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
     }
 
     /**
      * @return the number of actual scenarios, including outlined
      */
     public int getNumberOfConcreteScenarios() {
-        return ScenarioCounter.countScenarios(cucumberFeatures);
+        return pickleEvents.size();
     }
 
     private void trySetCucumberOptionsToSystemProperties(final Arguments arguments) {

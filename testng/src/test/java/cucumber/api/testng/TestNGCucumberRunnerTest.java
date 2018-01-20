@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.testng.RunCukesStrict;
 import cucumber.runtime.testng.RunCukesTest;
+import cucumber.runtime.testng.RunScenarioWithUndefinedStepsStrict;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -27,10 +28,23 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner.runCukes();
     }
 
+    @Test(expectedExceptions = CucumberException.class)
+    public void runScenarioWithUndefinedStepsStrict() throws Throwable {
+        testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedStepsStrict.class);
+        Object[][] scenarios = testNGCucumberRunner.provideScenarios();
+
+        // the feature file only contains one scenario
+        Assert.assertEquals(scenarios.length, 1);
+        Object[] scenario = scenarios[0];
+        PickleEventWrapper pickleEvent = (PickleEventWrapper) scenario[0];
+
+        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent()); // runScenario() throws CucumberException
+    }
+
     @Test
     public void parse_error_propagated_to_testng_test_execution() throws Exception {
         testNGCucumberRunner = new ParseErrorCucumberRunner(RunCukesTest.class);
-        Object[][] features = testNGCucumberRunner.provideFeatures(); // provideFeatures() throws CucumberException
+        Object[][] features = testNGCucumberRunner.provideScenarios(); // provideScenarios() throws CucumberException
         try {
             ((CucumberFeatureWrapper)features[0][0]).getCucumberFeature();
             Assert.fail("CucumberException not thrown");

@@ -1,246 +1,259 @@
 package cucumber.runtime.junit;
 
-import cucumber.api.PendingException;
-import cucumber.runtime.CucumberException;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
-import org.junit.internal.runners.model.EachTestNotifier;
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.event.TestStepStarted;
+import cucumber.runner.EventBus;
+import cucumber.runtime.junit.PickleRunners.PickleRunner;
+import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.MultipleFailureException;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static cucumber.runtime.Runtime.isPending;
+public class JUnitReporter {
 
-public class JUnitReporter implements Reporter, Formatter {
-    private final List<Step> steps = new ArrayList<Step>();
-
-    private final Reporter reporter;
-    private final Formatter formatter;
     private final boolean strict;
     private final JUnitOptions junitOptions;
 
-    EachTestNotifier stepNotifier;
-    private ExecutionUnitRunner executionUnitRunner;
+    TestNotifier stepNotifier; // package-private for testing
+    private PickleRunner pickleRunner;
     private RunNotifier runNotifier;
-    EachTestNotifier executionUnitNotifier;
-    private boolean failedStep;
-    private boolean ignoredStep;
-    private boolean inScenarioLifeCycle;
+    TestNotifier pickleRunnerNotifier; // package-private for testing
+    ArrayList<Throwable> stepErrors; // package-private for testing
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
 
-    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict, JUnitOptions junitOption) {
-        this.reporter = reporter;
-        this.formatter = formatter;
+        @Override
+        public void receive(TestCaseStarted event) {
+            handleTestCaseStarted();
+        }
+
+    };
+    private final EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
+
+        @Override
+        public void receive(TestStepStarted event) {
+            if (!event.testStep.isHook()) {
+                handleStepStarted(event.testStep.getPickleStep());
+            }
+        }
+
+    };
+    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
+
+        @Override
+        public void receive(TestStepFinished event) {
+            if (!event.testStep.isHook()) {
+                handleStepResult(event.testStep, event.result);
+            } else {
+                handleHookResult(event.result);
+            }
+        }
+
+    };
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
+
+        @Override
+        public void receive(TestCaseFinished event) {
+            handleTestCaseResult(event.result);
+        }
+
+    };
+
+    public JUnitReporter(EventBus bus, boolean strict, JUnitOptions junitOption) {
         this.strict = strict;
         this.junitOptions = junitOption;
+        bus.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
+        bus.registerHandlerFor(TestStepStarted.class, testStepStartedHandler);
+        bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
+        bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
-    public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
-        this.executionUnitRunner = executionUnitRunner;
+    void startExecutionUnit(PickleRunner pickleRunner, RunNotifier runNotifier) {
+        this.pickleRunner = pickleRunner;
         this.runNotifier = runNotifier;
         this.stepNotifier = null;
-        this.failedStep = false;
-        this.ignoredStep = false;
 
-        executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
-        executionUnitNotifier.fireTestStarted();
+        pickleRunnerNotifier = new EachTestNotifier(runNotifier, pickleRunner.getDescription());
     }
 
-    public void finishExecutionUnit() {
-        if (ignoredStep && !failedStep) {
-            executionUnitNotifier.fireTestIgnored();
-        }
-        executionUnitNotifier.fireTestFinished();
+    void handleTestCaseStarted() {
+        pickleRunnerNotifier.fireTestStarted();
+        stepErrors = new ArrayList<Throwable>();
     }
 
-    public void match(Match match) {
-        Step runnerStep = fetchAndCheckRunnerStep();
-        Description description = executionUnitRunner.describeChild(runnerStep);
-        stepNotifier = new EachTestNotifier(runNotifier, description);
-        reporter.match(match);
-        if (junitOptions.allowStartedIgnored()) {
-            stepNotifier.fireTestStarted();
-        }
-    }
-
-    private Step fetchAndCheckRunnerStep() {
-        Step scenarioStep = steps.remove(0);
-        Step runnerStep = executionUnitRunner.getRunnerSteps().remove(0);
-        if (!scenarioStep.getName().equals(runnerStep.getName())) {
-            throw new CucumberException("Expected step: \"" + scenarioStep.getName() + "\" got step: \"" + runnerStep.getName() + "\"");
-        }
-        return runnerStep;
-    }
-
-    @Override
-    public void embedding(String mimeType, byte[] data) {
-        reporter.embedding(mimeType, data);
-    }
-
-    @Override
-    public void write(String text) {
-        reporter.write(text);
-    }
-
-    public void result(Result result) {
-        Throwable error = result.getError();
-        if (Result.SKIPPED == result) {
-            stepNotifier.fireTestIgnored();
-        } else if (isPendingOrUndefined(result)) {
-            addFailureOrIgnoreStep(result);
+    void handleStepStarted(PickleStep step) {
+        if (stepNotifications()) {
+            Description description = pickleRunner.describeChild(step);
+            stepNotifier = new EachTestNotifier(runNotifier, description);
         } else {
-            if (stepNotifier != null) {
-                //Should only fireTestStarted if not ignored
-                if (!junitOptions.allowStartedIgnored()) {
-                    stepNotifier.fireTestStarted();
-                }
-                if (error != null) {
-                    stepNotifier.addFailure(error);
-                }
-                stepNotifier.fireTestFinished();
-            }
-            if (error != null) {
-                failedStep = true;
-                executionUnitNotifier.addFailure(error);
-            }
+            stepNotifier = new NoTestNotifier();
         }
-        if (steps.isEmpty()) {
-            // We have run all of our steps. Set the stepNotifier to null so that
-            // if an error occurs in an After block, it's reported against the scenario
-            // instead (via executionUnitNotifier).
-            stepNotifier = null;
-        }
-        reporter.result(result);
+        stepNotifier.fireTestStarted();
     }
 
-    public boolean useFilenameCompatibleNames() {
+    boolean stepNotifications() {
+        return junitOptions.stepNotifications();
+    }
+
+    void handleStepResult(TestStep testStep, Result result) {
+        Throwable error = result.getError();
+        switch (result.getStatus()) {
+        case PASSED:
+            // do nothing
+            break;
+        case SKIPPED:
+            if (error == null) {
+                error = new SkippedThrowable(NotificationLevel.STEP);
+            } else {
+                stepErrors.add(error);
+            }
+            stepNotifier.addFailedAssumption(error);
+            break;
+        case PENDING:
+            stepErrors.add(error);
+            addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+            break;
+        case UNDEFINED:
+            if (error == null) {
+                error = new UndefinedThrowable();
+            }
+            stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
+            addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+            break;
+        case AMBIGUOUS:
+        case FAILED:
+            stepErrors.add(error);
+            stepNotifier.addFailure(error);
+            break;
+        default:
+            throw new IllegalStateException("Unexpected result status: " + result.getStatus());
+        }
+        stepNotifier.fireTestFinished();
+    }
+
+    void handleHookResult(Result result) {
+        if (result.getError() != null) {
+            stepErrors.add(result.getError());
+        }
+    }
+
+    void handleTestCaseResult(Result result) {
+        switch (result.getStatus()) {
+        case PASSED:
+            // do nothing
+            break;
+        case SKIPPED:
+            if (stepErrors.isEmpty()) {
+                stepErrors.add(new SkippedThrowable(NotificationLevel.SCENARIO));
+            }
+            for (Throwable error : stepErrors) {
+                pickleRunnerNotifier.addFailedAssumption(error);
+            }
+            break;
+        case PENDING:
+        case UNDEFINED:
+            for (Throwable error : stepErrors) {
+                addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error);
+            }
+            break;
+        case AMBIGUOUS:
+        case FAILED:
+            for (Throwable error : stepErrors) {
+                pickleRunnerNotifier.addFailure(error);
+            }
+            break;
+        }
+        pickleRunnerNotifier.fireTestFinished();
+    }
+
+    boolean useFilenameCompatibleNames() {
         return junitOptions.filenameCompatibleNames();
     }
 
-    private boolean isPendingOrUndefined(Result result) {
-        Throwable error = result.getError();
-        return Result.UNDEFINED == result || isPending(error);
-    }
-
-    private void addFailureOrIgnoreStep(Result result) {
+    private void addFailureOrFailedAssumptionDependingOnStrictMode(TestNotifier notifier, Throwable error) {
         if (strict) {
-            if (!junitOptions.allowStartedIgnored()) {
-                stepNotifier.fireTestStarted();
-            }
-            addFailure(result);
-            stepNotifier.fireTestFinished();
+            notifier.addFailure(error);
         } else {
-            ignoredStep = true;
-            stepNotifier.fireTestIgnored();
+            notifier.addFailedAssumption(error);
         }
     }
 
-    private void addFailure(Result result) {
+    private interface TestNotifier {
 
-        Throwable error = result.getError();
-        if (error == null) {
-            error = new PendingException();
+        void fireTestStarted();
+
+        void addFailure(Throwable error);
+
+        void addFailedAssumption(Throwable error);
+
+        void fireTestFinished();
+    }
+
+
+    static final class NoTestNotifier implements TestNotifier {
+
+        @Override
+        public void fireTestStarted() {
+            // Does nothing
         }
-        failedStep = true;
-        stepNotifier.addFailure(error);
-        executionUnitNotifier.addFailure(error);
-    }
 
-    @Override
-    public void before(Match match, Result result) {
-        handleHook(result);
-        reporter.before(match, result);
-    }
+        @Override
+        public void addFailure(Throwable error) {
+            // Does nothing
+        }
 
-    @Override
-    public void after(Match match, Result result) {
-        handleHook(result);
-        reporter.after(match, result);
-    }
+        @Override
+        public void addFailedAssumption(Throwable error) {
+            // Does nothing
+        }
 
-    private void handleHook(Result result) {
-        if (result.getStatus().equals(Result.FAILED) || (strict && isPending(result.getError()))) {
-            executionUnitNotifier.addFailure(result.getError());
-        } else if (isPending(result.getError())) {
-            ignoredStep = true;
+        @Override
+        public void fireTestFinished() {
+            // Does nothing
         }
     }
 
-    @Override
-    public void uri(String uri) {
-        formatter.uri(uri);
-    }
+    static class EachTestNotifier implements TestNotifier {
+        private final RunNotifier notifier;
 
-    @Override
-    public void feature(gherkin.formatter.model.Feature feature) {
-        formatter.feature(feature);
-    }
+        private final Description description;
 
-    @Override
-    public void background(Background background) {
-        formatter.background(background);
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-        formatter.scenario(scenario);
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        formatter.scenarioOutline(scenarioOutline);
-    }
-
-    @Override
-    public void examples(Examples examples) {
-        formatter.examples(examples);
-    }
-
-    @Override
-    public void step(Step step) {
-        if (inScenarioLifeCycle) {
-            steps.add(step);
+        EachTestNotifier(RunNotifier notifier, Description description) {
+            this.notifier = notifier;
+            this.description = description;
         }
-        formatter.step(step);
-    }
 
-    @Override
-    public void eof() {
-        formatter.eof();
-    }
+        public void addFailure(Throwable targetException) {
+            if (targetException instanceof MultipleFailureException) {
+                addMultipleFailureException((MultipleFailureException) targetException);
+            } else {
+                notifier.fireTestFailure(new Failure(description, targetException));
+            }
+        }
 
-    @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-        formatter.syntaxError(state, event, legalEvents, uri, line);
-    }
+        private void addMultipleFailureException(MultipleFailureException mfe) {
+            for (Throwable each : mfe.getFailures()) {
+                addFailure(each);
+            }
+        }
 
-    @Override
-    public void done() {
-        formatter.done();
-    }
+        public void addFailedAssumption(Throwable e) {
+            notifier.fireTestAssumptionFailed(new Failure(description, e));
+        }
 
-    @Override
-    public void close() {
-        formatter.close();
-    }
+        public void fireTestFinished() {
+            notifier.fireTestFinished(description);
+        }
 
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
-        inScenarioLifeCycle = true;
-        formatter.startOfScenarioLifeCycle(scenario);
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
-        formatter.endOfScenarioLifeCycle(scenario);
-        inScenarioLifeCycle = false;
+        public void fireTestStarted() {
+            notifier.fireTestStarted(description);
+        }
     }
 }

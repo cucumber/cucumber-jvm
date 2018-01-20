@@ -1,34 +1,54 @@
----
 language: java
-
-# get us on the new container based builds, we're not using any fancyness
 sudo: false
-
-before_install:
-  - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
-  - tar zxvf apache-maven-3.3.9-bin.tar.gz
-  - chmod +x apache-maven-3.3.9/bin/mvn
-  - export M2_HOME=$PWD/apache-maven-3.3.9
-  - export PATH=$PWD/apache-maven-3.3.9/bin:${PATH}
-  - hash -r
 
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
+before_cache:
+- rm -rf $HOME/.m2/repository/io/cucumber
 
-script: mvn -q install -P examples
-
-jdk:
-- openjdk7
-
-matrix:
+jobs:
   include:
-  - jdk: oraclejdk7
+  - stage: test
+    jdk: oraclejdk8
     script: mvn -q install
-    after_success: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+    after_success:
+    - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
   - jdk: oraclejdk8
-    script: mvn -q install -P java8
-    after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
+    env: JAVADOC=true
+    script:
+    - mvn clean install -DskipTests=true
+    - mvn javadoc:aggregate
+  - jdk: oraclejdk8
+    env: ANDROID_EXAMPLES=true
+    language: android
+    android:
+      components:
+      - tools
+      - platform-tools
+      - tools
+      - build-tools-26.0.0
+      - android-21
+      - sys-img-armeabi-v7a-android-21
+    before_install:
+    - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+    - emulator -avd test -no-skin -no-audio -no-window &
+    install:
+    - mvn -q install --also-make --projects android,picocontainer -DskipTests=true
+      -Dmaven.javadoc.skip=true
+    before_script:
+    - android-wait-for-emulator
+    script:
+    - mvn install --activate-profiles android-examples --projects examples/android
+      --also-make-dependents -Dandroid.device=test
+  - stage: deploy
+    jdk: oraclejdk8
+    script:
+    - "./continuous-deployment/before-deploy.sh"
+    - "./continuous-deployment/deploy.sh"
+    - "./continuous-deployment/upload-api-docs.sh"
+    on:
+      repo: cucumber/cucumber-jvm
 
 env:
   global:
@@ -40,11 +60,19 @@ env:
       BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
       K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
       969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
+  - secure: |-
+      YFC36RaO9gnbOlqDt94mp5s6ipOiAjs32J+fo1plaL02WceKfgVvcKOlirfO
+      58vytZ0hu9SdV1KYWOqr787cg7B7EZcUUKzDE/9ldsNr/WfwTIIt34Umu2oZ
+      v2dOSpimxxMXJCjW+nFcfjENVJfg2flT31kjtzsGiZtpHK3TxqY=
+  - secure: |-
+      Zq9aGkt4PJQ0MVTrbbNbe8OEV68wWjIDfYiCumrGZ1n8sIy3AgERxRjsHgiD
+      QzDDaLAw2ynHFXq9OuxlgY922ltPOQBkio0ARNmfRFJo2ArUyqeK53BPrnxJ
+      tjZwOM9sWlmckoRz5iv3k28Z7yim9N+mHZ9/DcogEdDi0O0X2tY=
+  - secure: |-
+      ambMvk6phoaLJYntjF67zHYWll+xTIZ/hJinfAzN1H1477/oUvxs9+S4BoLq
+      YRuaNCosy5WaZQGmK2DXoLE97ILhpukK9aAO4JW2LbjBJdEZTOg6DQrSluqN
+      k5fmA23NhdoGACwU+guqnJ4jcNDBLWXXsOuJ2J4AKUXJLR5VL+Q=
 
 branches:
   only:
   - master
-
-notifications:
-  email:
-  - cukes-devs@googlegroups.com

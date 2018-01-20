@@ -39,8 +39,21 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
     @Override
     public void start() {
         logger.trace("start()");
-        for (final Class<?> stepDefinitionType : cachedStepsInstances.keySet()) {
-            cachedStepsInstances.put(stepDefinitionType, createStepsInstance(stepDefinitionType));
+        try {
+            // First create all instances
+            for (final Class<?> stepDefinitionType : cachedStepsInstances.keySet()) {
+                cachedStepsInstances.put(stepDefinitionType, createStepsInstance(stepDefinitionType));
+            }
+            // Then collect injection providers from all instances
+            for (Object stepsInstance : cachedStepsInstances.values()) {
+                addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
+            }
+            // Now init all instances, having the injection providers from all other instances available
+            for (Object stepsInstance : cachedStepsInstances.values()) {
+                initTestcase(stepsInstance);
+            }
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -74,21 +87,14 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
         final Object instance = cachedStepsInstances.get(type);
         if (instance == null) {
             throw new IllegalStateException(format("instance of type %s has not been initialized in start()!",
-                    type.getSimpleName()));
+                type.getSimpleName()));
         }
         return (T) instance;
     }
 
-    private <T> T createStepsInstance(final Class<T> type) {
+    private <T> T createStepsInstance(final Class<T> type) throws Exception {
         logger.trace("createInstance(): " + type.getCanonicalName());
-        try {
-            final T stepsInstance = createInstanceByDefaultConstructor.apply(type);
-            addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
-            initTestcase(stepsInstance);
-            return stepsInstance;
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
+        return createInstanceByDefaultConstructor.apply(type);
     }
 
     static InjectionProvider<?>[] setUpInjectionProviders(final String resourceName) {

@@ -13,12 +13,12 @@ import java.util.List;
 /**
  * Android specific implementation of {@link cucumber.runtime.io.ResourceLoader} which loads non-class resources such as .feature files.
  */
-public class AndroidResourceLoader implements ResourceLoader {
+final class AndroidResourceLoader implements ResourceLoader {
 
     /**
      * The format of the resource path.
      */
-    public static final String RESOURCE_PATH_FORMAT = "%s/%s";
+    private static final String RESOURCE_PATH_FORMAT = "%s/%s";
 
     /**
      * The {@link android.content.Context} to get the resources from.
@@ -30,7 +30,7 @@ public class AndroidResourceLoader implements ResourceLoader {
      *
      * @param context the {@link android.content.Context} to get resources from
      */
-    public AndroidResourceLoader(final Context context) {
+    AndroidResourceLoader(final Context context) {
         this.context = context;
     }
 

@@ -1,9 +1,13 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.api.event.TestStepFinished;
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.formatter.model.Result;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -21,6 +25,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class PluginFactoryTest {
     private PluginFactory fc = new PluginFactory();
@@ -56,13 +61,13 @@ public class PluginFactoryTest {
     @Test
     public void instantiates_pretty_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create("pretty:" + Utils.toURL(TempDir.createTempFile().getAbsolutePath()));
-        assertEquals(CucumberPrettyFormatter.class, plugin.getClass());
+        assertEquals(PrettyFormatter.class, plugin.getClass());
     }
 
     @Test
     public void instantiates_pretty_plugin_without_file_arg() {
         Object plugin = fc.create("pretty");
-        assertEquals(CucumberPrettyFormatter.class, plugin.getClass());
+        assertEquals(PrettyFormatter.class, plugin.getClass());
     }
 
     @Test
@@ -89,8 +94,11 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
-
-            plugin.result(new Result("passed", null, null));
+            EventBus bus = new EventBus(new TimeServiceStub(0));
+            plugin.setEventPublisher(bus);
+            Result result = new Result(Result.Type.PASSED, null, null);
+            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestStep.class), result);
+            bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));
         } finally {
@@ -145,11 +153,32 @@ public class PluginFactoryTest {
         assertEquals(new File("halp.txt"), plugin.out);
     }
 
+    @Test
+    public void instantiates_custom_string_arg_plugin() throws IOException {
+        WantsString plugin = (WantsString) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsString:hello");
+        assertEquals("hello", plugin.arg);
+    }
+
+    @Test
+    public void instantiates_plugin_using_empty_constructor_when_unspecified() throws IOException {
+        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsStringOrDefault");
+        assertEquals("defaultValue", plugin.arg);
+    }
+
+    @Test
+    public void instantiates_plugin_using_arg_constructor_when_specified() throws IOException {
+        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsStringOrDefault:hello");
+        assertEquals("hello", plugin.arg);
+    }
+
     public static class WantsAppendable extends StubFormatter {
         public final Appendable out;
 
         public WantsAppendable(Appendable out) {
             this.out = out;
+        }
+        public WantsAppendable() {
+            this.out = null;
         }
     }
 
@@ -174,6 +203,25 @@ public class PluginFactoryTest {
 
         public WantsFile(File out) {
             this.out = out;
+        }
+    }
+
+    public static class WantsString extends StubFormatter {
+        public final String arg;
+
+        public WantsString(String arg) {
+            this.arg = arg;
+        }
+    }
+
+    public static class WantsStringOrDefault extends StubFormatter {
+        public final String arg;
+
+        public WantsStringOrDefault(String arg) {
+            this.arg = arg;
+        }
+        public WantsStringOrDefault() {
+            this("defaultValue");
         }
     }
 }

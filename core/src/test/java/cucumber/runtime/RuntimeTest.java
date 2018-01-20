@@ -1,30 +1,30 @@
 package cucumber.runtime;
 
 import cucumber.api.PendingException;
+import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
-import cucumber.runtime.formatter.CucumberJSONFormatter;
+import cucumber.api.TestCase;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.I18n;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.JSONFormatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.events.PickleEvent;
+import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
 import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,8 +51,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
-
-    private static final I18n ENGLISH = new I18n("en");
+    private final static String ENGLISH = "en";
+    private final static long ANY_TIMESTAMP = 1234567890;
 
     @Ignore
     @Test
@@ -64,138 +64,141 @@ public class RuntimeTest {
                 "  Scenario: scenario name\n" +
                 "    When s\n");
         StringBuilder out = new StringBuilder();
-        JSONFormatter jsonFormatter = new CucumberJSONFormatter(out);
+
+//        JSONFormatter jsonFormatter = new JSONFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
-        feature.run(jsonFormatter, jsonFormatter, runtime);
-        jsonFormatter.done();
-        String expected = "" +
-                "[\n" +
-                "  {\n" +
-                "    \"id\": \"feature-name\",\n" +
-                "    \"description\": \"\",\n" +
-                "    \"name\": \"feature name\",\n" +
-                "    \"keyword\": \"Feature\",\n" +
-                "    \"line\": 1,\n" +
-                "    \"elements\": [\n" +
-                "      {\n" +
-                "        \"description\": \"\",\n" +
-                "        \"name\": \"background name\",\n" +
-                "        \"keyword\": \"Background\",\n" +
-                "        \"line\": 2,\n" +
-                "        \"steps\": [\n" +
-                "          {\n" +
-                "            \"result\": {\n" +
-                "              \"status\": \"undefined\"\n" +
-                "            },\n" +
-                "            \"name\": \"b\",\n" +
-                "            \"keyword\": \"Given \",\n" +
-                "            \"line\": 3,\n" +
-                "            \"match\": {}\n" +
-                "          }\n" +
-                "        ],\n" +
-                "        \"type\": \"background\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"id\": \"feature-name;scenario-name\",\n" +
-                "        \"description\": \"\",\n" +
-                "        \"name\": \"scenario name\",\n" +
-                "        \"keyword\": \"Scenario\",\n" +
-                "        \"line\": 4,\n" +
-                "        \"steps\": [\n" +
-                "          {\n" +
-                "            \"result\": {\n" +
-                "              \"status\": \"undefined\"\n" +
-                "            },\n" +
-                "            \"name\": \"s\",\n" +
-                "            \"keyword\": \"When \",\n" +
-                "            \"line\": 5,\n" +
-                "            \"match\": {}\n" +
-                "          }\n" +
-                "        ],\n" +
-                "        \"type\": \"scenario\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"uri\": \"test.feature\"\n" +
-                "  }\n" +
-                "]";
-        assertEquals(expected, out.toString());
+//        feature.run(jsonFormatter, jsonFormatter, runtime);
+//        jsonFormatter.done();
+//        String expected = "" +
+//                "[\n" +
+//                "  {\n" +
+//                "    \"id\": \"feature-name\",\n" +
+//                "    \"description\": \"\",\n" +
+//                "    \"name\": \"feature name\",\n" +
+//                "    \"keyword\": \"Feature\",\n" +
+//                "    \"line\": 1,\n" +
+//                "    \"elements\": [\n" +
+//                "      {\n" +
+//                "        \"description\": \"\",\n" +
+//                "        \"name\": \"background name\",\n" +
+//                "        \"keyword\": \"Background\",\n" +
+//                "        \"line\": 2,\n" +
+//                "        \"steps\": [\n" +
+//                "          {\n" +
+//                "            \"result\": {\n" +
+//                "              \"status\": \"undefined\"\n" +
+//                "            },\n" +
+//                "            \"name\": \"b\",\n" +
+//                "            \"keyword\": \"Given \",\n" +
+//                "            \"line\": 3,\n" +
+//                "            \"match\": {}\n" +
+//                "          }\n" +
+//                "        ],\n" +
+//                "        \"type\": \"background\"\n" +
+//                "      },\n" +
+//                "      {\n" +
+//                "        \"id\": \"feature-name;scenario-name\",\n" +
+//                "        \"description\": \"\",\n" +
+//                "        \"name\": \"scenario name\",\n" +
+//                "        \"keyword\": \"Scenario\",\n" +
+//                "        \"line\": 4,\n" +
+//                "        \"steps\": [\n" +
+//                "          {\n" +
+//                "            \"result\": {\n" +
+//                "              \"status\": \"undefined\"\n" +
+//                "            },\n" +
+//                "            \"name\": \"s\",\n" +
+//                "            \"keyword\": \"When \",\n" +
+//                "            \"line\": 5,\n" +
+//                "            \"match\": {}\n" +
+//                "          }\n" +
+//                "        ],\n" +
+//                "        \"type\": \"scenario\"\n" +
+//                "      }\n" +
+//                "    ],\n" +
+//                "    \"uri\": \"test.feature\"\n" +
+//                "  }\n" +
+//                "]";
+//        assertEquals(expected, out.toString());
     }
 
     @Test
-    public void strict_without_pending_steps_or_errors() {
+    public void strict_with_passed_scenarios() {
         Runtime runtime = createStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_without_pending_steps_or_errors() {
+    public void non_strict_with_passed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_undefined_steps() {
+    public void non_strict_with_undefined_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_undefined_steps() {
+    public void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_pending_steps_and_no_errors() {
+    public void strict_with_pending_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.addError(new PendingException());
-
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_pending_steps() {
-        Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new PendingException());
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_failed_junit_assumption_prior_to_junit_412() {
-        Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new AssumptionViolatedException("should be treated like pending"));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_failed_junit_assumption_from_junit_412_on() {
-        Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new org.junit.AssumptionViolatedException("should be treated like pending"));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_errors() {
-        Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new RuntimeException());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PENDING));
 
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_errors() {
+    public void non_strict_with_pending_scenarios() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PENDING));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_skipped_scenarios() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_skipped_scenarios() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_failed_scenarios() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.addError(new RuntimeException());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -222,8 +225,8 @@ public class RuntimeTest {
     }
 
     public static class StepdefsPrinter implements StepDefinitionReporter {
-        public static StepdefsPrinter instance;
-        public StepDefinition stepDefinition;
+        static StepdefsPrinter instance;
+        StepDefinition stepDefinition;
 
         public StepdefsPrinter() {
             instance = this;
@@ -251,11 +254,10 @@ public class RuntimeTest {
     @Test
     public void should_add_passed_result_to_the_summary_counter() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -266,11 +268,10 @@ public class RuntimeTest {
     @Test
     public void should_add_pending_result_to_the_summary_counter() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = createExceptionThrowingMatch(new PendingException());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -281,11 +282,10 @@ public class RuntimeTest {
     @Test
     public void should_add_failed_result_to_the_summary_counter() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -296,25 +296,23 @@ public class RuntimeTest {
     @Test
     public void should_add_ambiguous_match_as_failed_result_to_the_summary_counter() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
 
         Runtime runtime = createRuntimeWithMockedGlueWithAmbiguousMatch("--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format(""+
-                "1 Scenarios (1 failed)%n" +
-                "1 Steps (1 failed)%n")));
+                "1 Scenarios (1 ambiguous)%n" +
+                "1 Steps (1 ambiguous)%n")));
     }
 
     @Test
     public void should_add_skipped_result_to_the_summary_counter() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runScenario(reporter, runtime, stepCount(2));
+        runScenario(runtime, stepCount(2));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -325,10 +323,9 @@ public class RuntimeTest {
     @Test
     public void should_add_undefined_result_to_the_summary_counter() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
 
         Runtime runtime = createRuntimeWithMockedGlue(null, "--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -339,12 +336,11 @@ public class RuntimeTest {
     @Test
     public void should_fail_the_scenario_if_before_fails() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
         Runtime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -355,12 +351,11 @@ public class RuntimeTest {
     @Test
     public void should_fail_the_scenario_if_after_fails() throws Throwable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
         Runtime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
-        runScenario(reporter, runtime, stepCount(1));
+        runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -377,33 +372,14 @@ public class RuntimeTest {
                         "    When second step\n" +
                         "    Then third step\n");
         HookDefinition beforeHook = mock(HookDefinition.class);
-        when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
+        when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
 
         Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
-        feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
+        runtime.runFeature(feature);
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
         verify(beforeHook).execute(capturedScenario.capture());
         assertEquals("scenario name", capturedScenario.getValue().getName());
-    }
-
-    @Test
-    public void should_make_scenario_id_available_to_hooks() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
-        HookDefinition beforeHook = mock(HookDefinition.class);
-        when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
-
-        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
-        feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
-
-        ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
-        verify(beforeHook).execute(capturedScenario.capture());
-        assertEquals("feature-name;scenario-name", capturedScenario.getValue().getId());
     }
 
     @Test
@@ -425,34 +401,21 @@ public class RuntimeTest {
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
         assertEquals("" +
-                "uri\n" +
-                "feature\n" +
-                "  startOfScenarioLifeCycle\n" +
-                "  background\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  scenario\n" +
-                "    step\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "    match\n" +
-                "    result\n" +
-                "  endOfScenarioLifeCycle\n" +
-                "  startOfScenarioLifeCycle\n" +
-                "  background\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  scenario\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  endOfScenarioLifeCycle\n" +
-                "eof\n" +
-                "done\n" +
-                "close\n", formatterOutput);
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestRun finished\n", formatterOutput);
     }
 
     @Test
@@ -479,80 +442,50 @@ public class RuntimeTest {
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
         assertEquals("" +
-                "uri\n" +
-                "feature\n" +
-                "  scenarioOutline\n" +
-                "    step\n" +
-                "    step\n" +
-                "  examples\n" +
-                "  startOfScenarioLifeCycle\n" +
-                "  background\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  scenario\n" +
-                "    step\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "    match\n" +
-                "    result\n" +
-                "  endOfScenarioLifeCycle\n" +
-                "  startOfScenarioLifeCycle\n" +
-                "  background\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  scenario\n" +
-                "    step\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "    match\n" +
-                "    result\n" +
-                "  endOfScenarioLifeCycle\n" +
-                "  examples\n" +
-                "  startOfScenarioLifeCycle\n" +
-                "  background\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  scenario\n" +
-                "    step\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "    match\n" +
-                "    result\n" +
-                "  endOfScenarioLifeCycle\n" +
-                "eof\n" +
-                "done\n" +
-                "close\n", formatterOutput);
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestRun finished\n", formatterOutput);
     }
 
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
         FormatterSpy formatterSpy = new FormatterSpy();
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy, formatterSpy);
+        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy);
         return formatterSpy.toString();
     }
 
     private StepDefinitionMatch createExceptionThrowingMatch(Exception exception) throws Throwable {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
-        doThrow(exception).when(match).runStep((I18n) any());
+        doThrow(exception).when(match).runStep(anyString(), (Scenario) any());
         return match;
     }
 
     private HookDefinition createExceptionThrowingHook() throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
+        when(hook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
         doThrow(new Exception()).when(hook).execute((Scenario) any());
         return hook;
-    }
-
-    public void runStep(Reporter reporter, Runtime runtime) {
-        Step step = mock(Step.class);
-        I18n i18n = mock(I18n.class);
-        runtime.runStep("<featurePath>", step, reporter, i18n);
     }
 
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
@@ -604,7 +537,11 @@ public class RuntimeTest {
                                                 boolean isBefore, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
-        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
+        List<String> args = new ArrayList<String>(asList(runtimeArgs));
+        if (!args.contains("-p")) {
+            args.addAll(asList("-p", "null"));
+        }
+        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         RuntimeGlue glue = mock(RuntimeGlue.class);
         mockMatch(glue, match, isAmbiguous);
@@ -616,10 +553,10 @@ public class RuntimeTest {
 
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {
         if (isAmbiguous) {
-            Exception exception = new AmbiguousStepDefinitionsException(Arrays.asList(match, match));
-            doThrow(exception).when(glue).stepDefinitionMatch(anyString(), (Step) any(), (I18n) any());
+            Exception exception = new AmbiguousStepDefinitionsException(mock(PickleStep.class), Arrays.asList(match, match));
+            doThrow(exception).when(glue).stepDefinitionMatch(anyString(), (PickleStep) any());
         } else {
-            when(glue.stepDefinitionMatch(anyString(), (Step) any(), (I18n) any())).thenReturn(match);
+            when(glue.stepDefinitionMatch(anyString(), (PickleStep) any())).thenReturn(match);
         }
     }
 
@@ -631,18 +568,21 @@ public class RuntimeTest {
         }
     }
 
-    private void runScenario(Reporter reporter, Runtime runtime, int stepCount) {
-        gherkin.formatter.model.Scenario gherkinScenario = mock(gherkin.formatter.model.Scenario.class);
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), gherkinScenario);
-        runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
+    private void runScenario(Runtime runtime, int stepCount) {
+        List<PickleStep> steps = new ArrayList<PickleStep>(stepCount);
         for (int i = 0; i < stepCount; ++i) {
-            runStep(reporter, runtime);
+            steps.add(mock(PickleStep.class));
         }
-        runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
-        runtime.disposeBackendWorlds("scenario designation");
+        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, steps, Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
+
+        runtime.getRunner().runPickle(pickleEvent);
     }
 
     private int stepCount(int stepCount) {
         return stepCount;
+    }
+
+    private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
+        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, null, null));
     }
 }

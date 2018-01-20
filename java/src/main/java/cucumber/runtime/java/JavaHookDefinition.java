@@ -6,8 +6,8 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.Utils;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagPredicate;
+import gherkin.pickles.PickleTag;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -18,14 +18,14 @@ class JavaHookDefinition implements HookDefinition {
 
     private final Method method;
     private final long timeoutMillis;
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final int order;
     private final ObjectFactory objectFactory;
 
     public JavaHookDefinition(Method method, String[] tagExpressions, int order, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
-        this.tagExpression = new TagExpression(asList(tagExpressions));
+        this.tagPredicate = new TagPredicate(asList(tagExpressions));
         this.order = order;
         this.objectFactory = objectFactory;
     }
@@ -61,8 +61,8 @@ class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.evaluate(tags);
+    public boolean matches(Collection<PickleTag> tags) {
+        return tagPredicate.apply(tags);
     }
 
     @Override

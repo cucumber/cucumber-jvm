@@ -2,12 +2,11 @@ package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +16,15 @@ public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-
-    private final UndefinedStepsTracker tracker;
+    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
     private final LocalizedXStreams localizedXStreams;
 
+    public RuntimeGlue(LocalizedXStreams localizedXStreams) {
+        this(null, localizedXStreams);
+    }
+
+    @Deprecated
     public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
-        this.tracker = tracker;
         this.localizedXStreams = localizedXStreams;
     }
 
@@ -58,24 +60,27 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n) {
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
-        try {
-            if (matches.isEmpty()) {
-                tracker.addUndefinedStep(step, i18n);
-                return null;
-            }
-            if (matches.size() == 1) {
-                return matches.get(0);
-            } else {
-                throw new AmbiguousStepDefinitionsException(matches);
-            }
-        } finally {
-            tracker.storeStepKeyword(step, i18n);
+    public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+        String stepText = step.getText();
+
+        CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
+        if (cacheEntry != null) {
+            return new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
         }
+
+        List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
+        if (matches.isEmpty()) {
+            return null;
+        }
+        if (matches.size() == 1) {
+            StepDefinitionMatch match = matches.get(0);
+            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(), match.getArguments()));
+            return match;
+        }
+        throw new AmbiguousStepDefinitionsException(step, matches);
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, Step step) {
+    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
@@ -102,9 +107,9 @@ public class RuntimeGlue implements Glue {
 
     private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks1) {
         Iterator<HookDefinition> hookIterator = beforeHooks1.iterator();
-        while(hookIterator.hasNext()) {
+        while (hookIterator.hasNext()) {
             HookDefinition hook = hookIterator.next();
-            if(hook.isScenarioScoped()) {
+            if (hook.isScenarioScoped()) {
                 hookIterator.remove();
             }
         }
@@ -112,11 +117,30 @@ public class RuntimeGlue implements Glue {
 
     private void removeScenarioScopedStepdefs() {
         Iterator<Map.Entry<String, StepDefinition>> stepdefs = stepDefinitionsByPattern.entrySet().iterator();
-        while(stepdefs.hasNext()) {
+        while (stepdefs.hasNext()) {
             StepDefinition stepDefinition = stepdefs.next().getValue();
-            if(stepDefinition.isScenarioScoped()) {
+            if (stepDefinition.isScenarioScoped()) {
                 stepdefs.remove();
             }
+        }
+
+        Iterator<Map.Entry<String, CacheEntry>> cachedStepDefs = matchedStepDefinitionsCache.entrySet().iterator();
+        while(cachedStepDefs.hasNext()){
+            StepDefinition stepDefinition = cachedStepDefs.next().getValue().stepDefinition;
+            if(stepDefinition.isScenarioScoped()){
+                cachedStepDefs.remove();
+            }
+        }
+    }
+
+    static final class CacheEntry {
+
+        StepDefinition stepDefinition;
+        List<Argument> arguments;
+
+        private CacheEntry(StepDefinition stepDefinition, List<Argument> arguments) {
+            this.stepDefinition = stepDefinition;
+            this.arguments = arguments;
         }
     }
 }

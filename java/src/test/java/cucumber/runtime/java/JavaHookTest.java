@@ -3,13 +3,17 @@ package cucumber.runtime.java;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.UndefinedStepsTracker;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -37,13 +41,23 @@ public class JavaHookTest {
         }
     }
 
-    private final SingletonFactory objectFactory = new SingletonFactory();
-    private final JavaBackend backend = new JavaBackend(objectFactory);
-    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams(Thread.currentThread().getContextClassLoader());
-    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker(), localizedXStreams);
+
+    private JavaBackend backend;
+    private Glue glue;
+    private SingletonFactory objectFactory;
 
     @org.junit.Before
-    public void loadNoGlue() {
+    public void createBackendAndLoadNoGlue() {
+        this.objectFactory = new SingletonFactory();
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        this.backend = new JavaBackend(objectFactory, classFinder);
+
+        LocalizedXStreams localizedXStreams = new LocalizedXStreams(classLoader);
+        this.glue = new RuntimeGlue(localizedXStreams);
+
         backend.loadGlue(glue, Collections.<String>emptyList());
     }
 
@@ -91,7 +105,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertTrue(before.matches(asList(new Tag("@bar", 0), new Tag("@zap", 0))));
+        assertTrue(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"), new PickleTag(mock(PickleLocation.class), "@zap"))));
     }
 
     @Test
@@ -100,7 +114,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertFalse(before.matches(asList(new Tag("@bar", 0))));
+        assertFalse(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"))));
     }
 
     @Test
@@ -119,7 +133,7 @@ public class JavaHookTest {
 
     public static class HasHooks {
 
-        @Before({"@foo,@bar", "@zap"})
+        @Before({"(@foo or @bar) and @zap"})
         public void before() {
 
         }

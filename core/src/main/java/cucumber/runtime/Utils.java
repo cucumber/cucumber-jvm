@@ -16,14 +16,6 @@ public class Utils {
     private Utils() {
     }
 
-    public static <T> List<T> listOf(int size, T obj) {
-        List<T> list = new ArrayList<T>();
-        for (int i = 0; i < size; i++) {
-            list.add(obj);
-        }
-        return list;
-    }
-
     public static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
         return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
@@ -39,11 +31,13 @@ public class Utils {
                     targetMethod.setAccessible(true);
                     return targetMethod.invoke(target, args);
                 } catch (IllegalArgumentException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod), e);
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
+                                                ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
                 } catch (InvocationTargetException e) {
                     throw e.getTargetException();
                 } catch (IllegalAccessException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod), e);
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
+                                                ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
                 } finally {
                     targetMethod.setAccessible(accessible);
                 }

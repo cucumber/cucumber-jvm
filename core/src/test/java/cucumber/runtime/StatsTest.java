@@ -5,8 +5,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import gherkin.formatter.ansi.AnsiEscapes;
-import gherkin.formatter.model.Result;
+import cucumber.api.Result;
+import cucumber.api.formatter.AnsiEscapes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -15,6 +15,7 @@ import java.util.Locale;
 import org.junit.Test;
 
 public class StatsTest {
+    public static final long ANY_TIME = 1234567890;
     public static final long ONE_MILLI_SECOND = 1000000;
     private static final long ONE_HOUR = 60 * Stats.ONE_MINUTE;
 
@@ -33,13 +34,12 @@ public class StatsTest {
     @Test
     public void should_only_print_sub_counts_if_not_zero() {
         Stats counter = createMonochromeSummaryCounter();
-        Result passedResult = createResultWithStatus(Result.PASSED);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(passedResult);
-        counter.addStep(passedResult);
-        counter.addStep(passedResult);
-        counter.addScenario(Result.PASSED);
+        counter.addStep(Result.Type.PASSED);
+        counter.addStep(Result.Type.PASSED);
+        counter.addStep(Result.Type.PASSED);
+        counter.addScenario(Result.Type.PASSED, "scenario designation");
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -48,43 +48,46 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_sub_counts_in_order_failed_skipped_pending_undefined_passed() {
+    public void should_print_sub_counts_in_order_failed_ambiguous_skipped_pending_undefined_passed() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        addOneStepScenario(counter, Result.PASSED);
-        addOneStepScenario(counter, Result.FAILED);
-        addOneStepScenario(counter, Stats.PENDING);
-        addOneStepScenario(counter, Result.UNDEFINED.getStatus());
-        addOneStepScenario(counter, Result.SKIPPED.getStatus());
+        addOneStepScenario(counter, Result.Type.PASSED);
+        addOneStepScenario(counter, Result.Type.FAILED);
+        addOneStepScenario(counter, Result.Type.AMBIGUOUS);
+        addOneStepScenario(counter, Result.Type.PENDING);
+        addOneStepScenario(counter, Result.Type.UNDEFINED);
+        addOneStepScenario(counter, Result.Type.SKIPPED);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), containsString(String.format("" +
-                "5 Scenarios (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
-                "5 Steps (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
+                "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
+                "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
     }
 
     @Test
-    public void should_print_sub_counts_in_order_failed_skipped_undefined_passed_in_color() {
+    public void should_print_sub_counts_in_order_failed_ambiguous_skipped_undefined_passed_in_color() {
         Stats counter = createColorSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        addOneStepScenario(counter, Result.PASSED);
-        addOneStepScenario(counter, Result.FAILED);
-        addOneStepScenario(counter, Stats.PENDING);
-        addOneStepScenario(counter, Result.UNDEFINED.getStatus());
-        addOneStepScenario(counter, Result.SKIPPED.getStatus());
+        addOneStepScenario(counter, Result.Type.PASSED);
+        addOneStepScenario(counter, Result.Type.FAILED);
+        addOneStepScenario(counter, Result.Type.AMBIGUOUS);
+        addOneStepScenario(counter, Result.Type.PENDING);
+        addOneStepScenario(counter, Result.Type.UNDEFINED);
+        addOneStepScenario(counter, Result.Type.SKIPPED);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
-        String colorSubCounts =
+        String colorSubCounts = "" +
                 AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
                 AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
                 AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
                 AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
                 AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
         assertThat(baos.toString(), containsString(String.format("" +
-                "5 Scenarios (" + colorSubCounts + ")%n" +
-                "5 Steps (" + colorSubCounts + ")%n")));
+                "6 Scenarios (" + colorSubCounts + ")%n" +
+                "6 Steps (" + colorSubCounts + ")%n")));
     }
 
     @Test
@@ -99,14 +102,12 @@ public class StatsTest {
     }
 
     @Test
-    public void should_include_hook_time_and_step_time_has_executed() {
+    public void should_report_the_difference_between_finish_time_and_start_time() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addHookTime(ONE_MILLI_SECOND);
-        counter.addStep(new Result(Result.PASSED, ONE_MILLI_SECOND, null));
-        counter.addStep(new Result(Result.PASSED, ONE_MILLI_SECOND, null));
-        counter.addHookTime(ONE_MILLI_SECOND);
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + 4*ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -118,9 +119,8 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(new Result(Result.PASSED, Stats.ONE_MINUTE, null));
-        counter.addStep(new Result(Result.PASSED, Stats.ONE_SECOND, null));
-        counter.addStep(new Result(Result.PASSED, ONE_MILLI_SECOND, null));
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -132,8 +132,8 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(new Result(Result.PASSED, ONE_HOUR, null));
-        counter.addStep(new Result(Result.PASSED, Stats.ONE_MINUTE, null));
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + ONE_HOUR + Stats.ONE_MINUTE);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -145,9 +145,8 @@ public class StatsTest {
         Stats counter = new Stats(true, Locale.GERMANY);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(new Result(Result.PASSED, Stats.ONE_MINUTE, null));
-        counter.addStep(new Result(Result.PASSED, Stats.ONE_SECOND, null));
-        counter.addStep(new Result(Result.PASSED, ONE_MILLI_SECOND, null));
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -155,40 +154,50 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_failed_scenarios() {
+    public void should_print_failed_ambiguous_scenarios() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(createResultWithStatus(Result.FAILED));
-        counter.addScenario(Result.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.UNDEFINED.getStatus()));
-        counter.addScenario(Result.UNDEFINED.getStatus(), "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Stats.PENDING));
-        counter.addScenario(Stats.PENDING, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.FAILED);
+        counter.addScenario(Result.Type.FAILED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.AMBIGUOUS);
+        counter.addScenario(Result.Type.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.UNDEFINED);
+        counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.PENDING);
+        counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), startsWith(String.format("" +
                 "Failed scenarios:%n" +
                 "path/file.feature:3 # Scenario: scenario_name%n" +
                 "%n" +
-                "3 Scenarios")));
+                "Ambiguous scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "4 Scenarios")));
     }
 
     @Test
-    public void should_print_failed_pending_undefined_scenarios_if_strict() {
+    public void should_print_failed_ambiguous_pending_undefined_scenarios_if_strict() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(createResultWithStatus(Result.FAILED));
-        counter.addScenario(Result.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.UNDEFINED.getStatus()));
-        counter.addScenario(Result.UNDEFINED.getStatus(), "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Stats.PENDING));
-        counter.addScenario(Stats.PENDING, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.FAILED);
+        counter.addScenario(Result.Type.FAILED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.AMBIGUOUS);
+        counter.addScenario(Result.Type.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.UNDEFINED);
+        counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Result.Type.PENDING);
+        counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos), isStrict(true));
 
         assertThat(baos.toString(), startsWith(String.format("" +
                 "Failed scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Ambiguous scenarios:%n" +
                 "path/file.feature:3 # Scenario: scenario_name%n" +
                 "%n" +
                 "Pending scenarios:%n" +
@@ -197,16 +206,12 @@ public class StatsTest {
                 "Undefined scenarios:%n" +
                 "path/file.feature:3 # Scenario: scenario_name%n" +
                 "%n" +
-                "3 Scenarios")));
+                "4 Scenarios")));
     }
 
-    private void addOneStepScenario(Stats counter, String status) {
-        counter.addStep(createResultWithStatus(status));
+    private void addOneStepScenario(Stats counter, Result.Type status) {
+        counter.addStep(status);
         counter.addScenario(status, "scenario designation");
-    }
-
-    private Result createResultWithStatus(String status) {
-        return new Result(status, 0l, null);
     }
 
     private Stats createMonochromeSummaryCounter() {

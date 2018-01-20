@@ -1,5 +1,12 @@
 package cucumber.api;
 
-public interface SummaryPrinter {
-    public void print(cucumber.runtime.Runtime runtime);
+import cucumber.runtime.Runtime;
+
+/**
+ * Interface for plugins that print a summary after test execution.
+ *
+ * @see Plugin
+ */
+public interface SummaryPrinter extends Plugin {
+    void print(Runtime runtime);
 }

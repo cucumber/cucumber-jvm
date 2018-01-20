@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface Backend {
     void loadGlue(Glue glue, List<String> gluePaths);
 
     /**
-     * invoked once, handing the backend a reference to a step executor
+     * Invoked once, handing the backend a reference to a step executor
      * in case the backend needs to call steps defined within other steps
      */
     void setUnreportedStepExecutor(UnreportedStepExecutor executor);
@@ -28,5 +28,5 @@ public interface Backend {
      */
     void disposeWorld();
 
-    String getSnippet(Step step, FunctionNameGenerator functionNameGenerator);
+    String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator);
 }

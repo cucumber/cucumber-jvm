@@ -8,10 +8,10 @@ import cucumber.runtime.model.CucumberFeature;
  *
  * @see AbstractTestNGCucumberTests#feature(cucumber.api.testng.CucumberFeatureWrapper)
  */
-public class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
+class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
     private final CucumberFeature cucumberFeature;
 
-    public CucumberFeatureWrapperImpl(CucumberFeature cucumberFeature) {
+    CucumberFeatureWrapperImpl(CucumberFeature cucumberFeature) {
         this.cucumberFeature = cucumberFeature;
     }
 
@@ -22,6 +22,6 @@ public class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
 
     @Override
     public String toString() {
-        return cucumberFeature.getGherkinFeature().getName();
+        return "\"" + cucumberFeature.getGherkinFeature().getFeature().getName() + "\"";
     }
 }

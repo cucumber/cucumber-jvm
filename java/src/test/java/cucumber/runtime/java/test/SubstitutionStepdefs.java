@@ -32,8 +32,8 @@ public class SubstitutionStepdefs {
 
     @Then("^I should receive an email with the body:$")
     public void I_should_receive_an_email_with_the_body(String body) throws Throwable {
-        String expected = String.format("Dear %s,%n" +
-                "You have been granted %s rights.  You are %s. Please be responsible.%n" +
+        String expected = String.format("Dear %s,\n" +
+                "You have been granted %s rights.  You are %s. Please be responsible.\n" +
                 "-The Admins", name, role, details);
         assertEquals(expected, body);
     }
