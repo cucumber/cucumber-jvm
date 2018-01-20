@@ -1,6 +1,9 @@
 package cucumber.runtime.formatter;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -27,6 +30,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -456,6 +462,116 @@ public class AndroidInstrumentationReporterTest {
 
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.FAILURE), firstCaptor.capture());
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.OK), secondCaptor.capture());
+    }
+
+    /**
+     * Verifies, if different test names are produced, if we uses scenario outlines with multiple examples.
+     */
+    @Test
+    public void scenario_outline_all_test_names_unique() {
+        // We really require this class in this method only.
+        class TestNameTestSetup {
+            private AndroidInstrumentationReporter formatter;
+            private TestCase testCase;
+            private String testCaseInitialized;
+            private String testCaseStarted;
+            private String testStepFinished;
+            private String testCaseFinished;
+
+            private TestNameTestSetup(AndroidInstrumentationReporter formatter, String featureName, String scenarioName) {
+                this.formatter = formatter;
+                this.testCase = mock(TestCase.class);
+                when(testCase.getUri()).thenReturn("path/" + featureName + ".feature");
+                when(testCase.getName()).thenReturn(scenarioName);
+            }
+
+            private TestNameTestSetup invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle() {
+                // We invoke our method under test ...
+                testCaseInitialized = formatter.getUniqueTestName(testCase);
+                formatter.startTestCase(testCase);
+                // ... we invoke the method again after test-case has been started ...
+                testCaseStarted = formatter.getUniqueTestName(testCase);
+                formatter.finishTestStep(firstResult);
+                // ... and after a test step has been completed ...
+                testStepFinished = formatter.getUniqueTestName(testCase);
+                formatter.finishTestCase();
+                // ... and finally after the test case has been finished.
+                testCaseFinished = formatter.getUniqueTestName(testCase);
+                return this;
+            }
+
+            private void assertValues(String expectedTestNameTestCaseStarted) {
+                assertThat("Unexpected test name on test case initialization", testCaseInitialized, is(nullValue()));
+                assertThat("Unexpected test name after test case start", testCaseStarted, equalTo(expectedTestNameTestCaseStarted));
+                assertThat("Unexpected test name after test step finished", testStepFinished, equalTo(expectedTestNameTestCaseStarted));
+                assertThat("Unexpected test name after test case finished",testCaseFinished, equalTo(expectedTestNameTestCaseStarted));
+            }
+        }
+        String[] featureNames = new String[]{"Addition", "Subtraction", "Multiplication", "Division"};
+        String[] scenarioNames = new String[] {"Enter one number", "Enter two numbers"};
+        List<TestNameTestSetup> testNameTestSetupCollection = new ArrayList<TestNameTestSetup>();
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
+        final int MAX_EXAMPLES = 3;
+        // Normally, it is not good style to use for-loops in tests, but in this case it should be okay.
+        for (String featureName : featureNames) {
+            for (String scenarioName : scenarioNames) {
+                for (int exampleIndex = 0; exampleIndex < MAX_EXAMPLES; exampleIndex++) {
+                    TestNameTestSetup testNameTestSetup = new TestNameTestSetup(formatter, featureName, scenarioName);
+                    testNameTestSetup.invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle();
+                    testNameTestSetupCollection.add(testNameTestSetup);
+                }
+            }
+        }
+
+        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], scenarioNames[0])
+            .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
+        );
+        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, "New feature", scenarioNames[0])
+            .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
+        );
+        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], "new scenario")
+            .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
+        );
+        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], "new scenario")
+            .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
+        );
+
+        // TODO Consider to split this test method into multiple ones, to fulfil the one-assert-per-test-method-paradigm
+        testNameTestSetupCollection.get(0).assertValues("Enter one number");
+        testNameTestSetupCollection.get(1).assertValues("Enter one number (2)");
+        testNameTestSetupCollection.get(2).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(3).assertValues("Enter two numbers");
+        testNameTestSetupCollection.get(4).assertValues("Enter two numbers (2)");
+        testNameTestSetupCollection.get(5).assertValues("Enter two numbers (3)");
+
+        testNameTestSetupCollection.get(6).assertValues("Enter one number");
+        testNameTestSetupCollection.get(7).assertValues("Enter one number (2)");
+        testNameTestSetupCollection.get(8).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(9).assertValues("Enter two numbers");
+        testNameTestSetupCollection.get(10).assertValues("Enter two numbers (2)");
+        testNameTestSetupCollection.get(11).assertValues("Enter two numbers (3)");
+
+        testNameTestSetupCollection.get(12).assertValues("Enter one number");
+        testNameTestSetupCollection.get(13).assertValues("Enter one number (2)");
+        testNameTestSetupCollection.get(14).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(15).assertValues("Enter two numbers");
+        testNameTestSetupCollection.get(16).assertValues("Enter two numbers (2)");
+        testNameTestSetupCollection.get(17).assertValues("Enter two numbers (3)");
+
+        testNameTestSetupCollection.get(18).assertValues("Enter one number");
+        testNameTestSetupCollection.get(19).assertValues("Enter one number (2)");
+        testNameTestSetupCollection.get(20).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(21).assertValues("Enter two numbers");
+        testNameTestSetupCollection.get(22).assertValues("Enter two numbers (2)");
+        testNameTestSetupCollection.get(23).assertValues("Enter two numbers (3)");
+
+        testNameTestSetupCollection.get(24).assertValues("Enter one number (4)");
+        testNameTestSetupCollection.get(25).assertValues("Enter one number");
+        testNameTestSetupCollection.get(26).assertValues("new scenario");
+        testNameTestSetupCollection.get(27).assertValues("new scenario (2)");
+
+        assertThat(testNameTestSetupCollection.size(), equalTo(28));
     }
 
     private void mockResultStatus(Result result, Result.Type status) {
