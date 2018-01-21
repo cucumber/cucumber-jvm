@@ -530,46 +530,46 @@ public class AndroidInstrumentationReporterTest {
         testNameTestSetupCollection.add(new TestNameTestSetup(formatter, "New feature", scenarioNames[0])
             .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
         );
-        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], "new scenario")
+        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], "new_scenario")
             .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
         );
-        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], "new scenario")
+        testNameTestSetupCollection.add(new TestNameTestSetup(formatter, featureNames[0], "new_scenario")
             .invokeGetUniqueTestNameOnDifferentStatesInTestCaseLifecycle()
         );
 
         // TODO Consider to split this test method into multiple ones, to fulfil the one-assert-per-test-method-paradigm
         testNameTestSetupCollection.get(0).assertValues("Enter one number");
-        testNameTestSetupCollection.get(1).assertValues("Enter one number (2)");
-        testNameTestSetupCollection.get(2).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(1).assertValues("Enter one number 2");
+        testNameTestSetupCollection.get(2).assertValues("Enter one number 3");
         testNameTestSetupCollection.get(3).assertValues("Enter two numbers");
-        testNameTestSetupCollection.get(4).assertValues("Enter two numbers (2)");
-        testNameTestSetupCollection.get(5).assertValues("Enter two numbers (3)");
+        testNameTestSetupCollection.get(4).assertValues("Enter two numbers 2");
+        testNameTestSetupCollection.get(5).assertValues("Enter two numbers 3");
 
         testNameTestSetupCollection.get(6).assertValues("Enter one number");
-        testNameTestSetupCollection.get(7).assertValues("Enter one number (2)");
-        testNameTestSetupCollection.get(8).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(7).assertValues("Enter one number 2");
+        testNameTestSetupCollection.get(8).assertValues("Enter one number 3");
         testNameTestSetupCollection.get(9).assertValues("Enter two numbers");
-        testNameTestSetupCollection.get(10).assertValues("Enter two numbers (2)");
-        testNameTestSetupCollection.get(11).assertValues("Enter two numbers (3)");
+        testNameTestSetupCollection.get(10).assertValues("Enter two numbers 2");
+        testNameTestSetupCollection.get(11).assertValues("Enter two numbers 3");
 
         testNameTestSetupCollection.get(12).assertValues("Enter one number");
-        testNameTestSetupCollection.get(13).assertValues("Enter one number (2)");
-        testNameTestSetupCollection.get(14).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(13).assertValues("Enter one number 2");
+        testNameTestSetupCollection.get(14).assertValues("Enter one number 3");
         testNameTestSetupCollection.get(15).assertValues("Enter two numbers");
-        testNameTestSetupCollection.get(16).assertValues("Enter two numbers (2)");
-        testNameTestSetupCollection.get(17).assertValues("Enter two numbers (3)");
+        testNameTestSetupCollection.get(16).assertValues("Enter two numbers 2");
+        testNameTestSetupCollection.get(17).assertValues("Enter two numbers 3");
 
         testNameTestSetupCollection.get(18).assertValues("Enter one number");
-        testNameTestSetupCollection.get(19).assertValues("Enter one number (2)");
-        testNameTestSetupCollection.get(20).assertValues("Enter one number (3)");
+        testNameTestSetupCollection.get(19).assertValues("Enter one number 2");
+        testNameTestSetupCollection.get(20).assertValues("Enter one number 3");
         testNameTestSetupCollection.get(21).assertValues("Enter two numbers");
-        testNameTestSetupCollection.get(22).assertValues("Enter two numbers (2)");
-        testNameTestSetupCollection.get(23).assertValues("Enter two numbers (3)");
+        testNameTestSetupCollection.get(22).assertValues("Enter two numbers 2");
+        testNameTestSetupCollection.get(23).assertValues("Enter two numbers 3");
 
-        testNameTestSetupCollection.get(24).assertValues("Enter one number (4)");
+        testNameTestSetupCollection.get(24).assertValues("Enter one number 4");
         testNameTestSetupCollection.get(25).assertValues("Enter one number");
-        testNameTestSetupCollection.get(26).assertValues("new scenario");
-        testNameTestSetupCollection.get(27).assertValues("new scenario (2)");
+        testNameTestSetupCollection.get(26).assertValues("new_scenario");
+        testNameTestSetupCollection.get(27).assertValues("new_scenario_2");
 
         assertThat(testNameTestSetupCollection.size(), equalTo(28));
     }

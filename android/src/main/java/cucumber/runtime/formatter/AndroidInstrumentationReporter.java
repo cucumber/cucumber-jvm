@@ -329,14 +329,19 @@ public final class AndroidInstrumentationReporter implements Formatter {
             uniqueTestNamesForFeature.put(feature, new HashSet<String>());
         }
         final Set<String> uniqueTestNamesSetForFeature = uniqueTestNamesForFeature.get(feature);
-        // If "name" already exists, the next one is "name (2)"
+        // If "name" already exists, the next one is "name_2" or "name with spaces 2"
         int i = 2;
         while (uniqueTestNamesSetForFeature.contains(uniqueTestCaseName)) {
-            uniqueTestCaseName = testCase.getName() + " (" + i + ")";
+            uniqueTestCaseName = testCase.getName() + (includesBlank(testCase.getName()) ? " " : "_") + i;
             i++;
         }
         uniqueTestNamesSetForFeature.add(uniqueTestCaseName);
         uniqueTestNameForTestCase.put(testCase, uniqueTestCaseName);
+    }
+
+    // Duplicated from JunitFormatter
+    private boolean includesBlank(String testCaseName) {
+        return testCaseName.indexOf(' ') != -1;
     }
 
 }
