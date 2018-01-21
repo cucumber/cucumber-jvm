@@ -1,5 +1,5 @@
 ## Cukeulator Example Test
-This is the example test-project for the Cukeulator app for Android Studio 1.0.2.
+This is the example test-project for the Cukeulator app for Android Studio 3.0+
 
 ### Setup
 Features must be placed in `assets/features/`. Subdirectories are allowed.
@@ -67,3 +67,7 @@ adb shell am instrument -w cucumber.cukeulator.test/cucumber.cukeulator.test.Ins
 
 ### Output
 Filter for the logcat tag `cucumber-android` in [DDMS](https://developer.android.com/tools/debugging/ddms.html).
+
+### Using this project with locally built Cucumber-JVM
+See [app/build.gradle](app/build.gradle) under `dependencies`.  
+There is a source-code comment which explains how to use a locally built Cucumber-JVM Android library.

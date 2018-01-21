@@ -53,7 +53,40 @@ android {
 
 dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    // Use the stable Cucumber version
     androidTestCompile 'io.cucumber:cucumber-android:2.3.0'
+    //
+    // The following dependency works, if you build Cucumber-JVM on your local machine:
+    //
+    // androidTestCompile 'io.cucumber:cucumber-android:2.3.2-SNAPSHOT'
+    //
+    // (If you enable it, you must disable the dependency to the stable Cucumber version above.)
+    //
+    // If you have not yet built Cucumber-JVM on your local machine, build it with:
+    //
+    //                   cd <cucumber-jvm-source-root>
+    //                   mvn clean install
+    //
+    // Hint: you find the Cucumber-JVM source root under a parent directory of this file.
+    //
+    // If you only change the Android source, you also can do:
+    //
+    //                   cd <cucumber-jvm-source-root>/android
+    //                   mvn install
+    //
+    // Now, after you have been built Cucumber-JVM with one of the commands above, it is published
+    // to your local Maven repository and may be used by other projects on your local machine.
+    //
+    // For our example project, that means you can execute the feature files, with the just built
+    // Cucumber-JVM library by using the following command (press Alt+F12 in Android Studio):
+    //
+    //                   gradlew connectedCheck --refresh-dependencies
+    //
+    // The --refresh-dependencies option seems not to be required anymore for recent Android Studio
+    // and Gradle versions. But, if your Cucumber-JVM snapshot dependency is not updated
+    // automatically by Gradle, the flag always bypasses any caching of dependencies.
+
     androidTestCompile 'io.cucumber:cucumber-picocontainer:2.3.1'
 
     // compile 'com.android.support:appcompat-v7:25.1.0'
