@@ -106,6 +106,7 @@
                     <instructions>
                         <Bundle-Description />
                         <Export-Package>cucumber.*</Export-Package>
+                        <Export-Package>io.cucumber.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
