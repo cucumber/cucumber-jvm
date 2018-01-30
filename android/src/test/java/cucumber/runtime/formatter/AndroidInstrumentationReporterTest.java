@@ -465,7 +465,7 @@ public class AndroidInstrumentationReporterTest {
     }
 
     /**
-     * Verifies, if different test names are produced, if we uses scenario outlines with multiple examples.
+     * Verifies, if different test names are produced, if we use scenario outlines with multiple examples.
      */
     @Test
     public void scenario_outline_all_test_names_unique() {
