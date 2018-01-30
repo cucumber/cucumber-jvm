@@ -12,6 +12,7 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.Utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -332,16 +333,11 @@ public final class AndroidInstrumentationReporter implements Formatter {
         // If "name" already exists, the next one is "name_2" or "name with spaces 2"
         int i = 2;
         while (uniqueTestNamesSetForFeature.contains(uniqueTestCaseName)) {
-            uniqueTestCaseName = testCase.getName() + (includesBlank(testCase.getName()) ? " " : "_") + i;
+            uniqueTestCaseName = Utils.getUniqueTestNameForScenarioExample(testCase.getName(), i);
             i++;
         }
         uniqueTestNamesSetForFeature.add(uniqueTestCaseName);
         uniqueTestNameForTestCase.put(testCase, uniqueTestCaseName);
-    }
-
-    // Duplicated from JunitFormatter
-    private boolean includesBlank(String testCaseName) {
-        return testCaseName.indexOf(' ') != -1;
     }
 
 }
