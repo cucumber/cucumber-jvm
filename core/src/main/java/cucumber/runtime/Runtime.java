@@ -30,7 +30,7 @@ public class Runtime {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Runtime.class);
 
-    final Stats stats; // package private to be avaiable for tests.
+    final Stats stats; // package private to be available for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final RuntimeOptions runtimeOptions;
@@ -97,6 +97,7 @@ public class Runtime {
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
+        LOGGER.info("Load Backends");
         Reflections reflections = new Reflections(classFinder);
         return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
