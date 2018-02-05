@@ -2,13 +2,12 @@ package cucumber.runtime.formatter;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -464,130 +463,82 @@ public class AndroidInstrumentationReporterTest {
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.OK), secondCaptor.capture());
     }
 
-    /**
-     * Verifies, that different test names are used when scenario names are duplicated.
-     * More technical: Checks, if {{@link AndroidInstrumentationReporter#getUniqueTestName(TestCase)}} is working.
-     *
-     * Note about the test code: We are using multiple assertions and for-loops in this method, which is a code smell.
-     * Here it is okay, since we are just answering the question if the getUniqueTestName-method is working or not.
-     */
     @Test
-    public void scenario_outline_all_test_names_unique() {
+    public void test_case_names_are_unique_on_equal_scenario_names() {
         // given
         String[] featureNames = new String[] {"Addition", "Subtraction", "Multiplication", "Division"};
         String[] scenarioNames = new String[] {"Enter one number", "Enter two numbers"};
-        List<UniqueTestNameTester> uniqueTestNameTesters = new ArrayList<UniqueTestNameTester>();
+        List<TestCase> testCases = new ArrayList<TestCase>();
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
         mockResultStatus(firstResult, Result.Type.PASSED);
+        // We are using multiple assertions and for-loops in this method, which is a code smell,
+        // here it is okay, since we are just answering the question if we got unique test case names
         for (String featureName : featureNames) {
             for (String scenarioName : scenarioNames) {
                 for (int exampleIndex = 0; exampleIndex < 3; exampleIndex++) {
                     // We use the same scenario name three times in every feature.
                     // In practise that happens on scenario outlines.
-                    uniqueTestNameTesters.add(new UniqueTestNameTester(formatter, featureName, scenarioName));
+                    testCases.add(newMockedTestCase(featureName, scenarioName));
                 }
             }
         }
-        // Use scenario name one again for feature one
-        uniqueTestNameTesters.add(new UniqueTestNameTester(formatter, featureNames[0], scenarioNames[0]));
+        // Use scenario name once again for feature one
+        testCases.add(newMockedTestCase(featureNames[0], scenarioNames[0]));
         // Use scenario names with underscore
-        uniqueTestNameTesters.add(new UniqueTestNameTester(formatter, featureNames[0], "new_scenario"));
-        uniqueTestNameTesters.add(new UniqueTestNameTester(formatter, featureNames[0], "new_scenario"));
+        testCases.add(newMockedTestCase(featureNames[0], "new_scenario"));
+        testCases.add(newMockedTestCase(featureNames[0], "new_scenario"));
 
         // when
-
-        for (UniqueTestNameTester uniqueTestNameTester : uniqueTestNameTesters) {
-            uniqueTestNameTester.invokeGetUniqueTestNameOnDifferentTestCaseStates();
-        }
-
-        // then
-
-        // Check default behavior
-        uniqueTestNameTesters.get(0).assertExpectedUniqueTestName("Enter one number");
-        uniqueTestNameTesters.get(1).assertExpectedUniqueTestName("Enter one number 2");
-        uniqueTestNameTesters.get(2).assertExpectedUniqueTestName("Enter one number 3");
-        uniqueTestNameTesters.get(3).assertExpectedUniqueTestName("Enter two numbers");
-        uniqueTestNameTesters.get(4).assertExpectedUniqueTestName("Enter two numbers 2");
-        uniqueTestNameTesters.get(5).assertExpectedUniqueTestName("Enter two numbers 3");
-
-        uniqueTestNameTesters.get(6).assertExpectedUniqueTestName("Enter one number");
-        uniqueTestNameTesters.get(7).assertExpectedUniqueTestName("Enter one number 2");
-        uniqueTestNameTesters.get(8).assertExpectedUniqueTestName("Enter one number 3");
-        uniqueTestNameTesters.get(9).assertExpectedUniqueTestName("Enter two numbers");
-        uniqueTestNameTesters.get(10).assertExpectedUniqueTestName("Enter two numbers 2");
-        uniqueTestNameTesters.get(11).assertExpectedUniqueTestName("Enter two numbers 3");
-
-        uniqueTestNameTesters.get(12).assertExpectedUniqueTestName("Enter one number");
-        uniqueTestNameTesters.get(13).assertExpectedUniqueTestName("Enter one number 2");
-        uniqueTestNameTesters.get(14).assertExpectedUniqueTestName("Enter one number 3");
-        uniqueTestNameTesters.get(15).assertExpectedUniqueTestName("Enter two numbers");
-        uniqueTestNameTesters.get(16).assertExpectedUniqueTestName("Enter two numbers 2");
-        uniqueTestNameTesters.get(17).assertExpectedUniqueTestName("Enter two numbers 3");
-
-        uniqueTestNameTesters.get(18).assertExpectedUniqueTestName("Enter one number");
-        uniqueTestNameTesters.get(19).assertExpectedUniqueTestName("Enter one number 2");
-        uniqueTestNameTesters.get(20).assertExpectedUniqueTestName("Enter one number 3");
-        uniqueTestNameTesters.get(21).assertExpectedUniqueTestName("Enter two numbers");
-        uniqueTestNameTesters.get(22).assertExpectedUniqueTestName("Enter two numbers 2");
-        uniqueTestNameTesters.get(23).assertExpectedUniqueTestName("Enter two numbers 3");
-
-        // Check that order of test cases does not matter
-        uniqueTestNameTesters.get(24).assertExpectedUniqueTestName("Enter one number 4");
-
-        // Check naming behavior on underscores
-        uniqueTestNameTesters.get(25).assertExpectedUniqueTestName("new_scenario");
-        uniqueTestNameTesters.get(26).assertExpectedUniqueTestName("new_scenario_2");
-
-        assertThat(uniqueTestNameTesters.size(), equalTo(27));
-    }
-
-    /**
-     * Our test code for @{{@link AndroidInstrumentationReporter#getUniqueTestName(TestCase)}} is complex. Thus, we
-     * create an extra class to allow better readable test method {@link #scenario_outline_all_test_names_unique()}.
-     */
-    private class UniqueTestNameTester {
-        private AndroidInstrumentationReporter formatter;
-        private TestCase testCase;
-
-        private String uniqueTestNameOnTestCaseInitialization;
-        private String uniqueTestNameAfterTestCaseStarted;
-        private String uniqueTestNameAfterTestStepFinished;
-        private String uniqueTestNameAfterTestCaseFinished;
-
-        // given
-        private UniqueTestNameTester(AndroidInstrumentationReporter formatter, String featureName, String scenarioName) {
-            this.formatter = formatter;
-            this.testCase = mock(TestCase.class);
-            when(testCase.getUri()).thenReturn("path/" + featureName + ".feature");
-            when(testCase.getName()).thenReturn(scenarioName);
-        }
-
-        // when
-        private void invokeGetUniqueTestNameOnDifferentTestCaseStates() {
-            // We invoke our method under test ...
-            uniqueTestNameOnTestCaseInitialization = formatter.getUniqueTestName(testCase);
+        for (TestCase testCase : testCases) {
             formatter.startTestCase(testCase);
-            // ... we invoke the method again after test-case has been started ...
-            uniqueTestNameAfterTestCaseStarted = formatter.getUniqueTestName(testCase);
             formatter.finishTestStep(firstResult);
-            // ... and after a test step has been completed ...
-            uniqueTestNameAfterTestStepFinished = formatter.getUniqueTestName(testCase);
             formatter.finishTestCase();
-            // ... and finally after the test case has been finished.
-            uniqueTestNameAfterTestCaseFinished = formatter.getUniqueTestName(testCase);
         }
 
         // then
-        private void assertExpectedUniqueTestName(String expectedUniqueTestName) {
-            assertThat("Unexpected test name on test case initialization", uniqueTestNameOnTestCaseInitialization, is(nullValue()));
-            assertThat("Unexpected test name after test case started", uniqueTestNameAfterTestCaseStarted, equalTo(expectedUniqueTestName));
-            assertThat("Unexpected test name after test step finished", uniqueTestNameAfterTestStepFinished, equalTo(expectedUniqueTestName));
-            assertThat("Unexpected test name after test case finished", uniqueTestNameAfterTestCaseFinished, equalTo(expectedUniqueTestName));
+        final int expectedCount = 27;
+        final ArgumentCaptor<Bundle> captor1 = ArgumentCaptor.forClass(Bundle.class);
+        verify(instrumentation, times(expectedCount)).sendStatus(eq(StatusCodes.START), captor1.capture());
+        final List<Bundle> startBundles = captor1.getAllValues();
+        final ArgumentCaptor<Bundle> captor2 = ArgumentCaptor.forClass(Bundle.class);
+        verify(instrumentation, times(expectedCount)).sendStatus(eq(StatusCodes.OK), captor2.capture());
+        final List<Bundle> resultBundles = captor2.getAllValues();
+        final String[] expectedUniqueNames = {
+            // Check default behavior
+            "Enter one number", "Enter one number 2", "Enter one number 3",
+            "Enter two numbers", "Enter two numbers 2", "Enter two numbers 3",
+            "Enter one number", "Enter one number 2", "Enter one number 3",
+            "Enter two numbers", "Enter two numbers 2", "Enter two numbers 3",
+            "Enter one number", "Enter one number 2", "Enter one number 3",
+            "Enter two numbers", "Enter two numbers 2", "Enter two numbers 3",
+            "Enter one number", "Enter one number 2", "Enter one number 3",
+            "Enter two numbers", "Enter two numbers 2", "Enter two numbers 3",
+            // Check that order of test cases does not matter
+            "Enter one number 4",
+            // Check naming behavior on underscores
+            "new_scenario",
+            "new_scenario_2"
+        };
+        for (int i = 0; i < expectedCount; i++) {
+            String expectedUniqueName = expectedUniqueNames[i];
+
+            String testMethodNameAfterStart = startBundles.get(i).getString(AndroidInstrumentationReporter.StatusKeys.TEST);
+            assertThat(testMethodNameAfterStart, equalTo(expectedUniqueName));
+
+            String testMethodNameAfterFinish = resultBundles.get(i).getString(AndroidInstrumentationReporter.StatusKeys.TEST);
+            assertThat(testMethodNameAfterFinish, equalTo(expectedUniqueName));
         }
     }
 
     private void mockResultStatus(Result result, Result.Type status) {
         when(result.getStatus()).thenReturn(status);
         when(result.is(Result.Type.PASSED)).thenReturn(status == Result.Type.PASSED);
+    }
+
+    private static TestCase newMockedTestCase(String featureName, String scenarioName) {
+        TestCase testCase = mock(TestCase.class);
+        when(testCase.getUri()).thenReturn("path/" + featureName + ".feature");
+        when(testCase.getName()).thenReturn(scenarioName);
+        return testCase;
     }
 }

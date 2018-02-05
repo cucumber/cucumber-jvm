@@ -177,8 +177,7 @@ public final class AndroidInstrumentationReporter implements Formatter {
             currentFeatureName = testSources.getFeatureName(currentUri);
         }
         // Since the names of test cases are not guaranteed to be unique, we must check for unique names
-        ensureUniqueTestName(testCase);
-        currentTestCaseName = getUniqueTestName(testCase);
+        currentTestCaseName = calculateUniqueTestName(testCase);
         resetSeverestResult();
         final Bundle testStart = createBundle(currentFeatureName, currentTestCaseName);
         instrumentation.sendStatus(StatusCodes.START, testStart);
@@ -287,16 +286,6 @@ public final class AndroidInstrumentationReporter implements Formatter {
     }
 
     /**
-     * Gets the unique test name for the given test case.<br/>
-     * If, {@link #ensureUniqueTestName(TestCase)} was not yet invoked for the test case, {@code null} will be returned.
-     * @param testCase the testCase
-     * @return the unique test name or {@code null}
-     */
-    String getUniqueTestName(TestCase testCase) {
-        return uniqueTestNameForTestCase.get(testCase);
-    }
-
-    /**
      * The stored unique test name for a test case.
      * We use an identity hash-map since we want to distinct all test case objects.
      * Thus, the key is a unique test case object.<br/>
@@ -314,14 +303,15 @@ public final class AndroidInstrumentationReporter implements Formatter {
     /**
      * Creates a unique test name for the given test case by filling the internal maps
      * {@link #uniqueTestNameForTestCase} and {@link #uniqueTestNamesForFeature}.<br/>
-     * If the test case name is unique, it will be used, otherwise, a index will be added "(2)", "(3)", "(4)", ...
+     * If the test case name is unique, it will be used, otherwise, a index will be added " 2", " 3", " 4", ...
      * @param testCase the test case
+     * @return a unique test name
      */
-    private void ensureUniqueTestName(TestCase testCase) {
+    private String calculateUniqueTestName(TestCase testCase) {
         String existingName = uniqueTestNameForTestCase.get(testCase);
         if (existingName != null) {
             // Nothing to do: there is already a test name for the passed test case object
-            return;
+            return existingName;
         }
         final String feature = testCase.getUri();
         String uniqueTestCaseName = testCase.getName();
@@ -338,6 +328,7 @@ public final class AndroidInstrumentationReporter implements Formatter {
         }
         uniqueTestNamesSetForFeature.add(uniqueTestCaseName);
         uniqueTestNameForTestCase.put(testCase, uniqueTestCaseName);
+        return uniqueTestNameForTestCase.get(testCase);
     }
 
 }
