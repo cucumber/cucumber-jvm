@@ -120,6 +120,18 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void assigns_verbose() {
+        RuntimeOptions options = new RuntimeOptions(asList("--verbose", "--glue", "somewhere"));
+        assertTrue(options.isVerbose());
+    }
+
+    @Test
+    public void default_verbose() {
+        RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
+        assertFalse(options.isVerbose());
+    }
+
+    @Test
     public void name_without_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "someName"));
         Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
@@ -303,6 +315,14 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--no-strict");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--strict"));
         assertFalse(runtimeOptions.isStrict());
+    }
+
+    @Test
+    public void allows_removal_of_verbose_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--no-verbose");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--verbose"));
+        assertFalse(runtimeOptions.isVerbose());
     }
 
     @Test
