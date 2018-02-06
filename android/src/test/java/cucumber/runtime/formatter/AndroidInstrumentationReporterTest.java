@@ -522,11 +522,11 @@ public class AndroidInstrumentationReporterTest {
         for (int i = 0; i < expectedCount; i++) {
             String expectedUniqueName = expectedUniqueNames[i];
 
-            String testMethodNameAfterStart = startBundles.get(i).getString(AndroidInstrumentationReporter.StatusKeys.TEST);
-            assertThat(testMethodNameAfterStart, equalTo(expectedUniqueName));
+            String testMethodNameOnStartTestCase = startBundles.get(i).getString(AndroidInstrumentationReporter.StatusKeys.TEST);
+            assertThat(testMethodNameOnStartTestCase, equalTo(expectedUniqueName));
 
-            String testMethodNameAfterFinish = resultBundles.get(i).getString(AndroidInstrumentationReporter.StatusKeys.TEST);
-            assertThat(testMethodNameAfterFinish, equalTo(expectedUniqueName));
+            String testMethodNameOnFinishTestCase = resultBundles.get(i).getString(AndroidInstrumentationReporter.StatusKeys.TEST);
+            assertThat(testMethodNameOnFinishTestCase, equalTo(expectedUniqueName));
         }
     }
 
