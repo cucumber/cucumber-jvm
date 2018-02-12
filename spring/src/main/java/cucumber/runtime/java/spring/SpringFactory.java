@@ -168,7 +168,8 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public void start() {
         if (stepClassWithSpringContext != null) {
-            testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
+        	Class enhanced = new GlueScopeConfigEnhancer().enhance(stepClassWithSpringContext);
+            testContextManager = new CucumberTestContextManager(enhanced);
         } else {
             if (beanFactory == null) {
                 beanFactory = createFallbackContext();
