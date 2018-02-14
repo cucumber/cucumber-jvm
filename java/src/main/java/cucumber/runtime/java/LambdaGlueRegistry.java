@@ -8,6 +8,8 @@ public interface LambdaGlueRegistry {
 
     void addStepDefinition(StepDefinition stepDefinition);
 
+    void addAfterStepHookDefinition(HookDefinition afterStepHook);
+
     void addBeforeHookDefinition(HookDefinition beforeHook);
 
     void addAfterHookDefinition(HookDefinition afterHook);

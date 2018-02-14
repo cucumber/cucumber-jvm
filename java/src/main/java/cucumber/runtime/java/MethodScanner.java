@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -76,7 +77,7 @@ class MethodScanner {
 
     private boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
-        return annotationClass.equals(Before.class) || annotationClass.equals(After.class);
+        return annotationClass.equals(Before.class) || annotationClass.equals(After.class) || annotationClass.equals(AfterStep.class);
     }
 
     private boolean isStepdefAnnotation(Annotation annotation) {

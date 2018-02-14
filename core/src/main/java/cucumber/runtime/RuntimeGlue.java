@@ -16,6 +16,7 @@ public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
     final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
     private final LocalizedXStreams localizedXStreams;
 
@@ -50,6 +51,12 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
+    public void addAfterStepHook(HookDefinition hookDefinition) {
+        afterStepHooks.add(hookDefinition);
+        Collections.sort(afterStepHooks, new HookComparator(false));
+    }
+
+    @Override
     public List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
     }
@@ -57,6 +64,11 @@ public class RuntimeGlue implements Glue {
     @Override
     public List<HookDefinition> getAfterHooks() {
         return afterHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getAfterStepHooks() {
+        return afterStepHooks;
     }
 
     @Override

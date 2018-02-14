@@ -128,6 +128,9 @@ public class Runner implements UnreportedStepExecutor {
                 match = new FailedStepInstantiationMatch(pickleEvent.uri, step, t);
             }
             testSteps.add(new PickleTestStep(pickleEvent.uri, step, match));
+            if (!runtimeOptions.isDryRun()) {
+                addTestStepsForAfterStepHooks(testSteps, pickleEvent.pickle.getTags());
+            }
         }
     }
 
@@ -137,6 +140,10 @@ public class Runner implements UnreportedStepExecutor {
 
     private void addTestStepsForAfterHooks(List<TestStep> testSteps, List<PickleTag> tags) {
         addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
+    }
+
+    private void addTestStepsForAfterStepHooks(List<TestStep> testSteps, List<PickleTag> tags) {
+        addTestStepsForHooks(testSteps, tags, glue.getAfterStepHooks(), HookType.AfterStep);
     }
 
     private void addTestStepsForHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {

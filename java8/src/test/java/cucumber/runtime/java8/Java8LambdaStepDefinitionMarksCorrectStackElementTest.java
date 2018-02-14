@@ -53,6 +53,11 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
+        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+
+        }
+
+        @Override
         public void addAfterHookDefinition(HookDefinition afterHook) {
 
         }
