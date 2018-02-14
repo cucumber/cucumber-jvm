@@ -81,6 +81,25 @@ public class HookOrderTest {
     }
 
     @Test
+    public void after_step_hooks_execute_in_reverse_order() throws Throwable {
+        List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
+        for (HookDefinition hook : hooks) {
+            glue.addAfterStepHook(hook);
+        }
+
+        runner.runPickle(pickleEvent);
+
+        InOrder inOrder = inOrder(hooks.toArray());
+        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
+    }
+
+    @Test
     public void hooks_order_across_many_backends() throws Throwable {
         List<HookDefinition> backend1Hooks = mockHooks(3, Integer.MAX_VALUE, 1);
         for (HookDefinition hook : backend1Hooks) {

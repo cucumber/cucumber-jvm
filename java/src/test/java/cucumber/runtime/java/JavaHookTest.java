@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -29,12 +30,14 @@ import static org.mockito.Mockito.mock;
 public class JavaHookTest {
     private static final Method BEFORE;
     private static final Method AFTER;
+    private static final Method AFTERSTEP;
     private static final Method BAD_AFTER;
 
     static {
         try {
             BEFORE = HasHooks.class.getMethod("before");
             AFTER = HasHooks.class.getMethod("after");
+            AFTERSTEP = HasHooks.class.getMethod("afterStep");
             BAD_AFTER = BadHook.class.getMethod("after", String.class);
         } catch (NoSuchMethodException e) {
             throw new InternalError("dang");
@@ -69,6 +72,16 @@ public class JavaHookTest {
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
         assertEquals(0, glue.getAfterHooks().size());
         assertEquals(BEFORE, hookDef.getMethod());
+    }
+
+    @Test
+    public void after_step_hooks_get_registered() throws Exception {
+        objectFactory.setInstance(new HasHooks());
+        backend.buildWorld();
+        backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
+        assertEquals(0, glue.getBeforeHooks().size());
+        assertEquals(AFTERSTEP, hookDef.getMethod());
     }
 
     @Test
@@ -135,6 +148,11 @@ public class JavaHookTest {
 
         @Before({"(@foo or @bar) and @zap"})
         public void before() {
+
+        }
+
+        @AfterStep
+        public void afterStep() {
 
         }
 
