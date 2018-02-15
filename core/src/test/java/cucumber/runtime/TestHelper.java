@@ -198,10 +198,11 @@ public class TestHelper {
             final List<Answer<Object>> hookActions) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
         for (int i = 0; i < hooks.size(); ++i) {
             String hookLocation = hookLocations.size() > i ? hookLocations.get(i) : null;
             Answer<Object> hookAction  = hookActions.size() > i ? hookActions.get(i) : null;
-            TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks);
+            TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks, afterStepHooks);
         }
         if (!beforeHooks.isEmpty()) {
             when(glue.getBeforeHooks()).thenReturn(beforeHooks);
@@ -209,10 +210,13 @@ public class TestHelper {
         if (!afterHooks.isEmpty()) {
             when(glue.getAfterHooks()).thenReturn(afterHooks);
         }
+        if (!afterStepHooks.isEmpty()) {
+            when(glue.getAfterStepHooks()).thenReturn(afterStepHooks);
+        }
     }
 
     private static void mockHook(final SimpleEntry<String, Result> hookEntry, final String hookLocation, final Answer<Object> action,
-                                 final List<HookDefinition> beforeHooks, final List<HookDefinition> afterHooks) throws Throwable {
+                                 final List<HookDefinition> beforeHooks, final List<HookDefinition> afterHooks, final List<HookDefinition> afterStepHooks) throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
         if (hookLocation != null) {
@@ -230,8 +234,10 @@ public class TestHelper {
             beforeHooks.add(hook);
         } else if ("after".equals(hookEntry.getKey())) {
             afterHooks.add(hook);
+        } else if ("afterstep".equals(hookEntry.getKey())) {
+            afterStepHooks.add(hook);
         } else {
-            fail("Only before and after hooks are allowed, hook type found was: " + hookEntry.getKey());
+            fail("Only before, after and afterstep hooks are allowed, hook type found was: " + hookEntry.getKey());
         }
     }
 

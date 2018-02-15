@@ -15,10 +15,12 @@ import org.mockito.Matchers;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class HookTest {
     private final static String ENGLISH = "en";
@@ -46,6 +48,32 @@ public class HookTest {
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<Scenario>any());
+        inOrder.verify(backend).disposeWorld();
+    }
+
+
+
+    @Test
+    public void afterStep_hook_registered_for_every_step() throws Throwable {
+        Backend backend = mock(Backend.class);
+        HookDefinition hook = mock(HookDefinition.class);
+        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+        runtime.getGlue().addAfterStepHook(hook);
+        Runner runner = runtime.getRunner();
+        PickleStep step1 = mock(PickleStep.class);
+        PickleStep step2 = mock(PickleStep.class);
+        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step1, step2), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
+
+        runner.runPickle(pickleEvent);
+
+        InOrder inOrder = inOrder(step1, step2, hook, backend);
+        inOrder.verify(step1).getText();
+        inOrder.verify(step2).getText();
+        inOrder.verify(hook, times(2)).execute(Matchers.<Scenario>any());
         inOrder.verify(backend).disposeWorld();
     }
 

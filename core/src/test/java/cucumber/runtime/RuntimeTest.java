@@ -1,10 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.PendingException;
-import cucumber.api.Result;
-import cucumber.api.Scenario;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.TestCase;
+import cucumber.api.*;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -339,7 +335,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
+        Runtime runtime = createRuntimeWithMockedGlue(match, hook, HookType.Before, "--monochrome");
         runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -354,7 +350,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
+        Runtime runtime = createRuntimeWithMockedGlue(match, hook, HookType.After, "--monochrome");
         runScenario(runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -374,7 +370,7 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, HookType.Before);
         runtime.runFeature(feature);
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -521,20 +517,20 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
+    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, HookType hookType,
                                                 String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, isBefore, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, hook, hookType, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), false, runtimeArgs);
+        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), HookType.After, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
-                                                boolean isBefore, String... runtimeArgs) {
+                                                HookType hookType, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
@@ -545,7 +541,7 @@ public class RuntimeTest {
         Backend backend = mock(Backend.class);
         RuntimeGlue glue = mock(RuntimeGlue.class);
         mockMatch(glue, match, isAmbiguous);
-        mockHook(glue, hook, isBefore);
+        mockHook(glue, hook, hookType);
         Collection<Backend> backends = Arrays.asList(backend);
 
         return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
@@ -560,11 +556,17 @@ public class RuntimeTest {
         }
     }
 
-    private void mockHook(RuntimeGlue glue, HookDefinition hook, boolean isBefore) {
-        if (isBefore) {
-            when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
-        } else {
-            when(glue.getAfterHooks()).thenReturn(Arrays.asList(hook));
+    private void mockHook(RuntimeGlue glue, HookDefinition hook, HookType hookType) {
+        switch(hookType) {
+            case Before:
+                when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
+                return;
+            case After:
+                when(glue.getAfterHooks()).thenReturn(Arrays.asList(hook));
+                return;
+            case AfterStep:
+                when(glue.getAfterStepHooks()).thenReturn(Arrays.asList(hook));
+                return;
         }
     }
 

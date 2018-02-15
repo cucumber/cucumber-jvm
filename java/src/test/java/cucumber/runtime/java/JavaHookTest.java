@@ -80,7 +80,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
-        assertEquals(0, glue.getBeforeHooks().size());
+        assertEquals(1, glue.getAfterStepHooks().size());
         assertEquals(AFTERSTEP, hookDef.getMethod());
     }
 
