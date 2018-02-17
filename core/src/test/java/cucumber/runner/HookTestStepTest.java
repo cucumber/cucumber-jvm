@@ -14,15 +14,16 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
-public class UnskipableTestStepTest {
+public class HookTestStepTest {
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
-    private final UnskipableStep step = new UnskipableStep(HookType.Before, definitionMatch);
 
     @Test
     public void run_does_run_step_even_when_skip_steps_is_true() throws Throwable {
+
+        HookStep step = new HookStep(HookType.Before, definitionMatch);
         step.run(bus, language, scenario, true);
 
         InOrder order = inOrder(bus, definitionMatch);
@@ -33,8 +34,17 @@ public class UnskipableTestStepTest {
 
     @Test
     public void result_is_passed_when_step_definition_does_not_throw_exception_and_skip_steps_is_true() throws Throwable {
+        HookStep step = new HookStep(HookType.Before, definitionMatch);
         Result result = step.run(bus, language, scenario, true);
 
         assertEquals(Result.Type.PASSED, result.getStatus());
+    }
+
+    @Test
+    public void result_should_be_skipped_for_afterstep_if_skip_is_true() throws Throwable {
+        HookStep step = new HookStep(HookType.AfterStep, definitionMatch);
+        Result result = step.run(bus, language, scenario, true);
+
+        assertEquals(Result.Type.SKIPPED, result.getStatus());
     }
 }

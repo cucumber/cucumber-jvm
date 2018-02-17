@@ -316,6 +316,33 @@ public class PrettyFormatterTest {
     }
 
     @Test
+    public void should_print_output_from_afterStep_hooks() throws Throwable {
+        CucumberFeature feature = feature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n");
+        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("second step", "path/step_definitions.java:4");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
+        hookActions.add(createWriteHookAction("printed from afterstep hook"));
+
+        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, hookActions);
+
+        assertThat(formatterOutput, containsString("" +
+            "    Given first step      # path/step_definitions.java:3\n" +
+            "printed from afterstep hook\n" +
+            "    When second step      # path/step_definitions.java:4\n" +
+            "printed from afterstep hook"));
+    }
+
+    @Test
     public void should_color_code_steps_according_to_the_result() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +

@@ -10,17 +10,26 @@ import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-public class UnskipableStep extends TestStep {
+public class HookStep extends TestStep {
     private final HookType hookType;
 
-    public UnskipableStep(HookType hookType, DefinitionMatch definitionMatch) {
+    public HookStep(HookType hookType, DefinitionMatch definitionMatch) {
         super(definitionMatch);
         this.hookType = hookType;
     }
 
     protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
-        definitionMatch.runStep(language, scenario);
-        return Result.Type.PASSED;
+        if(hookType == HookType.After || hookType == HookType.Before) {
+            definitionMatch.runStep(language, scenario);
+            return Result.Type.PASSED;
+        } else { //Either hook step is AfterStep or BeforeStep
+            if(!skipSteps) {
+                definitionMatch.runStep(language, scenario);
+                return Result.Type.PASSED;
+            } else {
+                return Result.Type.SKIPPED;
+            }
+        }
     }
 
     @Override

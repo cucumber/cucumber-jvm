@@ -444,12 +444,16 @@ public class HTMLFormatterTest {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
-            "    Given first step\n");
+            "    Given first step\n" +
+            "    When second step\n");
         Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
         Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("second step", "path/step_definitions.java:4");
         List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
         hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
         long stepDuration = 1;
 
@@ -469,6 +473,25 @@ public class HTMLFormatterTest {
                 "  \"location\": \"path/step_definitions.java:3\"\n" +
                 "});\n", "" +
                 "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.step({\n" +
+                "  \"keyword\": \"When \",\n" +
+                "  \"name\": \"second step\"\n" +
+                "});\n", "" +
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:4\"\n" +
+                "});\n", "" +
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
                 "  \"status\": \"passed\"\n" +
                 "});\n", "" +
                 "formatter.afterstep({\n" +

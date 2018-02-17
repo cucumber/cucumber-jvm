@@ -149,7 +149,7 @@ public class Runner implements UnreportedStepExecutor {
     private void addTestStepsForHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {
         for (HookDefinition hook : hooks) {
             if (hook.matches(tags)) {
-                TestStep testStep = new UnskipableStep(hookType, new HookDefinitionMatch(hook));
+                TestStep testStep = new HookStep(hookType, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }
