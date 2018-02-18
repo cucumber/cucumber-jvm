@@ -12,9 +12,15 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.Utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Reports the test results to the instrumentation through {@link Instrumentation#sendStatus(int, Bundle)} calls.
@@ -170,7 +176,8 @@ public final class AndroidInstrumentationReporter implements Formatter {
             currentUri = testCase.getUri();
             currentFeatureName = testSources.getFeatureName(currentUri);
         }
-        currentTestCaseName = testCase.getName();
+        // Since the names of test cases are not guaranteed to be unique, we must check for unique names
+        currentTestCaseName = calculateUniqueTestName(testCase);
         resetSeverestResult();
         final Bundle testStart = createBundle(currentFeatureName, currentTestCaseName);
         instrumentation.sendStatus(StatusCodes.START, testStart);
@@ -277,4 +284,51 @@ public final class AndroidInstrumentationReporter implements Formatter {
         throwable.printStackTrace(printWriter);
         return stringWriter.getBuffer().toString();
     }
+
+    /**
+     * The stored unique test name for a test case.
+     * We use an identity hash-map since we want to distinct all test case objects.
+     * Thus, the key is a unique test case object.<br/>
+     * The mapped value is the unique test name, which maybe differs from test case original non-unique name.
+     */
+    private final Map<TestCase, String> uniqueTestNameForTestCase = new IdentityHashMap<TestCase, String>();
+
+    /**
+     * The stored unique test names grouped by feature.<br/>
+     * The key contains the feature file.<br/>
+     * The mapped value is a set of unique test names for the feature.
+     */
+    private final Map<String, Set<String>> uniqueTestNamesForFeature = new HashMap<String, Set<String>>();
+
+    /**
+     * Creates a unique test name for the given test case by filling the internal maps
+     * {@link #uniqueTestNameForTestCase} and {@link #uniqueTestNamesForFeature}.<br/>
+     * If the test case name is unique, it will be used, otherwise, a index will be added " 2", " 3", " 4", ...
+     * @param testCase the test case
+     * @return a unique test name
+     */
+    private String calculateUniqueTestName(TestCase testCase) {
+        String existingName = uniqueTestNameForTestCase.get(testCase);
+        if (existingName != null) {
+            // Nothing to do: there is already a test name for the passed test case object
+            return existingName;
+        }
+        final String feature = testCase.getUri();
+        String uniqueTestCaseName = testCase.getName();
+        if (!uniqueTestNamesForFeature.containsKey(feature)) {
+            // First test case of the feature
+            uniqueTestNamesForFeature.put(feature, new HashSet<String>());
+        }
+        final Set<String> uniqueTestNamesSetForFeature = uniqueTestNamesForFeature.get(feature);
+        // If "name" already exists, the next one is "name_2" or "name with spaces 2"
+        int i = 2;
+        while (uniqueTestNamesSetForFeature.contains(uniqueTestCaseName)) {
+            uniqueTestCaseName = Utils.getUniqueTestNameForScenarioExample(testCase.getName(), i);
+            i++;
+        }
+        uniqueTestNamesSetForFeature.add(uniqueTestCaseName);
+        uniqueTestNameForTestCase.put(testCase, uniqueTestCaseName);
+        return uniqueTestNameForTestCase.get(testCase);
+    }
+
 }
