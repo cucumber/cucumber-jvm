@@ -19,11 +19,11 @@ public class HookStep extends TestStep {
     }
 
     protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
-        if(hookType == HookType.After || hookType == HookType.Before) {
+        if (hookType == HookType.After || hookType == HookType.Before) {
             definitionMatch.runStep(language, scenario);
             return Result.Type.PASSED;
         } else { //Either hook step is AfterStep or BeforeStep
-            if(!skipSteps) {
+            if (!skipSteps) {
                 definitionMatch.runStep(language, scenario);
                 return Result.Type.PASSED;
             } else {

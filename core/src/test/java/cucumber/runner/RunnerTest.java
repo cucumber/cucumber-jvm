@@ -196,7 +196,7 @@ public class RunnerTest {
             runtime.getGlue().addBeforeHook(hook);
         } else if (hookType == HookType.After){
             runtime.getGlue().addAfterHook(hook);
-        } else if(hookType == HookType.AfterStep) {
+        } else if (hookType == HookType.AfterStep) {
             runtime.getGlue().addAfterStepHook(hook);
         }
         return hook;

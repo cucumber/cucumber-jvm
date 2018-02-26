@@ -1,7 +1,12 @@
 package cucumber.runtime;
 
-import cucumber.api.*;
+import cucumber.api.HookType;
+import cucumber.api.PendingException;
+import cucumber.api.Result;
+import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestCaseFinished;
+import cucumber.api.Scenario;
+import cucumber.api.TestCase;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -557,7 +562,7 @@ public class RuntimeTest {
     }
 
     private void mockHook(RuntimeGlue glue, HookDefinition hook, HookType hookType) {
-        switch(hookType) {
+        switch (hookType) {
             case Before:
                 when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
                 return;

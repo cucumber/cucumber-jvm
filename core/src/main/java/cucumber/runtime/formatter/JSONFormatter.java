@@ -284,7 +284,7 @@ final class JSONFormatter implements Formatter {
 
     private void addHookStepToTestCaseMap(Map<String, Object> currentStepOrHookMap, HookType hookType) {
         Map<String, Object> mapToAddTo;
-        if(hookType == HookType.After || hookType == HookType.Before) {
+        if (hookType == HookType.After || hookType == HookType.Before) {
             mapToAddTo = currentTestCaseMap;
         }
         else {
@@ -292,7 +292,7 @@ final class JSONFormatter implements Formatter {
             mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
         }
 
-        if(!mapToAddTo.containsKey(hookType.toString())) {
+        if (!mapToAddTo.containsKey(hookType.toString())) {
             mapToAddTo.put(hookType.toString(), new ArrayList<Map<String, Object>>());
         }
         ((List<Map<String, Object>>)mapToAddTo.get(hookType.toString())).add(currentStepOrHookMap);

@@ -50,32 +50,4 @@ public class HookTest {
         inOrder.verify(hook).execute(Matchers.<Scenario>any());
         inOrder.verify(backend).disposeWorld();
     }
-
-
-
-  /*  @Test
-    public void afterStep_hook_registered_for_every_step() throws Throwable {
-        Backend backend = mock(Backend.class);
-        HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
-        runtime.getGlue().addAfterStepHook(hook);
-        Runner runner = runtime.getRunner();
-        PickleStep step1 = mock(PickleStep.class);
-        PickleStep step2 = mock(PickleStep.class);
-        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step1, step2), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
-
-        runner.runPickle(pickleEvent);
-
-        InOrder inOrder = inOrder(step1, step2, hook, backend);
-        inOrder.verify(step1).getText();
-        inOrder.verify(step2).getText();
-        inOrder.verify(hook, times(2)).execute(Matchers.<Scenario>any());
-        inOrder.verify(backend).disposeWorld();
-    }
-  */
-
 }
