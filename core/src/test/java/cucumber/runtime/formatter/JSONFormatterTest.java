@@ -600,7 +600,8 @@ public class JSONFormatterTest {
             "              \"status\": \"passed\"\n" +
             "            },\n" +
             "            \"line\": 4,\n" +
-            "            \"afterstep\": [\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"after\": [\n" +
             "              {\n" +
             "                \"result\": {\n" +
             "                  \"duration\": 1000000,\n" +
@@ -620,7 +621,6 @@ public class JSONFormatterTest {
             "                }\n" +
             "              }\n" +
             "            ],\n" +
-            "            \"name\": \"there are bananas\",\n" +
             "            \"match\": {\n" +
             "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
             "            },\n" +
@@ -632,7 +632,8 @@ public class JSONFormatterTest {
             "              \"status\": \"passed\"\n" +
             "            },\n" +
             "            \"line\": 5,\n" +
-            "            \"afterstep\": [\n" +
+            "            \"name\": \"monkey arrives\",\n" +
+            "            \"after\": [\n" +
             "              {\n" +
             "                \"result\": {\n" +
             "                  \"duration\": 1000000,\n" +
@@ -652,7 +653,7 @@ public class JSONFormatterTest {
             "                }\n" +
             "              }\n" +
             "            ],\n" +
-            "            \"name\": \"monkey arrives\",\n" +
+
             "            \"match\": {\n" +
             "              \"location\": \"StepDefs.monkey_arrives()\"\n" +
             "            },\n" +

@@ -283,6 +283,12 @@ final class JSONFormatter implements Formatter {
     }
 
     private void addHookStepToTestCaseMap(Map<String, Object> currentStepOrHookMap, HookType hookType) {
+        String hookName;
+        if (hookType.toString().contains("after"))
+            hookName = "after";
+        else
+            hookName = "before";
+
         Map<String, Object> mapToAddTo;
         if (hookType == HookType.After || hookType == HookType.Before) {
             mapToAddTo = currentTestCaseMap;
@@ -292,10 +298,10 @@ final class JSONFormatter implements Formatter {
             mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
         }
 
-        if (!mapToAddTo.containsKey(hookType.toString())) {
-            mapToAddTo.put(hookType.toString(), new ArrayList<Map<String, Object>>());
+        if (!mapToAddTo.containsKey(hookName)) {
+            mapToAddTo.put(hookName, new ArrayList<Map<String, Object>>());
         }
-        ((List<Map<String, Object>>)mapToAddTo.get(hookType.toString())).add(currentStepOrHookMap);
+        ((List<Map<String, Object>>)mapToAddTo.get(hookName)).add(currentStepOrHookMap);
     }
 
     private void addOutputToHookMap(String text) {
