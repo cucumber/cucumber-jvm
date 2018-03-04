@@ -14,6 +14,11 @@ public class TestCase {
     private final PickleEvent pickleEvent;
     private final List<TestStep> testSteps;
     private final boolean dryRun;
+    public enum SkipStatus {
+        RUN_ALL,
+        RUN_HOOKS,
+        SKIP_ALL_SKIPABLE
+    };
 
     /**
      * Creates a new instance of a test case.
@@ -50,16 +55,21 @@ public class TestCase {
      */
     @Deprecated
     public void run(EventBus bus) {
-        boolean skipNextStep = this.dryRun;
+        TestCase.SkipStatus skipNextStep = this.dryRun ? SkipStatus.SKIP_ALL_SKIPABLE : SkipStatus.RUN_ALL;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
+        boolean finishingGherkinStep = false;
         for (TestStep step : testSteps) {
+            if (skipNextStep == SkipStatus.RUN_HOOKS && finishingGherkinStep && step.startingGherkinStepType()) {
+                skipNextStep = SkipStatus.SKIP_ALL_SKIPABLE;
+            }
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
-            if (!stepResult.is(Result.Type.PASSED)) {
-                skipNextStep = true;
+            if (!stepResult.is(Result.Type.PASSED) && skipNextStep == SkipStatus.RUN_ALL) {
+                skipNextStep = SkipStatus.RUN_HOOKS;
             }
             scenarioResult.add(stepResult);
+            finishingGherkinStep = step.finishingGherkinStepType();
         }
         Long stopTime = bus.getTime();
         bus.send(new TestCaseFinished(stopTime, this, new Result(scenarioResult.getStatus(), stopTime - startTime, scenarioResult.getError())));

@@ -135,21 +135,26 @@ public class Runner implements UnreportedStepExecutor {
     }
 
     private void addTestStepsForBeforeHooks(List<TestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
+        addTestStepsForScenarioHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
     }
 
     private void addTestStepsForAfterHooks(List<TestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
+        addTestStepsForScenarioHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
+    }
+
+    private void addTestStepsForScenarioHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {
+        for (HookDefinition hook : hooks) {
+            if (hook.matches(tags)) {
+                TestStep testStep = new UnskipableHookStep(hookType, new HookDefinitionMatch(hook));
+                testSteps.add(testStep);
+            }
+        }
     }
 
     private void addTestStepsForAfterStepHooks(List<TestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getAfterStepHooks(), HookType.AfterStep);
-    }
-
-    private void addTestStepsForHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {
-        for (HookDefinition hook : hooks) {
+        for (HookDefinition hook : glue.getAfterStepHooks()) {
             if (hook.matches(tags)) {
-                TestStep testStep = new HookStep(hookType, new HookDefinitionMatch(hook));
+                TestStep testStep = new SkipableHookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }

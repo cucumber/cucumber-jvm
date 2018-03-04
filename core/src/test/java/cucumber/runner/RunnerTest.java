@@ -71,7 +71,7 @@ public class RunnerTest {
     }
 
     @Test
-    public void aftersteps_are_skipped_after_failure() throws Throwable {
+    public void aftersteps_are_executed_after_failed_step() throws Throwable {
 
         StepDefinition stepDefinition = mock(StepDefinition.class);
         doThrow(RuntimeException.class).when(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
@@ -81,7 +81,7 @@ public class RunnerTest {
 
         InOrder inOrder = inOrder(afteStepHook, stepDefinition);
         inOrder.verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
-        inOrder.verify(afteStepHook, never()).execute(Matchers.<Scenario>any());
+        inOrder.verify(afteStepHook).execute(Matchers.<Scenario>any());
     }
 
     @Test

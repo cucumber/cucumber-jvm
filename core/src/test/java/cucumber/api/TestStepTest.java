@@ -28,7 +28,7 @@ public class TestStepTest {
 
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
-        step.run(bus, language, scenario, false);
+        step.run(bus, language, scenario, TestCase.SkipStatus.RUN_ALL);
 
         InOrder order = inOrder(bus, definitionMatch);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -38,7 +38,7 @@ public class TestStepTest {
 
     @Test
     public void run_does_dry_run_step_when_skip_steps_is_true() throws Throwable {
-        step.run(bus, language, scenario, true);
+        step.run(bus, language, scenario, TestCase.SkipStatus.RUN_HOOKS);
 
         InOrder order = inOrder(bus, definitionMatch);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -48,14 +48,14 @@ public class TestStepTest {
 
     @Test
     public void result_is_passed_when_step_definition_does_not_throw_exception() throws Throwable {
-        Result result = step.run(bus, language, scenario, false);
+        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.RUN_ALL);
 
         assertEquals(Result.Type.PASSED, result.getStatus());
     }
 
     @Test
-    public void result_is_skipped_when_skip_step_is_true() throws Throwable {
-        Result result = step.run(bus, language, scenario, true);
+    public void result_is_skipped_when_skip_step_is_not_run_all() throws Throwable {
+        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.RUN_HOOKS);
 
         assertEquals(Result.Type.SKIPPED, result.getStatus());
     }
@@ -64,7 +64,7 @@ public class TestStepTest {
     public void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
         doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
 
-        Result result = step.run(bus, language, scenario, false);
+        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.RUN_ALL);
 
         assertEquals(Result.Type.SKIPPED, result.getStatus());
     }
@@ -73,7 +73,7 @@ public class TestStepTest {
     public void result_is_failed_when_step_definition_throws_exception() throws Throwable {
         doThrow(RuntimeException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
 
-        Result result = step.run(bus, language, scenario, false);
+        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.RUN_ALL);
 
         assertEquals(Result.Type.FAILED, result.getStatus());
     }
@@ -82,7 +82,7 @@ public class TestStepTest {
     public void result_is_pending_when_step_definition_throws_pending_exception() throws Throwable {
         doThrow(PendingException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
 
-        Result result = step.run(bus, language, scenario, false);
+        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.RUN_ALL);
 
         assertEquals(Result.Type.PENDING, result.getStatus());
     }
@@ -97,7 +97,7 @@ public class TestStepTest {
             .thenReturn(0L)
             .thenReturn(1234L);
 
-        Result result = step.run(bus, language, scenario, false);
+        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.RUN_ALL);
 
         assertEquals(duration, result.getDuration());
     }
