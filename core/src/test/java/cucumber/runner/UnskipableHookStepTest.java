@@ -25,7 +25,7 @@ public class UnskipableHookStepTest {
     public void run_does_run_step_even_when_skip_steps_is_skip_all_skippable() throws Throwable {
 
         HookStep step = new UnskipableHookStep(HookType.Before, definitionMatch);
-        step.run(bus, language, scenario, TestCase.SkipStatus.SKIP_ALL_SKIPABLE);
+        step.run(bus, language, scenario, true);
 
         InOrder order = inOrder(bus, definitionMatch);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -36,7 +36,7 @@ public class UnskipableHookStepTest {
     @Test
     public void result_is_passed_when_step_definition_does_not_throw_exception_and_skip_steps_is_skip_all_skipable() throws Throwable {
         HookStep step = new UnskipableHookStep(HookType.Before, definitionMatch);
-        Result result = step.run(bus, language, scenario, TestCase.SkipStatus.SKIP_ALL_SKIPABLE);
+        Result result = step.run(bus, language, scenario, true);
 
         assertEquals(Result.Type.PASSED, result.getStatus());
     }

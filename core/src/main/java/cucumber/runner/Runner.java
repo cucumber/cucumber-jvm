@@ -127,10 +127,10 @@ public class Runner implements UnreportedStepExecutor {
             } catch (Throwable t) {
                 match = new FailedStepInstantiationMatch(pickleEvent.uri, step, t);
             }
-            testSteps.add(new PickleTestStep(pickleEvent.uri, step, match));
-            if (!runtimeOptions.isDryRun()) {
-                addTestStepsForAfterStepHooks(testSteps, pickleEvent.pickle.getTags());
-            }
+
+
+            List<TestStep> afterStepHooks = getAfterStepHooks(pickleEvent.pickle.getTags());
+            testSteps.add(new PickleTestStep(pickleEvent.uri, step, afterStepHooks, match));
         }
     }
 
@@ -151,13 +151,17 @@ public class Runner implements UnreportedStepExecutor {
         }
     }
 
-    private void addTestStepsForAfterStepHooks(List<TestStep> testSteps, List<PickleTag> tags) {
+    private List<TestStep> getAfterStepHooks(List<PickleTag> tags) {
+        List<TestStep> hooks = new ArrayList<TestStep>();
+
         for (HookDefinition hook : glue.getAfterStepHooks()) {
             if (hook.matches(tags)) {
-                TestStep testStep = new SkipableHookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
-                testSteps.add(testStep);
+                TestStep testStep = new HookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
+                hooks.add(testStep);
             }
         }
+
+        return hooks;
     }
 
     private void buildBackendWorlds() {

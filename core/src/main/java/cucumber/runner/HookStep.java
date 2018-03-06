@@ -8,7 +8,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-public abstract class HookStep extends TestStep {
+public class HookStep extends TestStep {
     private final HookType hookType;
 
     public HookStep(HookType hookType, DefinitionMatch definitionMatch) {
@@ -51,13 +51,4 @@ public abstract class HookStep extends TestStep {
         return hookType;
     }
 
-    @Override
-    public boolean startingGherkinStepType() {
-        return false;
-    }
-
-    @Override
-    public boolean finishingGherkinStepType() {
-        return hookType == HookType.Before || hookType == HookType.AfterStep;
-    }
 }

@@ -15,6 +15,7 @@ import org.mockito.InOrder;
 
 import java.util.Arrays;
 
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.inOrder;
@@ -29,14 +30,14 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep = mock(TestStep.class);
-        when(testStep.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep), pickleEvent(), false);
         testCase.run(bus);
 
         InOrder order = inOrder(bus, testStep);
         order.verify(bus).send(isA(TestCaseStarted.class));
-        order.verify(testStep).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.RUN_ALL));
+        order.verify(testStep).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
         order.verify(bus).send(isA(TestCaseFinished.class));
     }
 
@@ -45,16 +46,16 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep1 = mock(TestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.PASSED));
+        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
         TestStep testStep2 = mock(TestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.PASSED));
+        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent(), false);
         testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.RUN_ALL));
-        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.RUN_ALL));
+        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
     }
 
     @Test
@@ -62,18 +63,16 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep1 = mock(TestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
-        when(testStep1.finishingGherkinStepType()).thenReturn(true);
+        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
         TestStep testStep2 = mock(TestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.SKIPPED));
-        when(testStep2.startingGherkinStepType()).thenReturn(false);
+        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent(), false);
         testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.RUN_ALL));
-        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.RUN_HOOKS));
+        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(true));
     }
 
     @Test
@@ -81,18 +80,16 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep1 = mock(TestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
-        when(testStep1.finishingGherkinStepType()).thenReturn(true);
+        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
         TestStep testStep2 = mock(TestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), isA(TestCase.SkipStatus.class))).thenReturn(resultWithStatus(Result.Type.SKIPPED));
-        when(testStep2.startingGherkinStepType()).thenReturn(true);
+        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent(), false);
         testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.RUN_ALL));
-        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(TestCase.SkipStatus.SKIP_ALL_SKIPABLE));
+        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(true));
     }
 
     private PickleEvent pickleEvent() {

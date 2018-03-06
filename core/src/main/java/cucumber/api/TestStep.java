@@ -1,6 +1,5 @@
 package cucumber.api;
 
-import cucumber.api.TestCase.SkipStatus;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
@@ -75,7 +74,7 @@ public abstract class TestStep {
      * @deprecated not part of the public api
      */
     @Deprecated
-    public Result run(EventBus bus, String language, Scenario scenario, TestCase.SkipStatus skipSteps) {
+    public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, this));
         Result.Type status;
@@ -92,25 +91,14 @@ public abstract class TestStep {
         return result;
     }
 
-
-    @Deprecated
-    public boolean startingGherkinStepType() {
-        return true;
-    }
-
-    @Deprecated
-    public boolean finishingGherkinStepType() {
-        return true;
-    }
-
     @Deprecated
     protected Result.Type nonExceptionStatus(boolean skipSteps) {
         return skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
     }
 
     @Deprecated
-    protected Result.Type executeStep(String language, Scenario scenario, TestCase.SkipStatus skipSteps) throws Throwable {
-        if (skipSteps == SkipStatus.RUN_ALL) {
+    protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+        if (!skipSteps) {
             definitionMatch.runStep(language, scenario);
             return Result.Type.PASSED;
         } else {
