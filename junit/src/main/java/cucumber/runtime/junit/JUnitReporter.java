@@ -39,8 +39,9 @@ public class JUnitReporter {
 
         @Override
         public void receive(TestStepStarted event) {
-            if (!event.testStep.isHook()) {
-                handleStepStarted(event.testStep.getPickleStep());
+            if (event.testStep instanceof TestStep) {
+                TestStep testStep = (TestStep) event.testStep;
+                handleStepStarted(testStep.getPickleStep());
             }
         }
 
@@ -49,8 +50,9 @@ public class JUnitReporter {
 
         @Override
         public void receive(TestStepFinished event) {
-            if (!event.testStep.isHook()) {
-                handleStepResult(event.testStep, event.result);
+            if (event.testStep instanceof TestStep) {
+                TestStep testStep = (TestStep) event.testStep;
+                handleStepResult(testStep, event.result);
             } else {
                 handleHookResult(event.result);
             }

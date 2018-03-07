@@ -14,8 +14,6 @@ import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -31,7 +29,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -124,8 +121,8 @@ final class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            testCase.steps.add(event.testStep);
+        if (event.testStep instanceof TestStep) {
+            testCase.steps.add((TestStep) event.testStep);
             testCase.results.add(event.result);
         }
     }

@@ -1,6 +1,6 @@
 package cucumber.runner;
 
-import cucumber.api.HookType;
+import cucumber.api.HookStep;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.TestStep;
@@ -19,17 +19,17 @@ import static java.util.Collections.max;
 public class PickleTestStep extends TestStep {
     private final String uri;
     private final PickleStep step;
-    private final List<TestStep> afterStepHooks;
+    private final List<HookStep> afterStepHookSteps;
 
     public PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
-        this(uri, step, Collections.<TestStep>emptyList(), definitionMatch);
+        this(uri, step, Collections.<HookStep>emptyList(), definitionMatch);
     }
 
-    public PickleTestStep(String uri, PickleStep step, List<TestStep> afterStepHooks, DefinitionMatch definitionMatch) {
+    public PickleTestStep(String uri, PickleStep step, List<HookStep> afterStepHookSteps, DefinitionMatch definitionMatch) {
         super(definitionMatch);
         this.uri = uri;
         this.step = step;
-        this.afterStepHooks = afterStepHooks;
+        this.afterStepHookSteps = afterStepHookSteps;
     }
 
     @Override
@@ -38,17 +38,11 @@ public class PickleTestStep extends TestStep {
 
         results.add(super.run(bus, language, scenario, skipSteps));
 
-        for(TestStep after : afterStepHooks){
+        for(HookStep after : afterStepHookSteps){
             results.add(after.run(bus, language, scenario, skipSteps));
         }
 
         return max(results, SEVERITY);
-    }
-
-
-    @Override
-    public boolean isHook() {
-        return false;
     }
 
     @Override
@@ -76,8 +70,4 @@ public class PickleTestStep extends TestStep {
         return step.getArgument();
     }
 
-    @Override
-    public HookType getHookType() {
-        throw new UnsupportedOperationException();
-    }
 }

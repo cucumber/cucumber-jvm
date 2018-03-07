@@ -1,7 +1,9 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.HookStep;
 import cucumber.api.HookType;
 import cucumber.api.Result;
+import cucumber.api.Step;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.api.event.EmbedEvent;
@@ -19,7 +21,6 @@ import gherkin.ast.Background;
 import gherkin.ast.DocString;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.Step;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.net.iharder.Base64;
@@ -129,16 +130,20 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (!event.testStep.isHook()) {
-            if (isFirstStepAfterBackground(event.testStep)) {
+        if (event.testStep instanceof TestStep) {
+            TestStep testStep = (TestStep) event.testStep;
+            if (isFirstStepAfterBackground(testStep)) {
                 currentElementMap = currentTestCaseMap;
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
             }
-            currentStepOrHookMap = createTestStep(event.testStep);
+            currentStepOrHookMap = createTestStep(testStep);
             currentStepsList.add(currentStepOrHookMap);
+        } else if(event.testStep instanceof HookStep) {
+            HookStep hookStep = (HookStep) event.testStep;
+            currentStepOrHookMap = createHookStep(hookStep);
+            addHookStepToTestCaseMap(currentStepOrHookMap, hookStep.getHookType());
         } else {
-            currentStepOrHookMap = createHookStep(event.testStep);
-            addHookStepToTestCaseMap(currentStepOrHookMap, event.testStep.getHookType());
+            throw new IllegalStateException();
         }
     }
 
@@ -242,7 +247,7 @@ final class JSONFormatter implements Formatter {
             }
         }
         if (astNode != null) {
-            Step step = (Step) astNode.node;
+            gherkin.ast.Step step = (gherkin.ast.Step) astNode.node;
             stepMap.put("keyword", step.getKeyword());
         }
 
@@ -255,7 +260,7 @@ final class JSONFormatter implements Formatter {
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
         if (astNode != null) {
-            docStringMap.put("content_type", ((DocString)((Step)astNode.node).getArgument()).getContentType());
+            docStringMap.put("content_type", ((DocString)((gherkin.ast.Step)astNode.node).getArgument()).getContentType());
         }
         return docStringMap;
     }
@@ -278,7 +283,7 @@ final class JSONFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createHookStep(TestStep testStep) {
+    private Map<String, Object> createHookStep(HookStep hookStep) {
         return new HashMap<String, Object>();
     }
 
@@ -326,7 +331,7 @@ final class JSONFormatter implements Formatter {
         return embedMap;
     }
 
-    private Map<String, Object> createMatchMap(TestStep testStep, Result result) {
+    private Map<String, Object> createMatchMap(Step testStep, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
         if (!testStep.getDefinitionArgument().isEmpty()) {
             List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();

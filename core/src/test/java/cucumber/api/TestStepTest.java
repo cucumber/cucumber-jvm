@@ -24,7 +24,7 @@ public class TestStepTest {
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
-    private final TestStep step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
+    private final Step step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
 
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
@@ -90,7 +90,7 @@ public class TestStepTest {
     @Test
     public void step_execution_time_is_measured() throws Throwable {
         Long duration = 1234L;
-        TestStep step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
+        Step step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
         when(bus.getTime()).thenReturn(0l, 1234l);
 
         when(bus.getTime())

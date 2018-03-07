@@ -12,7 +12,7 @@ import java.util.List;
 
 public class TestCase {
     private final PickleEvent pickleEvent;
-    private final List<TestStep> testSteps;
+    private final List<Step> testSteps;
     private final boolean dryRun;
     public enum SkipStatus {
         RUN_ALL,
@@ -27,7 +27,7 @@ public class TestCase {
      * @deprecated not part of the public api
      */
     @Deprecated
-    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent) {
+    public TestCase(List<Step> testSteps, PickleEvent pickleEvent) {
         this(testSteps, pickleEvent, false);
     }
 
@@ -40,7 +40,7 @@ public class TestCase {
      * @deprecated not part of the public api
      */
     @Deprecated
-    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent, boolean dryRun) {
+    public TestCase(List<Step> testSteps, PickleEvent pickleEvent, boolean dryRun) {
         this.testSteps = testSteps;
         this.pickleEvent = pickleEvent;
         this.dryRun = dryRun;
@@ -58,7 +58,7 @@ public class TestCase {
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
-        for (TestStep step : testSteps) {
+        for (Step step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
             if (!stepResult.is(Result.Type.PASSED)) {
                 skipNextStep = true;
@@ -69,7 +69,7 @@ public class TestCase {
         bus.send(new TestCaseFinished(stopTime, this, new Result(scenarioResult.getStatus(), stopTime - startTime, scenarioResult.getError())));
     }
 
-    public List<TestStep> getTestSteps() {
+    public List<Step> getTestSteps() {
         return testSteps;
     }
 

@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.api.Step;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
@@ -136,8 +137,8 @@ class TestNGFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            testMethod.steps.add(event.testStep);
+        if (event.testStep instanceof TestStep) {
+            testMethod.steps.add((TestStep) event.testStep);
             testMethod.results.add(event.result);
         } else {
             testMethod.hooks.add(event.result);

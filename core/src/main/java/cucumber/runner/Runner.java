@@ -1,9 +1,10 @@
 package cucumber.runner;
 
+import cucumber.api.HookStep;
 import cucumber.api.HookType;
+import cucumber.api.Step;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.api.event.SnippetsSuggestedEvent;
 import cucumber.runtime.AmbiguousStepDefinitionsMatch;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
@@ -91,7 +92,7 @@ public class Runner implements UnreportedStepExecutor {
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
-        List<TestStep> testSteps = new ArrayList<TestStep>();
+        List<Step> testSteps = new ArrayList<Step>();
         if (!pickleEvent.pickle.getSteps().isEmpty()) {
             if (!runtimeOptions.isDryRun()) {
                 addTestStepsForBeforeHooks(testSteps, pickleEvent.pickle.getTags());
@@ -104,7 +105,7 @@ public class Runner implements UnreportedStepExecutor {
         return new TestCase(testSteps, pickleEvent, runtimeOptions.isDryRun());
     }
 
-    private void addTestStepsForPickleSteps(List<TestStep> testSteps, PickleEvent pickleEvent) {
+    private void addTestStepsForPickleSteps(List<Step> testSteps, PickleEvent pickleEvent) {
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
             StepDefinitionMatch match;
             try {
@@ -129,39 +130,39 @@ public class Runner implements UnreportedStepExecutor {
             }
 
 
-            List<TestStep> afterStepHooks = getAfterStepHooks(pickleEvent.pickle.getTags());
-            testSteps.add(new PickleTestStep(pickleEvent.uri, step, afterStepHooks, match));
+            List<cucumber.api.HookStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
+            testSteps.add(new PickleTestStep(pickleEvent.uri, step, afterStepHookSteps, match));
         }
     }
 
-    private void addTestStepsForBeforeHooks(List<TestStep> testSteps, List<PickleTag> tags) {
+    private void addTestStepsForBeforeHooks(List<Step> testSteps, List<PickleTag> tags) {
         addTestStepsForScenarioHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
     }
 
-    private void addTestStepsForAfterHooks(List<TestStep> testSteps, List<PickleTag> tags) {
+    private void addTestStepsForAfterHooks(List<Step> testSteps, List<PickleTag> tags) {
         addTestStepsForScenarioHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
     }
 
-    private void addTestStepsForScenarioHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {
+    private void addTestStepsForScenarioHooks(List<Step> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
         for (HookDefinition hook : hooks) {
             if (hook.matches(tags)) {
-                TestStep testStep = new UnskipableHookStep(hookType, new HookDefinitionMatch(hook));
+                Step testStep = new UnskipableHookStep(hookType, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }
     }
 
-    private List<TestStep> getAfterStepHooks(List<PickleTag> tags) {
-        List<TestStep> hooks = new ArrayList<TestStep>();
+    private List<cucumber.api.HookStep> getAfterStepHooks(List<PickleTag> tags) {
+        List<HookStep> hookSteps = new ArrayList<cucumber.api.HookStep>();
 
         for (HookDefinition hook : glue.getAfterStepHooks()) {
             if (hook.matches(tags)) {
-                TestStep testStep = new HookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
-                hooks.add(testStep);
+                cucumber.api.HookStep testStep = new cucumber.runner.HookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
+                hookSteps.add(testStep);
             }
         }
 
-        return hooks;
+        return hookSteps;
     }
 
     private void buildBackendWorlds() {

@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.HookStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
@@ -161,21 +162,25 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (!event.testStep.isHook()) {
-            if (isFirstStepAfterBackground(event.testStep)) {
+        if (event.testStep instanceof TestStep) {
+            TestStep testStep = (TestStep) event.testStep;
+            if (isFirstStepAfterBackground(testStep)) {
                 jsFunctionCall("scenario", currentTestCaseMap);
                 currentTestCaseMap = null;
             }
-            jsFunctionCall("step", createTestStep(event.testStep));
+            jsFunctionCall("step", createTestStep(testStep));
         }
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            jsFunctionCall("match", createMatchMap(event.testStep, event.result));
+        if (event.testStep instanceof TestStep) {
+            jsFunctionCall("match", createMatchMap((TestStep) event.testStep, event.result));
             jsFunctionCall("result", createResultMap(event.result));
+        } else if(event.testStep instanceof HookStep) {
+            HookStep hookStep = (HookStep) event.testStep;
+            jsFunctionCall(hookStep.getHookType().toString(), createResultMap(event.result));
         } else {
-            jsFunctionCall(event.testStep.getHookType().toString(), createResultMap(event.result));
+            throw new IllegalStateException();
         }
     }
 
@@ -271,7 +276,7 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void addOutlineStepsToReport(ScenarioOutline scenarioOutline) {
-        for (Step step : scenarioOutline.getSteps()) {
+        for (gherkin.ast.Step step : scenarioOutline.getSteps()) {
             Map<String, Object> stepMap = new HashMap<String, Object>();
             stepMap.put("name", step.getText());
             stepMap.put("keyword", step.getKeyword());
