@@ -19,15 +19,15 @@ public class ResultTest {
         Result passed = new Result(Result.Type.PASSED, null, null);
         Result skipped = new Result(Result.Type.SKIPPED, null, null);
         Result pending = new Result(Result.Type.PENDING, null, null);
-        Result undefined = new Result(Result.Type.UNDEFINED, null, null);
         Result ambiguous = new Result(Result.Type.AMBIGUOUS, null, null);
+        Result undefined = new Result(Result.Type.UNDEFINED, null, null);
         Result failed = new Result(Result.Type.FAILED, null, null);
 
         List<Result> results = asList(pending, passed, skipped, failed, ambiguous, undefined);
 
         sort(results, SEVERITY);
 
-        assertThat(results, equalTo(asList(passed, skipped, pending, ambiguous, undefined, failed)));
+        assertThat(results, equalTo(asList(passed, skipped, pending, undefined, ambiguous, failed)));
     }
 
     @Test

@@ -25,8 +25,8 @@ public class Result {
         PASSED,
         SKIPPED,
         PENDING,
-        AMBIGUOUS,
         UNDEFINED,
+        AMBIGUOUS,
         FAILED;
 
         public static Type fromLowerCaseName(String lowerCaseName) {
