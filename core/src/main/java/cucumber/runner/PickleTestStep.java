@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static cucumber.api.Result.SEVERITY;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 
 public class PickleTestStep extends TestStep {
@@ -43,6 +44,15 @@ public class PickleTestStep extends TestStep {
         }
 
         return max(results, SEVERITY);
+    }
+
+
+    public List<HookStep> getBeforeStepHookSteps() {
+        return emptyList();
+    }
+
+    public List<HookStep> getAfterStepHookSteps(){
+        return afterStepHookSteps;
     }
 
     @Override

@@ -5,6 +5,7 @@ import cucumber.api.HookType;
 import cucumber.api.Step;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
+import cucumber.api.TestStep;
 import cucumber.api.event.SnippetsSuggestedEvent;
 import cucumber.runtime.AmbiguousStepDefinitionsMatch;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
@@ -19,6 +20,7 @@ import cucumber.runtime.UndefinedStepDefinitionMatch;
 import cucumber.runtime.UnreportedStepExecutor;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
+import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
@@ -92,20 +94,18 @@ public class Runner implements UnreportedStepExecutor {
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
-        List<Step> testSteps = new ArrayList<Step>();
+        List<PickleTestStep> testSteps = new ArrayList<PickleTestStep>();
+        List<Step> beforeHooks = new ArrayList<Step>();
+        List<Step> afterHooks = new ArrayList<Step>();
         if (!pickleEvent.pickle.getSteps().isEmpty()) {
-            if (!runtimeOptions.isDryRun()) {
-                addTestStepsForBeforeHooks(testSteps, pickleEvent.pickle.getTags());
-            }
+            addTestStepsForBeforeHooks(beforeHooks, pickleEvent.pickle.getTags());
             addTestStepsForPickleSteps(testSteps, pickleEvent);
-            if (!runtimeOptions.isDryRun()) {
-                addTestStepsForAfterHooks(testSteps, pickleEvent.pickle.getTags());
-            }
+            addTestStepsForAfterHooks(afterHooks, pickleEvent.pickle.getTags());
         }
-        return new TestCase(testSteps, pickleEvent, runtimeOptions.isDryRun());
+        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runtimeOptions.isDryRun());
     }
 
-    private void addTestStepsForPickleSteps(List<Step> testSteps, PickleEvent pickleEvent) {
+    private void addTestStepsForPickleSteps(List<PickleTestStep> testSteps, PickleEvent pickleEvent) {
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
             StepDefinitionMatch match;
             try {
@@ -136,17 +136,17 @@ public class Runner implements UnreportedStepExecutor {
     }
 
     private void addTestStepsForBeforeHooks(List<Step> testSteps, List<PickleTag> tags) {
-        addTestStepsForScenarioHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
+        addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
     }
 
     private void addTestStepsForAfterHooks(List<Step> testSteps, List<PickleTag> tags) {
-        addTestStepsForScenarioHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
+        addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
     }
 
-    private void addTestStepsForScenarioHooks(List<Step> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
+    private void addTestStepsForHooks(List<Step> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
         for (HookDefinition hook : hooks) {
             if (hook.matches(tags)) {
-                Step testStep = new UnskipableHookStep(hookType, new HookDefinitionMatch(hook));
+                Step testStep = new cucumber.runner.HookStep(hookType, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }
