@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static cucumber.api.Result.SEVERITY;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 
 class PickleTestStep extends Step implements cucumber.api.TestStep {
@@ -22,10 +21,15 @@ class PickleTestStep extends Step implements cucumber.api.TestStep {
     private final List<HookStep> beforeStepHookSteps;
 
     PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
-        this(uri, Collections.<HookStep>emptyList(), step, Collections.<HookStep>emptyList(), definitionMatch);
+        this(uri, step, Collections.<HookStep>emptyList(), Collections.<HookStep>emptyList(), definitionMatch);
     }
 
-    PickleTestStep(String uri, List<HookStep> beforeStepHookSteps, PickleStep step, List<HookStep> afterStepHookSteps, DefinitionMatch definitionMatch) {
+    PickleTestStep(String uri,
+                   PickleStep step,
+                   List<HookStep> beforeStepHookSteps,
+                   List<HookStep> afterStepHookSteps,
+                   DefinitionMatch definitionMatch
+    ) {
         super(definitionMatch);
         this.uri = uri;
         this.step = step;

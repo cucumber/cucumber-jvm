@@ -90,8 +90,8 @@ public class Runner implements UnreportedStepExecutor {
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
         List<PickleTestStep> testSteps = new ArrayList<PickleTestStep>();
-        List<Step> beforeHooks = new ArrayList<Step>();
-        List<Step> afterHooks = new ArrayList<Step>();
+        List<HookStep> beforeHooks = new ArrayList<HookStep>();
+        List<HookStep> afterHooks = new ArrayList<HookStep>();
         if (!pickleEvent.pickle.getSteps().isEmpty()) {
             addTestStepsForBeforeHooks(beforeHooks, pickleEvent.pickle.getTags());
             addTestStepsForPickleSteps(testSteps, pickleEvent);
@@ -127,22 +127,22 @@ public class Runner implements UnreportedStepExecutor {
 
             List<HookStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
             List<HookStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
-            testSteps.add(new PickleTestStep(pickleEvent.uri, beforeStepHookSteps, step, afterStepHookSteps, match));
+            testSteps.add(new PickleTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
         }
     }
 
-    private void addTestStepsForBeforeHooks(List<Step> testSteps, List<PickleTag> tags) {
+    private void addTestStepsForBeforeHooks(List<HookStep> testSteps, List<PickleTag> tags) {
         addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
     }
 
-    private void addTestStepsForAfterHooks(List<Step> testSteps, List<PickleTag> tags) {
+    private void addTestStepsForAfterHooks(List<HookStep> testSteps, List<PickleTag> tags) {
         addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
     }
 
-    private void addTestStepsForHooks(List<Step> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
+    private void addTestStepsForHooks(List<HookStep> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
         for (HookDefinition hook : hooks) {
             if (hook.matches(tags)) {
-                Step testStep = new cucumber.runner.HookStep(hookType, new HookDefinitionMatch(hook));
+                HookStep testStep = new HookStep(hookType, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }
@@ -150,27 +150,13 @@ public class Runner implements UnreportedStepExecutor {
 
     private List<HookStep> getAfterStepHooks(List<PickleTag> tags) {
         List<HookStep> hookSteps = new ArrayList<HookStep>();
-
-        for (HookDefinition hook : glue.getAfterStepHooks()) {
-            if (hook.matches(tags)) {
-                HookStep testStep = new cucumber.runner.HookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
-                hookSteps.add(testStep);
-            }
-        }
-
+        addTestStepsForHooks(hookSteps, tags, glue.getAfterStepHooks(), HookType.AfterStep);
         return hookSteps;
     }
 
     private List<HookStep> getBeforeStepHooks(List<PickleTag> tags) {
         List<HookStep> hookSteps = new ArrayList<HookStep>();
-
-        for (HookDefinition hook : glue.getBeforeStepHooks()) {
-            if (hook.matches(tags)) {
-                HookStep testStep = new cucumber.runner.HookStep(HookType.BeforeStep, new HookDefinitionMatch(hook));
-                hookSteps.add(testStep);
-            }
-        }
-
+        addTestStepsForHooks(hookSteps, tags, glue.getBeforeStepHooks(), HookType.BeforeStep);
         return hookSteps;
     }
 

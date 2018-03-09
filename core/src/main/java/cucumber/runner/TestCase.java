@@ -9,27 +9,25 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 class TestCase implements cucumber.api.TestCase {
     private final PickleEvent pickleEvent;
     private final List<PickleTestStep> testSteps;
     private final boolean dryRun;
-    private final List<Step> beforeHooks;
-    private final List<Step> afterHooks;
+    private final List<HookStep> beforeHooks;
+    private final List<HookStep> afterHooks;
 
-    public TestCase(List<PickleTestStep> testSteps, List<Step> beforeHooks, List<Step> afterHooks, PickleEvent pickleEvent, boolean dryRun) {
+    public TestCase(List<PickleTestStep> testSteps,
+                    List<HookStep> beforeHooks,
+                    List<HookStep> afterHooks,
+                    PickleEvent pickleEvent,
+                    boolean dryRun) {
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
         this.pickleEvent = pickleEvent;
         this.dryRun = dryRun;
-    }
-
-    @Deprecated
-    public TestCase(List<PickleTestStep> testSteps, PickleEvent pickleEvent, boolean dryRun) {
-        this(testSteps, Collections.<Step>emptyList(), Collections.<Step>emptyList(), pickleEvent, dryRun);
     }
 
     void run(EventBus bus) {
@@ -38,19 +36,19 @@ class TestCase implements cucumber.api.TestCase {
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
 
-        for (Step before : beforeHooks) {
+        for (HookStep before : beforeHooks) {
             Result stepResult = before.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
         }
 
-        for (Step step : testSteps) {
+        for (PickleTestStep step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
         }
 
-        for (Step after : afterHooks) {
+        for (HookStep after : afterHooks) {
             Result stepResult = after.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
             scenarioResult.add(stepResult);
         }
