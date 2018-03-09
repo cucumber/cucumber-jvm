@@ -874,6 +874,14 @@
                     </dependencies>
                     <configuration>
                         <analysisConfiguration>
+                            <revapi.semver.ignore>
+                                <enabled>true</enabled>
+                                <versionIncreaseAllows>
+                                    <major>breaking</major>
+                                    <minor>nonBreaking</minor>
+                                    <patch>equivalent</patch>
+                                </versionIncreaseAllows>
+                            </revapi.semver.ignore>
                             <revapi.java>
                                 <filter>
                                     <packages>
