@@ -1,9 +1,7 @@
 package cucumber.runner;
 
-import cucumber.api.HookStep;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
-import cucumber.api.TestStep;
 import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.StepDefinitionMatch;
 import gherkin.pickles.Argument;
@@ -17,16 +15,16 @@ import static cucumber.api.Result.SEVERITY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 
-public class PickleTestStep extends TestStep {
+class PickleTestStep extends Step implements cucumber.api.TestStep {
     private final String uri;
     private final PickleStep step;
     private final List<HookStep> afterStepHookSteps;
 
-    public PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
+    PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
         this(uri, step, Collections.<HookStep>emptyList(), definitionMatch);
     }
 
-    public PickleTestStep(String uri, PickleStep step, List<HookStep> afterStepHookSteps, DefinitionMatch definitionMatch) {
+    PickleTestStep(String uri, PickleStep step, List<HookStep> afterStepHookSteps, DefinitionMatch definitionMatch) {
         super(definitionMatch);
         this.uri = uri;
         this.step = step;
@@ -34,24 +32,23 @@ public class PickleTestStep extends TestStep {
     }
 
     @Override
-    public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         List<Result> results = new ArrayList<Result>();
 
         results.add(super.run(bus, language, scenario, skipSteps));
 
-        for(HookStep after : afterStepHookSteps){
+        for (HookStep after : afterStepHookSteps) {
             results.add(after.run(bus, language, scenario, skipSteps));
         }
 
         return max(results, SEVERITY);
     }
 
-
-    public List<HookStep> getBeforeStepHookSteps() {
+    List<HookStep> getBeforeStepHookSteps() {
         return emptyList();
     }
 
-    public List<HookStep> getAfterStepHookSteps(){
+    List<HookStep> getAfterStepHookSteps() {
         return afterStepHookSteps;
     }
 
@@ -80,4 +77,8 @@ public class PickleTestStep extends TestStep {
         return step.getArgument();
     }
 
+    @Override
+    public String getPattern() {
+        return definitionMatch.getPattern();
+    }
 }

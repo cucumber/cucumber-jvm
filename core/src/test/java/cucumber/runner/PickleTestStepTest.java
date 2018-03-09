@@ -1,9 +1,10 @@
-package cucumber.api;
+package cucumber.runner;
 
+import cucumber.api.PendingException;
+import cucumber.api.Result;
+import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runner.EventBus;
-import cucumber.runner.PickleTestStep;
 import cucumber.runtime.DefinitionMatch;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
@@ -19,12 +20,12 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestStepTest {
+public class PickleTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
-    private final Step step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
+    private final PickleTestStep step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
 
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {

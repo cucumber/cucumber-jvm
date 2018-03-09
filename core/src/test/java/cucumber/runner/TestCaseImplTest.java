@@ -1,9 +1,9 @@
-package cucumber.api;
+package cucumber.runner;
 
+import cucumber.api.Result;
+import cucumber.api.Scenario;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
-import cucumber.runner.EventBus;
-import cucumber.runner.PickleTestStep;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestCaseTest {
+public class TestCaseImplTest {
     private final static String ENGLISH = "en";
 
     @Test

@@ -1,28 +1,20 @@
 package cucumber.api;
 
-import cucumber.runtime.DefinitionMatch;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-public abstract class TestStep extends Step {
+public interface TestStep extends Step {
+    String getPattern();
 
-    protected TestStep(DefinitionMatch definitionMatch) {
-        super(definitionMatch);
-    }
+    PickleStep getPickleStep();
 
-    public String getPattern() {
-        return definitionMatch.getPattern();
-    }
+    List<Argument> getStepArgument();
 
-    public abstract PickleStep getPickleStep();
+    int getStepLine();
 
-    public abstract String getStepText();
+    String getStepLocation();
 
-    public abstract String getStepLocation();
-
-    public abstract int getStepLine();
-
-    public abstract List<Argument> getStepArgument();
+    String getStepText();
 }
