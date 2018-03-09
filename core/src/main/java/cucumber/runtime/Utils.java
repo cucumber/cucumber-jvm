@@ -92,4 +92,13 @@ public class Utils {
                 .replace("'", "&#x27;")
                 .replace("/", "&#x2F;");
     }
+
+    public static String getUniqueTestNameForScenarioExample(String testCaseName, int exampleNumber) {
+        return testCaseName + (includesBlank(testCaseName) ? " " : "_") + exampleNumber;
+    }
+
+    private static boolean includesBlank(String testCaseName) {
+        return testCaseName.indexOf(' ') != -1;
+    }
+
 }

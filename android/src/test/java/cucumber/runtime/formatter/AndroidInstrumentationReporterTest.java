@@ -1,6 +1,8 @@
 package cucumber.runtime.formatter;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -27,6 +29,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import java.util.List;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -458,8 +462,118 @@ public class AndroidInstrumentationReporterTest {
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.OK), secondCaptor.capture());
     }
 
+    @Test
+    public void test_names_within_feature_are_made_unique_by_appending_blank_and_number() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        TestCase testCase1 = mockTestCase(testCaseName("not unique name"));
+        TestCase testCase2 = mockTestCase(testCaseName("not unique name"));
+        TestCase testCase3 = mockTestCase(testCaseName("not unique name"));
+
+        // when
+        simulateRunningTestCases(formatter, asList(testCase1, testCase2, testCase3));
+
+        // then
+        final InOrder inOrder = inOrder(instrumentation);
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name 2"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name 3"));
+    }
+
+    @Test
+    public void test_names_within_are_made_unique_by_appending_underscore_and_number_when_no_blank_in_name() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        TestCase testCase1 = mockTestCase(testCaseName("not_unique_name"));
+        TestCase testCase2 = mockTestCase(testCaseName("not_unique_name"));
+        TestCase testCase3 = mockTestCase(testCaseName("not_unique_name"));
+
+        // when
+        simulateRunningTestCases(formatter, asList(testCase1, testCase2, testCase3));
+
+        // then
+        final InOrder inOrder = inOrder(instrumentation);
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not_unique_name"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not_unique_name_2"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not_unique_name_3"));
+    }
+
+    @Test
+    public void test_names_in_different_features_can_be_the_same() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        TestCase testCase1 = mockTestCase(featureUri("path/file1.feature"), testCaseName("not unique name"));
+        TestCase testCase2 = mockTestCase(featureUri("path/file2.feature"), testCaseName("not unique name"));
+
+        // when
+        simulateRunningTestCases(formatter, asList(testCase1, testCase2));
+
+        // then
+        final InOrder inOrder = inOrder(instrumentation);
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name"));
+    }
+
+    @Test
+    public void test_names_are_made_unique_also_when_not_consecutive() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        TestCase testCase1 = mockTestCase(testCaseName("not unique name"));
+        TestCase testCase2 = mockTestCase(testCaseName("unique name"));
+        TestCase testCase3 = mockTestCase(testCaseName("not unique name"));
+
+        // when
+        simulateRunningTestCases(formatter, asList(testCase1, testCase2, testCase3));
+
+        // then
+        final InOrder inOrder = inOrder(instrumentation);
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("unique name"));
+        assertThat(captureTestName(inOrder, instrumentation), equalTo("not unique name 2"));
+    }
+
     private void mockResultStatus(Result result, Result.Type status) {
         when(result.getStatus()).thenReturn(status);
         when(result.is(Result.Type.PASSED)).thenReturn(status == Result.Type.PASSED);
+    }
+
+    private TestCase mockTestCase(String testCaseName) {
+        return mockTestCase(featureUri("path/file.feature"), testCaseName);
+    }
+
+    private TestCase mockTestCase(String featureUri, String testCaseName) {
+        TestCase testCase = mock(TestCase.class);
+        when(testCase.getUri()).thenReturn(featureUri);
+        when(testCase.getName()).thenReturn(testCaseName);
+        return testCase;
+    }
+
+    private String testCaseName(String name) {
+        return name;
+    }
+
+    private String featureUri(String uri) {
+        return uri;
+    }
+
+    private void simulateRunningTestCases(AndroidInstrumentationReporter formatter, List<TestCase> testCases) {
+        mockResultStatus(firstResult, Result.Type.PASSED);
+        formatter.setNumberOfTests(testCases.size());
+        for (TestCase testCase : testCases) {
+            formatter.startTestCase(testCase);
+            formatter.finishTestStep(firstResult);
+            formatter.finishTestCase();
+        }
+    }
+
+    private String captureTestName(InOrder inOrder, Instrumentation intrumentation) {
+        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
+        inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.START), captor.capture());
+        final Bundle actualBundle = captor.getValue();
+        return actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST);
     }
 }

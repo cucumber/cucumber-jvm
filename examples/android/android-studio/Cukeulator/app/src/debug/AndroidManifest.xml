@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cucumber.cukeulator">
+
+    <!-- For Cucumber reports, we require the following permissions.
+	     (We place this in this debug manifest to avoid that this permissions are provided by default in release APKs.) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+</manifest>

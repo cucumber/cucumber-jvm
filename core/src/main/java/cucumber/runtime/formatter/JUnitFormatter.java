@@ -12,10 +12,9 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Utils;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,10 +27,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -233,16 +230,12 @@ final class JUnitFormatter implements Formatter, StrictAware {
         private String calculateElementName(cucumber.api.TestCase testCase) {
             String testCaseName = testCase.getName();
             if (testCaseName.equals(previousTestCaseName)) {
-                return testCaseName + (includesBlank(testCaseName) ? " " : "_") + ++exampleNumber;
+                return Utils.getUniqueTestNameForScenarioExample(testCaseName, ++exampleNumber);
             } else {
                 previousTestCaseName = testCase.getName();
                 exampleNumber = 1;
                 return testCaseName;
             }
-        }
-
-        private boolean includesBlank(String testCaseName) {
-            return testCaseName.indexOf(' ') != -1;
         }
 
         public void addTestCaseElement(Document doc, Element tc, Result result) {
@@ -325,7 +318,9 @@ final class JUnitFormatter implements Formatter, StrictAware {
             // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
             // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
             // are displayed as double line breaks.
-            child.appendChild(doc.createCDATASection(sb.toString().replace(System.lineSeparator(), "\n")));
+            // TODO Java 7 PR #1147: Inlined System.lineSeparator()
+            String systemLineSeperator = System.getProperty("line.separator");
+            child.appendChild(doc.createCDATASection(sb.toString().replace(systemLineSeperator, "\n")));
             return child;
         }
 
