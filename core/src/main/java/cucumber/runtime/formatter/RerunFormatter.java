@@ -27,7 +27,7 @@ final class RerunFormatter implements Formatter, StrictAware {
     private EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
         public void receive(TestCaseFinished event) {
-            handeTestCaseFinished(event);
+            handleTestCaseFinished(event);
         }
     };
     private EventHandler<TestRunFinished> runFinishHandler = new EventHandler<TestRunFinished>() {
@@ -53,7 +53,7 @@ final class RerunFormatter implements Formatter, StrictAware {
         isStrict = strict;
     }
 
-    private void handeTestCaseFinished(TestCaseFinished event) {
+    private void handleTestCaseFinished(TestCaseFinished event) {
         if (!event.result.isOk(isStrict)) {
             recordTestFailed(event.testCase);
         }
