@@ -331,20 +331,23 @@ final class JSONFormatter implements Formatter {
         return embedMap;
     }
 
-    private Map<String, Object> createMatchMap(Step testStep, Result result) {
+    private Map<String, Object> createMatchMap(Step step, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if (!testStep.getDefinitionArgument().isEmpty()) {
-            List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
-            for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
-                Map<String, Object> argumentMap = new HashMap<String, Object>();
-                argumentMap.put("val", argument.getVal());
-                argumentMap.put("offset", argument.getOffset());
-                argumentList.add(argumentMap);
+        if(step instanceof TestStep) {
+            TestStep testStep = (TestStep) step;
+            if (!testStep.getDefinitionArgument().isEmpty()) {
+                List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
+                for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
+                    Map<String, Object> argumentMap = new HashMap<String, Object>();
+                    argumentMap.put("val", argument.getVal());
+                    argumentMap.put("offset", argument.getOffset());
+                    argumentList.add(argumentMap);
+                }
+                matchMap.put("arguments", argumentList);
             }
-            matchMap.put("arguments", argumentList);
         }
         if (!result.is(Result.Type.UNDEFINED)) {
-            matchMap.put("location", testStep.getCodeLocation());
+            matchMap.put("location", step.getCodeLocation());
         }
         return matchMap;
     }

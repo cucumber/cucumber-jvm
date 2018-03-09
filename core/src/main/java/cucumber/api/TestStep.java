@@ -1,16 +1,15 @@
 package cucumber.api;
 
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleStep;
-
 import java.util.List;
 
 public interface TestStep extends Step {
     String getPattern();
 
-    PickleStep getPickleStep();
+    gherkin.pickles.PickleStep getPickleStep();
 
-    List<Argument> getStepArgument();
+    List<cucumber.api.Argument> getDefinitionArgument();
+
+    List<gherkin.pickles.Argument> getStepArgument();
 
     int getStepLine();
 

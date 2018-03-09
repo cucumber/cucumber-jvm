@@ -1,6 +1,5 @@
 package cucumber.runner;
 
-import cucumber.api.Argument;
 import cucumber.api.Pending;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
@@ -11,7 +10,6 @@ import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
 
 import java.util.Arrays;
-import java.util.List;
 
 abstract class Step implements cucumber.api.Step {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
@@ -32,11 +30,6 @@ abstract class Step implements cucumber.api.Step {
     @Override
     public String getCodeLocation() {
         return definitionMatch.getCodeLocation();
-    }
-
-    @Override
-    public List<Argument> getDefinitionArgument() {
-        return definitionMatch.getArguments();
     }
 
     Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
