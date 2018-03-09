@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;

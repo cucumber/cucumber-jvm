@@ -1,8 +1,9 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Argument;
 import cucumber.api.Result;
 import cucumber.api.formatter.AnsiEscapes;
-import cucumber.runtime.Argument;
+import cucumber.runtime.Arguments;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
@@ -15,13 +16,13 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static cucumber.runtime.Arguments.createArgument;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class PrettyFormatterTest {
@@ -396,8 +397,8 @@ public class PrettyFormatterTest {
     @Test
     public void should_mark_subsequent_arguments_in_steps() throws Throwable {
         Formats formats = new AnsiFormats();
-        Argument arg1 = new Argument(5, "arg1");
-        Argument arg2 = new Argument(15, "arg2");
+        Argument arg1 = createArgument(5, "arg1");
+        Argument arg2 = createArgument(15, "arg2");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
         String formattedText = prettyFormatter.formatStepText("Given ", "text arg1 text arg2", formats.get("passed"), formats.get("passed_arg"), asList(arg1, arg2));
@@ -412,8 +413,8 @@ public class PrettyFormatterTest {
     @Test
     public void should_mark_nested_argument_as_part_of_full_argument(){
         Formats formats = new AnsiFormats();
-        Argument enclosingArg = new Argument(19, " and not yet confirmed");
-        Argument nestedArg = new Argument(23, " not yet ");
+        Argument enclosingArg = createArgument(19, " and not yet confirmed");
+        Argument nestedArg = createArgument(23, " not yet ");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
         String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg));
@@ -426,9 +427,9 @@ public class PrettyFormatterTest {
     @Test
     public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
         Formats formats = new AnsiFormats();
-        Argument enclosingArg = new Argument(19, " and not yet confirmed");
-        Argument nestedArg = new Argument(23, " not yet ");
-        Argument nestedNestedArg = new Argument(27, "yet ");
+        Argument enclosingArg = createArgument(19, " and not yet confirmed");
+        Argument nestedArg = createArgument(23, " not yet ");
+        Argument nestedNestedArg = createArgument(27, "yet ");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
         String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg, nestedNestedArg));

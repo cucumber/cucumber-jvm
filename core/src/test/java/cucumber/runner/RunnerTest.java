@@ -1,8 +1,8 @@
 package cucumber.runner;
 
+import cucumber.api.Argument;
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
-import cucumber.runtime.Argument;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;

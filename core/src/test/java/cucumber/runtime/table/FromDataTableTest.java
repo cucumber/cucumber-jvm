@@ -1,12 +1,12 @@
 package cucumber.runtime.table;
 
+import cucumber.api.Argument;
 import cucumber.api.DataTable;
 import cucumber.api.Format;
 import cucumber.api.Transformer;
 import cucumber.api.Transpose;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
-import cucumber.runtime.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.StubStepDefinition;

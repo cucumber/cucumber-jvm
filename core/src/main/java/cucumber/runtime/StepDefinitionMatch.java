@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.TableConverter;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static cucumber.runtime.Arguments.createArgument;
 import static cucumber.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
@@ -124,7 +126,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         if (!step.getArgument().isEmpty()) {
             gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
             if (stepArgument instanceof PickleString) {
-                arguments.add(new Argument(-1, "DocString:" + ((PickleString) stepArgument).getContent()));
+                arguments.add(createArgument(-1, "DocString:" + ((PickleString) stepArgument).getContent()));
             } else if (stepArgument instanceof PickleTable) {
                 List<List<String>> rows = map(((PickleTable) stepArgument).getRows(), new Mapper<PickleRow, List<String>>() {
                     @Override
@@ -136,7 +138,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
                         return raw;
                     }
                 });
-                arguments.add(new Argument(-1, "Table:" + rows.toString()));
+                arguments.add(createArgument(-1, "Table:" + rows.toString()));
             }
         }
         return arguments;

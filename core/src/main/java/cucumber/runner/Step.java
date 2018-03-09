@@ -1,5 +1,6 @@
 package cucumber.runner;
 
+import cucumber.api.Argument;
 import cucumber.api.Pending;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
@@ -34,7 +35,7 @@ abstract class Step implements cucumber.api.Step {
     }
 
     @Override
-    public List<cucumber.runtime.Argument> getDefinitionArgument() {
+    public List<Argument> getDefinitionArgument() {
         return definitionMatch.getArguments();
     }
 

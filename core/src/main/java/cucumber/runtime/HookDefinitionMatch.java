@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.Scenario;
 
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class HookDefinitionMatch implements DefinitionMatch {
 
     @Override
     public Match getMatch() {
-        return new Match(Collections.<Argument>emptyList(), hookDefinition.getLocation(false));
+        return new Match(getArguments(), hookDefinition.getLocation(false));
     }
 
     @Override
@@ -39,6 +40,6 @@ public class HookDefinitionMatch implements DefinitionMatch {
 
     @Override
     public List<Argument> getArguments() {
-        return Collections.<Argument>emptyList();
+        return Collections.emptyList();
     }
 }

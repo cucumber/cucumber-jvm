@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Argument;
 import cucumber.api.Result;
 import cucumber.api.Step;
 import cucumber.api.TestCase;
@@ -15,7 +16,6 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.Argument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.ast.Background;
