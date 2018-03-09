@@ -1,6 +1,5 @@
 package cucumber.examples.java.calculator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.Configuration;
 import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTableType;
@@ -13,8 +12,6 @@ import static java.util.Locale.ENGLISH;
 
 public class ParameterTypes implements Configuration {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     public TypeRegistry createTypeRegistry() {
         TypeRegistry parameterTypeRegistry = new TypeRegistry(ENGLISH);
@@ -22,12 +19,21 @@ public class ParameterTypes implements Configuration {
         parameterTypeRegistry.defineDataTableType(new DataTableType(
             "entry",
             Entry.class,
-            (Map<String, String> row) -> objectMapper.convertValue(row, Entry.class)));
+            (Map<String, String> row) -> new Entry(
+                Integer.valueOf(row.get("first")),
+                Integer.valueOf(row.get("second")),
+                row.get("operation")
+            )
+        ));
 
         parameterTypeRegistry.defineDataTableType(new DataTableType(
             "groceries",
             Grocery.class,
-            (Map<String, String> row) -> objectMapper.convertValue(row, Grocery.class)));
+            (Map<String, String> row) -> new Grocery(
+                row.get("name"),
+                ShoppingStepdefs.Price.fromString(row.get("price"))
+            )
+        ));
 
         return parameterTypeRegistry;
     }

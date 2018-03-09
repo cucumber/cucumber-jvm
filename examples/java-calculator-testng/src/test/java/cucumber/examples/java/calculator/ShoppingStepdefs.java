@@ -30,28 +30,26 @@ public class ShoppingStepdefs {
         assertEquals(-calc.value().intValue(), change);
     }
 
-    public static class Grocery {
-        public String name;
-        public Price price;
+    static class Grocery {
+        private String name;
+        private Price price;
 
-        public Grocery() {
-            super();
+        Grocery(String name, Price price) {
+            this.name = name;
+            this.price = price;
         }
     }
 
-    public static final class Price {
+    static final class Price {
         private int value;
 
-        public Price(int value) {
+        Price(int value) {
             this.value = value;
         }
 
-        public static Price fromString(String value) {
+        static Price fromString(String value) {
             return new Price(Integer.parseInt(value));
         }
 
-        public int getValue() {
-            return value;
-        }
     }
 }

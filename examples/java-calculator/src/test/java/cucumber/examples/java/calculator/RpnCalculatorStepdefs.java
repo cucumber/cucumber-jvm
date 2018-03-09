@@ -49,38 +49,20 @@ public class RpnCalculatorStepdefs {
     @Given("the previous entries:")
     public void thePreviousEntries(List<Entry> entries) {
         for (Entry entry : entries) {
-            calc.push(entry.getFirst());
-            calc.push(entry.getSecond());
-            calc.push(entry.getOperation());
+            calc.push(entry.first);
+            calc.push(entry.second);
+            calc.push(entry.operation);
         }
     }
 
-    public static final class Entry {
-        private Integer first;
-        private Integer second;
-        private String operation;
+    static final class Entry {
+        private final Integer first;
+        private final Integer second;
+        private final String operation;
 
-        public Integer getFirst() {
-            return first;
-        }
-
-        public void setFirst(Integer first) {
+        Entry(Integer first, Integer second, String operation) {
             this.first = first;
-        }
-
-        public Integer getSecond() {
-            return second;
-        }
-
-        public void setSecond(Integer second) {
             this.second = second;
-        }
-
-        public String getOperation() {
-            return operation;
-        }
-
-        public void setOperation(String operation) {
             this.operation = operation;
         }
     }

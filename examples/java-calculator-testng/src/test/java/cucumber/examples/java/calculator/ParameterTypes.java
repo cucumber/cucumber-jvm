@@ -1,8 +1,8 @@
 package cucumber.examples.java.calculator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.Configuration;
 import cucumber.api.TypeRegistry;
+import cucumber.examples.java.calculator.ShoppingStepdefs.Price;
 import io.cucumber.datatable.DataTableType;
 import cucumber.examples.java.calculator.ShoppingStepdefs.Grocery;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -11,13 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import static cucumber.examples.java.calculator.RpnCalculatorStepdefs.Entry;
 import static java.text.DateFormat.MEDIUM;
 import static java.text.DateFormat.getDateInstance;
 import static java.util.Locale.ENGLISH;
 
 public class ParameterTypes implements Configuration {
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public TypeRegistry createTypeRegistry() {
@@ -39,13 +38,22 @@ public class ParameterTypes implements Configuration {
 
         parameterTypeRegistry.defineDataTableType(new DataTableType(
             "entry",
-            RpnCalculatorStepdefs.Entry.class,
-            (Map<String, String> row) -> objectMapper.convertValue(row, RpnCalculatorStepdefs.Entry.class)));
+            Entry.class,
+            (Map<String, String> row) -> new Entry(
+                Integer.valueOf(row.get("first")),
+                Integer.valueOf(row.get("second")),
+                row.get("operation")
+            )
+        ));
 
         parameterTypeRegistry.defineDataTableType(new DataTableType(
             "groceries",
             Grocery.class,
-            (Map<String, String> row) -> objectMapper.convertValue(row, Grocery.class)));
+            (Map<String, String> row) -> new Grocery(
+                row.get("name"),
+                Price.fromString(row.get("price"))
+            )
+        ));
 
         return parameterTypeRegistry;
     }
