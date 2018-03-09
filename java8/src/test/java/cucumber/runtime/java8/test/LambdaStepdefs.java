@@ -2,10 +2,10 @@ package cucumber.runtime.java8.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import cucumber.api.DataTable;
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 
@@ -21,6 +21,24 @@ public class LambdaStepdefs implements En {
             assertNotSame(this, lastInstance);
             lastInstance = this;
         });
+
+        BeforeStep((Scenario scenario) -> {
+            assertSame(this, lastInstance);
+            lastInstance = this;
+        });
+
+
+        AfterStep((Scenario scenario) -> {
+            assertSame(this, lastInstance);
+            lastInstance = this;
+        });
+
+
+        After((Scenario scenario) -> {
+            assertSame(this, lastInstance);
+            lastInstance = this;
+        });
+
 
         Before(this::methodThatDeclaresException);
 

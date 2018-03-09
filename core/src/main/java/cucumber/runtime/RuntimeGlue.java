@@ -125,7 +125,9 @@ public class RuntimeGlue implements Glue {
     @Override
     public void removeScenarioScopedGlue() {
         removeScenarioScopedHooks(beforeHooks);
+        removeScenarioScopedHooks(beforeStepHooks);
         removeScenarioScopedHooks(afterHooks);
+        removeScenarioScopedHooks(afterStepHooks);
         removeScenarioScopedStepdefs();
     }
 
