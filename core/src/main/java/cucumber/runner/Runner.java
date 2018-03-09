@@ -126,7 +126,8 @@ public class Runner implements UnreportedStepExecutor {
 
 
             List<HookStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
-            testSteps.add(new PickleTestStep(pickleEvent.uri, step, afterStepHookSteps, match));
+            List<HookStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
+            testSteps.add(new PickleTestStep(pickleEvent.uri, beforeStepHookSteps, step, afterStepHookSteps, match));
         }
     }
 
@@ -153,6 +154,19 @@ public class Runner implements UnreportedStepExecutor {
         for (HookDefinition hook : glue.getAfterStepHooks()) {
             if (hook.matches(tags)) {
                 HookStep testStep = new cucumber.runner.HookStep(HookType.AfterStep, new HookDefinitionMatch(hook));
+                hookSteps.add(testStep);
+            }
+        }
+
+        return hookSteps;
+    }
+
+    private List<HookStep> getBeforeStepHooks(List<PickleTag> tags) {
+        List<HookStep> hookSteps = new ArrayList<HookStep>();
+
+        for (HookDefinition hook : glue.getBeforeStepHooks()) {
+            if (hook.matches(tags)) {
+                HookStep testStep = new cucumber.runner.HookStep(HookType.BeforeStep, new HookDefinitionMatch(hook));
                 hookSteps.add(testStep);
             }
         }

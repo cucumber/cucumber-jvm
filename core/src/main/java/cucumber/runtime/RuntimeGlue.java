@@ -16,6 +16,7 @@ import java.util.TreeMap;
 public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    final List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
     final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
@@ -46,6 +47,11 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
+    public void addBeforeStepHook(HookDefinition hookDefinition) {
+        beforeStepHooks.add(hookDefinition);
+        Collections.sort(beforeStepHooks, new HookComparator(true));
+    }
+    @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
         Collections.sort(afterHooks, new HookComparator(false));
@@ -60,6 +66,11 @@ public class RuntimeGlue implements Glue {
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getBeforeStepHooks() {
+        return beforeStepHooks;
     }
 
     @Override

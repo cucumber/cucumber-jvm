@@ -17,6 +17,8 @@ public interface Glue {
 
     void addAfterHook(HookDefinition hookDefinition);
 
+    void addBeforeStepHook(HookDefinition beforeStepHook);
+
     void addAfterStepHook(HookDefinition hookDefinition);
 
     List<HookDefinition> getBeforeHooks();
@@ -24,6 +26,8 @@ public interface Glue {
     List<HookDefinition> getAfterHooks();
 
     List<HookDefinition> getAfterStepHooks();
+
+    List<HookDefinition> getBeforeStepHooks();
 
     StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step);
 

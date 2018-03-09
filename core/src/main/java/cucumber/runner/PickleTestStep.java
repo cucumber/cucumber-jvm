@@ -19,23 +19,32 @@ class PickleTestStep extends Step implements cucumber.api.TestStep {
     private final String uri;
     private final PickleStep step;
     private final List<HookStep> afterStepHookSteps;
+    private final List<HookStep> beforeStepHookSteps;
 
     PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
-        this(uri, step, Collections.<HookStep>emptyList(), definitionMatch);
+        this(uri, Collections.<HookStep>emptyList(), step, Collections.<HookStep>emptyList(), definitionMatch);
     }
 
-    PickleTestStep(String uri, PickleStep step, List<HookStep> afterStepHookSteps, DefinitionMatch definitionMatch) {
+    PickleTestStep(String uri, List<HookStep> beforeStepHookSteps, PickleStep step, List<HookStep> afterStepHookSteps, DefinitionMatch definitionMatch) {
         super(definitionMatch);
         this.uri = uri;
         this.step = step;
         this.afterStepHookSteps = afterStepHookSteps;
+        this.beforeStepHookSteps = beforeStepHookSteps;
     }
 
     @Override
     Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+        boolean skipNextStep = skipSteps;
         List<Result> results = new ArrayList<Result>();
 
-        results.add(super.run(bus, language, scenario, skipSteps));
+        for (HookStep before : beforeStepHookSteps) {
+            Result result = before.run(bus, language, scenario, skipSteps);
+            skipNextStep |= !result.is(Result.Type.PASSED);
+            results.add(result);
+        }
+
+        results.add(super.run(bus, language, scenario, skipNextStep));
 
         for (HookStep after : afterStepHookSteps) {
             results.add(after.run(bus, language, scenario, skipSteps));
@@ -45,7 +54,7 @@ class PickleTestStep extends Step implements cucumber.api.TestStep {
     }
 
     List<HookStep> getBeforeStepHookSteps() {
-        return emptyList();
+        return beforeStepHookSteps;
     }
 
     List<HookStep> getAfterStepHookSteps() {
