@@ -861,18 +861,58 @@
                         </execution>
                     </executions>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.revapi</groupId>
+                    <artifactId>revapi-maven-plugin</artifactId>
+                    <version>0.10.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.revapi</groupId>
+                            <artifactId>revapi-java</artifactId>
+                            <version>0.15.1</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <analysisConfiguration>
+                            <revapi.java>
+                                <filter>
+                                    <packages>
+                                        <regex>true</regex>
+                                        <exclude>
+                                            <item>cucumber\.runner\..*</item>
+                                            <item>cucumber\.runtime\..*</item>
+                                            <item>cucumber\.util\..*</item>
+                                            <!--The logging dependencies for Spring are provided. This causes them to
+                                            be missing in the dependency hierarchy. A false positive. -->
+                                            <item>org\.springframework\.core\..*</item>
+                                        </exclude>
+                                    </packages>
+                                </filter>
+                            </revapi.java>
+                        </analysisConfiguration>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.7</version>
                 </plugin>
-
-
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
