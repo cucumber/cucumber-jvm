@@ -37,13 +37,6 @@ public @interface CucumberOptions {
     String[] tags() default {};
 
     /**
-     * @return what formatter(s) to use
-     * @deprecated use {@link #plugin()}
-     */
-    @Deprecated
-    String[] format() default {};
-
-    /**
      * @return what plugins(s) to use
      */
     String[] plugin() default {};

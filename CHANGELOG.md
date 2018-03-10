@@ -1,6 +1,22 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [2.3.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.3.1...master) (In Git)
+## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...master) (In Git)
+
+### Added
+
+### Changed
+ * [Spring] Limit context configuration to a single class. ([#1240](https://github.com/cucumber/cucumber-jvm/pull/1240), [#1246](https://github.com/cucumber/cucumber-jvm/pull/1246) Björn Rasmusson, M.P. Korstanje)  
+
+### Deprecated
+
+### Removed
+ * [JUnit] Remove Cucumber.createRuntime method ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje) 
+ * [Core] Remove 'dummy' results from junit formatter ([#1331](https://github.com/cucumber/cucumber-jvm/pull/1331), [#1326](https://github.com/cucumber/cucumber-jvm/pull/1326) Christoph Kutzinski) 
+ * [Core] Remove the deprecated -f/--format option. ([#1295](https://github.com/cucumber/cucumber-jvm/pull/1295) Björn Rasmusson, M.P. Korstanje)  
+
+### Fixed
+
+## [2.4.0](https://github.com/cucumber/cucumber-jvm/compare/v2.3.1...v2.4.0)
 
 ### Added
  * [JUnit] Add readme to cucumber-junit ([#1306](https://github.com/cucumber/cucumber-jvm/pull/1306) M.P. Korstanje)
@@ -8,10 +24,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Changed
  * [Java] Remove 'throws Exception' from JavaSnippet ([#1308](https://github.com/cucumber/cucumber-jvm/pull/1308) Marit van Dijk)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
  * [Android] Make test names passed to the instrumentation unique ([#1094](https://github.com/cucumber/cucumber-jvm/pull/1094) Christian Gnüchtel)

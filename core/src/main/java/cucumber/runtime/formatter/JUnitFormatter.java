@@ -142,9 +142,6 @@ final class JUnitFormatter implements Formatter, StrictAware {
             rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
             rootElement.setAttribute("skipped", String.valueOf(rootElement.getElementsByTagName("skipped").getLength()));
             rootElement.setAttribute("time", sumTimes(rootElement.getElementsByTagName("testcase")));
-            if (rootElement.getElementsByTagName("testcase").getLength() == 0) {
-                addDummyTestCase(); // to avoid failed Jenkins jobs
-            }
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -155,16 +152,6 @@ final class JUnitFormatter implements Formatter, StrictAware {
         } catch (TransformerException e) {
             throw new CucumberException("Error while transforming.", e);
         }
-    }
-
-    private void addDummyTestCase() {
-        Element dummy = doc.createElement("testcase");
-        dummy.setAttribute("classname", "dummy");
-        dummy.setAttribute("name", "dummy");
-        rootElement.appendChild(dummy);
-        Element skipped = doc.createElement("skipped");
-        skipped.setAttribute("message", "No features found");
-        dummy.appendChild(skipped);
     }
 
     private String sumTimes(NodeList testCaseNodes) {

@@ -55,7 +55,7 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // Use the stable Cucumber version
-    androidTestCompile 'io.cucumber:cucumber-android:2.3.0'
+    androidTestCompile 'io.cucumber:cucumber-android:2.4.0'
     //
     // The following dependency works, if you build Cucumber-JVM on your local machine:
     //
@@ -87,7 +87,7 @@ dependencies {
     // and Gradle versions. But, if your Cucumber-JVM snapshot dependency is not updated
     // automatically by Gradle, the flag always bypasses any caching of dependencies.
 
-    androidTestCompile 'io.cucumber:cucumber-picocontainer:2.3.1'
+    androidTestCompile 'io.cucumber:cucumber-picocontainer:2.4.0'
 
     // compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
