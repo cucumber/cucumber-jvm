@@ -15,29 +15,35 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FeatureBuilder {
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private final List<CucumberFeature> cucumberFeatures;
+    private final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
     private final char fileSeparatorChar;
     private final MessageDigest md5;
     private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
 
-    public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
-        this(cucumberFeatures, File.separatorChar);
+    public FeatureBuilder() {
+        this(File.separatorChar);
     }
 
-    FeatureBuilder(List<CucumberFeature> cucumberFeatures, char fileSeparatorChar) {
-        this.cucumberFeatures = cucumberFeatures;
+    FeatureBuilder(char fileSeparatorChar) {
         this.fileSeparatorChar = fileSeparatorChar;
         try {
             this.md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             throw new CucumberException(e);
         }
+    }
+
+    public List<CucumberFeature> build() {
+        List<CucumberFeature> ret = new ArrayList<CucumberFeature>(cucumberFeatures);
+        cucumberFeatures.clear();
+        return ret;
     }
 
     public void parse(Resource resource) {
@@ -59,7 +65,7 @@ public class FeatureBuilder {
         } catch (ParserException e) {
             throw new CucumberException(e);
         }
-     }
+    }
 
     private String convertFileSeparatorToForwardSlash(String path) {
         return path.replace(fileSeparatorChar, '/');
@@ -69,10 +75,9 @@ public class FeatureBuilder {
         return new BigInteger(1, md5.digest(gherkin.getBytes(UTF8))).toString(16);
     }
 
-    public String read(Resource resource) {
+    private static String read(Resource resource) {
         try {
-            String source = Encoding.readFile(resource);
-            return source;
+            return Encoding.readFile(resource);
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }

@@ -40,8 +40,7 @@ public class CucumberFeature implements Serializable {
     }
 
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths) {
-        final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
-        final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
+        final FeatureBuilder builder = new FeatureBuilder();
         for (String featurePath : featurePaths) {
             if (featurePath.startsWith("@")) {
                 loadFromRerunFile(builder, resourceLoader, featurePath.substring(1));
@@ -49,6 +48,7 @@ public class CucumberFeature implements Serializable {
                 loadFromFeaturePath(builder, resourceLoader, featurePath, false);
             }
         }
+        final List<CucumberFeature> cucumberFeatures = builder.build();
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
     }

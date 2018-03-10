@@ -72,8 +72,7 @@ public class StepdefGeneratorTest {
     }
 
     private List<CucumberFeature> features() throws IOException {
-        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
-        FeatureBuilder fb = new FeatureBuilder(features);
+        FeatureBuilder fb = new FeatureBuilder();
         fb.parse(new Resource() {
             @Override
             public String getPath() {
@@ -105,7 +104,7 @@ public class StepdefGeneratorTest {
                 throw new UnsupportedOperationException();
             }
         });
-        return features;
+        return fb.build();
     }
 
     private StepDefinition def(final String pattern) {
