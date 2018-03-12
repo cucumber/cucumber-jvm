@@ -257,9 +257,15 @@ public class RuntimeOptions {
 
     private int printI18n(String language) {
         IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+        List<String> languages = dialectProvider.getLanguages();
 
         if (language.equalsIgnoreCase("help")) {
-            List<GherkinDialect> dialects = dialectProvider.getDialects();
+            List<GherkinDialect> dialects = new ArrayList<GherkinDialect>();
+            for (String code : languages) {
+                GherkinDialect dialect = dialectProvider.getDialect(code, null);
+                dialects.add(dialect);
+            }
+
             int widestLanguage = findWidestLanguage(dialects);
             int widestName = findWidestName(dialects);
             int widestNativeName = findWidestNativeName(dialects);
@@ -271,7 +277,6 @@ public class RuntimeOptions {
             return 0;
         }
 
-        List<String> languages = dialectProvider.getLanguages();
         if (languages.contains(language)) {
             return printKeywordsFor(dialectProvider.getDialect(language, null));
         }
