@@ -44,6 +44,7 @@ final class JSONFormatter implements Formatter {
     private Map<String, Object> currentTestCaseMap;
     private List<Map<String, Object>> currentStepsList;
     private Map<String, Object> currentStepOrHookMap;
+    private Map<String, Object> currentBeforeStepHookList = new HashMap<String, Object>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
@@ -137,6 +138,11 @@ final class JSONFormatter implements Formatter {
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
             }
             currentStepOrHookMap = createTestStep(testStep);
+            //add beforeSteps list to current step
+            if (currentBeforeStepHookList.containsKey(HookType.Before.toString())) {
+                currentStepOrHookMap.put(HookType.Before.toString(), currentBeforeStepHookList.get(HookType.Before.toString()));
+                currentBeforeStepHookList.clear();
+            }
             currentStepsList.add(currentStepOrHookMap);
         } else if(event.testStep instanceof HookStep) {
             HookStep hookStep = (HookStep) event.testStep;
@@ -294,13 +300,17 @@ final class JSONFormatter implements Formatter {
         else
             hookName = "before";
 
+
         Map<String, Object> mapToAddTo;
         if (hookType == HookType.After || hookType == HookType.Before) {
             mapToAddTo = currentTestCaseMap;
         }
         else {
-            //get latest added step
-            mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
+            if (hookType == HookType.AfterStep)
+                //get latest added step
+                mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
+            else
+                mapToAddTo = currentBeforeStepHookList;
         }
 
         if (!mapToAddTo.containsKey(hookName)) {

@@ -198,11 +198,12 @@ public class TestHelper {
             final List<Answer<Object>> hookActions) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
         for (int i = 0; i < hooks.size(); ++i) {
             String hookLocation = hookLocations.size() > i ? hookLocations.get(i) : null;
             Answer<Object> hookAction  = hookActions.size() > i ? hookActions.get(i) : null;
-            TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks, afterStepHooks);
+            TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks, beforeStepHooks, afterStepHooks);
         }
         if (!beforeHooks.isEmpty()) {
             when(glue.getBeforeHooks()).thenReturn(beforeHooks);
@@ -210,13 +211,16 @@ public class TestHelper {
         if (!afterHooks.isEmpty()) {
             when(glue.getAfterHooks()).thenReturn(afterHooks);
         }
+        if (!beforeStepHooks.isEmpty()) {
+            when(glue.getBeforeStepHooks()).thenReturn(beforeStepHooks);
+        }
         if (!afterStepHooks.isEmpty()) {
             when(glue.getAfterStepHooks()).thenReturn(afterStepHooks);
         }
     }
 
     private static void mockHook(final SimpleEntry<String, Result> hookEntry, final String hookLocation, final Answer<Object> action,
-                                 final List<HookDefinition> beforeHooks, final List<HookDefinition> afterHooks, final List<HookDefinition> afterStepHooks) throws Throwable {
+                                 final List<HookDefinition> beforeHooks, final List<HookDefinition> afterHooks, final List<HookDefinition> beforeStepHooks, final List<HookDefinition> afterStepHooks) throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
         if (hookLocation != null) {
@@ -236,6 +240,8 @@ public class TestHelper {
             afterHooks.add(hook);
         } else if ("afterstep".equals(hookEntry.getKey())) {
             afterStepHooks.add(hook);
+        } else if ("beforestep".equals(hookEntry.getKey())) {
+            beforeStepHooks.add(hook);
         } else {
             fail("Only before, after and afterstep hooks are allowed, hook type found was: " + hookEntry.getKey());
         }
