@@ -302,15 +302,21 @@ final class JSONFormatter implements Formatter {
 
 
         Map<String, Object> mapToAddTo;
-        if (hookType == HookType.After || hookType == HookType.Before) {
-            mapToAddTo = currentTestCaseMap;
-        }
-        else {
-            if (hookType == HookType.AfterStep)
-                //get latest added step
-                mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
-            else
+        switch (hookType) {
+            case Before:
+                mapToAddTo = currentTestCaseMap;
+                break;
+            case After:
+                mapToAddTo = currentTestCaseMap;
+                break;
+            case BeforeStep:
                 mapToAddTo = currentBeforeStepHookList;
+                break;
+            case AfterStep:
+                mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
+                break;
+             default:
+                 mapToAddTo = currentTestCaseMap;
         }
 
         if (!mapToAddTo.containsKey(hookName)) {
