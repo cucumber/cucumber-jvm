@@ -3,6 +3,7 @@ package cucumber.runner;
 import cucumber.api.Pending;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
+import cucumber.api.TestStep;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
@@ -11,7 +12,7 @@ import cucumber.runtime.UndefinedStepDefinitionException;
 
 import java.util.Arrays;
 
-abstract class Step implements cucumber.api.Step {
+abstract class Step implements TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
             "org.junit.AssumptionViolatedException",
             "org.junit.internal.AssumptionViolatedException"

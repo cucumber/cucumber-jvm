@@ -1,9 +1,8 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.api.Step;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
+import cucumber.api.PickleTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
@@ -137,8 +136,8 @@ class TestNGFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof TestStep) {
-            testMethod.steps.add((TestStep) event.testStep);
+        if (event.testStep instanceof PickleTestStep) {
+            testMethod.steps.add((PickleTestStep) event.testStep);
             testMethod.results.add(event.result);
         } else {
             testMethod.hooks.add(event.result);
@@ -211,7 +210,7 @@ class TestNGFormatter implements Formatter, StrictAware {
         static String previousTestCaseName;
         static int exampleNumber;
         static final TestSourcesModel testSources = new TestSourcesModel();
-        final List<TestStep> steps = new ArrayList<TestStep>();
+        final List<PickleTestStep> steps = new ArrayList<PickleTestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
         final TestCase scenario;

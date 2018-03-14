@@ -91,7 +91,7 @@ public class TestCaseTest {
     }
 
     private TestCase createTestCase(PickleTestStep... steps) {
-        return new TestCase(Arrays.asList(steps), Collections.<HookStep>emptyList(), Collections.<HookStep>emptyList(), pickleEvent(), false);
+        return new TestCase(Arrays.asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickleEvent(), false);
     }
 
     private PickleEvent pickleEvent() {

@@ -13,20 +13,20 @@ import java.util.List;
 import static cucumber.api.Result.SEVERITY;
 import static java.util.Collections.max;
 
-class PickleTestStep extends Step implements cucumber.api.TestStep {
+class PickleTestStep extends Step implements cucumber.api.PickleTestStep {
     private final String uri;
     private final PickleStep step;
-    private final List<HookStep> afterStepHookSteps;
-    private final List<HookStep> beforeStepHookSteps;
+    private final List<HookTestStep> afterStepHookSteps;
+    private final List<HookTestStep> beforeStepHookSteps;
 
     PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
-        this(uri, step, Collections.<HookStep>emptyList(), Collections.<HookStep>emptyList(), definitionMatch);
+        this(uri, step, Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), definitionMatch);
     }
 
     PickleTestStep(String uri,
                    PickleStep step,
-                   List<HookStep> beforeStepHookSteps,
-                   List<HookStep> afterStepHookSteps,
+                   List<HookTestStep> beforeStepHookSteps,
+                   List<HookTestStep> afterStepHookSteps,
                    DefinitionMatch definitionMatch
     ) {
         super(definitionMatch);
@@ -41,7 +41,7 @@ class PickleTestStep extends Step implements cucumber.api.TestStep {
         boolean skipNextStep = skipSteps;
         List<Result> results = new ArrayList<Result>();
 
-        for (HookStep before : beforeStepHookSteps) {
+        for (HookTestStep before : beforeStepHookSteps) {
             Result result = before.run(bus, language, scenario, skipSteps);
             skipNextStep |= !result.is(Result.Type.PASSED);
             results.add(result);
@@ -49,18 +49,18 @@ class PickleTestStep extends Step implements cucumber.api.TestStep {
 
         results.add(super.run(bus, language, scenario, skipNextStep));
 
-        for (HookStep after : afterStepHookSteps) {
+        for (HookTestStep after : afterStepHookSteps) {
             results.add(after.run(bus, language, scenario, skipNextStep));
         }
 
         return max(results, SEVERITY);
     }
 
-    List<HookStep> getBeforeStepHookSteps() {
+    List<HookTestStep> getBeforeStepHookSteps() {
         return beforeStepHookSteps;
     }
 
-    List<HookStep> getAfterStepHookSteps() {
+    List<HookTestStep> getAfterStepHookSteps() {
         return afterStepHookSteps;
     }
 

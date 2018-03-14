@@ -4,7 +4,7 @@ import static org.testng.Reporter.getCurrentTestResult;
 import static org.testng.Reporter.log;
 
 import cucumber.api.Result;
-import cucumber.api.TestStep;
+import cucumber.api.PickleTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
@@ -19,8 +19,8 @@ class TestNGReporter implements Formatter {
     private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
-            if (event.testStep instanceof TestStep) {
-                TestStep testStep = (TestStep) event.testStep;
+            if (event.testStep instanceof PickleTestStep) {
+                PickleTestStep testStep = (PickleTestStep) event.testStep;
                 result(testStep.getStepText(), event.result);
             }
         }

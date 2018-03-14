@@ -1,5 +1,6 @@
 package cucumber.runner;
 
+import cucumber.api.PickleTestStep;
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
@@ -15,7 +16,7 @@ public class EventBusTest {
     @Test
     public void handlers_receive_the_events_they_registered_for() {
         EventHandler<TestStepFinished> handler = mock(EventHandler.class);
-        cucumber.api.TestStep testStep = mock(cucumber.api.TestStep.class);
+        PickleTestStep testStep = mock(PickleTestStep.class);
         Result result = mock(Result.class);
         TestStepFinished event = new TestStepFinished(0l, testStep, result);
 
@@ -29,7 +30,7 @@ public class EventBusTest {
     @Test
     public void handlers_do_not_receive_the_events_they_did_not_registered_for() {
         EventHandler handler = mock(EventHandler.class);
-        cucumber.api.TestStep testStep = mock(cucumber.api.TestStep.class);
+        PickleTestStep testStep = mock(PickleTestStep.class);
         TestStepStarted event = new TestStepStarted(0l, testStep);
 
         EventBus bus = new EventBus(new TimeServiceStub(0));

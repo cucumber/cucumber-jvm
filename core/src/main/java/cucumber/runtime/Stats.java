@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Result;
-import cucumber.api.TestStep;
+import cucumber.api.PickleTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -49,7 +49,7 @@ class Stats implements EventListener {
             if (result.getError() != null) {
                 addError(result.getError());
             }
-            if (event.testStep instanceof TestStep) {
+            if (event.testStep instanceof PickleTestStep) {
                 addStep(result.getStatus());
             }
         }

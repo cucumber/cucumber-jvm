@@ -14,12 +14,12 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
-public class HookStepTest {
+public class HookTestStepTest {
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
-    private HookStep step = new HookStep(HookType.AfterStep, definitionMatch);
+    private HookTestStep step = new HookTestStep(HookType.AfterStep, definitionMatch);
 
     @Test
     public void run_does_run() throws Throwable {

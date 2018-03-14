@@ -90,8 +90,8 @@ public class Runner implements UnreportedStepExecutor {
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
         List<PickleTestStep> testSteps = new ArrayList<PickleTestStep>();
-        List<HookStep> beforeHooks = new ArrayList<HookStep>();
-        List<HookStep> afterHooks = new ArrayList<HookStep>();
+        List<HookTestStep> beforeHooks = new ArrayList<HookTestStep>();
+        List<HookTestStep> afterHooks = new ArrayList<HookTestStep>();
         if (!pickleEvent.pickle.getSteps().isEmpty()) {
             addTestStepsForBeforeHooks(beforeHooks, pickleEvent.pickle.getTags());
             addTestStepsForPickleSteps(testSteps, pickleEvent);
@@ -125,37 +125,37 @@ public class Runner implements UnreportedStepExecutor {
             }
 
 
-            List<HookStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
-            List<HookStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
+            List<HookTestStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
+            List<HookTestStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
             testSteps.add(new PickleTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
         }
     }
 
-    private void addTestStepsForBeforeHooks(List<HookStep> testSteps, List<PickleTag> tags) {
+    private void addTestStepsForBeforeHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {
         addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
     }
 
-    private void addTestStepsForAfterHooks(List<HookStep> testSteps, List<PickleTag> tags) {
+    private void addTestStepsForAfterHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {
         addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
     }
 
-    private void addTestStepsForHooks(List<HookStep> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
+    private void addTestStepsForHooks(List<HookTestStep> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
         for (HookDefinition hook : hooks) {
             if (hook.matches(tags)) {
-                HookStep testStep = new HookStep(hookType, new HookDefinitionMatch(hook));
+                HookTestStep testStep = new HookTestStep(hookType, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }
     }
 
-    private List<HookStep> getAfterStepHooks(List<PickleTag> tags) {
-        List<HookStep> hookSteps = new ArrayList<HookStep>();
+    private List<HookTestStep> getAfterStepHooks(List<PickleTag> tags) {
+        List<HookTestStep> hookSteps = new ArrayList<HookTestStep>();
         addTestStepsForHooks(hookSteps, tags, glue.getAfterStepHooks(), HookType.AfterStep);
         return hookSteps;
     }
 
-    private List<HookStep> getBeforeStepHooks(List<PickleTag> tags) {
-        List<HookStep> hookSteps = new ArrayList<HookStep>();
+    private List<HookTestStep> getBeforeStepHooks(List<PickleTag> tags) {
+        List<HookTestStep> hookSteps = new ArrayList<HookTestStep>();
         addTestStepsForHooks(hookSteps, tags, glue.getBeforeStepHooks(), HookType.BeforeStep);
         return hookSteps;
     }

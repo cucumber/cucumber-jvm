@@ -1,6 +1,7 @@
 package cucumber.runner;
 
 import cucumber.api.Result;
+import cucumber.api.TestStep;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.runtime.ScenarioImpl;
@@ -15,12 +16,12 @@ class TestCase implements cucumber.api.TestCase {
     private final PickleEvent pickleEvent;
     private final List<PickleTestStep> testSteps;
     private final boolean dryRun;
-    private final List<HookStep> beforeHooks;
-    private final List<HookStep> afterHooks;
+    private final List<HookTestStep> beforeHooks;
+    private final List<HookTestStep> afterHooks;
 
     public TestCase(List<PickleTestStep> testSteps,
-                    List<HookStep> beforeHooks,
-                    List<HookStep> afterHooks,
+                    List<HookTestStep> beforeHooks,
+                    List<HookTestStep> afterHooks,
                     PickleEvent pickleEvent,
                     boolean dryRun) {
         this.testSteps = testSteps;
@@ -36,7 +37,7 @@ class TestCase implements cucumber.api.TestCase {
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
 
-        for (HookStep before : beforeHooks) {
+        for (HookTestStep before : beforeHooks) {
             Result stepResult = before.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
@@ -48,7 +49,7 @@ class TestCase implements cucumber.api.TestCase {
             scenarioResult.add(stepResult);
         }
 
-        for (HookStep after : afterHooks) {
+        for (HookTestStep after : afterHooks) {
             Result stepResult = after.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
             scenarioResult.add(stepResult);
         }
@@ -58,16 +59,16 @@ class TestCase implements cucumber.api.TestCase {
     }
 
     @Override
-    public List<cucumber.api.Step> getTestSteps() {
-        List<cucumber.api.Step> steps = new ArrayList<cucumber.api.Step>();
-        steps.addAll(beforeHooks);
-        for (PickleTestStep step : testSteps) {
-            steps.addAll(step.getBeforeStepHookSteps());
-            steps.add(step);
-            steps.addAll(step.getAfterStepHookSteps());
+    public List<TestStep> getTestSteps() {
+        List<TestStep> testSteps = new ArrayList<TestStep>();
+        testSteps.addAll(beforeHooks);
+        for (PickleTestStep step : this.testSteps) {
+            testSteps.addAll(step.getBeforeStepHookSteps());
+            testSteps.add(step);
+            testSteps.addAll(step.getAfterStepHookSteps());
         }
-        steps.addAll(afterHooks);
-        return steps;
+        testSteps.addAll(afterHooks);
+        return testSteps;
     }
 
     @Override

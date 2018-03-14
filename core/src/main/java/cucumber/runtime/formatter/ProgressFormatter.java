@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.api.TestStep;
+import cucumber.api.PickleTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
@@ -72,7 +72,7 @@ final class ProgressFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof TestStep || event.result.is(Result.Type.FAILED)) {
+        if (event.testStep instanceof PickleTestStep || event.result.is(Result.Type.FAILED)) {
             if (!monochrome) {
                 ANSI_ESCAPES.get(event.result.getStatus()).appendTo(out);
             }

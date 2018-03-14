@@ -1,11 +1,11 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.HookStep;
+import cucumber.api.HookTestStep;
 import cucumber.api.HookType;
 import cucumber.api.Result;
-import cucumber.api.Step;
-import cucumber.api.TestCase;
 import cucumber.api.TestStep;
+import cucumber.api.TestCase;
+import cucumber.api.PickleTestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -131,8 +131,8 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof TestStep) {
-            TestStep testStep = (TestStep) event.testStep;
+        if (event.testStep instanceof PickleTestStep) {
+            PickleTestStep testStep = (PickleTestStep) event.testStep;
             if (isFirstStepAfterBackground(testStep)) {
                 currentElementMap = currentTestCaseMap;
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
@@ -144,10 +144,10 @@ final class JSONFormatter implements Formatter {
                 currentBeforeStepHookList.clear();
             }
             currentStepsList.add(currentStepOrHookMap);
-        } else if(event.testStep instanceof HookStep) {
-            HookStep hookStep = (HookStep) event.testStep;
-            currentStepOrHookMap = createHookStep(hookStep);
-            addHookStepToTestCaseMap(currentStepOrHookMap, hookStep.getHookType());
+        } else if(event.testStep instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) event.testStep;
+            currentStepOrHookMap = createHookStep(hookTestStep);
+            addHookStepToTestCaseMap(currentStepOrHookMap, hookTestStep.getHookType());
         } else {
             throw new IllegalStateException();
         }
@@ -229,7 +229,7 @@ final class JSONFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(TestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             if (currentElementMap != currentTestCaseMap && !TestSourcesModel.isBackgroundStep(astNode)) {
@@ -239,7 +239,7 @@ final class JSONFormatter implements Formatter {
         return false;
     }
 
-    private Map<String, Object> createTestStep(TestStep testStep) {
+    private Map<String, Object> createTestStep(PickleTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         stepMap.put("line", testStep.getStepLine());
@@ -289,7 +289,7 @@ final class JSONFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createHookStep(HookStep hookStep) {
+    private Map<String, Object> createHookStep(HookTestStep hookTestStep) {
         return new HashMap<String, Object>();
     }
 
@@ -347,10 +347,10 @@ final class JSONFormatter implements Formatter {
         return embedMap;
     }
 
-    private Map<String, Object> createMatchMap(Step step, Result result) {
+    private Map<String, Object> createMatchMap(TestStep step, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if(step instanceof TestStep) {
-            TestStep testStep = (TestStep) step;
+        if(step instanceof PickleTestStep) {
+            PickleTestStep testStep = (PickleTestStep) step;
             if (!testStep.getDefinitionArgument().isEmpty()) {
                 List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
                 for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {

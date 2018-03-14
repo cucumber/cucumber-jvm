@@ -1,8 +1,8 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.api.Step;
 import cucumber.api.TestStep;
+import cucumber.api.PickleTestStep;
 import cucumber.api.event.TestStepFinished;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -47,7 +47,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        Step testStep = mockTestStep();
+        TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(12345L);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
@@ -68,7 +68,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        Step testStep = mockTestStep();
+        TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(0L);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
@@ -89,7 +89,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        TestStep testStep = mockTestStep();
+        PickleTestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(null);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
@@ -146,8 +146,8 @@ public class UsageFormatterTest {
         assertTrue(out.toString().contains("0.012345678"));
     }
 
-    private TestStep mockTestStep() {
-        TestStep testStep = mock(TestStep.class, Mockito.RETURNS_MOCKS);
+    private PickleTestStep mockTestStep() {
+        PickleTestStep testStep = mock(PickleTestStep.class, Mockito.RETURNS_MOCKS);
         when(testStep.getPattern()).thenReturn("stepDef");
         when(testStep.getStepText()).thenReturn("step");
         return testStep;

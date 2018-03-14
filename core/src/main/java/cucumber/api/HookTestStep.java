@@ -2,12 +2,12 @@ package cucumber.api;
 
 /**
  * Hooks are invoked before and after each scenario and before and
- * after each test step in a scenario.
+ * after each gherkin step in a scenario.
  *
  * @see cucumber.api.event.TestCaseStarted
  * @see cucumber.api.event.TestCaseFinished
  */
-public interface HookStep extends Step {
+public interface HookTestStep extends TestStep {
 
     /**
      * Returns the hook hook type.

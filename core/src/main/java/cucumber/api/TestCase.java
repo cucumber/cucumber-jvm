@@ -13,7 +13,7 @@ public interface TestCase {
 
     List<PickleTag> getTags();
 
-    List<Step> getTestSteps();
+    List<TestStep> getTestSteps();
 
     String getUri();
 }
