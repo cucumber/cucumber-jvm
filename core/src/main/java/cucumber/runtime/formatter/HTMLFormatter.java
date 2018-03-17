@@ -3,7 +3,7 @@ package cucumber.runtime.formatter;
 import cucumber.api.HookTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
-import cucumber.api.PickleTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -162,8 +162,8 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof PickleTestStep) {
-            PickleTestStep testStep = (PickleTestStep) event.testStep;
+        if (event.testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
             if (isFirstStepAfterBackground(testStep)) {
                 jsFunctionCall("scenario", currentTestCaseMap);
                 currentTestCaseMap = null;
@@ -173,8 +173,8 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleTestStep) {
-            jsFunctionCall("match", createMatchMap((PickleTestStep) event.testStep, event.result));
+        if (event.testStep instanceof PickleStepTestStep) {
+            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.testStep, event.result));
             jsFunctionCall("result", createResultMap(event.result));
         } else if(event.testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) event.testStep;
@@ -276,7 +276,7 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void addOutlineStepsToReport(ScenarioOutline scenarioOutline) {
-        for (gherkin.ast.Step step : scenarioOutline.getSteps()) {
+        for (Step step : scenarioOutline.getSteps()) {
             Map<String, Object> stepMap = new HashMap<String, Object>();
             stepMap.put("name", step.getText());
             stepMap.put("keyword", step.getKeyword());
@@ -371,7 +371,7 @@ final class HTMLFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(PickleTestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             if (currentTestCaseMap != null && !TestSourcesModel.isBackgroundStep(astNode)) {
@@ -381,7 +381,7 @@ final class HTMLFormatter implements Formatter {
         return false;
     }
 
-    private Map<String, Object> createTestStep(PickleTestStep testStep) {
+    private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         if (!testStep.getStepArgument().isEmpty()) {
@@ -429,7 +429,7 @@ final class HTMLFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createMatchMap(PickleTestStep testStep, Result result) {
+    private Map<String, Object> createMatchMap(PickleStepTestStep testStep, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
         if (!result.is(Result.Type.UNDEFINED)) {
             matchMap.put("location", testStep.getCodeLocation());

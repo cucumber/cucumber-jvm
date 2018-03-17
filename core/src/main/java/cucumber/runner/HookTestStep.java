@@ -3,7 +3,7 @@ package cucumber.runner;
 import cucumber.api.HookType;
 import cucumber.runtime.DefinitionMatch;
 
-class HookTestStep extends Step implements cucumber.api.HookTestStep {
+class HookTestStep extends TestStep implements cucumber.api.HookTestStep {
     private final HookType hookType;
 
     HookTestStep(HookType hookType, DefinitionMatch definitionMatch) {

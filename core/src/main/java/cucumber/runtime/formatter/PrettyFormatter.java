@@ -4,7 +4,7 @@ import cucumber.api.Argument;
 import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.TestCase;
-import cucumber.api.PickleTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
@@ -23,6 +23,7 @@ import gherkin.ast.Examples;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
+import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
 
@@ -131,8 +132,8 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof PickleTestStep) {
-            if (isFirstStepAfterBackground((PickleTestStep) event.testStep)) {
+        if (event.testStep instanceof PickleStepTestStep) {
+            if (isFirstStepAfterBackground((PickleStepTestStep) event.testStep)) {
                 printScenarioDefinition(currentTestCase);
                 currentTestCase = null;
             }
@@ -140,8 +141,8 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleTestStep) {
-            printStep((PickleTestStep) event.testStep, event.result);
+        if (event.testStep instanceof PickleStepTestStep) {
+            printStep((PickleStepTestStep) event.testStep, event.result);
         }
         printError(event.result);
     }
@@ -187,7 +188,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
         printTags(scenarioOutline.getTags(), SCENARIO_INDENT);
         out.println(SCENARIO_INDENT + getScenarioDefinitionText(scenarioOutline) + " " + getLocationText(currentFeatureFile, scenarioOutline.getLocation().getLine()));
         printDescription(scenarioOutline.getDescription());
-        for (gherkin.ast.Step step : scenarioOutline.getSteps()) {
+        for (Step step : scenarioOutline.getSteps()) {
             out.println(STEP_INDENT + formats.get("skipped").text(step.getKeyword() + step.getText()));
         }
     }
@@ -199,7 +200,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
         printDescription(examples.getDescription());
     }
 
-    private void printStep(PickleTestStep testStep, Result result) {
+    private void printStep(PickleStepTestStep testStep, Result result) {
         String keyword = getStepKeyword(testStep);
         String stepText = testStep.getStepText();
         String locationPadding = createPaddingToLocation(STEP_INDENT, keyword + stepText);
@@ -247,26 +248,26 @@ final class PrettyFormatter implements Formatter, ColorAware {
         return formats.get("comment").text("# " + location);
     }
 
-    private StringBuffer stepText(PickleTestStep testStep) {
+    private StringBuffer stepText(PickleStepTestStep testStep) {
         String keyword = getStepKeyword(testStep);
         return new StringBuffer(keyword + testStep.getStepText());
     }
 
-    private String getStepKeyword(PickleTestStep testStep) {
+    private String getStepKeyword(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
-            gherkin.ast.Step step = (gherkin.ast.Step) astNode.node;
+            Step step = (Step) astNode.node;
             return step.getKeyword();
         } else {
             return "";
         }
     }
 
-    private boolean isFirstStepAfterBackground(PickleTestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         return currentTestCase != null && !isBackgroundStep(testStep);
     }
 
-    private boolean isBackgroundStep(PickleTestStep testStep) {
+    private boolean isBackgroundStep(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             return TestSourcesModel.isBackgroundStep(astNode);
@@ -341,8 +342,8 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void calculateLocationIndentation(String definitionText, List<TestStep> testSteps, boolean useBackgroundSteps) {
         int maxTextLength = definitionText.length();
         for (TestStep step : testSteps) {
-            if (step instanceof PickleTestStep) {
-                PickleTestStep testStep = (PickleTestStep) step;
+            if (step instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) step;
                 if (isBackgroundStep(testStep) == useBackgroundSteps) {
                     StringBuffer stepText = stepText(testStep);
                     maxTextLength = Math.max(maxTextLength, STEP_INDENT.length() + stepText.length());

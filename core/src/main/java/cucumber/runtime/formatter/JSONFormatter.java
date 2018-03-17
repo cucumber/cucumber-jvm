@@ -5,7 +5,7 @@ import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.TestCase;
-import cucumber.api.PickleTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -21,6 +21,7 @@ import gherkin.ast.Background;
 import gherkin.ast.DocString;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.Step;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.net.iharder.Base64;
@@ -131,8 +132,8 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof PickleTestStep) {
-            PickleTestStep testStep = (PickleTestStep) event.testStep;
+        if (event.testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
             if (isFirstStepAfterBackground(testStep)) {
                 currentElementMap = currentTestCaseMap;
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
@@ -229,7 +230,7 @@ final class JSONFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(PickleTestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             if (currentElementMap != currentTestCaseMap && !TestSourcesModel.isBackgroundStep(astNode)) {
@@ -239,7 +240,7 @@ final class JSONFormatter implements Formatter {
         return false;
     }
 
-    private Map<String, Object> createTestStep(PickleTestStep testStep) {
+    private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         stepMap.put("line", testStep.getStepLine());
@@ -253,7 +254,7 @@ final class JSONFormatter implements Formatter {
             }
         }
         if (astNode != null) {
-            gherkin.ast.Step step = (gherkin.ast.Step) astNode.node;
+            Step step = (Step) astNode.node;
             stepMap.put("keyword", step.getKeyword());
         }
 
@@ -266,7 +267,7 @@ final class JSONFormatter implements Formatter {
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
         if (astNode != null) {
-            docStringMap.put("content_type", ((DocString)((gherkin.ast.Step)astNode.node).getArgument()).getContentType());
+            docStringMap.put("content_type", ((DocString)((Step)astNode.node).getArgument()).getContentType());
         }
         return docStringMap;
     }
@@ -349,8 +350,8 @@ final class JSONFormatter implements Formatter {
 
     private Map<String, Object> createMatchMap(TestStep step, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if(step instanceof PickleTestStep) {
-            PickleTestStep testStep = (PickleTestStep) step;
+        if(step instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) step;
             if (!testStep.getDefinitionArgument().isEmpty()) {
                 List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
                 for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {

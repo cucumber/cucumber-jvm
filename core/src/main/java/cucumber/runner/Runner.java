@@ -89,7 +89,7 @@ public class Runner implements UnreportedStepExecutor {
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
-        List<PickleTestStep> testSteps = new ArrayList<PickleTestStep>();
+        List<PickleStepTestStep> testSteps = new ArrayList<PickleStepTestStep>();
         List<HookTestStep> beforeHooks = new ArrayList<HookTestStep>();
         List<HookTestStep> afterHooks = new ArrayList<HookTestStep>();
         if (!pickleEvent.pickle.getSteps().isEmpty()) {
@@ -100,7 +100,7 @@ public class Runner implements UnreportedStepExecutor {
         return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runtimeOptions.isDryRun());
     }
 
-    private void addTestStepsForPickleSteps(List<PickleTestStep> testSteps, PickleEvent pickleEvent) {
+    private void addTestStepsForPickleSteps(List<PickleStepTestStep> testSteps, PickleEvent pickleEvent) {
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
             StepDefinitionMatch match;
             try {
@@ -127,7 +127,7 @@ public class Runner implements UnreportedStepExecutor {
 
             List<HookTestStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
-            testSteps.add(new PickleTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
+            testSteps.add(new PickleStepTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
         }
     }
 

@@ -1,13 +1,13 @@
 package cucumber.api.event;
 
 import cucumber.api.HookTestStep;
-import cucumber.api.PickleTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.TestStep;
 
 /**
  * A test step started event is broadcast when ever a step starts.
  *
- * A step can either be a {@link PickleTestStep} or a
+ * A step can either be a {@link PickleStepTestStep} or a
  * {@link HookTestStep} depending on what step was executed.
  *
  * Each test step started event is followed by an matching
@@ -18,7 +18,7 @@ import cucumber.api.TestStep;
  *     [before hook,]* [[before step hook,]* test step, [after step hook,]*]+, [after hook,]*
  * </pre>
  *
- * @see PickleTestStep
+ * @see PickleStepTestStep
  * @see HookTestStep
  */
 public final class TestStepStarted extends TimeStampedEvent {

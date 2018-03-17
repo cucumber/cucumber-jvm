@@ -2,7 +2,7 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.TestStep;
-import cucumber.api.PickleTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.TestStepFinished;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -89,7 +89,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        PickleTestStep testStep = mockTestStep();
+        PickleStepTestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(null);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
@@ -146,8 +146,8 @@ public class UsageFormatterTest {
         assertTrue(out.toString().contains("0.012345678"));
     }
 
-    private PickleTestStep mockTestStep() {
-        PickleTestStep testStep = mock(PickleTestStep.class, Mockito.RETURNS_MOCKS);
+    private PickleStepTestStep mockTestStep() {
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class, Mockito.RETURNS_MOCKS);
         when(testStep.getPattern()).thenReturn("stepDef");
         when(testStep.getStepText()).thenReturn("step");
         return testStep;

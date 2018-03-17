@@ -20,12 +20,12 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PickleTestStepTest {
+public class PickleStepTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
-    private final PickleTestStep step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
+    private final PickleStepTestStep step = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
 
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
@@ -91,14 +91,14 @@ public class PickleTestStepTest {
     @Test
     public void step_execution_time_is_measured() throws Throwable {
         Long duration = 1234L;
-        Step step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
+        TestStep testStep = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
         when(bus.getTime()).thenReturn(0l, 1234l);
 
         when(bus.getTime())
             .thenReturn(0L)
             .thenReturn(1234L);
 
-        Result result = step.run(bus, language, scenario, false);
+        Result result = testStep.run(bus, language, scenario, false);
 
         assertEquals(duration, result.getDuration());
     }

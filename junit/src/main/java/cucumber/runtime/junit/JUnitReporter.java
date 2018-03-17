@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.Result;
-import cucumber.api.PickleTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
@@ -38,8 +38,8 @@ public class JUnitReporter {
 
         @Override
         public void receive(TestStepStarted event) {
-            if (event.testStep instanceof PickleTestStep) {
-                PickleTestStep testStep = (PickleTestStep) event.testStep;
+            if (event.testStep instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
                 handleStepStarted(testStep.getPickleStep());
             }
         }
@@ -49,8 +49,8 @@ public class JUnitReporter {
 
         @Override
         public void receive(TestStepFinished event) {
-            if (event.testStep instanceof PickleTestStep) {
-                PickleTestStep testStep = (PickleTestStep) event.testStep;
+            if (event.testStep instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
                 handleStepResult(testStep, event.result);
             } else {
                 handleHookResult(event.result);
@@ -103,7 +103,7 @@ public class JUnitReporter {
         return junitOptions.stepNotifications();
     }
 
-    void handleStepResult(PickleTestStep testStep, Result result) {
+    void handleStepResult(PickleStepTestStep testStep, Result result) {
         Throwable error = result.getError();
         switch (result.getStatus()) {
         case PASSED:

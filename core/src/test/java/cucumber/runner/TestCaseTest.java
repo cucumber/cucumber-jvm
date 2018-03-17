@@ -27,7 +27,7 @@ public class TestCaseTest {
     public void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
-        PickleTestStep testStep = mock(PickleTestStep.class);
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
 
         TestCase testCase = createTestCase(testStep);
@@ -43,9 +43,9 @@ public class TestCaseTest {
     public void run_all_steps() throws Throwable {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
-        PickleTestStep testStep1 = mock(PickleTestStep.class);
+        PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
         when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
-        PickleTestStep testStep2 = mock(PickleTestStep.class);
+        PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -60,9 +60,9 @@ public class TestCaseTest {
     public void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
-        PickleTestStep testStep1 = mock(PickleTestStep.class);
+        PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
         when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
-        PickleTestStep testStep2 = mock(PickleTestStep.class);
+        PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -77,9 +77,9 @@ public class TestCaseTest {
     public void skip_steps_at_first_gherkin_step_after_nonn_passed_result() throws Throwable {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
-        PickleTestStep testStep1 = mock(PickleTestStep.class);
+        PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
         when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
-        PickleTestStep testStep2 = mock(PickleTestStep.class);
+        PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -90,7 +90,7 @@ public class TestCaseTest {
         order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(true));
     }
 
-    private TestCase createTestCase(PickleTestStep... steps) {
+    private TestCase createTestCase(PickleStepTestStep... steps) {
         return new TestCase(Arrays.asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickleEvent(), false);
     }
 

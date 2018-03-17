@@ -2,7 +2,7 @@ package cucumber.api;
 
 /**
  * A test step can either represent the execution of a hook
- * or a pickle test step. Each step is tied to some glue code.
+ * or a pickle step. Each step is tied to some glue code.
  *
  * @see cucumber.api.event.TestCaseStarted
  * @see cucumber.api.event.TestCaseFinished

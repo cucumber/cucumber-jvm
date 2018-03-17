@@ -14,12 +14,12 @@ import java.util.List;
 
 class TestCase implements cucumber.api.TestCase {
     private final PickleEvent pickleEvent;
-    private final List<PickleTestStep> testSteps;
+    private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
 
-    public TestCase(List<PickleTestStep> testSteps,
+    public TestCase(List<PickleStepTestStep> testSteps,
                     List<HookTestStep> beforeHooks,
                     List<HookTestStep> afterHooks,
                     PickleEvent pickleEvent,
@@ -43,7 +43,7 @@ class TestCase implements cucumber.api.TestCase {
             scenarioResult.add(stepResult);
         }
 
-        for (PickleTestStep step : testSteps) {
+        for (PickleStepTestStep step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
@@ -62,7 +62,7 @@ class TestCase implements cucumber.api.TestCase {
     public List<TestStep> getTestSteps() {
         List<TestStep> testSteps = new ArrayList<TestStep>();
         testSteps.addAll(beforeHooks);
-        for (PickleTestStep step : this.testSteps) {
+        for (PickleStepTestStep step : this.testSteps) {
             testSteps.addAll(step.getBeforeStepHookSteps());
             testSteps.add(step);
             testSteps.addAll(step.getAfterStepHookSteps());
