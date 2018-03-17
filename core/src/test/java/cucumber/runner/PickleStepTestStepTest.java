@@ -8,16 +8,24 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.DefinitionMatch;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
+import static cucumber.api.Result.Type.PASSED;
+import static cucumber.api.Result.Type.SKIPPED;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PickleStepTestStepTest {
@@ -25,7 +33,23 @@ public class PickleStepTestStepTest {
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
-    private final PickleStepTestStep step = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
+    private final HookTestStep beforeHook = mock(HookTestStep.class);
+    private final HookTestStep afterHook = mock(HookTestStep.class);
+    private final PickleStepTestStep step = new PickleStepTestStep(
+        "uri",
+        mock(PickleStep.class),
+        singletonList(beforeHook),
+        singletonList(afterHook),
+        definitionMatch
+    );
+
+    @Before
+    public void setup(){
+        when(beforeHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean()))
+            .thenReturn(new Result(PASSED, 0L, null));
+        when(afterHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean()))
+            .thenReturn(new Result(PASSED, 0L, null));
+    }
 
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
@@ -51,28 +75,77 @@ public class PickleStepTestStepTest {
     public void result_is_passed_when_step_definition_does_not_throw_exception() throws Throwable {
         Result result = step.run(bus, language, scenario, false);
 
-        assertEquals(Result.Type.PASSED, result.getStatus());
+        assertEquals(PASSED, result.getStatus());
     }
 
     @Test
     public void result_is_skipped_when_skip_step_is_not_run_all() throws Throwable {
         Result result = step.run(bus, language, scenario, true);
 
-        assertEquals(Result.Type.SKIPPED, result.getStatus());
+        assertEquals(SKIPPED, result.getStatus());
+    }
+
+
+    @Test
+    public void result_is_skipped_when_before_step_hook_does_not_pass() throws Throwable {
+        when(beforeHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean())).thenReturn(Result.SKIPPED);
+        Result result = step.run(bus, language, scenario, false);
+        assertEquals(SKIPPED, result.getStatus());
     }
 
     @Test
+    public void step_execution_is_dry_run_when_before_step_hook_does_not_pass() throws Throwable {
+        when(beforeHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean())).thenReturn(Result.SKIPPED);
+        step.run(bus, language, scenario, false);
+        verify(definitionMatch).dryRunStep(anyString(), any(Scenario.class));
+    }
+
+    @Test
+    public void result_is_result_from_hook_when_before_step_hook_does_not_pass() throws Throwable {
+        Result failure = new Result(Result.Type.FAILED, 0L, null);
+        when(beforeHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean())).thenReturn(failure);
+        Result result = step.run(bus, language, scenario, false);
+        assertSame(failure, result);
+    }
+
+    @Test
+    public void result_is_result_from_hook_when_after_step_hook_does_not_pass() throws Throwable {
+        Result failure = new Result(Result.Type.FAILED, 0L, null);
+        when(afterHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean())).thenReturn(failure);
+        Result result = step.run(bus, language, scenario, false);
+        assertSame(failure, result);
+    }
+
+
+    @Test
+    public void after_step_hook_is_run_when_before_step_hook_does_not_pass() throws Throwable {
+        Result failure = new Result(Result.Type.FAILED, 0L, null);
+        when(beforeHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean())).thenReturn(failure);
+        step.run(bus, language, scenario, false);
+        verify(afterHook).run(any(EventBus.class), anyString(), any(Scenario.class), eq(false));
+    }
+
+
+    @Test
+    public void after_step_hook_is_run_when_step_does_not_pass() throws Throwable {
+        doThrow(Exception.class).when(definitionMatch).runStep(anyString(), (Scenario) any());
+        step.run(bus, language, scenario, false);
+        verify(afterHook).run(any(EventBus.class), anyString(), any(Scenario.class), eq(false));
+    }
+
+
+    @Test
     public void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
-        doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
+        doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep(anyString(), (Scenario) any());
 
         Result result = step.run(bus, language, scenario, false);
 
-        assertEquals(Result.Type.SKIPPED, result.getStatus());
+        assertEquals(SKIPPED, result.getStatus());
     }
 
     @Test
     public void result_is_failed_when_step_definition_throws_exception() throws Throwable {
-        doThrow(RuntimeException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
+        doThrow(RuntimeException.class).when(definitionMatch).runStep(anyString(), (Scenario) any());
 
         Result result = step.run(bus, language, scenario, false);
 
@@ -81,7 +154,7 @@ public class PickleStepTestStepTest {
 
     @Test
     public void result_is_pending_when_step_definition_throws_pending_exception() throws Throwable {
-        doThrow(PendingException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
+        doThrow(PendingException.class).when(definitionMatch).runStep(anyString(), (Scenario) any());
 
         Result result = step.run(bus, language, scenario, false);
 

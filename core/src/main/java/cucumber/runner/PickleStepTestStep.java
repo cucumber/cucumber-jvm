@@ -50,7 +50,7 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
         results.add(super.run(bus, language, scenario, skipNextStep));
 
         for (HookTestStep after : afterStepHookSteps) {
-            results.add(after.run(bus, language, scenario, skipNextStep));
+            results.add(after.run(bus, language, scenario, skipSteps));
         }
 
         return max(results, SEVERITY);
