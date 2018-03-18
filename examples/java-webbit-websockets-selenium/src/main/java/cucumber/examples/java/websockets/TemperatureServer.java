@@ -24,13 +24,13 @@ public class TemperatureServer {
                 String[] parts = msg.split(":");
                 String unit = parts[0];
                 double value = Double.parseDouble(parts[1]);
-                if (unit.equals("celcius")) {
+                if (unit.equals("celsius")) {
                     double f = (9.0 / 5.0) * value + 32;
                     connection.send("fahrenheit:" + roundOneDecimal(f));
                 }
                 if (unit.equals("fahrenheit")) {
                     double c = (value - 32) * (5.0 / 9.0);
-                    connection.send("celcius:" + roundOneDecimal(c));
+                    connection.send("celsius:" + roundOneDecimal(c));
                 }
             }
         });

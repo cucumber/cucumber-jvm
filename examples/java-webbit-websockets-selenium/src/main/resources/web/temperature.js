@@ -3,7 +3,7 @@ window.onload = function () {
 
   ws.onopen = function () {
     // Only enable the input fields after we have established a WebSocket connection.
-    document.getElementById("celcius").disabled = false;
+    document.getElementById("celsius").disabled = false;
     document.getElementById("fahrenheit").disabled = false;
   };
 
@@ -21,6 +21,6 @@ window.onload = function () {
     };
   }
 
-  setupEvent('celcius');
+  setupEvent('celsius');
   setupEvent('fahrenheit');
 };
