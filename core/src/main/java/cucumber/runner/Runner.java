@@ -3,16 +3,16 @@ package cucumber.runner;
 import cucumber.api.HookType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.SnippetsSuggestedEvent;
-import cucumber.runtime.AmbiguousStepDefinitionsMatch;
+import cucumber.runtime.AmbiguousPickleStepDefinitionsMatch;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Backend;
-import cucumber.runtime.FailedStepInstantiationMatch;
+import cucumber.runtime.FailedPickleStepInstantiationMatch;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.HookDefinitionMatch;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.UndefinedStepDefinitionMatch;
+import cucumber.runtime.PickleStepDefinitionMatch;
+import cucumber.runtime.UndefinedPickleStepDefinitionMatch;
 import cucumber.runtime.UnreportedStepExecutor;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
@@ -57,7 +57,7 @@ public class Runner implements UnreportedStepExecutor {
         }
         PickleStep step = new PickleStep(stepName, arguments, Collections.<PickleLocation>emptyList());
 
-        StepDefinitionMatch match = glue.stepDefinitionMatch(featurePath, step);
+        PickleStepDefinitionMatch match = glue.stepDefinitionMatch(featurePath, step);
         if (match == null) {
             UndefinedStepException error = new UndefinedStepException(step);
 
@@ -102,7 +102,7 @@ public class Runner implements UnreportedStepExecutor {
 
     private void addTestStepsForPickleSteps(List<PickleStepTestStep> testSteps, PickleEvent pickleEvent) {
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
-            StepDefinitionMatch match;
+            PickleStepDefinitionMatch match;
             try {
                 match = glue.stepDefinitionMatch(pickleEvent.uri, step);
                 if (match == null) {
@@ -116,12 +116,12 @@ public class Runner implements UnreportedStepExecutor {
                     if (!snippets.isEmpty()) {
                         bus.send(new SnippetsSuggestedEvent(bus.getTime(), pickleEvent.uri, step.getLocations(), snippets));
                     }
-                    match = new UndefinedStepDefinitionMatch(step);
+                    match = new UndefinedPickleStepDefinitionMatch(step);
                 }
             } catch (AmbiguousStepDefinitionsException e) {
-                match = new AmbiguousStepDefinitionsMatch(pickleEvent.uri, step, e);
+                match = new AmbiguousPickleStepDefinitionsMatch(pickleEvent.uri, step, e);
             } catch (Throwable t) {
-                match = new FailedStepInstantiationMatch(pickleEvent.uri, step, t);
+                match = new FailedPickleStepInstantiationMatch(pickleEvent.uri, step, t);
             }
 
 

@@ -168,7 +168,7 @@ public class TestHelper {
         for (String stepText : mergeStepSets(stepsToResult, stepsToLocation)) {
             Result stepResult = getResultWithDefaultPassed(stepsToResult, stepText);
             if (!stepResult.is(Result.Type.UNDEFINED)) {
-                StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
+                PickleStepDefinitionMatch matchStep = mock(PickleStepDefinitionMatch.class);
                 when(glue.stepDefinitionMatch(anyString(), TestHelper.stepWithName(stepText))).thenReturn(matchStep);
                 mockStepResult(stepResult, matchStep);
                 mockStepLocation(getLocationWithDefaultEmptyString(stepsToLocation, stepText), matchStep);
@@ -176,7 +176,7 @@ public class TestHelper {
         }
     }
 
-    private static void mockStepResult(Result stepResult, StepDefinitionMatch matchStep) throws Throwable {
+    private static void mockStepResult(Result stepResult, PickleStepDefinitionMatch matchStep) throws Throwable {
         if (stepResult.is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (stepResult.is(Result.Type.FAILED)) {
@@ -189,7 +189,7 @@ public class TestHelper {
         }
     }
 
-    private static void mockStepLocation(String stepLocation, StepDefinitionMatch matchStep) {
+    private static void mockStepLocation(String stepLocation, PickleStepDefinitionMatch matchStep) {
         when(matchStep.getCodeLocation()).thenReturn(stepLocation);
     }
 

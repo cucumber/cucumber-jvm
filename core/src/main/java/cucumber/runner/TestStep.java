@@ -6,7 +6,6 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
-import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
 
@@ -22,15 +21,15 @@ abstract class TestStep implements cucumber.api.TestStep {
         Arrays.sort(ASSUMPTION_VIOLATED_EXCEPTIONS);
     }
 
-    private final DefinitionMatch definitionMatch;
+    private final StepDefinitionMatch stepDefinitionMatch;
 
-    TestStep(DefinitionMatch definitionMatch) {
-        this.definitionMatch = definitionMatch;
+    TestStep(StepDefinitionMatch stepDefinitionMatch) {
+        this.stepDefinitionMatch = stepDefinitionMatch;
     }
 
     @Override
     public String getCodeLocation() {
-        return definitionMatch.getCodeLocation();
+        return stepDefinitionMatch.getCodeLocation();
     }
 
     Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
@@ -52,10 +51,10 @@ abstract class TestStep implements cucumber.api.TestStep {
 
     private Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
-            definitionMatch.runStep(language, scenario);
+            stepDefinitionMatch.runStep(language, scenario);
             return Result.Type.PASSED;
         } else {
-            definitionMatch.dryRunStep(language, scenario);
+            stepDefinitionMatch.dryRunStep(language, scenario);
             return Result.Type.SKIPPED;
         }
     }

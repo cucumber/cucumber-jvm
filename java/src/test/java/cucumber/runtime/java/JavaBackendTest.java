@@ -6,7 +6,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -107,7 +107,7 @@ public class JavaBackendTest {
         }
 
         @Override
-        public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+        public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
             throw new UnsupportedOperationException();
         }
 

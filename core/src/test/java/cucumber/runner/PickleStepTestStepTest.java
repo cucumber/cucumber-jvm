@@ -5,8 +5,7 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class PickleStepTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
-    private final StepDefinitionMatch definitionMatch = mock(StepDefinitionMatch.class);
+    private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
     private final HookTestStep beforeHook = mock(HookTestStep.class);
     private final HookTestStep afterHook = mock(HookTestStep.class);
     private final PickleStepTestStep step = new PickleStepTestStep(

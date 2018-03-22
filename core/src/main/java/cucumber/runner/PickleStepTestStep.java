@@ -3,8 +3,7 @@ package cucumber.runner;
 import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
-import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
@@ -19,9 +18,9 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
     private final PickleStep step;
     private final List<HookTestStep> afterStepHookSteps;
     private final List<HookTestStep> beforeStepHookSteps;
-    private final StepDefinitionMatch definitionMatch;
+    private final PickleStepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(String uri, PickleStep step, StepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(String uri, PickleStep step, PickleStepDefinitionMatch definitionMatch) {
         this(uri, step, Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), definitionMatch);
     }
 
@@ -29,7 +28,7 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
                        PickleStep step,
                        List<HookTestStep> beforeStepHookSteps,
                        List<HookTestStep> afterStepHookSteps,
-                       StepDefinitionMatch definitionMatch
+                       PickleStepDefinitionMatch definitionMatch
     ) {
         super(definitionMatch);
         this.uri = uri;
@@ -79,7 +78,7 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
 
     @Override
     public int getStepLine() {
-        return StepDefinitionMatch.getStepLine(step);
+        return PickleStepDefinitionMatch.getStepLine(step);
     }
 
     @Override

@@ -6,15 +6,17 @@ import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
 
-public class UndefinedStepDefinitionMatch extends StepDefinitionMatch {
+public class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
+    private AmbiguousStepDefinitionsException exception;
 
-    public UndefinedStepDefinitionMatch(PickleStep step) {
-        super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step, null);
+    public AmbiguousPickleStepDefinitionsMatch(String uri, PickleStep step, AmbiguousStepDefinitionsException e) {
+        super(Collections.<Argument>emptyList(), new NoStepDefinition(), uri, step, null);
+        this.exception = e;
     }
 
     @Override
     public void runStep(String language, Scenario scenario) throws Throwable {
-        throw new UndefinedStepDefinitionException();
+        throw exception;
     }
 
     @Override

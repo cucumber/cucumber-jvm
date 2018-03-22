@@ -84,32 +84,32 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+    public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
+            return new PickleStepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
         }
 
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
+        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
         }
         if (matches.size() == 1) {
-            StepDefinitionMatch match = matches.get(0);
+            PickleStepDefinitionMatch match = matches.get(0);
             matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(), match.getArguments()));
             return match;
         }
         throw new AmbiguousStepDefinitionsException(step, matches);
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
-        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
+        List<PickleStepDefinitionMatch> result = new ArrayList<PickleStepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
+                result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
             }
         }
         return result;
