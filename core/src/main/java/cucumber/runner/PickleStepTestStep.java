@@ -1,5 +1,6 @@
 package cucumber.runner;
 
+import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.runtime.DefinitionMatch;
@@ -92,6 +93,18 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
     @Override
     public List<gherkin.pickles.Argument> getStepArgument() {
         return step.getArgument();
+    }
+
+    @Deprecated
+    @Override
+    public HookType getHookType() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    @Override
+    public boolean isHook() {
+        return false;
     }
 
     @Override
