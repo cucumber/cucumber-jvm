@@ -144,7 +144,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return arguments;
     }
 
-    protected Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
+    Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;
@@ -176,8 +176,9 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getPattern();
     }
 
-    public StackTraceElement getStepLocation() {
-        return new StackTraceElement("✽", step.getText(), featurePath, getStepLine(step));
+    StackTraceElement getStepLocation() {
+        int stepLine = step.getLocations().get(step.getLocations().size() - 1).getLine();
+        return new StackTraceElement("✽", step.getText(), featurePath, stepLine);
     }
 
     StepDefinition getStepDefinition() {
@@ -189,7 +190,4 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getLocation(false);
     }
 
-    public static int getStepLine(PickleStep step) {
-        return step.getLocations().get(step.getLocations().size() - 1).getLine();
-    }
 }

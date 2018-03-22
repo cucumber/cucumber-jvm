@@ -24,8 +24,7 @@ class NoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public ParameterInfo getParameterType(int n, Type argumentType)
-            throws IndexOutOfBoundsException {
+    public ParameterInfo getParameterType(int n, Type argumentType) throws IndexOutOfBoundsException {
         return null;
     }
 
