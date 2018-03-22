@@ -1,10 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
 import cucumber.api.Scenario;
-
-import java.util.Collections;
-import java.util.List;
 
 public class HookDefinitionMatch implements DefinitionMatch {
     private final HookDefinition hookDefinition;
@@ -24,22 +20,8 @@ public class HookDefinitionMatch implements DefinitionMatch {
     }
 
     @Override
-    public Match getMatch() {
-        return new Match(getArguments(), hookDefinition.getLocation(false));
-    }
-
-    @Override
-    public String getPattern() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getCodeLocation() {
         return hookDefinition.getLocation(false);
     }
 
-    @Override
-    public List<Argument> getArguments() {
-        return Collections.emptyList();
-    }
 }

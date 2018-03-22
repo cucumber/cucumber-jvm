@@ -172,17 +172,12 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         }
     }
 
-    @Override
     public String getPattern() {
         return stepDefinition.getPattern();
     }
 
     public StackTraceElement getStepLocation() {
         return new StackTraceElement("✽", step.getText(), featurePath, getStepLine(step));
-    }
-
-    public Match getMatch() {
-        return this;
     }
 
     StepDefinition getStepDefinition() {

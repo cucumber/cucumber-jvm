@@ -24,8 +24,4 @@ public class AmbiguousStepDefinitionsMatch extends StepDefinitionMatch {
         runStep(language, scenario);
     }
 
-    @Override
-    public Match getMatch() {
-        return exception.getMatches().get(0);
-    }
 }

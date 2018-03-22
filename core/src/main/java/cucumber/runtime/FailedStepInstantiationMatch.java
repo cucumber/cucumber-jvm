@@ -24,8 +24,4 @@ public class FailedStepInstantiationMatch extends StepDefinitionMatch {
         runStep(language, scenario);
     }
 
-    @Override
-    public Match getMatch() {
-        return Match.UNDEFINED;
-    }
 }

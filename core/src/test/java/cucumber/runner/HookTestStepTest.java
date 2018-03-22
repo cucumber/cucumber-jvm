@@ -6,6 +6,7 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.DefinitionMatch;
+import cucumber.runtime.HookDefinitionMatch;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
 public class HookTestStepTest {
-    private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
+    private final HookDefinitionMatch definitionMatch = mock(HookDefinitionMatch.class);
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);

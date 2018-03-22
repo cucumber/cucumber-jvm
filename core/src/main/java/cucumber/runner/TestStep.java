@@ -7,6 +7,7 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DefinitionMatch;
+import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ abstract class TestStep implements cucumber.api.TestStep {
         Arrays.sort(ASSUMPTION_VIOLATED_EXCEPTIONS);
     }
 
-    final DefinitionMatch definitionMatch;
+    private final DefinitionMatch definitionMatch;
 
     TestStep(DefinitionMatch definitionMatch) {
         this.definitionMatch = definitionMatch;

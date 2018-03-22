@@ -2,16 +2,15 @@ package cucumber.runner;
 
 import cucumber.api.Argument;
 import cucumber.api.HookType;
-import cucumber.runtime.DefinitionMatch;
+import cucumber.runtime.HookDefinitionMatch;
 import gherkin.pickles.PickleStep;
 
-import java.util.Collections;
 import java.util.List;
 
 class HookTestStep extends TestStep implements cucumber.api.HookTestStep {
     private final HookType hookType;
 
-    HookTestStep(HookType hookType, DefinitionMatch definitionMatch) {
+    HookTestStep(HookType hookType, HookDefinitionMatch definitionMatch) {
         super(definitionMatch);
         this.hookType = hookType;
     }

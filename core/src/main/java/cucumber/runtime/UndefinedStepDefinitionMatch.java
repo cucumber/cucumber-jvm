@@ -22,8 +22,4 @@ public class UndefinedStepDefinitionMatch extends StepDefinitionMatch {
         runStep(language, scenario);
     }
 
-    @Override
-    public Match getMatch() {
-        return Match.UNDEFINED;
-    }
 }

@@ -19,8 +19,9 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
     private final PickleStep step;
     private final List<HookTestStep> afterStepHookSteps;
     private final List<HookTestStep> beforeStepHookSteps;
+    private final StepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
+    PickleStepTestStep(String uri, PickleStep step, StepDefinitionMatch definitionMatch) {
         this(uri, step, Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), definitionMatch);
     }
 
@@ -28,13 +29,14 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
                        PickleStep step,
                        List<HookTestStep> beforeStepHookSteps,
                        List<HookTestStep> afterStepHookSteps,
-                       DefinitionMatch definitionMatch
+                       StepDefinitionMatch definitionMatch
     ) {
         super(definitionMatch);
         this.uri = uri;
         this.step = step;
         this.afterStepHookSteps = afterStepHookSteps;
         this.beforeStepHookSteps = beforeStepHookSteps;
+        this.definitionMatch = definitionMatch;
     }
 
     @Override
