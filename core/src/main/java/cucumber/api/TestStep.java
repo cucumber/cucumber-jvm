@@ -15,7 +15,8 @@ import java.util.List;
 public abstract class TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
             "org.junit.AssumptionViolatedException",
-            "org.junit.internal.AssumptionViolatedException"
+            "org.junit.internal.AssumptionViolatedException",
+            "org.testng.SkipException"
     };
 
     static {
