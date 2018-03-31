@@ -6,7 +6,7 @@ import cucumber.runtime.model.CucumberFeature;
  * The only purpose of this class is to provide custom {@linkplain #toString()},
  * making TestNG reports look more descriptive.
  *
- * @see AbstractTestNGCucumberTests#feature(cucumber.api.testng.CucumberFeatureWrapper)
+ * @see AbstractTestNGCucumberTests#runScenario(cucumber.api.testng.PickleEventWrapper, cucumber.api.testng.CucumberFeatureWrapper)
  */
 class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
     private final CucumberFeature cucumberFeature;

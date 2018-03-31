@@ -1,9 +1,15 @@
 package cucumber.api.testng;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.model.CucumberFeature;
+import gherkin.events.PickleEvent;
 
-class CucumberExceptionWrapper implements CucumberFeatureWrapper {
+/**
+ * The only purpose of this class is to move parse errors from the DataProvider
+ * to the test execution of the TestNG tests.
+ *
+ * @see TestNGCucumberRunner#provideScenarios()
+ */
+class CucumberExceptionWrapper implements PickleEventWrapper {
     private CucumberException exception;
 
     CucumberExceptionWrapper(CucumberException e) {
@@ -11,7 +17,7 @@ class CucumberExceptionWrapper implements CucumberFeatureWrapper {
     }
 
     @Override
-    public CucumberFeature getCucumberFeature() {
+    public PickleEvent getPickleEvent() {
         throw this.exception;
     }
 
