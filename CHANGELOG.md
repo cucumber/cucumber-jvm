@@ -3,7 +3,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...master) (In Git)
 
 ### Added
- * [Core, TestNG] Support the TestNG SkipException ([#1338](https://github.com/cucumber/cucumber-jvm/pull/1338) Björn Rasmusson)
+ * [Core, TestNG] Support the TestNG SkipException ([#1338](https://github.com/cucumber/cucumber-jvm/pull/1338), [#1340](https://github.com/cucumber/cucumber-jvm/pull/1340) Björn Rasmusson, M.P. Korstanje)
 
 ### Changed
  * [Spring] Limit context configuration to a single class. ([#1240](https://github.com/cucumber/cucumber-jvm/pull/1240), [#1246](https://github.com/cucumber/cucumber-jvm/pull/1246) Björn Rasmusson, M.P. Korstanje)  
@@ -11,7 +11,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
 
 ### Removed
- * [TestNG] Remove the support of mapping the whole test suite or each feature to TestNG tests ([#1339](https://github.com/cucumber/cucumber-jvm/pull/1339) Björn Rasmusson, M.P. Korstanje)
+ * [TestNG] Remove the support of mapping the whole test suite or each feature to TestNG tests ([#1339](https://github.com/cucumber/cucumber-jvm/pull/1339), [#1340](https://github.com/cucumber/cucumber-jvm/pull/1340) Björn Rasmusson, M.P. Korstanje)
  * [JUnit] Remove the obsolete JUnit option `--allow-started-ignored` (Björn Rasmusson)
  * [JUnit] Remove Cucumber.createRuntime method ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje) 
  * [Core] Remove 'dummy' results from junit formatter ([#1331](https://github.com/cucumber/cucumber-jvm/pull/1331), [#1326](https://github.com/cucumber/cucumber-jvm/pull/1326) Christoph Kutzinski) 
