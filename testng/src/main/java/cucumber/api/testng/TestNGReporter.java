@@ -64,6 +64,7 @@ class TestNGReporter implements Formatter {
             case SKIPPED:
                 tr.setThrowable(result.getError());
                 tr.setStatus(ITestResult.SKIP);
+                break;
             case UNDEFINED:
             case PENDING:
                 tr.setThrowable(result.getError());
