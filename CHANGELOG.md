@@ -11,6 +11,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
 
 ### Removed
+ * [TestNG] Remove the support of mapping the whole test suite or each feature to TestNG tests ([#1339](https://github.com/cucumber/cucumber-jvm/pull/1339) Björn Rasmusson, M.P. Korstanje)
  * [JUnit] Remove the obsolete JUnit option `--allow-started-ignored` (Björn Rasmusson)
  * [JUnit] Remove Cucumber.createRuntime method ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje) 
  * [Core] Remove 'dummy' results from junit formatter ([#1331](https://github.com/cucumber/cucumber-jvm/pull/1331), [#1326](https://github.com/cucumber/cucumber-jvm/pull/1326) Christoph Kutzinski) 

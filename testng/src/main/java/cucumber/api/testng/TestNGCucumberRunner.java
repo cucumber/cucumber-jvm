@@ -24,7 +24,6 @@ public class TestNGCucumberRunner {
     private TestNGReporter reporter;
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
-    private FeatureResultListener resultListener;
     private TestCaseResultListener testCaseResultListener;
 
     /**
@@ -46,37 +45,10 @@ public class TestNGCucumberRunner {
                 }
             });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        resultListener = new FeatureResultListener(runtimeOptions.isStrict());
         runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
         reporter.setEventPublisher(runtime.getEventBus());
-        resultListener.setEventPublisher(runtime.getEventBus());
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
         testCaseResultListener.setEventPublisher(runtime.getEventBus());
-    }
-
-    /**
-     * Run the Cucumber features
-     */
-    public void runCukes() {
-        System.err.println("WARNING: The TestNGCucumberRunner.runCukes() is deprecated. Please create a runner class by subclassing AbstractTestNGCucumberTest.");
-        for (CucumberFeature cucumberFeature : getFeatures()) {
-            reporter.uri(cucumberFeature.getUri());
-            runtime.runFeature(cucumberFeature);
-        }
-        finish();
-        if (!resultListener.isPassed()) {
-            throw new CucumberException(resultListener.getFirstError());
-        }
-    }
-
-    public void runCucumber(CucumberFeature cucumberFeature) {
-        resultListener.startFeature();
-        reporter.uri(cucumberFeature.getUri());
-        runtime.runFeature(cucumberFeature);
-
-        if (!resultListener.isPassed()) {
-            throw new CucumberException(resultListener.getFirstError());
-        }
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
@@ -94,31 +66,6 @@ public class TestNGCucumberRunner {
     }
 
     /**
-     * @return List of detected cucumber features
-     */
-    public List<CucumberFeature> getFeatures() {
-        return runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
-    }
-
-    /**
-     * @return returns the cucumber features as a two dimensional array of
-     * {@link CucumberFeatureWrapper} objects.
-     */
-    public Object[][] provideFeatures() {
-        System.err.println("WARNING: Mapping Cucumber Features to TestNG test is deprecated. Please use TestNGCucumberRunner.providePickleEvent as data provider.");
-        try {
-            List<CucumberFeature> features = getFeatures();
-            List<Object[]> featuresList = new ArrayList<Object[]>(features.size());
-            for (CucumberFeature feature : features) {
-                featuresList.add(new Object[]{new CucumberFeatureWrapperImpl(feature)});
-            }
-            return featuresList.toArray(new Object[][]{});
-        } catch (CucumberException e) {
-            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e)}};
-        }
-    }
-
-    /**
      * @return returns the cucumber scenarios as a two dimensional array of {@link PickleEventWrapper}
      * scenarios combined with their {@link CucumberFeatureWrapper} feature.
      */
@@ -132,14 +79,18 @@ public class TestNGCucumberRunner {
 
                 for (PickleEvent pickle : pickles) {
                     if (runtime.matchesFilters(pickle)) {
-                        scenarios.add(new Object[]{new PickleEventWrapper(pickle),
+                        scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
                             new CucumberFeatureWrapperImpl(feature)});
                     }
                 }
             }
             return scenarios.toArray(new Object[][]{});
         } catch (CucumberException e) {
-            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e)}};
+            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e), null}};
         }
+    }
+
+    List<CucumberFeature> getFeatures() {
+        return runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
     }
 }
