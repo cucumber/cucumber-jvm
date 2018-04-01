@@ -41,3 +41,11 @@ package. The `@CucumberOptions` can be used to provide
 It is possible to use TestNG without inheriting from `AbstractTestNGCucumberTests` by using the `TestNGCucumberRunner`. 
 See the [RunCukesByCompositionTest Example](../examples/java-calculator-testng/src/test/java/cucumber/examples/java/calculator/RunCukesByCompositionTest.java) 
 for usage.
+
+## SkipException ##
+
+Cucumber provides limited support for [SkipException](https://jitpack.io/com/github/cbeust/testng/master/javadoc/org/testng/SkipException.html).
+
+* Throwing a `SkipException` results in both Cucumber and TestNG marking the test as skipped.
+* Throwing a subclass of `SkipException` results in Cucumber marking the test as failed and TestNG marking the test 
+as skipped.
