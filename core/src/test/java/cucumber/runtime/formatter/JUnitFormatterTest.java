@@ -499,22 +499,6 @@ public class JUnitFormatterTest {
         assertXmlEqual(expected, formatterOutput);
     }
 
-    @Test
-    public void should_add_dummy_testcase_if_no_scenarios_are_run_to_aviod_failed_jenkins_jobs() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
-                "Feature: feature name\n");
-
-        String formatterOutput = runFeatureWithJUnitFormatter(feature);
-
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" time=\"0\">\n" +
-                "    <testcase classname=\"dummy\" name=\"dummy\">\n" +
-                "        <skipped message=\"No features found\" />\n" +
-                "    </testcase>\n" +
-                "</testsuite>\n";
-        assertXmlEqual(expected, formatterOutput);
-    }
-
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
         return runFeaturesWithJunitFormatter(featurePaths, false);
     }

@@ -87,7 +87,6 @@ public class RuntimeOptionsFactory {
     private void addPlugins(CucumberOptions options, List<String> args) {
         List<String> plugins = new ArrayList<String>();
         plugins.addAll(asList(options.plugin()));
-        plugins.addAll(asList(options.format()));
         for (String plugin : plugins) {
             args.add("--plugin");
             args.add(plugin);

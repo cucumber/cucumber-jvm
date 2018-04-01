@@ -10,8 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-@WebAppConfiguration
-@ContextConfiguration("classpath:cucumber.xml")
 public class UserStepdefs {
     @Autowired
     private UserRepository userRepository;

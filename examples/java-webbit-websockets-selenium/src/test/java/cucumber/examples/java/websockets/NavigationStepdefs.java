@@ -14,7 +14,7 @@ public class NavigationStepdefs implements En {
             // The input fields won't be enabled until the WebSocket has established
             // a connection. Wait for this to happen.
             WebDriverWait wait = new WebDriverWait(webDriver, 1);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("celcius")));
+            wait.until(ExpectedConditions.elementToBeClickable(By.id("celsius")));
         });
     }
 }

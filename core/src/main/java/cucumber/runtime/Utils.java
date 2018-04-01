@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -128,4 +127,13 @@ public class Utils {
                 .replace("'", "&#x27;")
                 .replace("/", "&#x2F;");
     }
+
+    public static String getUniqueTestNameForScenarioExample(String testCaseName, int exampleNumber) {
+        return testCaseName + (includesBlank(testCaseName) ? " " : "_") + exampleNumber;
+    }
+
+    private static boolean includesBlank(String testCaseName) {
+        return testCaseName.indexOf(' ') != -1;
+    }
+
 }
