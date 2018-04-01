@@ -42,9 +42,6 @@ import java.util.Stack;
  * or @{@link BootstrapWith}. This step definition can also be annotated
  * with @{@link org.springframework.test.context.web.WebAppConfiguration}
  * or @{@link org.springframework.test.annotation.DirtiesContext} annotation.
- * <p>
- * If more that one step definition class has such an annotation, the annotations must be equal on
- * the different step definition. <b>Deprecation warning:</b> Annotating multiple step definitions is deprecated.
  * </li>
  * <li>If no step definition class with @ContextConfiguration or @ContextHierarchy
  * is found, it will try to load cucumber.xml from the classpath.</li>
