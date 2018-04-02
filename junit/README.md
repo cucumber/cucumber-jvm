@@ -52,3 +52,13 @@ The Cucumber runner acts like a suite of a JUnit tests. As such other JUnit feat
 Listeners and Reporters can all be expected to work.
 
 For more information on JUnit, see the [JUnit web site](http://www.junit.org).
+
+## Assume ## 
+
+Through [Assume](https://junit.org/junit4/javadoc/4.12/org/junit/Assume.html) JUnit provides: 
+
+> a set of methods useful for stating assumptions about the conditions in which a test is meaningful. A failed 
+assumption does not mean the code is broken, but that the test provides no useful information. The default JUnit 
+runner skips tests with failing assumptions. Custom runners may behave differently. 
+
+The Cucumber runner supports `Assume` and will marked skipped scenarios as skipped.   

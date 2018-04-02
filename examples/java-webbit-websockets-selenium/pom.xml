@@ -37,7 +37,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <!--
-                               Run phantomjs by default. It probably works every where.
+                               Run phantomjs by default. It probably works everywhere.
 
                                Check the develop profile to configure which web driver to use
                                when developing.
