@@ -78,7 +78,7 @@ public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<Ca
         }
     }
 
-    @When("^I press {operator}$")
+    @When("I press {operator}")
     public void I_press_op(char op) {
         CalculatorActivity activity = getActivity();
 

@@ -19,19 +19,19 @@ public class RpnCalculatorStepdefs {
         calc = new RpnCalculator();
     }
 
-    @When("^I add (\\d+) and (\\d+)$")
+    @When("I add {int} and {int}")
     public void adding(int arg1, int arg2) {
         calc.push(arg1);
         calc.push(arg2);
         calc.push("+");
     }
 
-    @Given("^I press (.+)$")
+    @Given("I press (.+)")
     public void I_press(String what) {
         calc.push(what);
     }
 
-    @Then("^the result is (\\d+)$")
+    @Then("the result is {int}")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
     }
@@ -46,7 +46,7 @@ public class RpnCalculatorStepdefs {
         // result.write("HELLLLOO");
     }
 
-    @Given("^the previous entries:$")
+    @Given("the previous entries:")
     public void thePreviousEntries(List<Entry> entries) {
         for (Entry entry : entries) {
             calc.push(entry.first);

@@ -14,7 +14,7 @@ public class ShoppingStepdefs implements En {
     public ShoppingStepdefs() {
 
 
-        Given("^the following groceries:$", (DataTable dataTable) -> {
+        Given("the following groceries:", (DataTable dataTable) -> {
             List<Grocery> groceries = dataTable.asList(Grocery.class);
             for (Grocery grocery : groceries) {
                 calc.push(grocery.price.value);
@@ -22,12 +22,12 @@ public class ShoppingStepdefs implements En {
             }
         });
 
-        When("^I pay (\\d+)$", (Integer amount) -> {
+        When("I pay {int}", (Integer amount) -> {
             calc.push(amount);
             calc.push("-");
         });
 
-        Then("^my change should be (\\d+)$", (Integer change) -> {
+        Then("my change should be {int}", (Integer change) -> {
             assertEquals(-calc.value().intValue(), change.intValue());
         });
     }

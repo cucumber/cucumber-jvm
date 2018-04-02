@@ -28,7 +28,7 @@ public class MoreSteps {
         assertTrue("Got a mock injected instead of the real instance.", atmWithdrawalSteps.isThisReallyYouOrJustAMock());
     }
 
-    @Given("^i call a step that i don't really need$")
+    @Given("i call a step that i don't really need")
     public void this_step_is_here_only_to_have_the_class_instantiated() {
     }
 

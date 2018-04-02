@@ -18,7 +18,7 @@ public class Java8LambdaStepDefinitionTest {
     public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {
         StepdefBody.A1<String> body = p1 -> {
         };
-        Java8StepDefinition def = Java8StepDefinition.create("^I have (\\d) some step (.*)$", StepdefBody.A1.class, body, parameterTypeRegistry);
+        Java8StepDefinition def = Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, parameterTypeRegistry);
         assertEquals(Integer.valueOf(1), def.getParameterCount());
     }
 
@@ -26,7 +26,7 @@ public class Java8LambdaStepDefinitionTest {
     public void should_calculate_parameters_count_from_body_with_two_params() throws Exception {
         StepdefBody.A2<String, String> body = (p1, p2) -> {
         };
-        Java8StepDefinition def = Java8StepDefinition.create("^I have some step $", StepdefBody.A2.class, body, parameterTypeRegistry);
+        Java8StepDefinition def = Java8StepDefinition.create("I have some step", StepdefBody.A2.class, body, parameterTypeRegistry);
         assertEquals(Integer.valueOf(2), def.getParameterCount());
     }
 
@@ -35,7 +35,7 @@ public class Java8LambdaStepDefinitionTest {
         try {
             StepdefBody.A1<List> body = p1 -> {
             };
-            Java8StepDefinition.create("^I have (\\d) some step (.*)$", StepdefBody.A1.class, body, parameterTypeRegistry);
+            Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, parameterTypeRegistry);
         } catch (CucumberException expected) {
             assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
         }
@@ -46,7 +46,7 @@ public class Java8LambdaStepDefinitionTest {
         try {
             StepdefBody.A1<List<String>> body = p1 -> {
             };
-            Java8StepDefinition.create("^I have (\\d) some step (.*)$", StepdefBody.A1.class, body, parameterTypeRegistry);
+            Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, parameterTypeRegistry);
         } catch (CucumberException expected) {
             assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
         }

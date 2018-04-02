@@ -23,7 +23,7 @@ public class RpnCalculatorStepdefs implements En {
         });
 
 
-        Given("^I press (.+)$", (String what) -> calc.push(what));
+        Given("I press (.+)", (String what) -> calc.push(what));
 
         Then("the result is {double}", (Integer expected) -> assertEquals(expected, calc.value()));
 

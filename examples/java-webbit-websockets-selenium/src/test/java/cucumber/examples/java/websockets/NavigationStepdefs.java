@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class NavigationStepdefs implements En {
 
     public NavigationStepdefs(SharedDriver webDriver) {
-        Given("^I am on the front page$", () -> {
+        Given("I am on the front page", () -> {
             webDriver.get("http://localhost:" + ServerHooks.PORT);
 
             // The input fields won't be enabled until the WebSocket has established
