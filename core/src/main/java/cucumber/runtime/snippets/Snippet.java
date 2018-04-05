@@ -1,5 +1,6 @@
 package cucumber.runtime.snippets;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public interface Snippet {
@@ -26,21 +27,7 @@ public interface Snippet {
      * @param argumentTypes the types the snippet's argument should accept
      * @return a string representation of the arguments
      */
-    String arguments(List<Class<?>> argumentTypes);
-
-    /**
-     * Langauges that don't support named capture groups should return null.
-     *
-     * @return the start of a named capture group
-     */
-    String namedGroupStart();
-
-    /**
-     * Langauges that don't support named capture groups should return null.
-     *
-     * @return the end of a named capture group
-     */
-    String namedGroupEnd();
+    String arguments(List<Type> argumentTypes);
 
     /**
      * @param pattern the computed pattern that will match an undefined step
