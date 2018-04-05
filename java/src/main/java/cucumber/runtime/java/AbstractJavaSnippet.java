@@ -3,18 +3,20 @@ package cucumber.runtime.java;
 import cucumber.runtime.snippets.Snippet;
 
 import java.lang.reflect.Type;
-import java.util.List;
+import java.util.Map;
 
 abstract class AbstractJavaSnippet implements Snippet {
     @Override
-    public final String arguments(List<Type> argumentTypes) {
+    public final String arguments(Map<String, Type> arguments) {
         StringBuilder sb = new StringBuilder();
-        int n = 1;
-        for (Type argType : argumentTypes) {
-            if (n > 1) {
+        boolean first = true;
+        for (Map.Entry<String, Type> argType : arguments.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
                 sb.append(", ");
             }
-            sb.append(getArgType(argType)).append(" ").append("arg").append(n++);
+            sb.append(getArgType(argType.getValue())).append(" ").append(argType.getKey());
         }
         return sb.toString();
     }

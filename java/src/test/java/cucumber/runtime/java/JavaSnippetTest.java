@@ -34,7 +34,7 @@ public class JavaSnippetTest {
     public void generatesPlainSnippet() {
         String expected = "" +
             "@Given(\"I have {int} cukes in my {string} belly\")\n" +
-            "public void i_have_cukes_in_my_belly(Integer arg1, String arg2) {\n" +
+            "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -57,7 +57,7 @@ public class JavaSnippetTest {
 
         String expected = "" +
             "@Given(\"I have {double} cukes in my {size} belly\")\n" +
-            "public void i_have_cukes_in_my_belly(Double arg1, Size arg2) {\n" +
+            "public void i_have_cukes_in_my_belly(Double double1, Size size) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -69,7 +69,8 @@ public class JavaSnippetTest {
         ParameterType<List<Size>> customParameterType = new ParameterType<List<Size>>(
             "sizes",
             singletonList("(small|medium|large)(( and |, )(small|medium|large))*"),
-            new TypeReference<List<Size>>(){}.getType(),
+            new TypeReference<List<Size>>() {
+            }.getType(),
             new Transformer<List<Size>>() {
                 @Override
                 public List<Size> transform(String... strings) throws Throwable {
@@ -80,7 +81,7 @@ public class JavaSnippetTest {
 
         String expected = "" +
             "@Given(\"I have {sizes} bellies\")\n" +
-            "public void i_have_bellies(java.util.List<cucumber.runtime.java.JavaSnippetTest$Size> arg1) {\n" +
+            "public void i_have_bellies(java.util.List<cucumber.runtime.java.JavaSnippetTest$Size> sizes) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -91,7 +92,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() {
         String expected = "" +
             "@Given(\"before {int} after\")\n" +
-            "public void before_after(Integer arg1) {\n" +
+            "public void before_after(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -102,7 +103,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
             "@Given(\"I have {int} cukes in: my {string} red-belly!\")\n" +
-            "public void i_have_cukes_in_my_red_belly(Integer arg1, String arg2) {\n" +
+            "public void i_have_cukes_in_my_red_belly(Integer int1, String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -113,7 +114,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
             "@Given(\"the DI system receives a message saying {string}\")\n" +
-            "public void the_DI_system_receives_a_message_saying(String arg1) {\n" +
+            "public void the_DI_system_receives_a_message_saying(String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -124,7 +125,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDollarSigns() {
         String expected = "" +
             "@Given(\"I have ${int}\")\n" +
-            "public void i_have_$(Integer arg1) {\n" +
+            "public void i_have_$(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -157,7 +158,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithParentheses() {
         String expected = "" +
             "@Given(\"I have {int} cukes (maybe more)\")\n" +
-            "public void i_have_cukes_maybe_more(Integer arg1) {\n" +
+            "public void i_have_cukes_maybe_more(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -168,7 +169,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithBrackets() {
         String expected = "" +
             "@Given(\"I have {int} cukes [maybe more]\")\n" +
-            "public void i_have_cukes_maybe_more(Integer arg1) {\n" +
+            "public void i_have_cukes_maybe_more(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
@@ -179,11 +180,35 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDocString() {
         String expected = "" +
             "@Given(\"I have:\")\n" +
-            "public void i_have(String arg1) {\n" +
+            "public void i_have(String docString) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
             "}\n";
         assertEquals(expected, snippetForDocString("I have:", new PickleString(null, "hello")));
+    }
+
+    @Test
+    public void generatesSnippetWithMultipleArgumentsNamedDocString() {
+        ParameterType<String> customParameterType = new ParameterType<String>(
+            "docString",
+            "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
+            String.class,
+            new Transformer<String>() {
+                @Override
+                public String transform(String... strings) throws Throwable {
+                    return null;
+                }
+            },
+            true,
+            false);
+
+        String expected = "" +
+            "@Given(\"I have a {docString}:\")\n" +
+            "public void i_have_a(String docString, String docString1) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    throw new PendingException();\n" +
+            "}\n";
+        assertEquals(expected, snippetForDocString("I have a \"Documentation String\":", new PickleString(null, "hello"), customParameterType));
     }
 
     @Test
@@ -201,7 +226,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDataTable() {
         String expected = "" +
             "@Given(\"I have:\")\n" +
-            "public void i_have(DataTable arg1) {\n" +
+            "public void i_have(DataTable dataTable) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    // For automatic transformation, change DataTable to one of\n" +
             "    // List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
@@ -213,6 +238,38 @@ public class JavaSnippetTest {
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
         assertEquals(expected, snippetForDataTable("I have:", dataTable));
+    }
+
+
+    @Test
+    public void generatesSnippetWithMultipleArgumentsNamedDataTable() {
+        ParameterType<String> customParameterType = new ParameterType<String>(
+            "dataTable",
+            "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
+            String.class,
+            new Transformer<String>() {
+                @Override
+                public String transform(String... strings) throws Throwable {
+                    return null;
+                }
+            },
+            true,
+            false);
+
+        String expected = "" +
+            "@Given(\"I have in table {dataTable}:\")\n" +
+            "public void i_have_in_table(String dataTable, DataTable dataTable1) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    // For automatic transformation, change DataTable to one of\n" +
+            "    // List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
+            "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
+            "    // Double, Byte Short, Long, BigInteger or BigDecimal.\n" +
+            "    //\n" +
+            "    // For other transformations you can register a DataTableType\n" +
+            "    throw new PendingException();\n" +
+            "}\n";
+        PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
+        assertEquals(expected, snippetForDataTable("I have in table \"M6\":", dataTable, customParameterType));
     }
 
     @Test
@@ -245,12 +302,30 @@ public class JavaSnippetTest {
         return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
+
+    private String snippetForDocString(String name, PickleString docString, ParameterType<String> parameterType) {
+        PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        parameterTypeRegistry.defineParameterType(parameterType);
+        return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+    }
+
+
     private String snippetForDataTable(String name, PickleTable dataTable) {
         PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
         return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
+
+    private String snippetForDataTable(String name, PickleTable dataTable, ParameterType<String> parameterType) {
+        PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        parameterTypeRegistry.defineParameterType(parameterType);
+        return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+    }
+
     private static class Size {
         // Dummy. Makes the test readable
     }
+
 }

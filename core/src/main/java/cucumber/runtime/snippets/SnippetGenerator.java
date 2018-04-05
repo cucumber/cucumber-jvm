@@ -12,7 +12,6 @@ import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class SnippetGenerator {
             keyword,
             snippet.escapePattern(expression.getSource()),
             functionName(expression.getSource(), functionNameGenerator),
-            snippet.arguments(argumentTypes(step, expression.getParameterTypes())),
+            snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
             REGEXP_HINT,
             !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
         );
@@ -59,25 +58,40 @@ public class SnippetGenerator {
     }
 
 
-    private List<Type> argumentTypes(PickleStep step, List<ParameterType<?>> parameterTypes) {
-        List<Type> types = new ArrayList<Type>(parameterTypes.size() + 1);
+    private Map<String, Type> arguments(PickleStep step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
+        Map<String, Type> arguments = new LinkedHashMap<String, Type>(parameterTypes.size() + 1);
 
-        for (ParameterType<?> parameterType : parameterTypes) {
-            types.add(parameterType.getType());
+        for (int i = 0; i < parameterTypes.size(); i++) {
+            ParameterType<?> parameterType = parameterTypes.get(i);
+            String parameterName = parameterNames.get(i);
+            arguments.put(parameterName, parameterType.getType());
         }
 
         if (step.getArgument().isEmpty()) {
-            return types;
-        }
-        Argument arg = step.getArgument().get(0);
-        if (arg instanceof PickleString) {
-            types.add(String.class);
-        }
-        if (arg instanceof PickleTable) {
-            types.add(DataTable.class);
+            return arguments;
         }
 
-        return types;
+        Argument arg = step.getArgument().get(0);
+        if (arg instanceof PickleString) {
+            arguments.put(parameterName("docString", parameterNames), String.class);
+        }
+        if (arg instanceof PickleTable) {
+            arguments.put(parameterName("dataTable", parameterNames), DataTable.class);
+        }
+
+        return arguments;
+    }
+
+    private String parameterName(String name, List<String> parameterNames) {
+        if (!parameterNames.contains(name)) {
+            return name;
+        }
+
+        for (int i = 1; ; i++) {
+            if (!parameterNames.contains(name + i)) {
+                return name + i;
+            }
+        }
     }
 
     ArgumentPattern[] argumentPatterns() {

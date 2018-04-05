@@ -18,7 +18,7 @@ public class Java8SnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Given(\"I have {int} cukes in my {string} belly\", (Integer arg1, String arg2) -> {\n" +
+                "Given(\"I have {int} cukes in my {string} belly\", (Integer int1, String string) -> {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "});\n";
