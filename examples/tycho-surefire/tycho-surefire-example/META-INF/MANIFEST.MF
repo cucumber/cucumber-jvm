@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tycho Surefire Example
+Bundle-SymbolicName: tycho-surefire-example;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Activator: cucumber.examples.java.tycho.calculator.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: cucumber.examples.java.tycho.calculator.api
+Require-Bundle: org.eclipse.osgi;bundle-version="3.12.50"
