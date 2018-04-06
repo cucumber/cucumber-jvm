@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/cucumber-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cucumber-html.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cucumber-java.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cucumber-junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cucumber-jvm-deps.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cucumber-osgi.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gherkin.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hamcrest-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tag-expressions.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
