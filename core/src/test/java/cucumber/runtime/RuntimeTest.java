@@ -208,7 +208,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
