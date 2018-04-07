@@ -94,7 +94,7 @@ class Stats implements EventListener {
 
     public byte exitStatus(boolean isStrict) {
         byte result = 0x0;
-        if (!failedScenarios.isEmpty() || (isStrict && (!pendingScenarios.isEmpty() || !undefinedScenarios.isEmpty()))) {
+        if (!failedScenarios.isEmpty() || (isStrict && (!pendingScenarios.isEmpty() || !undefinedScenarios.isEmpty() || !ambiguousScenarios.isEmpty()))) {
             result |= ERRORS;
         }
         return result;
