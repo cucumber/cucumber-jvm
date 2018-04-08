@@ -146,7 +146,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithLotsOfNonIdentifierCharacters() {
         String expected = "" +
-            "@Given(\"([a-z]*)?.+\")\n" +
+            "@Given(\"\\\\([a-z]*)?.+\")\n" +
             "public void a_z() {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
@@ -157,7 +157,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithParentheses() {
         String expected = "" +
-            "@Given(\"I have {int} cukes (maybe more)\")\n" +
+            "@Given(\"I have {int} cukes \\\\(maybe more)\")\n" +
             "public void i_have_cukes_maybe_more(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new PendingException();\n" +
