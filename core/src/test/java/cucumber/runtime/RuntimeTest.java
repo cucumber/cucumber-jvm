@@ -204,6 +204,22 @@ public class RuntimeTest {
     }
 
     @Test
+    public void non_strict_with_ambiguous_scenarios() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_ambiguous_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
     public void should_pass_if_no_features_are_found() throws IOException {
         ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
         Runtime runtime = createStrictRuntime(resourceLoader);
