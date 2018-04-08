@@ -13,8 +13,9 @@ import java.util.Arrays;
 
 abstract class TestStep implements cucumber.api.TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
-            "org.junit.AssumptionViolatedException",
-            "org.junit.internal.AssumptionViolatedException"
+        "org.junit.AssumptionViolatedException",
+        "org.junit.internal.AssumptionViolatedException",
+        "org.testng.SkipException"
     };
 
     static {
