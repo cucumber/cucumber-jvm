@@ -529,6 +529,11 @@
                 <artifactId>typetools</artifactId>
                 <version>${typetools.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.m2e</groupId>
+                <artifactId>lifecycle-mapping</artifactId>
+                <version>1.0.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
