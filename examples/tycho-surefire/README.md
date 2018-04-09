@@ -10,4 +10,4 @@ After importing the project into the workspace, perform these manual steps:
 
 To compile and run just this example, you must execute the `Run As -> Maven Install` from the `tycho-surefire` parent module level.
 
-To execute just the tests within the example, execute the `Run As -> JUnit Test` from the `tycho-surefire-example-tests` module level.  The expected results of this, however, are for the Scenarios of the feature file to be displayed in the JUnit view, but for no tests to actually run because it was not executed inside an OSGi container.
+To execute just the tests within the example, execute the `Run As -> JUnit Test` from the `tycho-surefire-example-test` module level.  The expected results of this, however, are for the Scenarios of the feature file to be displayed in the JUnit view, but for no tests to actually run because it was not executed inside an OSGi container.
