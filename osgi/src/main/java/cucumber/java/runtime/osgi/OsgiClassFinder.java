@@ -60,8 +60,11 @@ public class OsgiClassFinder implements ClassFinder {
         
         result.trimToSize();
         
-        if (LOGGER.isDebugEnabled())
-			result.stream().forEach(c -> LOGGER.debug("Found class " + c.getName()));
+        if (LOGGER.isDebugEnabled()) {
+        	for (Class<? extends T> clazz : result) {
+        		LOGGER.debug("Found class " + clazz.getName());
+        	}
+        }
         
         return result;
     }
