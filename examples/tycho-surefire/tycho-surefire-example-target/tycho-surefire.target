@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="tycho-surefire" sequenceNumber="287">
+<?pde version="3.8"?><target name="tycho-surefire" sequenceNumber="290">
 <locations>
-<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.junit" version="4.12.0.v201504281640"/>
-<repository location="http://prdmvnrepo:19081/nexus/content/repositories/orbit-drop-R20170919201930_20171024/"/>
+<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.equinox.core.sdk.feature.group" version="3.13.2.v20180210-1608"/>
+<unit id="org.eclipse.jdt.source.feature.group" version="3.13.3.v20180301-0715"/>
+<unit id="org.eclipse.equinox.executable.feature.group" version="3.7.2.v20171108-1834"/>
+<unit id="org.eclipse.platform.feature.group" version="4.7.3.v20180301-0715"/>
+<repository location="http://download.eclipse.org/releases/oxygen"/>
 </location>
-<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.core.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
+<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="javax.inject" version="1.0.0.v20091030"/>
-<unit id="org.eclipse.jdt.junit.runtime" version="0.0.0"/>
-<repository location="http://prdmvnrepo.vanguard.com:19081/nexus/content/repositories/oxygen-RELEASE-p2/"/>
-</location>
-<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.hamcrest.core" version="1.3.0.v201303031735"/>
-<unit id="org.hamcrest.library.source" version="1.3.0.v201305281000"/>
-<unit id="org.hamcrest.library" version="1.3.0.v201305281000"/>
-<unit id="org.hamcrest.core.source" version="1.3.0.v201303031735"/>
-<repository location="http://prdmvnrepo:19081/nexus/content/repositories/swtbot-2.2.0-p2/"/>
+<unit id="org.hamcrest.library" version="1.3.0.v201505072020"/>
+<unit id="org.junit" version="4.12.0.v201504281640"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6"/>
