@@ -13,9 +13,9 @@ public class ParameterTypes implements Configuration {
 
     @Override
     public TypeRegistry createTypeRegistry() {
-        final TypeRegistry parameterTypeRegistry = new TypeRegistry(ENGLISH);
+        final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "message",
             Message.class,
             new TableEntryTransformer<Message>() {
@@ -27,6 +27,6 @@ public class ParameterTypes implements Configuration {
                 }
             }));
 
-        return parameterTypeRegistry;
+        return typeRegistry;
     }
 }

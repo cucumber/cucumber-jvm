@@ -31,8 +31,8 @@ public class MethodScannerTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         this.factory = Mockito.mock(ObjectFactory.class);
-        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(factory, classFinder, parameterTypeRegistry);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
     }
 
     @Test

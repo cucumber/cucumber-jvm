@@ -20,8 +20,8 @@ public class ParameterTypes implements Configuration {
 
     @Override
     public TypeRegistry createTypeRegistry() {
-        TypeRegistry parameterTypeRegistry = new TypeRegistry(ENGLISH);
-        parameterTypeRegistry.defineParameterType(new ParameterType<>(
+        TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+        typeRegistry.defineParameterType(new ParameterType<>(
                 "date",
                 "((.*) \\d{1,2}, \\d{4})",
                 Date.class,
@@ -29,14 +29,14 @@ public class ParameterTypes implements Configuration {
             )
         );
 
-        parameterTypeRegistry.defineParameterType(new ParameterType<>(
+        typeRegistry.defineParameterType(new ParameterType<>(
             "iso-date",
             "\\d{4}-\\d{2}-\\d{2}",
             Date.class,
             (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
         ));
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "entry",
             Entry.class,
             (Map<String, String> row) -> new Entry(
@@ -46,7 +46,7 @@ public class ParameterTypes implements Configuration {
             )
         ));
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "groceries",
             Grocery.class,
             (Map<String, String> row) -> new Grocery(
@@ -55,6 +55,6 @@ public class ParameterTypes implements Configuration {
             )
         ));
 
-        return parameterTypeRegistry;
+        return typeRegistry;
     }
 }

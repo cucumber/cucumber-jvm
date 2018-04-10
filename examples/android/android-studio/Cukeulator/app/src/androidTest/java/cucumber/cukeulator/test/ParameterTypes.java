@@ -13,8 +13,8 @@ public class ParameterTypes implements Configuration {
 
     @Override
     public ParameterTypeRegistry createParameterTypeRegistry() {
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(ENGLISH);
-        parameterTypeRegistry.defineParameterType(new ParameterType<Integer>(
+        ParameterTypeRegistry typeRegistry = new ParameterTypeRegistry(ENGLISH);
+        typeRegistry.defineParameterType(new ParameterType<Integer>(
             "digit",
             "[0-9]",
             Integer.class,
@@ -26,7 +26,7 @@ public class ParameterTypes implements Configuration {
             })
         ));
 
-        parameterTypeRegistry.defineParameterType(new ParameterType<Character>(
+        typeRegistry.defineParameterType(new ParameterType<Character>(
             "operator",
             "[+–x\\/=]",
             Character.class,
@@ -39,6 +39,6 @@ public class ParameterTypes implements Configuration {
         ));
 
 
-        return parameterTypeRegistry;
+        return typeRegistry;
     }
 }

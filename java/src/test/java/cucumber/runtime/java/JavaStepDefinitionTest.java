@@ -60,8 +60,8 @@ public class JavaStepDefinitionTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactory factory = new SingletonFactory(defs);
-        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(factory, classFinder, parameterTypeRegistry);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.CucumberException;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,17 +12,17 @@ import java.util.Locale;
 
 public class Java8AnonInnerClassStepDefinitionTest {
 
-    private final TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
+    private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
 
     @Test
-    public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {
-        Java8StepDefinition java8StepDefinition = Java8StepDefinition.create("I have some step", StepdefBody.A1.class, oneParamStep(), parameterTypeRegistry);
+    public void should_calculate_parameters_count_from_body_with_one_param() {
+        Java8StepDefinition java8StepDefinition = Java8StepDefinition.create("I have some step", StepdefBody.A1.class, oneParamStep(), typeRegistry);
         assertEquals(Integer.valueOf(1), java8StepDefinition.getParameterCount());
     }
 
     @Test
-    public void should_calculate_parameters_count_from_body_with_two_params() throws Exception {
-        Java8StepDefinition java8StepDefinition = Java8StepDefinition.create("I have some step", StepdefBody.A2.class, twoParamStep(), parameterTypeRegistry);
+    public void should_calculate_parameters_count_from_body_with_two_params() {
+        Java8StepDefinition java8StepDefinition = Java8StepDefinition.create("I have some step", StepdefBody.A2.class, twoParamStep(), typeRegistry);
         assertEquals(Integer.valueOf(2), java8StepDefinition.getParameterCount());
     }
 

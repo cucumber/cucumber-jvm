@@ -15,7 +15,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class StubBackend implements Backend {
-    public StubBackend(ResourceLoader resourceLoader, TypeRegistry parameterTypeRegistry) {
+    public StubBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
 
     }
 

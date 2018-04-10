@@ -35,7 +35,7 @@ import java.util.List;
 public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     private final SnippetGenerator snippetGenerator;
-    private final TypeRegistry parameterTypeRegistry;
+    private final TypeRegistry typeRegistry;
 
     private Snippet createSnippet() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
@@ -59,12 +59,12 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
      *
      * @param resourceLoader
      */
-    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry parameterTypeRegistry) {
-        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), parameterTypeRegistry);
+    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
     }
 
-    private JavaBackend(ClassFinder classFinder, TypeRegistry parameterTypeRegistry) {
-        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, parameterTypeRegistry);
+    private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
+        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
     }
 
     public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
@@ -72,7 +72,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
         this.snippetGenerator = new SnippetGenerator(createSnippet(), typeRegistry.parameterTypeRegistry());
-        this.parameterTypeRegistry = typeRegistry;
+        this.typeRegistry = typeRegistry;
     }
 
     @Override
@@ -151,7 +151,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
                         argumentName(annotation),
                         timeoutMillis(annotation),
                         objectFactory,
-                        parameterTypeRegistry));
+                        typeRegistry));
             }
         } catch (DuplicateStepDefinitionException e) {
             throw e;
@@ -162,7 +162,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     @Override
     public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-        glue.addStepDefinition(stepDefinitionFunction.apply(parameterTypeRegistry));
+        glue.addStepDefinition(stepDefinitionFunction.apply(typeRegistry));
     }
 
     void addHook(Annotation annotation, Method method) {

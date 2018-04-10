@@ -79,8 +79,8 @@ public class CalculatorTest {
         final ClassLoader classLoader = Runtime.class.getClassLoader();
         final ObjectFactory objectFactory = new PaxExamObjectFactory(injector);
         final ClassFinder classFinder = new OsgiClassFinder(bundleContext);
-        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
-        final Backend backend = new JavaBackend(objectFactory, classFinder,parameterTypeRegistry);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        final Backend backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
 
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();

@@ -9,9 +9,9 @@ import java.util.Locale.ENGLISH
 class ParameterTypes : Configuration {
 
     override fun createTypeRegistry(): TypeRegistry {
-        val parameterTypeRegistry = TypeRegistry(ENGLISH)
+        val typeRegistry = TypeRegistry(ENGLISH)
 
-        parameterTypeRegistry.defineDataTableType(DataTableType(
+        typeRegistry.defineDataTableType(DataTableType(
                 "person",
                 LambdaStepdefs.Person::class.java,
                 TableEntryTransformer<LambdaStepdefs.Person>
@@ -23,6 +23,6 @@ class ParameterTypes : Configuration {
                 }))
 
 
-        return parameterTypeRegistry
+        return typeRegistry
     }
 }

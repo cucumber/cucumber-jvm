@@ -37,7 +37,7 @@ public class ParameterTypes implements Configuration {
     };
     private final TableRowTransformer<Author> authorRowTransformer = new TableRowTransformer<Author>() {
         @Override
-        public Author transform(List<String> tableRow) throws Throwable {
+        public Author transform(List<String> tableRow) {
             return new Author(
                 tableRow.get(0),
                 tableRow.get(1),
@@ -59,29 +59,29 @@ public class ParameterTypes implements Configuration {
 
     @Override
     public TypeRegistry createTypeRegistry() {
-        final TypeRegistry parameterTypeRegistry = new TypeRegistry(ENGLISH);
+        final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "author",
             Author.class,
             authorEntryTransformer,
             true));
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "simpleAuthor",
             Author.class,
             authorRowTransformer));
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "singleAuthor",
             Author.class,
             singleAuthorTransformer));
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "person",
             Person.class,
             personEntryTransformer));
 
-        return parameterTypeRegistry;
+        return typeRegistry;
     }
 }

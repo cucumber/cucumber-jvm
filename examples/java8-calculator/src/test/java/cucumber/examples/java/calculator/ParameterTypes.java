@@ -14,9 +14,9 @@ public class ParameterTypes implements Configuration {
 
     @Override
     public TypeRegistry createTypeRegistry() {
-        TypeRegistry parameterTypeRegistry = new TypeRegistry(ENGLISH);
+        TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "entry",
             Entry.class,
             (Map<String, String> row) -> new Entry(
@@ -26,7 +26,7 @@ public class ParameterTypes implements Configuration {
             )
         ));
 
-        parameterTypeRegistry.defineDataTableType(new DataTableType(
+        typeRegistry.defineDataTableType(new DataTableType(
             "groceries",
             Grocery.class,
             (Map<String, String> row) -> new Grocery(
@@ -35,6 +35,6 @@ public class ParameterTypes implements Configuration {
             )
         ));
 
-        return parameterTypeRegistry;
+        return typeRegistry;
     }
 }

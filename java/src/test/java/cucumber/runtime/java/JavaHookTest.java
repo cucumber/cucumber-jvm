@@ -54,8 +54,8 @@ public class JavaHookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(objectFactory, classFinder, parameterTypeRegistry);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
         this.glue = new RuntimeGlue();
 
         backend.loadGlue(glue, Collections.<String>emptyList());
