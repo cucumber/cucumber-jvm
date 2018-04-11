@@ -141,49 +141,5 @@
                 </executions>
             </plugin>
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-	                <groupId>org.eclipse.m2e</groupId>
-	                <artifactId>lifecycle-mapping</artifactId>
-	                <configuration>
-	                    <lifecycleMappingMetadata>
-	                        <pluginExecutions>
-	                           <pluginExecution>
-				                  <pluginExecutionFilter>
-				                    <groupId>org.eclipse.tycho</groupId>
-				                    <artifactId>tycho-packaging-plugin</artifactId>
-				                    <versionRange>[0.23.1,)</versionRange>
-				                    <goals>
-				                      <goal>build-qualifier</goal>
-				                      <goal>validate-id</goal>
-				                      <goal>validate-version</goal>
-				                    </goals>
-				                  </pluginExecutionFilter>
-				                  <action>
-				                    <ignore></ignore>
-				                  </action>
-	                           </pluginExecution>
-	                           
-				               <pluginExecution>
-				                  <pluginExecutionFilter>
-				                    <groupId>org.eclipse.tycho</groupId>
-				                    <artifactId>tycho-compiler-plugin</artifactId>
-				                    <versionRange>[0.23.1,)</versionRange>
-				                    <goals>
-				                      <goal>compile</goal>
-				                    </goals>
-				                  </pluginExecutionFilter>
-				                  <action>
-				                    <ignore></ignore>
-				                  </action>
-				                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin> 
-            </plugins>
-        </pluginManagement>
     </build>
 </project>

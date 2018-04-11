@@ -48,7 +48,7 @@ import gherkin.pickles.PickleStep;
 public class CucumberOSGi extends ParentRunner<FeatureRunner> {
 
 	private final JUnitReporter jUnitReporter;
-    private final List<FeatureRunner> children = new ArrayList<>();
+    private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
     private final ResourceLoader resourceLoader;
     private final boolean isRunningInContainer;

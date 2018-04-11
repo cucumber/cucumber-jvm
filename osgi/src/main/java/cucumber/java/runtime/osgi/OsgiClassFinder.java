@@ -31,7 +31,7 @@ public class OsgiClassFinder implements ClassFinder {
        
     	final String searchPath = packageName.replace('.', '/');
 
-        final ArrayList<Class<? extends T>> result = new ArrayList<>();
+        final ArrayList<Class<? extends T>> result = new ArrayList<Class<? extends T>>();
         
         for (Bundle bundle : bundleContext.getBundles()) {
             
@@ -85,7 +85,7 @@ public class OsgiClassFinder implements ClassFinder {
     }
 
     protected <T> Collection<Class<? extends T>> findClassesInBundle(Bundle bundle, String prefix, String searchPath, Class<T> parentType) {
-        final Collection<Class<? extends T>> result = new ArrayList<>();
+        final Collection<Class<? extends T>> result = new ArrayList<Class<? extends T>>();
         final Enumeration<URL> resources = bundle.findEntries(searchPath, "*.class", true);
         if (resources == null)
             return Collections.emptyList();
