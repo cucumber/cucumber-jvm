@@ -1,8 +1,14 @@
 package cucumber.api.event;
 
-public final class TestRunStarted extends TimeStampedEvent {
+import cucumber.runtime.model.CucumberFeature;
 
-    public TestRunStarted(Long timeStamp) {
+import java.util.List;
+
+public final class TestRunStarted extends TimeStampedEvent {
+    public final List<CucumberFeature> features;
+
+    public TestRunStarted(Long timeStamp, List<CucumberFeature> features) {
         super(timeStamp);
+        this.features = features;
     }
 }
