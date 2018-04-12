@@ -10,6 +10,7 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.cucumberexpressions.CaptureGroupTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.Transformer;
@@ -47,9 +48,9 @@ public class JavaSnippetTest {
             "size",
             "small|medium|large",
             Size.class,
-            new Transformer<Size>() {
+            new CaptureGroupTransformer<Size>() {
                 @Override
-                public Size transform(String... strings) throws Throwable {
+                public Size transform(String... strings) {
                     return null;
                 }
             }, true,
@@ -71,12 +72,13 @@ public class JavaSnippetTest {
             singletonList("(small|medium|large)(( and |, )(small|medium|large))*"),
             new TypeReference<List<Size>>() {
             }.getType(),
-            new Transformer<List<Size>>() {
+            new CaptureGroupTransformer<List<Size>>() {
                 @Override
-                public List<Size> transform(String... strings) throws Throwable {
+                public List<Size> transform(String... strings) {
                     return null;
                 }
-            }, true,
+            },
+            true,
             false);
 
         String expected = "" +
@@ -193,9 +195,9 @@ public class JavaSnippetTest {
             "docString",
             "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
             String.class,
-            new Transformer<String>() {
+            new CaptureGroupTransformer<String>() {
                 @Override
-                public String transform(String... strings) throws Throwable {
+                public String transform(String... strings) {
                     return null;
                 }
             },
@@ -247,9 +249,9 @@ public class JavaSnippetTest {
             "dataTable",
             "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
             String.class,
-            new Transformer<String>() {
+            new CaptureGroupTransformer<String>() {
                 @Override
-                public String transform(String... strings) throws Throwable {
+                public String transform(String... strings) {
                     return null;
                 }
             },
