@@ -83,6 +83,7 @@
         <xmlunit.version>1.6</xmlunit.version>
         <joda-time.version>2.9.9</joda-time.version>
         <osgi.version>6.0.0</osgi.version>
+        <eclipse.osgi.version>3.10.100.v20150529-1857</eclipse.osgi.version>
         <!-- At some version above this (not sure which one), pax-exam and/or pax-url stops working on Java 7. -->
         <pax-exam.version>4.3.0</pax-exam.version>
         <pax-url.version>2.2.0</pax-url.version>
@@ -493,6 +494,11 @@
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
                 <version>${osgi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>org.eclipse.osgi</artifactId>
+                <version>${eclipse.osgi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
