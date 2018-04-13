@@ -57,6 +57,7 @@ public class CalculatorTest {
             mavenBundle("io.cucumber", "cucumber-jvm-deps"),
             mavenBundle("io.cucumber", "cucumber-core"),
             mavenBundle("io.cucumber", "cucumber-java"),
+            mavenBundle("io.cucumber", "cucumber-junit"),
             mavenBundle("io.cucumber", "cucumber-osgi"),
 
             mavenBundle("org.slf4j", "slf4j-api"),
