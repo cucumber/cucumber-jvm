@@ -1,9 +1,11 @@
 package cucumber.runtime;
 
+import io.cucumber.cucumberexpressions.CucumberExpressionException;
+import io.cucumber.datatable.CucumberDataTableException;
+import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +38,12 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
             for (Argument argument : getArguments()) {
                 result.add(argument.getValue());
             }
-        } catch (CucumberExpressionException e){
-            throw new CucumberException(
-                String.format("Could not convert arguments for Step Definition '%s'", stepDefinition.getLocation(true)),
-                e);
+        } catch (UndefinedDataTableTypeException e) {
+            throw registerTypeInConfiguration(e);
+        } catch (CucumberExpressionException e) {
+            throw couldNotConvertArguments(e);
+        } catch (CucumberDataTableException e) {
+            throw couldNotConvertArguments(e);
         }
 
         try {
@@ -51,6 +55,26 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         }
     }
 
+    private CucumberException registerTypeInConfiguration(Exception e) {
+        return new CucumberException(String.format("" +
+                "Could not convert arguments for step [%s] defined at'%s'.\n" +
+                "It appears you did not register a data table type. The details are in the stacktrace below.\n" +
+                "You can find the documentation here: TODO URL",
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation(true)
+        ), e);
+    }
+
+
+    private CucumberException couldNotConvertArguments(Exception e) {
+        return new CucumberException(String.format(
+            "Could not convert arguments for step [%s] defined at'%s'.\n" +
+                "The details are in the stacktrace below.",
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation(true)
+        ), e);
+    }
+
     @Override
     public void dryRunStep(String language, Scenario scenario) throws Throwable {
         // Do nothing
@@ -59,14 +83,27 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private CucumberException arityMismatch(int parameterCount) {
         List<String> arguments = createArgumentsForErrorMessage();
         return new CucumberException(String.format(
-                "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep text: %s",
-                stepDefinition.getLocation(true),
-                stepDefinition.getPattern(),
-                parameterCount,
-                arguments.size(),
-                arguments,
-                step.getText()
+            "Step [%s] is defined with %s parameters at '%s'.\n" +
+                "However, the gherkin step has %s arguments%sStep text: %s",
+            stepDefinition.getPattern(),
+            parameterCount,
+            stepDefinition.getLocation(true),
+            arguments.size(),
+            formatArguments(arguments),
+            step.getText()
         ));
+    }
+
+    private String formatArguments(List<String> arguments) {
+        if (arguments.isEmpty()) {
+            return ".\n";
+        }
+
+        StringBuilder formatted = new StringBuilder(":\n");
+        for (String argument : arguments) {
+            formatted.append(" * ").append(argument).append("\n");
+        }
+        return formatted.toString();
     }
 
     private List<String> createArgumentsForErrorMessage() {

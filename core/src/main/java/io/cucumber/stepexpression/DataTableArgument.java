@@ -25,6 +25,6 @@ public final class DataTableArgument implements Argument {
 
     @Override
     public String toString() {
-        return "Table: " + argument;
+        return "Table:\n" + getText();
     }
 }

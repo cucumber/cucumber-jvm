@@ -235,7 +235,9 @@ public class JavaSnippetTest {
             "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
             "    // Double, Byte Short, Long, BigInteger or BigDecimal.\n" +
             "    //\n" +
-            "    // For other transformations you can register a DataTableType\n" +
+            "    // For other transformations you can register a DataTableType.\n" +
+            "    //\n" +
+            "    // See: TODO URL\n" +
             "    throw new PendingException();\n" +
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
@@ -267,7 +269,9 @@ public class JavaSnippetTest {
             "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
             "    // Double, Byte Short, Long, BigInteger or BigDecimal.\n" +
             "    //\n" +
-            "    // For other transformations you can register a DataTableType\n" +
+            "    // For other transformations you can register a DataTableType.\n" +
+            "    //\n" +
+            "    // See: TODO URL\n" +
             "    throw new PendingException();\n" +
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
