@@ -37,7 +37,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
                 
                 <!-- 
                 Copy dependencies to a lib directory so they can be included on 
@@ -68,7 +67,10 @@
                     Cucumber annotation classes, they must be explicitly listed 
                     as classes in the OSGi bundle.  So, they're being 
                     extracted from the cucumber jar and included in the 
-                    plugin test jar file 
+                    plugin test jar file.
+                    This example only extracts the English ones.  You only need 
+                    to extract the classes for the language(s) in which your 
+                    feature files are written.
                     -->
                     <execution>
                         <id>unpack-dependencies</id>

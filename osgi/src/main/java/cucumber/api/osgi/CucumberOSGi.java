@@ -1,4 +1,4 @@
-package cucumber.java.runtime.osgi;
+package cucumber.api.osgi;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.junit.Cucumber;
+import cucumber.java.runtime.osgi.OsgiClassFinder;
+import cucumber.java.runtime.osgi.OsgiObjectFactory;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Glue;
