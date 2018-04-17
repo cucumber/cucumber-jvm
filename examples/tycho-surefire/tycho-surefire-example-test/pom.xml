@@ -46,7 +46,7 @@
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>validate</phase>
+                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
