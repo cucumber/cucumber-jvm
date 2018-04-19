@@ -75,8 +75,10 @@ public class RuntimeOptions {
     private boolean strict = false;
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
-    private boolean pluginNamesInstantiated;
+    private volatile boolean pluginNamesInstantiated;
     private EventBus bus;
+    private int threads = 1;
+    private final Object syncObject = new Object();
 
     /**
      * Create a new instance from a string of options, for example:
@@ -148,6 +150,12 @@ public class RuntimeOptions {
             } else if (arg.equals("--i18n")) {
                 String nextArg = args.remove(0);
                 System.exit(printI18n(nextArg));
+            } else if (arg.equals("--threads")) {
+                String threads = args.remove(0);
+                this.threads = Integer.parseInt(threads);
+                if (this.threads < 1) {
+                    throw new CucumberException("--threads must be > 0");
+                }
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
                 parsedGlue.add(gluePath);
@@ -316,22 +324,26 @@ public class RuntimeOptions {
 
     public List<Plugin> getPlugins() {
         if (!pluginNamesInstantiated) {
-            for (String pluginName : pluginFormatterNames) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-                setMonochromeOnColorAwarePlugins(plugin);
-                setStrictOnStrictAwarePlugins(plugin);
-                setEventBusFormatterPlugins(plugin);
+            synchronized (syncObject) {
+                if (!pluginNamesInstantiated) {
+                    for (String pluginName : pluginFormatterNames) {
+                        Plugin plugin = pluginFactory.create(pluginName);
+                        plugins.add(plugin);
+                        setMonochromeOnColorAwarePlugins(plugin);
+                        setStrictOnStrictAwarePlugins(plugin);
+                        setEventBusFormatterPlugins(plugin);
+                    }
+                    for (String pluginName : pluginStepDefinitionReporterNames) {
+                        Plugin plugin = pluginFactory.create(pluginName);
+                        plugins.add(plugin);
+                    }
+                    for (String pluginName : pluginSummaryPrinterNames) {
+                        Plugin plugin = pluginFactory.create(pluginName);
+                        plugins.add(plugin);
+                    }
+                    pluginNamesInstantiated = true;
+                }
             }
-            for (String pluginName : pluginStepDefinitionReporterNames) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-            }
-            for (String pluginName : pluginSummaryPrinterNames) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-            }
-            pluginNamesInstantiated = true;
         }
         return plugins;
     }
@@ -457,6 +469,10 @@ public class RuntimeOptions {
 
     public List<String> getJunitOptions() {
         return junitOptions;
+    }
+
+    public int getThreads() {
+        return threads;
     }
 
     class ParsedPluginData {

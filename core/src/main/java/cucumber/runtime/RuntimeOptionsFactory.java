@@ -45,6 +45,7 @@ public class RuntimeOptionsFactory {
                 addGlue(options, args);
                 addFeatures(options, args);
                 addJunitOptions(options, args);
+                addThreads(options, args);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -141,6 +142,13 @@ public class RuntimeOptionsFactory {
     private void addJunitOptions(CucumberOptions options, List<String> args) {
         for (String junitOption : options.junit()) {
             args.add("--junit," + junitOption);
+        }
+    }
+
+    private void addThreads(CucumberOptions options, List<String> args) {
+        if (options.threads() > 1) {
+            args.add("--threads");
+            args.add(String.valueOf(options.threads()));
         }
     }
 

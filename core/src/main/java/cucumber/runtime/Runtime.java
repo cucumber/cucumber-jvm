@@ -9,6 +9,7 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.util.ListUtils;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 /**
@@ -92,7 +95,7 @@ public class Runtime {
      */
     public void run() throws IOException {
         // Make sure all features parse before initialising any reporters/formatters
-        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        final List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(runtimeOptions.cucumberFeatures(resourceLoader, bus), runtimeOptions.getThreads());
 
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
 
@@ -100,9 +103,19 @@ public class Runtime {
 
         reportStepDefinitions(stepDefinitionReporter);
 
-        for (CucumberFeature cucumberFeature : features) {
-            runFeature(cucumberFeature);
+        //Split features here into Futures and run
+        final ExecutorService executor = Executors.newFixedThreadPool(partitionedFeatures.size());
+        final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(partitionedFeatures.size());
+        for(List<CucumberFeature> featureSet : partitionedFeatures) {
+            tasks.add(new RuntimeCallable(this, featureSet));
         }
+        try {
+            executor.invokeAll(tasks);
+        }
+        catch (final InterruptedException e) {
+            throw new CucumberException(e);
+        }
+        executor.shutdown();
 
         bus.send(new TestRunFinished(bus.getTime()));
         printSummary();
