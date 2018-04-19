@@ -17,15 +17,15 @@ import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +44,14 @@ import static org.mockito.Mockito.when;
 
 public class JUnitFormatterTest {
 
+    @Test
+    public void shouldHandleTestsBeingRunConcurrently() throws Throwable {
+        final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+        
+        final File report = runFeaturesWithJunitFormatter(features, false , features.size());
+        assertXmlEqualOr(report,"cucumber/runtime/formatter/JunitFormatterParallelExpected1.xml", "cucumber/runtime/formatter/JunitFormatterParallelExpected2.xml");
+    }
+    
     @Test
     public void featureSimpleTest() throws Exception {
         File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_1.feature"));
@@ -65,7 +73,7 @@ public class JUnitFormatterTest {
     @Test
     public void featureSimpleStrictTest() throws Exception {
         boolean strict = true;
-        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_1.feature"), strict);
+        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_1.feature"), strict, 1);
         assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_1_strict.report.xml", report);
     }
 
@@ -500,17 +508,21 @@ public class JUnitFormatterTest {
     }
 
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
-        return runFeaturesWithJunitFormatter(featurePaths, false);
+        return runFeaturesWithJunitFormatter(featurePaths, false, 1);
     }
 
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
-        File report = File.createTempFile("cucumber-jvm-junit", "xml");
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict, long threads) throws IOException {
+        File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
         List<String> args = new ArrayList<String>();
         if (strict) {
             args.add("--strict");
+        }
+        if (threads > 1) {
+            args.add("--threads");
+            args.add(String.valueOf(threads));
         }
         args.add("--plugin");
         args.add("junit:" + report.getAbsolutePath());
@@ -522,10 +534,6 @@ public class JUnitFormatterTest {
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(0L), null);
         runtime.run();
         return report;
-    }
-
-    private String runFeatureWithJUnitFormatter(final CucumberFeature feature) throws Throwable {
-        return runFeatureWithJUnitFormatter(feature, new HashMap<String, Result>(), 0L);
     }
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final long stepHookDuration)
@@ -544,11 +552,22 @@ public class JUnitFormatterTest {
         return formatterOutput;
     }
 
-    private void assertXmlEqual(String expectedPath, File actual) throws IOException, ParserConfigurationException, SAXException {
+    private void assertXmlEqualOr(File actual, String expectedPath, String orPath) throws IOException, SAXException {
         XMLUnit.setIgnoreWhitespace(true);
-        InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
-        Diff diff = new Diff(control, new FileReader(actual));
+        Diff expectedDiff = new Diff(readFile(expectedPath), new FileReader(actual));
+        Diff orDiff = new Diff(readFile(orPath), new FileReader(actual));
+        final boolean result = expectedDiff.identical() || orDiff.identical();
+        assertTrue("Difference to expected:\r\n" + expectedDiff + "\r\n\r\nDifference to or:" + orDiff, result);
+    }
+    
+    private void assertXmlEqual(String expectedPath, File actual) throws IOException, SAXException {
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(readFile(expectedPath), new FileReader(actual));
         assertTrue("XML files are similar " + diff, diff.identical());
+    }
+    
+    private Reader readFile(final String path) throws UnsupportedEncodingException {
+        return new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(path), "UTF-8");
     }
 
     private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {

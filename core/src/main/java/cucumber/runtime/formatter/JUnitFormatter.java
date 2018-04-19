@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -15,9 +16,16 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,33 +35,36 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 final class JUnitFormatter implements Formatter, StrictAware {
+    private static final String NUMBER_FORMAT_PATTERN = "0.######";
+    private static final String TEST_SUITE_TAG = "testsuite";
+    private static final String TEST_CASE_TAG = "testcase";
+
+    private final TestSourcesModel testSources = new TestSourcesModel();
+    private final Object mergeToMainDocumentSyncObject = new Object();
     private final Writer out;
-    private final Document doc;
-    private final Element rootElement;
+    private final Document outputDocument;
+    private final Element outputTestSuiteElement;
 
-    private TestCase testCase;
-    private Element root;
+    private boolean strict;
 
-    private EventHandler<TestSourceRead> sourceReadHandler= new EventHandler<TestSourceRead>() {
+    private ThreadLocal<CurrentDomElements> domElements = new ThreadLocal<CurrentDomElements>();
+    private ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
+    private ThreadLocal<DecimalFormat> numberFormat = new ThreadLocal<DecimalFormat>();
+
+    private EventHandler<TestSourceRead> sourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -80,15 +91,12 @@ final class JUnitFormatter implements Formatter, StrictAware {
 
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
-        TestCase.treatConditionallySkippedAsFailure = false;
-        TestCase.currentFeatureFile = null;
-        TestCase.previousTestCaseName = "";
-        TestCase.exampleNumber = 1;
         try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            rootElement = doc.createElement("testsuite");
-            doc.appendChild(rootElement);
-        } catch (ParserConfigurationException e) {
+            outputDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            outputTestSuiteElement = outputDocument.createElement(TEST_SUITE_TAG);
+            outputDocument.appendChild(outputTestSuiteElement);
+        }
+        catch (ParserConfigurationException e) {
             throw new CucumberException("Error while processing unit report", e);
         }
     }
@@ -102,51 +110,178 @@ final class JUnitFormatter implements Formatter, StrictAware {
         publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
+    @Override
+    public void setStrict(boolean strict) {
+        this.strict = strict;
+    }
+
     private void handleTestSourceRead(TestSourceRead event) {
-        TestCase.testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getUri())) {
-            TestCase.currentFeatureFile = event.testCase.getUri();
-            TestCase.previousTestCaseName = "";
-            TestCase.exampleNumber = 1;
-        }
-        testCase = new TestCase(event.testCase);
-        root = testCase.createElement(doc);
-        testCase.writeElement(doc, root);
-        rootElement.appendChild(root);
+        CurrentDomElements currentDomElements = new CurrentDomElements();
+        domElements.set(currentDomElements);
 
-        increaseAttributeValue(rootElement, "tests");
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature == null || currentFeature.uri == null || !currentFeature.uri.equals(event.testCase.getUri())) {
+            currentFeature = new CurrentFeature(event.testCase.getUri());
+            featureUnderTest.set(currentFeature);
+        } else {
+            currentFeature.testStepResults.clear();
+        }
+
+        currentFeature.testCase = event.testCase;
+        currentDomElements.testCaseElement = currentDomElements.document.createElement(TEST_CASE_TAG);
+        currentDomElements.testCaseElement.setAttribute("classname", testSources.getFeatureName(currentFeature.uri));
+        currentDomElements.testCaseElement.setAttribute("name", calculateElementName(currentFeature));
+        currentDomElements.testSuiteElement.appendChild(currentDomElements.testCaseElement);
+    }
+
+    private String calculateElementName(final CurrentFeature currentFeature) {
+        String testCaseName = currentFeature.testCase.getName();
+        if (testCaseName.equals(currentFeature.previousTestCaseName)) {
+            return Utils.getUniqueTestNameForScenarioExample(testCaseName, ++currentFeature.exampleNumber);
+        } else {
+            currentFeature.previousTestCaseName = testCaseName;
+            currentFeature.exampleNumber = 1;
+            return testCaseName;
+        }
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
         if (!event.testStep.isHook()) {
-            testCase.steps.add(event.testStep);
-            testCase.results.add(event.result);
+            CurrentFeature currentFeature = featureUnderTest.get();
+            currentFeature.testStepResults.add(new TestStepResult(event.testStep, event.result));
         }
     }
 
     private void handleTestCaseFinished(TestCaseFinished event) {
-        if (testCase.steps.isEmpty()) {
-            testCase.handleEmptyTestCase(doc, root, event.result);
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature.testStepResults.isEmpty()) {
+            handleEmptyTestCase(event.result);
         } else {
-            testCase.addTestCaseElement(doc, root, event.result);
+            addTestCaseElement(event.result);
         }
+        
+        synchronized (mergeToMainDocumentSyncObject) {
+            final Element localTestCaseElement = domElements.get().testSuiteElement;
+            final NodeList testCases = localTestCaseElement.getChildNodes();
+            for (int i = 0; i < testCases.getLength(); i++) {
+                final Node clonedNode = testCases.item(i).cloneNode(true);
+                outputDocument.adoptNode(clonedNode);
+                outputTestSuiteElement.appendChild(clonedNode);
+            }
+        }
+    }
+
+    private void handleEmptyTestCase(final Result result) {
+        CurrentDomElements currentDomElements = domElements.get();
+        currentDomElements.testCaseElement.setAttribute("time", calculateTotalDurationString(result));
+        final String resultType = this.strict ? "failure" : "skipped";
+        final Element child = createElementWithMessage(currentDomElements.document, new StringBuilder(), resultType, "The scenario has no steps");
+        currentDomElements.testCaseElement.appendChild(child);
+    }
+
+    private String calculateTotalDurationString(final Result result) {
+        DecimalFormat df = numberFormat.get();
+        if (df == null) {
+            df = getDecimalFormat();
+            numberFormat.set(df);
+        }
+        return df.format(((double) result.getDuration()) / 1000000000);
+    }
+
+    private DecimalFormat getDecimalFormat() {
+        final DecimalFormat df = new DecimalFormat();
+        df.applyPattern(NUMBER_FORMAT_PATTERN);
+        return df;
+    }
+
+    private Element createElementWithMessage(final Document doc, final StringBuilder sb, final String elementType, final String message) {
+        Element child = createElement(doc, sb, elementType);
+        child.setAttribute("message", message);
+        return child;
+    }
+
+    private Element createElement(final Document doc, final StringBuilder sb, final String elementType) {
+        Element child = doc.createElement(elementType);
+        // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
+        // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
+        // are displayed as double line breaks.
+        // TODO Java 7 PR #1147: Inlined System.lineSeparator()
+        String systemLineSeperator = System.getProperty("line.separator");
+        child.appendChild(doc.createCDATASection(sb.toString().replace(systemLineSeperator, "\n")));
+        return child;
+    }
+
+    private void addTestCaseElement(final Result result) {
+        CurrentDomElements currentDomElements = domElements.get();
+        currentDomElements.testCaseElement.setAttribute("time", calculateTotalDurationString(result));
+
+        StringBuilder sb = new StringBuilder();
+        addStepAndResultListing(sb, featureUnderTest.get().testStepResults);
+        Element child;
+        if (result.is(Result.Type.FAILED)) {
+            addStackTrace(sb, result);
+            child = createElementWithMessage(currentDomElements.document, sb, "failure", result.getErrorMessage());
+        } else if (result.is(Result.Type.AMBIGUOUS)) {
+            addStackTrace(sb, result);
+            child = createElementWithMessage(currentDomElements.document, sb, "failure", result.getErrorMessage());
+        } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
+            if (this.strict) {
+                child = createElementWithMessage(currentDomElements.document, sb, "failure", "The scenario has pending or undefined step(s)");
+            }
+            else {
+                child = createElement(currentDomElements.document, sb, "skipped");
+            }
+        } else if (result.is(Result.Type.SKIPPED) && result.getError() != null) {
+            addStackTrace(sb, result);
+            child = createElementWithMessage(currentDomElements.document, sb, "skipped", result.getErrorMessage());
+        } else {
+            child = createElement(currentDomElements.document, sb, "system-out");
+        }
+
+        currentDomElements.testCaseElement.appendChild(child);
+    }
+
+    private void addStepAndResultListing(final StringBuilder sb, final List<TestStepResult> stepResults) {
+        for (final TestStepResult stepResult : stepResults) {
+            int length = sb.length();
+            sb.append(getKeywordFromSource(stepResult.step.getStepLine()));
+            sb.append(stepResult.step.getStepText());
+            do {
+                sb.append(".");
+            } while (sb.length() - length < 76);
+            sb.append(stepResult.result.getStatus().lowerCaseName());
+            sb.append("\n");
+        }
+    }
+
+    private void addStackTrace(final StringBuilder sb, final Result failed) {
+        sb.append("\nStackTrace:\n");
+        StringWriter sw = new StringWriter();
+        failed.getError().printStackTrace(new PrintWriter(sw));
+        sb.append(sw.toString());
+    }
+
+    private String getKeywordFromSource(int stepLine) {
+        return testSources.getKeywordFromSource(featureUnderTest.get().uri, stepLine);
     }
 
     private void finishReport() {
         try {
             // set up a transformer
-            rootElement.setAttribute("name", JUnitFormatter.class.getName());
-            rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
-            rootElement.setAttribute("skipped", String.valueOf(rootElement.getElementsByTagName("skipped").getLength()));
-            rootElement.setAttribute("time", sumTimes(rootElement.getElementsByTagName("testcase")));
-            TransformerFactory transfac = TransformerFactory.newInstance();
-            Transformer trans = transfac.newTransformer();
+            outputTestSuiteElement.setAttribute("name", JUnitFormatter.class.getName());
+            outputTestSuiteElement.setAttribute("failures", String.valueOf(outputTestSuiteElement.getElementsByTagName("failure").getLength()));
+            outputTestSuiteElement.setAttribute("skipped", String.valueOf(outputTestSuiteElement.getElementsByTagName("skipped").getLength()));
+            outputTestSuiteElement.setAttribute("time", sumTimes(outputTestSuiteElement.getElementsByTagName("testcase")));
+            outputTestSuiteElement.setAttribute("tests", String.valueOf(outputTestSuiteElement.getChildNodes().getLength()));
+            final TransformerFactory transFac = TransformerFactory.newInstance();
+            final Transformer trans = transFac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            StreamResult result = new StreamResult(out);
-            DOMSource source = new DOMSource(doc);
+            final StreamResult result = new StreamResult(out);
+            final DOMSource source = new DOMSource(outputDocument);
             trans.transform(source, result);
             closeQuietly(out);
         } catch (TransformerException e) {
@@ -159,7 +294,7 @@ final class JUnitFormatter implements Formatter, StrictAware {
         for( int i = 0; i < testCaseNodes.getLength(); i++ ) {
             try {
                 double testCaseTime =
-                        Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
+                    Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
                 totalDurationSecondsForAllTimes += testCaseTime;
             } catch ( NumberFormatException e ) {
                 throw new CucumberException(e);
@@ -167,157 +302,53 @@ final class JUnitFormatter implements Formatter, StrictAware {
                 throw new CucumberException(e);
             }
         }
-        DecimalFormat nfmt = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        nfmt.applyPattern("0.######");
-        return nfmt.format(totalDurationSecondsForAllTimes);
+        return getDecimalFormat().format(totalDurationSecondsForAllTimes);
     }
 
-    private void increaseAttributeValue(Element element, String attribute) {
-        int value = 0;
-        if (element.hasAttribute(attribute)) {
-            value = Integer.parseInt(element.getAttribute(attribute));
-        }
-        element.setAttribute(attribute, String.valueOf(++value));
-    }
-
-    @Override
-    public void setStrict(boolean strict) {
-        TestCase.treatConditionallySkippedAsFailure = strict;
-    }
-
-    private static class TestCase {
-        private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        private static final TestSourcesModel testSources = new TestSourcesModel();
-
-        static {
-            NUMBER_FORMAT.applyPattern("0.######");
-        }
-
-        private TestCase(cucumber.api.TestCase testCase) {
-            this.testCase = testCase;
-        }
-
-        static String currentFeatureFile;
-        static String previousTestCaseName;
-        static int exampleNumber;
-        static boolean treatConditionallySkippedAsFailure = false;
-        final List<TestStep> steps = new ArrayList<TestStep>();
-        final List<Result> results = new ArrayList<Result>();
-        private final cucumber.api.TestCase testCase;
-
-        private Element createElement(Document doc) {
-            return doc.createElement("testcase");
-        }
-
-        private void writeElement(Document doc, Element tc) {
-            tc.setAttribute("classname", testSources.getFeatureName(currentFeatureFile));
-            tc.setAttribute("name", calculateElementName(testCase));
-        }
-
-        private String calculateElementName(cucumber.api.TestCase testCase) {
-            String testCaseName = testCase.getName();
-            if (testCaseName.equals(previousTestCaseName)) {
-                return Utils.getUniqueTestNameForScenarioExample(testCaseName, ++exampleNumber);
-            } else {
-                previousTestCaseName = testCase.getName();
-                exampleNumber = 1;
-                return testCaseName;
-            }
-        }
-
-        public void addTestCaseElement(Document doc, Element tc, Result result) {
-            tc.setAttribute("time", calculateTotalDurationString(result));
-
-            StringBuilder sb = new StringBuilder();
-            addStepAndResultListing(sb);
-            Element child;
-            if (result.is(Result.Type.FAILED)) {
-                addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
-            } else if (result.is(Result.Type.AMBIGUOUS)) {
-                addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
-            } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
-                if (treatConditionallySkippedAsFailure) {
-                    child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
-                }
-                else {
-                    child = createElement(doc, sb, "skipped");
-                }
-            } else if (result.is(Result.Type.SKIPPED) && result.getError() != null) {
-                addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "skipped", result.getErrorMessage());
-            } else {
-                child = createElement(doc, sb, "system-out");
-            }
-
-            tc.appendChild(child);
-        }
-
-        public void handleEmptyTestCase(Document doc, Element tc, Result result) {
-            tc.setAttribute("time", calculateTotalDurationString(result));
-
-            String resultType = treatConditionallySkippedAsFailure ? "failure" : "skipped";
-            Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
-
-            tc.appendChild(child);
-        }
-
-        private String calculateTotalDurationString(Result result) {
-            return NUMBER_FORMAT.format(((double) result.getDuration()) / 1000000000);
-        }
-
-        private void addStepAndResultListing(StringBuilder sb) {
-            for (int i = 0; i < steps.size(); i++) {
-                int length = sb.length();
-                String resultStatus = "not executed";
-                if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus().lowerCaseName();
-                }
-                sb.append(getKeywordFromSource(steps.get(i).getStepLine()) + steps.get(i).getStepText());
-                do {
-                  sb.append(".");
-                } while (sb.length() - length < 76);
-                sb.append(resultStatus);
-                sb.append("\n");
-            }
-        }
-
-        private String getKeywordFromSource(int stepLine) {
-            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
-        }
-
-        private void addStackTrace(StringBuilder sb, Result failed) {
-            sb.append("\nStackTrace:\n");
-            StringWriter sw = new StringWriter();
-            failed.getError().printStackTrace(new PrintWriter(sw));
-            sb.append(sw.toString());
-        }
-
-        private Element createElementWithMessage(Document doc, StringBuilder sb, String elementType, String message) {
-            Element child = createElement(doc, sb, elementType);
-            child.setAttribute("message", message);
-            return child;
-        }
-
-        private Element createElement(Document doc, StringBuilder sb, String elementType) {
-            Element child = doc.createElement(elementType);
-            // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
-            // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
-            // are displayed as double line breaks.
-            // TODO Java 7 PR #1147: Inlined System.lineSeparator()
-            String systemLineSeperator = System.getProperty("line.separator");
-            child.appendChild(doc.createCDATASection(sb.toString().replace(systemLineSeperator, "\n")));
-            return child;
-        }
-
-    }
-
-    private static void closeQuietly(Closeable out) {
+    private void closeQuietly(final Closeable out) {
         try {
             out.close();
         } catch (IOException ignored) {
             // go gentle into that good night
+        }
+    }
+
+    private class CurrentDomElements {
+        private Document document;
+        private Element testSuiteElement;
+        private Element testCaseElement;
+
+        CurrentDomElements() {
+            try {
+                document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                testSuiteElement = document.createElement(TEST_SUITE_TAG);
+                document.appendChild(testSuiteElement);
+            }
+            catch (ParserConfigurationException e) {
+                throw new CucumberException("Error while processing unit report", e);
+            }
+        }
+    }
+
+    private class CurrentFeature {
+        private final String uri;
+        private String previousTestCaseName = "";
+        private int exampleNumber = 1;
+        private TestCase testCase;
+        private final List<TestStepResult> testStepResults = new ArrayList<TestStepResult>();
+
+        CurrentFeature(final String uri) {
+            this.uri = uri;
+        }
+    }
+    
+    private class TestStepResult {
+        private final TestStep step;
+        private final Result result;
+
+        TestStepResult(TestStep step, Result result) {
+            this.step = step;
+            this.result = result;
         }
     }
 }
