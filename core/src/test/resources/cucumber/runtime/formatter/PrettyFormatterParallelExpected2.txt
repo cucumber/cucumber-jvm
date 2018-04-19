@@ -1,0 +1,24 @@
+
+Feature: Feature_1
+
+  Background:  # cucumber/runtime/formatter/FormatterParallelTests.feature:3
+    Given bg_1 # 
+    When bg_2  # 
+    Then bg_3  # 
+
+  Scenario: Scenario_1 # cucumber/runtime/formatter/FormatterParallelTests.feature:8
+    Given step_1       # 
+    When step_2        # 
+    Then step_3        # 
+
+Feature: Feature_2
+
+  Background:   # cucumber/runtime/formatter/FormatterParallelTests2.feature:3
+    Given bg_10 # 
+    When bg_20  # 
+    Then bg_30  # 
+
+  Scenario: Scenario_2 # cucumber/runtime/formatter/FormatterParallelTests2.feature:8
+    Given step_10      # 
+    When step_20       # 
+    Then step_30       # 

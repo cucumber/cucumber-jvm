@@ -5,6 +5,7 @@ import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
@@ -14,6 +15,7 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.api.formatter.NiceRetrievableAppendable;
 import cucumber.runtime.Argument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
@@ -33,57 +35,63 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";
     private final TestSourcesModel testSources = new TestSourcesModel();
-    private final NiceAppendable out;
+    private final NiceAppendable globalOut;
+    private final Object globalOutSyncObject = new Object();
     private Formats formats;
-    private String currentFeatureFile;
-    private TestCase currentTestCase;
-    private ScenarioOutline currentScenarioOutline;
-    private Examples currentExamples;
-    private int locationIndentation;
-    private Mapper<Tag, String> tagNameMapper = new Mapper<Tag, String>() {
+
+    private final ThreadLocal<NiceRetrievableAppendable> out = new ThreadLocal<NiceRetrievableAppendable>();
+    private final ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
+
+    private final Mapper<Tag, String> tagNameMapper = new Mapper<Tag, String>() {
         @Override
         public String map(Tag tag) {
             return tag.getName();
         }
     };
-    private Mapper<PickleTag, String> pickleTagNameMapper = new Mapper<PickleTag, String>() {
+    private final Mapper<PickleTag, String> pickleTagNameMapper = new Mapper<PickleTag, String>() {
         @Override
         public String map(PickleTag pickleTag) {
             return pickleTag.getName();
         }
     };
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+    private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private final EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
         }
     };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
+    private final EventHandler<TestCaseFinished> caseFinishedHandler= new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            handleTestCaseFinished(event);
+        }
+    };
+    private final EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {
             handleTestStepStarted(event);
         }
     };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+    private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
             handleTestStepFinished(event);
         }
     };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
+    private final EventHandler<WriteEvent> writeEventHandler = new EventHandler<WriteEvent>() {
         @Override
         public void receive(WriteEvent event) {
             handleWrite(event);
         }
     };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+    private final EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
         @Override
         public void receive(TestRunFinished event) {
             finishReport();
@@ -92,17 +100,19 @@ final class PrettyFormatter implements Formatter, ColorAware {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public PrettyFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
+        this.globalOut = new NiceAppendable(out);
         this.formats = new AnsiFormats();
+        this.out.set(new NiceRetrievableAppendable(new StringBuilder()));
     }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
         publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
         publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
+        publisher.registerHandlerFor(WriteEvent.class, writeEventHandler);
         publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
@@ -120,21 +130,31 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
+        out.set(new NiceRetrievableAppendable(new StringBuilder()));
         handleStartOfFeature(event);
         handleScenarioOutline(event);
-        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (testSources.hasBackground(currentFeature.uri, event.testCase.getLine())) {
             printBackground(event.testCase);
-            currentTestCase = event.testCase;
+            currentFeature.testCase = event.testCase;
         } else {
             printScenarioDefinition(event.testCase);
         }
     }
 
+    private void handleTestCaseFinished(TestCaseFinished event) {
+        synchronized (globalOutSyncObject) {
+            globalOut.append(out.get().printAll());
+        }
+        out.get().close();
+    }
+
     private void handleTestStepStarted(TestStepStarted event) {
         if (!event.testStep.isHook()) {
             if (isFirstStepAfterBackground(event.testStep)) {
-                printScenarioDefinition(currentTestCase);
-                currentTestCase = null;
+                CurrentFeature currentFeature = featureUnderTest.get();
+                printScenarioDefinition(currentFeature.testCase);
+                currentFeature.testCase = null;
             }
         }
     }
@@ -148,55 +168,57 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleWrite(WriteEvent event) {
-        out.println(event.text);
+        out.get().println(event.text);
     }
 
     private void finishReport() {
-        out.close();
+        globalOut.close();
     }
 
     private void handleStartOfFeature(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
-            if (currentFeatureFile != null) {
-                out.println();
-            }
-            currentFeatureFile = event.testCase.getUri();
-            printFeature(currentFeatureFile);
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature == null || currentFeature.uri == null || !currentFeature.uri.equals(event.testCase.getUri())) {
+            out.get().println();
+            currentFeature = new CurrentFeature(event.testCase.getUri());
+            featureUnderTest.set(currentFeature);
+            printFeature(currentFeature.uri);
         }
     }
 
     private void handleScenarioOutline(TestCaseStarted event) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.testCase.getLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, event.testCase.getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
             ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
-            if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
-                currentScenarioOutline = scenarioOutline;
-                printScenarioOutline(currentScenarioOutline);
+            if (currentFeature.scenarioOutline == null || !currentFeature.scenarioOutline.equals(scenarioOutline)) {
+                currentFeature.scenarioOutline = scenarioOutline;
+                printScenarioOutline(currentFeature.scenarioOutline);
             }
-            if (currentExamples == null || !currentExamples.equals(astNode.parent.node)) {
-                currentExamples = (Examples)astNode.parent.node;
-                printExamples(currentExamples);
+            if (currentFeature.examples == null || !currentFeature.examples.equals(astNode.parent.node)) {
+                currentFeature.examples = (Examples)astNode.parent.node;
+                printExamples(currentFeature.examples);
             }
         } else {
-            currentScenarioOutline = null;
-            currentExamples = null;
+            currentFeature.scenarioOutline = null;
+            currentFeature.examples = null;
         }
     }
 
     private void printScenarioOutline(ScenarioOutline scenarioOutline) {
-        out.println();
+        CurrentFeature currentFeature = featureUnderTest.get();
+        out.get().println();
         printTags(scenarioOutline.getTags(), SCENARIO_INDENT);
-        out.println(SCENARIO_INDENT + getScenarioDefinitionText(scenarioOutline) + " " + getLocationText(currentFeatureFile, scenarioOutline.getLocation().getLine()));
+        out.get().println(SCENARIO_INDENT + getScenarioDefinitionText(scenarioOutline) + " " + getLocationText(currentFeature.uri, scenarioOutline.getLocation().getLine()));
         printDescription(scenarioOutline.getDescription());
         for (Step step : scenarioOutline.getSteps()) {
-            out.println(STEP_INDENT + formats.get("skipped").text(step.getKeyword() + step.getText()));
+            out.get().println(STEP_INDENT + formats.get("skipped").text(step.getKeyword() + step.getText()));
         }
     }
 
     private void printExamples(Examples examples) {
-        out.println();
+        out.get().println();
         printTags(examples.getTags(), EXAMPLES_INDENT);
-        out.println(EXAMPLES_INDENT + examples.getKeyword() + ": " + examples.getName());
+        out.get().println(EXAMPLES_INDENT + examples.getKeyword() + ": " + examples.getName());
         printDescription(examples.getDescription());
     }
 
@@ -205,7 +227,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
         String stepText = testStep.getStepText();
         String locationPadding = createPaddingToLocation(STEP_INDENT, keyword + stepText);
         String formattedStepText = formatStepText(keyword, stepText, formats.get(result.getStatus().lowerCaseName()), formats.get(result.getStatus().lowerCaseName() + "_arg"), testStep.getDefinitionArgument());
-        out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
+        out.get().println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
     }
 
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
@@ -254,7 +276,8 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private String getStepKeyword(TestStep testStep) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
             Step step = (Step) astNode.node;
             return step.getKeyword();
@@ -264,11 +287,13 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private boolean isFirstStepAfterBackground(TestStep testStep) {
-        return currentTestCase != null && !isBackgroundStep(testStep);
+        CurrentFeature currentFeature = featureUnderTest.get();
+        return currentFeature.testCase != null && !isBackgroundStep(testStep);
     }
 
     private boolean isBackgroundStep(TestStep testStep) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
             return TestSourcesModel.isBackgroundStep(astNode);
         }
@@ -278,7 +303,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void printFeature(String path) {
         Feature feature = testSources.getFeature(path);
         printTags(feature.getTags());
-        out.println(feature.getKeyword() + ": " + feature.getName());
+        out.get().println(feature.getKeyword() + ": " + feature.getName());
         printDescription(feature.getDescription());
     }
 
@@ -287,50 +312,52 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
-            out.println(indent + FixJava.join(FixJava.map(tags, tagNameMapper), " "));
+            out.get().println(indent + FixJava.join(FixJava.map(tags, tagNameMapper), " "));
         }
     }
 
     private void printPickleTags(List<PickleTag> tags, String indent) {
         if (!tags.isEmpty()) {
-            out.println(indent + FixJava.join(FixJava.map(tags, pickleTagNameMapper), " "));
+            out.get().println(indent + FixJava.join(FixJava.map(tags, pickleTagNameMapper), " "));
         }
     }
 
     private void printDescription(String description) {
         if (description != null) {
-            out.println(description);
+            out.get().println(description);
         }
     }
 
     private void printBackground(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testCase.getLine());
         if (astNode != null) {
             Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             String backgroundText = getScenarioDefinitionText(background);
             boolean useBackgroundSteps = true;
             calculateLocationIndentation(SCENARIO_INDENT + backgroundText, testCase.getTestSteps(), useBackgroundSteps);
             String locationPadding = createPaddingToLocation(SCENARIO_INDENT, backgroundText);
-            out.println();
-            out.println(SCENARIO_INDENT + backgroundText + locationPadding + getLocationText(currentFeatureFile, background.getLocation().getLine()));
+            out.get().println();
+            out.get().println(SCENARIO_INDENT + backgroundText + locationPadding + getLocationText(currentFeature.uri, background.getLocation().getLine()));
             printDescription(background.getDescription());
         }
     }
 
     private void printScenarioDefinition(TestCase testCase) {
-        ScenarioDefinition scenarioDefinition = testSources.getScenarioDefinition(currentFeatureFile, testCase.getLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        ScenarioDefinition scenarioDefinition = testSources.getScenarioDefinition(currentFeature.uri, testCase.getLine());
         String definitionText = scenarioDefinition.getKeyword() + ": " + testCase.getName();
         calculateLocationIndentation(SCENARIO_INDENT + definitionText, testCase.getTestSteps());
         String locationPadding = createPaddingToLocation(SCENARIO_INDENT, definitionText);
-        out.println();
+        out.get().println();
         printPickleTags(testCase.getTags(), SCENARIO_INDENT);
-        out.println(SCENARIO_INDENT + definitionText + locationPadding + getLocationText(currentFeatureFile, testCase.getLine()));
+        out.get().println(SCENARIO_INDENT + definitionText + locationPadding + getLocationText(currentFeature.uri, testCase.getLine()));
         printDescription(scenarioDefinition.getDescription());
     }
 
     private void printError(Result result) {
         if (result.getError() != null) {
-            out.println("      " + formats.get(result.getStatus().lowerCaseName()).text(result.getErrorMessage()));
+            out.get().println("      " + formats.get(result.getStatus().lowerCaseName()).text(result.getErrorMessage()));
         }
     }
 
@@ -350,14 +377,29 @@ final class PrettyFormatter implements Formatter, ColorAware {
                 maxTextLength = Math.max(maxTextLength, STEP_INDENT.length() + stepText.length());
             }
         }
-        locationIndentation = maxTextLength + 1;
+        CurrentFeature currentFeature = featureUnderTest.get();
+        currentFeature.locationIndentation = maxTextLength + 1;
     }
 
     private String createPaddingToLocation(String indent, String text) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         StringBuffer padding = new StringBuffer();
-        for (int i = indent.length() + text.length(); i < locationIndentation; ++i) {
+        for (int i = indent.length() + text.length(); i < currentFeature.locationIndentation; ++i) {
             padding.append(' ');
         }
         return padding.toString();
     }
+
+    private class CurrentFeature {
+        private final String uri;
+        private TestCase testCase;
+        private ScenarioOutline scenarioOutline;
+        private Examples examples;
+        private int locationIndentation;
+
+        CurrentFeature(final String uri) {
+            this.uri = uri;
+        }
+    }
+    
 }
