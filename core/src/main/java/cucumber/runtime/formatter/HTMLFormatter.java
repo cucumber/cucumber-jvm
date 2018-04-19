@@ -6,6 +6,7 @@ import cucumber.api.TestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
@@ -14,6 +15,7 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.api.formatter.NiceRetrievableAppendable;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import gherkin.ast.Background;
@@ -67,52 +69,56 @@ final class HTMLFormatter implements Formatter {
 
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final URL htmlReportDir;
-    private NiceAppendable jsOut;
+    private final NiceAppendable globalOut;
+    private final Object globalOutSyncObject = new Object();
+    private volatile boolean firstWrite = true;
+    
+    private final ThreadLocal<NiceRetrievableAppendable> jsOut = new ThreadLocal<NiceRetrievableAppendable>();
+    private final ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
 
-    private boolean firstFeature = true;
-    private String currentFeatureFile;
-    private Map<String, Object> currentTestCaseMap;
-    private ScenarioOutline currentScenarioOutline;
-    private Examples currentExamples;
-    private int embeddedIndex;
-
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+    private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private final EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
         }
     };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
+    private final EventHandler<TestCaseFinished> caseFinishedHandler= new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            handleTestCaseFinished(event);
+        }
+    };
+    private final EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {
             handleTestStepStarted(event);
         }
     };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+    private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
             handleTestStepFinished(event);
         }
     };
-    private EventHandler<EmbedEvent> embedEventhandler = new EventHandler<EmbedEvent>() {
+    private final EventHandler<EmbedEvent> embedEventHandler = new EventHandler<EmbedEvent>() {
         @Override
         public void receive(EmbedEvent event) {
             handleEmbed(event);
         }
     };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
+    private final EventHandler<WriteEvent> writeEventHandler = new EventHandler<WriteEvent>() {
         @Override
         public void receive(WriteEvent event) {
             handleWrite(event);
         }
     };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+    private final EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
         @Override
         public void receive(TestRunFinished event) {
             finishReport();
@@ -125,17 +131,19 @@ final class HTMLFormatter implements Formatter {
 
     HTMLFormatter(URL htmlReportDir, NiceAppendable jsOut) {
         this.htmlReportDir = htmlReportDir;
-        this.jsOut = jsOut;
+        this.globalOut = jsOut;
+        this.jsOut.set(new NiceRetrievableAppendable(new StringBuilder()));
     }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
         publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
         publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
+        publisher.registerHandlerFor(EmbedEvent.class, embedEventHandler);
+        publisher.registerHandlerFor(WriteEvent.class, writeEventHandler);
         publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
@@ -144,27 +152,40 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (firstFeature) {
-            jsOut.append("$(document).ready(function() {").append("var ")
-                    .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
-            firstFeature = false;
-        }
+        jsOut.set(new NiceRetrievableAppendable(new StringBuilder()));
         handleStartOfFeature(event.testCase);
         handleScenarioOutline(event.testCase);
-        currentTestCaseMap = createTestCase(event.testCase);
-        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
+        CurrentFeature currentFeature = featureUnderTest.get();
+        currentFeature.testCaseMap = createTestCase(event.testCase);
+        if (testSources.hasBackground(currentFeature.uri, event.testCase.getLine())) {
             jsFunctionCall("background", createBackground(event.testCase));
         } else {
-            jsFunctionCall("scenario", currentTestCaseMap);
-            currentTestCaseMap = null;
+            jsFunctionCall("scenario", currentFeature.testCaseMap);
+            currentFeature.testCaseMap = null;
         }
     }
 
+    private void handleTestCaseFinished(TestCaseFinished event) {
+        synchronized (globalOutSyncObject) {
+            if (firstWrite) {
+                firstWrite = false;
+                globalOut.append("$(document).ready(function() {")
+                    .append("var ")
+                    .append(JS_FORMATTER_VAR)
+                    .append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));")
+                    .println();
+            }
+            globalOut.append(jsOut.get().printAll());
+        }
+        jsOut.get().close();
+    }
+
     private void handleTestStepStarted(TestStepStarted event) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         if (!event.testStep.isHook()) {
             if (isFirstStepAfterBackground(event.testStep)) {
-                jsFunctionCall("scenario", currentTestCaseMap);
-                currentTestCaseMap = null;
+                jsFunctionCall("scenario", currentFeature.testCaseMap);
+                currentFeature.testCaseMap = null;
             }
             jsFunctionCall("step", createTestStep(event.testStep));
         }
@@ -180,6 +201,7 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleEmbed(EmbedEvent event) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         String mimeType = event.mimeType;
         if(mimeType.startsWith("text/")) {
             // just pass straight to the formatter to output in the html
@@ -188,7 +210,7 @@ final class HTMLFormatter implements Formatter {
             // Creating a file instead of using data urls to not clutter the js file
             String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
             if (extension != null) {
-                StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
+                StringBuilder fileName = new StringBuilder("embedded").append(currentFeature.embeddedIndex++).append(".").append(extension);
                 writeBytesToURL(event.data, toUrl(fileName.toString()));
                 jsFunctionCall("embedding", mimeType, fileName);
             }
@@ -200,17 +222,19 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void finishReport() {
-        if (!firstFeature) {
-            jsOut.append("});");
+        if (!firstWrite) {
+            globalOut.append("});");
             copyReportFiles();
         }
-        jsOut.close();
+        globalOut.close();
     }
 
     private void handleStartOfFeature(TestCase testCase) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(testCase.getUri())) {
-            currentFeatureFile = testCase.getUri();
-            jsFunctionCall("uri", currentFeatureFile);
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature == null || currentFeature.uri == null || !currentFeature.uri.equals(testCase.getUri())) {
+            currentFeature = new CurrentFeature(testCase.getUri());
+            featureUnderTest.set(currentFeature);
+            jsFunctionCall("uri", currentFeature.uri);
             jsFunctionCall("feature", createFeature(testCase));
         }
     }
@@ -240,22 +264,23 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleScenarioOutline(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testCase.getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
             ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
-            if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
-                currentScenarioOutline = scenarioOutline;
-                jsFunctionCall("scenarioOutline", createScenarioOutline(currentScenarioOutline));
+            if (currentFeature.scenarioOutline == null || !currentFeature.scenarioOutline.equals(scenarioOutline)) {
+                currentFeature.scenarioOutline = scenarioOutline;
+                jsFunctionCall("scenarioOutline", createScenarioOutline(currentFeature.scenarioOutline));
                 addOutlineStepsToReport(scenarioOutline);
             }
             Examples examples = (Examples)astNode.parent.node;
-            if (currentExamples == null || !currentExamples.equals(examples)) {
-                currentExamples = examples;
-                jsFunctionCall("examples", createExamples(currentExamples));
+            if (currentFeature.examples == null || !currentFeature.examples.equals(examples)) {
+                currentFeature.examples = examples;
+                jsFunctionCall("examples", createExamples(currentFeature.examples));
             }
         } else {
-            currentScenarioOutline = null;
-            currentExamples = null;
+            currentFeature.scenarioOutline = null;
+            currentFeature.examples = null;
         }
     }
 
@@ -333,9 +358,10 @@ final class HTMLFormatter implements Formatter {
     }
 
     private Map<String, Object> createTestCase(TestCase testCase) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
         testCaseMap.put("name", testCase.getName());
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testCase.getLine());
         if (astNode != null) {
             ScenarioDefinition scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
             testCaseMap.put("keyword", scenarioDefinition.getKeyword());
@@ -354,7 +380,8 @@ final class HTMLFormatter implements Formatter {
     }
 
     private Map<String, Object> createBackground(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testCase.getLine());
         if (astNode != null) {
             Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             Map<String, Object> testCaseMap = new HashMap<String, Object>();
@@ -367,9 +394,10 @@ final class HTMLFormatter implements Formatter {
     }
 
     private boolean isFirstStepAfterBackground(TestStep testStep) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
-            if (currentTestCaseMap != null && !TestSourcesModel.isBackgroundStep(astNode)) {
+            if (currentFeature.testCaseMap != null && !TestSourcesModel.isBackgroundStep(astNode)) {
                 return true;
             }
         }
@@ -377,6 +405,7 @@ final class HTMLFormatter implements Formatter {
     }
 
     private Map<String, Object> createTestStep(TestStep testStep) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         if (!testStep.getStepArgument().isEmpty()) {
@@ -387,7 +416,7 @@ final class HTMLFormatter implements Formatter {
                 stepMap.put("rows", createDataTableList((PickleTable)argument));
             }
         }
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
             Step step = (Step) astNode.node;
             stepMap.put("keyword", step.getKeyword());
@@ -442,7 +471,7 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void jsFunctionCall(String functionName, Object... args) {
-        NiceAppendable out = jsOut.append(JS_FORMATTER_VAR + ".").append(functionName).append("(");
+        NiceAppendable out = jsOut.get().append(JS_FORMATTER_VAR + ".").append(functionName).append("(");
         boolean comma = false;
         for (Object arg : args) {
             if (comma) {
@@ -526,6 +555,18 @@ final class HTMLFormatter implements Formatter {
             out.close();
         } catch (IOException ignored) {
             // go gentle into that good night
+        }
+    }
+    
+    private class CurrentFeature {
+        private final String uri;
+        private Map<String, Object> testCaseMap;
+        private ScenarioOutline scenarioOutline;
+        private Examples examples;
+        private int embeddedIndex;
+        
+        CurrentFeature(final String uri) {
+            this.uri = uri;
         }
     }
 

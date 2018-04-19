@@ -7,6 +7,7 @@ import cucumber.runtime.Utils;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.util.FixJava;
 import gherkin.deps.com.google.gson.JsonParser;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +40,7 @@ import static org.junit.Assert.fail;
 public class HTMLFormatterTest {
     private final static String jsFunctionCallRegexString = "formatter.(\\w*)\\(([^)]*)\\);";
     private final static Pattern jsFunctionCallRegex = Pattern.compile(jsFunctionCallRegexString);
+    private static final String REPORT_JS = "report.js";
 
     private URL outputDir;
 
@@ -58,7 +61,7 @@ public class HTMLFormatterTest {
     @Test
     public void writes_valid_report_js() throws Throwable {
         writeReport();
-        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, REPORT_JS).openStream(), "UTF-8"));
         assertJsFunctionCallSequence(asList("" +
                 "formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");\n",
                 "formatter.feature({\n" +
@@ -95,14 +98,14 @@ public class HTMLFormatterTest {
     @Test
     public void includes_uri() throws Throwable {
         writeReport();
-        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, REPORT_JS).openStream(), "UTF-8"));
         assertContains("formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");", reportJs);
     }
 
     @Test
     public void included_embedding() throws Throwable {
         writeReport();
-        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, REPORT_JS).openStream(), "UTF-8"));
         assertContains("formatter.embedding(\"image/png\", \"embedded0.png\");", reportJs);
         assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\");", reportJs);
     }
@@ -160,7 +163,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_backgound() throws Throwable {
+    public void should_handle_background() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Background: background name\n" +
@@ -562,6 +565,28 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
+    @Test
+    public void shouldHandleTestsBeingRunConcurrently() throws Throwable {
+        final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+
+        //TODO: update this when upgrade to 1.7+
+        final File reportDir = File.createTempFile("cucumber-jvm-html", Long.toString(System.nanoTime()));
+        reportDir.delete();
+        reportDir.mkdir();
+        
+        TestHelper.runFormatterWithPlugin("html", reportDir.getAbsolutePath(), features, features.size());
+
+        final File reportJsFile = new File(reportDir, REPORT_JS);
+        assertTrue(REPORT_JS + " was not found", reportJsFile.exists());
+        
+        final String actual = TestHelper.readFileContents(reportJsFile.getAbsolutePath());
+        
+        String expected = new Scanner(getClass().getResourceAsStream("HTMLFormatterParallelExpected1.txt"), "UTF-8").useDelimiter("\\A").next();
+        String expected2 = new Scanner(getClass().getResourceAsStream("HTMLFormatterParallelExpected2.txt"), "UTF-8").useDelimiter("\\A").next();
+        
+        TestHelper.assertEqualsOr(actual, expected, expected2);
+    }
+    
     private void assertJsFunctionCallSequence(List<String> expectedList, String actual) {
         Iterator<String> expectedIterator = expectedList.iterator();
         String expected = expectedIterator.next();

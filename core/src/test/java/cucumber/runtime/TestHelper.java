@@ -6,20 +6,28 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runner.StepDurationTimeService;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.formatter.PickleStepMatcher;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
+import gherkin.deps.com.google.gson.JsonElement;
+import gherkin.deps.com.google.gson.JsonParser;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import junit.framework.AssertionFailedError;
+
+import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,13 +38,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyCollectionOf;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doAnswer;
@@ -46,6 +59,9 @@ import static org.mockito.Mockito.when;
 
 @Ignore
 public class TestHelper {
+
+    public static final int DEFAULT_DURATION = 1234;
+
     private TestHelper() {
     }
 
@@ -169,6 +185,7 @@ public class TestHelper {
             Result stepResult = getResultWithDefaultPassed(stepsToResult, stepText);
             if (!stepResult.is(Result.Type.UNDEFINED)) {
                 StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
+                when(matchStep.getPattern()).thenReturn(stepText);
                 when(matchStep.getMatch()).thenReturn(matchStep);
                 when(glue.stepDefinitionMatch(anyString(), TestHelper.stepWithName(stepText))).thenReturn(matchStep);
                 mockStepResult(stepResult, matchStep);
@@ -285,4 +302,111 @@ public class TestHelper {
         return stepsToLocation.containsKey(step) ? stepsToLocation.get(step) : "";
     }
 
+    public static String runFormatterWithPlugin(final String pluginName, final String outputPath, final List<String> featurePaths, final long threads) {
+        return runFormatterWithPlugin(pluginName, outputPath, featurePaths, threads, null);
+    }
+
+    public static String runFormatterWithPlugin(final String pluginName, final String outputPath, final List<String> featurePaths, final long threads, final Map<String, Result> stepsToResult) {
+        return runFormatter(pluginName, outputPath, featurePaths, threads, stepsToResult, null);
+    }
+
+    public static void runFormatterWithThreads(final Formatter formatter, final List<String> featurePaths, final long threads, final Map<String, Result> stepsToResult) {
+        runFormatter(null, null, featurePaths, threads, stepsToResult, formatter);
+    }
+
+    private static String runFormatter(final String pluginName, final String outputPath, final List<String> featurePaths,
+                                       final long threads, final Map<String, Result> stepsToResult, final Formatter formatter) {
+        HookDefinition hook = mock(HookDefinition.class);
+        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+
+        final List<String> args = new ArrayList<String>();
+        args.add("--threads");
+        args.add(String.valueOf(threads));
+        if (pluginName != null && outputPath != null) {
+            args.add("--plugin");
+            args.add(pluginName + ":" + outputPath);
+        }
+        args.addAll(featurePaths);
+
+        final RuntimeOptions runtimeOptions = new RuntimeOptions(args);
+        final Backend backend = mock(Backend.class);
+        when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
+
+        RuntimeGlue optionalGlue;
+        try {
+            optionalGlue = stepsToResult == null
+                ? null
+                : createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult,
+                                                            Collections.<String, String>emptyMap(),
+                                                            Collections.<SimpleEntry<String,Result>>emptyList(),
+                                                            Collections.<String>emptyList(),
+                                                            Collections.<Answer<Object>>emptyList());
+        }
+        catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(DEFAULT_DURATION), optionalGlue);
+        runtime.getGlue().addBeforeHook(hook);
+        if (formatter != null) {
+            formatter.setEventPublisher(runtime.getEventBus());
+        }
+        try {
+            runtime.run();
+            if (pluginName != null && outputPath != null && new File(outputPath).isFile()) {
+                return readFileContents(outputPath);
+            }
+            return "Nothing to return, did you pass in a formatter with an embedded Appendable or was the given output path not a File?";
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public static String readFileContents(final String outputPath) throws IOException {
+        final Scanner scanner = new Scanner(new FileInputStream(outputPath), "UTF-8");
+        final String formatterOutput = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return formatterOutput;
+    }
+
+    public static void assertPrettyJsonEqualsOr(final String actual, final String expected, final String or) {
+        JsonParser parser = new JsonParser();
+        JsonElement expectedJson = parser.parse(expected);
+        JsonElement orJson = parser.parse(or);
+        JsonElement actualJson = parser.parse(actual);
+        assertThat(actualJson, Matchers.either(Matchers.equalTo(expectedJson)).or(Matchers.equalTo(orJson)));
+
+        List<String> actualLines = sortedLinesWithWhitespace(actual);
+        List<String> expectedLines = sortedLinesWithWhitespace(expected);
+        List<String> orLines = sortedLinesWithWhitespace(actual);
+        assertEqualsOr(actualLines, expectedLines, orLines);
+    }
+
+    public static void assertEqualsOr(final Object actual, final Object expected, final Object or) {
+        assertThat(actual, Matchers.either(Matchers.is(expected)).or(Matchers.is(or)));
+    }
+
+    public static void assertPrettyJsonEquals(final String expected, final String actual) {
+        assertJsonEquals(expected, actual);
+
+        List<String> expectedLines = sortedLinesWithWhitespace(expected);
+        List<String> actualLines = sortedLinesWithWhitespace(actual);
+        assertEquals(expectedLines, actualLines);
+    }
+
+    private static List<String> sortedLinesWithWhitespace(final String string) {
+        List<String> lines = asList(string.split(",?(?:\r\n?|\n)")); // also remove trailing ','
+        sort(lines);
+        return lines;
+    }
+
+    private static void assertJsonEquals(final String expected, final String actual) {
+        JsonParser parser = new JsonParser();
+        JsonElement o1 = parser.parse(expected);
+        JsonElement o2 = parser.parse(actual);
+        assertEquals(o1, o2);
+    }
 }
