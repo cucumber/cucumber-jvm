@@ -10,9 +10,10 @@ import cucumber.api.formatter.NiceAppendable;
 import cucumber.api.formatter.StrictAware;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -21,8 +22,9 @@ import java.util.Set;
  */
 final class RerunFormatter implements Formatter, StrictAware {
     private final NiceAppendable out;
-    private Map<String, ArrayList<Integer>> featureAndFailedLinesMapping = new HashMap<String, ArrayList<Integer>>();
+    private final Map<String, List<Integer>> featureAndFailedLinesMapping = new ConcurrentHashMap<String, List<Integer>>();
     private boolean isStrict = false;
+    private final Object syncObject = new Object();
 
     private EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
@@ -66,18 +68,23 @@ final class RerunFormatter implements Formatter, StrictAware {
 
     private void recordTestFailed(TestCase testCase) {
         String path = testCase.getUri();
-        ArrayList<Integer> failedTestCases = this.featureAndFailedLinesMapping.get(path);
+        List<Integer> failedTestCases = this.featureAndFailedLinesMapping.get(path);
         if (failedTestCases == null) {
-            failedTestCases = new ArrayList<Integer>();
-            this.featureAndFailedLinesMapping.put(path, failedTestCases);
+            synchronized (syncObject) {
+                failedTestCases = this.featureAndFailedLinesMapping.get(path);
+                if (failedTestCases == null) {
+                    failedTestCases = new ArrayList<Integer>();
+                    this.featureAndFailedLinesMapping.put(path, failedTestCases);
+                }
+            }
         }
 
         failedTestCases.add(testCase.getLine());
     }
 
     private void reportFailedTestCases() {
-        Set<Map.Entry<String, ArrayList<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
-        for (Map.Entry<String, ArrayList<Integer>> entry : entries) {
+        Set<Map.Entry<String, List<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
+        for (Map.Entry<String, List<Integer>> entry : entries) {
             if (!entry.getValue().isEmpty()) {
                 out.append(entry.getKey());
                 for (Integer line : entry.getValue()) {
