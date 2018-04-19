@@ -168,9 +168,10 @@ final class JUnitFormatter implements Formatter, StrictAware {
             final Element localTestCaseElement = domElements.get().testSuiteElement;
             final NodeList testCases = localTestCaseElement.getChildNodes();
             for (int i = 0; i < testCases.getLength(); i++) {
-                final Node clonedNode = testCases.item(i).cloneNode(true);
-                outputDocument.adoptNode(clonedNode);
-                outputTestSuiteElement.appendChild(clonedNode);
+                final Node node = testCases.item(i);
+                localTestCaseElement.removeChild(node);
+                outputDocument.adoptNode(node);
+                outputTestSuiteElement.appendChild(node);
             }
         }
     }
