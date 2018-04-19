@@ -16,7 +16,8 @@ import cucumber.runtime.formatter.MonochromeFormats;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,11 +31,11 @@ class Stats implements EventListener {
     private long totalDuration = 0;
     private Formats formats;
     private Locale locale;
-    private final List<String> failedScenarios = new ArrayList<String>();
-    private List<String> ambiguousScenarios = new ArrayList<String>();
-    private final List<String> pendingScenarios = new ArrayList<String>();
-    private final List<String> undefinedScenarios = new ArrayList<String>();
-    private final List<Throwable> errors = new ArrayList<Throwable>();
+    private final List<String> failedScenarios = Collections.synchronizedList(new LinkedList<String>());
+    private final List<String> ambiguousScenarios = Collections.synchronizedList(new LinkedList<String>());
+    private final List<String> pendingScenarios = Collections.synchronizedList(new LinkedList<String>());
+    private final List<String> undefinedScenarios = Collections.synchronizedList(new LinkedList<String>());
+    private final List<Throwable> errors = Collections.synchronizedList(new LinkedList<Throwable>());
     private final EventHandler<TestRunStarted> testRunStartedHandler = new EventHandler<TestRunStarted>() {
         @Override
         public void receive(TestRunStarted event) {
@@ -239,12 +240,12 @@ class Stats implements EventListener {
     }
 
     static class SubCounts {
-        public int passed = 0;
-        public int failed = 0;
-        public int ambiguous = 0;
-        public int skipped = 0;
-        public int pending = 0;
-        public int undefined = 0;
+        public volatile int passed = 0;
+        public volatile int failed = 0;
+        public volatile int ambiguous = 0;
+        public volatile int skipped = 0;
+        public volatile int pending = 0;
+        public volatile int undefined = 0;
 
         public int getTotal() {
             return passed + failed + ambiguous + skipped + pending + undefined;
