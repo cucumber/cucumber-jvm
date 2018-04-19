@@ -14,8 +14,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Formatter to measure performance of steps. Aggregated results for all steps can be computed
@@ -23,8 +26,10 @@ import java.util.Map;
  */
 final class UsageFormatter implements Formatter {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
-    final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
-    private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
+    final Map<String, List<StepContainer>> usageMap = Collections.synchronizedMap(new HashMap<String, List<StepContainer>>());
+    private final Map<String, UsageStatisticStrategy> statisticStrategies = new LinkedHashMap<String, UsageStatisticStrategy>();
+    private final Object syncObject = new Object();
+    private final Map<String, Object> stepContainerSyncObjects = new ConcurrentHashMap<String, Object>();
 
     private final NiceAppendable out;
 
@@ -68,7 +73,9 @@ final class UsageFormatter implements Formatter {
 
     void finishReport() {
         List<StepDefContainer> stepDefContainers = new ArrayList<StepDefContainer>();
-        for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
+        //Sort the output so can guarantee order of results when run in parallel
+        final Map<String, List<StepContainer>> sortedMap = new TreeMap<String, List<StepContainer>>(usageMap);
+        for (Map.Entry<String, List<StepContainer>> usageEntry : sortedMap.entrySet()) {
             StepDefContainer stepDefContainer = new StepDefContainer();
             stepDefContainers.add(stepDefContainer);
 
@@ -95,7 +102,7 @@ final class UsageFormatter implements Formatter {
     }
 
     private Map<String, BigDecimal> createAggregatedDurations(StepContainer stepContainer) {
-        Map<String, BigDecimal> aggregatedResults = new HashMap<String, BigDecimal>();
+        Map<String, BigDecimal> aggregatedResults = new LinkedHashMap<String, BigDecimal>();
         for (Map.Entry<String, UsageStatisticStrategy> calculatorEntry : statisticStrategies.entrySet()) {
             UsageStatisticStrategy statisticStrategy = calculatorEntry.getValue();
             List<Long> rawDurations = getRawDurations(stepContainer.durations);
@@ -127,10 +134,16 @@ final class UsageFormatter implements Formatter {
     private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs, String stepLocation) {
         List<StepContainer> stepContainers = usageMap.get(stepDefinition);
         if (stepContainers == null) {
-            stepContainers = new ArrayList<StepContainer>();
-            usageMap.put(stepDefinition, stepContainers);
+            synchronized (syncObject) {
+                stepContainers = usageMap.get(stepDefinition);
+                if (stepContainers == null) {
+                    stepContainers = new ArrayList<StepContainer>();
+                    usageMap.put(stepDefinition, stepContainers);
+                    stepContainerSyncObjects.put(stepDefinition, new Object());
+                }
+            }
         }
-        StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
+        StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers, stepDefinition);
 
         Long duration = result.getDuration();
         StepDuration stepDuration = createStepDuration(duration, stepLocation);
@@ -148,16 +161,18 @@ final class UsageFormatter implements Formatter {
         return stepDuration;
     }
 
-    private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
-        for (StepContainer container : stepContainers) {
-            if (stepNameWithArgs.equals(container.name)) {
-                return container;
+    private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers, String stepDefinition) {
+        synchronized (stepContainerSyncObjects.get(stepDefinition)) {
+            for (StepContainer container : stepContainers) {
+                if (stepNameWithArgs.equals(container.name)) {
+                    return container;
+                }
             }
+            StepContainer stepContainer = new StepContainer();
+            stepContainer.name = stepNameWithArgs;
+            stepContainers.add(stepContainer);
+            return stepContainer;
         }
-        StepContainer stepContainer = new StepContainer();
-        stepContainer.name = stepNameWithArgs;
-        stepContainers.add(stepContainer);
-        return stepContainer;
     }
 
     /**
@@ -202,7 +217,7 @@ final class UsageFormatter implements Formatter {
     /**
      * Calculate a statistical value to be displayed in the usage-file
      */
-    static interface UsageStatisticStrategy {
+    interface UsageStatisticStrategy {
         /**
          * @param durationEntries list of execution times of steps as nanoseconds
          * @return a statistical value (e.g. median, average, ..)

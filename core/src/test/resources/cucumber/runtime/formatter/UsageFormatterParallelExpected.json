@@ -1,0 +1,74 @@
+[
+  {
+    "source": "bg_1",
+    "steps": [
+      {
+        "name": "bg_1",
+        "aggregatedDurations": {
+          "median": 0.000001234,
+          "average": 0.000001234
+        },
+        "durations": [
+          {
+            "duration": 0.000001234,
+            "location": "cucumber/runtime/formatter/FormatterParallelTests.feature:4"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "bg_10",
+    "steps": [
+      {
+        "name": "bg_10",
+        "aggregatedDurations": {
+          "median": 0.000001234,
+          "average": 0.000001234
+        },
+        "durations": [
+          {
+            "duration": 0.000001234,
+            "location": "cucumber/runtime/formatter/FormatterParallelTests2.feature:4"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "bg_2",
+    "steps": [
+      {
+        "name": "bg_2",
+        "aggregatedDurations": {
+          "median": 0.000001234,
+          "average": 0.000001234
+        },
+        "durations": [
+          {
+            "duration": 0.000001234,
+            "location": "cucumber/runtime/formatter/FormatterParallelTests.feature:5"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "bg_20",
+    "steps": [
+      {
+        "name": "bg_20",
+        "aggregatedDurations": {
+          "median": 0.000001234,
+          "average": 0.000001234
+        },
+        "durations": [
+          {
+            "duration": 0.000001234,
+            "location": "cucumber/runtime/formatter/FormatterParallelTests2.feature:5"
+          }
+        ]
+      }
+    ]
+  }
+]

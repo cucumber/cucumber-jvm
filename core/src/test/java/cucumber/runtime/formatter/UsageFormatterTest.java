@@ -3,16 +3,23 @@ package cucumber.runtime.formatter;
 import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.event.TestStepFinished;
+import cucumber.runtime.TestHelper;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
+import static cucumber.runtime.TestHelper.result;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -150,5 +157,27 @@ public class UsageFormatterTest {
         when(testStep.getPattern()).thenReturn("stepDef");
         when(testStep.getStepText()).thenReturn("step");
         return testStep;
+    }
+
+    @Test
+    public void shouldHandleTestsBeingRunConcurrently() throws Exception {
+        final Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("bg_1", result("passed"));
+        stepsToResult.put("bg_2", result("passed"));
+        stepsToResult.put("step_1", result("passed"));
+        stepsToResult.put("step_2", result("passed"));
+        stepsToResult.put("step_3", result("passed"));
+        stepsToResult.put("bg_10", result("passed"));
+        stepsToResult.put("bg_20", result("passed"));
+        stepsToResult.put("step_10", result("passed"));
+        stepsToResult.put("step_20", result("passed"));
+        stepsToResult.put("step_30", result("passed"));
+
+        final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+        final File report = File.createTempFile("cucumber-jvm-usage", ".json");
+        final String actual = TestHelper.runFormatterWithPlugin("usage", report.getAbsolutePath(), features, features.size(), stepsToResult);
+        final String expected = new Scanner(getClass().getResourceAsStream("UsageFormatterParallelExpected.json"), "UTF-8").useDelimiter("\\A").next();
+
+        TestHelper.assertPrettyJsonEquals(expected, actual);
     }
 }
