@@ -1,53 +1,46 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runner.TimeServiceStub;
-import cucumber.runtime.Backend;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.TestHelper;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.deps.com.google.gson.JsonParser;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
-import gherkin.deps.com.google.gson.JsonElement;
-import org.junit.Test;
-import org.mockito.stubbing.Answer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.AbstractMap.SimpleEntry;
 
-import static cucumber.runtime.TestHelper.result;
+import org.junit.Test;
+import org.mockito.stubbing.Answer;
+
 import static cucumber.runtime.TestHelper.createEmbedHookAction;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
+import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
-import static java.util.Collections.sort;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JSONFormatterTest {
+
+    @Test
+    public void shouldHandleTestsBeingRunConcurrently() throws Exception {
+
+        final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+        String actual = runFeaturesWithJSONPrettyFormatter(features,features.size());
+        String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterParallelExpected1.json"), "UTF-8").useDelimiter("\\A").next();
+        String expected2 = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterParallelExpected2.json"), "UTF-8").useDelimiter("\\A").next();
+
+        TestHelper.assertPrettyJsonEqualsOr(actual, expected, expected2);
+    }
 
     @Test
     public void featureWithOutlineTest() throws Exception {
         String actual = runFeaturesWithJSONPrettyFormatter(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
 
-        assertPrettyJsonEquals(expected, actual);
+        TestHelper.assertPrettyJsonEquals(expected, actual);
     }
 
     @Test
@@ -95,7 +88,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -149,7 +142,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -204,7 +197,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -261,7 +254,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -389,7 +382,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -472,7 +465,7 @@ public class JSONFormatterTest {
             "    ]\n" +
             "  }\n" +
             "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -554,7 +547,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -628,7 +621,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -705,7 +698,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -766,7 +759,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -828,7 +821,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
 
@@ -899,7 +892,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test
@@ -993,52 +986,16 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
-    }
-
-    private void assertPrettyJsonEquals(final String expected, final String actual) {
-        assertJsonEquals(expected, actual);
-
-        List<String> expectedLines = sortedLinesWithWhitespace(expected);
-        List<String> actualLines = sortedLinesWithWhitespace(actual);
-        assertEquals(expectedLines, actualLines);
-    }
-
-    private List<String> sortedLinesWithWhitespace(final String string) {
-        List<String> lines = asList(string.split(",?(?:\r\n?|\n)")); // also remove trailing ','
-        sort(lines);
-        return lines;
-    }
-
-    private void assertJsonEquals(final String expected, final String actual) {
-        JsonParser parser = new JsonParser();
-        JsonElement o1 = parser.parse(expected);
-        JsonElement o2 = parser.parse(actual);
-        assertEquals(o1, o2);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {
-        HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
-        File report = File.createTempFile("cucumber-jvm-junit", ".json");
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        return runFeaturesWithJSONPrettyFormatter(featurePaths, 1L);
+    }
 
-        List<String> args = new ArrayList<String>();
-        args.add("--plugin");
-        args.add("json:" + report.getAbsolutePath());
-        args.addAll(featurePaths);
-
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(1234), null);
-        runtime.getGlue().addBeforeHook(hook);
-        runtime.run();
-        Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
-        String formatterOutput = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        return formatterOutput;
+    private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths, final long threads) throws IOException {
+        final File report = File.createTempFile("cucumber-jvm-json", ".json");
+        return TestHelper.runFormatterWithPlugin("json", report.getAbsolutePath(), featurePaths, threads);
     }
 
     private String runFeatureWithJSONPrettyFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult)
@@ -1079,7 +1036,7 @@ public class JSONFormatterTest {
         return report.toString();
     }
 
-    private JSONFormatter createJsonFormatter(final StringBuilder report) throws IOException {
+    private JSONFormatter createJsonFormatter(final StringBuilder report) {
         return new JSONFormatter(report);
     }
 

@@ -31,59 +31,57 @@ import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 final class JSONFormatter implements Formatter {
-    private String currentFeatureFile;
-    private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
-    private List<Map<String, Object>> currentElementsList;
-    private Map<String, Object> currentElementMap;
-    private Map<String, Object> currentTestCaseMap;
-    private List<Map<String, Object>> currentStepsList;
-    private Map<String, Object> currentStepOrHookMap;
+    private final List<Map<String, Object>> featureMaps = Collections.synchronizedList(new LinkedList<Map<String, Object>>());
+    private final ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
+
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+    private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private final EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
         }
     };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
+    private final EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {
             handleTestStepStarted(event);
         }
     };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+    private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
             handleTestStepFinished(event);
         }
     };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+    private final EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
         @Override
         public void receive(TestRunFinished event) {
             finishReport();
         }
     };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
+    private final EventHandler<WriteEvent> writeEventHandler = new EventHandler<WriteEvent>() {
         @Override
         public void receive(WriteEvent event) {
             handleWrite(event);
         }
     };
-    private EventHandler<EmbedEvent> embedEventhandler = new EventHandler<EmbedEvent>() {
+    private final EventHandler<EmbedEvent> embedEventHandler = new EventHandler<EmbedEvent>() {
         @Override
         public void receive(EmbedEvent event) {
             handleEmbed(event);
@@ -101,8 +99,8 @@ final class JSONFormatter implements Formatter {
         publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
         publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
-        publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
+        publisher.registerHandlerFor(WriteEvent.class, writeEventHandler);
+        publisher.registerHandlerFor(EmbedEvent.class, embedEventHandler);
         publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
@@ -111,34 +109,37 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
-            currentFeatureFile = event.testCase.getUri();
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature == null || !currentFeature.uri.equals(event.testCase.getUri())) {
+            currentFeature = new CurrentFeature(event.testCase.getUri());
+            featureUnderTest.set(currentFeature);
             Map<String, Object> currentFeatureMap = createFeatureMap(event.testCase);
             featureMaps.add(currentFeatureMap);
-            currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
+            currentFeature.elementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
-        currentTestCaseMap = createTestCase(event.testCase);
-        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
-            currentElementMap = createBackground(event.testCase);
-            currentElementsList.add(currentElementMap);
+        currentFeature.testCaseMap = createTestCase(event.testCase);
+        if (testSources.hasBackground(currentFeature.uri, event.testCase.getLine())) {
+            currentFeature.elementMap = createBackground(event.testCase);
+            currentFeature.elementsList.add(currentFeature.elementMap);
         } else {
-            currentElementMap = currentTestCaseMap;
+            currentFeature.elementMap = currentFeature.testCaseMap;
         }
-        currentElementsList.add(currentTestCaseMap);
-        currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
+        currentFeature.elementsList.add(currentFeature.testCaseMap);
+        currentFeature.stepsList = (List<Map<String, Object>>) currentFeature.elementMap.get("steps");
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         if (!event.testStep.isHook()) {
             if (isFirstStepAfterBackground(event.testStep)) {
-                currentElementMap = currentTestCaseMap;
-                currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
+                currentFeature.elementMap = currentFeature.testCaseMap;
+                currentFeature.stepsList = (List<Map<String, Object>>) currentFeature.elementMap.get("steps");
             }
-            currentStepOrHookMap = createTestStep(event.testStep);
-            currentStepsList.add(currentStepOrHookMap);
+            currentFeature.stepOrHookMap = createTestStep(event.testStep);
+            currentFeature.stepsList.add(currentFeature.stepOrHookMap);
         } else {
-            currentStepOrHookMap = createHookStep(event.testStep);
-            addHookStepToTestCaseMap(currentStepOrHookMap, event.testStep.getHookType());
+            currentFeature.stepOrHookMap = createHookStep(event.testStep);
+            addHookStepToTestCaseMap(currentFeature.stepOrHookMap, event.testStep.getHookType());
         }
     }
 
@@ -151,8 +152,9 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        currentStepOrHookMap.put("match", createMatchMap(event.testStep, event.result));
-        currentStepOrHookMap.put("result", createResultMap(event.result));
+        CurrentFeature currentFeature = featureUnderTest.get();
+        currentFeature.stepOrHookMap.put("match", createMatchMap(event.testStep, event.result));
+        currentFeature.stepOrHookMap.put("result", createResultMap(event.result));
     }
 
     private void finishReport() {
@@ -178,11 +180,12 @@ final class JSONFormatter implements Formatter {
     }
 
     private Map<String, Object> createTestCase(TestCase testCase) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
         testCaseMap.put("name", testCase.getName());
         testCaseMap.put("line", testCase.getLine());
         testCaseMap.put("type", "scenario");
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testCase.getLine());
         if (astNode != null) {
             testCaseMap.put("id", TestSourcesModel.calculateId(astNode));
             ScenarioDefinition scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
@@ -203,7 +206,8 @@ final class JSONFormatter implements Formatter {
     }
 
     private Map<String, Object> createBackground(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testCase.getLine());
         if (astNode != null) {
             Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             Map<String, Object> testCaseMap = new HashMap<String, Object>();
@@ -219,9 +223,10 @@ final class JSONFormatter implements Formatter {
     }
 
     private boolean isFirstStepAfterBackground(TestStep testStep) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
-            if (currentElementMap != currentTestCaseMap && !TestSourcesModel.isBackgroundStep(astNode)) {
+            if (currentFeature.elementMap != currentFeature.testCaseMap && !TestSourcesModel.isBackgroundStep(astNode)) {
                 return true;
             }
         }
@@ -229,10 +234,11 @@ final class JSONFormatter implements Formatter {
     }
 
     private Map<String, Object> createTestStep(TestStep testStep) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         stepMap.put("line", testStep.getStepLine());
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (!testStep.getStepArgument().isEmpty()) {
             Argument argument = testStep.getStepArgument().get(0);
             if (argument instanceof PickleString) {
@@ -283,25 +289,28 @@ final class JSONFormatter implements Formatter {
     }
 
     private void addHookStepToTestCaseMap(Map<String, Object> currentStepOrHookMap, HookType hookType) {
-        if (!currentTestCaseMap.containsKey(hookType.toString())) {
-            currentTestCaseMap.put(hookType.toString(), new ArrayList<Map<String, Object>>());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (!currentFeature.testCaseMap.containsKey(hookType.toString())) {
+            currentFeature.testCaseMap.put(hookType.toString(), new ArrayList<Map<String, Object>>());
         }
-        ((List<Map<String, Object>>)currentTestCaseMap.get(hookType.toString())).add(currentStepOrHookMap);
+        ((List<Map<String, Object>>)currentFeature.testCaseMap.get(hookType.toString())).add(currentStepOrHookMap);
     }
 
     private void addOutputToHookMap(String text) {
-        if (!currentStepOrHookMap.containsKey("output")) {
-            currentStepOrHookMap.put("output", new ArrayList<String>());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (!currentFeature.stepOrHookMap.containsKey("output")) {
+            currentFeature.stepOrHookMap.put("output", new ArrayList<String>());
         }
-        ((List<String>)currentStepOrHookMap.get("output")).add(text);
+        ((List<String>)currentFeature.stepOrHookMap.get("output")).add(text);
     }
 
     private void addEmbeddingToHookMap(byte[] data, String mimeType) {
-        if (!currentStepOrHookMap.containsKey("embeddings")) {
-            currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (!currentFeature.stepOrHookMap.containsKey("embeddings")) {
+            currentFeature.stepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
         }
         Map<String, Object> embedMap = createEmbeddingMap(data, mimeType);
-        ((List<Map<String, Object>>)currentStepOrHookMap.get("embeddings")).add(embedMap);
+        ((List<Map<String, Object>>)currentFeature.stepOrHookMap.get("embeddings")).add(embedMap);
     }
 
     private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType) {
@@ -339,5 +348,18 @@ final class JSONFormatter implements Formatter {
             resultMap.put("duration", result.getDuration());
         }
         return resultMap;
+    }
+    
+    private class CurrentFeature {
+        private final String uri;
+        private List<Map<String, Object>> elementsList;
+        private Map<String, Object> elementMap;
+        private Map<String, Object> testCaseMap;
+        private List<Map<String, Object>> stepsList;
+        private Map<String, Object> stepOrHookMap;
+        
+        CurrentFeature(final String uri) {
+            this.uri = uri;
+        }
     }
 }
