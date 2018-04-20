@@ -17,9 +17,9 @@ Options:
   -t, --tags TAG_EXPRESSION              Only run scenarios tagged with tags matching
                                          TAG_EXPRESSION.
   -n, --name REGEXP                      Only run scenarios whose names match REGEXP.
-  -d, --[no-]-dry-run                    Skip execution of glue code.
-  -m, --[no-]-monochrome                 Don't colour terminal output.
-  -s, --[no-]-strict                     Treat undefined and pending steps as errors.
+  -d, --[no-]dry-run                    Skip execution of glue code.
+  -m, --[no-]monochrome                 Don't colour terminal output.
+  -s, --[no-]strict                     Treat undefined and pending steps as errors.
       --snippets [underscore|camelcase]  Naming convention for generated snippets.
                                          Defaults to underscore.
   -v, --version                          Print version.
