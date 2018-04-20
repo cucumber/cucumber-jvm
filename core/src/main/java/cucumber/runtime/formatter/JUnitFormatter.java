@@ -16,16 +16,10 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,10 +30,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 final class JUnitFormatter implements Formatter, StrictAware {
     private static final String NUMBER_FORMAT_PATTERN = "0.######";
@@ -91,14 +90,9 @@ final class JUnitFormatter implements Formatter, StrictAware {
 
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
-        try {
-            outputDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            outputTestSuiteElement = outputDocument.createElement(TEST_SUITE_TAG);
-            outputDocument.appendChild(outputTestSuiteElement);
-        }
-        catch (ParserConfigurationException e) {
-            throw new CucumberException("Error while processing unit report", e);
-        }
+        final CurrentDomElements outputDomElements = new CurrentDomElements();        
+        this.outputDocument = outputDomElements.document;
+        this.outputTestSuiteElement = outputDomElements.testSuiteElement;
     }
 
     @Override
