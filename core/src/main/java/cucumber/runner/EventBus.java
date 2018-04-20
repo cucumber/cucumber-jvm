@@ -5,15 +5,13 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class EventBus implements EventPublisher {
     private final TimeService stopWatch;
-    private Map<Class<? extends Event>, List<EventHandler>> handlers = new ConcurrentHashMap<Class<? extends Event>, List<EventHandler>>();
-    private final Object syncObject = new Object();
+    private Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<Class<? extends Event>, List<EventHandler>>();
 
     public EventBus(TimeService stopWatch) {
         this.stopWatch = stopWatch;
@@ -34,14 +32,12 @@ public class EventBus implements EventPublisher {
 
     @Override
     public <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
-        if (!handlers.containsKey(eventType)) {
-            synchronized (syncObject) {
-                if (!handlers.containsKey(eventType)) {
-                    handlers.put(eventType, Collections.synchronizedList(new ArrayList<EventHandler>()));
-                }
-            }
+        if (handlers.containsKey(eventType)) {
+            handlers.get(eventType).add(handler);
+        } else {
+            List<EventHandler> list = new ArrayList<EventHandler>();
+            list.add(handler);
+            handlers.put(eventType, list);
         }
-
-        handlers.get(eventType).add(handler);
     }
 }
