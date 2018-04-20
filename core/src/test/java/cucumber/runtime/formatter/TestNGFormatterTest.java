@@ -11,9 +11,13 @@ import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,14 +25,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.AbstractMap.SimpleEntry;
 
 import static cucumber.runtime.TestHelper.result;
 import static cucumber.runtime.Utils.toURL;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 
 public final class TestNGFormatterTest {
 
+    @Test
+    public void shouldHandleTestsBeingRunConcurrently() throws Throwable {
+        final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+
+        final Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("bg_1", result("passed"));
+        stepsToResult.put("bg_2", result("passed"));
+        stepsToResult.put("bg_3", result("passed"));
+        stepsToResult.put("step_1", result("passed"));
+        stepsToResult.put("step_2", result("passed"));
+        stepsToResult.put("step_3", result("passed"));
+        stepsToResult.put("bg_10", result("passed"));
+        stepsToResult.put("bg_20", result("passed"));
+        stepsToResult.put("bg_30", result("passed"));
+        stepsToResult.put("step_10", result("passed"));
+        stepsToResult.put("step_20", result("passed"));
+        stepsToResult.put("step_30", result("passed"));
+        
+        final File report = File.createTempFile("cucumber-jvm-testng", ".xml");
+        TestHelper.runFormatterWithPlugin("testng", report.getAbsolutePath(), features, features.size(), stepsToResult);
+        
+        assertXmlEqualOr(report,"cucumber/runtime/formatter/TestNGFormatterParallelExpected1.xml", "cucumber/runtime/formatter/TestNGFormatterParallelExpected2.xml");
+    }
+    
     @Test
     public final void testScenarioWithUndefinedSteps() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -327,36 +355,51 @@ public final class TestNGFormatterTest {
                 "</testng-results>", actual);
     }
 
-    private String runFeatureWithTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult, long stepDuration)
-            throws IOException, Throwable, FileNotFoundException {
+    private String runFeatureWithTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult, long stepDuration) throws Throwable {
         return runFeatureWithTestNGFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepDuration);
     }
 
     private String runFeatureWithTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult,
-            List<SimpleEntry<String, Result>> hooks, long stepDuration) throws IOException, Throwable, FileNotFoundException {
+            List<SimpleEntry<String, Result>> hooks, long stepDuration) throws Throwable {
         return runFeaturesWithTestNGFormatter(Arrays.asList(feature), stepsToResult, hooks, stepDuration);
     }
 
     private String runFeaturesWithTestNGFormatter(List<CucumberFeature> features, Map<String, Result> stepsToResult,
-            List<SimpleEntry<String, Result>> hooks, long stepDuration) throws IOException, Throwable, FileNotFoundException {
+            List<SimpleEntry<String, Result>> hooks, long stepDuration) throws Throwable {
         final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
         final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
         TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepDuration, formatter);
         return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
     }
 
-    private String runFeatureWithStrictTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult, long stepDuration)
-            throws IOException, Throwable, FileNotFoundException {
+    private String runFeatureWithStrictTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult, long stepDuration) throws Throwable {
         final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
         final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
         formatter.setStrict(true);
         TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepDuration, formatter);
         return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
     }
+    
+    private void assertXmlEqualOr(File actual, String expectedPath, String orPath) throws IOException, SAXException {
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff expectedDiff = getDiffIgnoringDateTimes(readFile(expectedPath), new FileReader(actual));
+        Diff orDiff = getDiffIgnoringDateTimes(readFile(orPath), new FileReader(actual));
+        final boolean result = expectedDiff.identical() || orDiff.identical();
+        assertTrue("Difference to expected:\r\n" + expectedDiff + "\r\n\r\nDifference to or:" + orDiff, result);
+    }
+
+    private Reader readFile(final String path) throws UnsupportedEncodingException {
+        return new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(path), "UTF-8");
+    }
 
     private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, actual) {
+        Diff diff = getDiffIgnoringDateTimes(expected, actual);
+        assertTrue("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical());
+    }
+
+    private Diff getDiffIgnoringDateTimes(final Reader expected, final Reader actual) throws IOException, SAXException {
+        return new Diff(expected, actual) {
             @Override
             public int differenceFound(Difference difference) {
                 if (difference.getControlNodeDetail().getNode().getNodeName().matches("started-at|finished-at")) {
@@ -365,7 +408,18 @@ public final class TestNGFormatterTest {
                 return super.differenceFound(difference);
             }
         };
-        assertTrue("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical());
+    }
+    
+    private Diff getDiffIgnoringDateTimes(final String expected, final String actual) throws IOException, SAXException {
+        return new Diff(expected, actual) {
+            @Override
+            public int differenceFound(Difference difference) {
+                if (difference.getControlNodeDetail().getNode().getNodeName().matches("started-at|finished-at")) {
+                    return 0;
+                }
+                return super.differenceFound(difference);
+            }
+        };
     }
 
     private Long milliSeconds(int milliSeconds) {
