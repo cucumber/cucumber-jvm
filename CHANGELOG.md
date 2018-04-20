@@ -18,6 +18,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Remove the deprecated -f/--format option ([#1295](https://github.com/cucumber/cucumber-jvm/pull/1295) Björn Rasmusson, M.P. Korstanje)  
 
 ### Fixed
+ * [Core] Remove excess hyphens in `--help` usage info ([#1347](https://github.com/cucumber/cucumber-jvm/pull/1347) Jano Svitok
  * [Core] Fix runtime exit status for ambiguous scenarios ([#1342](https://github.com/cucumber/cucumber-jvm/pull/1342) Prashant Ramcharan)
 
 ## [2.4.0](https://github.com/cucumber/cucumber-jvm/compare/v2.3.1...v2.4.0)
