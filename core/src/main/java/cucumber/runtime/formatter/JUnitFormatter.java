@@ -120,8 +120,11 @@ final class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        CurrentDomElements currentDomElements = new CurrentDomElements();
-        domElements.set(currentDomElements);
+        CurrentDomElements currentDomElements = domElements.get();
+        if (currentDomElements == null) {
+            currentDomElements = new CurrentDomElements();
+            domElements.set(currentDomElements);
+        }
 
         CurrentFeature currentFeature = featureUnderTest.get();
         if (currentFeature == null || currentFeature.uri == null || !currentFeature.uri.equals(event.testCase.getUri())) {
