@@ -569,10 +569,7 @@ public class HTMLFormatterTest {
     public void shouldHandleTestsBeingRunConcurrently() throws Throwable {
         final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
 
-        //TODO: update this when upgrade to 1.7+
-        final File reportDir = File.createTempFile("cucumber-jvm-html", Long.toString(System.nanoTime()));
-        reportDir.delete();
-        reportDir.mkdir();
+        final File reportDir = TempDir.createTempDirectory();
         
         TestHelper.runFormatterWithPlugin("html", reportDir.getAbsolutePath(), features, features.size());
 
