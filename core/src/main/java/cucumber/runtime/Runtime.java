@@ -104,19 +104,23 @@ public class Runtime {
         reportStepDefinitions(stepDefinitionReporter);
 
         //Split features here into Futures and run
-        final ExecutorService executor = Executors.newFixedThreadPool(partitionedFeatures.size());
-        final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(partitionedFeatures.size());
-        for(List<CucumberFeature> featureSet : partitionedFeatures) {
-            tasks.add(new RuntimeCallable(this, featureSet));
+        if (partitionedFeatures.size() > 0) {
+            final ExecutorService executor = Executors.newFixedThreadPool(partitionedFeatures.size());
+            final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(partitionedFeatures.size());
+            for (List<CucumberFeature> featureSet : partitionedFeatures) {
+                tasks.add(new RuntimeCallable(this, featureSet));
+            }
+            try {
+                executor.invokeAll(tasks);
+            }
+            catch (final InterruptedException e) {
+                throw new CucumberException(e);
+            }
+            finally {
+                executor.shutdown();
+            }
         }
-        try {
-            executor.invokeAll(tasks);
-        }
-        catch (final InterruptedException e) {
-            throw new CucumberException(e);
-        }
-        executor.shutdown();
-
+        
         bus.send(new TestRunFinished(bus.getTime()));
         printSummary();
     }
