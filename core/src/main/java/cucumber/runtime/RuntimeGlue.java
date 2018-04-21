@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+//TODO: need to fix sharing of state across many threads
 public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
