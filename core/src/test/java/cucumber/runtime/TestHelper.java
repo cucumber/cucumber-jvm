@@ -164,6 +164,7 @@ public class TestHelper {
         timeService.setEventPublisher(runtime.getEventBus());
 
         formatter.setEventPublisher(runtime.getEventBus());
+        //runtime.prepareForFeatureRun();
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(runtime.getEventBus());
             runtime.runFeature(feature);
@@ -175,6 +176,7 @@ public class TestHelper {
                                                                           final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations,
                                                                           final List<Answer<Object>> hookActions) throws Throwable {
         RuntimeGlue glue = mock(RuntimeGlue.class);
+        when(glue.clone()).thenReturn(glue);
         TestHelper.mockSteps(glue, stepsToResult, stepsToLocation);
         TestHelper.mockHooks(glue, hooks, hookLocations, hookActions);
         return glue;

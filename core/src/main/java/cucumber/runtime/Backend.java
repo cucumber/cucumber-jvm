@@ -21,12 +21,12 @@ public interface Backend {
      * Invoked before a new scenario starts. Implementations should do any necessary
      * setup of new, isolated state here.
      */
-    void buildWorld();
+    void buildWorld(Glue glue);
 
     /**
      * Invoked at the end of a scenario, after hooks
      */
-    void disposeWorld();
+    void disposeWorld(Glue glue);
 
     String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator);
 }

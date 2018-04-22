@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
+import cucumber.runner.DefaultUnreportedStepExecutor;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -40,6 +41,8 @@ public class Runtime {
     private final List<PicklePredicate> filters;
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
+    private final Glue templateGlue;
+    
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
     }
@@ -61,11 +64,17 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        final Glue glue;
-        glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
+        this.templateGlue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
         this.stats = new Stats(runtimeOptions.isMonochrome());
         this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glue, bus, backends, runtimeOptions);
+
+        final UnreportedStepExecutor unreportedStepExecutor = new DefaultUnreportedStepExecutor(templateGlue);
+        for (Backend backend : backends) {
+            backend.loadGlue(templateGlue, runtimeOptions.getGlue());
+            backend.setUnreportedStepExecutor(unreportedStepExecutor);
+        }
+        
+        this.runner = new Runner(templateGlue, bus, backends, runtimeOptions);
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -128,6 +137,10 @@ public class Runtime {
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
         runner.reportStepDefinitions(stepDefinitionReporter);
     }
+    
+    public void prepareForFeatureRun() {
+        runner.prepareForFeatureRun();
+    }
 
     public void runFeature(CucumberFeature feature) {
         List<PickleEvent> pickleEvents = compileFeature(feature);
@@ -176,8 +189,12 @@ public class Runtime {
         return undefinedStepsTracker.getSnippets();
     }
 
+    /**
+     * Only use for test methods! 
+     * Template Glue is returned, which is not necessarily all of the Glue used due the execution of tests
+     */
     public Glue getGlue() {
-        return runner.getGlue();
+        return templateGlue;
     }
 
     public EventBus getEventBus() {

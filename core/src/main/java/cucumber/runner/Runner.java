@@ -15,79 +15,46 @@ import cucumber.runtime.HookDefinitionMatch;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionMatch;
-import cucumber.runtime.UnreportedStepExecutor;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class Runner implements UnreportedStepExecutor {
-    private final Glue glue;
+public class Runner {
+    private final Glue templateGlue;
+    private final ThreadLocal<Glue> localGlue = new ThreadLocal<Glue>();
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RuntimeOptions runtimeOptions;
 
-    public Runner(Glue glue, EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        this.glue = glue;
+    public Runner(Glue templateGlue, EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        this.templateGlue = templateGlue;
         this.bus = bus;
         this.runtimeOptions = runtimeOptions;
         this.backends = backends;
-        for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.getGlue());
-            backend.setUnreportedStepExecutor(this);
-        }
-
     }
 
-    //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
-    @Override
-    public void runUnreportedStep(String featurePath, String language, String stepName, int line, List<PickleRow> dataTableRows, PickleString docString) throws Throwable {
-        List<Argument> arguments = new ArrayList<Argument>();
-        if (dataTableRows != null && !dataTableRows.isEmpty()) {
-            arguments.add(new PickleTable(dataTableRows));
-        } else if (docString != null) {
-            arguments.add(docString);
-        }
-        PickleStep step = new PickleStep(stepName, arguments, Collections.<PickleLocation>emptyList());
-
-        StepDefinitionMatch match = glue.stepDefinitionMatch(featurePath, step);
-        if (match == null) {
-            UndefinedStepException error = new UndefinedStepException(step);
-
-            StackTraceElement[] originalTrace = error.getStackTrace();
-            StackTraceElement[] newTrace = new StackTraceElement[originalTrace.length + 1];
-            newTrace[0] = new StackTraceElement("✽", "StepDefinition", featurePath, line);
-            System.arraycopy(originalTrace, 0, newTrace, 1, originalTrace.length);
-            error.setStackTrace(newTrace);
-
-            throw error;
-        }
-        match.runStep(language, null);
+    public void prepareForFeatureRun() {
+        localGlue.set(templateGlue.clone());
     }
 
     public void runPickle(PickleEvent pickle) {
+        //Guard again direct usages where ThreadLocal state not pre-set
+        if (localGlue.get() == null) {
+            prepareForFeatureRun();
+        }
         buildBackendWorlds(); // Java8 step definitions will be added to the glue here
         TestCase testCase = createTestCaseForPickle(pickle);
         testCase.run(bus);
         disposeBackendWorlds();
     }
-
-    public Glue getGlue() {
-        return glue;
-    }
-
-
+    
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        glue.reportStepDefinitions(stepDefinitionReporter);
+        //Looks like can use templateGlue here as this is called prior to executing any tests
+        templateGlue.reportStepDefinitions(stepDefinitionReporter);
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
@@ -108,7 +75,7 @@ public class Runner implements UnreportedStepExecutor {
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
             StepDefinitionMatch match;
             try {
-                match = glue.stepDefinitionMatch(pickleEvent.uri, step);
+                match = localGlue.get().stepDefinitionMatch(pickleEvent.uri, step);
                 if (match == null) {
                     List<String> snippets = new ArrayList<String>();
                     for (Backend backend : backends) {
@@ -132,11 +99,11 @@ public class Runner implements UnreportedStepExecutor {
     }
 
     private void addTestStepsForBeforeHooks(List<TestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
+        addTestStepsForHooks(testSteps, tags, localGlue.get().getBeforeHooks(), HookType.Before);
     }
 
     private void addTestStepsForAfterHooks(List<TestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
+        addTestStepsForHooks(testSteps, tags, localGlue.get().getAfterHooks(), HookType.After);
     }
 
     private void addTestStepsForHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {
@@ -152,13 +119,13 @@ public class Runner implements UnreportedStepExecutor {
         runtimeOptions.getPlugins(); // To make sure that the plugins are instantiated after
         // the features have been parsed but before the pickles starts to execute.
         for (Backend backend : backends) {
-            backend.buildWorld();
+            backend.buildWorld(localGlue.get());
         }
     }
 
     private void disposeBackendWorlds() {
         for (Backend backend : backends) {
-            backend.disposeWorld();
+            backend.disposeWorld(localGlue.get());
         }
     }
 }

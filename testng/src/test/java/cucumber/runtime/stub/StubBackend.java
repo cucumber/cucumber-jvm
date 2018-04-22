@@ -26,11 +26,11 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public void buildWorld() {
+    public void buildWorld(Glue glue) {
     }
 
     @Override
-    public void disposeWorld() {
+    public void disposeWorld(Glue glue) {
     }
 
     @Override

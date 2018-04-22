@@ -12,21 +12,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-//TODO: need to fix sharing of state across many threads
 public class RuntimeGlue implements Glue {
-    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
+    final Map<String, StepDefinition> stepDefinitionsByPattern;
+    final List<HookDefinition> beforeHooks;
+    final List<HookDefinition> afterHooks;
+    final Map<String, CacheEntry> matchedStepDefinitionsCache;
     private final LocalizedXStreams localizedXStreams;
 
     public RuntimeGlue(LocalizedXStreams localizedXStreams) {
-        this(null, localizedXStreams);
+        this(localizedXStreams,
+            Collections.<String, StepDefinition>emptyMap(),
+            Collections.<HookDefinition>emptyList(),
+            Collections.<HookDefinition>emptyList(), Collections.<String, CacheEntry>emptyMap());
     }
 
     @Deprecated
     public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
+        this(localizedXStreams);
+    }
+
+    protected RuntimeGlue(RuntimeGlue other) {
+        this(other.localizedXStreams, other.stepDefinitionsByPattern, other.beforeHooks, other.afterHooks, other.matchedStepDefinitionsCache);
+
+    }
+
+    private RuntimeGlue(LocalizedXStreams localizedXStreams,
+                        Map<String, StepDefinition> stepDefinitionsByPattern, List<HookDefinition> beforeHooks,
+                        List<HookDefinition> afterHooks, Map<String, CacheEntry> matchedStepDefinitionsCache) {
         this.localizedXStreams = localizedXStreams;
+        this.stepDefinitionsByPattern = new TreeMap<String, StepDefinition>(stepDefinitionsByPattern);
+        this.beforeHooks = new ArrayList<HookDefinition>(beforeHooks);
+        this.afterHooks = new ArrayList<HookDefinition>(afterHooks);
+        this.matchedStepDefinitionsCache = new HashMap<String, CacheEntry>(matchedStepDefinitionsCache);
+    }
+
+    @Override
+    public Glue clone() {
+        return new RuntimeGlue(this);
     }
 
     @Override
@@ -50,6 +72,14 @@ public class RuntimeGlue implements Glue {
         Collections.sort(afterHooks, new HookComparator(false));
     }
 
+
+    @Override
+    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
+        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
+            stepDefinitionReporter.stepDefinition(stepDefinition);
+        }
+    }
+    
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
@@ -90,13 +120,6 @@ public class RuntimeGlue implements Glue {
             }
         }
         return result;
-    }
-
-    @Override
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            stepDefinitionReporter.stepDefinition(stepDefinition);
-        }
     }
 
     @Override

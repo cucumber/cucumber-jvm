@@ -560,11 +560,14 @@ public class RuntimeTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         RuntimeGlue glue = mock(RuntimeGlue.class);
+        when(glue.clone()).thenReturn(glue);
         mockMatch(glue, match, isAmbiguous);
         mockHook(glue, hook, isBefore);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        runtime.prepareForFeatureRun();
+        return runtime;
     }
 
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {

@@ -16,6 +16,7 @@ public class RuntimeCallable implements Callable<Void> {
 
     @Override
     public Void call() {
+        runtime.prepareForFeatureRun();
         for (final CucumberFeature feature : featureSet) {
             runtime.runFeature(feature);
         }
