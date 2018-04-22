@@ -19,6 +19,7 @@ import gherkin.pickles.PickleTag;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,14 +46,23 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static String ENGLISH = "en";
     private final static long ANY_TIMESTAMP = 1234567890;
+    
+    private Backend backend;
+    private RuntimeGlue templateGlue;
+    private RuntimeGlue localGlue;
+    private RuntimeOptions runtimeOptions;
 
     @Ignore
     @Test
@@ -484,7 +494,40 @@ public class RuntimeTest {
                 "TestCase finished\n" +
                 "TestRun finished\n", formatterOutput);
     }
+        
+    @Test
+    public void should_ensure_glue_template_is_globally_initialized_and_then_cloned_per_thread_when_running_in_parallel() throws IOException {
+        final List<String> features = asList(
+            "cucumber/runtime/ParallelTests1.feature", 
+            "cucumber/runtime/ParallelTests2.feature", 
+            "cucumber/runtime/ParallelTests3.feature", 
+            "cucumber/runtime/ParallelTests4.feature");
 
+        final int threads = features.size();
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        
+        runtime.run();
+
+        final InOrder order = inOrder(templateGlue, backend, localGlue);
+        order.verify(backend).loadGlue(templateGlue, runtimeOptions.getGlue());
+        order.verify(backend).setUnreportedStepExecutor(isA(UnreportedStepExecutor.class));
+        order.verify(templateGlue).reportStepDefinitions(isA(StepDefinitionReporter.class));
+        order.verify(templateGlue, times(threads)).clone();
+        order.verify(backend, times(threads)).buildWorld(localGlue);
+        order.verify(backend, times(threads)).disposeWorld(localGlue);
+        
+        // Cannot verify these methods in order
+        // e.g as each thread could've complete before the other and would result in it calling disposeWorld
+        // before the other thread has finished with stepDefinitionMatch
+        verify(localGlue, times(threads)).getBeforeHooks();
+        verify(localGlue, times(threads)).getAfterHooks();
+        final int stepsPerFeature = 6;
+        for(final String feature : features) {
+            verify(localGlue, times(stepsPerFeature)).stepDefinitionMatch(eq(feature), isA(PickleStep.class));
+        }
+        verifyNoMoreInteractions(templateGlue, backend, localGlue);
+    }
+    
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
         FormatterSpy formatterSpy = new FormatterSpy();
         TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy);
@@ -536,38 +579,41 @@ public class RuntimeTest {
         return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
     }
 
+    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, List<String> featurePaths, String... runtimeArgs) {
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, featurePaths, runtimeArgs);
+    }
+    
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
                                                 String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, isBefore, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, hook, isBefore, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), false, runtimeArgs);
+        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), false, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
-                                                boolean isBefore, String... runtimeArgs) {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = mock(ClassLoader.class);
+                                                boolean isBefore, List<String> featurePaths, String... runtimeArgs) {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
         if (!args.contains("-p")) {
             args.addAll(asList("-p", "null"));
         }
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
-        RuntimeGlue glue = mock(RuntimeGlue.class);
-        when(glue.clone()).thenReturn(glue);
-        mockMatch(glue, match, isAmbiguous);
-        mockHook(glue, hook, isBefore);
-        Collection<Backend> backends = Arrays.asList(backend);
+        args.addAll(featurePaths);
+        this.runtimeOptions = new RuntimeOptions(args);
+        this.backend = mock(Backend.class);
+        this.templateGlue = mock(RuntimeGlue.class);
+        this.localGlue = mock(RuntimeGlue.class);
+        when(templateGlue.clone()).thenReturn(localGlue);
+        mockMatch(localGlue, match, isAmbiguous);
+        mockHook(localGlue, hook, isBefore);
 
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
-        runtime.prepareForFeatureRun();
-        return runtime;
+        return new Runtime(resourceLoader, classLoader, Arrays.asList(backend), runtimeOptions, templateGlue);
     }
 
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {
