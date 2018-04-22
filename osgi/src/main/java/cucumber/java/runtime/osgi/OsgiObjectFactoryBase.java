@@ -8,16 +8,18 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 
 public abstract class OsgiObjectFactoryBase implements ObjectFactory {
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>();
 
     @Override
     public void start() {
-        // No-op
+        if (instances.get() == null) {
+            instances.set(new HashMap<Class<?>, Object>());
+        }
     }
 
     @Override
     public void stop() {
-        instances.clear();
+        instances.get().clear();
     }
 
     @Override
@@ -27,7 +29,7 @@ public abstract class OsgiObjectFactoryBase implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> glueClass) {
-        T instance = glueClass.cast(instances.get(glueClass));
+        T instance = glueClass.cast(instances.get().get(glueClass));
         if (instance == null) {
             instance = cacheNewInstance(glueClass);
             prepareGlueInstance(instance);
@@ -41,7 +43,7 @@ public abstract class OsgiObjectFactoryBase implements ObjectFactory {
         try {
             Constructor<T> constructor = type.getConstructor();
             T instance = constructor.newInstance();
-            instances.put(type, instance);
+            instances.get().put(type, instance);
             return instance;
         } catch (NoSuchMethodException e) {
             throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need DI, put cucumber-picocontainer on the classpath", type), e);

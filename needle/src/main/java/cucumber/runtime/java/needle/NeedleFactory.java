@@ -21,6 +21,7 @@ import static java.lang.String.format;
 public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
     private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<Class<?>, Object>();
+    private final ThreadLocal<Map<Class<?>, Object>> localCachedStepsInstances = new ThreadLocal<Map<Class<?>, Object>>();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final CreateInstanceByDefaultConstructor createInstanceByDefaultConstructor = CreateInstanceByDefaultConstructor.INSTANCE;
     private final CollectInjectionProvidersFromStepsInstance collectInjectionProvidersFromStepsInstance = CollectInjectionProvidersFromStepsInstance.INSTANCE;
@@ -39,17 +40,20 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
     @Override
     public void start() {
         logger.trace("start()");
+        if(localCachedStepsInstances.get() == null) {
+            localCachedStepsInstances.set(new LinkedHashMap<Class<?>, Object>(cachedStepsInstances));
+        }
         try {
             // First create all instances
-            for (final Class<?> stepDefinitionType : cachedStepsInstances.keySet()) {
-                cachedStepsInstances.put(stepDefinitionType, createStepsInstance(stepDefinitionType));
+            for (final Class<?> stepDefinitionType : localCachedStepsInstances.get().keySet()) {
+                localCachedStepsInstances.get().put(stepDefinitionType, createStepsInstance(stepDefinitionType));
             }
             // Then collect injection providers from all instances
-            for (Object stepsInstance : cachedStepsInstances.values()) {
+            for (Object stepsInstance : localCachedStepsInstances.get().values()) {
                 addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
             }
             // Now init all instances, having the injection providers from all other instances available
-            for (Object stepsInstance : cachedStepsInstances.values()) {
+            for (Object stepsInstance : localCachedStepsInstances.get().values()) {
                 initTestcase(stepsInstance);
             }
         } catch (final Exception e) {
@@ -60,8 +64,8 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
     @Override
     public void stop() {
         logger.trace("stop()");
-        for (final Class<?> stepDefinitionType : cachedStepsInstances.keySet()) {
-            cachedStepsInstances.put(stepDefinitionType, null);
+        for (final Class<?> stepDefinitionType : localCachedStepsInstances.get().keySet()) {
+            localCachedStepsInstances.get().put(stepDefinitionType, null);
         }
     }
 
@@ -77,14 +81,14 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
     }
 
     private void assertTypeHasBeenAdded(final Class<?> type) {
-        if (!cachedStepsInstances.containsKey(type)) {
+        if (!localCachedStepsInstances.get().containsKey(type)) {
             throw new IllegalStateException(format("%s was not added during addClass()", type.getSimpleName()));
         }
     }
 
     @SuppressWarnings("unchecked")
     private <T> T nullSafeGetInstance(final Class<T> type) {
-        final Object instance = cachedStepsInstances.get(type);
+        final Object instance = localCachedStepsInstances.get().get(type);
         if (instance == null) {
             throw new IllegalStateException(format("instance of type %s has not been initialized in start()!",
                 type.getSimpleName()));

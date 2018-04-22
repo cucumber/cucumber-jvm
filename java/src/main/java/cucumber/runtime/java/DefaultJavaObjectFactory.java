@@ -13,14 +13,16 @@ import java.util.Map;
  * thereby colliding with other DI implementations.
  */
 class DefaultJavaObjectFactory implements ObjectFactory {
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>();
 
     public void start() {
-        // No-op
+        if (instances.get() == null) {
+            instances.set(new HashMap<Class<?>, Object>());
+        }
     }
 
     public void stop() {
-        instances.clear();
+        instances.get().clear();
     }
 
     public boolean addClass(Class<?> clazz) {
@@ -28,7 +30,7 @@ class DefaultJavaObjectFactory implements ObjectFactory {
     }
 
     public <T> T getInstance(Class<T> type) {
-        T instance = type.cast(instances.get(type));
+        T instance = type.cast(instances.get().get(type));
         if (instance == null) {
             instance = cacheNewInstance(type);
         }
@@ -39,7 +41,7 @@ class DefaultJavaObjectFactory implements ObjectFactory {
         try {
             Constructor<T> constructor = type.getConstructor();
             T instance = constructor.newInstance();
-            instances.put(type, instance);
+            instances.get().put(type, instance);
             return instance;
         } catch (NoSuchMethodException e) {
             throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need DI, put cucumber-picocontainer on the classpath", type), e);

@@ -2,6 +2,8 @@ package cucumber.api.java;
 
 /**
  * Minimal facade for Dependency Injection containers
+ * 
+ * @since 3.0.0 - if you wish to utilise <code>--threads</code> argument, then class should be thread safe, except for {@link ObjectFactory#addClass} which is global
  */
 public interface ObjectFactory {
 
