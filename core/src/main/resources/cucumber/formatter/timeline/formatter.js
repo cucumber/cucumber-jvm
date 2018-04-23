@@ -7,6 +7,7 @@ Array.prototype.pushArray = function(arr) {
 CucumberHTML.domTimelineContainer = null;
 CucumberHTML.timelineGroups = [];
 CucumberHTML.timelineItems = [];
+CucumberHTML.timeline = null;
 
 CucumberHTML.RenderTimeline = function () {
 
@@ -21,10 +22,9 @@ CucumberHTML.RenderTimeline = function () {
     var options = {
         stack: false,
         min: startTime,
-        max: endTime,
-        dataAttributes: "all"
+        max: endTime
     };
 
     // Create a Timeline
-    CucumberHTML.timelineItems = new vis.Timeline(CucumberHTML.domTimelineContainer, items, CucumberHTML.timelineGroups, options);
+    CucumberHTML.timeline = new vis.Timeline(CucumberHTML.domTimelineContainer, items, CucumberHTML.timelineGroups, options);
 };
