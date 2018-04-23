@@ -110,7 +110,11 @@ public class CucumberFeature implements Serializable {
             throw new IllegalArgumentException("No resource found for: " + featurePath);
         }
         for (Resource resource : resources) {
-            builder.parse(resource);
+            try {
+                builder.parse(resource);
+            } catch(CucumberException cex) {
+                throw new CucumberException("Exception parsing feature "+resource.getPath(), cex);
+            }
         }
     }
 
