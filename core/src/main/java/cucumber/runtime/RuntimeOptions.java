@@ -17,6 +17,8 @@ import cucumber.runtime.model.PathWithLines;
 import cucumber.runtime.table.TablePrinter;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
+import cucumber.util.log.Logger;
+import cucumber.util.log.LoggerFactory;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
@@ -41,6 +43,8 @@ import static java.util.Collections.unmodifiableList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeOptions.class);
+
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
 
@@ -77,6 +81,7 @@ public class RuntimeOptions {
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private boolean pluginNamesInstantiated;
     private EventBus bus;
+    private boolean verbose;
 
     /**
      * Create a new instance from a string of options, for example:
@@ -145,6 +150,8 @@ public class RuntimeOptions {
             } else if (arg.equals("--version") || arg.equals("-v")) {
                 System.out.println(VERSION);
                 System.exit(0);
+            } else if (arg.equals("--verbose") || arg.equals("--no-verbose")) {
+                verbose = !arg.startsWith("--no-");
             } else if (arg.equals("--i18n")) {
                 String nextArg = args.remove(0);
                 System.exit(printI18n(nextArg));
@@ -400,6 +407,7 @@ public class RuntimeOptions {
         if (plugin instanceof Formatter && bus != null) {
             Formatter formatter = (Formatter) plugin;
             formatter.setEventPublisher(bus);
+            LOGGER.info("Setting Formatter: {0}", plugin.getClass());
         }
     }
 
@@ -457,6 +465,10 @@ public class RuntimeOptions {
 
     public List<String> getJunitOptions() {
         return junitOptions;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
     }
 
     class ParsedPluginData {

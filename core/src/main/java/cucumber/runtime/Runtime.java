@@ -9,6 +9,8 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.util.log.Logger;
+import cucumber.util.log.LoggerFactory;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
@@ -25,6 +27,8 @@ import java.util.regex.Pattern;
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Runtime.class);
 
     final Stats stats; // package private to be available for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
@@ -58,6 +62,16 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
+        LOGGER.info("Creating Runtime with RuntimeOptions...");
+        LOGGER.info("Feature paths: {0}", runtimeOptions.getFeaturePaths());
+        LOGGER.info("Glue: {0}", runtimeOptions.getGlue());
+        LOGGER.info("Name filters: {0}", runtimeOptions.getNameFilters());
+        LOGGER.info("Tag filters: {0}", runtimeOptions.getTagFilters());
+        LOGGER.info("Dry run: {0}", runtimeOptions.isDryRun());
+        LOGGER.info("Strict: {0}", runtimeOptions.isStrict());
+        LOGGER.info("Monochrome: {0}", runtimeOptions.isMonochrome());
+        LOGGER.info("SnippetType: {0}", runtimeOptions.getSnippetType());
+        LOGGER.info("JUnitOptions: {0}", runtimeOptions.getJunitOptions());
         final Glue glue;
         glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
         this.stats = new Stats(runtimeOptions.isMonochrome());
@@ -83,6 +97,7 @@ public class Runtime {
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
+        LOGGER.info("Load Backends");
         Reflections reflections = new Reflections(classFinder);
         return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
@@ -91,6 +106,7 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
+        LOGGER.info("Run started from CLI");
         // Make sure all features parse before initialising any reporters/formatters
         List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
 

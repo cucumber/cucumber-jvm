@@ -6,6 +6,7 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+import cucumber.util.log.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class Main {
      */
     public static byte run(String[] argv, ClassLoader classLoader) throws IOException {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new ArrayList<String>(asList(argv)));
+        LoggerFactory.setVerbose(runtimeOptions.isVerbose());
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
