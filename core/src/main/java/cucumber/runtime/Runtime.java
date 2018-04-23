@@ -103,7 +103,7 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        // Make sure all features parse before initialising any reporters/formatters
+        // TODO: This is too deterministic, add to a queue instead
         final List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(runtimeOptions.cucumberFeatures(resourceLoader, bus), runtimeOptions.getThreads());
 
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
@@ -111,7 +111,9 @@ public class Runtime {
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
 
         reportStepDefinitions(stepDefinitionReporter);
-
+        
+        // TODO: scan for @synchronized and split by any suffix into buckets and then run these first, followed by all other tests
+        
         //Split features here into Futures and run
         if (partitionedFeatures.size() > 0) {
             final ExecutorService executor = Executors.newFixedThreadPool(partitionedFeatures.size());
