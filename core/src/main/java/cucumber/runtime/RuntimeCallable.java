@@ -1,24 +1,24 @@
 package cucumber.runtime;
 
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import cucumber.runtime.model.CucumberFeature;
+
+import java.util.Queue;
+import java.util.concurrent.Callable;
 
 public class RuntimeCallable implements Callable<Void> {
     private final Runtime runtime;
-    private final List<CucumberFeature> featureSet;
+    private final Queue<CucumberFeature> featureQueue;
 
-    public RuntimeCallable(final Runtime runtime, final List<CucumberFeature> featureSet) {
+    public RuntimeCallable(final Runtime runtime, final Queue<CucumberFeature> featureQueue) {
         this.runtime = runtime;
-        this.featureSet = featureSet;
+        this.featureQueue = featureQueue;
     }
 
     @Override
     public Void call() {
         runtime.prepareForFeatureRun();
-        //TODO: consume from a queue instead
-        for (final CucumberFeature feature : featureSet) {
+        CucumberFeature feature;
+        while((feature = featureQueue.poll()) != null) {
             runtime.runFeature(feature);
         }
         return null;

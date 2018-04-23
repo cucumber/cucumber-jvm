@@ -10,7 +10,6 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import cucumber.util.ListUtils;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
@@ -103,8 +103,8 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        // TODO: This is too deterministic, add to a queue instead
-        final List<List<CucumberFeature>> partitionedFeatures = ListUtils.partition(runtimeOptions.cucumberFeatures(resourceLoader, bus), runtimeOptions.getThreads());
+        final ConcurrentLinkedQueue<CucumberFeature> queuedFeatures = new ConcurrentLinkedQueue<CucumberFeature>(runtimeOptions.cucumberFeatures(resourceLoader, bus));
+        int threadCount = Math.min(queuedFeatures.size(), runtimeOptions.getThreads());
 
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
 
@@ -115,11 +115,11 @@ public class Runtime {
         // TODO: scan for @synchronized and split by any suffix into buckets and then run these first, followed by all other tests
         
         //Split features here into Futures and run
-        if (partitionedFeatures.size() > 0) {
-            final ExecutorService executor = Executors.newFixedThreadPool(partitionedFeatures.size());
-            final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(partitionedFeatures.size());
-            for (List<CucumberFeature> featureSet : partitionedFeatures) {
-                tasks.add(new RuntimeCallable(this, featureSet));
+        if (threadCount > 0) {
+            final ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+            final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
+            for (int i = 0; i < threadCount; i++) {
+                tasks.add(new RuntimeCallable(this, queuedFeatures));
             }
             try {
                 executor.invokeAll(tasks);
