@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cucumber Timeline</title>
+    <link href="vis.min.css" rel="stylesheet" type="text/css"/>
+    <link href="vis.override.css" rel="stylesheet" type="text/css"/>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="vis.min.js"></script>
+    <script src="formatter.js"></script>
+    <script src="report.js"></script>
+</head>
+<body>
+    <div id="timeline"></div>
+
+    <script type="application/javascript">
+        $(document).ready(function() {
+            CucumberHTML.RenderTimeline();
+        });
+    </script>
+</body>
+</html>
