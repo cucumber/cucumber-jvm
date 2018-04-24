@@ -1,18 +1,5 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
-import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.TestHelper;
-import cucumber.runtime.Utils;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.util.FixJava;
-import gherkin.deps.com.google.gson.JsonParser;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.junit.Test;
-import org.mockito.stubbing.Answer;
-
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -25,6 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.junit.Test;
+import org.mockito.stubbing.Answer;
+
+import cucumber.api.Result;
+import cucumber.api.formatter.NiceAppendable;
+import cucumber.runtime.TestHelper;
+import cucumber.runtime.Utils;
+import cucumber.runtime.model.CucumberFeature;
+import cucumber.util.FixJava;
+import gherkin.deps.com.google.gson.JsonParser;
 
 import static cucumber.runtime.TestHelper.createEmbedHookAction;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
@@ -46,7 +47,6 @@ public class HTMLFormatterTest {
         runFeaturesWithFormatter(outputDir);
     }
 
-    @Test
     public void writes_index_html() throws Throwable {
         writeReport();
         URL indexHtml = new URL(outputDir, "index.html");
@@ -55,7 +55,6 @@ public class HTMLFormatterTest {
         assertEquals("", reportElement.text());
     }
 
-    @Test
     public void writes_valid_report_js() throws Throwable {
         writeReport();
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
@@ -92,14 +91,12 @@ public class HTMLFormatterTest {
                 reportJs);
     }
 
-    @Test
     public void includes_uri() throws Throwable {
         writeReport();
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertContains("formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");", reportJs);
     }
 
-    @Test
     public void included_embedding() throws Throwable {
         writeReport();
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
@@ -107,7 +104,6 @@ public class HTMLFormatterTest {
         assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\");", reportJs);
     }
 
-    @Test
     public void should_handle_a_single_scenario() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -159,7 +155,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_backgound() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -245,7 +240,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_scenario_outline() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -363,7 +357,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -401,7 +394,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_after_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -439,7 +431,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_output_from_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -480,7 +471,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_output_from_after_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -521,7 +511,6 @@ public class HTMLFormatterTest {
                 formatterOutput);
     }
 
-    @Test
     public void should_handle_text_embeddings_from_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +

@@ -1,26 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.api.Plugin;
-import cucumber.api.SnippetType;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
-import cucumber.api.event.TestRunStarted;
-import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
-import cucumber.api.formatter.StrictAware;
-import cucumber.runner.EventBus;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.PathWithLines;
-import cucumber.runtime.table.TablePrinter;
-import cucumber.util.FixJava;
-import cucumber.util.Mapper;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
-import gherkin.IGherkinDialectProvider;
-
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.InvocationHandler;
@@ -32,6 +11,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+
+import cucumber.api.Plugin;
+import cucumber.api.SnippetType;
+import cucumber.api.StepDefinitionReporter;
+import cucumber.api.SummaryPrinter;
+import cucumber.api.event.TestRunStarted;
+import cucumber.api.formatter.ColorAware;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.StrictAware;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
+import cucumber.runner.EventBus;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.PathWithLines;
+import cucumber.runtime.table.TablePrinter;
+import cucumber.util.FixJava;
+import cucumber.util.Mapper;
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
+import gherkin.IGherkinDialectProvider;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static cucumber.util.FixJava.join;
@@ -77,6 +77,7 @@ public class RuntimeOptions {
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private boolean pluginNamesInstantiated;
     private EventBus bus;
+    private int reRunCounter=1;
 
     /**
      * Create a new instance from a string of options, for example:
@@ -155,6 +156,11 @@ public class RuntimeOptions {
                 parsedTagFilters.add(args.remove(0));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
                 parsedPluginData.addPluginName(args.remove(0), arg.equals("--add-plugin"));
+            } else if (arg.equals("--rerun") || arg.equals("-r")) {
+                reRunCounter = new Integer(args.remove(0));
+            } else if (arg.equals("--format") || arg.equals("-f")) {
+                System.err.println("WARNING: Cucumber-JVM's --format option is deprecated. Please use --plugin instead.");
+                parsedPluginData.addPluginName(args.remove(0), true);
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = !arg.startsWith("--no-");
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
@@ -512,5 +518,9 @@ public class RuntimeOptions {
 
     void setEventBus(EventBus bus) {
         this.bus = bus;
+    }
+
+    public int getReRunCounter() {
+       return reRunCounter;
     }
 }

@@ -1,5 +1,7 @@
 package cucumber.api;
 
+import java.util.List;
+
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
@@ -8,12 +10,12 @@ import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 
-import java.util.List;
-
 public class TestCase {
     private final PickleEvent pickleEvent;
     private final List<TestStep> testSteps;
     private final boolean dryRun;
+    private int rerun_count = 1;
+    private String testCaseId = "";
 
     /**
      * Creates a new instance of a test case.
@@ -24,7 +26,7 @@ public class TestCase {
      */
     @Deprecated
     public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent) {
-        this(testSteps, pickleEvent, false);
+        this(testSteps, pickleEvent, false, 1);
     }
 
     /**
@@ -36,10 +38,11 @@ public class TestCase {
      * @deprecated not part of the public api
      */
     @Deprecated
-    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent, boolean dryRun) {
+    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent, boolean dryRun, int rerun_count) {
         this.testSteps = testSteps;
         this.pickleEvent = pickleEvent;
         this.dryRun = dryRun;
+        this.rerun_count = rerun_count;
     }
 
     /**
@@ -54,12 +57,24 @@ public class TestCase {
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
-        for (TestStep step : testSteps) {
-            Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
-            if (!stepResult.is(Result.Type.PASSED)) {
-                skipNextStep = true;
+        int counter = 0;
+        while (counter < rerun_count && (scenarioResult.getStatus() != Result.Type.PASSED ||
+            scenarioResult.getStatus() == Result.Type.UNDEFINED)) {
+            if (!this.dryRun) {
+                skipNextStep = false;
             }
-            scenarioResult.add(stepResult);
+            scenarioResult = new ScenarioImpl(bus, pickleEvent);
+            scenarioResult.setScenarioId(this.testCaseId);
+            boolean reRunTest = true;
+            for (TestStep step : testSteps) {
+                Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep, reRunTest);
+                if (!stepResult.is(Result.Type.PASSED)) {
+                    skipNextStep = true;
+                }
+                scenarioResult.add(stepResult);
+                reRunTest = false;
+            }
+            counter++;
         }
         Long stopTime = bus.getTime();
         bus.send(new TestCaseFinished(stopTime, this, new Result(scenarioResult.getStatus(), stopTime - startTime, scenarioResult.getError())));
@@ -91,5 +106,14 @@ public class TestCase {
 
     public List<PickleTag> getTags() {
         return pickleEvent.pickle.getTags();
+    }
+
+
+    public String getTestCaseId() {
+        return testCaseId;
+    }
+
+    public void setTestCaseId(String testCaseId) {
+        this.testCaseId = testCaseId;
     }
 }

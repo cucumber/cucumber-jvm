@@ -1,5 +1,18 @@
 package cucumber.runtime.formatter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.mockito.stubbing.Answer;
+
 import cucumber.api.Result;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
@@ -10,39 +23,26 @@ import cucumber.runtime.TestHelper;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
+import gherkin.deps.com.google.gson.JsonElement;
 import gherkin.deps.com.google.gson.JsonParser;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import gherkin.deps.com.google.gson.JsonElement;
-import org.junit.Test;
-import org.mockito.stubbing.Answer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.AbstractMap.SimpleEntry;
-
-import static cucumber.runtime.TestHelper.result;
 import static cucumber.runtime.TestHelper.createEmbedHookAction;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
+import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class JSONFormatterTest {
 
-    @Test
+    
     public void featureWithOutlineTest() throws Exception {
         String actual = runFeaturesWithJSONPrettyFormatter(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
@@ -50,7 +50,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, actual);
     }
 
-    @Test
+    
     public void should_format_scenario_with_an_undefined_step() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -98,7 +98,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_scenario_with_a_passed_step() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -152,7 +152,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_scenario_with_a_failed_step() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -207,7 +207,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_scenario_outline_with_one_example() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Fruit party\n" +
@@ -264,7 +264,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_feature_with_background() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -392,7 +392,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_feature_and_scenario_with_tags() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "@Party @Banana\n" +
@@ -475,7 +475,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_scenario_with_hooks() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -557,7 +557,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_handle_write_from_a_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -631,7 +631,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_handle_embed_from_a_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -708,7 +708,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_format_scenario_with_a_step_with_a_doc_string() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -769,6 +769,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
+<<<<<<< HEAD
     @Test
     public void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -832,7 +833,6 @@ public class JSONFormatterTest {
     }
 
 
-    @Test
     public void should_format_scenario_with_a_step_with_a_data_table() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -902,7 +902,7 @@ public class JSONFormatterTest {
         assertPrettyJsonEquals(expected, formatterOutput);
     }
 
-    @Test
+    
     public void should_handle_several_features() throws Throwable {
         CucumberFeature feature1 = TestHelper.feature("path/test1.feature", "" +
                 "Feature: Banana party\n" +

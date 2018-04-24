@@ -1,5 +1,13 @@
 package cucumber.runner;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Matchers;
+
 import cucumber.api.Scenario;
 import cucumber.runtime.Argument;
 import cucumber.runtime.Backend;
@@ -14,13 +22,6 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.Matchers;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -126,7 +127,7 @@ public class RunnerTest {
     }
 
     @Test
-    public void backends_are_asked_for_snippets_for_undefined_steps() throws Throwable {
+    public void backends_are_asked_for_snippets_for_undefined_steps() {
         PickleStep step = mock(PickleStep.class);
         runner.runPickle(createPickleEventWithSteps(asList(step)));
 
