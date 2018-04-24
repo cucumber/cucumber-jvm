@@ -5,7 +5,11 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
+import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestGroupRunFinished;
+import cucumber.api.event.TestGroupRunStarted;
+import cucumber.runner.EventBus;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -63,6 +67,23 @@ public class RuntimeTest {
     private RuntimeGlue templateGlue;
     private RuntimeGlue localGlue;
     private RuntimeOptions runtimeOptions;
+
+    private final List<TestGroupRunStarted> actualGroupStartEvents = new ArrayList<TestGroupRunStarted>();
+    private final List<TestGroupRunFinished> actualGroupEndEvents = new ArrayList<TestGroupRunFinished>();
+    
+    private final EventHandler<TestGroupRunStarted> handleTestGroupRunStarted = new EventHandler<TestGroupRunStarted>() {
+        @Override
+        public void receive(final TestGroupRunStarted event) {
+            actualGroupStartEvents.add(event);
+        }
+    };
+    
+    private final EventHandler<TestGroupRunFinished> handleTestGroupRunFinished = new EventHandler<TestGroupRunFinished>() {
+        @Override
+        public void receive(final TestGroupRunFinished event) {
+            actualGroupEndEvents.add(event);
+        }
+    };
 
     @Ignore
     @Test
@@ -505,6 +526,9 @@ public class RuntimeTest {
 
         final int threads = features.size();
         final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        final EventBus bus = runtime.getEventBus();
+        bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
+        bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
         
         runtime.run();
 
@@ -526,7 +550,67 @@ public class RuntimeTest {
             verify(localGlue, times(stepsPerFeature)).stepDefinitionMatch(eq(feature), isA(PickleStep.class));
         }
         verifyNoMoreInteractions(templateGlue, backend, localGlue);
+
+        assertEquals("Group Start event count was not as expected", 1, actualGroupStartEvents.size());
+        TestGroupRunStarted started = actualGroupStartEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, started.getType());
+        assertEquals("Non Sync run thread count not as expected", threads, started.getThreadCount());
+        assertEquals("Non Sync feature count not as expected", features.size(), started.getFeatureCount());
+
+        assertEquals("Group Finished event count was not as expected", 1, actualGroupEndEvents.size());
+        final TestGroupRunFinished finished = actualGroupEndEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, finished.getType());
     }
+    
+    @Test
+    public void should_run_synchronized_tests_together_prior_to_tests_which_are_not_synchronized() throws IOException {
+        final List<String> syncFeatures = asList(
+            "cucumber/runtime/SynchronizedGroup0Test1.feature",
+            "cucumber/runtime/SynchronizedGroup1Test1.feature",
+            "cucumber/runtime/SynchronizedGroup1Test2.feature",
+            "cucumber/runtime/SynchronizedGroup1Test3.feature",
+            "cucumber/runtime/SynchronizedGroup2Test1.feature",
+            "cucumber/runtime/SynchronizedGroup3Test1.feature",
+            "cucumber/runtime/SynchronizedGroup4Test1.feature");
+        
+        final List<String> parallelFeatures = asList(
+            "cucumber/runtime/ParallelTests1.feature",
+            "cucumber/runtime/ParallelTests2.feature",
+            "cucumber/runtime/ParallelTests3.feature",
+            "cucumber/runtime/ParallelTests4.feature");
+        
+        final List<String> allFeatures = new ArrayList<String>();
+        allFeatures.addAll(parallelFeatures);
+        allFeatures.addAll(syncFeatures);
+
+        final int maxThreads = 2; //allFeatures.size();
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), allFeatures,"--threads", String.valueOf(maxThreads));
+
+        
+        final EventBus bus = runtime.getEventBus();
+        bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
+        bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
+
+        runtime.run();
+        
+        assertEquals("Group Start event count was not as expected", 2, actualGroupStartEvents.size());
+        TestGroupRunStarted started = actualGroupStartEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.SYNCHRONIZED_TAG, started.getType());
+        assertEquals("Sync run thread count not as expected", maxThreads, started.getThreadCount());
+        assertEquals("Sync feature count not as expected", syncFeatures.size(), started.getFeatureCount());
+
+        started = actualGroupStartEvents.get(1);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, started.getType());
+        assertEquals("Non Sync run thread count not as expected", maxThreads, started.getThreadCount());
+        assertEquals("Non Sync feature count not as expected", parallelFeatures.size(), started.getFeatureCount());
+        
+        assertEquals("Group Finished event count was not as expected", 2, actualGroupEndEvents.size());
+        TestGroupRunFinished finished = actualGroupEndEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.SYNCHRONIZED_TAG, finished.getType());
+        finished = actualGroupEndEvents.get(1);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, finished.getType());
+    }
+    
     
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
         FormatterSpy formatterSpy = new FormatterSpy();

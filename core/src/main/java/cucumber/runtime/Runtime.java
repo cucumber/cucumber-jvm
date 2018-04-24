@@ -2,6 +2,8 @@ package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.event.TestGroupRunFinished;
+import cucumber.api.event.TestGroupRunStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.DefaultUnreportedStepExecutor;
 import cucumber.runner.EventBus;
@@ -20,9 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 /**
@@ -30,6 +31,9 @@ import java.util.regex.Pattern;
  */
 public class Runtime {
 
+    static final String SYNCHRONIZED_TAG = "@synchronized";
+    static final String NOT_SYNCHRONIZED_TAG = "~" + SYNCHRONIZED_TAG;
+    
     final Stats stats; // package private to be available for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
@@ -103,37 +107,54 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        final ConcurrentLinkedQueue<CucumberFeature> queuedFeatures = new ConcurrentLinkedQueue<CucumberFeature>(runtimeOptions.cucumberFeatures(resourceLoader, bus));
-        int threadCount = Math.min(queuedFeatures.size(), runtimeOptions.getThreads());
-
+        final List<CucumberFeature> allFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
-
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
-
         reportStepDefinitions(stepDefinitionReporter);
         
-        // TODO: scan for @synchronized and split by any suffix into buckets and then run these first, followed by all other tests
+        final int requestedThreads = runtimeOptions.getThreads();
         
-        //Split features here into Futures and run
-        if (threadCount > 0) {
-            final ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-            final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
-            for (int i = 0; i < threadCount; i++) {
-                tasks.add(new RuntimeCallable(this, queuedFeatures));
+        final Map<String, Queue<CucumberFeature>> synchronisedFeatures = new FeatureFilter(SYNCHRONIZED_TAG).filterAndGroupBy(allFeatures);
+        if (!synchronisedFeatures.isEmpty()) {
+            int featureCount = 0;
+            for(final Queue<CucumberFeature> featureGroup : synchronisedFeatures.values()) {
+                featureCount+= featureGroup.size();
+                allFeatures.removeAll(featureGroup);
             }
-            try {
-                executor.invokeAll(tasks);
-            }
-            catch (final InterruptedException e) {
-                throw new CucumberException(e);
-            }
-            finally {
-                executor.shutdown();
-            }
+            runSynchronizedTests(featureCount, requestedThreads, synchronisedFeatures);
+        }      
+        
+        if (!allFeatures.isEmpty()) {
+            runRemainingTests(allFeatures, requestedThreads);
         }
         
         bus.send(new TestRunFinished(bus.getTime()));
         printSummary();
+    }
+
+    private void runSynchronizedTests(final int featureCount, final int requestedThreads, final Map<String, Queue<CucumberFeature>> synchronisedFeatures) {
+        final ConcurrentLinkedQueue<Queue<CucumberFeature>> queuedFeatureGroups = new ConcurrentLinkedQueue<Queue<CucumberFeature>>(synchronisedFeatures.values());
+        final int threadCount = Math.min(requestedThreads, synchronisedFeatures.size());
+        final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            tasks.add(new RuntimeCallableFeatureGroupQueue(this, queuedFeatureGroups));
+        }
+        bus.send(new TestGroupRunStarted(SYNCHRONIZED_TAG, threadCount, featureCount, bus.getTime()));
+        RuntimeCallableRunner.run(tasks);
+        bus.send(new TestGroupRunFinished(SYNCHRONIZED_TAG, bus.getTime()));
+    }
+
+    private void runRemainingTests(final List<CucumberFeature> allFeatures, final int requestedThreads) {
+        final ConcurrentLinkedQueue<CucumberFeature> queuedFeatures = new ConcurrentLinkedQueue<CucumberFeature>(allFeatures);
+        final int threadCount = Math.min(requestedThreads, allFeatures.size());
+        final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            tasks.add(new RuntimeCallableFeatureQueue(this, queuedFeatures));
+        }
+        bus.send(new TestGroupRunStarted(NOT_SYNCHRONIZED_TAG, threadCount, queuedFeatures.size(), bus.getTime()));
+        RuntimeCallableRunner.run(tasks);
+        bus.send(new TestGroupRunFinished(NOT_SYNCHRONIZED_TAG, bus.getTime()));
     }
 
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {

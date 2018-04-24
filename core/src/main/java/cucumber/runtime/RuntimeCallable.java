@@ -5,22 +5,26 @@ import cucumber.runtime.model.CucumberFeature;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 
-public class RuntimeCallable implements Callable<Void> {
+public abstract class RuntimeCallable implements Callable<Void> {
     private final Runtime runtime;
-    private final Queue<CucumberFeature> featureQueue;
 
-    public RuntimeCallable(final Runtime runtime, final Queue<CucumberFeature> featureQueue) {
+    public RuntimeCallable(final Runtime runtime) {
         this.runtime = runtime;
-        this.featureQueue = featureQueue;
     }
 
     @Override
     public Void call() {
         runtime.prepareForFeatureRun();
         CucumberFeature feature;
-        while((feature = featureQueue.poll()) != null) {
+        while((feature = poll()) != null) {
             runtime.runFeature(feature);
         }
         return null;
+    }
+
+    protected abstract CucumberFeature poll();
+
+    protected void runFeature(final CucumberFeature feature) {
+        runtime.runFeature(feature);
     }
 }
