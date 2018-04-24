@@ -21,7 +21,11 @@ import static java.lang.String.format;
 public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
     private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<Class<?>, Object>();
-    private final ThreadLocal<Map<Class<?>, Object>> localCachedStepsInstances = new ThreadLocal<Map<Class<?>, Object>>();
+    private final ThreadLocal<Map<Class<?>, Object>> localCachedStepsInstances = new ThreadLocal<Map<Class<?>, Object>>(){
+        protected Map<Class<?>, Object> initialValue() {
+            return new LinkedHashMap<Class<?>, Object>(cachedStepsInstances);
+        }
+    };
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final CreateInstanceByDefaultConstructor createInstanceByDefaultConstructor = CreateInstanceByDefaultConstructor.INSTANCE;
     private final CollectInjectionProvidersFromStepsInstance collectInjectionProvidersFromStepsInstance = CollectInjectionProvidersFromStepsInstance.INSTANCE;
@@ -40,9 +44,6 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
     @Override
     public void start() {
         logger.trace("start()");
-        if(localCachedStepsInstances.get() == null) {
-            localCachedStepsInstances.set(new LinkedHashMap<Class<?>, Object>(cachedStepsInstances));
-        }
         try {
             // First create all instances
             for (final Class<?> stepDefinitionType : localCachedStepsInstances.get().keySet()) {

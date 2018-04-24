@@ -13,12 +13,14 @@ import java.util.Map;
  * thereby colliding with other DI implementations.
  */
 class DefaultJavaObjectFactory implements ObjectFactory {
-    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>();
+    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>(){
+        protected Map<Class<?>, Object> initialValue() {
+            return new HashMap<Class<?>, Object>();
+        }
+    };
 
     public void start() {
-        if (instances.get() == null) {
-            instances.set(new HashMap<Class<?>, Object>());
-        }
+        // No-op
     }
 
     public void stop() {

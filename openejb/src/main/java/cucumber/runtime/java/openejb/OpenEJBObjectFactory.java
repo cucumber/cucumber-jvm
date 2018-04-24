@@ -14,7 +14,11 @@ import java.util.Properties;
 
 public class OpenEJBObjectFactory implements ObjectFactory {
     private final List<String> classes = new ArrayList<String>();
-    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>();
+    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>(){
+        protected Map<Class<?>, Object> initialValue() {
+            return new HashMap<Class<?>, Object>();
+        }
+    };
     private final ThreadLocal<EJBContainer> container = new ThreadLocal<EJBContainer>();
 
     @Override
@@ -30,9 +34,6 @@ public class OpenEJBObjectFactory implements ObjectFactory {
         Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY, callers.toString());
         container.set(EJBContainer.createEJBContainer(properties));
-        if (instances.get() == null) {
-            instances.set(new HashMap<Class<?>, Object>());
-        }
     }
 
     @Override

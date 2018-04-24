@@ -10,7 +10,11 @@ import cucumber.runtime.java.guice.ScenarioScope;
  */
 public class GuiceFactory implements ObjectFactory {
 
-    private final ThreadLocal<Injector> injector = new ThreadLocal<Injector>();
+    private final ThreadLocal<Injector> injector = new ThreadLocal<Injector>(){
+        protected Injector initialValue() {
+            return new InjectorSourceFactory(Env.INSTANCE).create().getInjector();
+        }
+    };
 
     public GuiceFactory() {
     }
@@ -30,10 +34,6 @@ public class GuiceFactory implements ObjectFactory {
     }
 
     public void start() {
-        if (injector.get() == null) {
-            injector.set(new InjectorSourceFactory(Env.INSTANCE).create().getInjector());
-            
-        }
         injector.get().getInstance(ScenarioScope.class).enterScope();
     }
 

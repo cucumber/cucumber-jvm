@@ -8,13 +8,15 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 
 public abstract class OsgiObjectFactoryBase implements ObjectFactory {
-    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>();
+    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>() {
+        protected Map<Class<?>, Object> initialValue() {
+            return new HashMap<Class<?>, Object>();
+        }
+    };
 
     @Override
     public void start() {
-        if (instances.get() == null) {
-            instances.set(new HashMap<Class<?>, Object>());
-        }
+        // No-op
     }
 
     @Override

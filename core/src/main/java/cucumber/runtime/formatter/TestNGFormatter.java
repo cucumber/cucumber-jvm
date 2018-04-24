@@ -61,7 +61,12 @@ class TestNGFormatter implements Formatter, StrictAware {
 
     private boolean strict;
 
-    private ThreadLocal<CurrentDomElements> domElements = new ThreadLocal<CurrentDomElements>();
+    private ThreadLocal<CurrentDomElements> domElements = new ThreadLocal<CurrentDomElements>() {
+        @Override
+        protected CurrentDomElements initialValue() {
+            return new CurrentDomElements();
+        }
+    };
     private ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
     private ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>();
 
@@ -125,12 +130,7 @@ class TestNGFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        CurrentDomElements currentDomElements = domElements.get();
-        if (currentDomElements == null) {
-            currentDomElements = new CurrentDomElements();
-            domElements.set(currentDomElements);
-        }
-
+        final CurrentDomElements currentDomElements = domElements.get();
         CurrentFeature currentFeature = featureUnderTest.get();
         if (currentFeature == null || currentFeature.uri == null || !currentFeature.uri.equals(event.testCase.getUri())) {
             currentFeature = new CurrentFeature(event.testCase.getUri());
