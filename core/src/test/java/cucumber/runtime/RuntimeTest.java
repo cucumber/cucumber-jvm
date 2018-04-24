@@ -531,25 +531,40 @@ public class RuntimeTest {
         bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
         
         runtime.run();
-
-        final InOrder order = inOrder(templateGlue, backend, localGlue);
-        order.verify(backend).loadGlue(templateGlue, runtimeOptions.getGlue());
-        order.verify(backend).setUnreportedStepExecutor(isA(UnreportedStepExecutor.class));
-        order.verify(templateGlue).reportStepDefinitions(isA(StepDefinitionReporter.class));
-        order.verify(templateGlue, times(threads)).clone();
-        order.verify(backend, times(threads)).buildWorld(localGlue);
-        order.verify(backend, times(threads)).disposeWorld(localGlue);
         
         // Cannot verify these methods in order
         // e.g as each thread could've complete before the other and would result in it calling disposeWorld
         // before the other thread has finished with stepDefinitionMatch
+        verify(backend).loadGlue(templateGlue, runtimeOptions.getGlue());
+        verify(backend).setUnreportedStepExecutor(isA(UnreportedStepExecutor.class));
+        verify(templateGlue).reportStepDefinitions(isA(StepDefinitionReporter.class));
+        verify(templateGlue, times(threads)).clone();
+        verify(backend, times(threads)).buildWorld(localGlue);
+        verify(backend, times(threads)).disposeWorld(localGlue);        
         verify(localGlue, times(threads)).getBeforeHooks();
         verify(localGlue, times(threads)).getAfterHooks();
         final int stepsPerFeature = 6;
         for(final String feature : features) {
             verify(localGlue, times(stepsPerFeature)).stepDefinitionMatch(eq(feature), isA(PickleStep.class));
         }
-        verifyNoMoreInteractions(templateGlue, backend, localGlue);
+        verifyNoMoreInteractions(templateGlue, backend, localGlue);        
+    }
+
+    @Test
+    public void should_not_raise_synchronized_group_event_when_no_synchronized_features_exist() throws IOException {
+        final List<String> features = asList(
+            "cucumber/runtime/ParallelTests1.feature",
+            "cucumber/runtime/ParallelTests2.feature",
+            "cucumber/runtime/ParallelTests3.feature",
+            "cucumber/runtime/ParallelTests4.feature");
+
+        final int threads = features.size();
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        final EventBus bus = runtime.getEventBus();
+        bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
+        bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
+
+        runtime.run();
 
         assertEquals("Group Start event count was not as expected", 1, actualGroupStartEvents.size());
         TestGroupRunStarted started = actualGroupStartEvents.get(0);
