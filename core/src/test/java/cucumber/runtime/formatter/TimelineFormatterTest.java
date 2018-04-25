@@ -182,11 +182,11 @@ public class TimelineFormatterTest {
 
             assertEquals(String.format("id on item %s, was not as expected", i), expected.id, actual.id);
             assertEquals(String.format("feature on item %s, was not as expected", i), expected.feature, actual.feature);
-            assertEquals(String.format("startTime on item %s, was not as expected", i), expected.startTime, actual.startTime);
-            assertEquals(String.format("endTime on item %s, was not as expected", i), expected.endTime, actual.endTime);
+            assertNotNull(String.format("startTime on item %s, should not be null", i), actual.startTime);
+            assertNotNull(String.format("endTime on item %s, should not be null", i), actual.endTime);
             assertEquals(String.format("className on item %s, was not as expected", i), expected.className, actual.className);
             assertEquals(String.format("content on item %s, was not as expected", i), expected.content, actual.content);
-            assertNotNull(String.format("threadId on item %s, was not as expected", i), actual.threadId);
+            assertNotNull(String.format("threadId on item %s, should not be null", i), actual.threadId);
             usedThreads.add(actual.threadId);
         }
 
