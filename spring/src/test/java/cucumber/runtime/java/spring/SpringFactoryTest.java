@@ -20,6 +20,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -266,5 +270,42 @@ public class SpringFactoryTest {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithControllerAnnotation.class);
 
+    }
+
+    @Test
+    public void shouldGiveUsNewInstancesPerThread() throws ExecutionException, InterruptedException {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(BellyStepdefs.class);
+        factory.start();
+
+        // Thread 1
+        final BellyStepdefs o1 = Executors.newFixedThreadPool(1)
+            .submit(new GetBeanInstanceRunnable<BellyStepdefs>(factory, BellyStepdefs.class)).get();
+
+        // Thread 2
+        final BellyStepdefs o2 = Executors.newFixedThreadPool(1)
+            .submit(new GetBeanInstanceRunnable<BellyStepdefs>(factory, BellyStepdefs.class)).get();
+        
+        factory.stop();
+
+        assertNotNull(o1);
+        assertNotNull(o2);
+        assertNotSame(o1, o2);
+    }
+    
+    private class GetBeanInstanceRunnable<T> implements Callable<T> {
+
+        private final ObjectFactory factory;
+        private final Class<T> clazz;
+
+        public GetBeanInstanceRunnable(final ObjectFactory factory, final Class<T> clazz) {
+            this.factory = factory;
+            this.clazz = clazz;
+        }
+        
+        @Override
+        public T call() {
+            return factory.getInstance(clazz);
+        }
     }
 }
