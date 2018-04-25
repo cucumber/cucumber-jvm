@@ -122,7 +122,7 @@ public class Runtime {
                 featureCount+= featureGroup.size();
                 allFeatures.removeAll(featureGroup);
             }
-            runSynchronizedTests(featureCount, requestedThreads, synchronisedFeatures);
+            runSynchronizedTests(featureCount, requestedThreads, synchronisedFeatures.values());
         }      
         
         if (!allFeatures.isEmpty()) {
@@ -133,8 +133,8 @@ public class Runtime {
         printSummary();
     }
 
-    private void runSynchronizedTests(final int featureCount, final int requestedThreads, final Map<String, Queue<CucumberFeature>> synchronisedFeatures) {
-        final ConcurrentLinkedQueue<Queue<CucumberFeature>> queuedFeatureGroups = new ConcurrentLinkedQueue<Queue<CucumberFeature>>(synchronisedFeatures.values());
+    private void runSynchronizedTests(final int featureCount, final int requestedThreads, final Collection<Queue<CucumberFeature>> synchronisedFeatures) {
+        final ConcurrentLinkedQueue<Queue<CucumberFeature>> queuedFeatureGroups = new ConcurrentLinkedQueue<Queue<CucumberFeature>>(synchronisedFeatures);
         final int threadCount = Math.min(requestedThreads, synchronisedFeatures.size());
         final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
         for (int i = 0; i < threadCount; i++) {
