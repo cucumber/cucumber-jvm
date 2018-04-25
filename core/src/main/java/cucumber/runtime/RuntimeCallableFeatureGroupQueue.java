@@ -2,9 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.model.CucumberFeature;
 
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.Callable;
 
 public class RuntimeCallableFeatureGroupQueue extends RuntimeCallable {
     private final Queue<Queue<CucumberFeature>> featureGroupQueue;

@@ -25,7 +25,13 @@ import java.util.List;
 
 public class Runner {
     private final Glue templateGlue;
-    private final ThreadLocal<Glue> localGlue = new ThreadLocal<Glue>();
+    private final ThreadLocal<Glue> localGlue = new ThreadLocal<Glue>() {
+        @Override
+        protected Glue initialValue() {
+            return templateGlue.clone();
+        }
+    };
+    
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RuntimeOptions runtimeOptions;
@@ -37,15 +43,7 @@ public class Runner {
         this.backends = backends;
     }
 
-    public void prepareForFeatureRun() {
-        localGlue.set(templateGlue.clone());
-    }
-
     public void runPickle(PickleEvent pickle) {
-        //Guard again direct usages where ThreadLocal state not pre-set
-        if (localGlue.get() == null) {
-            prepareForFeatureRun();
-        }
         buildBackendWorlds(); // Java8 step definitions will be added to the glue here
         TestCase testCase = createTestCaseForPickle(pickle);
         testCase.run(bus);

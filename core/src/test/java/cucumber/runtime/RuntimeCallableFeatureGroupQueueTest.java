@@ -38,7 +38,6 @@ public class RuntimeCallableFeatureGroupQueueTest {
         callable.call();
 
         final InOrder order = inOrder(runtime);
-        order.verify(runtime).prepareForFeatureRun();
         order.verify(runtime).runFeature(feature);
         order.verify(runtime).runFeature(feature2);
         order.verify(runtime).runFeature(feature3);

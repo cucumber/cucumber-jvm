@@ -89,7 +89,6 @@ public class JavaStepDefinitionTest {
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runtime.getRunner().prepareForFeatureRun();
         
         runtime.getRunner().runPickle(pickleEvent);
 
@@ -104,7 +103,6 @@ public class JavaStepDefinitionTest {
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runtime.getRunner().prepareForFeatureRun();
         
         runtime.getRunner().runPickle(pickleEvent);
 

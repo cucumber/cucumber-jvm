@@ -161,10 +161,6 @@ public class Runtime {
         runner.reportStepDefinitions(stepDefinitionReporter);
     }
     
-    public void prepareForFeatureRun() {
-        runner.prepareForFeatureRun();
-    }
-
     public void runFeature(CucumberFeature feature) {
         List<PickleEvent> pickleEvents = compileFeature(feature);
         for (PickleEvent pickleEvent : pickleEvents) {
