@@ -212,13 +212,13 @@ public class TimelineFormatter implements Formatter {
 
             this.id = TestSourcesModel.calculateId(astNode);
             this.feature = TestSourcesModel.convertToId(TimelineFormatter.this.testSources.getFeature(uri).getName());
-            this.startTime = started.getTimeStamp();
+            this.startTime = System.currentTimeMillis();
             this.threadId = threadId;
             this.content = "Scenario: " + started.testCase.getName();
         }
 
         public void end(final TestCaseFinished event) {
-            this.endTime = event.getTimeStamp();
+            this.endTime = System.currentTimeMillis();;
             this.className = event.result.getStatus().lowerCaseName();
         }
     }
