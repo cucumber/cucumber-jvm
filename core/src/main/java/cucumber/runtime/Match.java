@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
+
 import java.util.Collections;
 import java.util.List;
 

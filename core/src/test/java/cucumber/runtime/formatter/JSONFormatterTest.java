@@ -558,6 +558,145 @@ public class JSONFormatterTest {
     }
 
     @Test
+    public void should_add_step_hooks_to_step() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+            "Feature: Banana party\n" +
+            "\n" +
+            "  Scenario: Monkey eats bananas\n" +
+            "    Given there are bananas\n" +
+            "    When monkey arrives\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("there are bananas", result("passed"));
+        stepsToResult.put("monkey arrives", result("passed"));
+        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
+        stepsToLocation.put("monkey arrives", "StepDefs.monkey_arrives()");
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("beforestep", result("passed")));
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        List<String> hookLocations = new ArrayList<String>();
+        hookLocations.add("Hooks.beforestep_hooks_1()");
+        hookLocations.add("Hooks.afterstep_hooks_1()");
+        hookLocations.add("Hooks.afterstep_hooks_2()");
+        Long stepHookDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJSONPrettyFormatter(feature, stepsToResult, stepsToLocation, hooks, hookLocations, stepHookDuration);
+
+        String expected = "" +
+            "[\n" +
+            "  {\n" +
+            "    \"line\": 1,\n" +
+            "    \"elements\": [\n" +
+            "      {\n" +
+            "        \"line\": 3,\n" +
+            "        \"name\": \"Monkey eats bananas\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
+            "        \"type\": \"scenario\",\n" +
+            "        \"keyword\": \"Scenario\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"before\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.beforestep_hooks_1()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"line\": 4,\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"after\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                }\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"before\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.beforestep_hooks_1()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"line\": 5,\n" +
+            "            \"name\": \"monkey arrives\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.monkey_arrives()\"\n" +
+            "            },\n" +
+            "            \"after\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                }\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"keyword\": \"When \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"name\": \"Banana party\",\n" +
+            "    \"description\": \"\",\n" +
+            "    \"id\": \"banana-party\",\n" +
+            "    \"keyword\": \"Feature\",\n" +
+            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"tags\": []\n" +
+            "  }\n" +
+            "]";
+        assertPrettyJsonEquals(expected, formatterOutput);
+    }
+
+    @Test
     public void should_handle_write_from_a_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +

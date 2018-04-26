@@ -1,137 +1,107 @@
 package cucumber.api;
 
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.event.TestStepStarted;
-import cucumber.runner.EventBus;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
-import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.UndefinedStepDefinitionException;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleStep;
-
-import java.util.Arrays;
 import java.util.List;
 
-public abstract class TestStep {
-    private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
-            "org.junit.AssumptionViolatedException",
-            "org.junit.internal.AssumptionViolatedException",
-            "org.testng.SkipException"
-    };
-
-    static {
-        Arrays.sort(ASSUMPTION_VIOLATED_EXCEPTIONS);
-    }
+/**
+ * A test step can either represent the execution of a hook
+ * or a pickle step. Each step is tied to some glue code.
+ *
+ * @see cucumber.api.event.TestCaseStarted
+ * @see cucumber.api.event.TestCaseFinished
+ */
+public interface TestStep {
 
     /**
-     * @deprecated not part of the public api
-     */
-    @Deprecated
-    protected final DefinitionMatch definitionMatch;
-
-    /**
-     * Creates a new test step from the matching step definition
+     * Returns a string representation of the glue code location.
      *
-     * @param definitionMatch the matching step definition
-     * @deprecated not part of the public api
+     * @return a string representation of the glue code location.
      */
-    @Deprecated
-    public TestStep(DefinitionMatch definitionMatch) {
-        this.definitionMatch = definitionMatch;
-    }
-
-    public String getPattern() {
-        return definitionMatch.getPattern();
-    }
-
-    public String getCodeLocation() {
-        return definitionMatch.getCodeLocation();
-    }
-
-    public List<cucumber.runtime.Argument> getDefinitionArgument() {
-        return definitionMatch.getArguments();
-    }
-
-    public abstract boolean isHook();
-
-    public abstract PickleStep getPickleStep();
-
-    public abstract String getStepText();
-
-    public abstract String getStepLocation();
-
-    public abstract int getStepLine();
-
-    public abstract List<Argument> getStepArgument();
-
-    public abstract HookType getHookType();
+    String getCodeLocation();
 
     /**
-     * @param bus       to which events should be broadcast
-     * @param language  in which the step is defined
-     * @param scenario  of which this step is part
-     * @param skipSteps if this step should be skipped
-     * @return result of running this step
-     * @deprecated not part of the public api
+     * Returns the hook hook type.
+     *
+     * @return the hook type.
+     * @deprecated cast to {@link HookTestStep} instead.
      */
     @Deprecated
-    public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
-        Long startTime = bus.getTime();
-        bus.send(new TestStepStarted(startTime, this));
-        Result.Type status;
-        Throwable error = null;
-        try {
-            status = executeStep(language, scenario, skipSteps);
-        } catch (Throwable t) {
-            error = t;
-            status = mapThrowableToStatus(t);
-        }
-        Long stopTime = bus.getTime();
-        Result result = mapStatusToResult(status, error, stopTime - startTime);
-        bus.send(new TestStepFinished(stopTime, this, result));
-        return result;
-    }
+    HookType getHookType();
 
+    /**
+     * Returns true if the test step is a hook test step
+     * @return true if the test step is a hook test step
+     * @deprecated type check {@link HookTestStep} or {@link PickleStepTestStep} instead.
+     */
     @Deprecated
-    protected Result.Type nonExceptionStatus(boolean skipSteps) {
-        return skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
-    }
+    boolean isHook();
 
+    /**
+     * The pattern or expression used to match the glue code to the Gherkin step.
+     *
+     * @return a pattern or expression
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
     @Deprecated
-    protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
-        if (!skipSteps) {
-            definitionMatch.runStep(language, scenario);
-            return Result.Type.PASSED;
-        } else {
-            definitionMatch.dryRunStep(language, scenario);
-            return Result.Type.SKIPPED;
-        }
-    }
+    String getPattern();
 
-    private Result.Type mapThrowableToStatus(Throwable t) {
-        if (t.getClass().isAnnotationPresent(Pending.class)) {
-            return Result.Type.PENDING;
-        }
-        if (Arrays.binarySearch(ASSUMPTION_VIOLATED_EXCEPTIONS, t.getClass().getName()) >= 0) {
-            return Result.Type.SKIPPED;
-        }
-        if (t.getClass() == UndefinedStepDefinitionException.class) {
-            return Result.Type.UNDEFINED;
-        }
-        if (t.getClass() == AmbiguousStepDefinitionsException.class) {
-            return Result.Type.AMBIGUOUS;
-        }
-        return Result.Type.FAILED;
-    }
+    /**
+     * The matched Gherkin step as a compiled Pickle
+     *
+     * @return the matched step
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
+    @Deprecated
+    gherkin.pickles.PickleStep getPickleStep();
 
-    private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
-        Long resultDuration = duration;
-        if (status == Result.Type.SKIPPED && error == null) {
-            return Result.SKIPPED;
-        }
-        if (status == Result.Type.UNDEFINED) {
-            return Result.UNDEFINED;
-        }
-        return new Result(status, resultDuration, error);
-    }
+    /**
+     * Returns the arguments provided to the step definition.
+     * <p>
+     * For example the step definition <code>Given (.*) pickles</code>
+     * when matched with <code>Given 15 pickles</code> will receive
+     * as argument <code>"15"</code>
+     *
+     * @return argument provided to the step definition
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
+    @Deprecated
+    List<Argument> getDefinitionArgument();
+
+    /**
+     * Returns arguments provided to the Gherkin step. E.g:
+     * a data table or doc string.
+     *
+     * @return arguments provided to the gherkin step.
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
+    @Deprecated
+    List<gherkin.pickles.Argument> getStepArgument();
+
+    /**
+     * The line in the feature file defining this step.
+     *
+     * @return a line number
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
+    @Deprecated
+    int getStepLine();
+
+    /**
+     * A uri to to the feature and line of this step.
+     *
+     * @return a uri
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
+    @Deprecated
+    String getStepLocation();
+
+    /**
+     * The full text of the Gherkin step.
+     *
+     * @return the step text
+     * @deprecated cast to {@link PickleStepTestStep} instead.
+     */
+    @Deprecated
+    String getStepText();
+
+
 }

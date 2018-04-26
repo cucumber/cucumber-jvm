@@ -1,6 +1,6 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.runtime.Argument;
+import cucumber.api.Argument;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;

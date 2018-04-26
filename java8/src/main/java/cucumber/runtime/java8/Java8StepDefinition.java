@@ -3,15 +3,14 @@ package cucumber.runtime.java8;
 import static cucumber.runtime.ParameterInfo.fromTypes;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
+import cucumber.api.Argument;
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.Argument;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
-import net.jodah.typetools.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

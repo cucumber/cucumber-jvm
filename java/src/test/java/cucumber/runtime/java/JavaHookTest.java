@@ -2,7 +2,9 @@ package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
+import cucumber.api.java.BeforeStep;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -29,12 +31,16 @@ import static org.mockito.Mockito.mock;
 public class JavaHookTest {
     private static final Method BEFORE;
     private static final Method AFTER;
+    private static final Method BEFORESTEP;
+    private static final Method AFTERSTEP;
     private static final Method BAD_AFTER;
 
     static {
         try {
             BEFORE = HasHooks.class.getMethod("before");
             AFTER = HasHooks.class.getMethod("after");
+            BEFORESTEP = HasHooks.class.getMethod("beforeStep");
+            AFTERSTEP = HasHooks.class.getMethod("afterStep");
             BAD_AFTER = BadHook.class.getMethod("after", String.class);
         } catch (NoSuchMethodException e) {
             throw new InternalError("dang");
@@ -69,6 +75,26 @@ public class JavaHookTest {
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
         assertEquals(0, glue.getAfterHooks().size());
         assertEquals(BEFORE, hookDef.getMethod());
+    }
+
+    @Test
+    public void before_step_hooks_get_registered() throws Exception {
+        objectFactory.setInstance(new HasHooks());
+        backend.buildWorld();
+        backend.addHook(BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeStepHooks().get(0);
+        assertEquals(0, glue.getAfterStepHooks().size());
+        assertEquals(BEFORESTEP, hookDef.getMethod());
+    }
+
+    @Test
+    public void after_step_hooks_get_registered() throws Exception {
+        objectFactory.setInstance(new HasHooks());
+        backend.buildWorld();
+        backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
+        assertEquals(0, glue.getBeforeStepHooks().size());
+        assertEquals(AFTERSTEP, hookDef.getMethod());
     }
 
     @Test
@@ -135,6 +161,16 @@ public class JavaHookTest {
 
         @Before({"(@foo or @bar) and @zap"})
         public void before() {
+
+        }
+
+        @BeforeStep
+        public void beforeStep() {
+
+        }
+
+        @AfterStep
+        public void afterStep() {
 
         }
 

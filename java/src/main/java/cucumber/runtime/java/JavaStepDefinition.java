@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
+import cucumber.api.Argument;
 import cucumber.api.java.ObjectFactory;
-import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterInfo;

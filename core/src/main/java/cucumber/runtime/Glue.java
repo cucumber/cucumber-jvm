@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
-import gherkin.GherkinDialect;
 import gherkin.pickles.PickleStep;
 
 import java.util.List;
@@ -17,11 +16,19 @@ public interface Glue {
 
     void addAfterHook(HookDefinition hookDefinition);
 
+    void addBeforeStepHook(HookDefinition beforeStepHook);
+
+    void addAfterStepHook(HookDefinition hookDefinition);
+
     List<HookDefinition> getBeforeHooks();
 
     List<HookDefinition> getAfterHooks();
 
-    StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step);
+    List<HookDefinition> getAfterStepHooks();
+
+    List<HookDefinition> getBeforeStepHooks();
+
+    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step);
 
     void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
 

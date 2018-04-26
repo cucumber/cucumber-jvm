@@ -1,7 +1,8 @@
 package cucumber.runner;
 
+import cucumber.api.Argument;
+import cucumber.api.HookType;
 import cucumber.api.Scenario;
-import cucumber.runtime.Argument;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
@@ -70,6 +71,35 @@ public class RunnerTest {
     }
 
     @Test
+    public void aftersteps_are_executed_after_failed_step() throws Throwable {
+
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        doThrow(RuntimeException.class).when(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
+        HookDefinition afteStepHook = addAfterStepHook(runtime);
+
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+
+        InOrder inOrder = inOrder(afteStepHook, stepDefinition);
+        inOrder.verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
+        inOrder.verify(afteStepHook).execute(Matchers.<Scenario>any());
+    }
+
+    @Test
+    public void aftersteps_executed_for_passed_step() throws Throwable {
+
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        HookDefinition afteStepHook1 = addAfterStepHook(runtime);
+        HookDefinition afteStepHook2 = addAfterStepHook(runtime);
+
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+
+        InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
+        inOrder.verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
+        inOrder.verify(afteStepHook1).execute(Matchers.<Scenario>any());
+        inOrder.verify(afteStepHook2).execute(Matchers.<Scenario>any());
+    }
+
+    @Test
     public void hooks_execute_also_after_failure() throws Throwable {
         PickleStep step = mock(PickleStep.class);
         HookDefinition failingBeforeHook = addBeforeHook(runtime);
@@ -107,10 +137,12 @@ public class RunnerTest {
         PickleStep step = mock(PickleStep.class);
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
+        HookDefinition afterStepHook = addAfterStepHook(runtime);
 
         runner.runPickle(createPickleEventWithSteps(asList(step)));
 
         verify(beforeHook, never()).execute(Matchers.<Scenario>any());
+        verify(afterStepHook, never()).execute(Matchers.<Scenario>any());
         verify(afterHook, never()).execute(Matchers.<Scenario>any());
     }
 
@@ -118,10 +150,12 @@ public class RunnerTest {
     public void hooks_not_executed_for_empty_pickles() throws Throwable {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
+        HookDefinition afterStepHook = addAfterStepHook(runtime);
 
         runner.runPickle(createEmptyPickleEvent());
 
         verify(beforeHook, never()).execute(Matchers.<Scenario>any());
+        verify(afterStepHook, never()).execute(Matchers.<Scenario>any());
         verify(afterHook, never()).execute(Matchers.<Scenario>any());
     }
 
@@ -143,25 +177,27 @@ public class RunnerTest {
         return new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
     }
 
-    private boolean isBefore(boolean value) {
-        return value;
-    }
-
     private HookDefinition addBeforeHook(Runtime runtime) {
-        return addHook(runtime, isBefore(true));
+        return addHook(runtime, HookType.Before);
     }
 
     private HookDefinition addAfterHook(Runtime runtime) {
-        return addHook(runtime, isBefore(false));
+        return addHook(runtime, HookType.After);
     }
 
-    private HookDefinition addHook(Runtime runtime, boolean isBefore) {
+    private HookDefinition addAfterStepHook(Runtime runtime) {
+        return addHook(runtime, HookType.AfterStep);
+    }
+
+    private HookDefinition addHook(Runtime runtime, HookType hookType) {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
-        if (isBefore) {
+        if (hookType == HookType.Before) {
             runtime.getGlue().addBeforeHook(hook);
-        } else {
+        } else if (hookType == HookType.After){
             runtime.getGlue().addAfterHook(hook);
+        } else if (hookType == HookType.AfterStep) {
+            runtime.getGlue().addAfterStepHook(hook);
         }
         return hook;
     }

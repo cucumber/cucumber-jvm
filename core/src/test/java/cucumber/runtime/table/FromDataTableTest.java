@@ -1,14 +1,14 @@
 package cucumber.runtime.table;
 
+import cucumber.api.Argument;
 import cucumber.api.DataTable;
 import cucumber.api.Format;
 import cucumber.api.Transformer;
 import cucumber.api.Transpose;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
-import cucumber.runtime.Argument;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.StubStepDefinition;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleCell;
@@ -234,7 +234,7 @@ public class FromDataTableTest {
         PickleStep stepWithTable = new PickleStep("something", asList((gherkin.pickles.Argument)table), asList(mock(PickleLocation.class)));
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithTable, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithTable, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH, null);
         return stepDefs;
     }

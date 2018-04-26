@@ -2,10 +2,33 @@ package cucumber.api;
 
 import org.junit.Test;
 
+import java.util.List;
+
+import static cucumber.api.Result.SEVERITY;
+import static java.util.Arrays.asList;
+import static java.util.Collections.sort;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ResultTest {
+
+    @Test
+    public void severity_from_low_to_high_is_passed_skipped_pending_undefined_ambiguous_failed() {
+        Result passed = new Result(Result.Type.PASSED, null, null);
+        Result skipped = new Result(Result.Type.SKIPPED, null, null);
+        Result pending = new Result(Result.Type.PENDING, null, null);
+        Result ambiguous = new Result(Result.Type.AMBIGUOUS, null, null);
+        Result undefined = new Result(Result.Type.UNDEFINED, null, null);
+        Result failed = new Result(Result.Type.FAILED, null, null);
+
+        List<Result> results = asList(pending, passed, skipped, failed, ambiguous, undefined);
+
+        sort(results, SEVERITY);
+
+        assertThat(results, equalTo(asList(passed, skipped, pending, undefined, ambiguous, failed)));
+    }
 
     @Test
     public void passed_result_is_always_ok() {

@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,7 +20,7 @@ public class JdkPatternArgumentMatcher {
             List<Argument> arguments = new ArrayList<Argument>(matcher.groupCount());
             for (int i = 1; i <= matcher.groupCount(); i++) {
                 int startIndex = matcher.start(i);
-                arguments.add(new Argument(startIndex == -1 ? null : startIndex, matcher.group(i)));
+                arguments.add(Arguments.createArgument(startIndex == -1 ? null : startIndex, matcher.group(i)));
             }
             return arguments;
         } else {

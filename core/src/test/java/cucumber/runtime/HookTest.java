@@ -15,10 +15,12 @@ import org.mockito.Matchers;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class HookTest {
     private final static String ENGLISH = "en";
@@ -48,6 +50,4 @@ public class HookTest {
         inOrder.verify(hook).execute(Matchers.<Scenario>any());
         inOrder.verify(backend).disposeWorld();
     }
-
-
 }
