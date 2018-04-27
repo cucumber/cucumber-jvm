@@ -5,18 +5,25 @@
     <title>Cucumber Timeline</title>
     <link href="vis.min.css" rel="stylesheet" type="text/css"/>
     <link href="vis.override.css" rel="stylesheet" type="text/css"/>
+    <link href="chosen.min.css" rel="stylesheet" type="text/css"/>
+    <link href="report.css" rel="stylesheet" type="text/css"/>
     <script src="jquery-3.3.1.min.js"></script>
+    <script src="chosen.jquery.min.js"></script>
     <script src="vis.min.js"></script>
     <script src="formatter.js"></script>
     <script src="report.js"></script>
 </head>
 <body>
-    <div id="timeline"></div>
+<div class="navbar">
+    <select data-placeholder="Choose a scenario name..." id="scenarioSelect"><option /></select>
+</div>
 
-    <script type="application/javascript">
-        $(document).ready(function() {
-            CucumberHTML.RenderTimeline();
-        });
-    </script>
+<div id="timeline" class="main"></div>
+
+<script type="application/javascript">
+    $(document).ready(function() {
+        CucumberHTML.PreparePage();
+    });
+</script>
 </body>
 </html>

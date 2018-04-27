@@ -76,20 +76,20 @@ public class TimelineFormatterTest {
         final TimelineFormatter.TestData[] expectedTests = gson.fromJson("[\n" +
             "  {\n" +
             "    \"id\": \"feature-1;scenario-1\",\n" +
-            "    \"feature\": \"feature-1\",\n" +
+            "    \"feature\": \"Feature_1\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 16042,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario: Scenario_1\",\n" +
+            "    \"content\": \"Scenario_1\",\n" +
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": \"feature-2;scenario-2\",\n" +
-            "    \"feature\": \"feature-2\",\n" +
+            "    \"feature\": \"Feature_2\",\n" +
             "    \"start\": 17276,\n" +
             "    \"end\": 33318,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario: Scenario_2\",\n" +
+            "    \"content\": \"Scenario_2\",\n" +
             "    \"className\": \"passed\"\n" +
             "  }\n" +
             "]", TimelineFormatter.TestData[].class);
@@ -115,20 +115,20 @@ public class TimelineFormatterTest {
         final TimelineFormatter.TestData[] expectedTests = gson.fromJson("[\n" +
             "  {\n" +
             "    \"id\": \"feature-1;scenario-1\",\n" +
-            "    \"feature\": \"feature-1\",\n" +
+            "    \"feature\": \"Feature_1\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 16042,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario: Scenario_1\",\n" +
+            "    \"content\": \"Scenario_1\",\n" +
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": \"feature-2;scenario-2\",\n" +
-            "    \"feature\": \"feature-2\",\n" +
+            "    \"feature\": \"Feature_2\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 16042,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario: Scenario_2\",\n" +
+            "    \"content\": \"Scenario_2\",\n" +
             "    \"className\": \"passed\"\n" +
             "  }\n" +
             "]", TimelineFormatter.TestData[].class);
