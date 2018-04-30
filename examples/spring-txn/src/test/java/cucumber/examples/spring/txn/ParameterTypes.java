@@ -5,6 +5,7 @@ import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
@@ -12,9 +13,12 @@ import static java.util.Locale.ENGLISH;
 public class ParameterTypes implements Configuration {
 
     @Override
-    public TypeRegistry createTypeRegistry() {
-        final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    public Locale locale() {
+        return ENGLISH;
+    }
 
+    @Override
+    public void configureTypeRegistry(TypeRegistry typeRegistry) {
         typeRegistry.defineDataTableType(new DataTableType(
             Message.class,
             new TableEntryTransformer<Message>() {
@@ -26,6 +30,5 @@ public class ParameterTypes implements Configuration {
                 }
             }));
 
-        return typeRegistry;
     }
 }

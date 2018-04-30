@@ -9,6 +9,7 @@ import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import static cucumber.examples.java.calculator.RpnCalculatorStepdefs.Entry;
@@ -19,8 +20,7 @@ import static java.util.Locale.ENGLISH;
 public class ParameterTypes implements Configuration {
 
     @Override
-    public TypeRegistry createTypeRegistry() {
-        TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    public void configureTypeRegistry(TypeRegistry typeRegistry) {
         typeRegistry.defineParameterType(new ParameterType<>(
                 "date",
                 "((.*) \\d{1,2}, \\d{4})",
@@ -53,6 +53,10 @@ public class ParameterTypes implements Configuration {
             )
         ));
 
-        return typeRegistry;
+    }
+
+    @Override
+    public Locale locale() {
+        return ENGLISH;
     }
 }

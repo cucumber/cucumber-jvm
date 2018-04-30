@@ -1,6 +1,6 @@
 package cucumber.runtime.java;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 

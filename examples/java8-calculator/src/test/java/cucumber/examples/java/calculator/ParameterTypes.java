@@ -6,6 +6,7 @@ import io.cucumber.datatable.DataTableType;
 import cucumber.examples.java.calculator.RpnCalculatorStepdefs.Entry;
 import cucumber.examples.java.calculator.ShoppingStepdefs.Grocery;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
@@ -13,9 +14,12 @@ import static java.util.Locale.ENGLISH;
 public class ParameterTypes implements Configuration {
 
     @Override
-    public TypeRegistry createTypeRegistry() {
-        TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    public Locale locale() {
+        return ENGLISH;
+    }
 
+    @Override
+    public void configureTypeRegistry(TypeRegistry typeRegistry) {
         typeRegistry.defineDataTableType(new DataTableType(
             Entry.class,
             (Map<String, String> row) -> new Entry(
@@ -32,7 +36,5 @@ public class ParameterTypes implements Configuration {
                 ShoppingStepdefs.Price.fromString(row.get("price"))
             )
         ));
-
-        return typeRegistry;
     }
 }

@@ -1,9 +1,8 @@
 package cucumber.runtime.java8;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
 import org.junit.Test;
 

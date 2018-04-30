@@ -1,5 +1,10 @@
 package cucumber.api;
 
+import java.util.Locale;
+
 public interface Configuration {
-    TypeRegistry createTypeRegistry();
+
+    Locale locale();
+
+    void configureTypeRegistry(TypeRegistry typeRegistry);
 }

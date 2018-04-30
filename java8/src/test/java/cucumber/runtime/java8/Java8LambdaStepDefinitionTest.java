@@ -2,7 +2,7 @@ package cucumber.runtime.java8;
 
 import static org.junit.Assert.assertEquals;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.CucumberException;
 import org.junit.Test;

@@ -5,7 +5,7 @@ import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.Scenario;
 import cucumber.runtime.formatter.FormatterSpy;

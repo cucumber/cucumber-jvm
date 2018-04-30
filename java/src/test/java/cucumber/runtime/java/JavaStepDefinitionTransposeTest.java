@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.runtime.PickleStepDefinitionMatch;
 import io.cucumber.datatable.DataTable;
 import cucumber.api.java.ObjectFactory;

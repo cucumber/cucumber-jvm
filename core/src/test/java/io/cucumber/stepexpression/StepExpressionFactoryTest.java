@@ -1,6 +1,5 @@
 package io.cucumber.stepexpression;
 
-import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;

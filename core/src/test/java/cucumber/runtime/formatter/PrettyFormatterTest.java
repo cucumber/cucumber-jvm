@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.formatter.AnsiEscapes;
 import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.TestHelper;

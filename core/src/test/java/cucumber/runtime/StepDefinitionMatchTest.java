@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;

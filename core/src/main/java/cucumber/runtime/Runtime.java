@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.Configuration;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
-import cucumber.api.TypeRegistry;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
@@ -14,6 +13,7 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -41,6 +41,7 @@ public class Runtime {
     private final List<PicklePredicate> filters;
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
+
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
     }
@@ -89,7 +90,9 @@ public class Runtime {
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
         Reflections reflections = new Reflections(classFinder);
         Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
-        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, configuration.createTypeRegistry()});
+        TypeRegistry typeRegistry = new TypeRegistry(configuration.locale());
+        configuration.configureTypeRegistry(typeRegistry);
+        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
     }
 
     /**

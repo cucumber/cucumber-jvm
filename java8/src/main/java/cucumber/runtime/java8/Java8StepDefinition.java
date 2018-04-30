@@ -5,7 +5,7 @@ import static java.lang.String.format;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 import io.cucumber.stepexpression.Argument;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import cucumber.runtime.CucumberException;

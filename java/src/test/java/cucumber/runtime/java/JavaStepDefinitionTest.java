@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;

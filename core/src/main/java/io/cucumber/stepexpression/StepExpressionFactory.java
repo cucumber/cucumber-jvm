@@ -1,8 +1,6 @@
 package io.cucumber.stepexpression;
 
-import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
-import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTable;
 
 import io.cucumber.cucumberexpressions.Expression;
@@ -16,7 +14,6 @@ public final class StepExpressionFactory {
 
     private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
-    private final TypeRegistry registry;
 
     private static final DocStringTransformer<String> DOC_STRING_IDENTITY = new DocStringTransformer<String>() {
         @Override
@@ -26,7 +23,6 @@ public final class StepExpressionFactory {
     };
 
     public StepExpressionFactory(TypeRegistry registry) {
-        this.registry = registry;
         this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
     }

@@ -6,6 +6,7 @@ import android.util.Log;
 import cucumber.api.Configuration;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Backend;
@@ -165,9 +166,11 @@ public final class CucumberExecutor {
 
     private Collection<? extends Backend> createBackends() {
         final Reflections reflections = new Reflections(classFinder);
-        final Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
         final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
         final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
-        return singletonList(new JavaBackend(objectFactory, classFinder, configuration.createTypeRegistry()));
+        final Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
+        final TypeRegistry typeRegistry = new TypeRegistry(configuration.locale());
+        configuration.configureTypeRegistry(typeRegistry);
+        return singletonList(new JavaBackend(objectFactory, classFinder, typeRegistry));
     }
 }

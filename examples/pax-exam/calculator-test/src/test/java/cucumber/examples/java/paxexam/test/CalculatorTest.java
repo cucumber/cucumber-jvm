@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;

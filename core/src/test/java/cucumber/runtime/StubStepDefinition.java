@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.ArgumentMatcher;

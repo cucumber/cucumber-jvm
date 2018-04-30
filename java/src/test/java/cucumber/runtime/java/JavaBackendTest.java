@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;

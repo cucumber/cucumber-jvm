@@ -1,6 +1,6 @@
 package cucumber.runtime.java;
 
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.ArgumentMatcher;

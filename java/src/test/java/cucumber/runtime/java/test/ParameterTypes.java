@@ -5,12 +5,11 @@ import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
-import io.cucumber.datatable.TableRowTransformer;
 import cucumber.runtime.java.test.Authors.Author;
 import cucumber.runtime.java.test.Stepdefs.Person;
 import io.cucumber.datatable.TableTransformer;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
@@ -44,9 +43,12 @@ public class ParameterTypes implements Configuration {
     };
 
     @Override
-    public TypeRegistry createTypeRegistry() {
-        final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    public Locale locale() {
+        return ENGLISH;
+    }
 
+    @Override
+    public void configureTypeRegistry(TypeRegistry typeRegistry) {
         typeRegistry.defineDataTableType(new DataTableType(
             Author.class,
             authorEntryTransformer));
@@ -58,7 +60,5 @@ public class ParameterTypes implements Configuration {
         typeRegistry.defineDataTableType(new DataTableType(
             Person.class,
             personEntryTransformer));
-
-        return typeRegistry;
     }
 }

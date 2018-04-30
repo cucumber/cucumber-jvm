@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
-import cucumber.api.TypeRegistry;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;

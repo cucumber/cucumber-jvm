@@ -4,13 +4,16 @@ import cucumber.api.Configuration
 import cucumber.api.TypeRegistry
 import io.cucumber.datatable.DataTableType
 import io.cucumber.datatable.TableEntryTransformer
+import java.util.Locale
 import java.util.Locale.ENGLISH
 
 class ParameterTypes : Configuration {
 
-    override fun createTypeRegistry(): TypeRegistry {
-        val typeRegistry = TypeRegistry(ENGLISH)
+    override fun locale(): Locale {
+        return ENGLISH
+    }
 
+    override fun configureTypeRegistry(typeRegistry: TypeRegistry) {
         typeRegistry.defineDataTableType(DataTableType(
                 LambdaStepdefs.Person::class.java,
                 TableEntryTransformer<LambdaStepdefs.Person>
@@ -20,8 +23,5 @@ class ParameterTypes : Configuration {
                     person.last = map.get("last")
                     person
                 }))
-
-
-        return typeRegistry
     }
 }
