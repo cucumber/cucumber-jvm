@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Result;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -48,7 +49,7 @@ class Stats implements EventListener {
             if (result.getError() != null) {
                 addError(result.getError());
             }
-            if (!event.testStep.isHook()) {
+            if (event.testStep instanceof PickleStepTestStep) {
                 addStep(result.getStatus());
             }
         }
@@ -94,7 +95,7 @@ class Stats implements EventListener {
 
     public byte exitStatus(boolean isStrict) {
         byte result = 0x0;
-        if (!failedScenarios.isEmpty() || (isStrict && (!pendingScenarios.isEmpty() || !undefinedScenarios.isEmpty()))) {
+        if (!failedScenarios.isEmpty() || !ambiguousScenarios.isEmpty() || (isStrict && (!pendingScenarios.isEmpty() || !undefinedScenarios.isEmpty()))) {
             result |= ERRORS;
         }
         return result;

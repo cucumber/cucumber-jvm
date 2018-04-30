@@ -2,11 +2,21 @@ package cucumber.api;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Comparator;
 
 public class Result {
+
+    public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
+
+        @Override
+        public int compare(Result a, Result b) {
+            return a.status == b.status ? 0 : a.status.ordinal() > b.status.ordinal() ? 1 : -1;
+        }
+    };
+
     private static final long serialVersionUID = 1L;
 
-    private final Result.Type status;
+    private final Type status;
     private final Long duration;
     private final Throwable error;
     public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
@@ -84,5 +94,14 @@ public class Result {
         PrintWriter printWriter = new PrintWriter(stringWriter);
         error.printStackTrace(printWriter);
         return stringWriter.getBuffer().toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+            "status=" + status +
+            ", duration=" + duration +
+            ", error=" + error +
+            '}';
     }
 }

@@ -15,7 +15,9 @@ import java.util.TreeMap;
 public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    final List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
     final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
 
     @Override
@@ -34,9 +36,20 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
+    public void addBeforeStepHook(HookDefinition hookDefinition) {
+        beforeStepHooks.add(hookDefinition);
+        Collections.sort(beforeStepHooks, new HookComparator(true));
+    }
+    @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
         Collections.sort(afterHooks, new HookComparator(false));
+    }
+
+    @Override
+    public void addAfterStepHook(HookDefinition hookDefinition) {
+        afterStepHooks.add(hookDefinition);
+        Collections.sort(afterStepHooks, new HookComparator(false));
     }
 
     @Override
@@ -45,20 +58,30 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
+    public List<HookDefinition> getBeforeStepHooks() {
+        return beforeStepHooks;
+    }
+
+    @Override
     public List<HookDefinition> getAfterHooks() {
         return afterHooks;
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+    public List<HookDefinition> getAfterStepHooks() {
+        return afterStepHooks;
+    }
+
+    @Override
+    public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new StepDefinitionMatch(Collections.<Argument>emptyList(), cacheEntry.stepDefinition, featurePath, step);
+            return new PickleStepDefinitionMatch(Collections.<Argument>emptyList(), cacheEntry.stepDefinition, featurePath, step);
         }
 
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
+        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
         }
@@ -66,7 +89,7 @@ public class RuntimeGlue implements Glue {
             throw new AmbiguousStepDefinitionsException(step, matches);
         }
 
-        StepDefinitionMatch match = matches.get(0);
+        PickleStepDefinitionMatch match = matches.get(0);
 
         // We can only cache step definitions without arguments.
         // DocString and TableArguments are not included in the stepText used as the cache key.
@@ -77,12 +100,12 @@ public class RuntimeGlue implements Glue {
         return match;
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
-        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
+        List<PickleStepDefinitionMatch> result = new ArrayList<PickleStepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step));
+                result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step));
             }
         }
         return result;
@@ -98,7 +121,9 @@ public class RuntimeGlue implements Glue {
     @Override
     public void removeScenarioScopedGlue() {
         removeScenarioScopedHooks(beforeHooks);
+        removeScenarioScopedHooks(beforeStepHooks);
         removeScenarioScopedHooks(afterHooks);
+        removeScenarioScopedHooks(afterStepHooks);
         removeScenarioScopedStepdefs();
     }
 

@@ -2,7 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
 import cucumber.api.Result;
-import cucumber.api.TestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.runner.EventBus;
 import cucumber.runtime.junit.JUnitReporter.EachTestNotifier;
 import cucumber.runtime.junit.JUnitReporter.NoTestNotifier;
@@ -81,7 +81,7 @@ public class JUnitReporterTest {
         setUpStepNotifierAndStepErrors(description);
         Result result = mockResult(Result.Type.PASSED);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         verify(runNotifier).fireTestFinished(description);
     }
@@ -94,7 +94,7 @@ public class JUnitReporterTest {
         setUpStepNotifierAndStepErrors(description);
         Result result = mockResult(Result.Type.SKIPPED);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -115,7 +115,7 @@ public class JUnitReporterTest {
         Throwable exception = new AssumptionViolatedException("Oops");
         Result result = mockResult(Result.Type.SKIPPED, exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -133,7 +133,7 @@ public class JUnitReporterTest {
         setUpNoStepNotifierAndStepErrors();
         Result result = mockResult(Result.Type.SKIPPED);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         assertTrue(jUnitReporter.stepErrors.isEmpty());
     }
@@ -146,7 +146,7 @@ public class JUnitReporterTest {
         Throwable exception = new AssumptionViolatedException("Oops");
         Result result = mockResult(Result.Type.SKIPPED, exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         assertEquals(asList(exception), jUnitReporter.stepErrors);
     }
@@ -160,7 +160,7 @@ public class JUnitReporterTest {
         Throwable exception = new PendingException();
         Result result = mockResult(Result.Type.PENDING, exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -180,7 +180,7 @@ public class JUnitReporterTest {
         Throwable exception = new PendingException();
         Result result = mockResult(Result.Type.PENDING, exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
@@ -199,7 +199,7 @@ public class JUnitReporterTest {
         Throwable exception = new PendingException();
         Result result = mockResult(Result.Type.PENDING, exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         assertEquals(asList(exception), jUnitReporter.stepErrors);
     }
@@ -212,7 +212,7 @@ public class JUnitReporterTest {
         setUpStepNotifierAndStepErrors(description);
         Result result = mockResult(Result.Type.UNDEFINED);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -232,7 +232,7 @@ public class JUnitReporterTest {
         setUpStepNotifierAndStepErrors(description);
         Result result = mockResult(Result.Type.UNDEFINED);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
@@ -249,7 +249,7 @@ public class JUnitReporterTest {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
-        TestStep testStep = mockTestStep("XX");
+        PickleStepTestStep testStep = mockTestStep("XX");
         Result result = mockResult(Result.Type.UNDEFINED);
 
         jUnitReporter.handleStepResult(testStep, result);
@@ -267,7 +267,7 @@ public class JUnitReporterTest {
         Throwable exception = mock(Throwable.class);
         Result result = mockResult(Result.Type.FAILED, exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
@@ -287,7 +287,7 @@ public class JUnitReporterTest {
         Result result = mockResult(Result.Type.FAILED, exception);
         when(result.getError()).thenReturn(exception);
 
-        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
         assertEquals(asList(exception), jUnitReporter.stepErrors);
     }
@@ -507,8 +507,8 @@ public class JUnitReporterTest {
         return step;
     }
 
-    private TestStep mockTestStep(String stepText) {
-        TestStep testStep = mock(TestStep.class);
+    private PickleStepTestStep mockTestStep(String stepText) {
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         when(testStep.getStepText()).thenReturn(stepText);
         return testStep;
     }

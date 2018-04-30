@@ -6,8 +6,6 @@ import cucumber.api.formatter.AnsiEscapes;
 import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
-import io.cucumber.stepexpression.Argument;
-import io.cucumber.stepexpression.ExpressionArgument;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
 import org.junit.Test;
@@ -320,6 +318,33 @@ public class PrettyFormatterTest {
     }
 
     @Test
+    public void should_print_output_from_afterStep_hooks() throws Throwable {
+        CucumberFeature feature = feature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n");
+        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("second step", "path/step_definitions.java:4");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
+        hookActions.add(createWriteHookAction("printed from afterstep hook"));
+
+        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, hookActions);
+
+        assertThat(formatterOutput, containsString("" +
+            "    Given first step      # path/step_definitions.java:3\n" +
+            "printed from afterstep hook\n" +
+            "    When second step      # path/step_definitions.java:4\n" +
+            "printed from afterstep hook"));
+    }
+
+    @Test
     public void should_color_code_steps_according_to_the_result() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
@@ -333,7 +358,7 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
 
         assertThat(formatterOutput, containsString("" +
-                "    " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
+            "    " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
     }
 
     @Test
@@ -350,7 +375,7 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
 
         assertThat(formatterOutput, containsString("" +
-                AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
+            AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
     }
 
     @Test
@@ -367,7 +392,7 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
 
         assertThat(formatterOutput, containsString("" +
-                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
+            "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
 
     @Test
@@ -380,17 +405,17 @@ public class PrettyFormatterTest {
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "text 'arg1' text 'arg2'";
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'"  + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'"  + AnsiEscapes.RESET));
+            AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'" + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'" + AnsiEscapes.RESET));
     }
 
     @Test
-    public void should_mark_nested_argument_as_part_of_full_argument(){
+    public void should_mark_nested_argument_as_part_of_full_argument() {
         Formats formats = new AnsiFormats();
 
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
@@ -400,37 +425,27 @@ public class PrettyFormatterTest {
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "the order is placed and not yet confirmed";
 
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
-    }
-
-    private static List<cucumber.api.Argument> createArguments(List<Argument> match) {
-        List<cucumber.api.Argument> args = new ArrayList<cucumber.api.Argument>();
-        for (Argument argument : match) {
-            if (argument instanceof ExpressionArgument) {
-                args.add(new DefinitionArgument((ExpressionArgument) argument));
-            }
-        }
-        return args;
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
     @Test
-    public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
+    public void should_mark_nested_arguments_as_part_of_enclosing_argument() {
         Formats formats = new AnsiFormats();
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
         StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not( yet)? )?confirmed)?");
         String stepText = "the order is placed and not yet confirmed";
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {

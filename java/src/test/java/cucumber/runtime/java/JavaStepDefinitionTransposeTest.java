@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
 import cucumber.api.TypeRegistry;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import io.cucumber.datatable.DataTable;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.StepDefinition;
@@ -120,7 +121,7 @@ public class JavaStepDefinitionTransposeTest {
         PickleStep stepWithTable = new PickleStep("some text", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
         List<Argument> arguments = stepDefinition.matchedArguments(stepWithTable);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithTable);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithTable);
         stepDefinitionMatch.runStep(ENGLISH, null);
         return stepDefs;
     }

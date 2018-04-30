@@ -1,12 +1,8 @@
 package cucumber.runtime;
 
-import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 
-import java.util.Collections;
-import java.util.List;
-
-public class HookDefinitionMatch implements DefinitionMatch {
+public class HookDefinitionMatch implements StepDefinitionMatch {
     private final HookDefinition hookDefinition;
 
     public HookDefinitionMatch(HookDefinition hookDefinition) {
@@ -24,22 +20,8 @@ public class HookDefinitionMatch implements DefinitionMatch {
     }
 
     @Override
-    public Match getMatch() {
-        return new Match(Collections.<Argument>emptyList(), hookDefinition.getLocation(false));
-    }
-
-    @Override
-    public String getPattern() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getCodeLocation() {
         return hookDefinition.getLocation(false);
     }
 
-    @Override
-    public List<Argument> getArguments() {
-        return Collections.emptyList();
-    }
 }

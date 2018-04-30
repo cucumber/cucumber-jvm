@@ -1,7 +1,7 @@
 package cucumber.api;
 
 public enum HookType {
-    Before, After;
+    Before, After, BeforeStep, AfterStep;
 
     @Override
     public String toString() {

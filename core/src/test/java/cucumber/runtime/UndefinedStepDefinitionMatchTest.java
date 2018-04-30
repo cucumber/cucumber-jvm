@@ -9,7 +9,7 @@ import static org.mockito.Mockito.mock;
 
 public class UndefinedStepDefinitionMatchTest {
     public final static String ENGLISH = "en";
-    public final UndefinedStepDefinitionMatch match = new UndefinedStepDefinitionMatch(mock(PickleStep.class));
+    public final UndefinedPickleStepDefinitionMatch match = new UndefinedPickleStepDefinitionMatch(mock(PickleStep.class));
 
     @Test(expected=UndefinedStepDefinitionException.class)
     public void throws_ambiguous_step_definitions_exception_when_run() throws Throwable {

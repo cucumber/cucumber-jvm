@@ -6,7 +6,9 @@ import static java.lang.Thread.currentThread;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
+import cucumber.api.java.BeforeStep;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
 import cucumber.runtime.Backend;
@@ -170,10 +172,18 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
                 String[] tagExpressions = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
                 addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
-            } else {
+            } else if (annotation.annotationType().equals(After.class)) {
                 String[] tagExpressions = ((After) annotation).value();
                 long timeout = ((After) annotation).timeout();
                 addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(BeforeStep.class)) {
+                String[] tagExpressions = ((BeforeStep) annotation).value();
+                long timeout = ((BeforeStep) annotation).timeout();
+                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((BeforeStep) annotation).order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(AfterStep.class)) {
+                String[] tagExpressions = ((AfterStep) annotation).value();
+                long timeout = ((AfterStep) annotation).timeout();
+                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((AfterStep) annotation).order(), timeout, objectFactory));
             }
         }
     }
@@ -187,6 +197,18 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     public void addAfterHookDefinition(HookDefinition afterHook) {
         glue.addAfterHook(afterHook);
     }
+
+    @Override
+    public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+        glue.addAfterStepHook(afterStepHook);
+    }
+
+    @Override
+    public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
+        glue.addBeforeStepHook(beforeStepHook);
+
+    }
+
 
     private String expression(Annotation annotation) throws Throwable {
         Method expressionMethod = annotation.getClass().getMethod("value");

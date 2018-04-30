@@ -35,7 +35,7 @@ public class StepDefinitionMatchTest {
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         stepDefinitionMatch.runStep(null, null);
     }
 
@@ -46,7 +46,7 @@ public class StepDefinitionMatchTest {
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         expectedException.expectMessage(
             "" +
@@ -70,7 +70,7 @@ public class StepDefinitionMatchTest {
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         expectedException.expectMessage(
             "" +
@@ -90,7 +90,7 @@ public class StepDefinitionMatchTest {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) mock(PickleTable.class)), asList(mock(PickleLocation.class)));
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Step [I have {int} cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
             "However, the gherkin step has 2 arguments:\n" +
@@ -107,7 +107,7 @@ public class StepDefinitionMatchTest {
         PickleStep step = new PickleStep("I have cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
             "However, the gherkin step has 0 arguments.\n" +
@@ -124,7 +124,7 @@ public class StepDefinitionMatchTest {
         StepDefinition stepDefinition = new StubStepDefinition("I have a datatable", typeRegistry, UndefinedDataTableType.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Could not convert arguments for step [I have a datatable] defined at'{stubbed location with details}'.\n" +
             "It appears you did not register a data table type. The details are in the stacktrace below.\n" +
@@ -150,7 +150,7 @@ public class StepDefinitionMatchTest {
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", typeRegistry, ItemQuantity.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at'{stubbed location with details}'.\n" +
             "The details are in the stacktrace below."
@@ -183,7 +183,7 @@ public class StepDefinitionMatchTest {
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", typeRegistry, ItemQuantity.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Could not convert arguments for step [I have some cukes in my belly] defined at'{stubbed location with details}'.\n" +
             "The details are in the stacktrace below.");
