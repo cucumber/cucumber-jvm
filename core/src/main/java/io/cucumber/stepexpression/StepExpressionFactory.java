@@ -80,44 +80,6 @@ public final class StepExpressionFactory {
     }
 
 
-    public StepExpression createExpression(String expressionString, String tableOrDocStringType) {
-        return createExpression(expressionString, tableOrDocStringType, false);
-    }
-
-    public StepExpression createExpression(String expressionString, final String tableOrDocStringType, final boolean transpose) {
-        if (expressionString == null) throw new NullPointerException("expressionString can not be null");
-        if (tableOrDocStringType == null) throw new NullPointerException("tableOrDocStringType can not be null");
-
-        Expression expression = expressionFactory.createExpression(expressionString);
-
-        RawTableTransformer<?> tableTransform = new RawTableTransformer<Object>() {
-            @Override
-            public Object transform(List<List<String>> raw) {
-                DataTableType type = registry.lookupTableTypeByName(tableOrDocStringType);
-                if (type == null) {
-                    throw new UndefinedTableTypeException(tableOrDocStringType);
-                }
-                if (transpose) {
-                    raw = DataTable.create(raw, StepExpressionFactory.this.tableConverter).transpose().cells();
-                }
-                return type.transform(raw);
-            }
-        };
-
-        DocStringTransformer<?> docStringTransform = new DocStringTransformer<Object>() {
-            @Override
-            public Object transform(String docString) {
-                DataTableType type = registry.lookupTableTypeByName(tableOrDocStringType);
-                if (type == null) {
-                    throw new UndefinedTableTypeException(tableOrDocStringType);
-                }
-                return type.transform(singletonList(singletonList(docString)));
-            }
-        };
-
-        return new StepExpression(expression, docStringTransform, tableTransform);
-    }
-
     private static final class ResolvedType implements TypeResolver {
 
         private final Type type;

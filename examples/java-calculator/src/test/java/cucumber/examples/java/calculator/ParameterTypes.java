@@ -36,7 +36,6 @@ public class ParameterTypes implements Configuration {
         ));
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "entry",
             Entry.class,
             (Map<String, String> row) -> new Entry(
                 Integer.valueOf(row.get("first")),
@@ -46,7 +45,6 @@ public class ParameterTypes implements Configuration {
         ));
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "groceries",
             Grocery.class,
             (Map<String, String> row) -> new Grocery(
                 row.get("name"),

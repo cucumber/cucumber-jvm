@@ -148,7 +148,6 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
                     new JavaStepDefinition(
                         method,
                         expression(annotation),
-                        argumentName(annotation),
                         timeoutMillis(annotation),
                         objectFactory,
                         typeRegistry));
@@ -192,12 +191,6 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     private String expression(Annotation annotation) throws Throwable {
         Method expressionMethod = annotation.getClass().getMethod("value");
         return (String) Utils.invoke(annotation, expressionMethod, 0);
-    }
-
-
-    private String argumentName(Annotation annotation) throws Throwable {
-        //TODO (cucumber-expressions v2): Implement argument expressions
-        return null;
     }
 
     private long timeoutMillis(Annotation annotation) throws Throwable {

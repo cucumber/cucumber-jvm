@@ -16,7 +16,6 @@ public class ParameterTypes implements Configuration {
         final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "person",
             Person.class,
             (Map<String, String> map) -> {
                 Person person = new Person();

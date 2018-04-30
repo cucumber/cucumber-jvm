@@ -27,7 +27,6 @@ class JavaStepDefinition implements StepDefinition {
 
     JavaStepDefinition(Method method,
                        String expression,
-                       String argumentName,
                        long timeoutMillis,
                        ObjectFactory objectFactory,
                        TypeRegistry typeRegistry) {
@@ -35,18 +34,15 @@ class JavaStepDefinition implements StepDefinition {
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
         this.parameterInfos = ParameterInfo.fromMethod(method);
-        this.expression = createExpression(expression, argumentName, typeRegistry);
+        this.expression = createExpression(expression, typeRegistry);
     }
 
-    private StepExpression createExpression(String expression, String argumentName, TypeRegistry typeRegistry) {
+    private StepExpression createExpression(String expression, TypeRegistry typeRegistry) {
         if (parameterInfos.isEmpty()) {
             return new StepExpressionFactory(typeRegistry).createExpression(expression);
-        } else if (argumentName == null) {
-            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            return new StepExpressionFactory(typeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
         } else {
             ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            return new StepExpressionFactory(typeRegistry).createExpression(expression, argumentName, parameterInfo.isTransposed());
+            return new StepExpressionFactory(typeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
         }
     }
 

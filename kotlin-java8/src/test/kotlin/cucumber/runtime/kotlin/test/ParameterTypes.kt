@@ -12,7 +12,6 @@ class ParameterTypes : Configuration {
         val typeRegistry = TypeRegistry(ENGLISH)
 
         typeRegistry.defineDataTableType(DataTableType(
-                "person",
                 LambdaStepdefs.Person::class.java,
                 TableEntryTransformer<LambdaStepdefs.Person>
                 { map: Map<String, String> ->

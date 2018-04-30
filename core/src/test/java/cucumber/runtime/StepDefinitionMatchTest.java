@@ -169,7 +169,6 @@ public class StepDefinitionMatchTest {
         );
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "itemQuantity",
             ItemQuantity.class,
             new TableCellTransformer<ItemQuantity>() {
                 @Override

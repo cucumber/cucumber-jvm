@@ -35,23 +35,9 @@ public class ParameterTypes implements Configuration {
                 tableEntry.get("birthDate"));
         }
     };
-    private final TableRowTransformer<Author> authorRowTransformer = new TableRowTransformer<Author>() {
-        @Override
-        public Author transform(List<String> tableRow) {
-            return new Author(
-                tableRow.get(0),
-                tableRow.get(1),
-                tableRow.get(2));
-        }
-    };
-
     private final TableTransformer<Author> singleAuthorTransformer = new TableTransformer<Author>() {
         @Override
         public Author transform(DataTable table) throws Throwable {
-            if (table.height() == 1) {
-                return authorRowTransformer.transform(table.row(0));
-            }
-
             Map<String, String> tableEntry = table.asMaps().get(0);
             return authorEntryTransformer.transform(tableEntry);
         }
@@ -62,23 +48,14 @@ public class ParameterTypes implements Configuration {
         final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "author",
             Author.class,
-            authorEntryTransformer,
-            true));
+            authorEntryTransformer));
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "simpleAuthor",
-            Author.class,
-            authorRowTransformer));
-
-        typeRegistry.defineDataTableType(new DataTableType(
-            "singleAuthor",
             Author.class,
             singleAuthorTransformer));
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "person",
             Person.class,
             personEntryTransformer));
 

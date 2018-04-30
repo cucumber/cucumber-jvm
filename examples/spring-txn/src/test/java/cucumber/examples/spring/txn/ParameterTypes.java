@@ -16,7 +16,6 @@ public class ParameterTypes implements Configuration {
         final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
         typeRegistry.defineDataTableType(new DataTableType(
-            "message",
             Message.class,
             new TableEntryTransformer<Message>() {
                 @Override

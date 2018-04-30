@@ -71,21 +71,9 @@ public class StepExpressionFactoryTest {
     }
 
     @Test
-    public void table_expression_with_name_creates_single_ingredients_from_table() {
-        registry.defineDataTableType(new DataTableType("ingredient", Ingredient.class, beanMapper(registry)));
-
-        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredient", false);
-
-        List<Argument> match = expression.match("Given some stuff:", tableTransposed);
-        Ingredient ingredient = (Ingredient) match.get(0).getValue();
-        assertEquals(ingredient.name, "chocolate");
-    }
-
-
-    @Test
     public void table_expression_with_type_creates_single_ingredients_from_table() {
 
-        registry.defineDataTableType(new DataTableType("ingredient", Ingredient.class, beanMapper(registry)));
+        registry.defineDataTableType(new DataTableType(Ingredient.class, beanMapper(registry)));
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", Ingredient.class);
         List<Argument> match = expression.match("Given some stuff:", tableTransposed);
 
@@ -94,25 +82,10 @@ public class StepExpressionFactoryTest {
         assertEquals(ingredient.name, "chocolate");
     }
 
-
-    @Test
-    public void table_expression_with_name_creates_list_of_ingredients_from_table() {
-
-        registry.defineDataTableType(new DataTableType("ingredients", Ingredient.class, listBeanMapper(registry)));
-        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredients", false);
-
-        List<Argument> match = expression.match("Given some stuff:", table);
-
-
-        List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
-        Ingredient ingredient = ingredients.get(0);
-        assertEquals(ingredient.name, "chocolate");
-    }
-
     @Test
     public void table_expression_with_list_type_creates_list_of_ingredients_from_table() {
 
-        registry.defineDataTableType(new DataTableType("ingredients", Ingredient.class, listBeanMapper(registry)));
+        registry.defineDataTableType(new DataTableType(Ingredient.class, listBeanMapper(registry)));
 
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", getTypeFromStepDefinition());
         List<Argument> match = expression.match("Given some stuff:", table);

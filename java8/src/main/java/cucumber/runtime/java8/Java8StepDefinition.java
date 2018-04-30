@@ -28,22 +28,12 @@ public class Java8StepDefinition implements StepDefinition {
 
     public static <T extends StepdefBody> Java8StepDefinition create(
         String expression, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
-        return new Java8StepDefinition(expression, null, 0, bodyClass, body, typeRegistry);
-    }
-
-    public static <T extends StepdefBody> Java8StepDefinition create(
-        String expression, String argumentName, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
-        return new Java8StepDefinition(expression, argumentName, 0, bodyClass, body, typeRegistry);
-    }
-
-    public static <T extends StepdefBody> Java8StepDefinition create(
-        String expression, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
-        return new Java8StepDefinition(expression, null, timeoutMillis, bodyClass, body, typeRegistry);
+        return new Java8StepDefinition(expression, 0, bodyClass, body, typeRegistry);
     }
 
     public static <T extends StepdefBody> StepDefinition create(
-        String expression, String argumentName, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
-        return new Java8StepDefinition(expression, argumentName, timeoutMillis, bodyClass, body, typeRegistry);
+        String expression, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
+        return new Java8StepDefinition(expression, timeoutMillis, bodyClass, body, typeRegistry);
     }
 
     private final long timeoutMillis;
@@ -56,28 +46,25 @@ public class Java8StepDefinition implements StepDefinition {
     private final Method method;
 
     private <T extends StepdefBody> Java8StepDefinition(String expression,
-                                                       String argumentName,
-                                                       long timeoutMillis,
-                                                       Class<T> bodyClass,
-                                                       T body,
-                                                       TypeRegistry typeRegistry) {
+                                                        long timeoutMillis,
+                                                        Class<T> bodyClass,
+                                                        T body,
+                                                        TypeRegistry typeRegistry) {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
         this.location = new Exception().getStackTrace()[5];
         this.method = getAcceptMethod(body.getClass());
         this.parameterInfos = fromTypes(resolveRawArguments(bodyClass, body.getClass()));
-        this.expression = createExpression(expression, argumentName, typeRegistry);
+        this.expression = createExpression(expression, typeRegistry);
     }
 
-    private StepExpression createExpression(String expression, String argumentName, TypeRegistry typeRegistry) {
+    private StepExpression createExpression(String expression, TypeRegistry typeRegistry) {
         if (parameterInfos.isEmpty()) {
             return new StepExpressionFactory(typeRegistry).createExpression(expression);
-        } else if (argumentName == null) {
+        } else {
             ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
             return new StepExpressionFactory(typeRegistry).createExpression(expression, new LambdaTypeResolver(parameterInfo));
-        } else {
-            return new StepExpressionFactory(typeRegistry).createExpression(expression, argumentName);
         }
     }
 
