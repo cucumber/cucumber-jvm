@@ -10,7 +10,7 @@ public final class DefinitionArgument implements Argument {
 
     private final io.cucumber.cucumberexpressions.Group group;
 
-    public DefinitionArgument(ExpressionArgument expressionArgument) {
+    private DefinitionArgument(ExpressionArgument expressionArgument) {
         group = expressionArgument.getGroup();
     }
 

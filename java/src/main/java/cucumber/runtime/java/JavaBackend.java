@@ -154,7 +154,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
                         objectFactory,
                         typeRegistry));
             }
-        } catch (DuplicateStepDefinitionException e) {
+        } catch (CucumberException e) {
             throw e;
         } catch (Throwable e) {
             throw new CucumberException(e);

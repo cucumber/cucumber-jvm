@@ -1,5 +1,7 @@
 package io.cucumber.stepexpression;
 
+import cucumber.runtime.CucumberException;
+import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.datatable.DataTable;
 
@@ -47,6 +49,7 @@ public final class StepExpressionFactory {
     public StepExpression createExpression(String expressionString, TypeResolver tableOrDocStringType) {
         return createExpression(expressionString, tableOrDocStringType, false);
     }
+
     public StepExpression createExpression(String expressionString, final Type tableOrDocStringType, final boolean transpose) {
         return createExpression(expressionString, new ResolvedType(tableOrDocStringType), transpose);
     }
@@ -55,7 +58,12 @@ public final class StepExpressionFactory {
         if (expressionString == null) throw new NullPointerException("expressionString can not be null");
         if (tableOrDocStringType == null) throw new NullPointerException("tableOrDocStringType can not be null");
 
-        Expression expression = expressionFactory.createExpression(expressionString);
+        final Expression expression;
+        try {
+            expression = expressionFactory.createExpression(expressionString);
+        } catch (UndefinedParameterTypeException e) {
+            throw registerTypeInConfiguration(expressionString, e);
+        }
 
         RawTableTransformer<?> tableTransform = new RawTableTransformer<Object>() {
             @Override
@@ -75,6 +83,14 @@ public final class StepExpressionFactory {
         return new StepExpression(expression, docStringTransform, tableTransform);
     }
 
+    private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {
+        return new CucumberException(String.format("" +
+                "Could not create a cucumber expression for '%s'.\n" +
+                "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
+                "You can find the documentation here: TODO URL",
+            expressionString
+        ), e);
+    }
 
     private static final class ResolvedType implements TypeResolver {
 
