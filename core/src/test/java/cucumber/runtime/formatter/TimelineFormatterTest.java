@@ -28,7 +28,10 @@ public class TimelineFormatterTest {
     private static final String REPORT_JS = "report.js";
 
     private final Gson gson = new GsonBuilder().create();
-    private final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+    private final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", 
+        "cucumber/runtime/formatter/FormatterParallelTests2.feature",
+        "cucumber/runtime/formatter/FormatterParallelTestWithTag.feature"
+    );
     private final Map<String, Result> stepsToResult = new HashMap<String, Result>();
     
     private File reportDir;
@@ -49,6 +52,12 @@ public class TimelineFormatterTest {
         stepsToResult.put("step_10", result("passed"));
         stepsToResult.put("step_20", result("passed"));
         stepsToResult.put("step_30", result("passed"));
+        stepsToResult.put("bg_100", result("passed"));
+        stepsToResult.put("bg_200", result("passed"));
+        stepsToResult.put("bg_300", result("passed"));
+        stepsToResult.put("step_100", result("passed"));
+        stepsToResult.put("step_200", result("passed"));
+        stepsToResult.put("step_300", result("passed"));
     }
     
     @Test
@@ -57,8 +66,14 @@ public class TimelineFormatterTest {
         
         assertTrue(REPORT_JS + ": did not exist in output dir", new File(reportDir, REPORT_JS).exists());
 
-        final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.3.1.min.js", "vis.min.css", "vis.min.js", "vis.override.css");
-        for(final String e : files) {
+        final List<String> expectedFiles = Arrays.asList("index.html", "formatter.js", "report.css", "jquery-3.3.1.min.js", 
+            "vis.min.css", "vis.min.js", "vis.override.css",
+            "chosen.jquery.min.js", "chosen.min.css", "chosen.override.css", "chosen-sprite.png"
+        );
+        final List<String> actualFiles = Arrays.asList(reportDir.list());
+        assertEquals(String.format("file count not as expected.\r\nExpected: %s\r\nActual: %s", expectedFiles, actualFiles), actualFiles.size(), expectedFiles.size() + 1);
+        
+        for(final String e : expectedFiles) {
             final File actualFile = new File(reportDir, e);
             assertTrue(e + ": did not exist in output dir", actualFile.exists());
             final String actual = TestHelper.readFileContents(actualFile.getAbsolutePath());
@@ -77,19 +92,34 @@ public class TimelineFormatterTest {
             "  {\n" +
             "    \"id\": \"feature-1;scenario-1\",\n" +
             "    \"feature\": \"Feature_1\",\n" +
+            "    \"scenario\": \"Scenario_1\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 16042,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario_1\",\n" +
+            "    \"content\": \"Feature_1<br/>Scenario_1\",\n" +
+            "    \"tags\": \"\",\n" +
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": \"feature-2;scenario-2\",\n" +
             "    \"feature\": \"Feature_2\",\n" +
+            "    \"scenario\": \"Scenario_2\",\n" +
             "    \"start\": 17276,\n" +
             "    \"end\": 33318,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario_2\",\n" +
+            "    \"content\": \"Feature_2<br/>Scenario_2\",\n" +
+            "    \"tags\": \"\",\n" +
+            "    \"className\": \"passed\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"id\": \"feature-3;scenario-3\",\n" +
+            "    \"feature\": \"Feature_3\",\n" +
+            "    \"scenario\": \"Scenario_3\",\n" +
+            "    \"start\": 0,\n" +
+            "    \"end\": 16042,\n" +
+            "    \"group\": 0,\n" +
+            "    \"content\": \"Feature_3<br/>Scenario_3\",\n" +
+            "    \"tags\": \"@tag,\",\n" +
             "    \"className\": \"passed\"\n" +
             "  }\n" +
             "]", TimelineFormatter.TestData[].class);
@@ -116,19 +146,34 @@ public class TimelineFormatterTest {
             "  {\n" +
             "    \"id\": \"feature-1;scenario-1\",\n" +
             "    \"feature\": \"Feature_1\",\n" +
+            "    \"scenario\": \"Scenario_1\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 16042,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario_1\",\n" +
+            "    \"content\": \"Feature_1<br/>Scenario_1\",\n" +
+            "    \"tags\": \"\",\n" +
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": \"feature-2;scenario-2\",\n" +
             "    \"feature\": \"Feature_2\",\n" +
+            "    \"scenario\": \"Scenario_2\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 16042,\n" +
             "    \"group\": 0,\n" +
-            "    \"content\": \"Scenario_2\",\n" +
+            "    \"content\": \"Feature_2<br/>Scenario_2\",\n" +
+            "    \"tags\": \"\",\n" +
+            "    \"className\": \"passed\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"id\": \"feature-3;scenario-3\",\n" +
+            "    \"feature\": \"Feature_3\",\n" +
+            "    \"scenario\": \"Scenario_3\",\n" +
+            "    \"start\": 0,\n" +
+            "    \"end\": 16042,\n" +
+            "    \"group\": 0,\n" +
+            "    \"content\": \"Feature_3<br/>Scenario_3\",\n" +
+            "    \"tags\": \"@tag,\",\n" +
             "    \"className\": \"passed\"\n" +
             "  }\n" +
             "]", TimelineFormatter.TestData[].class);
@@ -141,12 +186,16 @@ public class TimelineFormatterTest {
             "  {\n" +
             "    \"id\": 1,\n" +
             "    \"content\": \"Thread 1\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"id\": 2,\n" +
+            "    \"content\": \"Thread 3\"\n" +
             "  }\n" +
             "]", TimelineFormatter.GroupData[].class);
 
         final ActualReportOutput actualOutput = runReport(reportJsFile);
         
-        assertTimelineDataIsAsExpected(expectedTests, expectedGroups, actualOutput);;
+        assertTimelineDataIsAsExpected(expectedTests, expectedGroups, actualOutput);
     }
 
     private ActualReportOutput runReport(final File reportJsFile) throws IOException {
@@ -182,10 +231,12 @@ public class TimelineFormatterTest {
 
             assertEquals(String.format("id on item %s, was not as expected", i), expected.id, actual.id);
             assertEquals(String.format("feature on item %s, was not as expected", i), expected.feature, actual.feature);
+            assertEquals(String.format("scenario on item %s, was not as expected", i), expected.scenario, actual.scenario);
             assertNotNull(String.format("startTime on item %s, should not be null", i), actual.startTime);
             assertNotNull(String.format("endTime on item %s, should not be null", i), actual.endTime);
             assertEquals(String.format("className on item %s, was not as expected", i), expected.className, actual.className);
             assertEquals(String.format("content on item %s, was not as expected", i), expected.content, actual.content);
+            assertEquals(String.format("tags on item %s, was not as expected", i), expected.tags, actual.tags);
             assertNotNull(String.format("threadId on item %s, should not be null", i), actual.threadId);
             usedThreads.add(actual.threadId);
         }

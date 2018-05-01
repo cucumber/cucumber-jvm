@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.TestCase;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
@@ -13,6 +14,7 @@ import cucumber.runtime.io.URLOutputStream;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
+import gherkin.pickles.PickleTag;
 
 import java.io.Closeable;
 import java.io.File;
@@ -39,15 +41,22 @@ public class TimelineFormatter implements Formatter {
             return o1.id.compareTo(o2.id);
         }
     };
+    private static final String CONTENT_TEMPLATE = "%s<br/>%s";
 
     //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{
         "/cucumber/formatter/timeline/index.html",
         "/cucumber/formatter/timeline/formatter.js",
+        "/cucumber/formatter/timeline/report.css",
         "/cucumber/formatter/timeline/jquery-3.3.1.min.js",
         "/cucumber/formatter/timeline/vis.min.css",
         "/cucumber/formatter/timeline/vis.min.js",
-        "/cucumber/formatter/timeline/vis.override.css"};
+        "/cucumber/formatter/timeline/vis.override.css",
+        "/cucumber/formatter/timeline/chosen.jquery.min.js",
+        "/cucumber/formatter/timeline/chosen.min.css",
+        "/cucumber/formatter/timeline/chosen.override.css",
+        "/cucumber/formatter/timeline/chosen-sprite.png"
+    };
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -195,6 +204,8 @@ public class TimelineFormatter implements Formatter {
         final String id;
         @SerializedName("feature")
         final String feature;
+        @SerializedName("scenario")
+        final String scenario;
         @SerializedName("start")
         final long startTime;
         @SerializedName("end")
@@ -205,16 +216,28 @@ public class TimelineFormatter implements Formatter {
         final String content;
         @SerializedName("className")
         String className;
-
+        @SerializedName("tags")
+        final String tags;
+        
         TestData(final TestCaseStarted started, long threadId) {
             final String uri = started.testCase.getUri();
             final TestSourcesModel.AstNode astNode = testSources.getAstNode(uri, started.testCase.getLine());
 
             this.id = TestSourcesModel.calculateId(astNode);
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
+            this.scenario = started.testCase.getName();
+            this.content = String.format(CONTENT_TEMPLATE, this.feature, this.scenario);
             this.startTime = System.currentTimeMillis();
             this.threadId = threadId;
-            this.content = started.testCase.getName();
+            this.tags = buildTagsValue(started.testCase);
+        }
+
+        private String buildTagsValue(final TestCase testCase) {
+            final StringBuilder tags = new StringBuilder();
+            for(final PickleTag tag : testCase.getTags()) {
+                tags.append(tag.getName().toLowerCase()).append(",");
+            }
+            return tags.toString();
         }
 
         public void end(final TestCaseFinished event) {
