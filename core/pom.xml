@@ -52,11 +52,7 @@
             <artifactId>jsoup</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit</artifactId>
@@ -105,8 +101,6 @@
                 <configuration>
                     <instructions>
                         <Bundle-Description />
-                        <Export-Package>cucumber.*</Export-Package>
-                        <Export-Package>io.cucumber.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>

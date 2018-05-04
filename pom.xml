@@ -81,7 +81,6 @@
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <joda-time.version>2.9.9</joda-time.version>
         <osgi.version>6.0.0</osgi.version>
         <!-- At some version above this (not sure which one), pax-exam and/or pax-url stops working on Java 7. -->
         <pax-exam.version>4.3.0</pax-exam.version>
@@ -90,7 +89,7 @@
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
         <cucumber-expressions.version>5.0.17</cucumber-expressions.version>
-        <datatable.version>0.0.1-SNAPSHOT</datatable.version>
+        <datatable.version>1.0.3</datatable.version>
     </properties>
     <licenses>
         <license>
@@ -479,11 +478,6 @@
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>${xmlunit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
             </dependency>
 
             <dependency>
