@@ -83,12 +83,14 @@
         <xmlunit.version>1.6</xmlunit.version>
         <joda-time.version>2.9.9</joda-time.version>
         <osgi.version>6.0.0</osgi.version>
+        <eclipse.osgi.version>3.10.100.v20150529-1857</eclipse.osgi.version>
         <!-- At some version above this (not sure which one), pax-exam and/or pax-url stops working on Java 7. -->
         <pax-exam.version>4.3.0</pax-exam.version>
         <pax-url.version>2.2.0</pax-url.version>
         <felix.version>5.6.6</felix.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
+        <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
     </properties>
     <licenses>
         <license>
@@ -495,6 +497,11 @@
                 <version>${osgi.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>org.eclipse.osgi</artifactId>
+                <version>${eclipse.osgi.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam</artifactId>
                 <version>${pax-exam.version}</version>
@@ -528,6 +535,12 @@
                 <groupId>net.jodah</groupId>
                 <artifactId>typetools</artifactId>
                 <version>${typetools.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -818,6 +831,7 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.0</version>
                 </plugin>
+                
                 <!-- Non-standard plugins -->
                 <plugin>
                     <groupId>com.lazerycode.selenium</groupId>

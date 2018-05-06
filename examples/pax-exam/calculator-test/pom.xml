@@ -26,6 +26,12 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-osgi</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>org.eclipse.osgi</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
 

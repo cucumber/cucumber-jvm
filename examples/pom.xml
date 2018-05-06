@@ -19,6 +19,7 @@
         <module>pax-exam</module>
         <module>java-wicket</module>
         <module>java-webbit-websockets-selenium</module>
+        <module>tycho-surefire</module>
     </modules>
 
     <profiles>

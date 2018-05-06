@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tycho Surefire Example Test Fragment
+Bundle-SymbolicName: tycho-surefire-example-test;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Fragment-Host: tycho-surefire-example;bundle-version="3.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.osgi.framework;version="1.5.0",
+ org.osgi.framework.wiring;version="1.2.0"
+Bundle-ClassPath: .,
+ lib/cucumber-core.jar,
+ lib/cucumber-html.jar,
+ lib/cucumber-java.jar,
+ lib/cucumber-junit.jar,
+ lib/cucumber-jvm-deps.jar,
+ lib/cucumber-osgi.jar,
+ lib/gherkin.jar,
+ lib/hamcrest-core.jar,
+ lib/junit.jar,
+ lib/slf4j-api.jar,
+ lib/tag-expressions.jar
+Require-Bundle: org.junit;bundle-version="4.12.0",
+ javax.inject;bundle-version="1.0.0"
