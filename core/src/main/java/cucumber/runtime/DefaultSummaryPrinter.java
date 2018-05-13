@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.SummaryPrinter;
+import cucumber.api.SummaryPrintingInterface;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -13,27 +14,27 @@ public class DefaultSummaryPrinter implements SummaryPrinter {
     }
 
     @Override
-    public void print(Runtime runtime) {
+    public void print(SummaryPrintingInterface summaryPrinting) {
         out.println();
-        printStats(runtime);
+        printStats(summaryPrinting);
         out.println();
-        printErrors(runtime);
-        printSnippets(runtime);
+        printErrors(summaryPrinting);
+        printSnippets(summaryPrinting);
     }
 
-    private void printStats(Runtime runtime) {
-        runtime.printStats(out);
+    private void printStats(SummaryPrintingInterface summaryPrinting) {
+        summaryPrinting.printStats(out);
     }
 
-    private void printErrors(Runtime runtime) {
-        for (Throwable error : runtime.getErrors()) {
+    private void printErrors(SummaryPrintingInterface summaryPrinting) {
+        for (Throwable error : summaryPrinting.getErrors()) {
             error.printStackTrace(out);
             out.println();
         }
     }
 
-    private void printSnippets(Runtime runtime) {
-        List<String> snippets = runtime.getSnippets();
+    private void printSnippets(SummaryPrintingInterface summaryPrinting) {
+        List<String> snippets = summaryPrinting.getSnippets();
         if (!snippets.isEmpty()) {
             out.append("\n");
             out.println("You can implement missing steps with the snippets below:");

@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.SummaryPrintingInterface;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * This is the main entry point for running Cucumber features.
  */
-public class Runtime {
+public class Runtime implements SummaryPrintingInterface {
 
     final Stats stats; // package private to be available for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
@@ -143,7 +144,7 @@ public class Runtime {
         summaryPrinter.print(this);
     }
 
-    void printStats(PrintStream out) {
+    public void printStats(PrintStream out) {
         stats.printStats(out, runtimeOptions.isStrict());
     }
 
