@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<testng-results failed="0" passed="2" skipped="0" total="2">
+    <suite duration-ms="0" name="cucumber.runtime.formatter.TestNGFormatter">
+        <test duration-ms="0" name="cucumber.runtime.formatter.TestNGFormatter">
+            <class name="Feature_1">
+                <test-method duration-ms="0" finished-at="yyyy-MM-ddTHH:mm:ssZ" name="Scenario_1" started-at="yyyy-MM-ddTHH:mm:ssZ" status="PASS"/>
+            </class>
+            <class name="Feature_2">
+                <test-method duration-ms="0" finished-at="yyyy-MM-ddTHH:mm:ssZ" name="Scenario_2" started-at="yyyy-MM-ddTHH:mm:ssZ" status="PASS"/>
+            </class>
+        </test>
+    </suite>
+</testng-results>

@@ -14,21 +14,53 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class RuntimeGlue implements Glue {
-    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
-    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
+    final Map<String, StepDefinition> stepDefinitionsByPattern;
+    final List<HookDefinition> beforeHooks;
+    final List<HookDefinition> beforeStepHooks;
+    final List<HookDefinition> afterHooks;
+    final List<HookDefinition> afterStepHooks;
+    final Map<String, CacheEntry> matchedStepDefinitionsCache;
     private final LocalizedXStreams localizedXStreams;
 
     public RuntimeGlue(LocalizedXStreams localizedXStreams) {
-        this(null, localizedXStreams);
+        this(localizedXStreams,
+            Collections.<String, StepDefinition>emptyMap(),
+            Collections.<HookDefinition>emptyList(),
+            Collections.<HookDefinition>emptyList(),
+            Collections.<HookDefinition>emptyList(),
+            Collections.<HookDefinition>emptyList(), 
+            Collections.<String, CacheEntry>emptyMap());
     }
 
     @Deprecated
     public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
+        this(localizedXStreams);
+    }
+
+    protected RuntimeGlue(RuntimeGlue other) {
+        this(other.localizedXStreams, other.stepDefinitionsByPattern, other.beforeHooks, other.beforeStepHooks, other.afterHooks, other.afterStepHooks, other.matchedStepDefinitionsCache);
+
+    }
+
+    private RuntimeGlue(LocalizedXStreams localizedXStreams,
+                        Map<String, StepDefinition> stepDefinitionsByPattern,
+                        List<HookDefinition> beforeHooks,
+                        List<HookDefinition> beforeStepHooks,
+                        List<HookDefinition> afterHooks,
+                        List<HookDefinition> afterStepHooks,
+                        Map<String, CacheEntry> matchedStepDefinitionsCache) {
         this.localizedXStreams = localizedXStreams;
+        this.stepDefinitionsByPattern = new TreeMap<String, StepDefinition>(stepDefinitionsByPattern);
+        this.beforeHooks = new ArrayList<HookDefinition>(beforeHooks);
+        this.beforeStepHooks = new ArrayList<HookDefinition>(beforeStepHooks);
+        this.afterHooks = new ArrayList<HookDefinition>(afterHooks);
+        this.afterStepHooks = new ArrayList<HookDefinition>(afterStepHooks);
+        this.matchedStepDefinitionsCache = new HashMap<String, CacheEntry>(matchedStepDefinitionsCache);
+    }
+
+    @Override
+    public Glue clone() {
+        return new RuntimeGlue(this);
     }
 
     @Override
@@ -51,6 +83,7 @@ public class RuntimeGlue implements Glue {
         beforeStepHooks.add(hookDefinition);
         Collections.sort(beforeStepHooks, new HookComparator(true));
     }
+
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
@@ -63,6 +96,12 @@ public class RuntimeGlue implements Glue {
         Collections.sort(afterStepHooks, new HookComparator(false));
     }
 
+    @Override
+    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
+        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
+            stepDefinitionReporter.stepDefinition(stepDefinition);
+        }
+    }
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
@@ -113,13 +152,6 @@ public class RuntimeGlue implements Glue {
             }
         }
         return result;
-    }
-
-    @Override
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            stepDefinitionReporter.stepDefinition(stepDefinition);
-        }
     }
 
     @Override

@@ -10,10 +10,13 @@ import cucumber.runtime.java.guice.ScenarioScope;
  */
 public class GuiceFactory implements ObjectFactory {
 
-    private final Injector injector;
+    private final ThreadLocal<Injector> injector = new ThreadLocal<Injector>(){
+        protected Injector initialValue() {
+            return new InjectorSourceFactory(Env.INSTANCE).create().getInjector();
+        }
+    };
 
     public GuiceFactory() {
-        this(new InjectorSourceFactory(Env.INSTANCE).create().getInjector());
     }
 
     /**
@@ -23,7 +26,7 @@ public class GuiceFactory implements ObjectFactory {
      * @param injector an injector configured with a binding for <code>cucumber.runtime.java.guice.ScenarioScope</code>.
      */
     GuiceFactory(Injector injector) {
-        this.injector = injector;
+        this.injector.set(injector);
     }
 
     public boolean addClass(Class<?> clazz) {
@@ -31,15 +34,15 @@ public class GuiceFactory implements ObjectFactory {
     }
 
     public void start() {
-        injector.getInstance(ScenarioScope.class).enterScope();
+        injector.get().getInstance(ScenarioScope.class).enterScope();
     }
 
     public void stop() {
-        injector.getInstance(ScenarioScope.class).exitScope();
+        injector.get().getInstance(ScenarioScope.class).exitScope();
     }
 
     public <T> T getInstance(Class<T> clazz) {
-        return injector.getInstance(clazz);
+        return injector.get().getInstance(clazz);
     }
 
 }

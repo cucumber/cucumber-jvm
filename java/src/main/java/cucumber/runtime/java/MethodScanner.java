@@ -6,6 +6,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Glue;
 import cucumber.runtime.Utils;
 
 import java.lang.annotation.Annotation;
@@ -28,7 +29,7 @@ class MethodScanner {
      * @param javaBackend the backend where stepdefs and hooks will be registered
      * @param gluePaths   where to look
      */
-    public void scan(JavaBackend javaBackend, List<String> gluePaths) {
+    public void scan(JavaBackend javaBackend, Glue glue,  List<String> gluePaths) {
         for (String gluePath : gluePaths) {
             for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, packageName(gluePath))) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
@@ -39,7 +40,7 @@ class MethodScanner {
                 if (glueCodeClass != null && glueCodeClass != Object.class) {
                     for (Method method : glueCodeClass.getMethods()) {
                         if (method.getDeclaringClass() != Object.class) {
-                            scan(javaBackend, method, glueCodeClass);
+                            scan(javaBackend, glue, method, glueCodeClass);
                         }
                     }
                 }
@@ -54,15 +55,15 @@ class MethodScanner {
      * @param method        a candidate for being a stepdef or hook.
      * @param glueCodeClass the class where the method is declared.
      */
-    public void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
+    public void scan(JavaBackend javaBackend, Glue glue, Method method, Class<?> glueCodeClass) {
         Annotation[] methodAnnotations = method.getAnnotations();
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation)) {
                 validateMethod(method, glueCodeClass);
-                javaBackend.addHook(annotation, method);
+                javaBackend.addHook(glue, annotation, method);
             } else if (isStepdefAnnotation(annotation)) {
                 validateMethod(method, glueCodeClass);
-                javaBackend.addStepDefinition(annotation, method);
+                javaBackend.addStepDefinition(glue, annotation, method);
             }
         }
     }

@@ -52,7 +52,6 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     private final ClassFinder classFinder;
 
     private final MethodScanner methodScanner;
-    private Glue glue;
     private List<Class<? extends GlueBase>> glueBaseClasses = new ArrayList<Class<? extends GlueBase>>();
 
     /**
@@ -76,9 +75,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
-        this.glue = glue;
         // Scan for Java7 style glue (annotated methods)
-        methodScanner.scan(this, gluePaths);
+        methodScanner.scan(this, glue, gluePaths);
 
         // Scan for Java8 style glue (lambdas)
         for (final String gluePath : gluePaths) {
@@ -104,8 +102,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
      * @param glueCodeClass the class implementing the method. Must not be a subclass of the class implementing the method.
      */
     public void loadGlue(Glue glue, Method method, Class<?> glueCodeClass) {
-        this.glue = glue;
-        methodScanner.scan(this, method, glueCodeClass);
+        methodScanner.scan(this, glue, method, glueCodeClass);
     }
 
     @Override
@@ -114,24 +111,26 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void buildWorld() {
+    public void buildWorld(Glue glue) {
         objectFactory.start();
 
         // Instantiate all the stepdef classes for java8 - the stepdef will be initialised
         // in the constructor.
         try {
             INSTANCE.set(this);
+            GLUE.set(glue);
             glue.removeScenarioScopedGlue();
             for (Class<? extends GlueBase> glueBaseClass : glueBaseClasses) {
                 objectFactory.getInstance(glueBaseClass);
             }
         } finally {
             INSTANCE.remove();
+            GLUE.remove();
         }
     }
 
     @Override
-    public void disposeWorld() {
+    public void disposeWorld(Glue glue) {
         objectFactory.stop();
     }
 
@@ -140,7 +139,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
     }
 
-    void addStepDefinition(Annotation annotation, Method method) {
+    void addStepDefinition(Glue glue, Annotation annotation, Method method) {
         try {
             if (objectFactory.addClass(method.getDeclaringClass())) {
                 glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeoutMillis(annotation), objectFactory));
@@ -153,49 +152,49 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void addStepDefinition(StepDefinition stepDefinition) {
+    public void addStepDefinition(Glue glue, StepDefinition stepDefinition) {
         glue.addStepDefinition(stepDefinition);
     }
 
-    void addHook(Annotation annotation, Method method) {
+    void addHook(Glue glue, Annotation annotation, Method method) {
         if (objectFactory.addClass(method.getDeclaringClass())) {
             if (annotation.annotationType().equals(Before.class)) {
                 String[] tagExpressions = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
-                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+                addBeforeHookDefinition(glue, new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(After.class)) {
                 String[] tagExpressions = ((After) annotation).value();
                 long timeout = ((After) annotation).timeout();
-                addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+                addAfterHookDefinition(glue, new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(BeforeStep.class)) {
                 String[] tagExpressions = ((BeforeStep) annotation).value();
                 long timeout = ((BeforeStep) annotation).timeout();
-                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((BeforeStep) annotation).order(), timeout, objectFactory));
+                addBeforeStepHookDefinition(glue, new JavaHookDefinition(method, tagExpressions, ((BeforeStep) annotation).order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(AfterStep.class)) {
                 String[] tagExpressions = ((AfterStep) annotation).value();
                 long timeout = ((AfterStep) annotation).timeout();
-                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((AfterStep) annotation).order(), timeout, objectFactory));
+                addAfterStepHookDefinition(glue, new JavaHookDefinition(method, tagExpressions, ((AfterStep) annotation).order(), timeout, objectFactory));
             }
         }
     }
 
     @Override
-    public void addBeforeHookDefinition(HookDefinition beforeHook) {
+    public void addBeforeHookDefinition(Glue glue, HookDefinition beforeHook) {
         glue.addBeforeHook(beforeHook);
     }
 
     @Override
-    public void addAfterHookDefinition(HookDefinition afterHook) {
+    public void addAfterHookDefinition(Glue glue, HookDefinition afterHook) {
         glue.addAfterHook(afterHook);
     }
 
     @Override
-    public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+    public void addAfterStepHookDefinition(Glue glue, HookDefinition afterStepHook) {
         glue.addAfterStepHook(afterStepHook);
     }
 
     @Override
-    public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
+    public void addBeforeStepHookDefinition(Glue glue, HookDefinition beforeStepHook) {
         glue.addBeforeStepHook(beforeStepHook);
 
     }

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 import static cucumber.runtime.Arguments.createArgument;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
@@ -26,6 +27,36 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class PrettyFormatterTest {
+
+    @Test
+    public void shouldHandleTestsBeingRunConcurrently() {
+        final Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("bg_1", result("passed"));
+        stepsToResult.put("bg_2", result("passed"));
+        stepsToResult.put("bg_3", result("passed"));
+        stepsToResult.put("step_1", result("passed"));
+        stepsToResult.put("step_2", result("passed"));
+        stepsToResult.put("step_3", result("passed"));
+        stepsToResult.put("bg_10", result("passed"));
+        stepsToResult.put("bg_20", result("passed"));
+        stepsToResult.put("bg_30", result("passed"));
+        stepsToResult.put("step_10", result("passed"));
+        stepsToResult.put("step_20", result("passed"));
+        stepsToResult.put("step_30", result("passed"));
+
+        final List<String> features = asList("cucumber/runtime/formatter/FormatterParallelTests.feature", "cucumber/runtime/formatter/FormatterParallelTests2.feature");
+
+        final StringBuilder out = new StringBuilder();
+        final PrettyFormatter formatter = new PrettyFormatter(out);
+        formatter.setMonochrome(true);
+
+        TestHelper.runFormatterWithThreads(formatter, features, features.size(), stepsToResult);
+        String actual = out.toString();
+        String expected = new Scanner(getClass().getResourceAsStream("PrettyFormatterParallelExpected1.txt"), "UTF-8").useDelimiter("\\A").next();
+        String expected2 = new Scanner(getClass().getResourceAsStream("PrettyFormatterParallelExpected2.txt"), "UTF-8").useDelimiter("\\A").next();
+
+        TestHelper.assertEqualsOr(actual, expected, expected2);
+    }
 
     @Test
     public void should_align_the_indentation_of_location_strings() throws Throwable {
@@ -42,7 +73,7 @@ public class PrettyFormatterTest {
 
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
 
-        assertThat(formatterOutput, equalTo("" +
+        assertThat(formatterOutput, equalTo("\n" +
                 "Feature: feature name\n" +
                 "\n" +
                 "  Scenario: scenario name # path/test.feature:2\n" +
@@ -142,7 +173,7 @@ public class PrettyFormatterTest {
 
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
 
-        assertThat(formatterOutput, equalTo("" +
+        assertThat(formatterOutput, equalTo("\n" +
                 "Feature: feature name\n" +
                 "    feature description\n" +
                 "    ...\n" +
@@ -192,7 +223,7 @@ public class PrettyFormatterTest {
 
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
 
-        assertThat(formatterOutput, equalTo("" +
+        assertThat(formatterOutput, equalTo("\n" +
                 "@feature_tag\n" +
                 "Feature: feature name\n" +
                 "\n" +

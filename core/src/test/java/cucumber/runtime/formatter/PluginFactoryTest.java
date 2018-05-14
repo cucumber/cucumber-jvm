@@ -59,6 +59,22 @@ public class PluginFactoryTest {
     }
 
     @Test
+    public void instantiates_timeline_plugin_with_dir_arg() throws IOException {
+        Object plugin = fc.create("timeline:" + TempDir.createTempDirectory().getAbsolutePath());
+        assertEquals(TimelineFormatter.class, plugin.getClass());
+    }
+
+    @Test
+    public void fails_to_instantiate_timeline_plugin_without_dir_arg() throws IOException {
+        try {
+            fc.create("timeline");
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("You must supply an output argument to timeline. Like so: timeline:output", e.getMessage());
+        }
+    }
+
+    @Test
     public void instantiates_pretty_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create("pretty:" + Utils.toURL(TempDir.createTempFile().getAbsolutePath()));
         assertEquals(PrettyFormatter.class, plugin.getClass());

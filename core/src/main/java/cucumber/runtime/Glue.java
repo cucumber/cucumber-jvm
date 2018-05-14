@@ -8,8 +8,12 @@ import java.util.List;
 
 //TODO: now that this is just basically a java bean storing values
 // I don't think it needs an interface anymore...
+// TODO: would be nice to separate the methods in this interface into a GlueBuilder (use before all tests) and GlueContent (used during test execution) but requires changes in many areas so will leave for now
 public interface Glue {
-
+    
+    Glue clone();
+    
+    //<editor-fold desc="pre test execution">
     void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
     void addBeforeHook(HookDefinition hookDefinition);

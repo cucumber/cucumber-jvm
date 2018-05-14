@@ -4,6 +4,7 @@ import cucumber.api.Argument;
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
+import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -51,10 +52,10 @@ public class RunnerTest {
         runner.runPickle(createPickleEventWithSteps(asList(step)));
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
-        inOrder.verify(backend).buildWorld();
+        inOrder.verify(backend).buildWorld(Matchers.<Glue>any());
         inOrder.verify(beforeHook).execute(Matchers.<Scenario>any());
         inOrder.verify(afterHook).execute(Matchers.<Scenario>any());
-        inOrder.verify(backend).disposeWorld();
+        inOrder.verify(backend).disposeWorld(Matchers.<Glue>any());
     }
 
     @Test

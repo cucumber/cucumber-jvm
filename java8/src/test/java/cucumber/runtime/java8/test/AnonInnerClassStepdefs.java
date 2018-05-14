@@ -11,6 +11,7 @@ public class AnonInnerClassStepdefs implements GlueBase {
 
     public AnonInnerClassStepdefs() {
         JavaBackend.INSTANCE.get().addStepDefinition(
+            JavaBackend.GLUE.get(),
             new Java8StepDefinition(
                 "^I have (\\d+) java7 beans in my (.*)", 0, StepdefBody.A2.class,
                 new StepdefBody.A2<Integer, String>() {

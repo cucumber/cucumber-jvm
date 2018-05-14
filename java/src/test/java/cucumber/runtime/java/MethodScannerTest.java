@@ -9,7 +9,6 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import static java.lang.Thread.currentThread;
 import static org.junit.Assert.assertEquals;
@@ -35,10 +34,9 @@ public class MethodScannerTest {
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
         MethodScanner methodScanner = new MethodScanner(classFinder);
         Glue world = Mockito.mock(Glue.class);
-        Whitebox.setInternalState(backend, "glue", world);
 
         // this delegates to methodScanner.scan which we test
-        methodScanner.scan(backend, BaseStepDefs.class.getMethod("m"), BaseStepDefs.class);
+        methodScanner.scan(backend, world, BaseStepDefs.class.getMethod("m"), BaseStepDefs.class);
 
         verify(factory, times(1)).addClass(BaseStepDefs.class);
         verifyNoMoreInteractions(factory);

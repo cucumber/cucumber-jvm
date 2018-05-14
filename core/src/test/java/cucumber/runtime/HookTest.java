@@ -48,6 +48,6 @@ public class HookTest {
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<Scenario>any());
-        inOrder.verify(backend).disposeWorld();
+        inOrder.verify(backend).disposeWorld(Matchers.<Glue>any());
     }
 }

@@ -7,6 +7,10 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.Scenario;
 import cucumber.api.TestCase;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.TestGroupRunFinished;
+import cucumber.api.event.TestGroupRunStarted;
+import cucumber.runner.EventBus;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -46,14 +50,39 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static String ENGLISH = "en";
     private final static long ANY_TIMESTAMP = 1234567890;
+    
+    private Backend backend;
+    private RuntimeGlue templateGlue;
+    private RuntimeGlue localGlue;
+    private RuntimeOptions runtimeOptions;
+
+    private final List<TestGroupRunStarted> actualGroupStartEvents = new ArrayList<TestGroupRunStarted>();
+    private final List<TestGroupRunFinished> actualGroupEndEvents = new ArrayList<TestGroupRunFinished>();
+    
+    private final EventHandler<TestGroupRunStarted> handleTestGroupRunStarted = new EventHandler<TestGroupRunStarted>() {
+        @Override
+        public void receive(final TestGroupRunStarted event) {
+            actualGroupStartEvents.add(event);
+        }
+    };
+    
+    private final EventHandler<TestGroupRunFinished> handleTestGroupRunFinished = new EventHandler<TestGroupRunFinished>() {
+        @Override
+        public void receive(final TestGroupRunFinished event) {
+            actualGroupEndEvents.add(event);
+        }
+    };
 
     @Ignore
     @Test
@@ -485,7 +514,120 @@ public class RuntimeTest {
                 "TestCase finished\n" +
                 "TestRun finished\n", formatterOutput);
     }
+        
+    @Test
+    public void should_ensure_glue_template_is_globally_initialized_and_then_cloned_per_thread_when_running_in_parallel() throws IOException {
+        final List<String> features = asList(
+            "cucumber/runtime/ParallelTests1.feature", 
+            "cucumber/runtime/ParallelTests2.feature", 
+            "cucumber/runtime/ParallelTests3.feature", 
+            "cucumber/runtime/ParallelTests4.feature");
 
+        final int threads = features.size();
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        final EventBus bus = runtime.getEventBus();
+        bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
+        bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
+        
+        runtime.run();
+        
+        // Cannot verify these methods in order
+        // e.g as each thread could've complete before the other and would result in it calling disposeWorld
+        // before the other thread has finished with stepDefinitionMatch
+        verify(backend).loadGlue(templateGlue, runtimeOptions.getGlue());
+        verify(backend).setUnreportedStepExecutor(isA(UnreportedStepExecutor.class));
+        verify(templateGlue).reportStepDefinitions(isA(StepDefinitionReporter.class));
+        verify(templateGlue, times(threads)).clone();
+        verify(backend, times(threads)).buildWorld(localGlue);
+        verify(backend, times(threads)).disposeWorld(localGlue);
+        final int stepsPerFeature = 6;
+        verify(localGlue, times(threads)).getBeforeHooks();
+        verify(localGlue, times(threads * stepsPerFeature)).getBeforeStepHooks();
+        verify(localGlue, times(threads)).getAfterHooks();
+        verify(localGlue, times(threads * stepsPerFeature)).getAfterStepHooks();
+        for(final String feature : features) {
+            verify(localGlue, times(stepsPerFeature)).stepDefinitionMatch(eq(feature), isA(PickleStep.class));
+        }
+        verifyNoMoreInteractions(templateGlue, backend, localGlue);        
+    }
+
+    @Test
+    public void should_not_raise_synchronized_group_event_when_no_synchronized_features_exist() throws IOException {
+        final List<String> features = asList(
+            "cucumber/runtime/ParallelTests1.feature",
+            "cucumber/runtime/ParallelTests2.feature",
+            "cucumber/runtime/ParallelTests3.feature",
+            "cucumber/runtime/ParallelTests4.feature");
+
+        final int threads = features.size();
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        final EventBus bus = runtime.getEventBus();
+        bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
+        bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
+
+        runtime.run();
+
+        assertEquals("Group Start event count was not as expected", 1, actualGroupStartEvents.size());
+        TestGroupRunStarted started = actualGroupStartEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, started.getType());
+        assertEquals("Non Sync run thread count not as expected", threads, started.getThreadCount());
+        assertEquals("Non Sync feature count not as expected", features.size(), started.getFeatureCount());
+
+        assertEquals("Group Finished event count was not as expected", 1, actualGroupEndEvents.size());
+        final TestGroupRunFinished finished = actualGroupEndEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, finished.getType());
+    }
+    
+    @Test
+    public void should_run_synchronized_tests_together_prior_to_tests_which_are_not_synchronized() throws IOException {
+        final List<String> syncFeatures = asList(
+            "cucumber/runtime/SynchronizedGroup0Test1.feature",
+            "cucumber/runtime/SynchronizedGroup1Test1.feature",
+            "cucumber/runtime/SynchronizedGroup1Test2.feature",
+            "cucumber/runtime/SynchronizedGroup1Test3.feature",
+            "cucumber/runtime/SynchronizedGroup2Test1.feature",
+            "cucumber/runtime/SynchronizedGroup3Test1.feature",
+            "cucumber/runtime/SynchronizedGroup4Test1.feature");
+        
+        final List<String> parallelFeatures = asList(
+            "cucumber/runtime/ParallelTests1.feature",
+            "cucumber/runtime/ParallelTests2.feature",
+            "cucumber/runtime/ParallelTests3.feature",
+            "cucumber/runtime/ParallelTests4.feature");
+        
+        final List<String> allFeatures = new ArrayList<String>();
+        allFeatures.addAll(parallelFeatures);
+        allFeatures.addAll(syncFeatures);
+
+        final int maxThreads = 2; //allFeatures.size();
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), allFeatures,"--threads", String.valueOf(maxThreads));
+
+        
+        final EventBus bus = runtime.getEventBus();
+        bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
+        bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
+
+        runtime.run();
+        
+        assertEquals("Group Start event count was not as expected", 2, actualGroupStartEvents.size());
+        TestGroupRunStarted started = actualGroupStartEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.SYNCHRONIZED_TAG, started.getType());
+        assertEquals("Sync run thread count not as expected", maxThreads, started.getThreadCount());
+        assertEquals("Sync feature count not as expected", syncFeatures.size(), started.getFeatureCount());
+
+        started = actualGroupStartEvents.get(1);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, started.getType());
+        assertEquals("Non Sync run thread count not as expected", maxThreads, started.getThreadCount());
+        assertEquals("Non Sync feature count not as expected", parallelFeatures.size(), started.getFeatureCount());
+        
+        assertEquals("Group Finished event count was not as expected", 2, actualGroupEndEvents.size());
+        TestGroupRunFinished finished = actualGroupEndEvents.get(0);
+        assertEquals("Tag not as expected", Runtime.SYNCHRONIZED_TAG, finished.getType());
+        finished = actualGroupEndEvents.get(1);
+        assertEquals("Tag not as expected", Runtime.NOT_SYNCHRONIZED_TAG, finished.getType());
+    }
+    
+    
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
         FormatterSpy formatterSpy = new FormatterSpy();
         TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy);
@@ -537,35 +679,40 @@ public class RuntimeTest {
         return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
     }
 
+    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, List<String> featurePaths, String... runtimeArgs) {
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, featurePaths, runtimeArgs);
+    }
+    
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, Collections.<String>emptyList(), runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType,
-                                                String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, hookType, runtimeArgs);
+    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType, String... runtimeArgs) {
+        return createRuntimeWithMockedGlue(match, false, hook, hookType, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), true, mock(HookDefinition.class), HookType.After, runtimeArgs);
+        return createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), true, mock(HookDefinition.class), HookType.After, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
-                                                HookType hookType, String... runtimeArgs) {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = mock(ClassLoader.class);
+                                                HookType hookType, List<String> featurePaths, String... runtimeArgs) {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
         if (!args.contains("-p")) {
             args.addAll(asList("-p", "null"));
         }
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
-        RuntimeGlue glue = mock(RuntimeGlue.class);
-        mockMatch(glue, match, isAmbiguous);
-        mockHook(glue, hook, hookType);
-        Collection<Backend> backends = Arrays.asList(backend);
+        args.addAll(featurePaths);
+        this.runtimeOptions = new RuntimeOptions(args);
+        this.backend = mock(Backend.class);
+        this.templateGlue = mock(RuntimeGlue.class);
+        this.localGlue = mock(RuntimeGlue.class);
+        when(templateGlue.clone()).thenReturn(localGlue);
+        mockMatch(localGlue, match, isAmbiguous);
+        mockHook(localGlue, hook, hookType);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        return new Runtime(resourceLoader, classLoader, Arrays.asList(backend), runtimeOptions, templateGlue);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

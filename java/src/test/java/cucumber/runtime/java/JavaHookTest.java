@@ -70,8 +70,8 @@ public class JavaHookTest {
     @Test
     public void before_hooks_get_registered() throws Exception {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BEFORE.getAnnotation(Before.class), BEFORE);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
         assertEquals(0, glue.getAfterHooks().size());
         assertEquals(BEFORE, hookDef.getMethod());
@@ -80,8 +80,8 @@ public class JavaHookTest {
     @Test
     public void before_step_hooks_get_registered() throws Exception {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeStepHooks().get(0);
         assertEquals(0, glue.getAfterStepHooks().size());
         assertEquals(BEFORESTEP, hookDef.getMethod());
@@ -90,8 +90,8 @@ public class JavaHookTest {
     @Test
     public void after_step_hooks_get_registered() throws Exception {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
+        backend.buildWorld(glue);
+        backend.addHook(glue, AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
         assertEquals(0, glue.getBeforeStepHooks().size());
         assertEquals(AFTERSTEP, hookDef.getMethod());
@@ -100,8 +100,8 @@ public class JavaHookTest {
     @Test
     public void after_hooks_get_registered() throws Exception {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(AFTER.getAnnotation(After.class), AFTER);
+        backend.buildWorld(glue);
+        backend.addHook(glue, AFTER.getAnnotation(After.class), AFTER);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterHooks().get(0);
         assertEquals(0, glue.getBeforeHooks().size());
         assertEquals(AFTER, hookDef.getMethod());
@@ -110,8 +110,8 @@ public class JavaHookTest {
     @Test
     public void hook_order_gets_registered() {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(AFTER.getAnnotation(After.class), AFTER);
+        backend.buildWorld(glue);
+        backend.addHook(glue, AFTER.getAnnotation(After.class), AFTER);
         HookDefinition hookDef = glue.getAfterHooks().get(0);
         assertEquals(1, hookDef.getOrder());
     }
@@ -119,8 +119,8 @@ public class JavaHookTest {
     @Test
     public void hook_with_no_order_is_last() {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition hookDef = glue.getBeforeHooks().get(0);
         assertEquals(10000, hookDef.getOrder());
     }
@@ -128,8 +128,8 @@ public class JavaHookTest {
     @Test
     public void matches_matching_tags() {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
         assertTrue(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"), new PickleTag(mock(PickleLocation.class), "@zap"))));
     }
@@ -137,8 +137,8 @@ public class JavaHookTest {
     @Test
     public void does_not_match_non_matching_tags() {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
         assertFalse(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"))));
     }
@@ -146,8 +146,8 @@ public class JavaHookTest {
     @Test
     public void fails_if_hook_argument_is_not_scenario_result() throws Throwable {
         objectFactory.setInstance(new BadHook());
-        backend.buildWorld();
-        backend.addHook(BAD_AFTER.getAnnotation(After.class), BAD_AFTER);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BAD_AFTER.getAnnotation(After.class), BAD_AFTER);
         HookDefinition bad = glue.getAfterHooks().get(0);
         try {
             bad.execute(mock(Scenario.class));

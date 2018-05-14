@@ -63,4 +63,8 @@ public @interface CucumberOptions {
      */
     String[] junit() default {};
 
+    /**
+     * @return the number of parallel threads to run scenarios
+     */
+    int threads() default 1;
 }

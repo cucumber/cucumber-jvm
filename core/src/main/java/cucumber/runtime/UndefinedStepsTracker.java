@@ -19,16 +19,19 @@ import gherkin.ast.Step;
 import gherkin.pickles.PickleLocation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UndefinedStepsTracker implements EventListener {
-    private final List<String> snippets = new ArrayList<String>();
+    private final List<String> snippets = Collections.synchronizedList(new ArrayList<String>());
     private final IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-    private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
-    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
-    private boolean hasUndefinedSteps = false;
+    private final Map<String, String> pathToSourceMap = new ConcurrentHashMap<String, String>();
+    private final Map<String, FeatureStepMap> pathToStepMap = new ConcurrentHashMap<String, FeatureStepMap>();
+    private volatile boolean hasUndefinedSteps = false;
+    private final Object syncObject = new Object();
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -80,14 +83,19 @@ public class UndefinedStepsTracker implements EventListener {
 
     private String getKeywordFromSource(String path, List<PickleLocation> stepLocations) {
         if (!pathToStepMap.containsKey(path)) {
-            createFeatureStepMap(path);
+            synchronized (syncObject) {
+                if (!pathToStepMap.containsKey(path)) {
+                    createFeatureStepMap(path);
+                }
+            }
         }
         if (!pathToStepMap.containsKey(path)) {
             return null;
         }
-        GherkinDialect featureDialect = pathToStepMap.get(path).dialect;
+        final FeatureStepMap pathSteps = pathToStepMap.get(path);
+        GherkinDialect featureDialect = pathSteps.dialect;
         List<String> givenThenWhenKeywords = getGivenWhenThenKeywords(featureDialect);
-        Map<Integer, StepNode> stepMap = pathToStepMap.get(path).stepMap;
+        Map<Integer, StepNode> stepMap = pathSteps.stepMap;
         for (PickleLocation stepLocation : stepLocations) {
             if (!stepMap.containsKey(stepLocation.getLine())) {
                 continue;

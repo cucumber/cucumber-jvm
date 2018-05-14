@@ -29,6 +29,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -43,15 +48,27 @@ import java.util.List;
 
 class TestNGFormatter implements Formatter, StrictAware {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    
+    private final TestSourcesModel testSources = new TestSourcesModel();
+    private final Object mergeToMainDocumentSyncObject = new Object();
+    private final XPath xPath = XPathFactory.newInstance().newXPath();
     private final Writer writer;
-    private final Document document;
-    private final Element results;
-    private final Element suite;
-    private final Element test;
-    private Element clazz;
-    private Element root;
-    private TestMethod testMethod;
+    private final Document outputDocument;
+    private final Element outputNgResultsElement;
+    private final Element outputSuiteElement;
+    private final Element outputTestElement;
+
+    private boolean strict;
+
+    private ThreadLocal<CurrentDomElements> domElements = new ThreadLocal<CurrentDomElements>() {
+        @Override
+        protected CurrentDomElements initialValue() {
+            return new CurrentDomElements();
+        }
+    };
+    private ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
+    private ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>();
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -59,7 +76,7 @@ class TestNGFormatter implements Formatter, StrictAware {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -87,19 +104,11 @@ class TestNGFormatter implements Formatter, StrictAware {
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public TestNGFormatter(URL url) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(url));
-        TestMethod.treatSkippedAsFailure = false;
-        TestMethod.currentFeatureFile = null;
-        try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            results = document.createElement("testng-results");
-            suite = document.createElement("suite");
-            test = document.createElement("test");
-            suite.appendChild(test);
-            results.appendChild(suite);
-            document.appendChild(results);
-        } catch (ParserConfigurationException e) {
-            throw new CucumberException("Error initializing DocumentBuilder.", e);
-        }
+        final CurrentDomElements outputDomElements = new CurrentDomElements();
+        this.outputDocument = outputDomElements.document;
+        this.outputNgResultsElement = outputDomElements.ngResultsElement;
+        this.outputSuiteElement = outputDomElements.suiteElement;
+        this.outputTestElement = outputDomElements.testElement;
     }
 
     @Override
@@ -113,56 +122,210 @@ class TestNGFormatter implements Formatter, StrictAware {
 
     @Override
     public void setStrict(boolean strict) {
-        TestMethod.treatSkippedAsFailure = strict;
+        this.strict = strict;
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestMethod.testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getUri())) {
-            TestMethod.currentFeatureFile = event.testCase.getUri();
-            TestMethod.previousTestCaseName = "";
-            TestMethod.exampleNumber = 1;
-            clazz = document.createElement("class");
-            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getUri()).getName());
-            test.appendChild(clazz);
+        final CurrentDomElements currentDomElements = domElements.get();
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature == null || currentFeature.uri == null || !currentFeature.uri.equals(event.testCase.getUri())) {
+            currentFeature = new CurrentFeature(event.testCase.getUri());
+            featureUnderTest.set(currentFeature);
+            currentDomElements.classElement = currentDomElements.document.createElement("class");
+            currentDomElements.classElement.setAttribute("name", testSources.getFeature(event.testCase.getUri()).getName());
+            currentDomElements.testElement.appendChild(currentDomElements.classElement);
         }
-        root = document.createElement("test-method");
-        clazz.appendChild(root);
-        testMethod = new TestMethod(event.testCase);
-        testMethod.start(root);
+        else {
+            currentFeature.testStepResults.clear();
+            currentFeature.hooks.clear();
+        }
+        
+        currentDomElements.testMethodElement = currentDomElements.document.createElement("test-method");
+        currentDomElements.testMethodElement.setAttribute("name", calculateElementName(event.testCase, currentFeature));
+        currentDomElements.testMethodElement.setAttribute("started-at", getDateTime());
+        currentDomElements.classElement.appendChild(currentDomElements.testMethodElement);
+    }
+
+    private String calculateElementName(final TestCase testCase, final CurrentFeature currentFeature) {
+        String testCaseName = testCase.getName();
+        if (testCaseName.equals(currentFeature.previousTestCaseName)) {
+            return testCaseName + "_" + ++currentFeature.exampleNumber;
+        } else {
+            currentFeature.previousTestCaseName = testCaseName;
+            currentFeature.exampleNumber = 1;
+            return testCaseName;
+        }
+    }
+    
+    private String getDateTime() {
+        SimpleDateFormat df = dateFormat.get();
+        if (df == null) {
+            df = getNewDateFormat();
+            dateFormat.set(df);
+        }
+        return df.format(new Date());
+    }
+    
+    private SimpleDateFormat getNewDateFormat() {
+        return new SimpleDateFormat(DATE_FORMAT_PATTERN);
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
+        final CurrentFeature currentFeature = featureUnderTest.get();
         if (event.testStep instanceof PickleStepTestStep) {
-            testMethod.steps.add((PickleStepTestStep) event.testStep);
-            testMethod.results.add(event.result);
+            currentFeature.testStepResults.add(new TestStepResult((PickleStepTestStep)event.testStep, event.result)); 
         } else {
-            testMethod.hooks.add(event.result);
+            currentFeature.hooks.add(event.result);
         }
     }
 
     private void handleTestCaseFinished() {
-        testMethod.finish(document, root);
+        final CurrentDomElements currentDomElements = domElements.get();
+        final CurrentFeature currentFeature = featureUnderTest.get();
+        writeResultToLocalDocument(currentDomElements, currentFeature);
+        
+        synchronized (mergeToMainDocumentSyncObject) {
+            final Element localClassElement = currentDomElements.classElement;
+            final String featureName = localClassElement.getAttributeNode("name").getValue();
+            Node targetClassElement = findSingleNodeByAttributeValue(outputTestElement, "name", featureName);
+            if (targetClassElement == null) {
+                targetClassElement = localClassElement.cloneNode(false);
+                outputDocument.adoptNode(targetClassElement);
+                outputTestElement.appendChild(targetClassElement);
+            }
+            final NodeList testCases = localClassElement.getChildNodes();
+            for (int i = 0; i < testCases.getLength(); i++) {
+                final Node node = testCases.item(i);
+                localClassElement.removeChild(node);
+                outputDocument.adoptNode(node);
+                targetClassElement.appendChild(node);
+            }
+        }
+    }
+    
+    private Node findSingleNodeByAttributeValue(final Element element, final String name, final String value) {
+        final NodeList matchingNodes = getNodeListByAttributeValue(element, name, value);
+        if (matchingNodes == null || matchingNodes.getLength() == 0) {
+            return null;
+        }
+        if (matchingNodes.getLength() > 1) {
+            throw new CucumberException("More than 1 node found matching tagName [" + name + "]");
+        }
+        return matchingNodes.item(0);
     }
 
+    private NodeList getNodeListByAttributeValue(final Element element, final String name, final String value) {
+        try {
+            final String exp = "*[@" + name + "='" + value + "']";
+            final XPathExpression xExpress = xPath.compile(exp);
+            return (NodeList) xExpress.evaluate(element, XPathConstants.NODESET);
+        }
+        catch(final XPathExpressionException e) {
+            throw new CucumberException(e);
+        }
+    }
+
+    private void writeResultToLocalDocument(final CurrentDomElements currentDomElements, final CurrentFeature currentFeature) {
+        currentDomElements.testMethodElement.setAttribute("duration-ms", calculateTotalDurationString(currentFeature));
+        currentDomElements.testMethodElement.setAttribute("finished-at", getDateTime());
+
+        final StringBuilder stringBuilder = buildStepAndResultListing(currentFeature);
+        Result skipped = null;
+        Result failed = null;
+        for (final TestStepResult stepResult : currentFeature.testStepResults) {
+            if (stepResult.result.is(Result.Type.FAILED) || stepResult.result.is(Result.Type.AMBIGUOUS)) {
+                failed = stepResult.result;
+            }
+            if (stepResult.result.is(Result.Type.UNDEFINED) || stepResult.result.is(Result.Type.PENDING)) {
+                skipped = stepResult.result;
+            }
+        }
+        for (final Result result : currentFeature.hooks) {
+            if (failed == null && result.is(Result.Type.FAILED)) {
+                failed = result;
+            }
+        }
+        if (failed != null) {
+            currentDomElements.testMethodElement.setAttribute("status", "FAIL");
+            final StringWriter stringWriter = new StringWriter();
+            failed.getError().printStackTrace(new PrintWriter(stringWriter));
+            final Element exception = createException(currentDomElements.document, failed.getError().getClass().getName(), stringBuilder.toString(), stringWriter.toString());
+            currentDomElements.testMethodElement.appendChild(exception);
+        } else if (skipped != null) {
+            if (this.strict) {
+                currentDomElements.testMethodElement.setAttribute("status", "FAIL");
+                Element exception = createException(currentDomElements.document, "The scenario has pending or undefined step(s)", stringBuilder.toString(), "The scenario has pending or undefined step(s)");
+                currentDomElements.testMethodElement.appendChild(exception);
+            } else {
+                currentDomElements.testMethodElement.setAttribute("status", "SKIP");
+            }
+        } else {
+            currentDomElements.testMethodElement.setAttribute("status", "PASS");
+        }
+    }
+
+    private String calculateTotalDurationString(final CurrentFeature currentFeature) {
+        long totalDurationNanos = 0;
+        for (final TestStepResult r : currentFeature.testStepResults) {
+            totalDurationNanos += r.result.getDuration() == null ? 0 : r.result.getDuration();
+        }
+        for (final Result r : currentFeature.hooks) {
+            totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
+        }
+        return String.valueOf(totalDurationNanos / 1000000);
+    }
+
+    private StringBuilder buildStepAndResultListing(final CurrentFeature currentFeature) {
+        final StringBuilder sb = new StringBuilder();
+        for (final TestStepResult stepResult : currentFeature.testStepResults) {
+            int length = sb.length();
+            sb.append(testSources.getKeywordFromSource(currentFeature.uri, stepResult.step.getStepLine()));
+            sb.append(stepResult.step.getStepText());
+            do {
+                sb.append(".");
+            } while (sb.length() - length < 76);
+            sb.append(stepResult.result.getStatus().lowerCaseName());
+            sb.append("\n");
+        }
+        return sb;
+    }
+
+    private Element createException(final Document doc, final String clazz, final String message, final String stacktrace) {
+        final Element exceptionElement = doc.createElement("exception");
+        exceptionElement.setAttribute("class", clazz);
+
+        if (message != null) {
+            final Element messageElement = doc.createElement("message");
+            messageElement.appendChild(doc.createCDATASection(message));
+            exceptionElement.appendChild(messageElement);
+        }
+
+        final Element stacktraceElement = doc.createElement("full-stacktrace");
+        stacktraceElement.appendChild(doc.createCDATASection(stacktrace));
+        exceptionElement.appendChild(stacktraceElement);
+
+        return exceptionElement;
+    }
+    
     private void finishReport() {
         try {
-            results.setAttribute("total", String.valueOf(getElementsCountByAttribute(suite, "status", ".*")));
-            results.setAttribute("passed", String.valueOf(getElementsCountByAttribute(suite, "status", "PASS")));
-            results.setAttribute("failed", String.valueOf(getElementsCountByAttribute(suite, "status", "FAIL")));
-            results.setAttribute("skipped", String.valueOf(getElementsCountByAttribute(suite, "status", "SKIP")));
-            suite.setAttribute("name", TestNGFormatter.class.getName());
-            suite.setAttribute("duration-ms", getTotalDuration(suite.getElementsByTagName("test-method")));
-            test.setAttribute("name", TestNGFormatter.class.getName());
-            test.setAttribute("duration-ms", getTotalDuration(suite.getElementsByTagName("test-method")));
+            outputNgResultsElement.setAttribute("total", String.valueOf(getElementsCountByAttribute(outputSuiteElement, "status", ".*")));
+            outputNgResultsElement.setAttribute("passed", String.valueOf(getElementsCountByAttribute(outputSuiteElement, "status", "PASS")));
+            outputNgResultsElement.setAttribute("failed", String.valueOf(getElementsCountByAttribute(outputSuiteElement, "status", "FAIL")));
+            outputNgResultsElement.setAttribute("skipped", String.valueOf(getElementsCountByAttribute(outputSuiteElement, "status", "SKIP")));
+            outputSuiteElement.setAttribute("name", TestNGFormatter.class.getName());
+            outputSuiteElement.setAttribute("duration-ms", getTotalDuration(outputSuiteElement.getElementsByTagName("test-method")));
+            outputTestElement.setAttribute("name", TestNGFormatter.class.getName());
+            outputTestElement.setAttribute("duration-ms", getTotalDuration(outputSuiteElement.getElementsByTagName("test-method")));
 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            StreamResult streamResult = new StreamResult(writer);
-            DOMSource domSource = new DOMSource(document);
+            final StreamResult streamResult = new StreamResult(writer);
+            final DOMSource domSource = new DOMSource(outputDocument);
             transformer.transform(domSource, streamResult);
             closeQuietly(writer);
         } catch (TransformerException e) {
@@ -177,9 +340,9 @@ class TestNGFormatter implements Formatter, StrictAware {
             count += getElementsCountByAttribute(node.getChildNodes().item(i), attributeName, attributeValue);
         }
 
-        NamedNodeMap attributes = node.getAttributes();
+        final NamedNodeMap attributes = node.getAttributes();
         if (attributes != null) {
-            Node namedItem = attributes.getNamedItem(attributeName);
+            final Node namedItem = attributes.getNamedItem(attributeName);
             if (namedItem != null && namedItem.getNodeValue().matches(attributeValue)) {
                 count++;
             }
@@ -192,7 +355,7 @@ class TestNGFormatter implements Formatter, StrictAware {
         long totalDuration = 0;
         for (int i = 0; i < testCaseNodes.getLength(); i++) {
             try {
-                String duration = testCaseNodes.item(i).getAttributes().getNamedItem("duration-ms").getNodeValue();
+                final String duration = testCaseNodes.item(i).getAttributes().getNamedItem("duration-ms").getNodeValue();
                 totalDuration += Long.parseLong(duration);
             } catch (NumberFormatException e) {
                 throw new CucumberException(e);
@@ -203,127 +366,58 @@ class TestNGFormatter implements Formatter, StrictAware {
         return String.valueOf(totalDuration);
     }
 
-    private static class TestMethod {
-
-        static String currentFeatureFile;
-        static boolean treatSkippedAsFailure = false;
-        static String previousTestCaseName;
-        static int exampleNumber;
-        static final TestSourcesModel testSources = new TestSourcesModel();
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
-        final List<Result> hooks = new ArrayList<Result>();
-        final TestCase scenario;
-
-        private TestMethod(TestCase scenario) {
-            this.scenario = scenario;
-        }
-
-        private void start(Element element) {
-            element.setAttribute("name", calculateElementName(scenario));
-            element.setAttribute("started-at", DATE_FORMAT.format(new Date()));
-        }
-
-        private String calculateElementName(TestCase testCase) {
-            String testCaseName = testCase.getName();
-            if (testCaseName.equals(previousTestCaseName)) {
-                return testCaseName + "_" + ++exampleNumber;
-            } else {
-                previousTestCaseName = testCaseName;
-                exampleNumber = 1;
-                return testCaseName;
-            }
-         }
-
-        public void finish(Document doc, Element element) {
-            element.setAttribute("duration-ms", calculateTotalDurationString());
-            element.setAttribute("finished-at", DATE_FORMAT.format(new Date()));
-            StringBuilder stringBuilder = new StringBuilder();
-            addStepAndResultListing(stringBuilder);
-            Result skipped = null;
-            Result failed = null;
-            for (Result result : results) {
-                if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
-                    failed = result;
-                }
-                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {
-                    skipped = result;
-                }
-            }
-            for (Result result : hooks) {
-                if (failed == null && result.is(Result.Type.FAILED)) {
-                    failed = result;
-                }
-            }
-            if (failed != null) {
-                element.setAttribute("status", "FAIL");
-                StringWriter stringWriter = new StringWriter();
-                failed.getError().printStackTrace(new PrintWriter(stringWriter));
-                Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stringWriter.toString());
-                element.appendChild(exception);
-            } else if (skipped != null) {
-                if (treatSkippedAsFailure) {
-                    element.setAttribute("status", "FAIL");
-                    Element exception = createException(doc, "The scenario has pending or undefined step(s)", stringBuilder.toString(), "The scenario has pending or undefined step(s)");
-                    element.appendChild(exception);
-                } else {
-                    element.setAttribute("status", "SKIP");
-                }
-            } else {
-                element.setAttribute("status", "PASS");
-            }
-        }
-
-        private String calculateTotalDurationString() {
-            long totalDurationNanos = 0;
-            for (Result r : results) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            for (Result r : hooks) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            return String.valueOf(totalDurationNanos / 1000000);
-        }
-
-        private void addStepAndResultListing(StringBuilder sb) {
-            for (int i = 0; i < steps.size(); i++) {
-                int length = sb.length();
-                String resultStatus = "not executed";
-                if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus().lowerCaseName();
-                }
-                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
-                do {
-                    sb.append(".");
-                } while (sb.length() - length < 76);
-                sb.append(resultStatus);
-                sb.append("\n");
-            }
-        }
-
-        private Element createException(Document doc, String clazz, String message, String stacktrace) {
-            Element exceptionElement = doc.createElement("exception");
-            exceptionElement.setAttribute("class", clazz);
-
-            if (message != null) {
-                Element messageElement = doc.createElement("message");
-                messageElement.appendChild(doc.createCDATASection(message));
-                exceptionElement.appendChild(messageElement);
-            }
-
-            Element stacktraceElement = doc.createElement("full-stacktrace");
-            stacktraceElement.appendChild(doc.createCDATASection(stacktrace));
-            exceptionElement.appendChild(stacktraceElement);
-
-            return exceptionElement;
-        }
-    }
-
-    private static void closeQuietly(Closeable out) {
+    private void closeQuietly(final Closeable out) {
         try {
             out.close();
         } catch (IOException ignored) {
             // go gentle into that good night
+        }
+    }
+
+    private class CurrentDomElements {
+
+        private final Document document;
+        private final Element ngResultsElement;
+        private final Element suiteElement;
+        private final Element testElement;
+        private Element classElement;
+        private Element testMethodElement;
+
+        CurrentDomElements() {
+            try {
+                document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                ngResultsElement = document.createElement("testng-results");
+                suiteElement = document.createElement("suite");
+                testElement = document.createElement("test");
+                suiteElement.appendChild(testElement);
+                ngResultsElement.appendChild(suiteElement);
+                document.appendChild(ngResultsElement);
+            }
+            catch (ParserConfigurationException e) {
+                throw new CucumberException("Error initializing DocumentBuilder.", e);
+            }
+        }
+    }
+
+    private class CurrentFeature {
+        private final String uri;
+        private String previousTestCaseName = "";
+        private int exampleNumber = 1;
+        private final List<TestStepResult> testStepResults = new ArrayList<TestStepResult>();
+        private final List<Result> hooks = new ArrayList<Result>();
+
+        CurrentFeature(final String uri) {
+            this.uri = uri;
+        }
+    }
+
+    private class TestStepResult {
+        private final PickleStepTestStep step;
+        private final Result result;
+
+        TestStepResult(PickleStepTestStep step, Result result) {
+            this.step = step;
+            this.result = result;
         }
     }
 }

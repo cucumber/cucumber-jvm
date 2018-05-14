@@ -7,12 +7,12 @@ import org.jboss.weld.environment.se.WeldContainer;
 
 public class WeldFactory implements ObjectFactory {
 
-    private WeldContainer containerInstance;
+    private final ThreadLocal<WeldContainer> containerInstance = new ThreadLocal<WeldContainer>();
 
     @Override
     public void start() {
         try {
-            containerInstance = new Weld().initialize();
+            containerInstance.set(new Weld().initialize());
         } catch (IllegalArgumentException e) {
             throw new CucumberException("" +
                     "\n" +
@@ -31,8 +31,8 @@ public class WeldFactory implements ObjectFactory {
     @Override
     public void stop() {
         try {
-            if (containerInstance.isRunning()) {
-                containerInstance.close();
+            if (containerInstance.get().isRunning()) {
+                containerInstance.get().close();
             }
         } catch (NullPointerException npe) {
             System.err.println("" +
@@ -51,6 +51,6 @@ public class WeldFactory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        return containerInstance.select(type).get();
+        return containerInstance.get().select(type).get();
     }
 }

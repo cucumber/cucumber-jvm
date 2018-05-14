@@ -7,6 +7,7 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -51,6 +52,7 @@ public class JavaStepDefinitionTest {
     private JavaBackend backend;
     private Runtime runtime;
     private Result latestReceivedResult;
+    private Glue glue;
 
     @Before
     public void createBackendAndLoadNoGlue() {
@@ -61,8 +63,9 @@ public class JavaStepDefinitionTest {
         this.backend = new JavaBackend(factory, classFinder);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+        this.glue = runtime.getGlue();
 
-        backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<String>emptyList());
         runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {
@@ -73,19 +76,20 @@ public class JavaStepDefinitionTest {
 
     @Test(expected = DuplicateStepDefinitionException.class)
     public void throws_duplicate_when_two_stepdefs_with_same_regexp_found() throws Throwable {
-        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_DISABLED_MICE);
-        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
+        backend.addStepDefinition(glue, THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(glue, THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
     }
 
     @Test
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
-        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
+        backend.addStepDefinition(glue, THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(glue, THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
 
         PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
+        
         runtime.getRunner().runPickle(pickleEvent);
 
         assertEquals(AmbiguousStepDefinitionsException.class, latestReceivedResult.getError().getClass());
@@ -93,12 +97,13 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(glue, THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
 
         PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
+        
         runtime.getRunner().runPickle(pickleEvent);
 
         assertNull(latestReceivedResult.getError());

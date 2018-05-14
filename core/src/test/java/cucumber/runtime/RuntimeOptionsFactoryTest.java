@@ -142,6 +142,14 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
+    public void create_with_threads_option() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithThreadsOption.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(2, runtimeOptions.getThreads());
+    }
+
+    @Test
     public void create_with_xstream_converter() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithConverter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
@@ -251,6 +259,11 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(junit = {"option1", "option2=value"})
     static class ClassWithJunitOption {
+        // empty
+    }
+
+    @CucumberOptions(threads = 2)
+    static class ClassWithThreadsOption {
         // empty
     }
 

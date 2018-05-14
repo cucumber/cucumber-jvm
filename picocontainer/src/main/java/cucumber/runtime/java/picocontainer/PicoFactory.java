@@ -10,23 +10,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PicoFactory implements ObjectFactory {
-    private MutablePicoContainer pico;
+    private final ThreadLocal<MutablePicoContainer> pico = new ThreadLocal<MutablePicoContainer>();
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     public void start() {
-        pico = new PicoBuilder()
+        pico.set(new PicoBuilder()
             .withCaching()
             .withLifecycle()
-            .build();
+            .build());
         for (Class<?> clazz : classes) {
-            pico.addComponent(clazz);
+            pico.get().addComponent(clazz);
         }
-        pico.start();
+        pico.get().start();
     }
 
     public void stop() {
-        pico.stop();
-        pico.dispose();
+        pico.get().stop();
+        pico.get().dispose();
     }
 
     public boolean addClass(Class<?> clazz) {
@@ -37,7 +37,7 @@ public class PicoFactory implements ObjectFactory {
     }
 
     public <T> T getInstance(Class<T> type) {
-        return pico.getComponent(type);
+        return pico.get().getComponent(type);
     }
 
     private void addConstructorDependencies(Class<?> clazz) {

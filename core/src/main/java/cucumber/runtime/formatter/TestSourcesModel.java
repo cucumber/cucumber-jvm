@@ -1,6 +1,11 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.event.TestSourceRead;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import gherkin.AstBuilder;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
@@ -17,13 +22,11 @@ import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.TableRow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 final class TestSourcesModel {
-    private final Map<String, TestSourceRead> pathToReadEventMap = new HashMap<String, TestSourceRead>();
-    private final Map<String, GherkinDocument> pathToAstMap = new HashMap<String, GherkinDocument>();
-    private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<String, Map<Integer, AstNode>>();
+    private final Map<String, TestSourceRead> pathToReadEventMap = new ConcurrentHashMap<String, TestSourceRead>();
+    private final Map<String, GherkinDocument> pathToAstMap = new ConcurrentHashMap<String, GherkinDocument>();
+    private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new ConcurrentHashMap<String, Map<Integer, AstNode>>();
+    private final Object syncObject = new Object();
 
     static Feature getFeatureForTestCase(AstNode astNode) {
         while (astNode.parent != null) {
@@ -84,7 +87,11 @@ final class TestSourcesModel {
 
     Feature getFeature(String path) {
         if (!pathToAstMap.containsKey(path)) {
-            parseGherkinSource(path);
+            synchronized (syncObject) {
+                if (!pathToAstMap.containsKey(path)) {
+                    parseGherkinSource(path);
+                }
+            }
         }
         if (pathToAstMap.containsKey(path)) {
             return pathToAstMap.get(path).getFeature();
@@ -98,7 +105,11 @@ final class TestSourcesModel {
 
     AstNode getAstNode(String path, int line) {
         if (!pathToNodeMap.containsKey(path)) {
-            parseGherkinSource(path);
+            synchronized (syncObject) {
+                if (!pathToNodeMap.containsKey(path)) {
+                    parseGherkinSource(path);
+                }
+            }
         }
         if (pathToNodeMap.containsKey(path)) {
             return pathToNodeMap.get(path).get(line);
@@ -108,7 +119,11 @@ final class TestSourcesModel {
 
     boolean hasBackground(String path, int line) {
         if (!pathToNodeMap.containsKey(path)) {
-            parseGherkinSource(path);
+            synchronized (syncObject) {
+                if (!pathToNodeMap.containsKey(path)) {
+                    parseGherkinSource(path);
+                }
+            }
         }
         if (pathToNodeMap.containsKey(path)) {
             AstNode astNode = pathToNodeMap.get(path).get(line);

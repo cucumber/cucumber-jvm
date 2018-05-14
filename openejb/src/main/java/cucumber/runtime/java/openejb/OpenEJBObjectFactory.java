@@ -14,8 +14,12 @@ import java.util.Properties;
 
 public class OpenEJBObjectFactory implements ObjectFactory {
     private final List<String> classes = new ArrayList<String>();
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
-    private EJBContainer container;
+    private final ThreadLocal<Map<Class<?>, Object>> instances = new ThreadLocal<Map<Class<?>, Object>>(){
+        protected Map<Class<?>, Object> initialValue() {
+            return new HashMap<Class<?>, Object>();
+        }
+    };
+    private final ThreadLocal<EJBContainer> container = new ThreadLocal<EJBContainer>();
 
     @Override
     public void start() {
@@ -29,13 +33,13 @@ public class OpenEJBObjectFactory implements ObjectFactory {
 
         Properties properties = new Properties();
         properties.setProperty(OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY, callers.toString());
-        container = EJBContainer.createEJBContainer(properties);
+        container.set(EJBContainer.createEJBContainer(properties));
     }
 
     @Override
     public void stop() {
-        container.close();
-        instances.clear();
+        container.get().close();
+        instances.get().clear();
     }
 
     @Override
@@ -46,18 +50,18 @@ public class OpenEJBObjectFactory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        if (instances.containsKey(type)) {
-            return type.cast(instances.get(type));
+        if (instances.get().containsKey(type)) {
+            return type.cast(instances.get().get(type));
         }
 
         T object;
         try {
             object = type.newInstance();
-            container.getContext().bind("inject", object);
+            container.get().getContext().bind("inject", object);
         } catch (Exception e) {
             throw new CucumberException("can't create " + type.getName(), e);
         }
-        instances.put(type, object);
+        instances.get().put(type, object);
         return object;
     }
 }

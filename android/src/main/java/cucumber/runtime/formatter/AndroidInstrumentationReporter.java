@@ -83,27 +83,8 @@ public final class AndroidInstrumentationReporter implements Formatter {
      */
     private int numberOfTests;
 
-    /**
-     * The severest step result of the current test execution.
-     * This might be a step or hook result.
-     */
-    private Result severestResult;
-
-    /**
-     * The uri of the feature file of the current test case.
-     */
-    private String currentUri;
-
-    /**
-     * The name of the current feature.
-     */
-    private String currentFeatureName;
-
-    /**
-     * The name of the current test case.
-     */
-    private String currentTestCaseName;
-
+    private ThreadLocal<CurrentFeature> featureUnderTest = new ThreadLocal<CurrentFeature>();
+    
     /**
      * The event handler for the {@link TestSourceRead} events.
      */
@@ -172,40 +153,43 @@ public final class AndroidInstrumentationReporter implements Formatter {
     }
 
     void startTestCase(final TestCase testCase) {
-        if (!testCase.getUri().equals(currentUri)) {
-            currentUri = testCase.getUri();
-            currentFeatureName = testSources.getFeatureName(currentUri);
+        CurrentFeature currentFeature = featureUnderTest.get();
+        if (currentFeature == null || !testCase.getUri().equals(currentFeature.uri)) {
+            currentFeature = new CurrentFeature(testCase.getUri(), testSources.getFeatureName(testCase.getUri()));
+            featureUnderTest.set(currentFeature);
         }
         // Since the names of test cases are not guaranteed to be unique, we must check for unique names
-        currentTestCaseName = calculateUniqueTestName(testCase);
-        resetSeverestResult();
-        final Bundle testStart = createBundle(currentFeatureName, currentTestCaseName);
+        currentFeature.testCaseName = calculateUniqueTestName(testCase);
+        currentFeature.resetSeverestResult();
+        final Bundle testStart = createBundle(currentFeature.featureName, currentFeature.testCaseName);
         instrumentation.sendStatus(StatusCodes.START, testStart);
     }
 
     void finishTestStep(final Result result) {
-        checkAndSetSeverestStepResult(result);
+        CurrentFeature currentFeature = featureUnderTest.get();
+        currentFeature.checkAndSetSeverestStepResult(result);
     }
 
     void finishTestCase() {
-        final Bundle testResult = createBundle(currentFeatureName, currentTestCaseName);
+        final CurrentFeature currentFeature = featureUnderTest.get();
+        final Bundle testResult = createBundle(currentFeature.featureName, currentFeature.testCaseName);
 
-        switch (severestResult.getStatus()) {
+        switch (currentFeature.severestResult.getStatus()) {
             case FAILED:
-                if (severestResult.getError() instanceof AssertionError) {
-                    testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
+                if (currentFeature.severestResult.getError() instanceof AssertionError) {
+                    testResult.putString(StatusKeys.STACK, currentFeature.severestResult.getErrorMessage());
                     instrumentation.sendStatus(StatusCodes.FAILURE, testResult);
                 } else {
-                    testResult.putString(StatusKeys.STACK, getStackTrace(severestResult.getError()));
+                    testResult.putString(StatusKeys.STACK, getStackTrace(currentFeature.severestResult.getError()));
                     instrumentation.sendStatus(StatusCodes.ERROR, testResult);
                 }
                 break;
             case AMBIGUOUS:
-                testResult.putString(StatusKeys.STACK, getStackTrace(severestResult.getError()));
+                testResult.putString(StatusKeys.STACK, getStackTrace(currentFeature.severestResult.getError()));
                 instrumentation.sendStatus(StatusCodes.ERROR, testResult);
                 break;
             case PENDING:
-                testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
+                testResult.putString(StatusKeys.STACK, currentFeature.severestResult.getErrorMessage());
                 instrumentation.sendStatus(StatusCodes.ERROR, testResult);
                 break;
             case PASSED:
@@ -217,7 +201,7 @@ public final class AndroidInstrumentationReporter implements Formatter {
                 instrumentation.sendStatus(StatusCodes.ERROR, testResult);
                 break;
             default:
-                throw new IllegalStateException("Unexpected result status: " + severestResult.getStatus());
+                throw new IllegalStateException("Unexpected result status: " + currentFeature.severestResult.getStatus());
         }
     }
 
@@ -243,33 +227,6 @@ public final class AndroidInstrumentationReporter implements Formatter {
      */
     private String getLastSnippet() {
         return runtime.getSnippets().get(runtime.getSnippets().size() - 1);
-    }
-
-    /**
-     * Resets the severest test result for the next scenario life cycle.
-     */
-    private void resetSeverestResult() {
-        severestResult = null;
-    }
-
-    /**
-     * Checks if the given {@code result} is more severe than the current {@code severestResult} and
-     * updates the {@code severestResult} if that should be the case.
-     *
-     * @param result the {@link Result} to check
-     */
-    private void checkAndSetSeverestStepResult(final Result result) {
-        final boolean firstResult = severestResult == null;
-        if (firstResult) {
-            severestResult = result;
-            return;
-        }
-
-        final boolean currentIsPassed = severestResult.is(Result.Type.PASSED);
-        final boolean nextIsNotPassed = !result.is(Result.Type.PASSED);
-        if (currentIsPassed && nextIsNotPassed) {
-            severestResult = result;
-        }
     }
 
     /**
@@ -329,6 +286,45 @@ public final class AndroidInstrumentationReporter implements Formatter {
         uniqueTestNamesSetForFeature.add(uniqueTestCaseName);
         uniqueTestNameForTestCase.put(testCase, uniqueTestCaseName);
         return uniqueTestNameForTestCase.get(testCase);
+    }
+
+    private class CurrentFeature {
+        private final String uri;
+        private final String featureName;
+        private String testCaseName;
+        private Result severestResult;
+        
+        CurrentFeature(final String uri, final String featureName) {
+            this.uri = uri;
+            this.featureName = featureName;
+        }
+
+        /**
+         * Resets the severest test result for the next scenario life cycle.
+         */
+        private void resetSeverestResult() {
+            severestResult = null;
+        }
+
+        /**
+         * Checks if the given {@code result} is more severe than the current {@code severestResult} and
+         * updates the {@code severestResult} if that should be the case.
+         *
+         * @param result the {@link Result} to check
+         */
+        private void checkAndSetSeverestStepResult(final Result result) {
+            final boolean firstResult = severestResult == null;
+            if (firstResult) {
+                severestResult = result;
+                return;
+            }
+
+            final boolean currentIsPassed = severestResult.is(Result.Type.PASSED);
+            final boolean nextIsNotPassed = !result.is(Result.Type.PASSED);
+            if (currentIsPassed && nextIsNotPassed) {
+                severestResult = result;
+            }
+        }
     }
 
 }

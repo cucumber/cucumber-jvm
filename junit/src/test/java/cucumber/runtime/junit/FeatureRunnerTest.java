@@ -198,6 +198,7 @@ public class FeatureRunnerTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);
+        when(glue.clone()).thenReturn(glue);
         final TimeService timeServiceStub = new TimeService() {
             @Override
             public long time() {

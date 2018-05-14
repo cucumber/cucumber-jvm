@@ -40,7 +40,7 @@ public class JavaBackendTest {
     public void finds_step_definitions_by_classpath_url() {
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
-        backend.buildWorld();
+        backend.buildWorld(glue);
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
 
@@ -48,7 +48,7 @@ public class JavaBackendTest {
     public void finds_step_definitions_by_package_name() {
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs"));
-        backend.buildWorld();
+        backend.buildWorld(glue);
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
 
@@ -60,6 +60,11 @@ public class JavaBackendTest {
 
     private class GlueStub implements Glue {
         public final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+
+        @Override
+        public Glue clone() {
+            return this;
+        }
 
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {

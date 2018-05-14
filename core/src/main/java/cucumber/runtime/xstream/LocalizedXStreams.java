@@ -14,13 +14,13 @@ import cucumber.runtime.ParameterInfo;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LocalizedXStreams {
-    private final Map<Locale, LocalizedXStream> xStreamsByLocale = new HashMap<Locale, LocalizedXStream>();
+    private final Map<Locale, LocalizedXStream> xStreamsByLocale = new ConcurrentHashMap<Locale, LocalizedXStream>();
     private final List<XStreamConverter> extraConverters;
     private final ClassLoader classLoader;
 
@@ -36,9 +36,14 @@ public class LocalizedXStreams {
     public LocalizedXStream get(Locale locale) {
         LocalizedXStream xStream = xStreamsByLocale.get(locale);
         if (xStream == null) {
-            xStream = newXStream(locale);
-            registerExtraConverters(xStream);
-            xStreamsByLocale.put(locale, xStream);
+            synchronized (xStreamsByLocale) {
+                xStream = xStreamsByLocale.get(locale);
+                if (xStream == null) {
+                    xStream = newXStream(locale);
+                    registerExtraConverters(xStream);
+                    xStreamsByLocale.put(locale, xStream);
+                }
+            }
         }
         return xStream;
     }

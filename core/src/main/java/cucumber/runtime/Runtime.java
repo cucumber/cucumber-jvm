@@ -2,7 +2,10 @@ package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.event.TestGroupRunFinished;
+import cucumber.api.event.TestGroupRunStarted;
 import cucumber.api.event.TestRunFinished;
+import cucumber.runner.DefaultUnreportedStepExecutor;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 
 /**
@@ -26,6 +31,9 @@ import java.util.regex.Pattern;
  */
 public class Runtime {
 
+    static final String SYNCHRONIZED_TAG = "@synchronized";
+    static final String NOT_SYNCHRONIZED_TAG = "~" + SYNCHRONIZED_TAG;
+    
     final Stats stats; // package private to be available for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
@@ -37,6 +45,8 @@ public class Runtime {
     private final List<PicklePredicate> filters;
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
+    private final Glue templateGlue;
+    
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
     }
@@ -58,11 +68,17 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        final Glue glue;
-        glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
+        this.templateGlue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
         this.stats = new Stats(runtimeOptions.isMonochrome());
         this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glue, bus, backends, runtimeOptions);
+
+        final UnreportedStepExecutor unreportedStepExecutor = new DefaultUnreportedStepExecutor(templateGlue);
+        for (Backend backend : backends) {
+            backend.loadGlue(templateGlue, runtimeOptions.getGlue());
+            backend.setUnreportedStepExecutor(unreportedStepExecutor);
+        }
+        
+        this.runner = new Runner(templateGlue, bus, backends, runtimeOptions);
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -91,27 +107,60 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        // Make sure all features parse before initialising any reporters/formatters
-        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
-
+        final List<CucumberFeature> allFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
-
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
-
         reportStepDefinitions(stepDefinitionReporter);
-
-        for (CucumberFeature cucumberFeature : features) {
-            runFeature(cucumberFeature);
+        
+        final int requestedThreads = runtimeOptions.getThreads();
+        
+        final Map<String, Queue<CucumberFeature>> synchronisedFeatures = new FeatureFilter(SYNCHRONIZED_TAG).filterAndGroupBy(allFeatures);
+        if (!synchronisedFeatures.isEmpty()) {
+            int featureCount = 0;
+            for(final Queue<CucumberFeature> featureGroup : synchronisedFeatures.values()) {
+                featureCount+= featureGroup.size();
+                allFeatures.removeAll(featureGroup);
+            }
+            runSynchronizedTests(featureCount, requestedThreads, synchronisedFeatures.values());
+        }      
+        
+        if (!allFeatures.isEmpty()) {
+            runRemainingTests(allFeatures, requestedThreads);
         }
-
+        
         bus.send(new TestRunFinished(bus.getTime()));
         printSummary();
+    }
+
+    private void runSynchronizedTests(final int featureCount, final int requestedThreads, final Collection<Queue<CucumberFeature>> synchronisedFeatures) {
+        final ConcurrentLinkedQueue<Queue<CucumberFeature>> queuedFeatureGroups = new ConcurrentLinkedQueue<Queue<CucumberFeature>>(synchronisedFeatures);
+        final int threadCount = Math.min(requestedThreads, synchronisedFeatures.size());
+        final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            tasks.add(new RuntimeCallableFeatureGroupQueue(this, queuedFeatureGroups));
+        }
+        bus.send(new TestGroupRunStarted(SYNCHRONIZED_TAG, threadCount, featureCount, bus.getTime()));
+        RuntimeCallableRunner.run(tasks);
+        bus.send(new TestGroupRunFinished(SYNCHRONIZED_TAG, bus.getTime()));
+    }
+
+    private void runRemainingTests(final List<CucumberFeature> allFeatures, final int requestedThreads) {
+        final ConcurrentLinkedQueue<CucumberFeature> queuedFeatures = new ConcurrentLinkedQueue<CucumberFeature>(allFeatures);
+        final int threadCount = Math.min(requestedThreads, allFeatures.size());
+        final List<RuntimeCallable> tasks = new ArrayList<RuntimeCallable>(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            tasks.add(new RuntimeCallableFeatureQueue(this, queuedFeatures));
+        }
+        bus.send(new TestGroupRunStarted(NOT_SYNCHRONIZED_TAG, threadCount, queuedFeatures.size(), bus.getTime()));
+        RuntimeCallableRunner.run(tasks);
+        bus.send(new TestGroupRunFinished(NOT_SYNCHRONIZED_TAG, bus.getTime()));
     }
 
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
         runner.reportStepDefinitions(stepDefinitionReporter);
     }
-
+    
     public void runFeature(CucumberFeature feature) {
         List<PickleEvent> pickleEvents = compileFeature(feature);
         for (PickleEvent pickleEvent : pickleEvents) {
@@ -159,8 +208,12 @@ public class Runtime {
         return undefinedStepsTracker.getSnippets();
     }
 
+    /**
+     * Only use for test methods! 
+     * Template Glue is returned, which is not necessarily all of the Glue used due the execution of tests
+     */
     public Glue getGlue() {
-        return runner.getGlue();
+        return templateGlue;
     }
 
     public EventBus getEventBus() {
