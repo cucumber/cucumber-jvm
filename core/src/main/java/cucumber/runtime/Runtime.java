@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
@@ -89,9 +89,9 @@ public class Runtime {
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
         Reflections reflections = new Reflections(classFinder);
-        Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
-        TypeRegistry typeRegistry = new TypeRegistry(configuration.locale());
-        configuration.configureTypeRegistry(typeRegistry);
+        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+        TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
         return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
     }
 

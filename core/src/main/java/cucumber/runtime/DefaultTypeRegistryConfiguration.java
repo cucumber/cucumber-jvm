@@ -1,11 +1,11 @@
 package cucumber.runtime;
 
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.TypeRegistry;
 
 import java.util.Locale;
 
-public class DefaultConfiguration implements Configuration {
+public class DefaultTypeRegistryConfiguration implements TypeRegistryConfigurer {
 
     @Override
     public Locale locale() {

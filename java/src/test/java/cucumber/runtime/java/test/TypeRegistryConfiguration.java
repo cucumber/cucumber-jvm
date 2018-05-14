@@ -1,6 +1,6 @@
 package cucumber.runtime.java.test;
 
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
 
-public class ParameterTypes implements Configuration {
+public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
 
     private final TableEntryTransformer<Person> personEntryTransformer = new TableEntryTransformer<Person>() {
         @Override

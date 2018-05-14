@@ -3,7 +3,7 @@ package cucumber.runtime.android;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.util.Log;
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -12,7 +12,7 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.DefaultConfiguration;
+import cucumber.runtime.DefaultTypeRegistryConfiguration;
 import cucumber.runtime.Env;
 import cucumber.runtime.Reflections;
 import cucumber.runtime.Runtime;
@@ -168,9 +168,9 @@ public final class CucumberExecutor {
         final Reflections reflections = new Reflections(classFinder);
         final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
         final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
-        final Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
-        final TypeRegistry typeRegistry = new TypeRegistry(configuration.locale());
-        configuration.configureTypeRegistry(typeRegistry);
+        final TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+        final TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
         return singletonList(new JavaBackend(objectFactory, classFinder, typeRegistry));
     }
 }

@@ -1,6 +1,6 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.TypeRegistry;
 import cucumber.examples.java.calculator.ShoppingStepdefs.Price;
 import io.cucumber.datatable.DataTableType;
@@ -17,7 +17,7 @@ import static java.text.DateFormat.MEDIUM;
 import static java.text.DateFormat.getDateInstance;
 import static java.util.Locale.ENGLISH;
 
-public class ParameterTypes implements Configuration {
+public class ParameterTypes implements TypeRegistryConfigurer {
 
     @Override
     public void configureTypeRegistry(TypeRegistry typeRegistry) {

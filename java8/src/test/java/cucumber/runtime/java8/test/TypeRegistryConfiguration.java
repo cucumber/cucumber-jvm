@@ -1,6 +1,6 @@
 package cucumber.runtime.java8.test;
 
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTableType;
 import cucumber.runtime.java8.test.LambdaStepdefs.Person;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
 
-public class ParameterTypes implements Configuration {
+public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
 
     @Override
     public Locale locale() {

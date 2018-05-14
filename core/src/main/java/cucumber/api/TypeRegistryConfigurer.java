@@ -2,7 +2,7 @@ package cucumber.api;
 
 import java.util.Locale;
 
-public interface Configuration {
+public interface TypeRegistryConfigurer {
 
     Locale locale();
 

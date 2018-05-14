@@ -1,6 +1,6 @@
 package cucumber.example.android.cukeulator.test;
 
-import cucumber.api.Configuration;
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.Transformer;
@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import static java.util.Locale.ENGLISH;
 
-public class ParameterTypes implements Configuration {
+public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
 
     @Override
     public Locale locale() {
