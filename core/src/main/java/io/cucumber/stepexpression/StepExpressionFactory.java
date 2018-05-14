@@ -87,7 +87,7 @@ public final class StepExpressionFactory {
         return new CucumberException(String.format("" +
                 "Could not create a cucumber expression for '%s'.\n" +
                 "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
-                "You can find the documentation here: TODO URL",
+                "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/",
             expressionString
         ), e);
     }

@@ -126,9 +126,8 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
-            "Could not convert arguments for step [I have a datatable] defined at'{stubbed location with details}'.\n" +
-            "It appears you did not register a data table type. The details are in the stacktrace below.\n" +
-            "You can find the documentation here: TODO URL");
+            "Could not convert arguments for step [I have a datatable] defined at '{stubbed location with details}'.\n" +
+            "It appears you did not register a data table type. The details are in the stacktrace below.");
         stepDefinitionMatch.runStep(null, null);
 
     }
@@ -152,7 +151,7 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
-            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at'{stubbed location with details}'.\n" +
+            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'.\n" +
             "The details are in the stacktrace below."
         );
         stepDefinitionMatch.runStep(null, null);
@@ -185,7 +184,7 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
-            "Could not convert arguments for step [I have some cukes in my belly] defined at'{stubbed location with details}'.\n" +
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
             "The details are in the stacktrace below.");
         stepDefinitionMatch.runStep(null, null);
 
