@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleStep;
@@ -15,7 +16,9 @@ import java.util.TreeMap;
 public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern;
     final List<HookDefinition> beforeHooks;
+    final List<HookDefinition> beforeStepHooks;
     final List<HookDefinition> afterHooks;
+    final List<HookDefinition> afterStepHooks;
     final Map<String, CacheEntry> matchedStepDefinitionsCache;
     private final LocalizedXStreams localizedXStreams;
 
@@ -23,7 +26,10 @@ public class RuntimeGlue implements Glue {
         this(localizedXStreams,
             Collections.<String, StepDefinition>emptyMap(),
             Collections.<HookDefinition>emptyList(),
-            Collections.<HookDefinition>emptyList(), Collections.<String, CacheEntry>emptyMap());
+            Collections.<HookDefinition>emptyList(),
+            Collections.<HookDefinition>emptyList(),
+            Collections.<HookDefinition>emptyList(), 
+            Collections.<String, CacheEntry>emptyMap());
     }
 
     @Deprecated
@@ -32,17 +38,23 @@ public class RuntimeGlue implements Glue {
     }
 
     protected RuntimeGlue(RuntimeGlue other) {
-        this(other.localizedXStreams, other.stepDefinitionsByPattern, other.beforeHooks, other.afterHooks, other.matchedStepDefinitionsCache);
+        this(other.localizedXStreams, other.stepDefinitionsByPattern, other.beforeHooks, other.beforeStepHooks, other.afterHooks, other.afterStepHooks, other.matchedStepDefinitionsCache);
 
     }
 
     private RuntimeGlue(LocalizedXStreams localizedXStreams,
-                        Map<String, StepDefinition> stepDefinitionsByPattern, List<HookDefinition> beforeHooks,
-                        List<HookDefinition> afterHooks, Map<String, CacheEntry> matchedStepDefinitionsCache) {
+                        Map<String, StepDefinition> stepDefinitionsByPattern,
+                        List<HookDefinition> beforeHooks,
+                        List<HookDefinition> beforeStepHooks,
+                        List<HookDefinition> afterHooks,
+                        List<HookDefinition> afterStepHooks,
+                        Map<String, CacheEntry> matchedStepDefinitionsCache) {
         this.localizedXStreams = localizedXStreams;
         this.stepDefinitionsByPattern = new TreeMap<String, StepDefinition>(stepDefinitionsByPattern);
         this.beforeHooks = new ArrayList<HookDefinition>(beforeHooks);
+        this.beforeStepHooks = new ArrayList<HookDefinition>(beforeStepHooks);
         this.afterHooks = new ArrayList<HookDefinition>(afterHooks);
+        this.afterStepHooks = new ArrayList<HookDefinition>(afterStepHooks);
         this.matchedStepDefinitionsCache = new HashMap<String, CacheEntry>(matchedStepDefinitionsCache);
     }
 
@@ -67,11 +79,22 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
+    public void addBeforeStepHook(HookDefinition hookDefinition) {
+        beforeStepHooks.add(hookDefinition);
+        Collections.sort(beforeStepHooks, new HookComparator(true));
+    }
+
+    @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
         Collections.sort(afterHooks, new HookComparator(false));
     }
 
+    @Override
+    public void addAfterStepHook(HookDefinition hookDefinition) {
+        afterStepHooks.add(hookDefinition);
+        Collections.sort(afterStepHooks, new HookComparator(false));
+    }
 
     @Override
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
@@ -79,10 +102,14 @@ public class RuntimeGlue implements Glue {
             stepDefinitionReporter.stepDefinition(stepDefinition);
         }
     }
-    
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getBeforeStepHooks() {
+        return beforeStepHooks;
     }
 
     @Override
@@ -91,32 +118,37 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+    public List<HookDefinition> getAfterStepHooks() {
+        return afterStepHooks;
+    }
+
+    @Override
+    public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
+            return new PickleStepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
         }
 
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
+        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
         }
         if (matches.size() == 1) {
-            StepDefinitionMatch match = matches.get(0);
+            PickleStepDefinitionMatch match = matches.get(0);
             matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(), match.getArguments()));
             return match;
         }
         throw new AmbiguousStepDefinitionsException(step, matches);
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
-        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
+        List<PickleStepDefinitionMatch> result = new ArrayList<PickleStepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
+                result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
             }
         }
         return result;
@@ -125,7 +157,9 @@ public class RuntimeGlue implements Glue {
     @Override
     public void removeScenarioScopedGlue() {
         removeScenarioScopedHooks(beforeHooks);
+        removeScenarioScopedHooks(beforeStepHooks);
         removeScenarioScopedHooks(afterHooks);
+        removeScenarioScopedHooks(afterStepHooks);
         removeScenarioScopedStepdefs();
     }
 

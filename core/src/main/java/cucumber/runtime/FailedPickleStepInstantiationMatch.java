@@ -1,14 +1,15 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
 
-public class FailedStepInstantiationMatch extends StepDefinitionMatch {
+public class FailedPickleStepInstantiationMatch extends PickleStepDefinitionMatch {
     private final Throwable throwable;
 
-    public FailedStepInstantiationMatch(String uri, PickleStep step, Throwable throwable) {
+    public FailedPickleStepInstantiationMatch(String uri, PickleStep step, Throwable throwable) {
         super(Collections.<Argument>emptyList(), new NoStepDefinition(), uri, step, null);
         this.throwable = removeFrameworkFramesAndAppendStepLocation(throwable, getStepLocation());
     }
@@ -23,8 +24,4 @@ public class FailedStepInstantiationMatch extends StepDefinitionMatch {
         runStep(language, scenario);
     }
 
-    @Override
-    public Match getMatch() {
-        return Match.UNDEFINED;
-    }
 }

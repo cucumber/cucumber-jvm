@@ -57,6 +57,46 @@ public interface LambdaGlueBase extends GlueBase {
         JavaBackend.INSTANCE.get().addBeforeHookDefinition(getGlue(), new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
+    default void BeforeStep(final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void BeforeStep(String[] tagExpressions, final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(tagExpressions, DEFAULT_BEFORE_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void BeforeStep(long timeoutMillis, final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, timeoutMillis, body));
+    }
+
+    default void BeforeStep(int order, final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, order, NO_TIMEOUT, body));
+    }
+
+    default void BeforeStep(String[] tagExpressions, long timeoutMillis, int order, final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+    }
+
+    default void BeforeStep(final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void BeforeStep(String[] tagExpressions, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(tagExpressions, DEFAULT_BEFORE_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void BeforeStep(long timeoutMillis, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, timeoutMillis, body));
+    }
+
+    default void BeforeStep(int order, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, order, NO_TIMEOUT, body));
+    }
+
+    default void BeforeStep(String[] tagExpressions, long timeoutMillis, int order, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+    }
+
     default void After(final HookBody body) {
         JavaBackend.INSTANCE.get().addAfterHookDefinition(getGlue(), new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, NO_TIMEOUT, body));
     }
@@ -96,4 +136,45 @@ public interface LambdaGlueBase extends GlueBase {
     default void After(String[] tagExpressions, long timeoutMillis, int order, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addAfterHookDefinition(getGlue(), new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
+
+    default void AfterStep(final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void AfterStep(String[] tagExpressions, final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpressions, DEFAULT_AFTER_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void AfterStep(long timeoutMillis, final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, timeoutMillis, body));
+    }
+
+    default void AfterStep(int order, final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, order, NO_TIMEOUT, body));
+    }
+
+    default void AfterStep(String[] tagExpressions, long timeoutMillis, int order, final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+    }
+
+    default void AfterStep(final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void AfterStep(String[] tagExpressions, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpressions, DEFAULT_AFTER_ORDER, NO_TIMEOUT, body));
+    }
+
+    default void AfterStep(long timeoutMillis, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, timeoutMillis, body));
+    }
+
+    default void AfterStep(int order, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, order, NO_TIMEOUT, body));
+    }
+
+    default void AfterStep(String[] tagExpressions, long timeoutMillis, int order, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+    }
+
 }

@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import android.util.Log;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
@@ -40,8 +41,9 @@ public final class  AndroidLogcatReporter implements Formatter {
     private final EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {
-            if (!event.testStep.isHook()) {
-                Log.d(logTag, String.format("%s", event.testStep.getStepText()));
+            if (event.testStep instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+                Log.d(logTag, String.format("%s", testStep.getStepText()));
             }
         }
     };

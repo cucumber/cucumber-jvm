@@ -1,8 +1,9 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.HookTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -182,21 +183,25 @@ final class HTMLFormatter implements Formatter {
 
     private void handleTestStepStarted(TestStepStarted event) {
         CurrentFeature currentFeature = featureUnderTest.get();
-        if (!event.testStep.isHook()) {
-            if (isFirstStepAfterBackground(event.testStep)) {
-                jsFunctionCall("scenario", currentFeature.testCaseMap);
-                currentFeature.testCaseMap = null;
+        if (event.testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+            if (isFirstStepAfterBackground(testStep)) {
+                jsFunctionCall("scenario", currentFeature.currentTestCaseMap);
+                currentFeature.currentTestCaseMap = null;
             }
-            jsFunctionCall("step", createTestStep(event.testStep));
+            jsFunctionCall("step", createTestStep(testStep));
         }
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            jsFunctionCall("match", createMatchMap(event.testStep, event.result));
+        if (event.testStep instanceof PickleStepTestStep) {
+            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.testStep, event.result));
             jsFunctionCall("result", createResultMap(event.result));
+        } else if(event.testStep instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) event.testStep;
+            jsFunctionCall(hookTestStep.getHookType().toString(), createResultMap(event.result));
         } else {
-            jsFunctionCall(event.testStep.getHookType().toString(), createResultMap(event.result));
+            throw new IllegalStateException();
         }
     }
 
@@ -393,7 +398,7 @@ final class HTMLFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(TestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) { {
         CurrentFeature currentFeature = featureUnderTest.get();
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
@@ -404,7 +409,7 @@ final class HTMLFormatter implements Formatter {
         return false;
     }
 
-    private Map<String, Object> createTestStep(TestStep testStep) {
+    private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         CurrentFeature currentFeature = featureUnderTest.get();
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
@@ -453,7 +458,7 @@ final class HTMLFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createMatchMap(TestStep testStep, Result result) {
+    private Map<String, Object> createMatchMap(PickleStepTestStep testStep, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
         if (!result.is(Result.Type.UNDEFINED)) {
             matchMap.put("location", testStep.getCodeLocation());

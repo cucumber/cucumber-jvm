@@ -1,14 +1,15 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
 
-public class AmbiguousStepDefinitionsMatch extends StepDefinitionMatch {
+public class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
     private AmbiguousStepDefinitionsException exception;
 
-    public AmbiguousStepDefinitionsMatch(String uri, PickleStep step, AmbiguousStepDefinitionsException e) {
+    public AmbiguousPickleStepDefinitionsMatch(String uri, PickleStep step, AmbiguousStepDefinitionsException e) {
         super(Collections.<Argument>emptyList(), new NoStepDefinition(), uri, step, null);
         this.exception = e;
     }
@@ -23,8 +24,4 @@ public class AmbiguousStepDefinitionsMatch extends StepDefinitionMatch {
         runStep(language, scenario);
     }
 
-    @Override
-    public Match getMatch() {
-        return exception.getMatches().get(0);
-    }
 }

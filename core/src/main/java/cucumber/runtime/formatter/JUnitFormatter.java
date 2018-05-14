@@ -1,8 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.TestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
@@ -147,9 +146,9 @@ final class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
+        if (event.testStep instanceof PickleStepTestStep) {
             CurrentFeature currentFeature = featureUnderTest.get();
-            currentFeature.testStepResults.add(new TestStepResult(event.testStep, event.result));
+            currentFeature.testStepResults.add(new TestStepResult((PickleStepTestStep) event.testStep, event.result));
         }
     }
 
@@ -341,10 +340,10 @@ final class JUnitFormatter implements Formatter, StrictAware {
     }
     
     private class TestStepResult {
-        private final TestStep step;
+        private final PickleStepTestStep step;
         private final Result result;
 
-        TestStepResult(TestStep step, Result result) {
+        TestStepResult(PickleStepTestStep step, Result result) {
             this.step = step;
             this.result = result;
         }

@@ -15,6 +15,21 @@ class LambdaStepdefs : En {
             lastInstance = this
         }
 
+        BeforeStep { scenario: Scenario ->
+            assertSame(this, lastInstance)
+            lastInstance = this
+        }
+
+        AfterStep { scenario: Scenario ->
+            assertSame(this, lastInstance)
+            lastInstance = this
+        }
+
+        After { scenario: Scenario ->
+            assertSame(this, lastInstance)
+            lastInstance = this
+        }
+
         Given("^this data table:$") { peopleTable: DataTable ->
             val people = peopleTable.asList(Person::class.java)
             assertEquals("Aslak", people[0].first)

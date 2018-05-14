@@ -2,7 +2,7 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
@@ -176,8 +176,8 @@ class TestNGFormatter implements Formatter, StrictAware {
 
     private void handleTestStepFinished(TestStepFinished event) {
         final CurrentFeature currentFeature = featureUnderTest.get();
-        if (!event.testStep.isHook()) {
-            currentFeature.testStepResults.add(new TestStepResult(event.testStep, event.result));
+        if (event.testStep instanceof PickleStepTestStep) {
+            currentFeature.testStepResults.add(new TestStepResult((PickleStepTestStep)event.testStep, event.result)); 
         } else {
             currentFeature.hooks.add(event.result);
         }
@@ -412,10 +412,10 @@ class TestNGFormatter implements Formatter, StrictAware {
     }
 
     private class TestStepResult {
-        private final TestStep step;
+        private final PickleStepTestStep step;
         private final Result result;
 
-        TestStepResult(TestStep step, Result result) {
+        TestStepResult(PickleStepTestStep step, Result result) {
             this.step = step;
             this.result = result;
         }

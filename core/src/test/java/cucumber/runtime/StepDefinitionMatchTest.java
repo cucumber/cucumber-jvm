@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -10,11 +11,12 @@ import gherkin.pickles.PickleTable;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static cucumber.runtime.Arguments.createArgument;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -35,7 +37,7 @@ public class StepDefinitionMatchTest {
         PickleStep stepWithoutDocStringOrTable = mock(PickleStep.class);
         when(stepWithoutDocStringOrTable.getArgument()).thenReturn(Collections.<gherkin.pickles.Argument>emptyList());
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{5});
     }
@@ -50,7 +52,7 @@ public class StepDefinitionMatchTest {
         PickleStep stepWithoutDocStringOrTable = mock(PickleStep.class);
         when(stepWithoutDocStringOrTable.getArgument()).thenReturn(Collections.<gherkin.pickles.Argument>emptyList());
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "the thing")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "the thing")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
     }
@@ -66,7 +68,7 @@ public class StepDefinitionMatchTest {
         PickleString docString = new PickleString(mock(PickleLocation.class), "the thing");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
     }
@@ -115,7 +117,7 @@ public class StepDefinitionMatchTest {
         PickleStep stepWithoutDocStringOrTable = mock(PickleStep.class);
         when(stepWithoutDocStringOrTable.getArgument()).thenReturn(Collections.<gherkin.pickles.Argument>emptyList());
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "blah")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "blah")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
         try {
 
             stepDefinitionMatch.runStep(ENGLISH, null);
@@ -147,7 +149,7 @@ public class StepDefinitionMatchTest {
         PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{"HELLO"});
     }
@@ -165,7 +167,7 @@ public class StepDefinitionMatchTest {
         PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{5, "HELLO"});
     }
@@ -175,7 +177,7 @@ public class StepDefinitionMatchTest {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
         StepDefinition stepDefinition = new StubStepDefinition(new Object(), Object.class.getMethod("toString"), "some pattern");
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(asList(new Argument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
         try {
             stepDefinitionMatch.runStep(ENGLISH, null);
             fail();
@@ -195,7 +197,7 @@ public class StepDefinitionMatchTest {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument)mock(PickleTable.class)), asList(mock(PickleLocation.class)));
 
         StepDefinition stepDefinition = new StubStepDefinition(new Object(), WithTwoParams.class.getMethod("withTwoParams", Integer.TYPE, Short.TYPE, List.class), "some pattern");
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(asList(new Argument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
         try {
             stepDefinitionMatch.runStep(ENGLISH, null);
             fail();

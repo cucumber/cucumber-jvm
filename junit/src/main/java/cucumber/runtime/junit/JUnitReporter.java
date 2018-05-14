@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.Result;
-import cucumber.api.TestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
@@ -9,7 +9,6 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
-import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -39,8 +38,9 @@ public class JUnitReporter {
 
         @Override
         public void receive(TestStepStarted event) {
-            if (!event.testStep.isHook()) {
-                handleStepStarted(event.testStep.getPickleStep());
+            if (event.testStep instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+                handleStepStarted(testStep.getPickleStep());
             }
         }
 
@@ -49,8 +49,9 @@ public class JUnitReporter {
 
         @Override
         public void receive(TestStepFinished event) {
-            if (!event.testStep.isHook()) {
-                handleStepResult(event.testStep, event.result);
+            if (event.testStep instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+                handleStepResult(testStep, event.result);
             } else {
                 handleHookResult(event.result);
             }
@@ -88,7 +89,7 @@ public class JUnitReporter {
         stepErrors = new ArrayList<Throwable>();
     }
 
-    void handleStepStarted(PickleStep step) {
+    void handleStepStarted(gherkin.pickles.PickleStep step) {
         if (stepNotifications()) {
             Description description = pickleRunner.describeChild(step);
             stepNotifier = new EachTestNotifier(runNotifier, description);
@@ -102,7 +103,7 @@ public class JUnitReporter {
         return junitOptions.stepNotifications();
     }
 
-    void handleStepResult(TestStep testStep, Result result) {
+    void handleStepResult(PickleStepTestStep testStep, Result result) {
         Throwable error = result.getError();
         switch (result.getStatus()) {
         case PASSED:

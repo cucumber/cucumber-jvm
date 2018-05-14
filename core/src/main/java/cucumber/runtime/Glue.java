@@ -16,22 +16,25 @@ public interface Glue {
     //<editor-fold desc="pre test execution">
     void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
-    void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
-    //</editor-fold>
-    
-    //<editor-fold desc=pre test execution, but also during execution. Called by loadGlue but also JavaBackend.buildWorld()">
     void addBeforeHook(HookDefinition hookDefinition);
 
     void addAfterHook(HookDefinition hookDefinition);
-    
-    void removeScenarioScopedGlue();
-    //</editor-fold>
 
-    //<editor-fold desc="state changing methods, called during execution of PickleEvents">    
+    void addBeforeStepHook(HookDefinition beforeStepHook);
+
+    void addAfterStepHook(HookDefinition hookDefinition);
+
     List<HookDefinition> getBeforeHooks();
 
     List<HookDefinition> getAfterHooks();
 
-    StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step);    
-    //</editor-fold>
+    List<HookDefinition> getAfterStepHooks();
+
+    List<HookDefinition> getBeforeStepHooks();
+
+    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step);
+
+    void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
+
+    void removeScenarioScopedGlue();
 }
