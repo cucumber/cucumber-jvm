@@ -3,6 +3,7 @@ package cucumber.runner;
 import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
+import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 
@@ -88,7 +89,7 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
 
     @Override
     public List<cucumber.api.Argument> getDefinitionArgument() {
-        return definitionMatch.getArguments();
+        return DefinitionArgument.createArguments(definitionMatch.getArguments());
     }
 
     @Override

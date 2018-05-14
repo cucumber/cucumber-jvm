@@ -73,12 +73,12 @@ public class CalculatorActivitySteps {
         return rule.getActivity();
     }
 
-    @Given("^I have a CalculatorActivity$")
+    @Given("I have a CalculatorActivity")
     public void I_have_a_CalculatorActivity() {
         assertNotNull(getActivity());
     }
 
-    @When("^I press (\\d)$")
+    @When("I press {digit}")
     public void I_press_d(final int d) {
         switch (d) {
             case 0:
@@ -114,7 +114,7 @@ public class CalculatorActivitySteps {
         }
     }
 
-    @When("^I press ([+–x\\/=])$")
+    @When("I press {operator}")
     public void I_press_op(final char op) {
         switch (op) {
             case '+':
@@ -135,7 +135,7 @@ public class CalculatorActivitySteps {
         }
     }
 
-    @Then("^I should see (\\S+) on the display$")
+    @Then("I should see {word} on the display")
     public void I_should_see_s_on_the_display(final String s) {
         onView(withId(R.id.txt_calc_display)).check(matches(withText(s)));
     }

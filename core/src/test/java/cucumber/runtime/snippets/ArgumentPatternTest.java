@@ -7,9 +7,8 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 
 public class ArgumentPatternTest {
-    private Class<?> intType = Integer.TYPE;
     private Pattern singleDigit = Pattern.compile("(\\d)");
-    private ArgumentPattern argumentPattern = new ArgumentPattern(singleDigit, intType);
+    private ArgumentPattern argumentPattern = new ArgumentPattern(singleDigit);
 
     @Test
     public void replacesMatchWithoutEscapedNumberClass() {

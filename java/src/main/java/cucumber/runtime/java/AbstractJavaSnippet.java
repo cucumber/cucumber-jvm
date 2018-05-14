@@ -2,45 +2,48 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.snippets.Snippet;
 
-import java.util.List;
+import java.lang.reflect.Type;
+import java.util.Map;
 
-public abstract class AbstractJavaSnippet implements Snippet {
+abstract class AbstractJavaSnippet implements Snippet {
     @Override
-    public String arguments(List<Class<?>> argumentTypes) {
+    public final String arguments(Map<String, Type> arguments) {
         StringBuilder sb = new StringBuilder();
-        int n = 1;
-        for (Class<?> argType : argumentTypes) {
-            if (n > 1) {
+        boolean first = true;
+        for (Map.Entry<String, Type> argType : arguments.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
                 sb.append(", ");
             }
-            sb.append(getArgType(argType)).append(" ").append("arg").append(n++);
+            sb.append(getArgType(argType.getValue())).append(" ").append(argType.getKey());
         }
         return sb.toString();
     }
 
-    protected abstract String getArgType(Class<?> argType);
+    private String getArgType(Type argType) {
+        if (argType instanceof Class) {
+            Class cType = (Class) argType;
+            return cType.getSimpleName();
+        }
 
-    @Override
-    public String tableHint() {
-        return "    // For automatic transformation, change DataTable to one of\n" +
-                "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
-                "    // E,K,V must be a scalar (String, Integer, Date, enum etc).\n" +
-                "    // Field names for YourType must match the column names in \n" +
-                "    // your feature file (except for spaces and capitalization).\n";
+        // Got a better idea? Send a PR.
+        return argType.toString();
     }
 
     @Override
-    public String namedGroupStart() {
-        return null;
+    public final String tableHint() {
+        return "" +
+            "    // For automatic transformation, change DataTable to one of\n" +
+            "    // List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
+            "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
+            "    // Double, Byte Short, Long, BigInteger or BigDecimal.\n" +
+            "    //\n" +
+            "    // For other transformations you can register a DataTableType.\n"; //TODO: Add doc URL
     }
 
     @Override
-    public String namedGroupEnd() {
-        return null;
-    }
-
-    @Override
-    public String escapePattern(String pattern) {
+    public final String escapePattern(String pattern) {
         return pattern.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }

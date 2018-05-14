@@ -51,17 +51,17 @@ public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<Cucu
         assertEquals(3, steps);
     }
 
-    @Given("^I have a test$")
+    @Given("I have a test")
     public void I_have_a_test() {
         assertEquals(1, ++steps);
     }
 
-    @When("^I test$")
+    @When("I test")
     public void I_test() {
         assertEquals(2, ++steps);
     }
 
-    @Then("^I succeed$")
+    @Then("I succeed")
     public void I_succeed() {
         assertEquals(3, ++steps);
     }

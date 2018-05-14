@@ -56,7 +56,7 @@ final class JSONFormatter implements Formatter {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -356,8 +356,10 @@ final class JSONFormatter implements Formatter {
                 List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
                 for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
                     Map<String, Object> argumentMap = new HashMap<String, Object>();
-                    argumentMap.put("val", argument.getVal());
-                    argumentMap.put("offset", argument.getOffset());
+                    if (argument.getValue() != null) {
+                        argumentMap.put("val", argument.getValue());
+                        argumentMap.put("offset", argument.getStart());
+                    }
                     argumentList.add(argumentMap);
                 }
                 matchMap.put("arguments", argumentList);

@@ -4,6 +4,7 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
@@ -20,7 +21,6 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.Utils;
-import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
@@ -33,10 +33,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend, LambdaGlueRegistry {
-    private final SnippetGenerator snippetGenerator = new SnippetGenerator(createSnippet());
+
+    private final SnippetGenerator snippetGenerator;
+    private final TypeRegistry typeRegistry;
 
     private Snippet createSnippet() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
@@ -60,18 +61,20 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
      *
      * @param resourceLoader
      */
-    public JavaBackend(ResourceLoader resourceLoader) {
-        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()));
+    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
     }
 
-    private JavaBackend(ClassFinder classFinder) {
-        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder);
+    private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
+        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), typeRegistry.parameterTypeRegistry());
+        this.typeRegistry = typeRegistry;
     }
 
     @Override
@@ -143,9 +146,15 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             if (objectFactory.addClass(method.getDeclaringClass())) {
-                glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeoutMillis(annotation), objectFactory));
+                glue.addStepDefinition(
+                    new JavaStepDefinition(
+                        method,
+                        expression(annotation),
+                        timeoutMillis(annotation),
+                        objectFactory,
+                        typeRegistry));
             }
-        } catch (DuplicateStepDefinitionException e) {
+        } catch (CucumberException e) {
             throw e;
         } catch (Throwable e) {
             throw new CucumberException(e);
@@ -153,8 +162,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void addStepDefinition(StepDefinition stepDefinition) {
-        glue.addStepDefinition(stepDefinition);
+    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
+        glue.addStepDefinition(stepDefinitionFunction.apply(typeRegistry));
     }
 
     void addHook(Annotation annotation, Method method) {
@@ -200,10 +209,10 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     }
 
-    private Pattern pattern(Annotation annotation) throws Throwable {
-        Method regexpMethod = annotation.getClass().getMethod("value");
-        String regexpString = (String) Utils.invoke(annotation, regexpMethod, 0);
-        return Pattern.compile(regexpString);
+
+    private String expression(Annotation annotation) throws Throwable {
+        Method expressionMethod = annotation.getClass().getMethod("value");
+        return (String) Utils.invoke(annotation, expressionMethod, 0);
     }
 
     private long timeoutMillis(Annotation annotation) throws Throwable {

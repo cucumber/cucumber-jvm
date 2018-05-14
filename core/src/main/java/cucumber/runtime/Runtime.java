@@ -1,17 +1,19 @@
 package cucumber.runtime;
 
+import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -20,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.singletonList;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -37,8 +41,9 @@ public class Runtime {
     private final List<PicklePredicate> filters;
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
+
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
+        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
@@ -59,7 +64,7 @@ public class Runtime {
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
         final Glue glue;
-        glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
+        glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
         this.stats = new Stats(runtimeOptions.isMonochrome());
         this.bus = new EventBus(stopWatch);
         this.runner = new Runner(glue, bus, backends, runtimeOptions);
@@ -82,9 +87,12 @@ public class Runtime {
         runtimeOptions.setEventBus(bus);
     }
 
-    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
+    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
         Reflections reflections = new Reflections(classFinder);
-        return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+        TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
+        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
     }
 
     /**

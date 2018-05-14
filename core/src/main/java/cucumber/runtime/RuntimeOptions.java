@@ -4,17 +4,16 @@ import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import io.cucumber.datatable.DataTable;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.EventBus;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.PathWithLines;
-import cucumber.runtime.table.TablePrinter;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
@@ -37,7 +36,6 @@ import static cucumber.runtime.model.CucumberFeature.load;
 import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
@@ -70,7 +68,6 @@ public class RuntimeOptions {
     private final List<String> junitOptions = new ArrayList<String>();
     private final PluginFactory pluginFactory;
     private final List<Plugin> plugins = new ArrayList<Plugin>();
-    private final List<XStreamConverter> converters = new ArrayList<XStreamConverter>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -213,11 +210,6 @@ public class RuntimeOptions {
         parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
     }
 
-    RuntimeOptions withConverters(List<XStreamConverter> converters) {
-        this.converters.addAll(converters);
-        return this;
-    }
-
     private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
         if (parsedLineFilters.containsKey(key)) {
             parsedLineFilters.get(key).addAll(lines);
@@ -271,7 +263,6 @@ public class RuntimeOptions {
 
     private int printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
-        TablePrinter printer = new TablePrinter();
         List<List<String>> table = new ArrayList<List<String>>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
         addKeywordRow(table, "background", dialect.getBackgroundKeywords());
@@ -288,7 +279,7 @@ public class RuntimeOptions {
         addCodeKeywordRow(table, "then", dialect.getThenKeywords());
         addCodeKeywordRow(table, "and", dialect.getAndKeywords());
         addCodeKeywordRow(table, "but", dialect.getButKeywords());
-        printer.printTable(table, builder);
+        DataTable.create(table).print(builder);
         System.out.println(builder.toString());
         return 0;
     }
@@ -334,10 +325,6 @@ public class RuntimeOptions {
             pluginNamesInstantiated = true;
         }
         return plugins;
-    }
-
-    List<XStreamConverter> getConverters() {
-        return unmodifiableList(converters);
     }
 
     public Formatter formatter(ClassLoader classLoader) {

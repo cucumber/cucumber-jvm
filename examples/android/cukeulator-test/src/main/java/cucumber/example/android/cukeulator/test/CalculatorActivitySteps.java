@@ -35,12 +35,12 @@ public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<Ca
         assertNotNull(dependency);
     }
 
-    @Given("^I have a CalculatorActivity$")
+    @Given("I have a CalculatorActivity")
     public void I_have_a_CalculatorActivity() {
         assertNotNull(getActivity());
     }
 
-    @When("^I press (\\d)$")
+    @When("I press {digit}")
     public void I_press_d(int d) {
         CalculatorActivity activity = getActivity();
 
@@ -78,7 +78,7 @@ public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<Ca
         }
     }
 
-    @When("^I press ([+–x\\/=])$")
+    @When("I press {operator}")
     public void I_press_op(char op) {
         CalculatorActivity activity = getActivity();
 
@@ -101,7 +101,7 @@ public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<Ca
         }
     }
 
-    @Then("^I should see (\\S+) on the display$")
+    @Then("I should see {word} on the display")
     public void I_should_see_s_on_the_display(String s) {
         TextView display = (TextView) getActivity().findViewById(R.id.txt_calc_display);
         String displayed_result = display.getText().toString();

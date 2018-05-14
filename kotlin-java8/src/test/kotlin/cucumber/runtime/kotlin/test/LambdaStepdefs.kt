@@ -1,7 +1,7 @@
 package cucumber.runtime.kotlin.test;
 
-import cucumber.api.DataTable
 import cucumber.api.Scenario
+import io.cucumber.datatable.DataTable
 import cucumber.api.java8.En
 import org.junit.Assert.*
 
@@ -30,32 +30,32 @@ class LambdaStepdefs : En {
             lastInstance = this
         }
 
-        Given("^this data table:$") { peopleTable: DataTable ->
-            val people = peopleTable.asList(Person::class.java)
+        Given("this data table:") { peopleTable: DataTable ->
+            val people : List<Person> = peopleTable.asList(Person::class.java)
             assertEquals("Aslak", people[0].first)
             assertEquals("Hellesøy", people[0].last)
         }
 
         val alreadyHadThisManyCukes = 1
-        Given("^I have (\\d+) cukes in my belly$") { n: Long ->
+        Given("I have {long} cukes in my belly") { n: Long ->
             assertEquals(1, alreadyHadThisManyCukes)
             assertEquals(42L, n)
         }
 
         val localState = "hello"
-        Then("^I really have (\\d+) cukes in my belly") { i: Int ->
+        Then("I really have {int} cukes in my belly") { i: Int ->
             assertEquals(42, i)
             assertEquals("hello", localState)
         }
 
-        Given("^A statement with a body expression$") { assertTrue(true) }
+        Given("A statement with a body expression$") { assertTrue(true) }
 
-        Given("^A statement with a simple match$", { -> assertTrue(true) })
+        Given("A statement with a simple match$", { -> assertTrue(true) })
 
         val localInt = 1
-        Given("^A statement with a scoped argument$", { assertEquals(2, localInt + 1) })
+        Given("A statement with a scoped argument$", { assertEquals(2, localInt + 1) })
 
-        Given("^I will give you (\\d+) and ([\\d\\.]+) and (\\w+) and (\\d+)$") { a: Int, b: Float, c: String, d: Int ->
+        Given("I will give you {int} and {float} and {word} and {int}") { a: Int, b: Float, c: String, d: Int ->
             assertEquals(1, a)
             assertEquals(2.2f, b)
             assertEquals("three", c)
@@ -64,7 +64,7 @@ class LambdaStepdefs : En {
     }
 
     class Person {
-        internal var first: String? = null
-        internal var last: String? = null
+        var first: String? = null
+        var last: String? = null
     }
 }

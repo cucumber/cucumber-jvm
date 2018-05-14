@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
@@ -24,6 +25,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -58,7 +60,8 @@ public class JavaStepDefinitionTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactory factory = new SingletonFactory(defs);
-        this.backend = new JavaBackend(factory, classFinder);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
 

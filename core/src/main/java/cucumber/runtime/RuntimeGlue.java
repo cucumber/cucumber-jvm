@@ -1,8 +1,7 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import io.cucumber.stepexpression.Argument;
 import cucumber.api.StepDefinitionReporter;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
@@ -20,16 +19,6 @@ public class RuntimeGlue implements Glue {
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
     final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
-    private final LocalizedXStreams localizedXStreams;
-
-    public RuntimeGlue(LocalizedXStreams localizedXStreams) {
-        this(null, localizedXStreams);
-    }
-
-    @Deprecated
-    public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
-        this.localizedXStreams = localizedXStreams;
-    }
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -89,19 +78,26 @@ public class RuntimeGlue implements Glue {
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new PickleStepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
+            return new PickleStepDefinitionMatch(Collections.<Argument>emptyList(), cacheEntry.stepDefinition, featurePath, step);
         }
 
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
         }
-        if (matches.size() == 1) {
-            PickleStepDefinitionMatch match = matches.get(0);
-            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(), match.getArguments()));
-            return match;
+        if (matches.size() > 1) {
+            throw new AmbiguousStepDefinitionsException(step, matches);
         }
-        throw new AmbiguousStepDefinitionsException(step, matches);
+
+        PickleStepDefinitionMatch match = matches.get(0);
+
+        // We can only cache step definitions without arguments.
+        // DocString and TableArguments are not included in the stepText used as the cache key.
+        if(match.getArguments().isEmpty()) {
+            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition()));
+        }
+
+        return match;
     }
 
     private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
@@ -109,7 +105,7 @@ public class RuntimeGlue implements Glue {
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
+                result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step));
             }
         }
         return result;
@@ -162,11 +158,9 @@ public class RuntimeGlue implements Glue {
     static final class CacheEntry {
 
         StepDefinition stepDefinition;
-        List<Argument> arguments;
 
-        private CacheEntry(StepDefinition stepDefinition, List<Argument> arguments) {
+        private CacheEntry(StepDefinition stepDefinition) {
             this.stepDefinition = stepDefinition;
-            this.arguments = arguments;
         }
     }
 }

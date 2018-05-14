@@ -31,7 +31,7 @@ public interface PickleStepTestStep extends TestStep {
      *
      * @return argument provided to the step definition
      */
-    List<cucumber.api.Argument> getDefinitionArgument();
+    List<Argument> getDefinitionArgument();
 
     /**
      * Returns arguments provided to the Gherkin step. E.g:

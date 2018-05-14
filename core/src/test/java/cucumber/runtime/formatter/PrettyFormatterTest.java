@@ -1,26 +1,27 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Argument;
 import cucumber.api.Result;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.formatter.AnsiEscapes;
-import cucumber.runtime.Arguments;
+import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static cucumber.runtime.Arguments.createArgument;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -357,7 +358,7 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
 
         assertThat(formatterOutput, containsString("" +
-                "    " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
+            "    " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
     }
 
     @Test
@@ -374,7 +375,7 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
 
         assertThat(formatterOutput, containsString("" +
-                AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
+            AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
     }
 
     @Test
@@ -391,52 +392,60 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
 
         assertThat(formatterOutput, containsString("" +
-                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
+            "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
 
     @Test
     public void should_mark_subsequent_arguments_in_steps() throws Throwable {
         Formats formats = new AnsiFormats();
-        Argument arg1 = createArgument(5, "arg1");
-        Argument arg2 = createArgument(15, "arg2");
-        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
-        String formattedText = prettyFormatter.formatStepText("Given ", "text arg1 text arg2", formats.get("passed"), formats.get("passed_arg"), asList(arg1, arg2));
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("text {string} text {string}");
+
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+        String stepText = "text 'arg1' text 'arg2'";
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg1"  + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
-                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg2"  + AnsiEscapes.RESET));
+            AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'" + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'" + AnsiEscapes.RESET));
     }
 
     @Test
-    public void should_mark_nested_argument_as_part_of_full_argument(){
+    public void should_mark_nested_argument_as_part_of_full_argument() {
         Formats formats = new AnsiFormats();
-        Argument enclosingArg = createArgument(19, " and not yet confirmed");
-        Argument nestedArg = createArgument(23, " not yet ");
-        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
-        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg));
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not yet )?confirmed)?");
+
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+        String stepText = "the order is placed and not yet confirmed";
+
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
     @Test
-    public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
+    public void should_mark_nested_arguments_as_part_of_enclosing_argument() {
         Formats formats = new AnsiFormats();
-        Argument enclosingArg = createArgument(19, " and not yet confirmed");
-        Argument nestedArg = createArgument(23, " not yet ");
-        Argument nestedNestedArg = createArgument(27, "yet ");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not( yet)? )?confirmed)?");
+        String stepText = "the order is placed and not yet confirmed";
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
-        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg, nestedNestedArg));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {

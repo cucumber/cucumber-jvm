@@ -1,33 +1,41 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import io.cucumber.stepexpression.TypeRegistry;
+import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.ArgumentMatcher;
+import io.cucumber.stepexpression.ExpressionArgumentMatcher;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 public class StubStepDefinition implements StepDefinition {
-    private final Object target;
-    private final Method method;
-    private final String pattern;
+    private final StepExpression expression;
     private List<ParameterInfo> parameterInfos;
 
-    public StubStepDefinition(Object target, Method method, String pattern) {
-        this.target = target;
-        this.method = method;
-        this.pattern = pattern;
-        this.parameterInfos = ParameterInfo.fromMethod(method);
+    StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
+        this.parameterInfos = ParameterInfo.fromTypes(types);
+        if (parameterInfos.isEmpty()) {
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern);
+        } else {
+            ParameterInfo lastParameter = parameterInfos.get(parameterInfos.size() - 1);
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern, lastParameter.getType());
+        }
     }
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
-        throw new UnsupportedOperationException();
+        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+        return argumentMatcher.argumentsFrom(step);
     }
 
     @Override
     public String getLocation(boolean detail) {
-        return method.getName();
+        return "{stubbed location" + (detail ? " with details" : "") + "}";
     }
 
     @Override
@@ -41,8 +49,11 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(String language, Object[] args) throws Throwable {
-        Utils.invoke(target, method, 0, args);
+    public void execute(String language, Object[] args) {
+        assertEquals(parameterInfos.size(), args.length);
+        for (int i = 0; i < args.length; i++) {
+            assertEquals(parameterInfos.get(i).getType(), args[i].getClass());
+        }
     }
 
     @Override
@@ -52,7 +63,7 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public String getPattern() {
-        return pattern;
+        return expression.getSource();
     }
 
     @Override

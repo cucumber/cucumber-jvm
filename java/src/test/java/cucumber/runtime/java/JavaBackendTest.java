@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -17,6 +18,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -33,7 +35,8 @@ public class JavaBackendTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         this.factory = new DefaultJavaObjectFactory();
-        this.backend = new JavaBackend(factory, classFinder);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
     }
 
     @Test

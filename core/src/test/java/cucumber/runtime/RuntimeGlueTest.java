@@ -1,17 +1,22 @@
 package cucumber.runtime;
 
-import cucumber.runtime.xstream.LocalizedXStreams;
+import io.cucumber.stepexpression.TypeRegistry;
+import io.cucumber.stepexpression.ArgumentMatcher;
+import io.cucumber.stepexpression.ExpressionArgumentMatcher;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
-import java.util.regex.Pattern;
 
+import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -27,11 +32,12 @@ public class RuntimeGlueTest {
 
     @Before
     public void setUp() {
-        glue = new RuntimeGlue(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
+        glue = new RuntimeGlue();
     }
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
+        RuntimeGlue glue = new RuntimeGlue();
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
@@ -54,7 +60,6 @@ public class RuntimeGlueTest {
         // This test is a bit fragile - it is testing state, not behaviour.
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
-
 
         StepDefinition sd = mock(StepDefinition.class);
         when(sd.isScenarioScoped()).thenReturn(true);
@@ -87,7 +92,7 @@ public class RuntimeGlueTest {
         glue.addStepDefinition(sd);
         String featurePath = "someFeature.feature";
 
-        String stepText = "pattern1";
+        String stepText = "pattern";
         PickleStep pickleStep1 = getPickleStep(stepText);
         assertEquals(sd, glue.stepDefinitionMatch(featurePath, pickleStep1).getStepDefinition());
 
@@ -168,13 +173,14 @@ public class RuntimeGlueTest {
     }
 
     private static StepDefinition getStepDefinitionMockWithPattern(String pattern) {
-        final JdkPatternArgumentMatcher jdkPatternArgumentMatcher = new JdkPatternArgumentMatcher(Pattern.compile(pattern));
+        StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
+        final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getPattern()).thenReturn(pattern);
         when(stepDefinition.matchedArguments(any(PickleStep.class))).then(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) {
-                return jdkPatternArgumentMatcher.argumentsFrom(invocationOnMock.getArgumentAt(0,PickleStep.class).getText());
+                return argumentMatcher.argumentsFrom(invocationOnMock.getArgumentAt(0, PickleStep.class));
             }
         });
         return stepDefinition;

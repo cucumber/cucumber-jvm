@@ -1,5 +1,6 @@
 package cucumber.runtime.stub;
 
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
@@ -12,8 +13,9 @@ import java.util.List;
 /**
  * We need an implementation of Backend to prevent Runtime from blowing up.
  */
+@SuppressWarnings("unused")
 public class StubBackend implements Backend {
-    public StubBackend(ResourceLoader resourceLoader) {
+    public StubBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
 
     }
 

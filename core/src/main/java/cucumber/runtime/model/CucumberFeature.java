@@ -3,7 +3,6 @@ package cucumber.runtime.model;
 import cucumber.api.event.TestSourceRead;
 import cucumber.runner.EventBus;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
