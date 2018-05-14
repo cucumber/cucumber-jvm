@@ -11,11 +11,8 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.HookDefinitionMatch;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.UndefinedStepDefinitionMatch;
 import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.UndefinedPickleStepDefinitionMatch;
-import cucumber.runtime.UnreportedStepExecutor;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
@@ -92,7 +89,6 @@ public class Runner {
                 match = new FailedPickleStepInstantiationMatch(pickleEvent.uri, step, t);
             }
 
-
             List<HookTestStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
             testSteps.add(new PickleStepTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
@@ -118,13 +114,13 @@ public class Runner {
 
     private List<HookTestStep> getAfterStepHooks(List<PickleTag> tags) {
         List<HookTestStep> hookSteps = new ArrayList<HookTestStep>();
-        addTestStepsForHooks(hookSteps, tags, glue.getAfterStepHooks(), HookType.AfterStep);
+        addTestStepsForHooks(hookSteps, tags, localGlue.get().getAfterStepHooks(), HookType.AfterStep);
         return hookSteps;
     }
 
     private List<HookTestStep> getBeforeStepHooks(List<PickleTag> tags) {
         List<HookTestStep> hookSteps = new ArrayList<HookTestStep>();
-        addTestStepsForHooks(hookSteps, tags, glue.getBeforeStepHooks(), HookType.BeforeStep);
+        addTestStepsForHooks(hookSteps, tags, localGlue.get().getBeforeStepHooks(), HookType.BeforeStep);
         return hookSteps;
     }
 

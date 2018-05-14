@@ -10,11 +10,10 @@ public interface LambdaGlueRegistry {
 
     void addStepDefinition(Glue glue, StepDefinition stepDefinition);
 
-    void addBeforeStepHookDefinition(HookDefinition beforeStepHook);
+    void addBeforeStepHookDefinition(Glue glue, HookDefinition beforeStepHook);
 
-    void addAfterStepHookDefinition(HookDefinition afterStepHook);
+    void addAfterStepHookDefinition(Glue glue, HookDefinition afterStepHook);
 
-    void addBeforeHookDefinition(HookDefinition beforeHook);
     void addBeforeHookDefinition(Glue glue, HookDefinition beforeHook);
 
     void addAfterHookDefinition(Glue glue, HookDefinition afterHook);

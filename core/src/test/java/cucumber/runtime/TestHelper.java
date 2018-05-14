@@ -186,9 +186,7 @@ public class TestHelper {
             Result stepResult = getResultWithDefaultPassed(stepsToResult, stepText);
             if (!stepResult.is(Result.Type.UNDEFINED)) {
                 PickleStepDefinitionMatch matchStep = mock(PickleStepDefinitionMatch.class);
-                StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
                 when(matchStep.getPattern()).thenReturn(stepText);
-                when(matchStep.getMatch()).thenReturn(matchStep);
                 when(glue.stepDefinitionMatch(anyString(), TestHelper.stepWithName(stepText))).thenReturn(matchStep);
                 mockStepResult(stepResult, matchStep);
                 mockStepLocation(getLocationWithDefaultEmptyString(stepsToLocation, stepText), matchStep);

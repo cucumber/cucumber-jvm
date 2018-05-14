@@ -80,8 +80,8 @@ public class JavaHookTest {
     @Test
     public void before_step_hooks_get_registered() throws Exception {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
+        backend.buildWorld(glue);
+        backend.addHook(glue, BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeStepHooks().get(0);
         assertEquals(0, glue.getAfterStepHooks().size());
         assertEquals(BEFORESTEP, hookDef.getMethod());
@@ -90,8 +90,8 @@ public class JavaHookTest {
     @Test
     public void after_step_hooks_get_registered() throws Exception {
         objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
+        backend.buildWorld(glue);
+        backend.addHook(glue, AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
         assertEquals(0, glue.getBeforeStepHooks().size());
         assertEquals(AFTERSTEP, hookDef.getMethod());

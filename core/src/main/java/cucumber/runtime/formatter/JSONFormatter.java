@@ -131,23 +131,24 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
+        CurrentFeature currentFeature = featureUnderTest.get();
         if (event.testStep instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
             if (isFirstStepAfterBackground(testStep)) {
-                currentElementMap = currentTestCaseMap;
-                currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
+                currentFeature.elementMap = currentFeature.testCaseMap;
+                currentFeature.stepsList = (List<Map<String, Object>>) currentFeature.elementMap.get("steps");
             }
-            currentStepOrHookMap = createTestStep(testStep);
+            currentFeature.stepOrHookMap = createTestStep(testStep);
             //add beforeSteps list to current step
-            if (currentBeforeStepHookList.containsKey(HookType.Before.toString())) {
-                currentStepOrHookMap.put(HookType.Before.toString(), currentBeforeStepHookList.get(HookType.Before.toString()));
-                currentBeforeStepHookList.clear();
+            if (currentFeature.beforeStepHookList.containsKey(HookType.Before.toString())) {
+                currentFeature.stepOrHookMap.put(HookType.Before.toString(), currentFeature.beforeStepHookList.get(HookType.Before.toString()));
+                currentFeature.beforeStepHookList.clear();
             }
-            currentStepsList.add(currentStepOrHookMap);
+            currentFeature.stepsList.add(currentFeature.stepOrHookMap);
         } else if(event.testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) event.testStep;
-            currentStepOrHookMap = createHookStep(hookTestStep);
-            addHookStepToTestCaseMap(currentStepOrHookMap, hookTestStep.getHookType());
+            currentFeature.stepOrHookMap = createHookStep(hookTestStep);
+            addHookStepToTestCaseMap(currentFeature.stepOrHookMap, hookTestStep.getHookType());
         } else {
             throw new IllegalStateException();
         }
@@ -306,22 +307,23 @@ final class JSONFormatter implements Formatter {
             hookName = "before";
 
 
+        CurrentFeature currentFeature = featureUnderTest.get();
         Map<String, Object> mapToAddTo;
         switch (hookType) {
             case Before:
-                mapToAddTo = currentTestCaseMap;
+                mapToAddTo = currentFeature.testCaseMap;
                 break;
             case After:
-                mapToAddTo = currentTestCaseMap;
+                mapToAddTo = currentFeature.testCaseMap;
                 break;
             case BeforeStep:
-                mapToAddTo = currentBeforeStepHookList;
+                mapToAddTo = currentFeature.beforeStepHookList;
                 break;
             case AfterStep:
-                mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
+                mapToAddTo = currentFeature.stepsList.get(currentFeature.stepsList.size() - 1);
                 break;
              default:
-                 mapToAddTo = currentTestCaseMap;
+                 mapToAddTo = currentFeature.testCaseMap;
         }
 
         if (!mapToAddTo.containsKey(hookName)) {
@@ -394,6 +396,7 @@ final class JSONFormatter implements Formatter {
         private Map<String, Object> testCaseMap;
         private List<Map<String, Object>> stepsList;
         private Map<String, Object> stepOrHookMap;
+        private Map<String, Object> beforeStepHookList = new HashMap<String, Object>();
         
         CurrentFeature(final String uri) {
             this.uri = uri;

@@ -6,10 +6,8 @@ import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.Scenario;
-import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.api.event.EventHandler;
-import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestGroupRunFinished;
 import cucumber.api.event.TestGroupRunStarted;
 import cucumber.runner.EventBus;
@@ -26,7 +24,6 @@ import gherkin.pickles.PickleTag;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,7 +52,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -528,7 +524,7 @@ public class RuntimeTest {
             "cucumber/runtime/ParallelTests4.feature");
 
         final int threads = features.size();
-        final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
         final EventBus bus = runtime.getEventBus();
         bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
         bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
@@ -543,10 +539,12 @@ public class RuntimeTest {
         verify(templateGlue).reportStepDefinitions(isA(StepDefinitionReporter.class));
         verify(templateGlue, times(threads)).clone();
         verify(backend, times(threads)).buildWorld(localGlue);
-        verify(backend, times(threads)).disposeWorld(localGlue);        
-        verify(localGlue, times(threads)).getBeforeHooks();
-        verify(localGlue, times(threads)).getAfterHooks();
+        verify(backend, times(threads)).disposeWorld(localGlue);
         final int stepsPerFeature = 6;
+        verify(localGlue, times(threads)).getBeforeHooks();
+        verify(localGlue, times(threads * stepsPerFeature)).getBeforeStepHooks();
+        verify(localGlue, times(threads)).getAfterHooks();
+        verify(localGlue, times(threads * stepsPerFeature)).getAfterStepHooks();
         for(final String feature : features) {
             verify(localGlue, times(stepsPerFeature)).stepDefinitionMatch(eq(feature), isA(PickleStep.class));
         }
@@ -562,7 +560,7 @@ public class RuntimeTest {
             "cucumber/runtime/ParallelTests4.feature");
 
         final int threads = features.size();
-        final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), features,"--threads", String.valueOf(threads));
         final EventBus bus = runtime.getEventBus();
         bus.registerHandlerFor(TestGroupRunStarted.class, handleTestGroupRunStarted);
         bus.registerHandlerFor(TestGroupRunFinished.class, handleTestGroupRunFinished);
@@ -602,7 +600,7 @@ public class RuntimeTest {
         allFeatures.addAll(syncFeatures);
 
         final int maxThreads = 2; //allFeatures.size();
-        final Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), allFeatures,"--threads", String.valueOf(maxThreads));
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), allFeatures,"--threads", String.valueOf(maxThreads));
 
         
         final EventBus bus = runtime.getEventBus();
@@ -682,20 +680,19 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, List<String> featurePaths, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, featurePaths, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, featurePaths, runtimeArgs);
     }
     
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, Collections.<String>emptyList(), runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, Collections.<String>emptyList(), runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, HookType hookType,
-                                                String... runtimeArgs) {
+    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType, String... runtimeArgs) {
         return createRuntimeWithMockedGlue(match, false, hook, hookType, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), true, mock(HookDefinition.class), false, Collections.<String>emptyList(), runtimeArgs);
+        return createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), true, mock(HookDefinition.class), HookType.After, Collections.<String>emptyList(), runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,

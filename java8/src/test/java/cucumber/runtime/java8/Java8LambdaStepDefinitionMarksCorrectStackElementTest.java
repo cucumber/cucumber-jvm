@@ -4,8 +4,8 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.java.LambdaGlueRegistry;
 import gherkin.pickles.PickleStep;
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -57,7 +57,7 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
-        public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
+        public void addBeforeStepHookDefinition(Glue glue, HookDefinition beforeStepHook) {
 
         }
 
@@ -67,7 +67,7 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
-        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+        public void addAfterStepHookDefinition(Glue glue, HookDefinition afterStepHook) {
 
         }
 
@@ -104,6 +104,16 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
+        public void addBeforeStepHook(final HookDefinition hookDefinition) {
+
+        }
+
+        @Override
+        public void addAfterStepHook(final HookDefinition hookDefinition) {
+
+        }
+
+        @Override
         public void reportStepDefinitions(final StepDefinitionReporter stepDefinitionReporter) {
 
         }
@@ -119,7 +129,17 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
-        public StepDefinitionMatch stepDefinitionMatch(final String featurePath, final PickleStep step) {
+        public List<HookDefinition> getBeforeStepHooks() {
+            return null;
+        }
+
+        @Override
+        public List<HookDefinition> getAfterStepHooks() {
+            return null;
+        }
+
+        @Override
+        public PickleStepDefinitionMatch stepDefinitionMatch(final String featurePath, final PickleStep step) {
             return null;
         }
 

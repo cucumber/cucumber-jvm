@@ -686,7 +686,7 @@ public class JSONFormatterTest {
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
-        assertPrettyJsonEquals(expected, formatterOutput);
+        TestHelper.assertPrettyJsonEquals(expected, formatterOutput);
     }
 
     @Test

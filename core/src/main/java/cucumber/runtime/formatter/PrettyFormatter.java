@@ -294,7 +294,6 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private boolean isBackgroundStep(PickleStepTestStep testStep) {
         CurrentFeature currentFeature = featureUnderTest.get();
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             return TestSourcesModel.isBackgroundStep(astNode);
         }

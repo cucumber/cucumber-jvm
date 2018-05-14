@@ -186,8 +186,8 @@ final class HTMLFormatter implements Formatter {
         if (event.testStep instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
             if (isFirstStepAfterBackground(testStep)) {
-                jsFunctionCall("scenario", currentFeature.currentTestCaseMap);
-                currentFeature.currentTestCaseMap = null;
+                jsFunctionCall("scenario", currentFeature.testCaseMap);
+                currentFeature.testCaseMap = null;
             }
             jsFunctionCall("step", createTestStep(testStep));
         }
@@ -398,7 +398,7 @@ final class HTMLFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) { {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         CurrentFeature currentFeature = featureUnderTest.get();
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeature.uri, testStep.getStepLine());
         if (astNode != null) {
