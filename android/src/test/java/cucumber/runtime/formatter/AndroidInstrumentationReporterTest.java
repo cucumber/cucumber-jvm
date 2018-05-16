@@ -17,7 +17,7 @@ import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestSourceRead;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.formatter.AndroidInstrumentationReporter.StatusCodes;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class AndroidInstrumentationReporterTest {
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
 
-    private final Runtime runtime = mock(Runtime.class);
+    private final UndefinedStepsTracker runtime = mock(UndefinedStepsTracker.class);
     private final Instrumentation instrumentation = mock(Instrumentation.class);
 
     private final TestSourceRead testSourceRead = new TestSourceRead(

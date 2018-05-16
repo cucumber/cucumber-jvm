@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
@@ -126,6 +125,12 @@ public class RuntimeOptions {
             pluginSummaryPrinterNames.add("default_summary");
         }
     }
+
+    public RuntimeOptions noSummaryPrinter(){
+        pluginSummaryPrinterNames.clear();
+        return this;
+    }
+
 
     private void parse(List<String> args) {
         List<String> parsedTagFilters = new ArrayList<String>();
@@ -318,18 +323,15 @@ public class RuntimeOptions {
         if (!pluginNamesInstantiated) {
             for (String pluginName : pluginFormatterNames) {
                 Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-                setMonochromeOnColorAwarePlugins(plugin);
-                setStrictOnStrictAwarePlugins(plugin);
-                setEventBusFormatterPlugins(plugin);
+                addPlugin(plugin);
             }
             for (String pluginName : pluginStepDefinitionReporterNames) {
                 Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
+                addPlugin(plugin);
             }
             for (String pluginName : pluginSummaryPrinterNames) {
                 Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
+                addPlugin(plugin);
             }
             pluginNamesInstantiated = true;
         }
@@ -346,10 +348,6 @@ public class RuntimeOptions {
 
     public StepDefinitionReporter stepDefinitionReporter(ClassLoader classLoader) {
         return pluginProxy(classLoader, StepDefinitionReporter.class);
-    }
-
-    public SummaryPrinter summaryPrinter(ClassLoader classLoader) {
-        return pluginProxy(classLoader, SummaryPrinter.class);
     }
 
     /**
@@ -419,8 +417,10 @@ public class RuntimeOptions {
         return featurePaths;
     }
 
-    public void addPlugin(Formatter plugin) {
+    public void addPlugin(Plugin plugin) {
         plugins.add(plugin);
+        setMonochromeOnColorAwarePlugins(plugin);
+        setStrictOnStrictAwarePlugins(plugin);
         setEventBusFormatterPlugins(plugin);
     }
 
@@ -465,12 +465,12 @@ public class RuntimeOptions {
         ParsedOptionNames summaryPrinterNames = new ParsedOptionNames();
 
         public void addPluginName(String name, boolean isAddPlugin) {
-            if (PluginFactory.isFormatterName(name)) {
-                formatterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isStepDefinitionReporterName(name)) {
+            if (PluginFactory.isStepDefinitionReporterName(name)) {
                 stepDefinitionReporterNames.addName(name, isAddPlugin);
             } else if (PluginFactory.isSummaryPrinterName(name)) {
                 summaryPrinterNames.addName(name, isAddPlugin);
+            } else if (PluginFactory.isFormatterName(name)) {
+                formatterNames.addName(name, isAddPlugin);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);
             }
