@@ -18,6 +18,8 @@ import cucumber.runtime.Reflections;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
+import cucumber.runtime.Stats;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.formatter.AndroidInstrumentationReporter;
 import cucumber.runtime.formatter.AndroidLogcatReporter;
 import cucumber.runtime.io.MultiLoader;
@@ -94,13 +96,18 @@ public final class CucumberExecutor {
         this.instrumentation = instrumentation;
         this.classLoader = context.getClassLoader();
         this.classFinder = createDexClassFinder(context);
-        this.runtimeOptions = createRuntimeOptions(context);
+        this.runtimeOptions = createRuntimeOptions(context).noSummaryPrinter();
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
         this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
-        AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+        undefinedStepsTracker.setEventPublisher(runtime.getEventBus());
+        Stats stats = new Stats();
+        stats.setEventPublisher(runtime.getEventBus());
+
+        AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(undefinedStepsTracker, instrumentation);
         runtimeOptions.addPlugin(instrumentationReporter);
-        runtimeOptions.addPlugin(new AndroidLogcatReporter(runtime, TAG));
+        runtimeOptions.addPlugin(new AndroidLogcatReporter(stats, undefinedStepsTracker, TAG));
 
         List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
         this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);

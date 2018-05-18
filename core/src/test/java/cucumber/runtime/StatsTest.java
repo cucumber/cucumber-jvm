@@ -23,8 +23,7 @@ public class StatsTest {
     public void should_print_zero_scenarios_zero_steps_if_nothing_has_executed() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "0 Scenarios%n" +
@@ -40,7 +39,7 @@ public class StatsTest {
         counter.addStep(Result.Type.PASSED);
         counter.addStep(Result.Type.PASSED);
         counter.addScenario(Result.Type.PASSED, "scenario designation");
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 passed)%n" +
@@ -58,7 +57,7 @@ public class StatsTest {
         addOneStepScenario(counter, Result.Type.PENDING);
         addOneStepScenario(counter, Result.Type.UNDEFINED);
         addOneStepScenario(counter, Result.Type.SKIPPED);
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
                 "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
@@ -76,7 +75,7 @@ public class StatsTest {
         addOneStepScenario(counter, Result.Type.PENDING);
         addOneStepScenario(counter, Result.Type.UNDEFINED);
         addOneStepScenario(counter, Result.Type.SKIPPED);
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         String colorSubCounts = "" +
                 AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
@@ -95,7 +94,7 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
                 "0m0.000s%n")));
@@ -108,7 +107,7 @@ public class StatsTest {
 
         counter.setStartTime(ANY_TIME);
         counter.setFinishTime(ANY_TIME + 4*ONE_MILLI_SECOND);
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
                 "0m0.004s%n")));
@@ -121,7 +120,7 @@ public class StatsTest {
 
         counter.setStartTime(ANY_TIME);
         counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
                 "1m1.001s%n")));
@@ -134,7 +133,7 @@ public class StatsTest {
 
         counter.setStartTime(ANY_TIME);
         counter.setFinishTime(ANY_TIME + ONE_HOUR + Stats.ONE_MINUTE);
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
                 "61m0.000s%n")));
@@ -142,12 +141,13 @@ public class StatsTest {
 
     @Test
     public void should_use_locale_for_decimal_separator() {
-        Stats counter = new Stats(true, Locale.GERMANY);
+        Stats counter = new Stats(Locale.GERMANY);
+        counter.setStrict(true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
         counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
                 "1m1,001s%n")));
@@ -166,7 +166,7 @@ public class StatsTest {
         counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
         counter.addStep(Result.Type.PENDING);
         counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
-        counter.printStats(new PrintStream(baos), isStrict(false));
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
                 "Failed scenarios:%n" +
@@ -191,7 +191,8 @@ public class StatsTest {
         counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
         counter.addStep(Result.Type.PENDING);
         counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
-        counter.printStats(new PrintStream(baos), isStrict(true));
+        counter.setStrict(true);
+        counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
                 "Failed scenarios:%n" +
@@ -215,14 +216,13 @@ public class StatsTest {
     }
 
     private Stats createMonochromeSummaryCounter() {
-        return new Stats(true, Locale.US);
+        Stats stats = new Stats(Locale.US);
+        stats.setMonochrome(true);
+        return stats;
     }
 
     private Stats createColorSummaryCounter() {
-        return new Stats(false, Locale.US);
+        return new Stats(Locale.US);
     }
 
-    private boolean isStrict(boolean isStrict) {
-        return isStrict;
-    }
 }

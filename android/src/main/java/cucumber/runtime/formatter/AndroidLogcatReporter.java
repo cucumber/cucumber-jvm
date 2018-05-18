@@ -8,17 +8,13 @@ import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.formatter.Formatter;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.Stats;
+import cucumber.runtime.UndefinedStepsTracker;
 
 /**
  * Logs information about the currently executed statements to androids logcat.
  */
-public final class  AndroidLogcatReporter implements Formatter {
-
-    /**
-     * The {@link cucumber.runtime.Runtime} to get the errors and snippets from for writing them to the logcat at the end of the execution.
-     */
-    private final Runtime runtime;
+public final class AndroidLogcatReporter implements Formatter {
 
     /**
      * The log tag to be used when logging to logcat.
@@ -34,6 +30,10 @@ public final class  AndroidLogcatReporter implements Formatter {
             Log.d(logTag, String.format("%s", event.testCase.getName()));
         }
     };
+
+    private final Stats stats;
+
+    private final UndefinedStepsTracker undefinedStepsTracker;
 
     /**
      * The event handler that logs the {@link TestStepStarted} events.
@@ -55,11 +55,11 @@ public final class  AndroidLogcatReporter implements Formatter {
 
         @Override
         public void receive(TestRunFinished event) {
-            for (final Throwable throwable : runtime.getErrors()) {
+            for (final Throwable throwable : stats.getErrors()) {
                 Log.e(logTag, throwable.toString());
             }
 
-            for (final String snippet : runtime.getSnippets()) {
+            for (final String snippet : undefinedStepsTracker.getSnippets()) {
                 Log.w(logTag, snippet);
             }
         }
@@ -68,11 +68,12 @@ public final class  AndroidLogcatReporter implements Formatter {
     /**
      * Creates a new instance for the given parameters.
      *
-     * @param runtime the {@link cucumber.runtime.Runtime} to get the errors and snippets from
+     * @param undefinedStepsTracker
      * @param logTag the tag to use for logging to logcat
      */
-    public AndroidLogcatReporter(final Runtime runtime, final String logTag) {
-        this.runtime = runtime;
+    public AndroidLogcatReporter(Stats stats, UndefinedStepsTracker undefinedStepsTracker, final String logTag) {
+        this.stats = stats;
+        this.undefinedStepsTracker = undefinedStepsTracker;
         this.logTag = logTag;
     }
 

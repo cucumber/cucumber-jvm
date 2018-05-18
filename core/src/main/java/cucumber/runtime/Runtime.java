@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
@@ -15,8 +14,6 @@ import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import io.cucumber.stepexpression.TypeRegistry;
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,8 +27,7 @@ import static java.util.Collections.singletonList;
  */
 public class Runtime {
 
-    final Stats stats; // package private to be available for tests.
-    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    private final ExitStatus exitStatus = new ExitStatus();
 
     private final RuntimeOptions runtimeOptions;
 
@@ -65,7 +61,6 @@ public class Runtime {
         this.runtimeOptions = runtimeOptions;
         final Glue glue;
         glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
-        this.stats = new Stats(runtimeOptions.isMonochrome());
         this.bus = new EventBus(stopWatch);
         this.runner = new Runner(glue, bus, backends, runtimeOptions);
         this.filters = new ArrayList<PicklePredicate>();
@@ -82,8 +77,7 @@ public class Runtime {
             this.filters.add(new LinePredicate(lineFilters));
         }
 
-        stats.setEventPublisher(bus);
-        undefinedStepsTracker.setEventPublisher(bus);
+        exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
     }
 
@@ -98,7 +92,7 @@ public class Runtime {
     /**
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
-    public void run() throws IOException {
+    public void run() {
         // Make sure all features parse before initialising any reporters/formatters
         List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
 
@@ -113,7 +107,6 @@ public class Runtime {
         }
 
         bus.send(new TestRunFinished(bus.getTime()));
-        printSummary();
     }
 
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
@@ -146,25 +139,8 @@ public class Runtime {
         return true;
     }
 
-    public void printSummary() {
-        SummaryPrinter summaryPrinter = runtimeOptions.summaryPrinter(classLoader);
-        summaryPrinter.print(this);
-    }
-
-    void printStats(PrintStream out) {
-        stats.printStats(out, runtimeOptions.isStrict());
-    }
-
-    public List<Throwable> getErrors() {
-        return stats.getErrors();
-    }
-
     public byte exitStatus() {
-        return stats.exitStatus(runtimeOptions.isStrict());
-    }
-
-    public List<String> getSnippets() {
-        return undefinedStepsTracker.getSnippets();
+        return exitStatus.exitStatus(runtimeOptions.isStrict());
     }
 
     public Glue getGlue() {

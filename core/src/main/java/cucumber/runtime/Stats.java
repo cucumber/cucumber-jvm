@@ -9,6 +9,8 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.ColorAware;
+import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.formatter.AnsiFormats;
 import cucumber.runtime.formatter.Format;
 import cucumber.runtime.formatter.Formats;
@@ -21,15 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class Stats implements EventListener {
-    public static final long ONE_SECOND = 1000000000;
-    public static final long ONE_MINUTE = 60 * ONE_SECOND;
-    private static final byte ERRORS = 0x1;
+public class Stats implements EventListener, ColorAware, StrictAware {
+    static final long ONE_SECOND = 1000000000;
+    static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();
     private long startTime = 0;
     private long totalDuration = 0;
-    private Formats formats;
+    private Formats formats = new AnsiFormats();
     private Locale locale;
     private final List<String> failedScenarios = new ArrayList<String>();
     private List<String> ambiguousScenarios = new ArrayList<String>();
@@ -66,13 +67,18 @@ class Stats implements EventListener {
             setFinishTime(event.getTimeStamp());
         }
     };
+    private boolean strict;
 
-    public Stats(boolean monochrome) {
-        this(monochrome, Locale.getDefault());
+    public Stats() {
+        this(Locale.getDefault());
     }
 
-    public Stats(boolean monochrome, Locale locale) {
+    Stats(Locale locale) {
         this.locale = locale;
+    }
+
+    @Override
+    public void setMonochrome(boolean monochrome) {
         if (monochrome) {
             formats = new MonochromeFormats();
         } else {
@@ -80,6 +86,10 @@ class Stats implements EventListener {
         }
     }
 
+    @Override
+    public void setStrict(boolean strict) {
+        this.strict = true;
+    }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
@@ -93,16 +103,8 @@ class Stats implements EventListener {
         return errors;
     }
 
-    public byte exitStatus(boolean isStrict) {
-        byte result = 0x0;
-        if (!failedScenarios.isEmpty() || !ambiguousScenarios.isEmpty() || (isStrict && (!pendingScenarios.isEmpty() || !undefinedScenarios.isEmpty()))) {
-            result |= ERRORS;
-        }
-        return result;
-    }
-
-    public void printStats(PrintStream out, boolean isStrict) {
-        printNonZeroResultScenarios(out, isStrict);
+    public void printStats(PrintStream out) {
+        printNonZeroResultScenarios(out);
         if (stepSubCounts.getTotal() == 0) {
             out.println("0 Scenarios");
             out.println("0 Steps");
@@ -155,10 +157,10 @@ class Stats implements EventListener {
         out.println(format.format(((double) (totalDuration % ONE_MINUTE)) / ONE_SECOND) + "s");
     }
 
-    private void printNonZeroResultScenarios(PrintStream out, boolean isStrict) {
+    private void printNonZeroResultScenarios(PrintStream out) {
         printScenarios(out, failedScenarios, Result.Type.FAILED);
         printScenarios(out, ambiguousScenarios, Result.Type.AMBIGUOUS);
-        if (isStrict) {
+        if (strict) {
             printScenarios(out, pendingScenarios, Result.Type.PENDING);
             printScenarios(out, undefinedScenarios, Result.Type.UNDEFINED);
         }
