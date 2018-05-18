@@ -28,30 +28,30 @@ public class ScenarioScopedSteps {
         this.scenarioScopedObjectProvider = scenarioScopedObjectProvider;
     }
 
-    @Given("^a scenario scope instance has been provided in this scenario$")
+    @Given("a scenario scope instance has been provided in this scenario")
     public void a_scenario_scope_instance_has_been_provided_in_this_scenario() throws Throwable {
         OBJECTS.clear();
         provide();
     }
 
-    @When("^another scenario scope instance is provided$")
+    @When("another scenario scope instance is provided")
     public void another_scenario_scope_instance_is_provided() throws Throwable {
         provide();
     }
 
-    @Then("^all three provided instances are the same instance$")
+    @Then("all three provided instances are the same instance")
     public void all_three_provided_instances_are_the_same_instance() throws Throwable {
         assertThat("Expected test scenario to provide three objects.", OBJECTS.size(), equalTo(3));
         assertThat(OBJECTS, elementsAreAllEqual());
     }
 
-    @Given("^a scenario scope instance was provided in the previous scenario$")
+    @Given("a scenario scope instance was provided in the previous scenario")
     public void a_scenario_scope_instance_was_provided_in_the_previous_scenario() throws Throwable {
         // we only need one instance from the previous scenario
         removeAllExceptFirstElement(OBJECTS);
     }
 
-    @Then("^the two provided instances are different$")
+    @Then("the two provided instances are different")
     public void the_two_provided_instances_are_different() throws Throwable {
         assertThat("Expected test scenario to provide two objects.", OBJECTS.size(), equalTo(2));
         assertThat(OBJECTS, elementsAreAllUnique());

@@ -11,12 +11,12 @@ import static org.junit.Assert.assertTrue;
 
 public class TransactionStepDefs {
 
-    @Given("^a feature with the @txn annotation$")
+    @Given("a feature with the @txn annotation")
     public void a_feature_with_the_txn_annotation() throws Throwable {
         // blank
     }
 
-    @Then("^the scenarios shall execute within a transaction$")
+    @Then("the scenarios shall execute within a transaction")
     public void the_scenarios_shall_execute_within_a_transaction() throws Throwable {
         assertTrue("No transaction is active",
             TransactionSynchronizationManager.isActualTransactionActive());

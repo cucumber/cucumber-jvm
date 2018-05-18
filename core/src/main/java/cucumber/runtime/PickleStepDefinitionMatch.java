@@ -1,24 +1,15 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
-import cucumber.api.DataTable;
+import io.cucumber.cucumberexpressions.CucumberExpressionException;
+import io.cucumber.datatable.CucumberDataTableException;
+import io.cucumber.datatable.UndefinedDataTableTypeException;
+import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
-import cucumber.api.TableConverter;
-import cucumber.runtime.xstream.LocalizedXStreams;
-import cucumber.util.Mapper;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static cucumber.runtime.Arguments.createArgument;
-import static cucumber.util.FixJava.map;
 
 public class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -26,20 +17,37 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
     // to prevent it from ending up in the JSON.
     private final transient PickleStep step;
-    private final LocalizedXStreams localizedXStreams;
 
-    public PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step, LocalizedXStreams localizedXStreams) {
+    public PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
         super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
         this.featurePath = featurePath;
         this.step = step;
-        this.localizedXStreams = localizedXStreams;
     }
 
     @Override
     public void runStep(String language, Scenario scenario) throws Throwable {
+        int argumentCount = getArguments().size();
+
+        Integer parameterCount = stepDefinition.getParameterCount();
+        if (parameterCount != null && argumentCount != parameterCount) {
+            throw arityMismatch(parameterCount);
+        }
+        List<Object> result = new ArrayList<Object>();
         try {
-            stepDefinition.execute(language, transformedArgs(step, localizedXStreams.get(localeFor(language))));
+            for (Argument argument : getArguments()) {
+                result.add(argument.getValue());
+            }
+        } catch (UndefinedDataTableTypeException e) {
+            throw registerTypeInConfiguration(e);
+        } catch (CucumberExpressionException e) {
+            throw couldNotConvertArguments(e);
+        } catch (CucumberDataTableException e) {
+            throw couldNotConvertArguments(e);
+        }
+
+        try {
+            stepDefinition.execute(language, result.toArray(new Object[result.size()]));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -47,104 +55,65 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         }
     }
 
+    private CucumberException registerTypeInConfiguration(Exception e) {
+        return new CucumberException(String.format("" +
+                "Could not convert arguments for step [%s] defined at '%s'.\n" +
+                "It appears you did not register a data table type. The details are in the stacktrace below.", //TODO: Add doc URL
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation(true)
+        ), e);
+    }
+
+
+    private CucumberException couldNotConvertArguments(Exception e) {
+        return new CucumberException(String.format(
+            "Could not convert arguments for step [%s] defined at '%s'.\n" +
+                "The details are in the stacktrace below.",
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation(true)
+        ), e);
+    }
+
     @Override
     public void dryRunStep(String language, Scenario scenario) throws Throwable {
         // Do nothing
     }
 
-    /**
-     * @param step    the step to run
-     * @param xStream used to convert a string to declared stepdef arguments
-     * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
-     */
-    private Object[] transformedArgs(PickleStep step, LocalizedXStreams.LocalizedXStream xStream) {
-        int argumentCount = getArguments().size();
-
-        if (!step.getArgument().isEmpty()) {
-            argumentCount++;
-        }
-        Integer parameterCount = stepDefinition.getParameterCount();
-        if (parameterCount != null && argumentCount != parameterCount) {
-            throw arityMismatch(parameterCount);
-        }
-
-        List<Object> result = new ArrayList<Object>();
-
-        int n = 0;
-        for (Argument a : getArguments()) {
-            ParameterInfo parameterInfo = getParameterType(n, String.class);
-            Object arg = parameterInfo.convert(a.getVal(), xStream);
-            result.add(arg);
-            n++;
-        }
-
-        if (!step.getArgument().isEmpty()) {
-            gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-            if (stepArgument instanceof PickleTable) {
-                result.add(tableArgument((PickleTable) stepArgument, n, xStream));
-            } else if (stepArgument instanceof PickleString) {
-                ParameterInfo parameterInfo = getParameterType(n, String.class);
-                Object arg = parameterInfo.convert(((PickleString) stepArgument).getContent(), xStream);
-                result.add(arg);
-            }
-        }
-        return result.toArray(new Object[result.size()]);
-    }
-
-    private ParameterInfo getParameterType(int n, Type argumentType) {
-        ParameterInfo parameterInfo = stepDefinition.getParameterType(n, argumentType);
-        if (parameterInfo == null) {
-            // Some backends return null because they don't know
-            parameterInfo = new ParameterInfo(argumentType, null, null, false, null);
-        }
-        return parameterInfo;
-    }
-
-    private Object tableArgument(PickleTable stepArgument, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
-        ParameterInfo parameterInfo = getParameterType(argIndex, DataTable.class);
-        TableConverter tableConverter = new cucumber.runtime.table.TableConverter(xStream, parameterInfo);
-        DataTable table = new DataTable(stepArgument, tableConverter);
-        Type type = parameterInfo.getType();
-        return tableConverter.convert(table, type, parameterInfo.isTransposed());
-    }
-
     private CucumberException arityMismatch(int parameterCount) {
-        List<Argument> arguments = createArgumentsForErrorMessage(step);
+        List<String> arguments = createArgumentsForErrorMessage();
         return new CucumberException(String.format(
-                "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep text: %s",
-                stepDefinition.getLocation(true),
-                stepDefinition.getPattern(),
-                parameterCount,
-                arguments.size(),
-                arguments,
-                step.getText()
+            "Step [%s] is defined with %s parameters at '%s'.\n" +
+                "However, the gherkin step has %s arguments%sStep text: %s",
+            stepDefinition.getPattern(),
+            parameterCount,
+            stepDefinition.getLocation(true),
+            arguments.size(),
+            formatArguments(arguments),
+            step.getText()
         ));
     }
 
-    private List<Argument> createArgumentsForErrorMessage(PickleStep step) {
-        List<Argument> arguments = new ArrayList<Argument>(getArguments());
-        if (!step.getArgument().isEmpty()) {
-            gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-            if (stepArgument instanceof PickleString) {
-                arguments.add(createArgument(-1, "DocString:" + ((PickleString) stepArgument).getContent()));
-            } else if (stepArgument instanceof PickleTable) {
-                List<List<String>> rows = map(((PickleTable) stepArgument).getRows(), new Mapper<PickleRow, List<String>>() {
-                    @Override
-                    public List<String> map(PickleRow row) {
-                        List<String> raw = new ArrayList<String>(row.getCells().size());
-                        for (PickleCell pickleCell : row.getCells()) {
-                            raw.add(pickleCell.getValue());
-                        }
-                        return raw;
-                    }
-                });
-                arguments.add(createArgument(-1, "Table:" + rows.toString()));
-            }
+    private String formatArguments(List<String> arguments) {
+        if (arguments.isEmpty()) {
+            return ".\n";
+        }
+
+        StringBuilder formatted = new StringBuilder(":\n");
+        for (String argument : arguments) {
+            formatted.append(" * ").append(argument).append("\n");
+        }
+        return formatted.toString();
+    }
+
+    private List<String> createArgumentsForErrorMessage() {
+        List<String> arguments = new ArrayList<String>(getArguments().size());
+        for (Argument argument : getArguments()) {
+            arguments.add(argument.toString());
         }
         return arguments;
     }
 
-    Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
+    protected Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;
@@ -176,9 +145,12 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getPattern();
     }
 
-    StackTraceElement getStepLocation() {
-        int stepLine = step.getLocations().get(step.getLocations().size() - 1).getLine();
-        return new StackTraceElement("✽", step.getText(), featurePath, stepLine);
+    public StackTraceElement getStepLocation() {
+        return new StackTraceElement("✽", step.getText(), featurePath, getStepLine(step));
+    }
+
+    public Match getMatch() {
+        return this;
     }
 
     StepDefinition getStepDefinition() {
@@ -190,4 +162,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getLocation(false);
     }
 
+    public static int getStepLine(PickleStep step) {
+        return step.getLocations().get(step.getLocations().size() - 1).getLine();
+    }
 }

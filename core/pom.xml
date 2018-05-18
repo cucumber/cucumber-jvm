@@ -18,17 +18,20 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>tag-expressions</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-expressions</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>datatable</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -49,11 +52,7 @@
             <artifactId>jsoup</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit</artifactId>
@@ -64,6 +63,7 @@
             <artifactId>webbit-rest</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -101,7 +101,6 @@
                 <configuration>
                     <instructions>
                         <Bundle-Description />
-                        <Export-Package>cucumber.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>

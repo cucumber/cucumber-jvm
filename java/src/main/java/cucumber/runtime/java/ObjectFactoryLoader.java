@@ -7,6 +7,8 @@ import cucumber.runtime.NoInstancesException;
 import cucumber.runtime.Reflections;
 import cucumber.runtime.TooManyInstancesException;
 
+import static java.util.Arrays.asList;
+
 public class ObjectFactoryLoader {
     private ObjectFactoryLoader() {
     }
@@ -28,7 +30,7 @@ public class ObjectFactoryLoader {
                 Class<ObjectFactory> objectFactoryClass = (Class<ObjectFactory>) classFinder.loadClass(objectFactoryClassName);
                 objectFactory = reflections.newInstance(new Class[0], new Object[0], objectFactoryClass);
             } else {
-                objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
+                objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, asList("cucumber.runtime"), new Class[0], new Object[0], null);
             }
         } catch (TooManyInstancesException e) {
             System.out.println(e.getMessage());

@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
@@ -13,13 +14,13 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -59,10 +60,9 @@ public class JavaHookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        this.backend = new JavaBackend(objectFactory, classFinder);
-
-        LocalizedXStreams localizedXStreams = new LocalizedXStreams(classLoader);
-        this.glue = new RuntimeGlue(localizedXStreams);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
+        this.glue = new RuntimeGlue();
 
         backend.loadGlue(glue, Collections.<String>emptyList());
     }

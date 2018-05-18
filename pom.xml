@@ -81,7 +81,6 @@
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <joda-time.version>2.9.9</joda-time.version>
         <osgi.version>6.0.0</osgi.version>
         <!-- At some version above this (not sure which one), pax-exam and/or pax-url stops working on Java 7. -->
         <pax-exam.version>4.3.0</pax-exam.version>
@@ -89,6 +88,8 @@
         <felix.version>5.6.6</felix.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
+        <cucumber-expressions.version>5.0.17</cucumber-expressions.version>
+        <datatable.version>1.0.3</datatable.version>
     </properties>
     <licenses>
         <license>
@@ -108,21 +109,6 @@
         <dependencies>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.6</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.thoughtworks.xstream</groupId>
-                        <artifactId>xstream</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.googlecode.java-diff-utils</groupId>
-                        <artifactId>diffutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
                 <exclusions>
@@ -136,6 +122,16 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>tag-expressions</artifactId>
                 <version>${tag-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-expressions</artifactId>
+                <version>${cucumber-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>datatable</artifactId>
+                <version>${datatable.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -483,11 +479,6 @@
                 <artifactId>xmlunit</artifactId>
                 <version>${xmlunit.version}</version>
             </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -686,16 +677,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.0.0</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>.</directory>
-                                <includes>
-                                    <include>**/*.ser</include>
-                                </includes>
-                            </fileset>
-                        </filesets>
-                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -981,12 +962,5 @@
             </plugin>
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.10</version>
-            </extension>
-        </extensions>
     </build>
 </project>

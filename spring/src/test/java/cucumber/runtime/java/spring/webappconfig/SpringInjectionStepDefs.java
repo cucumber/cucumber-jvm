@@ -24,18 +24,18 @@ public class SpringInjectionStepDefs {
 
     private ResultActions callUrl;
 
-    @Given("^I have the web context set$")
+    @Given("I have the web context set")
     public void I_have_the_web_context_set() throws Throwable {
         assertNotNull(wac);
     }
 
-    @When("^I call the url \"([^\"]*)\"$")
+    @When("I call the url {string}")
     public void I_call_the_url(String url) throws Throwable {
         MockMvc mock = MockMvcBuilders.webAppContextSetup(wac).build();
         callUrl = mock.perform(get(url));
     }
 
-    @Then("^it should return (\\d+)$")
+    @Then("it should return {int}")
     public void it_should_return(int httpCode) throws Throwable {
         callUrl.andExpect(status().is(httpCode));
     }

@@ -24,17 +24,17 @@ public class ThreadingStepDefs {
 
     private static final CountDownLatch latch = new CountDownLatch(2);
 
-    @Given("^I am a step definition$")
+    @Given("I am a step definition")
     public void iAmAStepDefinition() throws Throwable {
         map.put(currentThread(), this);
     }
 
-    @When("^when executed in parallel$")
+    @When("when executed in parallel")
     public void whenExecutedInParallel() throws Throwable {
         latch.await(1, TimeUnit.SECONDS);
     }
 
-    @Then("^I should not be shared between threads$")
+    @Then("I should not be shared between threads")
     public void iShouldNotBeSharedBetweenThreads() throws Throwable {
         for (Map.Entry<Thread, ThreadingStepDefs> entries : map.entrySet()) {
             if (entries.getKey().equals(currentThread())) {

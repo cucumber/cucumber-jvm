@@ -4,9 +4,10 @@ import cucumber.api.HookType;
 import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.TestCase;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.Scenario;
-import cucumber.api.TestCase;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -23,6 +24,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
 import java.io.PrintStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static cucumber.runtime.TestHelper.feature;
@@ -231,10 +234,10 @@ public class RuntimeTest {
     }
 
     @Test
-    public void reports_step_definitions_to_plugin() throws IOException, NoSuchMethodException {
+    public void reports_step_definitions_to_plugin() throws IOException {
         Runtime runtime = createRuntime("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter");
 
-        StubStepDefinition stepDefinition = new StubStepDefinition(this, getClass().getMethod("reports_step_definitions_to_plugin"), "some pattern");
+        StubStepDefinition stepDefinition = new StubStepDefinition( "some pattern", new TypeRegistry(Locale.ENGLISH));
         runtime.getGlue().addStepDefinition(stepDefinition);
         runtime.run();
 

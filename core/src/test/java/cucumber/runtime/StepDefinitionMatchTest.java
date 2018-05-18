@@ -1,209 +1,210 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
-import cucumber.deps.com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
-import cucumber.runtime.xstream.LocalizedXStreams;
+import io.cucumber.stepexpression.TypeRegistry;
+import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.cucumberexpressions.ParameterType;
+import io.cucumber.cucumberexpressions.Transformer;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.TableCellTransformer;
+import io.cucumber.stepexpression.Argument;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static cucumber.runtime.Arguments.createArgument;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static java.util.Locale.ENGLISH;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class StepDefinitionMatchTest {
-    private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private static final String ENGLISH = "en";
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
 
     @Test
-    public void converts_numbers() throws Throwable {
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Integer.TYPE, null, null,
-                null));
+    public void executes_a_step() throws Throwable {
+        PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
-        PickleStep stepWithoutDocStringOrTable = mock(PickleStep.class);
-        when(stepWithoutDocStringOrTable.getArgument()).thenReturn(Collections.<gherkin.pickles.Argument>emptyList());
-
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(ENGLISH, null);
-        verify(stepDefinition).execute(ENGLISH, new Object[]{5});
-    }
-
-    @Test
-    public void converts_with_explicit_converter() throws Throwable {
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null, null,
-                null));
-
-        PickleStep stepWithoutDocStringOrTable = mock(PickleStep.class);
-        when(stepWithoutDocStringOrTable.getArgument()).thenReturn(Collections.<gherkin.pickles.Argument>emptyList());
-
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "the thing")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(ENGLISH, null);
-        verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
-    }
-
-    @Test
-    public void converts_doc_string_with_explicit_converter() throws Throwable {
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null, null,
-                null));
-
-        PickleStep stepWithDocString = mock(PickleStep.class);
-        PickleString docString = new PickleString(mock(PickleLocation.class), "the thing");
-        when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
-
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(ENGLISH, null);
-        verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
-    }
-
-    @XStreamConverter(ThingConverter.class)
-    public static class Thing {
-        public final String name;
-
-        public Thing(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Thing thing = (Thing) o;
-            return name.equals(thing.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-    }
-
-    public static class ThingConverter extends AbstractSingleValueConverter {
-        @Override
-        public boolean canConvert(Class type) {
-            return Thing.class.equals(type);
-        }
-
-        @Override
-        public Object fromString(String str) {
-            return new Thing(str);
-        }
-    }
-
-    @Test
-    public void gives_nice_error_message_when_conversion_fails() throws Throwable {
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thang.class, null, null,
-                null));
-
-        PickleStep stepWithoutDocStringOrTable = mock(PickleStep.class);
-        when(stepWithoutDocStringOrTable.getArgument()).thenReturn(Collections.<gherkin.pickles.Argument>emptyList());
-
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "blah")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
-        try {
-
-            stepDefinitionMatch.runStep(ENGLISH, null);
-            fail();
-        } catch (CucumberException expected) {
-            assertEquals(
-                    "Don't know how to convert \"blah\" into cucumber.runtime.StepDefinitionMatchTest$Thang.\n" +
-                            "Try writing your own converter:\n" +
-                            "\n" +
-                            "@cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter(ThangConverter.class)\n" +
-                            "public class Thang {}\n",
-                    expected.getMessage()
-            );
-        }
-    }
-
-    public static class Thang {
-
-    }
-
-    @Test
-    public void can_have_doc_string_as_only_argument() throws Throwable {
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(String.class, null, null,
-                null));
-
-        PickleStep stepWithDocString = mock(PickleStep.class);
-        PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
-        when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
-
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(ENGLISH, null);
-        verify(stepDefinition).execute(ENGLISH, new Object[]{"HELLO"});
-    }
-
-    @Test
-    public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getParameterCount()).thenReturn(2);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Integer.TYPE, null, null,
-                null));
-        when(stepDefinition.getParameterType(1, String.class)).thenReturn(new ParameterInfo(String.class, null, null,
-                null));
-
-        PickleStep stepWithDocString = mock(PickleStep.class);
-        PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
-        when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
-
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(ENGLISH, null);
-        verify(stepDefinition).execute(ENGLISH, new Object[]{5, "HELLO"});
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.class);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        stepDefinitionMatch.runStep(null, null);
     }
 
     @Test
     public void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments() throws Throwable {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
-        StepDefinition stepDefinition = new StubStepDefinition(new Object(), Object.class.getMethod("toString"), "some pattern");
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
-        try {
-            stepDefinitionMatch.runStep(ENGLISH, null);
-            fail();
-        } catch (CucumberException expected) {
-            assertEquals("Arity mismatch: Step Definition 'toString' with pattern [some pattern] is declared with 0 parameters. However, the gherkin step has 1 arguments [4]. \n" +
-                    "Step text: I have 4 cukes in my belly", expected.getMessage());
-        }
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+
+        expectedException.expectMessage(
+            "" +
+                "Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.\n" +
+                "However, the gherkin step has 1 arguments:\n" +
+                " * 4\n" +
+                "Step text: I have 4 cukes in my belly");
+        stepDefinitionMatch.runStep(null, null);
     }
 
-    public static class WithTwoParams {
-        public void withTwoParams(int anInt, short aShort, List<String> strings) {
-        }
+    @Test
+    public void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments_with_data_table() throws Throwable {
+        PickleTable table = new PickleTable(
+            asList(
+                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "A"), new PickleCell(mock(PickleLocation.class), "B"))),
+                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "C"), new PickleCell(mock(PickleLocation.class), "D")))
+            )
+        );
+
+        PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+
+        expectedException.expectMessage(
+            "" +
+                "Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.\n" +
+                "However, the gherkin step has 2 arguments:\n" +
+                " * 4\n" +
+                " * Table:\n" +
+                "      | A | B |\n" +
+                "      | C | D |\n" +
+                "\n" +
+                "Step text: I have 4 cukes in my belly");
+        stepDefinitionMatch.runStep(null, null);
     }
 
     @Test
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() throws Throwable {
-        PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument)mock(PickleTable.class)), asList(mock(PickleLocation.class)));
+        PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) mock(PickleTable.class)), asList(mock(PickleLocation.class)));
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        expectedException.expectMessage("" +
+            "Step [I have {int} cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
+            "However, the gherkin step has 2 arguments:\n" +
+            " * 4\n" +
+            " * Table:\n" +
+            "\n" +
+            "Step text: I have 4 cukes in my belly");
+        stepDefinitionMatch.runStep(null, null);
+    }
 
-        StepDefinition stepDefinition = new StubStepDefinition(new Object(), WithTwoParams.class.getMethod("withTwoParams", Integer.TYPE, Short.TYPE, List.class), "some pattern");
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(singletonList(createArgument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
-        try {
-            stepDefinitionMatch.runStep(ENGLISH, null);
-            fail();
-        } catch (CucumberException expected) {
-            assertEquals("Arity mismatch: Step Definition 'withTwoParams' with pattern [some pattern] is declared with 3 parameters. However, the gherkin step has 2 arguments [4, Table:[]]. \n" +
-                    "Step text: I have 4 cukes in my belly", expected.getMessage());
+
+    @Test
+    public void throws_arity_mismatch_exception_when_there_are_more_parameters_and_no_arguments() throws Throwable {
+        PickleStep step = new PickleStep("I have cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
+        StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        expectedException.expectMessage("" +
+            "Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
+            "However, the gherkin step has 0 arguments.\n" +
+            "Step text: I have cukes in my belly");
+        stepDefinitionMatch.runStep(null, null);
+    }
+
+    @Test
+    public void throws_register_type_in_configuration_exception_when_there_is_no_data_table_type_defined() throws Throwable {
+        // Empty table maps to null and doesn't trigger a type check.
+        PickleTable table = new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "A")))));
+
+        PickleStep step = new PickleStep("I have a datatable", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+        StepDefinition stepDefinition = new StubStepDefinition("I have a datatable", typeRegistry, UndefinedDataTableType.class);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        expectedException.expectMessage("" +
+            "Could not convert arguments for step [I have a datatable] defined at '{stubbed location with details}'.\n" +
+            "It appears you did not register a data table type. The details are in the stacktrace below.");
+        stepDefinitionMatch.runStep(null, null);
+
+    }
+
+    @Test
+    public void throws_could_not_convert_exception_for_transfomer_and_capture_group_mismatch() throws Throwable {
+        typeRegistry.defineParameterType(new ParameterType<ItemQuantity>(
+            "itemQuantity",
+            "(few|some|lots of) (cukes|gherkins)",
+            ItemQuantity.class,
+            new Transformer<ItemQuantity>() {
+                @Override
+                public ItemQuantity transform(String s) throws Throwable {
+                    return null;
+                }
+            }));
+
+        PickleStep step = new PickleStep("I have some cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
+        StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", typeRegistry, ItemQuantity.class);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        expectedException.expectMessage("" +
+            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'.\n" +
+            "The details are in the stacktrace below."
+        );
+        stepDefinitionMatch.runStep(null, null);
+
+    }
+
+    @Test
+    public void throws_could_not_convert_exception_for_singleton_table_dimension_mismatch() throws Throwable {
+        PickleTable table = new PickleTable(
+            asList(
+                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "A"), new PickleCell(mock(PickleLocation.class), "B"))),
+                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "C"), new PickleCell(mock(PickleLocation.class), "D")))
+            )
+        );
+
+        typeRegistry.defineDataTableType(new DataTableType(
+            ItemQuantity.class,
+            new TableCellTransformer<ItemQuantity>() {
+                @Override
+                public ItemQuantity transform(String s) {
+                    return new ItemQuantity(s);
+                }
+            }
+
+        ));
+
+        PickleStep step = new PickleStep("I have some cukes in my belly", singletonList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+        StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", typeRegistry, ItemQuantity.class);
+        List<Argument> arguments = stepDefinition.matchedArguments(step);
+
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        expectedException.expectMessage("" +
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
+            "The details are in the stacktrace below.");
+        stepDefinitionMatch.runStep(null, null);
+
+    }
+
+    private static final class ItemQuantity {
+
+        private final String s;
+
+        public ItemQuantity(String s) {
+            this.s = s;
         }
+
+        @Override
+        public String toString() {
+            return s;
+        }
+    }
+
+    private static final class UndefinedDataTableType {
+
     }
 }

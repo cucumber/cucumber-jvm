@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
 
@@ -9,7 +9,7 @@ import java.util.Collections;
 public class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
 
     public UndefinedPickleStepDefinitionMatch(PickleStep step) {
-        super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step, null);
+        super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step);
     }
 
     @Override

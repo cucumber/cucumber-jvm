@@ -38,12 +38,12 @@ public class StepDefs {
         assert !belly.isDisposed();
     }
 
-    @Given("^I have (\\d+) (.*) in my belly$")
+    @Given("I have {int} {word} in my belly")
     public void I_have_n_things_in_my_belly(int n, String what) {
         belly.setContents(Collections.nCopies(n, what));
     }
 
-    @Given("^I have this in my basket:$")
+    @Given("I have this in my basket:")
     public void I_have_this_in_my_basket(List<List<String>> stuff) {
     }
 
@@ -52,22 +52,22 @@ public class StepDefs {
         throw new PendingException("This should not fail (seeing this output is ok)");
     }
 
-    @Then("^there are (\\d+) cukes in my belly")
+    @Then("there are {int} cukes in my belly")
     public void checkCukes(int n) {
         assertEquals(belly.getContents(), Collections.nCopies(n, "cukes"));
     }
 
-    @Then("^the (.*) contains (.*)")
+    @Then("the {word} contains {word}")
     public void containerContainsIngredient(String container, String ingredient) throws InterruptedException {
         assertEquals("glass", container);
     }
 
-    @Then("^I add (.*)")
+    @Then("I add {word}")
     public void addLiquid(String liquid) throws InterruptedException {
         assertEquals("milk", liquid);
     }
 
-    @Then("^I should be (.*)$")
+    @Then("I should be {word}")
     public void I_should_be(String mood) {
         assertEquals("happy", mood);
     }

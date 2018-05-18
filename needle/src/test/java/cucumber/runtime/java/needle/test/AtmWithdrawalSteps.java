@@ -60,7 +60,7 @@ public class AtmWithdrawalSteps {
     @ObjectUnderTest(implementation = AtmServiceBean.class)
     private AtmService atmService;
 
-    @Given("^I have (\\d+) EUR in my account$")
+    @Given("I have {int} EUR in my account")
     public void I_have_EUR_in_my_account(final int account) throws Throwable {
         assertNotNull(atmService);
         when(bicGetter.getBic()).thenReturn(BIC);
@@ -71,12 +71,12 @@ public class AtmWithdrawalSteps {
         assert (atmService.getAmount() == account);
     }
 
-    @When("^I withdraw (\\d+) EUR$")
+    @When("I withdraw {int} EUR")
     public void I_withdraw_EUR(final int amount) throws Throwable {
         atmService.withdraw(amount);
     }
 
-    @Then("^I have (\\d+) EUR remaining.$")
+    @Then("I have {int} EUR remaining.")
     public void I_have_EUR_remaining(final int remaining) throws Throwable {
         atmService.getAmount();
         assertThat(atmService.getAmount(), Is.is(remaining));

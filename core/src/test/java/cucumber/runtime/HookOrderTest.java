@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import cucumber.runner.Runner;
 import cucumber.runtime.io.ResourceLoader;

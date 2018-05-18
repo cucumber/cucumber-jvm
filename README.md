@@ -48,7 +48,7 @@ You're most likely going to paste code and output, so familiarise yourself with
 <pre>
 ```java
 // Why doesn't this work?
-@Given("I have (\\d+) cukes in my (.*)")
+@Given("I have {int} cukes in my {string}")
 public void some_cukes(int howMany, String what) {
     // HALP!
 }

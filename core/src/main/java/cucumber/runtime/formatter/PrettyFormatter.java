@@ -60,7 +60,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -213,20 +213,21 @@ final class PrettyFormatter implements Formatter, ColorAware {
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
         for (Argument argument : arguments) {
             // can be null if the argument is missing.
-            if (argument.getOffset() != null) {
-                int argumentOffset = argument.getOffset();
+            if (argument.getValue() != null) {
+                int argumentOffset = argument.getStart();
                 // a nested argument starts before the enclosing argument ends; ignore it when formatting
-                if (argumentOffset < beginIndex ) {
+                if (argumentOffset < beginIndex) {
                     continue;
                 }
                 String text = stepText.substring(beginIndex, argumentOffset);
                 result.append(textFormat.text(text));
             }
             // val can be null if the argument isn't there, for example @And("(it )?has something")
-            if (argument.getVal() != null) {
-                result.append(argFormat.text(argument.getVal()));
+            if (argument.getValue() != null) {
+                String text = stepText.substring(argument.getStart(), argument.getEnd());
+                result.append(argFormat.text(text));
                 // set beginIndex to end of argument
-                beginIndex = argument.getOffset() + argument.getVal().length();
+                beginIndex = argument.getEnd();
             }
         }
         if (beginIndex != stepText.length()) {

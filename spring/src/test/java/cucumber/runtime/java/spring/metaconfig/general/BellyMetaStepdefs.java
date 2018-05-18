@@ -20,12 +20,12 @@ public class BellyMetaStepdefs {
         return bellyBean;
     }
 
-    @Then("^I have a meta belly$")
+    @Then("I have a meta belly")
     public void I_have_belly() throws Throwable {
         assertNotNull(belly);
     }
 
-    @Then("^I have a meta belly bean$")
+    @Then("I have a meta belly bean")
     public void I_have_belly_bean() throws Throwable {
         assertNotNull(bellyBean);
     }

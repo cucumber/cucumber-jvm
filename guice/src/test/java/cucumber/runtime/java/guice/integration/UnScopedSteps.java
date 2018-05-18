@@ -23,18 +23,18 @@ public class UnScopedSteps {
         this.unScopedObjectProvider = unScopedObjectProvider;
     }
 
-    @Given("^an un-scoped instance has been provided in this scenario$")
+    @Given("an un-scoped instance has been provided in this scenario")
     public void an_un_scoped_instance_has_been_provided_in_this_scenario() throws Throwable {
         OBJECTS.clear();
         provide();
     }
 
-    @When("^another un-scoped instance is provided$")
+    @When("another un-scoped instance is provided")
     public void another_un_scoped_instance_is_provided() throws Throwable {
         provide();
     }
 
-    @Then("^all three provided instances are unique instances$")
+    @Then("all three provided instances are unique instances")
     public void all_three_provided_instances_are_unique_instances() throws Throwable {
         assertThat("Expected test scenario to provide three objects.", OBJECTS.size(), equalTo(3));
         assertThat(OBJECTS, elementsAreAllUnique());
