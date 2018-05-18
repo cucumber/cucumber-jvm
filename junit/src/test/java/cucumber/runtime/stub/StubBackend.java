@@ -3,7 +3,6 @@ package cucumber.runtime.stub;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
-import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
@@ -21,10 +20,6 @@ public class StubBackend implements Backend {
 
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
-    }
-
-    @Override
-    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
     }
 
     @Override

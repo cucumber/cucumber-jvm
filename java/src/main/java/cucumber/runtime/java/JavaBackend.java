@@ -14,12 +14,10 @@ import cucumber.api.java8.GlueBase;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Env;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -109,11 +107,6 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     public void loadGlue(Glue glue, Method method, Class<?> glueCodeClass) {
         this.glue = glue;
         methodScanner.scan(this, method, glueCodeClass);
-    }
-
-    @Override
-    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
-        //Not used here yet
     }
 
     @Override
