@@ -1,8 +1,7 @@
 package cucumber.api.event;
 
 /**
- * This is the interface you should implement if you want your own custom
- * formatter.
+ * This is the interface you should implement if your plugin listens to cucumber execution events
  */
 public interface EventListener {
 

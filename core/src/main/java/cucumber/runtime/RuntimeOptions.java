@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.EventListener;
 import io.cucumber.datatable.DataTable;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.ColorAware;
@@ -381,8 +382,8 @@ public class RuntimeOptions {
         }
     }
 
-    private void setEventBusFormatterPlugins(Object plugin) {
-        if (plugin instanceof Formatter && bus != null) {
+    private void setEventBusOnEventListenerPlugins(Object plugin) {
+        if (plugin instanceof EventListener && bus != null) {
             Formatter formatter = (Formatter) plugin;
             formatter.setEventPublisher(bus);
         }
@@ -408,7 +409,7 @@ public class RuntimeOptions {
         plugins.add(plugin);
         setMonochromeOnColorAwarePlugins(plugin);
         setStrictOnStrictAwarePlugins(plugin);
-        setEventBusFormatterPlugins(plugin);
+        setEventBusOnEventListenerPlugins(plugin);
     }
 
     public List<Pattern> getNameFilters() {

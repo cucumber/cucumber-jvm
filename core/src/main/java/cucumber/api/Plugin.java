@@ -29,6 +29,14 @@ import java.net.URL;
  * </ul>
  * <p>
  * To make the parameter optional the plugin must also have a public default constructor.
+ * <p>
+ * Plugins may also implement one of these interfaces:
+ * <ul>
+ * <li>{@link cucumber.api.formatter.ColorAware}</li>
+ * <li>{@link cucumber.api.formatter.StrictAware}</li>
+ * <li>{@link cucumber.api.event.EventListener}</li>
+ * </ul>
+ * <p>
  */
 public interface Plugin {
 }

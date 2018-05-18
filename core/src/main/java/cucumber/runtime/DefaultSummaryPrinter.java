@@ -2,16 +2,16 @@ package cucumber.runtime;
 
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 
 import java.io.PrintStream;
 import java.util.List;
 
-public class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, Formatter {
+public class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
 
     private final Stats stats = new Stats();
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
