@@ -39,7 +39,7 @@
         <minimum.maven.version>3.3</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>5.0.0</gherkin.version>
-        <groovy.version>2.4.12</groovy.version>
+        <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <spring.version>4.3.10.RELEASE</spring.version>
         <spring.data.version>1.11.6.RELEASE</spring.data.version>
@@ -48,12 +48,13 @@
         <!-- version 2.4.0 does not work on Java 7 -->
         <hsqldb.version>2.3.5</hsqldb.version>
         <guice.version>4.2.0</guice.version>
-        <jsoup.version>1.10.3</jsoup.version>
+        <jsoup.version>1.11.3</jsoup.version>
         <testng.version>6.14.3</testng.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito.version>1.10.19</mockito.version>
-        <selenium.version>3.5.2</selenium.version>
+        <mockito.version>2.18.3</mockito.version>
+        <selenium.version>3.12.0</selenium.version>
+        <htmlunit.version>2.30.1</htmlunit.version>
         <driver-binary-downloader-maven-plugin.version>1.0.17</driver-binary-downloader-maven-plugin.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
@@ -69,7 +70,7 @@
         <dbunit.version>2.5.4</dbunit.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.28</freemarker.version>
         <!-- version 4.0.0 does not work on Java 7 -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <android-maven-plugin.version>4.4.3</android-maven-plugin.version>
@@ -391,6 +392,23 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>htmlunit-driver</artifactId>
+                <version>${htmlunit.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.github.detro</groupId>
+                <artifactId>ghostdriver</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>

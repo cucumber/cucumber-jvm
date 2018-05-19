@@ -324,7 +324,7 @@ public class FeatureRunnerTest {
         }
     }
 
-    private static final class DescriptionMatcher extends ArgumentMatcher<Description> {
+    private static final class DescriptionMatcher implements ArgumentMatcher<Description> {
         private String name;
 
         DescriptionMatcher(String name) {
@@ -332,13 +332,13 @@ public class FeatureRunnerTest {
         }
 
         @Override
-        public boolean matches(Object argument) {
-            return argument instanceof Description && ((Description) argument).getDisplayName().equals(name);
+        public boolean matches(Description argument) {
+            return argument != null && argument.getDisplayName().equals(name);
         }
 
     }
 
-    private static final class FailureMatcher extends ArgumentMatcher<Failure> {
+    private static final class FailureMatcher implements ArgumentMatcher<Failure> {
         private String name;
 
         FailureMatcher(String name) {
@@ -346,8 +346,8 @@ public class FeatureRunnerTest {
         }
 
         @Override
-        public boolean matches(Object argument) {
-            return argument instanceof Failure && ((Failure) argument).getDescription().getDisplayName().equals(name);
+        public boolean matches(Failure argument) {
+            return argument != null && argument.getDescription().getDisplayName().equals(name);
         }
 
     }

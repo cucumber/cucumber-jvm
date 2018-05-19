@@ -12,7 +12,7 @@
     <name>Cucumber-JVM: Kotlin Java8</name>
 
     <properties>
-        <kotlin.version>1.2.0</kotlin.version>
+        <kotlin.version>1.2.41</kotlin.version>
     </properties>
 
     <dependencies>

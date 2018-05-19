@@ -40,6 +40,8 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <!--Override parent pom. Android is stuck on Powermock. Which is stuck on Mockito 1.x-->
+            <version>1.10.19</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -73,7 +75,7 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-mockito-release-full</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.4</version>
             <classifier>full</classifier>
             <scope>test</scope>
             <exclusions>

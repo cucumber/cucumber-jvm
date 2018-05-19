@@ -180,7 +180,7 @@ public class RuntimeGlueTest {
         when(stepDefinition.matchedArguments(any(PickleStep.class))).then(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) {
-                return argumentMatcher.argumentsFrom(invocationOnMock.getArgumentAt(0, PickleStep.class));
+                return argumentMatcher.argumentsFrom((PickleStep) invocationOnMock.getArgument(0));
             }
         });
         return stepDefinition;
