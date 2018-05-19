@@ -1,6 +1,14 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...master) (In Git)
+## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...master) (In Git)
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
 
 ### Added
  * [Core] Implement [cucumber expressions](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)
