@@ -73,12 +73,7 @@ public class Runtime {
     }
 
     public boolean matchesFilters(PickleEvent pickleEvent) {
-        for (PicklePredicate filter : filters.getFilters()) {
-            if (!filter.apply(pickleEvent)) {
-                return false;
-            }
-        }
-        return true;
+        return filters.matchesFilters(pickleEvent);
     }
 
     public byte exitStatus() {
