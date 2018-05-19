@@ -1,6 +1,6 @@
 package cucumber.runtime.java8;
 
-import static cucumber.runtime.ParameterInfo.fromTypes;
+import static cucumber.runtime.java8.ParameterInfo.fromTypes;
 import static java.lang.String.format;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
@@ -10,7 +10,6 @@ import cucumber.api.java8.StepdefBody;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import cucumber.runtime.CucumberException;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
-import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
@@ -101,11 +100,6 @@ public class Java8StepDefinition implements StepDefinition {
     @Override
     public Integer getParameterCount() {
         return parameterInfos.size();
-    }
-
-    @Override
-    public ParameterInfo getParameterType(int n, Type argumentType) throws IndexOutOfBoundsException {
-        return parameterInfos.get(n);
     }
 
     @Override

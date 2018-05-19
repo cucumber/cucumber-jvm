@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * This annotation can be specified on step definition method parameters to give Cucumber a hint
- * to transpose a DataTable into an object or list of objects. 
- * 
+ * to transpose a DataTable.
+ * <p>
  * For example, if you have the following Gherkin step with a table
  * </p>
  * <pre>
@@ -19,6 +19,22 @@ import java.lang.annotation.Target;
  *    | nationality	| Italian	|
  * </pre>
  * <p>
+ * And a data table type to create a User
+ *
+ * <pre>
+ * typeRegistry.defineDataTableType(new DataTableType(
+ *    Author.class,
+ *    new TableEntryTransformer<User>() {
+ *    @Override
+ *    public Author transform(Map<String, String> entry) {
+ *       return new User(
+ *          entry.get("firstName"),
+ *          entry.get("lastName"),
+ *          entry.get("nationality"));
+ *    }
+ * }));
+ *
+ * </pre>
  * Then the following Java Step Definition would convert that into an User object:
  * </p>
  * <pre>
@@ -27,13 +43,10 @@ import java.lang.annotation.Target;
  *     this.user = user;
  * }
  * </pre>
- * <p>
- * 
- * This annotation also works for data tables that are transformed to a list of beans.
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
+@Target({ElementType.PARAMETER})
 public @interface Transpose {
     boolean value() default true;
 }

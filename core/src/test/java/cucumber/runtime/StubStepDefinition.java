@@ -9,21 +9,22 @@ import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class StubStepDefinition implements StepDefinition {
     private final StepExpression expression;
-    private List<ParameterInfo> parameterInfos;
+    private List<Type> parameters;
 
     StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
-        this.parameterInfos = ParameterInfo.fromTypes(types);
-        if (parameterInfos.isEmpty()) {
+        this.parameters = Arrays.asList(types);
+        if (parameters.isEmpty()) {
             this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern);
         } else {
-            ParameterInfo lastParameter = parameterInfos.get(parameterInfos.size() - 1);
-            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern, lastParameter.getType());
+            Type lastParameter = parameters.get(parameters.size() - 1);
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern, lastParameter);
         }
     }
 
@@ -40,19 +41,14 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public Integer getParameterCount() {
-        return parameterInfos.size();
-    }
-
-    @Override
-    public ParameterInfo getParameterType(int n, Type argumentType) {
-        return parameterInfos.get(n);
+        return parameters.size();
     }
 
     @Override
     public void execute(String language, Object[] args) {
-        assertEquals(parameterInfos.size(), args.length);
+        assertEquals(parameters.size(), args.length);
         for (int i = 0; i < args.length; i++) {
-            assertEquals(parameterInfos.get(i).getType(), args[i].getClass());
+            assertEquals(parameters.get(i), args[i].getClass());
         }
     }
 
