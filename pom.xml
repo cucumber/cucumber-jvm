@@ -47,7 +47,7 @@
         <hibernate.version>5.1.1.Final</hibernate.version>
         <!-- version 2.4.0 does not work on Java 7 -->
         <hsqldb.version>2.3.5</hsqldb.version>
-        <guice.version>4.0</guice.version>
+        <guice.version>4.2.0</guice.version>
         <jsoup.version>1.10.3</jsoup.version>
         <testng.version>6.14.3</testng.version>
         <junit.version>4.12</junit.version>
@@ -60,7 +60,7 @@
         <weld-se.version>2.4.4.Final</weld-se.version>
         <!-- version 2.0 does not work on Java 7 -->
         <cdi-api.version>1.2</cdi-api.version>
-        <openejb-core.version>4.7.4</openejb-core.version>
+        <openejb-core.version>4.7.5</openejb-core.version>
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
