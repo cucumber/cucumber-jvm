@@ -845,12 +845,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.10.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.15.1</version>
+                            <version>0.17.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
