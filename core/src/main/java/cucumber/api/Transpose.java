@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
  * to transpose a DataTable.
  * <p>
  * For example, if you have the following Gherkin step with a table
- * </p>
  * <pre>
  * Given the user is
  *    | firstname	| Roberto	|
@@ -24,9 +23,9 @@ import java.lang.annotation.Target;
  * <pre>
  * typeRegistry.defineDataTableType(new DataTableType(
  *    Author.class,
- *    new TableEntryTransformer<User>() {
- *    @Override
- *    public Author transform(Map<String, String> entry) {
+ *    new TableEntryTransformer&lt;User&gt;() {
+ *    &#064;Override
+ *    public Author transform(Map&lt;String, String&gt; entry) {
  *       return new User(
  *          entry.get("firstName"),
  *          entry.get("lastName"),
@@ -36,14 +35,12 @@ import java.lang.annotation.Target;
  *
  * </pre>
  * Then the following Java Step Definition would convert that into an User object:
- * </p>
  * <pre>
  * &#064;Given("^the user is$")
- * public void the_user_is(@Transpose User user) {
+ * public void the_user_is(&#064;Transpose User user) {
  *     this.user = user;
  * }
  * </pre>
- * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})

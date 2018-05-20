@@ -36,7 +36,6 @@ import java.net.URL;
  * <li>{@link cucumber.api.formatter.StrictAware}</li>
  * <li>{@link cucumber.api.event.EventListener}</li>
  * </ul>
- * <p>
  */
 public interface Plugin {
 }
