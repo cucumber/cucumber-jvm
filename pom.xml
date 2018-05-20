@@ -882,6 +882,14 @@
                             </revapi.semver.ignore>
                             <revapi.java>
                                 <filter>
+                                    <classes>
+                                        <regex>true</regex>
+                                        <exclude>
+                                            <item>cucumber\.runner\..*</item>
+                                            <item>cucumber\.runtime\..*</item>
+                                            <item>cucumber\.util\..*</item>
+                                        </exclude>
+                                    </classes>
                                     <packages>
                                         <regex>true</regex>
                                         <exclude>
