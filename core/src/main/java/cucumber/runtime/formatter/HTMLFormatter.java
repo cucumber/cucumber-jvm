@@ -169,12 +169,12 @@ final class HTMLFormatter implements Formatter {
                 currentTestCaseMap = null;
             }
             jsFunctionCall("step", createTestStep(testStep));
+            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.testStep));
         }
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
         if (event.testStep instanceof PickleStepTestStep) {
-            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.testStep, event.result));
             jsFunctionCall("result", createResultMap(event.result));
         } else if(event.testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) event.testStep;
@@ -429,10 +429,11 @@ final class HTMLFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createMatchMap(PickleStepTestStep testStep, Result result) {
+    private Map<String, Object> createMatchMap(PickleStepTestStep testStep) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if (!result.is(Result.Type.UNDEFINED)) {
-            matchMap.put("location", testStep.getCodeLocation());
+        String location = testStep.getCodeLocation();
+        if (location != null) {
+            matchMap.put("location", location);
         }
         return matchMap;
     }

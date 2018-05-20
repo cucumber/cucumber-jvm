@@ -3,10 +3,15 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...master) (In Git)
 
 ### Added
+
 ### Changed
+
 ### Deprecated
+
 ### Removed
+
 ### Fixed
+ * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
 
 ## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
 
