@@ -4,6 +4,7 @@ import cucumber.api.Result;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
@@ -530,7 +531,7 @@ public class JUnitFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(0L));
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         runtime.run();
         return report;
     }

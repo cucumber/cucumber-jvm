@@ -5,6 +5,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
@@ -1183,7 +1184,7 @@ public class JSONFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(1234));
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         runtime.getGlue().addBeforeHook(hook);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");

@@ -53,6 +53,7 @@ import static org.mockito.Mockito.when;
 public class RuntimeTest {
     private final static String ENGLISH = "en";
     private final static long ANY_TIMESTAMP = 1234567890;
+    private EventBus bus;
 
     @Ignore
     @Test
@@ -76,7 +77,7 @@ public class RuntimeTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
 //        String expected = "" +
@@ -135,7 +136,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_passed_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -143,7 +144,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_passed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -151,21 +152,21 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_undefined_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
     public void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
     public void strict_with_pending_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PENDING));
+        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -173,7 +174,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_pending_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PENDING));
+        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -181,7 +182,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -189,7 +190,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -197,7 +198,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_failed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -205,7 +206,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -213,7 +214,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_ambiguous_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -221,7 +222,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_ambiguous_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -272,7 +273,7 @@ public class RuntimeTest {
                     return Collections.<Backend>emptyList();
                 }
             };
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), new Runtime.RunnerSupplier(new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), backendSupplier, new RuntimeGlueSupplier()));
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), new RunnerSupplier(new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), backendSupplier, new RuntimeGlueSupplier()));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -431,7 +432,7 @@ public class RuntimeTest {
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
 
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        this.bus = new EventBus(TimeService.SYSTEM);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
@@ -440,7 +441,8 @@ public class RuntimeTest {
                 return backends;
             }
         };
-        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier());
+        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, runnerSupplier);
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
@@ -485,7 +487,7 @@ public class RuntimeTest {
             }
         };
 
-        return new Runtime(resourceLoader, classLoader, runtimeOptions, new EventBus(TimeService.SYSTEM), new Runtime.RunnerSupplier(runtimeOptions, new EventBus(TimeService.SYSTEM), backendSupplier, glueSupplier));
+        return new Runtime(resourceLoader, classLoader, runtimeOptions, new EventBus(TimeService.SYSTEM), new RunnerSupplier(runtimeOptions, new EventBus(TimeService.SYSTEM), backendSupplier, glueSupplier));
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

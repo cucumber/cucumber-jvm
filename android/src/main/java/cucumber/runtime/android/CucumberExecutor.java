@@ -8,6 +8,7 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -106,17 +107,17 @@ public final class CucumberExecutor {
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
 
         this.bus = new EventBus(TimeService.SYSTEM);
-        this.runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, createBackends(), new RuntimeGlueSupplier()));
+        this.runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, createBackends(), new RuntimeGlueSupplier()));
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(bus);
         Stats stats = new Stats();
-        stats.setEventPublisher(runtime.getEventBus());
+        stats.setEventPublisher(bus);
 
         AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(undefinedStepsTracker, instrumentation);
         runtimeOptions.addPlugin(instrumentationReporter);
         runtimeOptions.addPlugin(new AndroidLogcatReporter(stats, undefinedStepsTracker, TAG));
 
-        List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
+        List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
         this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);
         instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
@@ -135,7 +136,7 @@ public final class CucumberExecutor {
             runtime.getRunner().runPickle(pickleEvent);
         }
 
-        bus.send(new TestRunFinished(runtime.getEventBus().getTime()));
+        bus.send(new TestRunFinished(bus.getTime()));
     }
 
     /**

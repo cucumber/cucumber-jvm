@@ -1,5 +1,6 @@
 package cucumber.runner;
 
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.Argument;
@@ -185,7 +186,7 @@ public class RunnerTest {
         };
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
     }
 
     private HookDefinition addBeforeHook(Runtime runtime) {

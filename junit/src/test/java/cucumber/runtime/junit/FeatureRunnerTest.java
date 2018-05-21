@@ -4,6 +4,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
@@ -220,7 +221,7 @@ public class FeatureRunnerTest {
             }
         };
         EventBus bus = new EventBus(timeServiceStub);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
         return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(bus, false, junitOption));
     }
 

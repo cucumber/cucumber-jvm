@@ -17,6 +17,7 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -99,7 +100,7 @@ public class CalculatorTest {
                 return Collections.singleton(backend);
             }
         };
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 
