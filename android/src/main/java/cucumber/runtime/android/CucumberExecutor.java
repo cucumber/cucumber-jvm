@@ -6,6 +6,7 @@ import android.util.Log;
 import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.RunnerSupplier;
@@ -129,7 +130,7 @@ public final class CucumberExecutor {
      */
     public void execute() {
 
-        // TODO: This is duplicated in info.cucumber.Runtime.
+        bus.send(new TestRunStarted(bus.getTime()));
 
         final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
         runtime.reportStepDefinitions(stepDefinitionReporter);

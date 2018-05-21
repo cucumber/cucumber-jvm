@@ -1,6 +1,7 @@
 package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
@@ -57,6 +58,8 @@ public class TestNGCucumberRunner {
         reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
         testCaseResultListener.setEventPublisher(bus);
+
+        bus.send(new TestRunStarted(bus.getTime()));
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {

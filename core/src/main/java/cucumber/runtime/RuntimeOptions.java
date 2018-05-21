@@ -304,7 +304,6 @@ public class RuntimeOptions {
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader, EventBus bus) {
         List<CucumberFeature> features = load(resourceLoader, featurePaths, System.out);
         getPlugins(); // to create the formatter objects
-        bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
         }

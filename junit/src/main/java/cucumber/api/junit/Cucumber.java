@@ -2,6 +2,7 @@ package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.Formatter;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
@@ -86,8 +87,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
-        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
         jUnitReporter = new JUnitReporter(bus, runtimeOptions.isStrict(), junitOptions);
+
+        // Start the run before reading the features.
+        // Allows the test source read events to be broadcast properly
+        bus.send(new TestRunStarted(bus.getTime()));
+        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
         addChildren(cucumberFeatures);
     }
 
