@@ -221,7 +221,7 @@ public class FeatureRunnerTest {
         };
         EventBus bus = new EventBus(timeServiceStub);
         final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
-        return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
+        return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(bus, false, junitOption));
     }
 
 

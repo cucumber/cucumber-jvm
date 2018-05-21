@@ -79,7 +79,7 @@ public class JavaStepDefinitionTest {
         this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
 
         backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
-        runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
+        bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {
                 latestReceivedResult = event.result;

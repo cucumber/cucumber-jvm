@@ -61,6 +61,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
     private final Formatter formatter;
+    private final EventBus bus;
 
     /**
      * Constructor called by JUnit.
@@ -80,12 +81,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        bus = new EventBus(TimeService.SYSTEM);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
-        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
-        jUnitReporter = new JUnitReporter(runtime.getEventBus(), runtimeOptions.isStrict(), junitOptions);
+        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        jUnitReporter = new JUnitReporter(bus, runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
     }
 
@@ -111,7 +112,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             @Override
             public void evaluate() throws Throwable {
                 features.evaluate();
-                runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+                bus.send(new TestRunFinished(bus.getTime()));
             }
         };
     }

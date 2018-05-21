@@ -167,7 +167,7 @@ public class TestHelper {
             feature.sendTestSourceRead(bus);
             runtime.runFeature(feature);
         }
-        bus.send(new TestRunFinished(runtime.getEventBus().getTime()));
+        bus.send(new TestRunFinished(bus.getTime()));
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

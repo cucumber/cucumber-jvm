@@ -24,6 +24,7 @@ import java.util.List;
  * Glue code for running Cucumber via TestNG.
  */
 public class TestNGCucumberRunner {
+    private final EventBus bus;
     private Runtime runtime;
     private TestNGReporter reporter;
     private RuntimeOptions runtimeOptions;
@@ -50,7 +51,7 @@ public class TestNGCucumberRunner {
             });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        bus = new EventBus(TimeService.SYSTEM);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
@@ -67,7 +68,7 @@ public class TestNGCucumberRunner {
     }
 
     public void finish() {
-        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+        bus.send(new TestRunFinished(bus.getTime()));
     }
 
     /**
@@ -96,6 +97,6 @@ public class TestNGCucumberRunner {
     }
 
     List<CucumberFeature> getFeatures() {
-        return runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
+        return runtimeOptions.cucumberFeatures(resourceLoader, bus);
     }
 }

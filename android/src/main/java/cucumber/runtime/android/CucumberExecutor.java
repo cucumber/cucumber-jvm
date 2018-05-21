@@ -84,6 +84,7 @@ public final class CucumberExecutor {
      * The actual {@link PickleEvent}s to run stored in {@link PickleStruct}s.
      */
     private final List<PickleEvent> pickleEvents;
+    private final EventBus bus;
 
     /**
      * Creates a new instance for the given parameters.
@@ -104,7 +105,7 @@ public final class CucumberExecutor {
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
 
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        this.bus = new EventBus(TimeService.SYSTEM);
         this.runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, createBackends(), new RuntimeGlueSupplier()));
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(bus);
@@ -134,7 +135,7 @@ public final class CucumberExecutor {
             runtime.getRunner().runPickle(pickleEvent);
         }
 
-        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+        bus.send(new TestRunFinished(runtime.getEventBus().getTime()));
     }
 
     /**

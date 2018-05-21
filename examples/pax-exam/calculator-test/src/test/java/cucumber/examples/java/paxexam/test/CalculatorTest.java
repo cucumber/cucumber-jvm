@@ -103,7 +103,7 @@ public class CalculatorTest {
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 
-        runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
+        bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {
                 Throwable error = event.result.getError();
