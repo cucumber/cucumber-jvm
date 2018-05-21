@@ -1,6 +1,7 @@
 package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
+import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -47,7 +48,7 @@ public class TestNGCucumberRunner {
             });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions);
+        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
         reporter.setEventPublisher(runtime.getEventBus());
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
         testCaseResultListener.setEventPublisher(runtime.getEventBus());

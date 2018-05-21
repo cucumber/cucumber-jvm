@@ -1,5 +1,6 @@
 package cucumber.api.cli;
 
+import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
@@ -32,7 +33,7 @@ public class Main {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions);
+        Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
         runtime.run();
         return runtime.exitStatus();
     }

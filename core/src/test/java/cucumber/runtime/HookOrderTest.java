@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runner.TimeService;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import cucumber.runner.Runner;
@@ -38,11 +39,11 @@ public class HookOrderTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        return asList(mock(Backend.class));
-                    }
-                }, runtimeOptions);
+                            @Override
+                            public Collection<? extends Backend> get() {
+                                return asList(mock(Backend.class));
+                            }
+                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());

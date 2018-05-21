@@ -177,11 +177,11 @@ public class RunnerTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(options);
         return new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        return asList(backend);
-                    }
-                }, runtimeOptions);
+                            @Override
+                            public Collection<? extends Backend> get() {
+                                return asList(backend);
+                            }
+                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
     }
 
     private HookDefinition addBeforeHook(Runtime runtime) {

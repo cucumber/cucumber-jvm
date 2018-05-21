@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.Scenario;
 import cucumber.runner.Runner;
+import cucumber.runner.TimeService;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
@@ -37,11 +38,11 @@ public class HookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        return asList(mock(Backend.class));
-                    }
-                }, runtimeOptions);
+                            @Override
+                            public Collection<? extends Backend> get() {
+                                return asList(mock(Backend.class));
+                            }
+                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
         PickleStep step = mock(PickleStep.class);

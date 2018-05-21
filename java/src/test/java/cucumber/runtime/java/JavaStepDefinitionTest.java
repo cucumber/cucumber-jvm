@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
+import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -67,11 +68,11 @@ public class JavaStepDefinitionTest {
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        return asList(backend);
-                    }
-                }, runtimeOptions);
+                            @Override
+                            public Collection<? extends Backend> get() {
+                                return asList(backend);
+                            }
+                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
 
         backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
         runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {

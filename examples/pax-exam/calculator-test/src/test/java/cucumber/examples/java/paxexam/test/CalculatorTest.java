@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
+import cucumber.runner.TimeService;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
@@ -91,11 +92,11 @@ public class CalculatorTest {
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         final Runtime runtime = new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        return Collections.singleton(backend);
-                    }
-                }, runtimeOptions);
+                            @Override
+                            public Collection<? extends Backend> get() {
+                                return Collections.singleton(backend);
+                            }
+                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 
