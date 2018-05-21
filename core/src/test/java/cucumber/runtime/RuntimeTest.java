@@ -264,12 +264,13 @@ public class RuntimeTest {
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                                    @Override
-                                    public Collection<? extends Backend> get() {
-                                        return Collections.<Backend>emptyList();
-                                    }
-                                }, new RuntimeOptions(""), TimeService.SYSTEM, new RuntimeGlueSupplier());
+            Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+                @Override
+                public Collection<? extends Backend> get() {
+                    return Collections.<Backend>emptyList();
+                }
+            };
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, new RuntimeOptions(""), TimeService.SYSTEM, new RuntimeGlueSupplier());
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());

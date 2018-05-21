@@ -15,6 +15,7 @@ import org.mockito.Matchers;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -37,12 +38,14 @@ public class HookTest {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                            @Override
-                            public Collection<? extends Backend> get() {
-                                return asList(mock(Backend.class));
-                            }
-                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
+        final Backend backend = mock(Backend.class);
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return asList(backend);
+            }
+        };
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
         PickleStep step = mock(PickleStep.class);
@@ -50,9 +53,9 @@ public class HookTest {
 
         runner.runPickle(pickleEvent);
 
-        InOrder inOrder = inOrder(hook, mock(Backend.class));
+        InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<Scenario>any());
-        inOrder.verify(mock(Backend.class)).disposeWorld();
+        inOrder.verify(backend).disposeWorld();
     }
 
 

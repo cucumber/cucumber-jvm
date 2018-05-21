@@ -44,7 +44,7 @@ public class Runtime {
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
         this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glueSupplier.get(), bus, backendSupplier.get(), runtimeOptions);
+        this.runner = createRunner(backendSupplier, runtimeOptions, glueSupplier);
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -61,6 +61,14 @@ public class Runtime {
 
         exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
+    }
+
+    private Runner createRunner(Supplier<Collection<? extends Backend>> backendSupplier, RuntimeOptions runtimeOptions, Supplier<Glue> glueSupplier) {
+        Collection<? extends Backend> backends = backendSupplier.get();
+        if (backends.isEmpty()) {
+            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+        }
+        return new Runner(glueSupplier.get(), bus, backends, runtimeOptions);
     }
 
     /**

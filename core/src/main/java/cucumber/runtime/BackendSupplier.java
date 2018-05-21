@@ -25,9 +25,7 @@ public class BackendSupplier implements Supplier<Collection<? extends Backend>> 
     @Override
     public Collection<? extends Backend> get() {
         Collection<? extends Backend> backends = loadBackends(resourceLoader, classFinder, runtimeOptions);
-        if (backends.isEmpty()) {
-            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
-        }
+
         return backends;
     }
 
