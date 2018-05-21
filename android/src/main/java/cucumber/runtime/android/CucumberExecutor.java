@@ -107,7 +107,9 @@ public final class CucumberExecutor {
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
 
         this.bus = new EventBus(TimeService.SYSTEM);
-        this.runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, createBackends(), new RuntimeGlueSupplier()));
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier);
+        this.runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, runnerSupplier);
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(bus);
         Stats stats = new Stats();
