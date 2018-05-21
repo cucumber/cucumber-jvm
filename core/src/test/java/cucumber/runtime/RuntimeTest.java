@@ -65,12 +65,12 @@ public class RuntimeTest {
         StringBuilder out = new StringBuilder();
 
 //        JSONFormatter jsonFormatter = new JSONFormatter(out);
-        List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
                     @Override
                     public Collection<? extends Backend> get() {
+                        List<Backend> backends = asList(mock(Backend.class));
                         return backends;
                     }
                 }, runtimeOptions);
@@ -426,12 +426,12 @@ public class RuntimeTest {
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
-        Backend backend = mock(Backend.class);
-        Collection<Backend> backends = Arrays.asList(backend);
 
         return new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
                     @Override
                     public Collection<? extends Backend> get() {
+                        Backend backend = mock(Backend.class);
+                        Collection<Backend> backends = Arrays.asList(backend);
                         return backends;
                     }
                 }, runtimeOptions);
@@ -459,13 +459,19 @@ public class RuntimeTest {
             args.addAll(asList("-p", "null"));
         }
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
+
         RuntimeGlue glue = mock(RuntimeGlue.class);
         mockMatch(glue, match, isAmbiguous);
         mockHook(glue, hook, hookType);
-        Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        return new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        Backend backend = mock(Backend.class);
+                        Collection<Backend> backends = Arrays.asList(backend);
+                        return backends;
+                    }
+                }, runtimeOptions, glue);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

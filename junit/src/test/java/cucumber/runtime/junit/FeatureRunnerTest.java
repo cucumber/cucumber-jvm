@@ -5,7 +5,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.UndefinedStepsTracker;
+import cucumber.runtime.Supplier;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
@@ -17,6 +17,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +28,6 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 public class FeatureRunnerTest {
 
@@ -204,7 +204,12 @@ public class FeatureRunnerTest {
                 return 0l;
             }
         };
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, timeServiceStub, glue);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        return asList(mock(Backend.class));
+                    }
+                }, runtimeOptions, timeServiceStub, glue);
         return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
     }
 
