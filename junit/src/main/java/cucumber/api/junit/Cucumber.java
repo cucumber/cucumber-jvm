@@ -33,7 +33,6 @@ import java.util.List;
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
  * In general, the runner class should be empty without any fields or methods.
  * For example:
- * <p>
  * <blockquote><pre>
  * &#64;RunWith(Cucumber.class)
  * &#64;CucumberOptions(plugin = "pretty")

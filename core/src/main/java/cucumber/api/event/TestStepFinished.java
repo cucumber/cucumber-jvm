@@ -14,7 +14,6 @@ import cucumber.api.TestStep;
  * Each test step finished event is followed by an matching
  * {@link TestStepStarted} event for the same step.The order in which
  * these events may be expected is:
- * <p>
  * <pre>
  *     [before hook,]* [[before step hook,]* test step, [after step hook,]*]+, [after hook,]*
  * </pre>

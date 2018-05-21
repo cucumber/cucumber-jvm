@@ -3,7 +3,6 @@ package cucumber.runtime;
 import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public interface StepDefinition {
@@ -23,18 +22,9 @@ public interface StepDefinition {
     String getLocation(boolean detail);
 
     /**
-     * How many declared parameters this stepdefinition has. Returns null if unknown.
+     * How many declared parameters this step definition has. Returns null if unknown.
      */
     Integer getParameterCount();
-
-    /**
-     * The parameter type at index n. A hint about the raw parameter type is passed to make
-     * it easier for the implementation to make a guess based on runtime information.
-     * <p/>
-     * Statically typed languages will typically ignore the {@code argumentType} while dynamically
-     * typed ones will use it to infer a "good type". It's also ok to return null.
-     */
-    ParameterInfo getParameterType(int n, Type argumentType) throws IndexOutOfBoundsException;
 
     /**
      * Invokes the step definition. The method should raise a Throwable

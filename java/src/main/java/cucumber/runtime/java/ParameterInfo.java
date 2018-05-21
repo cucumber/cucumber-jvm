@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
 
@@ -11,11 +11,11 @@ import java.util.List;
 /**
  * This class composes all interesting parameter information into one object.
  */
-public class ParameterInfo {
+class ParameterInfo {
     private final Type type;
     private final boolean transposed;
 
-    public static List<ParameterInfo> fromMethod(Method method) {
+    static List<ParameterInfo> fromMethod(Method method) {
         List<ParameterInfo> result = new ArrayList<ParameterInfo>();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
@@ -31,28 +31,16 @@ public class ParameterInfo {
         return result;
     }
 
-    public static List<ParameterInfo> fromTypes(Type[] genericParameterTypes) {
-        List<ParameterInfo> result = new ArrayList<ParameterInfo>();
-        for (Type genericParameterType : genericParameterTypes) {
-            result.add(new ParameterInfo(genericParameterType, false));
-        }
-        return result;
-    }
-
-    ParameterInfo(Type type) {
-        this(type, false);
-    }
-
     private ParameterInfo(Type type, boolean transposed) {
         this.type = type;
         this.transposed = transposed;
     }
 
-    public Type getType() {
+    Type getType() {
         return type;
     }
 
-    public boolean isTransposed() {
+    boolean isTransposed() {
         return transposed;
     }
 

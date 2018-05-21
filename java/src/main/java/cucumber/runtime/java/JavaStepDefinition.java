@@ -6,7 +6,6 @@ import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import cucumber.runtime.MethodFormat;
-import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
@@ -14,7 +13,6 @@ import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.List;
 
 class JavaStepDefinition implements StepDefinition {
@@ -63,11 +61,6 @@ class JavaStepDefinition implements StepDefinition {
     @Override
     public Integer getParameterCount() {
         return parameterInfos.size();
-    }
-
-    @Override
-    public ParameterInfo getParameterType(int n, Type argumentType) {
-        return parameterInfos.get(n);
     }
 
     public boolean isDefinedAt(StackTraceElement e) {
