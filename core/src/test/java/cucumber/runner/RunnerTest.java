@@ -174,15 +174,17 @@ public class RunnerTest {
         return createRuntime(backend, "-p null");
     }
 
-    private Runtime createRuntime(Backend backend, String options) {
+    private Runtime createRuntime(final Backend backend, String options) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(options);
-        return new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                            @Override
-                            public Collection<? extends Backend> get() {
-                                return asList(backend);
-                            }
-                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return asList(backend);
+            }
+        };
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
     }
 
     private HookDefinition addBeforeHook(Runtime runtime) {

@@ -146,11 +146,16 @@ public class TestHelper {
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
         final Runtime runtime = new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        return asList(mock(Backend.class));
-                    }
-                }, runtimeOptions, timeService, glue);
+            @Override
+            public Collection<? extends Backend> get() {
+                return asList(mock(Backend.class));
+            }
+        }, runtimeOptions, timeService, new Supplier<Glue>() {
+            @Override
+            public Glue get() {
+                return glue;
+            }
+        });
         timeService.setEventPublisher(runtime.getEventBus());
 
         formatter.setEventPublisher(runtime.getEventBus());

@@ -451,8 +451,8 @@ public class RuntimeTest {
         return createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), true, mock(HookDefinition.class), HookType.After, runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
-                                                HookType hookType, String... runtimeArgs) {
+    private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final boolean isAmbiguous,
+                                                final HookDefinition hook, final HookType hookType, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
@@ -461,9 +461,6 @@ public class RuntimeTest {
         }
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
 
-        RuntimeGlue glue = mock(RuntimeGlue.class);
-        mockMatch(glue, match, isAmbiguous);
-        mockHook(glue, hook, hookType);
 
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
@@ -473,7 +470,17 @@ public class RuntimeTest {
                 return backends;
             }
         };
-        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, glue);
+        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+            @Override
+            public Glue get() {
+                final RuntimeGlue glue = mock(RuntimeGlue.class);
+                mockMatch(glue, match, isAmbiguous);
+                mockHook(glue, hook, hookType);
+                return glue;
+            }
+        };
+
+        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, glueSupplier);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {
