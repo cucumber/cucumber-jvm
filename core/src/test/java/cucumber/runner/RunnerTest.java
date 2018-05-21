@@ -1,5 +1,6 @@
 package cucumber.runner;
 
+import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
@@ -20,6 +21,7 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -174,7 +176,12 @@ public class RunnerTest {
     private Runtime createRuntime(Backend backend, String options) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(options);
-        return new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+        return new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        return asList(backend);
+                    }
+                }, runtimeOptions);
     }
 
     private HookDefinition addBeforeHook(Runtime runtime) {

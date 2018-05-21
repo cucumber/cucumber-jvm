@@ -6,6 +6,7 @@ import android.util.Log;
 import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.java.ObjectFactory;
@@ -99,6 +100,7 @@ public final class CucumberExecutor {
         this.runtimeOptions = createRuntimeOptions(context).noSummaryPrinter();
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
+
         this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(runtime.getEventBus());
@@ -171,13 +173,19 @@ public final class CucumberExecutor {
         throw new CucumberException("No CucumberOptions annotation");
     }
 
-    private Collection<? extends Backend> createBackends() {
-        final Reflections reflections = new Reflections(classFinder);
-        final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
-        final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
-        final TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
-        final TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
-        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
-        return singletonList(new JavaBackend(objectFactory, classFinder, typeRegistry));
+    private Supplier<Collection<? extends Backend>> createBackends() {
+        return new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                final Reflections reflections = new Reflections(classFinder);
+                final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
+                final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
+                final TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+                final TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+                typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
+                return singletonList(new JavaBackend(objectFactory, classFinder, typeRegistry));
+            }
+        }
+
     }
 }

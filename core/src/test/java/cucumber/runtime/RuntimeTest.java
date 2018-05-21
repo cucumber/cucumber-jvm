@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.HookType;
-import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
@@ -22,10 +21,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import java.io.PrintStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +36,6 @@ import java.util.Map;
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -73,7 +68,12 @@ public class RuntimeTest {
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        return backends;
+                    }
+                }, runtimeOptions);
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
 //        String expected = "" +
@@ -263,8 +263,12 @@ public class RuntimeTest {
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
-                    new RuntimeOptions(""));
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
+                        @Override
+                        public Collection<? extends Backend> get() {
+                            return Collections.<Backend>emptyList();
+                        }
+                    }, new RuntimeOptions(""));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -425,7 +429,12 @@ public class RuntimeTest {
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
+        return new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        return backends;
+                    }
+                }, runtimeOptions);
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {

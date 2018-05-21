@@ -6,6 +6,7 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
+import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import org.junit.Test;
@@ -88,7 +90,12 @@ public class CalculatorTest {
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, Collections.singleton(backend), runtimeOptions);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        return Collections.singleton(backend);
+                    }
+                }, runtimeOptions);
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 

@@ -15,6 +15,7 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +37,12 @@ public class HookOrderTest {
     public void buildMockWorld() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
+        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, new Supplier<Collection<? extends Backend>>() {
+                    @Override
+                    public Collection<? extends Backend> get() {
+                        return asList(mock(Backend.class));
+                    }
+                }, runtimeOptions);
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
