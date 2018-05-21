@@ -1,5 +1,6 @@
 package cucumber.api.cli;
 
+import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -7,7 +8,6 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static java.util.Arrays.asList;
@@ -31,7 +31,8 @@ public class Main {
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        Runtime runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions);
         runtime.run();
         return runtime.exitStatus();
     }

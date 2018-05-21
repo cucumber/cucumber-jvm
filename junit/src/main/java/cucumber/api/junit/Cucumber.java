@@ -3,6 +3,7 @@ package cucumber.api.junit;
 import cucumber.api.CucumberOptions;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
+import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -75,7 +76,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions);
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());

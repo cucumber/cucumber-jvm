@@ -1,26 +1,21 @@
 package cucumber.runtime;
 
-import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
-import io.cucumber.stepexpression.TypeRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import static java.util.Collections.singletonList;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -38,17 +33,13 @@ public class Runtime {
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
 
-    public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, new BackendSupplier(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, null);
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backends, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, null);
-    }
-
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backends,
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
                    RuntimeOptions runtimeOptions, Glue optionalGlue) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, optionalGlue);
+        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, optionalGlue);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
@@ -77,38 +68,6 @@ public class Runtime {
 
         exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
-    }
-
-    private static class BackendSupplier implements Supplier<Collection<? extends Backend>> {
-
-        private final ResourceLoader resourceLoader;
-        private final ClassFinder classFinder;
-        private final RuntimeOptions runtimeOptions;
-
-        private BackendSupplier(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
-            this.resourceLoader = resourceLoader;
-            this.classFinder = classFinder;
-            this.runtimeOptions = runtimeOptions;
-        }
-
-
-        @Override
-        public Collection<? extends Backend> get() {
-            Collection<? extends Backend> backends = loadBackends(resourceLoader, classFinder, runtimeOptions);
-            if (backends.isEmpty()) {
-                throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
-            }
-            return backends;
-        }
-
-        private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
-            Reflections reflections = new Reflections(classFinder);
-            TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
-            TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
-            typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
-            return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
-        }
-
     }
 
     /**
