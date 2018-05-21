@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.api.Result;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
@@ -72,7 +73,7 @@ public class JavaStepDefinitionTest {
                             public Collection<? extends Backend> get() {
                                 return asList(backend);
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
 
         backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
         runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {

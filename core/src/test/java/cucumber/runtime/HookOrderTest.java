@@ -43,7 +43,7 @@ public class HookOrderTest {
                             public Collection<? extends Backend> get() {
                                 return asList(mock(Backend.class));
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());

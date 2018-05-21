@@ -33,8 +33,12 @@ public class Runtime {
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
-                   RuntimeOptions runtimeOptions, TimeService stopWatch, Supplier<Glue> glueSupplier) {
+    public Runtime(ResourceLoader resourceLoader,
+                   ClassLoader classLoader,
+                   Supplier<Collection<? extends Backend>> backendSupplier,
+                   RuntimeOptions runtimeOptions,
+                   TimeService stopWatch,
+                   Supplier<Glue> glueSupplier) {
 
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
@@ -57,14 +61,6 @@ public class Runtime {
 
         exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
-    }
-
-    public static final class GlueSupplier implements Supplier<Glue> {
-
-        @Override
-        public Glue get() {
-            return new RuntimeGlue();
-        }
     }
 
     /**

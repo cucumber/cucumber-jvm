@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.TimeService;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
@@ -96,7 +97,7 @@ public class CalculatorTest {
                             public Collection<? extends Backend> get() {
                                 return Collections.singleton(backend);
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 

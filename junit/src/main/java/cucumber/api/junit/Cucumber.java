@@ -6,6 +6,7 @@ import cucumber.api.formatter.Formatter;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
@@ -78,7 +79,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());

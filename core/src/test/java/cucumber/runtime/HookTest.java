@@ -42,7 +42,7 @@ public class HookTest {
                             public Collection<? extends Backend> get() {
                                 return asList(mock(Backend.class));
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
         PickleStep step = mock(PickleStep.class);

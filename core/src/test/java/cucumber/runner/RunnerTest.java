@@ -1,5 +1,6 @@
 package cucumber.runner;
 
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.HookType;
@@ -181,7 +182,7 @@ public class RunnerTest {
                             public Collection<? extends Backend> get() {
                                 return asList(backend);
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
     }
 
     private HookDefinition addBeforeHook(Runtime runtime) {

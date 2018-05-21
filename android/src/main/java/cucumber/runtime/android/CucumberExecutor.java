@@ -7,6 +7,7 @@ import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runner.TimeService;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestRunFinished;
@@ -102,7 +103,7 @@ public final class CucumberExecutor {
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
 
-        this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+        this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(runtime.getEventBus());
         Stats stats = new Stats();

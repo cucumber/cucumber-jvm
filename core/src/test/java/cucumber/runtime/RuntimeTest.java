@@ -74,7 +74,7 @@ public class RuntimeTest {
                                 List<Backend> backends = asList(mock(Backend.class));
                                 return backends;
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
 //        String expected = "" +
@@ -269,7 +269,7 @@ public class RuntimeTest {
                                     public Collection<? extends Backend> get() {
                                         return Collections.<Backend>emptyList();
                                     }
-                                }, new RuntimeOptions(""), TimeService.SYSTEM, new Runtime.GlueSupplier());
+                                }, new RuntimeOptions(""), TimeService.SYSTEM, new RuntimeGlueSupplier());
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -435,7 +435,7 @@ public class RuntimeTest {
                                 Collection<Backend> backends = Arrays.asList(backend);
                                 return backends;
                             }
-                        }, runtimeOptions, TimeService.SYSTEM, new Runtime.GlueSupplier());
+                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
