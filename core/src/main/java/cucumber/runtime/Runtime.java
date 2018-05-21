@@ -44,7 +44,7 @@ public class Runtime {
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
         this.bus = new EventBus(stopWatch);
-        this.runner = createRunner(backendSupplier, runtimeOptions, glueSupplier);
+        this.runner = new RunnerProvider(runtimeOptions, bus, backendSupplier, glueSupplier).get();
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -63,12 +63,33 @@ public class Runtime {
         runtimeOptions.setEventBus(bus);
     }
 
-    private Runner createRunner(Supplier<Collection<? extends Backend>> backendSupplier, RuntimeOptions runtimeOptions, Supplier<Glue> glueSupplier) {
-        Collection<? extends Backend> backends = backendSupplier.get();
-        if (backends.isEmpty()) {
-            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+    public static final class RunnerProvider implements Supplier<Runner> {
+
+        private final Supplier<Collection<? extends Backend>> backendSupplier;
+        private final RuntimeOptions runtimeOptions;
+        private final Supplier<Glue> glueSupplier;
+        private final EventBus eventBus;
+
+        public RunnerProvider(RuntimeOptions runtimeOptions, EventBus eventBus, Supplier<Collection<? extends Backend>> backendSupplier, Supplier<Glue> glueSupplier) {
+            this.backendSupplier = backendSupplier;
+            this.runtimeOptions = runtimeOptions;
+            this.glueSupplier = glueSupplier;
+            this.eventBus = eventBus;
         }
-        return new Runner(glueSupplier.get(), bus, backends, runtimeOptions);
+
+        @Override
+        public Runner get() {
+            return createRunner(backendSupplier, runtimeOptions, glueSupplier);
+        }
+
+        private Runner createRunner(Supplier<Collection<? extends Backend>> backendSupplier, RuntimeOptions runtimeOptions, Supplier<Glue> glueSupplier) {
+            Collection<? extends Backend> backends = backendSupplier.get();
+            if (backends.isEmpty()) {
+                throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+            }
+            return new Runner(glueSupplier.get(), eventBus, backends, runtimeOptions);
+        }
+
     }
 
     /**
