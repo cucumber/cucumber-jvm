@@ -33,16 +33,6 @@ public class Runtime {
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
 
-    public Runtime(ResourceLoader resourceLoader,
-                   ClassLoader classLoader,
-                   Supplier<Collection<? extends Backend>> backendSupplier,
-                   RuntimeOptions runtimeOptions,
-                   TimeService stopWatch,
-                   Supplier<Glue> glueSupplier
-    ) {
-        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, new EventBus(stopWatch));
-    }
-
 
     public Runtime(ResourceLoader resourceLoader,
                    ClassLoader classLoader,

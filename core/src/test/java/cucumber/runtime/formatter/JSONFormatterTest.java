@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
@@ -1181,7 +1182,8 @@ public class JSONFormatterTest {
                 return asList(backend);
             }
         };
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new TimeServiceStub(1234), new RuntimeGlueSupplier());
+        EventBus bus = new EventBus(new TimeServiceStub(1234));
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
         runtime.getGlue().addBeforeHook(hook);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");

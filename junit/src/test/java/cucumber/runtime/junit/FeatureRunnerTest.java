@@ -1,5 +1,6 @@
 package cucumber.runtime.junit;
 
+import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
@@ -218,7 +219,8 @@ public class FeatureRunnerTest {
                 return glue;
             }
         };
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, timeServiceStub, glueSupplier);
+        EventBus bus = new EventBus(timeServiceStub);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, bus);
         return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
     }
 

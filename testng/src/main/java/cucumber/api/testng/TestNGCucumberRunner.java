@@ -1,6 +1,7 @@
 package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
+import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
@@ -49,10 +50,11 @@ public class TestNGCucumberRunner {
             });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
-        reporter.setEventPublisher(runtime.getEventBus());
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
-        testCaseResultListener.setEventPublisher(runtime.getEventBus());
+        testCaseResultListener.setEventPublisher(bus);
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {

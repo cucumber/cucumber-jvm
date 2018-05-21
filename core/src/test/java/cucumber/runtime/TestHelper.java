@@ -5,6 +5,7 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
+import cucumber.runner.EventBus;
 import cucumber.runner.StepDurationTimeService;
 import cucumber.runtime.formatter.PickleStepMatcher;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -145,25 +146,28 @@ public class TestHelper {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+        EventBus bus = new EventBus(timeService);
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
                 return asList(mock(Backend.class));
             }
-        }, runtimeOptions, timeService, new Supplier<Glue>() {
+        };
+        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
             @Override
             public Glue get() {
                 return glue;
             }
-        });
-        timeService.setEventPublisher(runtime.getEventBus());
+        };
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, bus);
+        timeService.setEventPublisher(bus);
 
-        formatter.setEventPublisher(runtime.getEventBus());
+        formatter.setEventPublisher(bus);
         for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(runtime.getEventBus());
+            feature.sendTestSourceRead(bus);
             runtime.runFeature(feature);
         }
-        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+        bus.send(new TestRunFinished(runtime.getEventBus().getTime()));
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

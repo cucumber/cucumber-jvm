@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
+import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -15,7 +16,6 @@ import org.mockito.Matchers;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -45,7 +45,8 @@ public class HookTest {
                 return asList(backend);
             }
         };
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
         PickleStep step = mock(PickleStep.class);

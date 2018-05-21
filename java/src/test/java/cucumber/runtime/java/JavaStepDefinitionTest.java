@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
+import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.RuntimeGlueSupplier;
@@ -68,12 +69,14 @@ public class JavaStepDefinitionTest {
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                            @Override
-                            public Collection<? extends Backend> get() {
-                                return asList(backend);
-                            }
-                        }, runtimeOptions, TimeService.SYSTEM, new RuntimeGlueSupplier());
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return asList(backend);
+            }
+        };
+        this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
 
         backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
         runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
