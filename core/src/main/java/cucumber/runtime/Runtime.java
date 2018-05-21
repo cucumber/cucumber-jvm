@@ -34,19 +34,17 @@ public class Runtime {
     private final Compiler compiler = new Compiler();
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, null);
+        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, new GlueSupplier());
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
-                   RuntimeOptions runtimeOptions, TimeService stopWatch, Glue optionalGlue) {
+                   RuntimeOptions runtimeOptions, TimeService stopWatch, Supplier<Glue> glueSupplier) {
 
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        final Glue glue;
-        glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
         this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
+        this.runner = new Runner(glueSupplier.get(), bus, backendSupplier.get(), runtimeOptions);
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -63,6 +61,14 @@ public class Runtime {
 
         exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
+    }
+
+    public static final class GlueSupplier implements Supplier<Glue> {
+
+        @Override
+        public Glue get() {
+            return new RuntimeGlue();
+        }
     }
 
     /**
