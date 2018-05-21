@@ -40,7 +40,7 @@ public class Runtime {
                    TimeService stopWatch,
                    Supplier<Glue> glueSupplier
     ) {
-        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, stopWatch, glueSupplier, new EventBus(stopWatch));
+        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, new EventBus(stopWatch));
     }
 
 
@@ -48,18 +48,14 @@ public class Runtime {
                    ClassLoader classLoader,
                    Supplier<Collection<? extends Backend>> backendSupplier,
                    RuntimeOptions runtimeOptions,
-                   TimeService stopWatch,
                    Supplier<Glue> glueSupplier, EventBus bus
     ) {
-        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, stopWatch, glueSupplier, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
+        this(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
     }
 
     public Runtime(ResourceLoader resourceLoader,
                    ClassLoader classLoader,
-                   Supplier<Collection<? extends Backend>> backendSupplier,
                    RuntimeOptions runtimeOptions,
-                   TimeService stopWatch,
-                   Supplier<Glue> glueSupplier,
                    EventBus bus,
                    Supplier<Runner> runnerSupplier
     ) {
