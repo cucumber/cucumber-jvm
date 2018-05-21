@@ -31,10 +31,6 @@ public class Filters {
         }
     }
 
-    public List<PicklePredicate> getFilters() {
-        return filters;
-    }
-
     boolean matchesFilters(PickleEvent pickleEvent) {
         for (PicklePredicate filter : filters) {
             if (!filter.apply(pickleEvent)) {
