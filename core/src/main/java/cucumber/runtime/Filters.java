@@ -31,7 +31,7 @@ public class Filters {
         }
     }
 
-    boolean matchesFilters(PickleEvent pickleEvent) {
+    public boolean matchesFilters(PickleEvent pickleEvent) {
         for (PicklePredicate filter : filters) {
             if (!filter.apply(pickleEvent)) {
                 return false;

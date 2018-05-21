@@ -80,7 +80,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         FeatureCompiler compiler = new FeatureCompiler();
         List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
         for (PickleEvent pickleEvent : pickleEvents) {
-            if (runtime.matchesFilters(pickleEvent)) {
+            if (runtime.getFilters().matchesFilters(pickleEvent)) {
                 try {
                     if(jUnitReporter.stepNotifications()) {
                         PickleRunner picklePickleRunner;

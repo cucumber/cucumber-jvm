@@ -82,9 +82,6 @@ public final class CucumberExecutor {
      */
     private final Runtime runtime;
 
-    /**
-     * The actual {@link PickleEvent}s to run stored in {@link PickleStruct}s.
-     */
     private final List<PickleEvent> pickleEvents;
     private final EventBus bus;
 
