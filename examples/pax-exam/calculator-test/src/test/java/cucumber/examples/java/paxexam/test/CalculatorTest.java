@@ -93,12 +93,13 @@ public class CalculatorTest {
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         final EventBus bus = new EventBus(TimeService.SYSTEM);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
-                                    @Override
-                                    public Collection<? extends Backend> get() {
-                                        return Collections.singleton(backend);
-                                    }
-                                }, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return Collections.singleton(backend);
+            }
+        };
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 

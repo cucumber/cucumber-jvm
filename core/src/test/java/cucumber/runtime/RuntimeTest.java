@@ -68,13 +68,15 @@ public class RuntimeTest {
 //        JSONFormatter jsonFormatter = new JSONFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new Supplier<Collection<? extends Backend>>() {
-                                    @Override
-                                    public Collection<? extends Backend> get() {
-                                        List<Backend> backends = asList(mock(Backend.class));
-                                        return backends;
-                                    }
-                                }, runtimeOptions, new RuntimeGlueSupplier(), new EventBus(TimeService.SYSTEM));
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                List<Backend> backends = asList(mock(Backend.class));
+                return backends;
+            }
+        };
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
 //        String expected = "" +
@@ -270,7 +272,7 @@ public class RuntimeTest {
                     return Collections.<Backend>emptyList();
                 }
             };
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, new RuntimeOptions(""), new RuntimeGlueSupplier(), new EventBus(TimeService.SYSTEM));
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), new Runtime.RunnerSupplier(new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), backendSupplier, new RuntimeGlueSupplier()));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -438,7 +440,7 @@ public class RuntimeTest {
                 return backends;
             }
         };
-        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
@@ -483,7 +485,7 @@ public class RuntimeTest {
             }
         };
 
-        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, new EventBus(TimeService.SYSTEM));
+        return new Runtime(resourceLoader, classLoader, runtimeOptions, new EventBus(TimeService.SYSTEM), new Runtime.RunnerSupplier(runtimeOptions, new EventBus(TimeService.SYSTEM), backendSupplier, glueSupplier));
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

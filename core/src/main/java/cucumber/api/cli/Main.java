@@ -36,7 +36,7 @@ public class Main {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         runtime.run();
         return runtime.exitStatus();
     }

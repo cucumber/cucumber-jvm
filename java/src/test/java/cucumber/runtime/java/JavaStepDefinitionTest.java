@@ -76,7 +76,7 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
 
         backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
         runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {

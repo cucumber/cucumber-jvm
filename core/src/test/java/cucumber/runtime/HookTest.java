@@ -46,7 +46,7 @@ public class HookTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
         PickleStep step = mock(PickleStep.class);

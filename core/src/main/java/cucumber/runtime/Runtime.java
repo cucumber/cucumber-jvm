@@ -36,15 +36,6 @@ public class Runtime {
 
     public Runtime(ResourceLoader resourceLoader,
                    ClassLoader classLoader,
-                   Supplier<Collection<? extends Backend>> backendSupplier,
-                   RuntimeOptions runtimeOptions,
-                   Supplier<Glue> glueSupplier, EventBus bus
-    ) {
-        this(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
-    }
-
-    public Runtime(ResourceLoader resourceLoader,
-                   ClassLoader classLoader,
                    RuntimeOptions runtimeOptions,
                    EventBus bus,
                    Supplier<Runner> runnerSupplier

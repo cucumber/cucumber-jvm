@@ -159,7 +159,7 @@ public class TestHelper {
                 return glue;
             }
         };
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, bus);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
         timeService.setEventPublisher(bus);
 
         formatter.setEventPublisher(bus);

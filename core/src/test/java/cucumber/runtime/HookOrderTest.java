@@ -46,7 +46,7 @@ public class HookOrderTest {
                 return asList(mock(Backend.class));
             }
         };
-        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());

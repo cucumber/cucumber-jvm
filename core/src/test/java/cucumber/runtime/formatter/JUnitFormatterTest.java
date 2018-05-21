@@ -530,7 +530,7 @@ public class JUnitFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(0L));
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         runtime.run();
         return report;
     }

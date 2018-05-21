@@ -220,7 +220,7 @@ public class FeatureRunnerTest {
             }
         };
         EventBus bus = new EventBus(timeServiceStub);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, glueSupplier, bus);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
         return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
     }
 

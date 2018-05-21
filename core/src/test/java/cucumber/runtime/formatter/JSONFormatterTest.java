@@ -1183,7 +1183,7 @@ public class JSONFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(1234));
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         runtime.getGlue().addBeforeHook(hook);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");

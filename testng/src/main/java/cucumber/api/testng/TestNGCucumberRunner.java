@@ -51,7 +51,7 @@ public class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        runtime = new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
         testCaseResultListener.setEventPublisher(bus);

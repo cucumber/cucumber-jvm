@@ -185,7 +185,7 @@ public class RunnerTest {
         };
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, new RuntimeGlueSupplier(), bus);
+        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new Runtime.RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
     }
 
     private HookDefinition addBeforeHook(Runtime runtime) {
