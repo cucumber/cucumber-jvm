@@ -122,10 +122,6 @@ public class Runtime {
         return runner.getGlue();
     }
 
-    public EventBus getEventBus() {
-        return bus;
-    }
-
     public Runner getRunner() {
         return runner;
     }
