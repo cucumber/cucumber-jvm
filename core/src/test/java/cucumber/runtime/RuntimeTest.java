@@ -4,6 +4,7 @@ import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
+import cucumber.runner.TimeService;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.Scenario;
@@ -464,14 +465,15 @@ public class RuntimeTest {
         mockMatch(glue, match, isAmbiguous);
         mockHook(glue, hook, hookType);
 
-        return new Runtime(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
-                    @Override
-                    public Collection<? extends Backend> get() {
-                        Backend backend = mock(Backend.class);
-                        Collection<Backend> backends = Arrays.asList(backend);
-                        return backends;
-                    }
-                }, runtimeOptions, glue);
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                Backend backend = mock(Backend.class);
+                Collection<Backend> backends = Arrays.asList(backend);
+                return backends;
+            }
+        };
+        return new Runtime(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, glue);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

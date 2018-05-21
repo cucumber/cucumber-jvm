@@ -38,11 +38,6 @@ public class Runtime {
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
-                   RuntimeOptions runtimeOptions, Glue optionalGlue) {
-        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, TimeService.SYSTEM, optionalGlue);
-    }
-
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
                    RuntimeOptions runtimeOptions, TimeService stopWatch, Glue optionalGlue) {
 
         this.resourceLoader = resourceLoader;
