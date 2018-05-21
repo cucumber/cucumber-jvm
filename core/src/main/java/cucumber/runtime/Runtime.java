@@ -38,13 +38,37 @@ public class Runtime {
                    Supplier<Collection<? extends Backend>> backendSupplier,
                    RuntimeOptions runtimeOptions,
                    TimeService stopWatch,
-                   Supplier<Glue> glueSupplier) {
+                   Supplier<Glue> glueSupplier
+    ) {
+        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, stopWatch, glueSupplier, new EventBus(stopWatch));
+    }
+
+
+    public Runtime(ResourceLoader resourceLoader,
+                   ClassLoader classLoader,
+                   Supplier<Collection<? extends Backend>> backendSupplier,
+                   RuntimeOptions runtimeOptions,
+                   TimeService stopWatch,
+                   Supplier<Glue> glueSupplier, EventBus bus
+    ) {
+        this(resourceLoader, classLoader, backendSupplier, runtimeOptions, stopWatch, glueSupplier, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
+    }
+
+    public Runtime(ResourceLoader resourceLoader,
+                   ClassLoader classLoader,
+                   Supplier<Collection<? extends Backend>> backendSupplier,
+                   RuntimeOptions runtimeOptions,
+                   TimeService stopWatch,
+                   Supplier<Glue> glueSupplier,
+                   EventBus bus,
+                   Supplier<Runner> runnerSupplier
+    ) {
 
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        this.bus = new EventBus(stopWatch);
-        this.runner = new RunnerProvider(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        this.bus = bus;
+        this.runner = runnerSupplier.get();
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -63,14 +87,14 @@ public class Runtime {
         runtimeOptions.setEventBus(bus);
     }
 
-    public static final class RunnerProvider implements Supplier<Runner> {
+    public static final class RunnerSupplier implements Supplier<Runner> {
 
         private final Supplier<Collection<? extends Backend>> backendSupplier;
         private final RuntimeOptions runtimeOptions;
         private final Supplier<Glue> glueSupplier;
         private final EventBus eventBus;
 
-        public RunnerProvider(RuntimeOptions runtimeOptions, EventBus eventBus, Supplier<Collection<? extends Backend>> backendSupplier, Supplier<Glue> glueSupplier) {
+        public RunnerSupplier(RuntimeOptions runtimeOptions, EventBus eventBus, Supplier<Collection<? extends Backend>> backendSupplier, Supplier<Glue> glueSupplier) {
             this.backendSupplier = backendSupplier;
             this.runtimeOptions = runtimeOptions;
             this.glueSupplier = glueSupplier;
