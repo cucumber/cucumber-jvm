@@ -39,30 +39,28 @@ public class Runtime {
     private final Compiler compiler = new Compiler();
 
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
+        this(resourceLoader, classLoader, new BackendSupplier(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backends, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, null);
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backends,
                    RuntimeOptions runtimeOptions, Glue optionalGlue) {
         this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, optionalGlue);
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
                    RuntimeOptions runtimeOptions, TimeService stopWatch, Glue optionalGlue) {
-        if (backends.isEmpty()) {
-            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
-        }
+
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
         final Glue glue;
         glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
         this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glue, bus, backends, runtimeOptions);
+        this.runner = new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -81,12 +79,36 @@ public class Runtime {
         runtimeOptions.setEventBus(bus);
     }
 
-    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
-        Reflections reflections = new Reflections(classFinder);
-        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
-        TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
-        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
-        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
+    private static class BackendSupplier implements Supplier<Collection<? extends Backend>> {
+
+        private final ResourceLoader resourceLoader;
+        private final ClassFinder classFinder;
+        private final RuntimeOptions runtimeOptions;
+
+        private BackendSupplier(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
+            this.resourceLoader = resourceLoader;
+            this.classFinder = classFinder;
+            this.runtimeOptions = runtimeOptions;
+        }
+
+
+        @Override
+        public Collection<? extends Backend> get() {
+            Collection<? extends Backend> backends = loadBackends(resourceLoader, classFinder, runtimeOptions);
+            if (backends.isEmpty()) {
+                throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+            }
+            return backends;
+        }
+
+        private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
+            Reflections reflections = new Reflections(classFinder);
+            TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+            TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+            typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
+            return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
+        }
+
     }
 
     /**
