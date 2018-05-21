@@ -42,13 +42,42 @@ public class Runtime {
         this(resourceLoader, classLoader, new BackendSupplier(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
     }
 
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, final Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return backends;
+            }
+        }, runtimeOptions);
+    }
+
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backends, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, null);
+    }
+
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, final Collection<? extends Backend> backends,
+                   RuntimeOptions runtimeOptions, Glue optionalGlue) {
+        this(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return backends;
+            }
+        }, runtimeOptions, optionalGlue);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backends,
                    RuntimeOptions runtimeOptions, Glue optionalGlue) {
         this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, optionalGlue);
+    }
+
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, final Collection<? extends Backend> backends,
+                   RuntimeOptions runtimeOptions, TimeService stopWatch, Glue optionalGlue) {
+        this(resourceLoader, classLoader, new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return backends;
+            }
+        }, runtimeOptions, stopWatch, optionalGlue);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Supplier<Collection<? extends Backend>> backendSupplier,
