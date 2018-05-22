@@ -36,7 +36,6 @@ public class HookTest {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final Backend backend = mock(Backend.class);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
@@ -46,9 +45,8 @@ public class HookTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
-        runtime.getGlue().addAfterHook(hook);
-        Runner runner = runtime.getRunner();
+        Runner runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        runner.getGlue().addAfterHook(hook);
         PickleStep step = mock(PickleStep.class);
         PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
