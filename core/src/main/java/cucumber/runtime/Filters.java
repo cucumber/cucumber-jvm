@@ -12,9 +12,11 @@ public class Filters {
 
     private final List<PicklePredicate> filters;
     private final RuntimeOptions runtimeOptions;
+    private final RerunFilters rerunFilters;
 
-    public Filters(RuntimeOptions runtimeOptions, ResourceLoader resourceLoader) {
+    public Filters(RuntimeOptions runtimeOptions, RerunFilters rerunFilters) {
         this.runtimeOptions = runtimeOptions;
+        this.rerunFilters = rerunFilters;
 
         filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = this.runtimeOptions.getTagFilters();
@@ -25,7 +27,11 @@ public class Filters {
         if (!nameFilters.isEmpty()) {
             this.filters.add(new NamePredicate(nameFilters));
         }
-        Map<String, List<Long>> lineFilters = runtimeOptions.getLineFilters(resourceLoader);
+        Map<String, List<Long>> lineFilters = runtimeOptions.getLineFilters();
+        Map<String, List<Long>> rerunlineFilters = rerunFilters.processRerunFiles();
+        for (Map.Entry<String,List<Long>> line: rerunlineFilters.entrySet()) {
+            addLineFilters(lineFilters, line.getKey(), line.getValue());
+        }
         if (!lineFilters.isEmpty()) {
             this.filters.add(new LinePredicate(lineFilters));
         }
@@ -38,6 +44,14 @@ public class Filters {
             }
         }
         return true;
+    }
+
+    private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
+        if (parsedLineFilters.containsKey(key)) {
+            parsedLineFilters.get(key).addAll(lines);
+        } else {
+            parsedLineFilters.put(key, lines);
+        }
     }
 
 }

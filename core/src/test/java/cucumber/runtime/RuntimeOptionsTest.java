@@ -48,7 +48,7 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
         Map<String, List<Long>> expectedLineFilters = new HashMap<String, List<Long>>(Collections.singletonMap("somewhere_else", asList(3L)));
-        assertEquals(expectedLineFilters, options.getLineFilters(mock(ResourceLoader.class)));
+        assertEquals(expectedLineFilters, options.getLineFilters());
     }
 
     @Test

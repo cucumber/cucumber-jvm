@@ -419,20 +419,20 @@ public class RuntimeOptions {
         return tagFilters;
     }
 
-    public Map<String, List<Long>> getLineFilters(ResourceLoader resourceLoader) {
-        processRerunFiles(resourceLoader);
+    public Map<String, List<Long>> getLineFilters() {
+//        processRerunFiles(resourceLoader);
         return lineFilters;
     }
 
-    private void processRerunFiles(ResourceLoader resourceLoader) {
-        for (String featurePath : featurePaths) {
-            if (featurePath.startsWith("@")) {
-                for (PathWithLines pathWithLines : CucumberFeature.loadRerunFile(resourceLoader, featurePath.substring(1))) {
-                    addLineFilters(lineFilters, pathWithLines.path, pathWithLines.lines);
-                }
-            }
-        }
-    }
+//    private void processRerunFiles(ResourceLoader resourceLoader) {
+//        for (String featurePath : featurePaths) {
+//            if (featurePath.startsWith("@")) {
+//                for (PathWithLines pathWithLines : CucumberFeature.loadRerunFile(resourceLoader, featurePath.substring(1))) {
+//                    addLineFilters(lineFilters, pathWithLines.path, pathWithLines.lines);
+//                }
+//            }
+//        }
+//    }
 
     public boolean isMonochrome() {
         return monochrome;

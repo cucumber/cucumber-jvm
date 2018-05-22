@@ -58,7 +58,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.getTagFilters().isEmpty());
         assertTrue(runtimeOptions.getNameFilters().isEmpty());
-        assertTrue(runtimeOptions.getLineFilters(mock(ResourceLoader.class)).isEmpty());
+        assertTrue(runtimeOptions.getLineFilters().isEmpty());
     }
 
     @Test
