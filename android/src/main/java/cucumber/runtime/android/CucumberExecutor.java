@@ -122,7 +122,7 @@ public final class CucumberExecutor {
         bus.send(new TestRunStarted(bus.getTime()));
 
         List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
-        this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);
+        this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, runtime.getFilters());
         instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
 

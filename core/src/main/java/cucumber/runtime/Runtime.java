@@ -38,13 +38,10 @@ public class Runtime {
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
         final Glue glue;
-        glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
-        this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glue, bus, backends, runtimeOptions);
+//        glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
         this.filters = new Filters(runtimeOptions, new RerunFilters(runtimeOptions, resourceLoader));
         this.bus = bus;
         this.runner = runnerSupplier.get();
-        this.filters = new Filters(runtimeOptions, resourceLoader);
         exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
     }
