@@ -59,11 +59,11 @@ public class RuntimeTest {
     @Test
     public void runs_feature_with_json_formatter() throws Exception {
         CucumberFeature feature = feature("test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background name\n" +
-                "    Given b\n" +
-                "  Scenario: scenario name\n" +
-                "    When s\n");
+            "Feature: feature name\n" +
+            "  Background: background name\n" +
+            "    Given b\n" +
+            "  Scenario: scenario name\n" +
+            "    When s\n");
         StringBuilder out = new StringBuilder();
 
 //        JSONFormatter jsonFormatter = new JSONFormatter(out);
@@ -239,10 +239,31 @@ public class RuntimeTest {
 
     @Test
     public void reports_step_definitions_to_plugin() throws IOException {
-        Runtime runtime = createRuntime("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter");
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        RuntimeOptions runtimeOptions = new RuntimeOptions(asList("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter"));
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                Backend backend = mock(Backend.class);
+                Collection<Backend> backends = Arrays.asList(backend);
+                return backends;
+            }
+        };
+        final StubStepDefinition stepDefinition = new StubStepDefinition("some pattern", new TypeRegistry(Locale.ENGLISH));
 
-        StubStepDefinition stepDefinition = new StubStepDefinition( "some pattern", new TypeRegistry(Locale.ENGLISH));
-        runtime.getGlue().addStepDefinition(stepDefinition);
+        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+            @Override
+            public Glue get() {
+                Glue glue = new RuntimeGlue();
+                glue.addStepDefinition(stepDefinition);
+                return glue;
+            }
+        };
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, runnerSupplier);
+
         runtime.run();
 
         assertSame(stepDefinition, StepdefsPrinter.instance.stepDefinition);
@@ -283,11 +304,11 @@ public class RuntimeTest {
     @Test
     public void should_make_scenario_name_available_to_hooks() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    When second step\n" +
+                "    Then third step\n");
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
 
@@ -302,14 +323,14 @@ public class RuntimeTest {
     @Test
     public void should_call_formatter_for_two_scenarios_with_background() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    When second step\n" +
-                "    Then third step\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Then second step\n");
+            "Feature: feature name\n" +
+            "  Background: background\n" +
+            "    Given first step\n" +
+            "  Scenario: scenario_1 name\n" +
+            "    When second step\n" +
+            "    Then third step\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Then second step\n");
         Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -318,39 +339,39 @@ public class RuntimeTest {
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
         assertEquals("" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestRun finished\n", formatterOutput);
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestRun finished\n", formatterOutput);
     }
 
     @Test
     public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given first step\n" +
-                "  Scenario Outline: scenario outline name\n" +
-                "    When <x> step\n" +
-                "    Then <y> step\n" +
-                "    Examples: examples 1 name\n" +
-                "      |   x    |   y   |\n" +
-                "      | second | third |\n" +
-                "      | second | third |\n" +
-                "    Examples: examples 2 name\n" +
-                "      |   x    |   y   |\n" +
-                "      | second | third |\n");
+            "Feature: feature name\n" +
+            "  Background: background\n" +
+            "    Given first step\n" +
+            "  Scenario Outline: scenario outline name\n" +
+            "    When <x> step\n" +
+            "    Then <y> step\n" +
+            "    Examples: examples 1 name\n" +
+            "      |   x    |   y   |\n" +
+            "      | second | third |\n" +
+            "      | second | third |\n" +
+            "    Examples: examples 2 name\n" +
+            "      |   x    |   y   |\n" +
+            "      | second | third |\n");
         Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -359,31 +380,31 @@ public class RuntimeTest {
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
         assertEquals("" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestRun finished\n", formatterOutput);
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestRun finished\n", formatterOutput);
     }
 
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {

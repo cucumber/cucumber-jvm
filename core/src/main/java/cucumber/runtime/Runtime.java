@@ -102,10 +102,6 @@ public class Runtime {
         return exitStatus.exitStatus(runtimeOptions.isStrict());
     }
 
-    public Glue getGlue() {
-        return runner.getGlue();
-    }
-
     public Runner getRunner() {
         return runner;
     }

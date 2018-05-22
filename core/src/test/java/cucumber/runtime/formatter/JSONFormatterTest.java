@@ -4,9 +4,11 @@ import cucumber.api.Result;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
+import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Supplier;
@@ -1162,7 +1164,7 @@ public class JSONFormatterTest {
     }
 
     private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {
-        HookDefinition hook = mock(HookDefinition.class);
+        final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -1184,8 +1186,16 @@ public class JSONFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(1234));
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
-        runtime.getGlue().addBeforeHook(hook);
+
+        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+            @Override
+            public Glue get() {
+                Glue glue = new RuntimeGlue();
+                glue.addBeforeHook(hook);
+                return glue;
+            }
+        };
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
         String formatterOutput = scanner.useDelimiter("\\A").next();

@@ -37,7 +37,6 @@ public class HookOrderTest {
 
     @Before
     public void buildMockWorld() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         EventBus bus = new EventBus(TimeService.SYSTEM);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
@@ -46,13 +45,12 @@ public class HookOrderTest {
                 return asList(mock(Backend.class));
             }
         };
-        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
         when(stepDefinition.getPattern()).thenReturn("pattern1");
-        runner = runtime.getRunner();
-        glue = runtime.getGlue();
+        runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        glue = runner.getGlue();
         glue.addStepDefinition(stepDefinition);
 
         pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
