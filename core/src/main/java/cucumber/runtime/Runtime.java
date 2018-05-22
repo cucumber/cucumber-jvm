@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static cucumber.runtime.model.CucumberFeature.load;
+
 /**
  * This is the main entry point for running Cucumber features.
  */
@@ -65,10 +67,12 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() {
+        List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
-
-        // Make sure all features parse before initialising any reporters/formatters
-        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
 
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
 

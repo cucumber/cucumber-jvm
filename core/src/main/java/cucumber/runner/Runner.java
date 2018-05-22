@@ -127,8 +127,6 @@ public class Runner {
     }
 
     private void buildBackendWorlds() {
-        runtimeOptions.getPlugins(); // To make sure that the plugins are instantiated after
-        // the features have been parsed but before the pickles starts to execute.
         for (Backend backend : backends) {
             backend.buildWorld();
         }

@@ -301,15 +301,6 @@ public class RuntimeOptions {
         table.add(cells);
     }
 
-    public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader, EventBus bus) {
-        List<CucumberFeature> features = load(resourceLoader, featurePaths, System.out);
-        getPlugins(); // to create the formatter objects
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(bus);
-        }
-        return features;
-    }
-
     public List<Plugin> getPlugins() {
         if (!pluginNamesInstantiated) {
             for (String pluginName : pluginFormatterNames) {
