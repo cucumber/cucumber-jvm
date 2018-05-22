@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.runtime.model.CucumberFeature.load;
+
 /**
  * <p>
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
@@ -93,10 +95,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
+        final List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
-        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
         runtime.getRunner().reportStepDefinitions(stepDefinitionReporter);
-        addChildren(cucumberFeatures);
+        addChildren(features);
     }
 
     @Override

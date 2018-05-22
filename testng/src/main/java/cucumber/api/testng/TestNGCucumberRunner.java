@@ -23,6 +23,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.runtime.model.CucumberFeature.load;
+
 /**
  * Glue code for running Cucumber via TestNG.
  */
@@ -59,8 +61,6 @@ public class TestNGCucumberRunner {
         reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
         testCaseResultListener.setEventPublisher(bus);
-
-        bus.send(new TestRunStarted(bus.getTime()));
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
@@ -102,6 +102,12 @@ public class TestNGCucumberRunner {
     }
 
     List<CucumberFeature> getFeatures() {
-        return runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+        runtimeOptions.getPlugins(); // to create the formatter objects
+        bus.send(new TestRunStarted(bus.getTime()));
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
+        return features;
     }
 }

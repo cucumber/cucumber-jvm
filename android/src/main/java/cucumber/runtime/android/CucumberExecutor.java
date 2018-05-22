@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.singletonList;
 
 /**
@@ -119,10 +120,13 @@ public final class CucumberExecutor {
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
+        List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
-
-        List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
-        this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, runtime.getFilters());
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
+        this.pickleEvents = FeatureCompiler.compile(features, this.runtime.getFilters());
         instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
 
