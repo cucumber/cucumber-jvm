@@ -3,9 +3,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...master) (In Git)
 
 ### Added
-
+ 
 ### Changed
-
+ * [Core] Upgrade cucumber expressions to 5.0.18 ([#1368](https://github.com/cucumber/cucumber-jvm/pull/1368) Aslak Hellesøy)
+     * Escape `/` with `\/` when a literal `/` is wanted (and not alternation)
+     
 ### Deprecated
 
 ### Removed
