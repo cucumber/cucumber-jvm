@@ -7,6 +7,7 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Runtime;
@@ -82,10 +83,10 @@ public class TestNGCucumberRunner {
     public Object[][] provideScenarios() {
         try {
             List<Object[]> scenarios = new ArrayList<Object[]>();
-
+            FeatureCompiler compiler = new FeatureCompiler();
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {
-                List<PickleEvent> pickles = runtime.compileFeature(feature);
+                List<PickleEvent> pickles = compiler.compileFeature(feature);
 
                 for (PickleEvent pickle : pickles) {
                     if (runtime.matchesFilters(pickle)) {
