@@ -1,17 +1,23 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...master) (In Git)
+## [3.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...master) (In Git)
 
 ### Added
  
 ### Changed
- * [Core] Upgrade cucumber expressions to 5.0.18 ([#1368](https://github.com/cucumber/cucumber-jvm/pull/1368) Aslak Hellesøy)
-     * Escape `/` with `\/` when a literal `/` is wanted (and not alternation)
      
 ### Deprecated
 
 ### Removed
 
+### Fixed
+
+## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...v3.0.1)
+
+### Changed
+ * [Core] Upgrade cucumber expressions to 5.0.18 ([#1368](https://github.com/cucumber/cucumber-jvm/pull/1368) Aslak Hellesøy)
+     * Escape `/` with `\/` when a literal `/` is wanted (and not alternation)
+     
 ### Fixed
  * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
 
