@@ -8,7 +8,6 @@ import cucumber.api.HookType;
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -43,14 +42,13 @@ public class RunnerTest {
     private static final List<PickleTag> NO_TAGS = Collections.<PickleTag>emptyList();
     private static final List<PickleLocation> MOCK_LOCATIONS = asList(mock(PickleLocation.class));
     private final Backend backend = mock(Backend.class);
-    private final Runtime runtime = createRuntime(backend);
-    private final Runner runner = runtime.getRunner();
+    private final Runner runner = createRunner(backend);
 
     @Test
     public void hooks_execute_when_world_exist() throws Throwable {
         PickleStep step = mock(PickleStep.class);
-        HookDefinition beforeHook = addBeforeHook(runtime);
-        HookDefinition afterHook = addAfterHook(runtime);
+        HookDefinition beforeHook = addBeforeHook();
+        HookDefinition afterHook = addAfterHook();
 
         runner.runPickle(createPickleEventWithSteps(asList(step)));
 
@@ -63,11 +61,11 @@ public class RunnerTest {
 
     @Test
     public void steps_are_skipped_after_failure() throws Throwable {
-        HookDefinition failingBeforeHook = addBeforeHook(runtime);
+        HookDefinition failingBeforeHook = addBeforeHook();
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(Matchers.<Scenario>any());
         StepDefinition stepDefinition = mock(StepDefinition.class);
 
-        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
         inOrder.verify(failingBeforeHook).execute(Matchers.<Scenario>any());
@@ -79,9 +77,9 @@ public class RunnerTest {
 
         StepDefinition stepDefinition = mock(StepDefinition.class);
         doThrow(RuntimeException.class).when(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
-        HookDefinition afteStepHook = addAfterStepHook(runtime);
+        HookDefinition afteStepHook = addAfterStepHook();
 
-        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
 
         InOrder inOrder = inOrder(afteStepHook, stepDefinition);
         inOrder.verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
@@ -92,10 +90,10 @@ public class RunnerTest {
     public void aftersteps_executed_for_passed_step() throws Throwable {
 
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        HookDefinition afteStepHook1 = addAfterStepHook(runtime);
-        HookDefinition afteStepHook2 = addAfterStepHook(runtime);
+        HookDefinition afteStepHook1 = addAfterStepHook();
+        HookDefinition afteStepHook2 = addAfterStepHook();
 
-        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
 
         InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
         inOrder.verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
@@ -106,10 +104,10 @@ public class RunnerTest {
     @Test
     public void hooks_execute_also_after_failure() throws Throwable {
         PickleStep step = mock(PickleStep.class);
-        HookDefinition failingBeforeHook = addBeforeHook(runtime);
+        HookDefinition failingBeforeHook = addBeforeHook();
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(Matchers.<Scenario>any());
-        HookDefinition beforeHook = addBeforeHook(runtime);
-        HookDefinition afterHook = addAfterHook(runtime);
+        HookDefinition beforeHook = addBeforeHook();
+        HookDefinition afterHook = addAfterHook();
 
         runner.runPickle(createPickleEventWithSteps(asList(step)));
 
@@ -122,26 +120,25 @@ public class RunnerTest {
     @Test
     public void steps_are_executed() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
-        runtime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
         verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
     }
 
     @Test
     public void steps_are_not_executed_on_dry_run() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
-        final Runtime dryRuntime = createRuntime(backend, "--dry-run");
-        dryRuntime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), dryRuntime));
+        Runner dryRunner = createRunner(backend, "--dry-run");
+        dryRunner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
         verify(stepDefinition, never()).execute(Matchers.anyString(), Matchers.<Object[]>any());
     }
 
     @Test
     public void hooks_not_executed_in_dry_run_mode() throws Throwable {
-        Runtime runtime = createRuntime(backend, "--dry-run");
-        Runner runner = runtime.getRunner();
+        Runner runner = createRunner(backend, "--dry-run");
         PickleStep step = mock(PickleStep.class);
-        HookDefinition beforeHook = addBeforeHook(runtime);
-        HookDefinition afterHook = addAfterHook(runtime);
-        HookDefinition afterStepHook = addAfterStepHook(runtime);
+        HookDefinition beforeHook = addBeforeHook();
+        HookDefinition afterHook = addAfterHook();
+        HookDefinition afterStepHook = addAfterStepHook();
 
         runner.runPickle(createPickleEventWithSteps(asList(step)));
 
@@ -152,9 +149,9 @@ public class RunnerTest {
 
     @Test
     public void hooks_not_executed_for_empty_pickles() throws Throwable {
-        HookDefinition beforeHook = addBeforeHook(runtime);
-        HookDefinition afterHook = addAfterHook(runtime);
-        HookDefinition afterStepHook = addAfterStepHook(runtime);
+        HookDefinition beforeHook = addBeforeHook();
+        HookDefinition afterHook = addAfterHook();
+        HookDefinition afterStepHook = addAfterStepHook();
 
         runner.runPickle(createEmptyPickleEvent());
 
@@ -171,11 +168,11 @@ public class RunnerTest {
         verify(backend).getSnippet(Matchers.eq(step), Matchers.anyString(), Matchers.<FunctionNameGenerator>any());
     }
 
-    private Runtime createRuntime(Backend backend) {
-        return createRuntime(backend, "-p null");
+    private Runner createRunner(Backend backend) {
+        return createRunner(backend, "-p null");
     }
 
-    private Runtime createRuntime(final Backend backend, String options) {
+    private Runner createRunner(final Backend backend, String options) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(options);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
@@ -186,30 +183,30 @@ public class RunnerTest {
         };
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        return new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
     }
 
-    private HookDefinition addBeforeHook(Runtime runtime) {
-        return addHook(runtime, HookType.Before);
+    private HookDefinition addBeforeHook() {
+        return addHook(HookType.Before);
     }
 
-    private HookDefinition addAfterHook(Runtime runtime) {
-        return addHook(runtime, HookType.After);
+    private HookDefinition addAfterHook() {
+        return addHook(HookType.After);
     }
 
-    private HookDefinition addAfterStepHook(Runtime runtime) {
-        return addHook(runtime, HookType.AfterStep);
+    private HookDefinition addAfterStepHook() {
+        return addHook(HookType.AfterStep);
     }
 
-    private HookDefinition addHook(Runtime runtime, HookType hookType) {
+    private HookDefinition addHook(HookType hookType) {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         if (hookType == HookType.Before) {
-            runtime.getGlue().addBeforeHook(hook);
+            runner.getGlue().addBeforeHook(hook);
         } else if (hookType == HookType.After){
-            runtime.getGlue().addAfterHook(hook);
+            runner.getGlue().addAfterHook(hook);
         } else if (hookType == HookType.AfterStep) {
-            runtime.getGlue().addAfterStepHook(hook);
+            runner.getGlue().addAfterStepHook(hook);
         }
         return hook;
     }
@@ -218,7 +215,7 @@ public class RunnerTest {
         return new PickleEvent("uri", new Pickle(NAME, ENGLISH, NO_STEPS, NO_TAGS, MOCK_LOCATIONS));
     }
 
-    private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions, Runtime runtime) {
+    private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions) {
         List<PickleStep> steps = new ArrayList<PickleStep>(stepDefinitions.size());
         int i = 0;
         for (StepDefinition stepDefinition : stepDefinitions) {
@@ -226,7 +223,7 @@ public class RunnerTest {
             steps.add(step);
             when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
             when(stepDefinition.getPattern()).thenReturn("pattern" + Integer.toString(++i));
-            runtime.getGlue().addStepDefinition(stepDefinition);
+            runner.getGlue().addStepDefinition(stepDefinition);
         }
         return new PickleEvent("uri", new Pickle(NAME, ENGLISH, steps, NO_TAGS, MOCK_LOCATIONS));
     }
