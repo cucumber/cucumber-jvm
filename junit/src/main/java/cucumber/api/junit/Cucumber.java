@@ -1,6 +1,7 @@
 package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
+import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.Formatter;
@@ -88,11 +89,13 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         jUnitReporter = new JUnitReporter(bus, runtimeOptions.isStrict(), junitOptions);
+        final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
         bus.send(new TestRunStarted(bus.getTime()));
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        runtime.getRunner().reportStepDefinitions(stepDefinitionReporter);
         addChildren(cucumberFeatures);
     }
 

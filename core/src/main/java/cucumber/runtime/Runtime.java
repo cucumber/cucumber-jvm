@@ -5,15 +5,11 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
-import cucumber.runner.TimeService;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -32,7 +28,7 @@ public class Runtime {
     private final Runner runner;
     private final List<PicklePredicate> filters;
     private final EventBus bus;
-    private final Compiler compiler = new Compiler();
+    private final FeatureCompiler compiler = new FeatureCompiler();
 
 
     public Runtime(ResourceLoader resourceLoader,
@@ -76,7 +72,7 @@ public class Runtime {
 
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
 
-        reportStepDefinitions(stepDefinitionReporter);
+        runner.reportStepDefinitions(stepDefinitionReporter);
 
         for (CucumberFeature cucumberFeature : features) {
             runFeature(cucumberFeature);
@@ -85,25 +81,12 @@ public class Runtime {
         bus.send(new TestRunFinished(bus.getTime()));
     }
 
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        runner.reportStepDefinitions(stepDefinitionReporter);
-    }
-
-    public void runFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = compileFeature(feature);
-        for (PickleEvent pickleEvent : pickleEvents) {
+    void runFeature(CucumberFeature feature) {
+        for (PickleEvent pickleEvent : compiler.compileFeature(feature)) {
             if (matchesFilters(pickleEvent)) {
                 runner.runPickle(pickleEvent);
             }
         }
-    }
-
-    public List<PickleEvent> compileFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
-        }
-        return pickleEvents;
     }
 
     public boolean matchesFilters(PickleEvent pickleEvent) {

@@ -120,6 +120,10 @@ public final class CucumberExecutor {
         runtimeOptions.addPlugin(instrumentationReporter);
         runtimeOptions.addPlugin(new AndroidLogcatReporter(stats, undefinedStepsTracker, TAG));
 
+        // Start the run before reading the features.
+        // Allows the test source read events to be broadcast properly
+        bus.send(new TestRunStarted(bus.getTime()));
+
         List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, bus);
         this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);
         instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
@@ -129,11 +133,8 @@ public final class CucumberExecutor {
      * Runs the cucumber scenarios with the specified arguments.
      */
     public void execute() {
-
-        bus.send(new TestRunStarted(bus.getTime()));
-
         final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
-        runtime.reportStepDefinitions(stepDefinitionReporter);
+        runtime.getRunner().reportStepDefinitions(stepDefinitionReporter);
 
         for (final PickleEvent pickleEvent : pickleEvents) {
             runtime.getRunner().runPickle(pickleEvent);

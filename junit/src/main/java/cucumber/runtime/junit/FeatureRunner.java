@@ -4,13 +4,12 @@ import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
 import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -78,11 +77,8 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         if (feature == null) {
             return;
         }
-        Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(cucumberFeature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(cucumberFeature.getUri(), pickle));
-        }
+        FeatureCompiler compiler = new FeatureCompiler();
+        List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
         for (PickleEvent pickleEvent : pickleEvents) {
             if (runtime.matchesFilters(pickleEvent)) {
                 try {

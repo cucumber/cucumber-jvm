@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
+import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.junit.PickleRunners.WithStepDescriptions;
 import cucumber.runtime.model.CucumberFeature;
@@ -107,12 +108,8 @@ public class PickleRunnerWithStepDescriptionsTest {
             "    Then another step\n"
         );
 
-        Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
-        }
-
+        FeatureCompiler compiler = new FeatureCompiler();
+        List<PickleEvent> pickleEvents = compiler.compileFeature(features);
         PickleRunner runner = PickleRunners.withStepDescriptions(
                 mock(Runner.class),
                 pickleEvents.get(0),
