@@ -1,3 +1,7 @@
+import com.android.ddmlib.AndroidDebugBridge
+import com.android.ddmlib.IDevice
+import com.android.ddmlib.CollectingOutputReceiver
+
 apply plugin: 'com.android.application'
 
 // ==================================================================
@@ -106,22 +110,33 @@ dependencies {
  */
 task downloadCucumberReports {
     group "Verification"
-    description "Downloads the rich Cucumber report files (HTML, XML, JSON) from the connected device"
+    description "Downloads the rich Cucumber report files (HTML, XML, JSON) from the connected devices"
 
     doLast {
-        def deviceSourcePath = getCucumberDevicePath()
-        def localReportPath = new File(buildDir, "reports/cucumber")
-        if (!localReportPath.exists()) {
-            localReportPath.mkdirs()
-        }
-        if (!localReportPath.exists()) {
-            throw new GradleException("Could not create $localReportPath")
-        }
-        def adb = getAdbPath()
-        def files = getCucumberReportFileNames()
-        files.each { fileName ->
-            exec {
-                commandLine adb, 'pull', "$deviceSourcePath/$fileName", localReportPath
+        getADB().devices.each { device ->
+            def deviceSourcePath = getDeviceCucumberPath(device)
+            def localReportPath = new File(buildDir, "reports/cucumber")
+            def deviceSpecificReportPath = new File(buildDir, "reports/cucumber-${device.getSerialNumber()}")
+            if (!localReportPath.exists()) {
+                localReportPath.mkdirs()
+            }
+            if (!localReportPath.exists()) {
+                throw new GradleException("Could not create $localReportPath")
+            }
+            if (!deviceSpecificReportPath.exists()) {
+                deviceSpecificReportPath.mkdirs()
+            }
+            if (!deviceSpecificReportPath.exists()) {
+                throw new GradleException("Could not create $deviceSpecificReportPath")
+            }
+            def adb = adbPath()
+            def files = getCucumberReportFileNames()
+            files.each { fileName ->
+                //Write to main cucumber directory
+                exec { commandLine adb, "-s", device.getSerialNumber(), "pull", deviceSourcePath+'/'+fileName, localReportPath }
+
+                //Write to device specific cucumber directory
+                exec { commandLine adb, "-s", device.getSerialNumber(), "pull", deviceSourcePath+'/'+fileName, deviceSpecificReportPath }
             }
         }
     }
@@ -132,14 +147,17 @@ task downloadCucumberReports {
  */
 task deleteExistingCucumberReports {
     group "Verification"
-    description "Removes the rich Cucumber report files (HTML, XML, JSON) from the connected device"
+    description "Removes the rich Cucumber report files (HTML, XML, JSON) from the connected devices"
     doLast {
-        def deviceSourcePath = getCucumberDevicePath()
-        def files = getCucumberReportFileNames()
-        files.each { fileName ->
-            def deviceFileName = deviceSourcePath + '/' + fileName
-            def output2 = executeAdb('if [ -d "' + deviceFileName + ' ]; then rm -r "' + deviceFileName + '"; else rm -r "' + deviceFileName + '" ; fi')
-            println output2
+        getADB().devices.each { device ->
+            def cucumberPath = getDeviceCucumberPath(device)
+            def files = getCucumberReportFileNames()
+            files.each { fileName ->
+                def deviceFileName = "${cucumberPath}/${fileName}"
+                def shellCommand = "if [ -d ${cucumberPath} ]; then rm -r ${deviceFileName}; fi"
+                def output = executeAdbShellOnDevice(shellCommand, device)
+                println output
+            }
         }
     }
 }
@@ -149,15 +167,43 @@ task deleteExistingCucumberReports {
  */
 task grantPermissions(dependsOn: 'installDebug') {
     doLast {
-        def adb = getAdbPath()
         // We only set the permissions for the main application
+        def adb = adbPath()
         def mainPackageName = android.defaultConfig.applicationId
         def readPermission = "android.permission.READ_EXTERNAL_STORAGE"
         def writePermission = "android.permission.WRITE_EXTERNAL_STORAGE"
-        exec { commandLine adb, 'shell', 'pm', 'grant', mainPackageName, readPermission }
-        exec { commandLine adb, 'shell', 'pm', 'grant', mainPackageName, writePermission }
+        getADB().devices.each { device ->
+            exec { commandLine adb, "-s", device.getSerialNumber(), 'shell', 'pm', 'grant', mainPackageName, readPermission }
+            exec { commandLine adb, "-s", device.getSerialNumber(), 'shell', 'pm', 'grant', mainPackageName, writePermission }
+        }
     }
 }
+
+/**
+ * Checks if there's at least one connected device.
+ */
+task checkDeviceConnection {
+    doLast {
+        def bridge = getADB()
+        long timeOut = 30000
+        int sleepTime = 1000
+        while (!bridge.hasInitialDeviceList() && timeOut > 0) {
+            sleep sleepTime
+            timeOut -= sleepTime
+        }
+        if (timeOut <= 0 && !bridge.hasInitialDeviceList()) {
+            throw new RuntimeException("Timeout getting device list.", null)
+        }
+        IDevice[] devices = bridge.devices
+        if (devices.length == 0) {
+            throw new RuntimeException("No connected devices!", null)
+        }
+    }
+}
+
+//Check if there are devices connected
+connectedCheck.dependsOn checkDeviceConnection
+connectedCheck.mustRunAfter checkDeviceConnection
 
 // Delete existing Cucumber reports on the device before connected test-run
 connectedCheck.dependsOn deleteExistingCucumberReports
@@ -178,12 +224,25 @@ connectedCheck.finalizedBy downloadCucumberReports
  * Utility method to get the full ADB path
  * @return the absolute ADB path
  */
-String getAdbPath() {
-    def adb = android.getAdbExecutable().toString()
+String adbPath() {
+    def adb = android.getAdbExecutable().getPath()
     if (adb.isEmpty()) {
         throw new GradleException("Could not detect adb path")
     }
     return adb
+}
+
+/**
+ * Method to get the ADB object.
+ * @return AndroidDebugBridge
+ */
+def getADB() {
+    AndroidDebugBridge.initIfNeeded(false /*clientSupport*/)
+    def bridge = AndroidDebugBridge.createBridge(adbPath(), false /*forceNewBridge*/)
+    if (!bridge.isConnected()) {
+        bridge.restart()
+    }
+    return bridge
 }
 
 /**
@@ -194,24 +253,25 @@ String getAdbPath() {
 static def fixAdbOutput(String s) {
     return s.replaceAll("[\r\n]+", "\n").trim()
 }
-
 /**
  * Runs the adb tool
  * @param program the program which is executed on the connected device
  * @return the output of the adb tool
  */
-def executeAdb(String program) {
-    def process = new ProcessBuilder(getAdbPath(), "shell", program).redirectErrorStream(true).start()
-    String text = new BufferedReader(new InputStreamReader(process.inputStream)).text
-    return fixAdbOutput(text)
+
+static def executeAdbShellOnDevice(String program, IDevice device) {
+    def receiver = new CollectingOutputReceiver()
+    device.executeShellCommand(program, receiver)
+    return fixAdbOutput(receiver.getOutput())
 }
 
 /**
  * Gets the 'external' storage path which is confusingly the internal storage of the phone.
  * @return
  */
-def getExternalStoragePath() {
-    String r = executeAdb('echo $EXTERNAL_STORAGE')
+
+static def getDeviceExternalStoragePath(IDevice device) {
+    String r = executeAdbShellOnDevice('echo $EXTERNAL_STORAGE', device).trim()
     if (!r.matches('(/[^/]+)+')) {
         throw new GradleException("Could not detect external storage path")
     }
@@ -222,8 +282,8 @@ def getExternalStoragePath() {
  * The path which is used to store the Cucumber files.
  * @return
  */
-def getCucumberDevicePath() {
-    return getExternalStoragePath() + '/cucumber'
+static def getDeviceCucumberPath(IDevice device) {
+    return getDeviceExternalStoragePath(device) + '/cucumber'
 }
 
 /**
