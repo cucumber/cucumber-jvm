@@ -51,6 +51,8 @@
                     <!-- hack to workaround https://github.com/simpligility/android-maven-plugin/issues/548 -->
                     <testCoverageFile>foo</testCoverageFile>
                     <failOnNonStandardStructure>false</failOnNonStandardStructure>
+                    <!--Breaks the build when the tests fail-->
+                    <testFailSafe>false</testFailSafe>
                 </configuration>
             </plugin>
         </plugins>
