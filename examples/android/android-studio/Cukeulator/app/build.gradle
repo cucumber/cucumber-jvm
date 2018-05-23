@@ -138,7 +138,7 @@ task deleteExistingCucumberReports {
         def files = getCucumberReportFileNames()
         files.each { fileName ->
             def deviceFileName = deviceSourcePath + '/' + fileName
-            def output2 = executeAdb('if [ -d "' + deviceFileName + ' ]; then rm -r "' + deviceFileName + '"; else rm -r "' + deviceFileName + '" ; fi')
+            def output2 = executeAdb('if [ -d "' + deviceFileName + '" ]; then rm -r "' + deviceFileName + '"; else rm -r "' + deviceFileName + '" ; fi')
             println output2
         }
     }
