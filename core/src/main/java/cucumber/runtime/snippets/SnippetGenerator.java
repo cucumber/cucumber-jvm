@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
-        new ArgumentPattern(Pattern.compile("\\{.*?}")),
+        new ArgumentPattern(Pattern.compile("\\{.*?\\}")) // Escape the closing brace. #1370
     };
 
     private static final String REGEXP_HINT = "Write code here that turns the phrase above into concrete actions";
