@@ -32,13 +32,13 @@
             <scope>provided</scope>
         </dependency>
         <!-- declare apk dependency for android:deploy-dependencies target -->
-        <!--<dependency>-->
-            <!--<groupId>io.cucumber.android-examples</groupId>-->
-            <!--<artifactId>cukelator</artifactId>-->
-            <!--<version>${project.version}</version>-->
-            <!--<scope>provided</scope>-->
-            <!--<type>apk</type>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>io.cucumber.android-examples</groupId>
+            <artifactId>cukelator</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <type>apk</type>
+        </dependency>
     </dependencies>
 
     <build>
