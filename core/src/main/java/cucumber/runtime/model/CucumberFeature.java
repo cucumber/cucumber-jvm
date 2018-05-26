@@ -26,92 +26,117 @@ public class CucumberFeature implements Serializable {
     private String gherkinSource;
     public static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
-    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, PrintStream out) {
-        final List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths);
-        if (cucumberFeatures.isEmpty()) {
-            if (featurePaths.isEmpty()) {
-                out.println("Got no path to feature directory or feature file");
-            } else {
-                out.println(String.format("No features found at %s", featurePaths));
+    public static final class FeatureLoader {
+        private final ResourceLoader resourceLoader;
+
+        public FeatureLoader(ResourceLoader resourceLoader) {
+            this.resourceLoader = resourceLoader;
+        }
+
+        public List<CucumberFeature> load(List<String> featurePaths, PrintStream out) {
+            final List<CucumberFeature> cucumberFeatures = load(featurePaths);
+            if (cucumberFeatures.isEmpty()) {
+                if (featurePaths.isEmpty()) {
+                    out.println("Got no path to feature directory or feature file");
+                } else {
+                    out.println(String.format("No features found at %s", featurePaths));
+                }
+            }
+            return cucumberFeatures;
+        }
+
+        public List<CucumberFeature> load(List<String> featurePaths) {
+            final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
+            final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
+            for (String featurePath : featurePaths) {
+                if (featurePath.startsWith("@")) {
+                    loadFromRerunFile(builder, resourceLoader, featurePath.substring(1));
+                } else {
+                    loadFromFeaturePath(builder, resourceLoader, featurePath, false);
+                }
+            }
+            Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
+            return cucumberFeatures;
+        }
+
+
+        private void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath) {
+            for (PathWithLines pathWithLines : loadRerunFile(rerunPath)) {
+                loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
             }
         }
-        return cucumberFeatures;
+
+        public List<PathWithLines> loadRerunFile(String rerunPath) {
+            List<PathWithLines> featurePaths = new ArrayList<PathWithLines>();
+            Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
+            for (Resource resource : resources) {
+                String source = read(resource);
+                if (!source.isEmpty()) {
+                    Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
+                    while (matcher.find()) {
+                        featurePaths.add(new PathWithLines(matcher.group(1)));
+                    }
+                }
+            }
+            return featurePaths;
+        }
+        private static String read(Resource resource) {
+            try {
+                return Encoding.readFile(resource);
+            } catch (IOException e) {
+                throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
+            }
+        }
+
+
+        private static void loadFromFileSystemOrClasspath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath) {
+            try {
+                loadFromFeaturePath(builder, resourceLoader, featurePath, false);
+            } catch (IllegalArgumentException originalException) {
+                if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME) &&
+                    originalException.getMessage().contains("Not a file or directory")) {
+                    try {
+                        loadFromFeaturePath(builder, resourceLoader, MultiLoader.CLASSPATH_SCHEME + featurePath, true);
+                    } catch (IllegalArgumentException secondException) {
+                        if (secondException.getMessage().contains("No resource found for")) {
+                            throw new IllegalArgumentException("Neither found on file system or on classpath: " +
+                                originalException.getMessage() + ", " + secondException.getMessage());
+                        } else {
+                            throw secondException;
+                        }
+                    }
+                } else {
+                    throw originalException;
+                }
+            }
+        }
+
+        private static void loadFromFeaturePath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, boolean failOnNoResource) {
+            Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
+            if (failOnNoResource && !resources.iterator().hasNext()) {
+                throw new IllegalArgumentException("No resource found for: " + featurePath);
+            }
+            for (Resource resource : resources) {
+                builder.parse(resource);
+            }
+        }
+    }
+
+
+    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, PrintStream out) {
+        return new FeatureLoader(resourceLoader).load(featurePaths, out);
+
     }
 
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths) {
-        final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
-        final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
-        for (String featurePath : featurePaths) {
-            if (featurePath.startsWith("@")) {
-                loadFromRerunFile(builder, resourceLoader, featurePath.substring(1));
-            } else {
-                loadFromFeaturePath(builder, resourceLoader, featurePath, false);
-            }
-        }
-        Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
-        return cucumberFeatures;
+        return new FeatureLoader(resourceLoader).load(featurePaths);
     }
 
-    private static void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath) {
-        for(PathWithLines pathWithLines : loadRerunFile(resourceLoader, rerunPath)){
-            loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
-        }
-    }
 
     public static List<PathWithLines> loadRerunFile(ResourceLoader resourceLoader, String rerunPath) {
-        List<PathWithLines> featurePaths = new ArrayList<PathWithLines>();
-        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
-        for (Resource resource : resources) {
-            String source = read(resource);
-            if (!source.isEmpty()) {
-                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
-                while(matcher.find()){
-                    featurePaths.add(new PathWithLines(matcher.group(1)));
-                }
-            }
-        }
-        return featurePaths;
+        return new FeatureLoader(resourceLoader).loadRerunFile(rerunPath);
     }
 
-    private static String read(Resource resource) {
-        try {
-            return Encoding.readFile(resource);
-        } catch (IOException e) {
-            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
-        }
-    }
-
-    private static void loadFromFileSystemOrClasspath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath) {
-        try {
-            loadFromFeaturePath(builder, resourceLoader, featurePath, false);
-        } catch (IllegalArgumentException originalException) {
-            if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME) &&
-                    originalException.getMessage().contains("Not a file or directory")) {
-                try {
-                    loadFromFeaturePath(builder, resourceLoader, MultiLoader.CLASSPATH_SCHEME + featurePath, true);
-                } catch (IllegalArgumentException secondException) {
-                    if (secondException.getMessage().contains("No resource found for")) {
-                        throw new IllegalArgumentException("Neither found on file system or on classpath: " +
-                                originalException.getMessage() + ", " + secondException.getMessage());
-                    } else {
-                        throw secondException;
-                    }
-                }
-            } else {
-                throw originalException;
-            }
-        }
-    }
-
-    private static void loadFromFeaturePath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, boolean failOnNoResource) {
-        Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
-        if (failOnNoResource && !resources.iterator().hasNext()) {
-            throw new IllegalArgumentException("No resource found for: " + featurePath);
-        }
-        for (Resource resource : resources) {
-            builder.parse(resource);
-        }
-    }
 
     public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource) {
         this.gherkinDocument = gherkinDocument;
