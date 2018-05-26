@@ -88,7 +88,7 @@
         <felix.version>5.6.6</felix.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
-        <cucumber-expressions.version>5.0.18</cucumber-expressions.version>
+        <cucumber-expressions.version>5.0.19</cucumber-expressions.version>
         <datatable.version>1.0.3</datatable.version>
     </properties>
     <licenses>

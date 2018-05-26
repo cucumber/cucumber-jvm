@@ -135,7 +135,7 @@ public class CalculatorActivitySteps {
         }
     }
 
-    @Then("I should see {word} on the display")
+    @Then("I should see {string} on the display")
     public void I_should_see_s_on_the_display(final String s) {
         onView(withId(R.id.txt_calc_display)).check(matches(withText(s)));
     }
