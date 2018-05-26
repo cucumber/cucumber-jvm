@@ -39,8 +39,6 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        final Glue glue;
-//        glue = optionalGlue == null ? new RuntimeGlue() : optionalGlue;
         this.filters = new Filters(runtimeOptions, new RerunFilters(runtimeOptions, resourceLoader));
         this.bus = bus;
         this.runner = runnerSupplier.get();
