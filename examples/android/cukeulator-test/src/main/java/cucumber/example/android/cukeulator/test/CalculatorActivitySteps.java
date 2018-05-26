@@ -101,7 +101,7 @@ public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<Ca
         }
     }
 
-    @Then("I should see {word} on the display")
+    @Then("I should see {string} on the display")
     public void I_should_see_s_on_the_display(String s) {
         TextView display = (TextView) getActivity().findViewById(R.id.txt_calc_display);
         String displayed_result = display.getText().toString();

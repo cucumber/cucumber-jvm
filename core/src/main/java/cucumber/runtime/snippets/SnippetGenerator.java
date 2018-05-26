@@ -18,8 +18,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class SnippetGenerator {
+    @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped braces.
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
-        new ArgumentPattern(Pattern.compile("\\{.*?}")),
+        new ArgumentPattern(Pattern.compile("\\{.*?\\}"))
     };
 
     private static final String REGEXP_HINT = "Write code here that turns the phrase above into concrete actions";

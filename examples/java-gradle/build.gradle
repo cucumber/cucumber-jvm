@@ -18,8 +18,8 @@ task cucumber() {
 }
 
 dependencies {
-    testCompile 'io.cucumber:cucumber-java:3.0.0'
-    testCompile 'io.cucumber:cucumber-junit:3.0.0'
+    testCompile 'io.cucumber:cucumber-java:3.0.1'
+    testCompile 'io.cucumber:cucumber-junit:3.0.1'
 
     testCompile 'junit:junit:4.12'
 }
