@@ -6,6 +6,7 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
 import cucumber.runtime.formatter.PickleStepMatcher;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -147,8 +148,8 @@ public class TestHelper {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        EventBus bus = new EventBus(timeService);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        final EventBus bus = new EventBus(timeService);
+        final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
                 return asList(mock(Backend.class));
@@ -163,8 +164,13 @@ public class TestHelper {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        Supplier<Runner> runnerSupplier = new Supplier<Runner>() {
+            @Override
+            public Runner get() {
+                return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
+            }
+        };
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         timeService.setEventPublisher(bus);
 

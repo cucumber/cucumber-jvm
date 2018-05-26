@@ -1199,8 +1199,8 @@ public class JSONFormatterTest {
             }
         };
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);

@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
@@ -23,6 +24,7 @@ import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
+import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
@@ -85,7 +87,7 @@ public class CalculatorTest {
     }
 
     @Test
-    public void cucumber() throws Exception {
+    public void cucumber() {
         assertNotNull(injector);
         assertNotNull(bundleContext);
         final ResourceLoader resourceLoader = new FileResourceLoader();
@@ -105,9 +107,9 @@ public class CalculatorTest {
             }
         };
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        Supplier<Runner> runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        Supplier<List<CucumberFeature>> featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);

@@ -78,12 +78,13 @@ public class RuntimeTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        FeatureLoader featureLoader = new FeatureLoader(new ClasspathResourceLoader(classLoader));
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(new ClasspathResourceLoader(classLoader), runtimeOptions);
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
@@ -272,7 +273,7 @@ public class RuntimeTest {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 
         runtime.run();
@@ -294,7 +295,6 @@ public class RuntimeTest {
         }
     }
 
-
     @Test
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
@@ -308,7 +308,7 @@ public class RuntimeTest {
             RuntimeOptions runtimeOptions = new RuntimeOptions("");
             EventBus bus = new EventBus(TimeService.SYSTEM);
             ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-            FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+            FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
             RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
             RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
             FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
@@ -487,7 +487,7 @@ public class RuntimeTest {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         return new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
     }
 
@@ -534,9 +534,9 @@ public class RuntimeTest {
         };
 
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         return new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);

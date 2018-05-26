@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 public class JUnitReporter {
 
-    private final boolean strict;
     private final JUnitOptions junitOptions;
+    private final EventBus bus;
 
     TestNotifier stepNotifier; // package-private for testing
     private PickleRunner pickleRunner;
@@ -67,13 +67,20 @@ public class JUnitReporter {
 
     };
 
-    public JUnitReporter(EventBus bus, boolean strict, JUnitOptions junitOption) {
-        this.strict = strict;
+    public JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
+        this.bus = bus;
         bus.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         bus.registerHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+    }
+
+    public void finishExecutionUnit() {
+        bus.removeHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
+        bus.removeHandlerFor(TestStepStarted.class, testStepStartedHandler);
+        bus.removeHandlerFor(TestStepFinished.class, testStepFinishedHandler);
+        bus.removeHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
     void startExecutionUnit(PickleRunner pickleRunner, RunNotifier runNotifier) {
@@ -90,17 +97,13 @@ public class JUnitReporter {
     }
 
     void handleStepStarted(gherkin.pickles.PickleStep step) {
-        if (stepNotifications()) {
+        if (junitOptions.stepNotifications()) {
             Description description = pickleRunner.describeChild(step);
             stepNotifier = new EachTestNotifier(runNotifier, description);
         } else {
             stepNotifier = new NoTestNotifier();
         }
         stepNotifier.fireTestStarted();
-    }
-
-    boolean stepNotifications() {
-        return junitOptions.stepNotifications();
     }
 
     void handleStepResult(PickleStepTestStep testStep, Result result) {
@@ -174,12 +177,8 @@ public class JUnitReporter {
         pickleRunnerNotifier.fireTestFinished();
     }
 
-    boolean useFilenameCompatibleNames() {
-        return junitOptions.filenameCompatibleNames();
-    }
-
     private void addFailureOrFailedAssumptionDependingOnStrictMode(TestNotifier notifier, Throwable error) {
-        if (strict) {
+        if (junitOptions.isStrict()) {
             notifier.addFailure(error);
         } else {
             notifier.addFailedAssumption(error);

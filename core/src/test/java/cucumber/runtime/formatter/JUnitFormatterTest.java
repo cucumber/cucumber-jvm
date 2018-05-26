@@ -535,7 +535,7 @@ public class JUnitFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(0L));
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);

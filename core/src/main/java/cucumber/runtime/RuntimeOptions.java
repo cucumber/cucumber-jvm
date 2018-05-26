@@ -473,7 +473,7 @@ public class RuntimeOptions {
         }
     }
 
-    void setEventBus(EventBus bus) {
+    public void setEventBus(EventBus bus) {
         this.bus = bus;
     }
 }

@@ -111,8 +111,8 @@ public final class CucumberExecutor {
         this.bus = new EventBus(TimeService.SYSTEM);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         this.runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
@@ -129,12 +129,13 @@ public final class CucumberExecutor {
         // Allows the test source read events to be broadcast properly
 
         List<CucumberFeature> features = featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
+        runtimeOptions.setEventBus(bus);
         runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
         }
-        this.pickleEvents = FeatureCompiler.compile(features, this.runtime.getFilters());
+        this.pickleEvents = FeatureCompiler.compile(features, filters);
         instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
 

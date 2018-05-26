@@ -3,12 +3,10 @@ package cucumber.runtime.junit;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
-import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
 import cucumber.runtime.Glue;
 import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Supplier;
@@ -195,7 +193,7 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
-        JUnitOptions junitOption = new JUnitOptions(Arrays.asList(options));
+        JUnitOptions junitOption = new JUnitOptions(false, Arrays.asList(options));
         return createFeatureRunner(cucumberFeature, junitOption);
     }
 
@@ -229,9 +227,7 @@ public class FeatureRunnerTest {
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
-        final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-        return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(bus, false, junitOption));
+        return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
     }
 
 

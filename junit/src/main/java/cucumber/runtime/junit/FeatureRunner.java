@@ -1,11 +1,9 @@
 package cucumber.runtime.junit;
 
-import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
-import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
-
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.Filters;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
@@ -19,16 +17,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
+import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
+
 public class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children = new ArrayList<PickleRunner>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
+    public FeatureRunner(CucumberFeature cucumberFeature, Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
-        buildFeatureElementRunners(runtime, jUnitReporter);
+        buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         super.run(notifier);
     }
 
-    private void buildFeatureElementRunners(Runtime runtime, JUnitReporter jUnitReporter) {
+    private void buildFeatureElementRunners(Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
         Feature feature = cucumberFeature.getGherkinFeature().getFeature();
         if (feature == null) {
             return;
@@ -80,15 +81,15 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         FeatureCompiler compiler = new FeatureCompiler();
         List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
         for (PickleEvent pickleEvent : pickleEvents) {
-            if (runtime.getFilters().matchesFilters(pickleEvent)) {
+            if (filters.matchesFilters(pickleEvent)) {
                 try {
-                    if(jUnitReporter.stepNotifications()) {
+                    if (jUnitOptions.stepNotifications()) {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withStepDescriptions(runtime.getRunner(), pickleEvent, jUnitReporter);
+                        picklePickleRunner = withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runtime.getRunner(), pickleEvent, jUnitReporter);
+                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {

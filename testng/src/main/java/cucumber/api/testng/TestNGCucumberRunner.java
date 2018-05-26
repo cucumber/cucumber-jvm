@@ -32,10 +32,10 @@ import java.util.List;
  */
 public class TestNGCucumberRunner {
     private final EventBus bus;
-    private Runtime runtime;
-    private TestNGReporter reporter;
+    private final Filters filters;
+    private final FeatureSupplier featureSupplier;
+    private final RunnerSupplier runnerSupplier;
     private RuntimeOptions runtimeOptions;
-    private ResourceLoader resourceLoader;
     private TestCaseResultListener testCaseResultListener;
 
     /**
@@ -45,27 +45,26 @@ public class TestNGCucumberRunner {
      */
     public TestNGCucumberRunner(Class clazz) {
         ClassLoader classLoader = clazz.getClassLoader();
-        resourceLoader = new MultiLoader(classLoader);
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
 
-        reporter = new TestNGReporter(new PrintStream(System.out) {
-                @Override
-                public void close() {
-                    // We have no intention to close System.out
-                }
-            });
+        TestNGReporter reporter = new TestNGReporter(new PrintStream(System.out) {
+            @Override
+            public void close() {
+                // We have no intention to close System.out
+            }
+        });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new EventBus(TimeService.SYSTEM);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        filters = new Filters(runtimeOptions, rerunFilters);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
-        runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        this.runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
         testCaseResultListener.setEventPublisher(bus);
@@ -73,7 +72,7 @@ public class TestNGCucumberRunner {
 
     public void runScenario(PickleEvent pickle) throws Throwable {
         testCaseResultListener.startPickle();
-        runtime.getRunner().runPickle(pickle);
+        runnerSupplier.get().runPickle(pickle);
 
         if (!testCaseResultListener.isPassed()) {
             throw testCaseResultListener.getError();
@@ -97,7 +96,7 @@ public class TestNGCucumberRunner {
                 List<PickleEvent> pickles = compiler.compileFeature(feature);
 
                 for (PickleEvent pickle : pickles) {
-                    if (runtime.getFilters().matchesFilters(pickle)) {
+                    if (filters.matchesFilters(pickle)) {
                         scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
                             new CucumberFeatureWrapperImpl(feature)});
                     }
@@ -111,7 +110,8 @@ public class TestNGCucumberRunner {
 
     List<CucumberFeature> getFeatures() {
 
-        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(runtimeOptions.getFeaturePaths(), System.out);
+        List<CucumberFeature> features = featureSupplier.get();
+        runtimeOptions.setEventBus(bus);
         runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {

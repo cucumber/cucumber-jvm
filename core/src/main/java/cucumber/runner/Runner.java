@@ -38,6 +38,10 @@ public class Runner {
 
     }
 
+    public EventBus getBus() {
+        return bus;
+    }
+
     public void runPickle(PickleEvent pickle) {
         buildBackendWorlds(); // Java8 step definitions will be added to the glue here
         TestCase testCase = createTestCaseForPickle(pickle);

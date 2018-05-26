@@ -44,7 +44,6 @@ public class Runtime {
         this.runner = runnerSupplier.get();
         this.featureSupplier = featureSupplier;
         exitStatus.setEventPublisher(bus);
-        runtimeOptions.setEventBus(bus);
     }
 
     /**
@@ -52,6 +51,7 @@ public class Runtime {
      */
     public void run() {
         List<CucumberFeature> features = featureSupplier.get();
+        runtimeOptions.setEventBus(bus);
         runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
