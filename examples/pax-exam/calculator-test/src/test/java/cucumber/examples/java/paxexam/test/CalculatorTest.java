@@ -20,10 +20,12 @@ import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
+import cucumber.runtime.Plugins;
 import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -94,25 +96,26 @@ public class CalculatorTest {
         final ClassLoader classLoader = Runtime.class.getClassLoader();
         final ObjectFactory objectFactory = new PaxExamObjectFactory(injector);
         final ClassFinder classFinder = new OsgiClassFinder(bundleContext);
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         final Backend backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
 
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         final EventBus bus = new EventBus(TimeService.SYSTEM);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        final Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
                 return Collections.singleton(backend);
             }
         };
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        Supplier<Runner> runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        Supplier<List<CucumberFeature>> featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        final Supplier<Runner> runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        final Supplier<List<CucumberFeature>> featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        final RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        final Filters filters = new Filters(runtimeOptions, rerunFilters);
+        final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 

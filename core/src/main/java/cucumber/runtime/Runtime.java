@@ -5,9 +5,7 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
-import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
 
 import java.util.List;
@@ -21,15 +19,15 @@ public class Runtime {
 
     private final RuntimeOptions runtimeOptions;
 
-    private final ClassLoader classLoader;
     private final Runner runner;
     private final Filters filters;
     private final EventBus bus;
     private final FeatureCompiler compiler = new FeatureCompiler();
     private final Supplier<List<CucumberFeature>> featureSupplier;
+    private final Plugins plugins;
 
 
-    public Runtime(ClassLoader classLoader,
+    public Runtime(Plugins plugins,
                    RuntimeOptions runtimeOptions,
                    EventBus bus,
                    Filters filters,
@@ -37,7 +35,7 @@ public class Runtime {
                    Supplier<List<CucumberFeature>> featureSupplier
     ) {
 
-        this.classLoader = classLoader;
+        this.plugins = plugins;
         this.runtimeOptions = runtimeOptions;
         this.filters = filters;
         this.bus = bus;
@@ -51,14 +49,12 @@ public class Runtime {
      */
     public void run() {
         List<CucumberFeature> features = featureSupplier.get();
-        runtimeOptions.setEventBus(bus);
-        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
         }
 
-        StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
+        StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
 
         runner.reportStepDefinitions(stepDefinitionReporter);
 

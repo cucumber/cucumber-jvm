@@ -9,6 +9,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
 import cucumber.runtime.formatter.PickleStepMatcher;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
@@ -149,6 +150,8 @@ public class TestHelper {
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
         final EventBus bus = new EventBus(timeService);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+
         final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
@@ -171,7 +174,7 @@ public class TestHelper {
             }
         };
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
-        final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         timeService.setEventPublisher(bus);
 
         formatter.setEventPublisher(bus);

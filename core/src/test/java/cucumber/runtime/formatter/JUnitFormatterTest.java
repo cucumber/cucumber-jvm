@@ -6,6 +6,7 @@ import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
+import cucumber.runtime.Plugins;
 import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
@@ -535,13 +536,14 @@ public class JUnitFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(0L));
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        final cucumber.runtime.Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final cucumber.runtime.Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         return report;
     }

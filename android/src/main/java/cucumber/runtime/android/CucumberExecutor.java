@@ -11,7 +11,9 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
+import cucumber.runtime.Plugins;
 import cucumber.runtime.RerunFilters;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
@@ -67,11 +69,6 @@ public final class CucumberExecutor {
     private final Instrumentation instrumentation;
 
     /**
-     * The {@link java.lang.ClassLoader} for all test relevant classes.
-     */
-    private final ClassLoader classLoader;
-
-    /**
      * The {@link cucumber.runtime.ClassFinder} to find all to be loaded classes.
      */
     private final ClassFinder classFinder;
@@ -88,6 +85,7 @@ public final class CucumberExecutor {
 
     private final List<PickleEvent> pickleEvents;
     private final EventBus bus;
+    private final Plugins plugins;
 
     /**
      * Creates a new instance for the given parameters.
@@ -99,38 +97,36 @@ public final class CucumberExecutor {
     public CucumberExecutor(final Arguments arguments, final Instrumentation instrumentation) {
 
         trySetCucumberOptionsToSystemProperties(arguments);
-
         final Context context = instrumentation.getContext();
         this.instrumentation = instrumentation;
-        this.classLoader = context.getClassLoader();
+        ClassLoader classLoader = context.getClassLoader();
         this.classFinder = createDexClassFinder(context);
         this.runtimeOptions = createRuntimeOptions(context).noSummaryPrinter();
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
 
         this.bus = new EventBus(TimeService.SYSTEM);
+        this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        this.runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        this.runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(bus);
         Stats stats = new Stats();
         stats.setEventPublisher(bus);
 
         AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(undefinedStepsTracker, instrumentation);
-        runtimeOptions.addPlugin(instrumentationReporter);
-        runtimeOptions.addPlugin(new AndroidLogcatReporter(stats, undefinedStepsTracker, TAG));
+        plugins.addPlugin(instrumentationReporter);
+        plugins.addPlugin(new AndroidLogcatReporter(stats, undefinedStepsTracker, TAG));
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
 
         List<CucumberFeature> features = featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
-        runtimeOptions.setEventBus(bus);
-        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
@@ -143,7 +139,7 @@ public final class CucumberExecutor {
      * Runs the cucumber scenarios with the specified arguments.
      */
     public void execute() {
-        final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
+        final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runtime.getRunner().reportStepDefinitions(stepDefinitionReporter);
 
         for (final PickleEvent pickleEvent : pickleEvents) {

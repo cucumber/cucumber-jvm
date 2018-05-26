@@ -6,6 +6,7 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestCaseFinished;
@@ -78,6 +79,7 @@ public class RuntimeTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
@@ -85,7 +87,7 @@ public class RuntimeTest {
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
-        Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
 //        String expected = "" +
@@ -251,6 +253,7 @@ public class RuntimeTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter"));
         EventBus bus = new EventBus(TimeService.SYSTEM);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
@@ -274,7 +277,7 @@ public class RuntimeTest {
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
-        Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 
         runtime.run();
 
@@ -307,6 +310,7 @@ public class RuntimeTest {
             };
             RuntimeOptions runtimeOptions = new RuntimeOptions("");
             EventBus bus = new EventBus(TimeService.SYSTEM);
+            Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
             ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
             FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
             RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
@@ -314,7 +318,7 @@ public class RuntimeTest {
             FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
             RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
             Filters filters = new Filters(runtimeOptions, rerunFilters);
-            new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+            new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -474,6 +478,7 @@ public class RuntimeTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
 
         this.bus = new EventBus(TimeService.SYSTEM);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
@@ -488,7 +493,7 @@ public class RuntimeTest {
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
-        return new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
@@ -534,12 +539,13 @@ public class RuntimeTest {
         };
 
         EventBus bus = new EventBus(TimeService.SYSTEM);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        return new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

@@ -10,11 +10,12 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
+import cucumber.runtime.Plugins;
 import cucumber.runtime.RerunFilters;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
@@ -35,7 +36,7 @@ public class TestNGCucumberRunner {
     private final Filters filters;
     private final FeatureSupplier featureSupplier;
     private final RunnerSupplier runnerSupplier;
-    private RuntimeOptions runtimeOptions;
+    private final Plugins plugins;
     private TestCaseResultListener testCaseResultListener;
 
     /**
@@ -48,7 +49,7 @@ public class TestNGCucumberRunner {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        runtimeOptions = runtimeOptionsFactory.create();
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         TestNGReporter reporter = new TestNGReporter(new PrintStream(System.out) {
             @Override
@@ -59,6 +60,7 @@ public class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new EventBus(TimeService.SYSTEM);
+        plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         filters = new Filters(runtimeOptions, rerunFilters);
@@ -111,8 +113,6 @@ public class TestNGCucumberRunner {
     List<CucumberFeature> getFeatures() {
 
         List<CucumberFeature> features = featureSupplier.get();
-        runtimeOptions.setEventBus(bus);
-        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);

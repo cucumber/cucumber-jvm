@@ -4,14 +4,15 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.api.formatter.Formatter;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
+import cucumber.runtime.Plugins;
 import cucumber.runtime.RerunFilters;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
@@ -63,7 +64,6 @@ import java.util.List;
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
-    private final Formatter formatter;
     private final EventBus bus;
     private final RunnerSupplier runnerSupplier;
     private final Filters filters;
@@ -84,25 +84,24 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        bus = new EventBus(TimeService.SYSTEM);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        // Parse the features early. Don't proceed when there are lexer errors
+        final List<CucumberFeature> features = featureSupplier.get();
+
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        this.bus = new EventBus(TimeService.SYSTEM);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         this.runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         this.filters = new Filters(runtimeOptions, rerunFilters);
-        formatter = runtimeOptions.formatter(classLoader);
-        junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
-        final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
+        this.junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
+        final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
-
-        final List<CucumberFeature> features = featureSupplier.get();
-        runtimeOptions.setEventBus(bus);
-        runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);

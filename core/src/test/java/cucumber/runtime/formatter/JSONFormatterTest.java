@@ -8,6 +8,7 @@ import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.Plugins;
 import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
@@ -1189,6 +1190,7 @@ public class JSONFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(1234));
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
 
         Supplier<Glue> glueSupplier = new Supplier<Glue>() {
             @Override
@@ -1203,7 +1205,7 @@ public class JSONFormatterTest {
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
         String formatterOutput = scanner.useDelimiter("\\A").next();
