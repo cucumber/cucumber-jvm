@@ -4,6 +4,9 @@ import cucumber.api.Result;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
+import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.Filters;
+import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlueSupplier;
@@ -13,6 +16,7 @@ import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import org.custommonkey.xmlunit.Diff;
@@ -531,7 +535,13 @@ public class JUnitFormatterTest {
             }
         };
         EventBus bus = new EventBus(new TimeServiceStub(0L));
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        final cucumber.runtime.Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         return report;
     }

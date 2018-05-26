@@ -4,6 +4,9 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.Filters;
+import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Runtime;
@@ -11,6 +14,7 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+import cucumber.runtime.model.FeatureLoader;
 
 import java.util.ArrayList;
 
@@ -37,7 +41,13 @@ public class Main {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         return runtime.exitStatus();
     }

@@ -25,7 +25,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), new PrintStream(new ByteArrayOutputStream()));
+        new FeatureLoader(resourceLoader).load(singletonList("does/not/exist"), new PrintStream(new ByteArrayOutputStream()));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), new PrintStream(baos));
+        new FeatureLoader(resourceLoader).load(singletonList("does/not/exist"), new PrintStream(baos));
 
         assertEquals(String.format("No features found at [does/not/exist]%n"), baos.toString());
     }
@@ -44,7 +44,7 @@ public class CucumberFeatureTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
 
-        CucumberFeature.load(resourceLoader, Collections.<String>emptyList(), new PrintStream(baos));
+        new FeatureLoader(resourceLoader).load(Collections.<String>emptyList(), new PrintStream(baos));
 
         assertEquals(String.format("Got no path to feature directory or feature file%n"), baos.toString());
     }
@@ -69,10 +69,7 @@ public class CucumberFeatureTest {
         mockFeatureFileResource(resourceLoader, featurePath2, feature2);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-                resourceLoader,
-                singletonList("@" + rerunPath),
-                new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
         assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
@@ -93,10 +90,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-                resourceLoader,
-                singletonList("@" + rerunPath),
-                new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(0, features.size());
     }
@@ -112,10 +106,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(0, features.size());
     }
@@ -131,10 +122,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(0, features.size());
     }
@@ -150,10 +138,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(0, features.size());
     }
@@ -178,10 +163,7 @@ public class CucumberFeatureTest {
         mockFeatureFileResource(resourceLoader, featurePath2, feature2);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
         assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
@@ -204,10 +186,7 @@ public class CucumberFeatureTest {
         mockFeaturePathToNotExist(resourceLoader, featurePath);
         mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-                resourceLoader,
-                singletonList("@" + rerunPath),
-                new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(1, features.size());
         assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
@@ -225,10 +204,8 @@ public class CucumberFeatureTest {
         mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
 
         try {
-            CucumberFeature.load(
-                    resourceLoader,
-                    singletonList("@" + rerunPath),
-                    new PrintStream(new ByteArrayOutputStream()));
+            new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
+
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
             assertEquals("Neither found on file system or on classpath: " +
@@ -249,10 +226,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(1, features.size());
         assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
@@ -280,10 +254,7 @@ public class CucumberFeatureTest {
         mockFeatureFileResource(resourceLoader, featurePath2, feature2);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
         assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
@@ -314,10 +285,7 @@ public class CucumberFeatureTest {
         mockFeatureFileResource(resourceLoader, featurePath2, feature2);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
 
-        List<CucumberFeature> features = CucumberFeature.load(
-            resourceLoader,
-            singletonList("@" + rerunPath),
-            new PrintStream(new ByteArrayOutputStream()));
+        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
         assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());

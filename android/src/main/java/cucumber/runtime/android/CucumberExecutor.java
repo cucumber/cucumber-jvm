@@ -9,6 +9,10 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.Filters;
+import cucumber.runtime.RerunFilters;
+import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
@@ -40,7 +44,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.singletonList;
 
 /**
@@ -108,7 +111,11 @@ public final class CucumberExecutor {
         this.bus = new EventBus(TimeService.SYSTEM);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier);
-        this.runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, runnerSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        this.runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(bus);
         Stats stats = new Stats();
@@ -120,7 +127,8 @@ public final class CucumberExecutor {
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
-        List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+
+        List<CucumberFeature> features = featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
         runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {

@@ -3,7 +3,10 @@ package cucumber.runtime.junit;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
+import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.Filters;
 import cucumber.runtime.Glue;
+import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
@@ -11,6 +14,7 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Supplier;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -221,7 +225,12 @@ public class FeatureRunnerTest {
             }
         };
         EventBus bus = new EventBus(timeServiceStub);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier));
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(bus, false, junitOption));
     }
 

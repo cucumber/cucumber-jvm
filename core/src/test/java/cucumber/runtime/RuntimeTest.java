@@ -6,6 +6,7 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.model.FeatureLoader;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.Scenario;
@@ -77,7 +78,13 @@ public class RuntimeTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        FeatureLoader featureLoader = new FeatureLoader(new ClasspathResourceLoader(classLoader));
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier(new ClasspathResourceLoader(classLoader), runtimeOptions);
+        Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 //        feature.run(jsonFormatter, jsonFormatter, runtime);
 //        jsonFormatter.done();
 //        String expected = "" +
@@ -262,7 +269,11 @@ public class RuntimeTest {
             }
         };
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, runnerSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 
         runtime.run();
 
@@ -294,7 +305,16 @@ public class RuntimeTest {
                     return Collections.<Backend>emptyList();
                 }
             };
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), new RunnerSupplier(new RuntimeOptions(""), new EventBus(TimeService.SYSTEM), backendSupplier, new RuntimeGlueSupplier()));
+            RuntimeOptions runtimeOptions = new RuntimeOptions("");
+            EventBus bus = new EventBus(TimeService.SYSTEM);
+            ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+            FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+            RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+            RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+            FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+            RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+            Filters filters = new Filters(runtimeOptions, rerunFilters);
+            new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -462,8 +482,13 @@ public class RuntimeTest {
                 return backends;
             }
         };
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier());
-        return new Runtime(resourceLoader, classLoader, runtimeOptions, bus, runnerSupplier);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        return new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
@@ -508,7 +533,13 @@ public class RuntimeTest {
             }
         };
 
-        return new Runtime(resourceLoader, classLoader, runtimeOptions, new EventBus(TimeService.SYSTEM), new RunnerSupplier(runtimeOptions, new EventBus(TimeService.SYSTEM), backendSupplier, glueSupplier));
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        return new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

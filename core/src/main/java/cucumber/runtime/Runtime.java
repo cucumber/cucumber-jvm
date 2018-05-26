@@ -7,10 +7,10 @@ import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
-import java.util.List;
 
-import static cucumber.runtime.model.CucumberFeature.load;
+import java.util.List;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -21,27 +21,28 @@ public class Runtime {
 
     private final RuntimeOptions runtimeOptions;
 
-    private final ResourceLoader resourceLoader;
     private final ClassLoader classLoader;
     private final Runner runner;
     private final Filters filters;
     private final EventBus bus;
     private final FeatureCompiler compiler = new FeatureCompiler();
+    private final Supplier<List<CucumberFeature>> featureSupplier;
 
 
-    public Runtime(ResourceLoader resourceLoader,
-                   ClassLoader classLoader,
+    public Runtime(ClassLoader classLoader,
                    RuntimeOptions runtimeOptions,
                    EventBus bus,
-                   Supplier<Runner> runnerSupplier
+                   Filters filters,
+                   Supplier<Runner> runnerSupplier,
+                   Supplier<List<CucumberFeature>> featureSupplier
     ) {
 
-        this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        this.filters = new Filters(runtimeOptions, new RerunFilters(runtimeOptions, resourceLoader));
+        this.filters = filters;
         this.bus = bus;
         this.runner = runnerSupplier.get();
+        this.featureSupplier = featureSupplier;
         exitStatus.setEventPublisher(bus);
         runtimeOptions.setEventBus(bus);
     }
@@ -50,7 +51,7 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() {
-        List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+        List<CucumberFeature> features = featureSupplier.get();
         runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
@@ -87,4 +88,5 @@ public class Runtime {
     public Filters getFilters() {
         return filters;
     }
+
 }

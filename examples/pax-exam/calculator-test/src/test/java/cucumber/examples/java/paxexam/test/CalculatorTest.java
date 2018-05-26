@@ -17,9 +17,13 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.Filters;
+import cucumber.runtime.RerunFilters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
+import cucumber.runtime.model.FeatureLoader;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import org.junit.Test;
@@ -100,7 +104,13 @@ public class CalculatorTest {
                 return Collections.singleton(backend);
             }
         };
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        final Runtime runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         final List<Throwable> errors = new ArrayList<Throwable>();
 
 

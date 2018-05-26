@@ -9,6 +9,10 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.Filters;
+import cucumber.runtime.RerunFilters;
+import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Runtime;
@@ -31,11 +35,8 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static cucumber.runtime.model.CucumberFeature.load;
 
 /**
  * <p>
@@ -72,10 +73,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * Constructor called by JUnit.
      *
      * @param clazz the class with the @RunWith annotation.
-     * @throws java.io.IOException                         if there is a problem
      * @throws org.junit.runners.model.InitializationError if there is another problem
      */
-    public Cucumber(Class clazz) throws InitializationError, IOException {
+    public Cucumber(Class clazz) throws InitializationError {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
@@ -87,7 +87,13 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new EventBus(TimeService.SYSTEM);
-        runtime = new Runtime(resourceLoader, classLoader, runtimeOptions, bus, new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()));
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        FeatureSupplier featureSupplier = new FeatureSupplier(resourceLoader, runtimeOptions);
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        runtime = new Runtime(classLoader, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         jUnitReporter = new JUnitReporter(bus, runtimeOptions.isStrict(), junitOptions);
@@ -95,7 +101,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
-        final List<CucumberFeature> features = load(resourceLoader, runtimeOptions.getFeaturePaths(), System.out);
+
+        final List<CucumberFeature> features = featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
         runtimeOptions.getPlugins(); // to create the formatter objects
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {

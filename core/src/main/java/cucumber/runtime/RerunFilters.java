@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.model.PathWithLines;
 
 import java.util.HashMap;
@@ -10,18 +9,19 @@ import java.util.Map;
 
 public class RerunFilters {
     private final RuntimeOptions runtimeOptions;
-    private final ResourceLoader resourceLoader;
+    private final FeatureLoader featureLoader;
 
-    public RerunFilters(RuntimeOptions runtimeOptions, ResourceLoader resourceLoader) {
+    public RerunFilters(RuntimeOptions runtimeOptions, FeatureLoader featureLoader) {
         this.runtimeOptions = runtimeOptions;
-        this.resourceLoader = resourceLoader;
+        this.featureLoader = featureLoader;
     }
+
 
     public Map<String, List<Long>> processRerunFiles() {
         final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
         for (String featurePath : runtimeOptions.getFeaturePaths()) {
             if (featurePath.startsWith("@")) {
-                for (PathWithLines pathWithLines : CucumberFeature.loadRerunFile(resourceLoader, featurePath.substring(1))) {
+                for (PathWithLines pathWithLines : featureLoader.loadRerunFile(featurePath.substring(1))) {
                     addLineFilters(lineFilters, pathWithLines.path, pathWithLines.lines);
                 }
             }
