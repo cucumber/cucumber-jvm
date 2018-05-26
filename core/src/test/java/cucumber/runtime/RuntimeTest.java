@@ -1,11 +1,13 @@
 package cucumber.runtime;
 
 import cucumber.api.HookType;
+import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runtime.formatter.FormatterBuilder;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -16,12 +18,8 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -40,6 +38,7 @@ import java.util.Map;
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
@@ -53,14 +52,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
-    private final static String ENGLISH = "en";
     private final static long ANY_TIMESTAMP = 1234567890;
     private EventBus bus;
 
-    @Ignore
     @Test
     public void runs_feature_with_json_formatter() throws Exception {
-        CucumberFeature feature = feature("test.feature", "" +
+        final CucumberFeature feature = feature("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
             "    Given b\n" +
@@ -68,79 +65,85 @@ public class RuntimeTest {
             "    When s\n");
         StringBuilder out = new StringBuilder();
 
-//        JSONFormatter jsonFormatter = new JSONFormatter(out);
+        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
-                List<Backend> backends = asList(mock(Backend.class));
-                return backends;
+                return singletonList(mock(Backend.class));
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        plugins.addPlugin(jsonFormatter);
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+            @Override
+            public List<CucumberFeature> get() {
+                return singletonList(feature);
+            }
+        };
         Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-//        feature.run(jsonFormatter, jsonFormatter, runtime);
-//        jsonFormatter.done();
-//        String expected = "" +
-//                "[\n" +
-//                "  {\n" +
-//                "    \"id\": \"feature-name\",\n" +
-//                "    \"description\": \"\",\n" +
-//                "    \"name\": \"feature name\",\n" +
-//                "    \"keyword\": \"Feature\",\n" +
-//                "    \"line\": 1,\n" +
-//                "    \"elements\": [\n" +
-//                "      {\n" +
-//                "        \"description\": \"\",\n" +
-//                "        \"name\": \"background name\",\n" +
-//                "        \"keyword\": \"Background\",\n" +
-//                "        \"line\": 2,\n" +
-//                "        \"steps\": [\n" +
-//                "          {\n" +
-//                "            \"result\": {\n" +
-//                "              \"status\": \"undefined\"\n" +
-//                "            },\n" +
-//                "            \"name\": \"b\",\n" +
-//                "            \"keyword\": \"Given \",\n" +
-//                "            \"line\": 3,\n" +
-//                "            \"match\": {}\n" +
-//                "          }\n" +
-//                "        ],\n" +
-//                "        \"type\": \"background\"\n" +
-//                "      },\n" +
-//                "      {\n" +
-//                "        \"id\": \"feature-name;scenario-name\",\n" +
-//                "        \"description\": \"\",\n" +
-//                "        \"name\": \"scenario name\",\n" +
-//                "        \"keyword\": \"Scenario\",\n" +
-//                "        \"line\": 4,\n" +
-//                "        \"steps\": [\n" +
-//                "          {\n" +
-//                "            \"result\": {\n" +
-//                "              \"status\": \"undefined\"\n" +
-//                "            },\n" +
-//                "            \"name\": \"s\",\n" +
-//                "            \"keyword\": \"When \",\n" +
-//                "            \"line\": 5,\n" +
-//                "            \"match\": {}\n" +
-//                "          }\n" +
-//                "        ],\n" +
-//                "        \"type\": \"scenario\"\n" +
-//                "      }\n" +
-//                "    ],\n" +
-//                "    \"uri\": \"test.feature\"\n" +
-//                "  }\n" +
-//                "]";
-//        assertEquals(expected, out.toString());
+
+        runtime.run();
+
+        String expected = "[\n" +
+            "  {\n" +
+            "    \"line\": 1,\n" +
+            "    \"elements\": [\n" +
+            "      {\n" +
+            "        \"line\": 2,\n" +
+            "        \"name\": \"background name\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"type\": \"background\",\n" +
+            "        \"keyword\": \"Background\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"status\": \"undefined\"\n" +
+            "            },\n" +
+            "            \"line\": 3,\n" +
+            "            \"name\": \"b\",\n" +
+            "            \"match\": {},\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"line\": 4,\n" +
+            "        \"name\": \"scenario name\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"id\": \"feature-name;scenario-name\",\n" +
+            "        \"type\": \"scenario\",\n" +
+            "        \"keyword\": \"Scenario\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"status\": \"undefined\"\n" +
+            "            },\n" +
+            "            \"line\": 5,\n" +
+            "            \"name\": \"s\",\n" +
+            "            \"match\": {},\n" +
+            "            \"keyword\": \"When \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"name\": \"feature name\",\n" +
+            "    \"description\": \"\",\n" +
+            "    \"id\": \"feature-name\",\n" +
+            "    \"keyword\": \"Feature\",\n" +
+            "    \"uri\": \"test.feature\",\n" +
+            "    \"tags\": []\n" +
+            "  }\n" +
+            "]";
+        assertEquals(expected, out.toString());
     }
 
     @Test
@@ -308,6 +311,7 @@ public class RuntimeTest {
                     return Collections.<Backend>emptyList();
                 }
             };
+
             RuntimeOptions runtimeOptions = new RuntimeOptions("");
             EventBus bus = new EventBus(TimeService.SYSTEM);
             Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
@@ -336,8 +340,8 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), beforeHook, HookType.Before);
-        runtime.runFeature(feature);
+        Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), beforeHook, HookType.Before, feature);
+        runtime.run();
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
         verify(beforeHook).execute(capturedScenario.capture());
@@ -483,8 +487,7 @@ public class RuntimeTest {
             @Override
             public Collection<? extends Backend> get() {
                 Backend backend = mock(Backend.class);
-                Collection<Backend> backends = Arrays.asList(backend);
-                return backends;
+                return singletonList(backend);
             }
         };
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
@@ -496,23 +499,15 @@ public class RuntimeTest {
         return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
     }
 
-    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), HookType.After, runtimeArgs);
-    }
-
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType,
-                                                String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, hookType, runtimeArgs);
-    }
-
-    private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), true, mock(HookDefinition.class), HookType.After, runtimeArgs);
+                                                CucumberFeature feature, String... runtimeArgs) {
+        return createRuntimeWithMockedGlue(match, false, hook, hookType, feature, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final boolean isAmbiguous,
-                                                final HookDefinition hook, final HookType hookType, String... runtimeArgs) {
+                                                final HookDefinition hook, final HookType hookType, final CucumberFeature feature, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = mock(ClassLoader.class);
+        ClassLoader classLoader = getClass().getClassLoader();
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
         if (!args.contains("-p")) {
             args.addAll(asList("-p", "null"));
@@ -524,8 +519,7 @@ public class RuntimeTest {
             @Override
             public Collection<? extends Backend> get() {
                 Backend backend = mock(Backend.class);
-                Collection<Backend> backends = Arrays.asList(backend);
-                return backends;
+                return singletonList(backend);
             }
         };
         Supplier<Glue> glueSupplier = new Supplier<Glue>() {
@@ -541,7 +535,12 @@ public class RuntimeTest {
         EventBus bus = new EventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+            @Override
+            public List<CucumberFeature> get() {
+                return singletonList(feature);
+            }
+        };
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
@@ -569,20 +568,6 @@ public class RuntimeTest {
                 when(glue.getAfterStepHooks()).thenReturn(Arrays.asList(hook));
                 return;
         }
-    }
-
-    private void runScenario(Runtime runtime, int stepCount) {
-        List<PickleStep> steps = new ArrayList<PickleStep>(stepCount);
-        for (int i = 0; i < stepCount; ++i) {
-            steps.add(mock(PickleStep.class));
-        }
-        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, steps, Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
-
-        runtime.getRunner().runPickle(pickleEvent);
-    }
-
-    private int stepCount(int stepCount) {
-        return stepCount;
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {

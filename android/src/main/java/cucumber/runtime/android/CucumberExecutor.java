@@ -8,6 +8,7 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Filters;
@@ -27,7 +28,6 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.DefaultTypeRegistryConfiguration;
 import cucumber.runtime.Env;
 import cucumber.runtime.Reflections;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.Stats;
@@ -78,14 +78,10 @@ public final class CucumberExecutor {
      */
     private final RuntimeOptions runtimeOptions;
 
-    /**
-     * The {@link cucumber.runtime.Runtime} to run with.
-     */
-    private final Runtime runtime;
-
     private final List<PickleEvent> pickleEvents;
     private final EventBus bus;
     private final Plugins plugins;
+    private final Runner runner;
 
     /**
      * Creates a new instance for the given parameters.
@@ -108,12 +104,11 @@ public final class CucumberExecutor {
         this.bus = new EventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier);
+        this.runner = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier).get();
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        this.runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
         undefinedStepsTracker.setEventPublisher(bus);
         Stats stats = new Stats();
@@ -125,8 +120,7 @@ public final class CucumberExecutor {
 
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
-
-        List<CucumberFeature> features = featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
+        List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
@@ -140,12 +134,10 @@ public final class CucumberExecutor {
      */
     public void execute() {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
-        runtime.getRunner().reportStepDefinitions(stepDefinitionReporter);
-
+        runner.reportStepDefinitions(stepDefinitionReporter);
         for (final PickleEvent pickleEvent : pickleEvents) {
-            runtime.getRunner().runPickle(pickleEvent);
+            runner.runPickle(pickleEvent);
         }
-
         bus.send(new TestRunFinished(bus.getTime()));
     }
 

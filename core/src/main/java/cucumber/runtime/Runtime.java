@@ -11,7 +11,7 @@ import gherkin.events.PickleEvent;
 import java.util.List;
 
 /**
- * This is the main entry point for running Cucumber features.
+ * This is the main entry point for running Cucumber features from the CLI.
  */
 public class Runtime {
 
@@ -25,7 +25,6 @@ public class Runtime {
     private final FeatureCompiler compiler = new FeatureCompiler();
     private final Supplier<List<CucumberFeature>> featureSupplier;
     private final Plugins plugins;
-
 
     public Runtime(Plugins plugins,
                    RuntimeOptions runtimeOptions,
@@ -44,9 +43,6 @@ public class Runtime {
         exitStatus.setEventPublisher(bus);
     }
 
-    /**
-     * This is the main entry point. Used from CLI, but not from JUnit.
-     */
     public void run() {
         List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
@@ -65,9 +61,9 @@ public class Runtime {
         bus.send(new TestRunFinished(bus.getTime()));
     }
 
-    void runFeature(CucumberFeature feature) {
+    private void runFeature(CucumberFeature feature) {
         for (PickleEvent pickleEvent : compiler.compileFeature(feature)) {
-            if (getFilters().matchesFilters(pickleEvent)) {
+            if (filters.matchesFilters(pickleEvent)) {
                 runner.runPickle(pickleEvent);
             }
         }
@@ -75,14 +71,6 @@ public class Runtime {
 
     public byte exitStatus() {
         return exitStatus.exitStatus(runtimeOptions.isStrict());
-    }
-
-    public Runner getRunner() {
-        return runner;
-    }
-
-    public Filters getFilters() {
-        return filters;
     }
 
 }

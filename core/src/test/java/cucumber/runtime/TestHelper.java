@@ -49,12 +49,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class TestHelper {
     private TestHelper() {
     }
 
-    public static CucumberFeature feature(final String path, final String source) throws IOException {
+    public static CucumberFeature feature(final String path, final String source) {
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
 
@@ -150,18 +149,14 @@ public class TestHelper {
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
         final EventBus bus = new EventBus(timeService);
+        timeService.setEventPublisher(bus);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        formatter.setEventPublisher(bus);
 
         final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
                 return asList(mock(Backend.class));
-            }
-        };
-        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
-            @Override
-            public Glue get() {
-                return glue;
             }
         };
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
@@ -173,16 +168,15 @@ public class TestHelper {
                 return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
             }
         };
-        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+            @Override
+            public List<CucumberFeature> get() {
+                return features;
+            }
+        };
         final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-        timeService.setEventPublisher(bus);
 
-        formatter.setEventPublisher(bus);
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(bus);
-            runtime.runFeature(feature);
-        }
-        bus.send(new TestRunFinished(bus.getTime()));
+        runtime.run();
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

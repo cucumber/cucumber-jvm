@@ -64,7 +64,7 @@ public final class Plugins {
         addPlugin(plugins, plugin);
     }
 
-    public void addPlugin(List<Plugin> plugins, Plugin plugin) {
+    private void addPlugin(List<Plugin> plugins, Plugin plugin) {
         plugins.add(plugin);
         setMonochromeOnColorAwarePlugins(plugin);
         setStrictOnStrictAwarePlugins(plugin);
