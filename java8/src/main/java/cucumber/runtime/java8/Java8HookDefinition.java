@@ -6,7 +6,7 @@ import cucumber.api.Scenario;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.TagPredicate;
+import cucumber.runtime.filter.TagPredicate;
 import cucumber.runtime.Timeout;
 import gherkin.pickles.PickleTag;
 

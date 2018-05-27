@@ -8,6 +8,7 @@ import cucumber.api.formatter.StrictAware;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -94,15 +95,15 @@ public class RuntimeOptionsTest {
     public void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "pretty", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
     public void creates_null_summary_printer() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "null_summary", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
-        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullSummaryPrinter");
+        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -282,8 +283,8 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
-        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
+        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullSummaryPrinter");
     }
 
     @Test
@@ -292,8 +293,8 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--add-plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -303,7 +304,7 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "pretty", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
 //        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test

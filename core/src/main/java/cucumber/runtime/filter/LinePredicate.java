@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
@@ -6,10 +6,10 @@ import gherkin.pickles.PickleLocation;
 import java.util.List;
 import java.util.Map;
 
-public class LinePredicate implements PicklePredicate {
+class LinePredicate implements PicklePredicate {
     private Map<String, List<Long>> lineFilters;
 
-    public LinePredicate(Map<String, List<Long>> lineFilters) {
+    LinePredicate(Map<String, List<Long>> lineFilters) {
         this.lineFilters = lineFilters;
     }
 

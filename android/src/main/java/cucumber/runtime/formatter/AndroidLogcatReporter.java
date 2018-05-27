@@ -8,7 +8,6 @@ import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.formatter.Formatter;
-import cucumber.runtime.Stats;
 import cucumber.runtime.UndefinedStepsTracker;
 
 /**

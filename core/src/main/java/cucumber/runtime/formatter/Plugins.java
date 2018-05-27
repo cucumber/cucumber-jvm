@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.formatter;
 
 import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
@@ -7,6 +7,8 @@ import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.EventBus;
+import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.Utils;
 import cucumber.runtime.formatter.PluginFactory;
 
 import java.lang.reflect.InvocationHandler;
@@ -32,7 +34,7 @@ public final class Plugins {
         this.plugins = createPlugins();
     }
 
-    public List<Plugin> createPlugins() {
+    private List<Plugin> createPlugins() {
         List<Plugin> plugins = new ArrayList<Plugin>();
         if (!pluginNamesInstantiated) {
             for (String pluginName : runtimeOptions.getPluginFormatterNames()) {

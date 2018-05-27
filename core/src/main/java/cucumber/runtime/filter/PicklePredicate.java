@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
 import gherkin.events.PickleEvent;
 

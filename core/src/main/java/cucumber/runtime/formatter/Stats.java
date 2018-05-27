@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;

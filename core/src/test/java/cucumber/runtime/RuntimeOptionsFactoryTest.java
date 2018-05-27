@@ -6,6 +6,7 @@ import cucumber.api.SnippetType;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -111,7 +112,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoSummaryPrinterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test

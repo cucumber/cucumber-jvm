@@ -1,5 +1,6 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
+import cucumber.runtime.RuntimeOptions;
 import gherkin.events.PickleEvent;
 
 import java.util.ArrayList;

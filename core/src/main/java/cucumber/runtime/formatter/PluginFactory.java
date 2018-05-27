@@ -5,8 +5,6 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.DefaultSummaryPrinter;
-import cucumber.runtime.NullSummaryPrinter;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 

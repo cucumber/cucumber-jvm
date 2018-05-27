@@ -1,6 +1,6 @@
 package cucumber.runtime.formatter;
 
-public final class MonochromeFormats implements Formats {
+final class MonochromeFormats implements Formats {
     private static final Format FORMAT = new Format() {
         public String text(String text) {
             return text;

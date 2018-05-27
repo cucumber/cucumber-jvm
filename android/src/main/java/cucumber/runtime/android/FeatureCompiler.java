@@ -1,7 +1,6 @@
 package cucumber.runtime.android;
 
-import cucumber.runtime.Filters;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.filter.Filters;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 

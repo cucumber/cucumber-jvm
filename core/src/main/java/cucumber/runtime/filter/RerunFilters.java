@@ -1,5 +1,6 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.model.PathWithLines;
 

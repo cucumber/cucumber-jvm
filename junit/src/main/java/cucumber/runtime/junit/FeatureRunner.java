@@ -2,7 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
-import cucumber.runtime.Filters;
+import cucumber.runtime.filter.Filters;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
