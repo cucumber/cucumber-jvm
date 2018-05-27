@@ -22,21 +22,21 @@ import static org.junit.Assert.assertTrue;
 
 public class RuntimeOptionsFactoryTest {
     @Test
-    public void create_strict() throws Exception {
+    public void create_strict() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Strict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.isStrict());
     }
 
     @Test
-    public void create_non_strict() throws Exception {
+    public void create_non_strict() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NotStrict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
-    public void create_without_options() throws Exception {
+    public void create_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
@@ -47,7 +47,7 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void create_without_options_with_base_class_without_options() throws Exception {
+    public void create_without_options_with_base_class_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
@@ -57,7 +57,7 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void create_with_no_name() throws Exception {
+    public void create_with_no_name() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NoName.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.getTagFilters().isEmpty());
@@ -66,7 +66,7 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void create_with_multiple_names() throws Exception {
+    public void create_with_multiple_names() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
 
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
@@ -152,69 +152,69 @@ public class RuntimeOptionsFactoryTest {
 
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
-    static class Snippets {
+    private static class Snippets {
         // empty
     }
 
     @CucumberOptions(strict = true)
-    static class Strict {
+    private static class Strict {
         // empty
     }
 
     @CucumberOptions
-    static class NotStrict {
+    private static class NotStrict {
         // empty
     }
 
     @CucumberOptions(name = {"name1", "name2"})
-    static class MultipleNames {
+    private static class MultipleNames {
         // empty
     }
 
     @CucumberOptions
-    static class NoName {
+    private static class NoName {
         // empty
     }
-    static class WithoutOptions {
+    private static class WithoutOptions {
         // empty
     }
 
-    static class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
+    private static class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
         // empty
     }
 
     @CucumberOptions(plugin = "pretty")
-    static class SubClassWithFormatter extends BaseClassWithFormatter {
+    private static class SubClassWithFormatter extends BaseClassWithFormatter {
         // empty
     }
 
     @CucumberOptions(plugin = "json:test-json-report.json")
-    static class BaseClassWithFormatter {
+    private static class BaseClassWithFormatter {
         // empty
     }
 
     @CucumberOptions(monochrome = true)
-    static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
+    private static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
         // empty
     }
 
     @CucumberOptions(monochrome = false)
-    static class BaseClassWithMonoChromeFalse {
+    private static class BaseClassWithMonoChromeFalse {
         // empty
     }
 
     @CucumberOptions(plugin = "cucumber.runtime.formatter.AnyStepDefinitionReporter")
-    static class ClassWithNoFormatterPlugin {
+    private static class ClassWithNoFormatterPlugin {
         // empty
     }
 
     @CucumberOptions(plugin = "pretty")
-    static class ClassWithNoSummaryPrinterPlugin {
+    private static class ClassWithNoSummaryPrinterPlugin {
         // empty
     }
 
     @CucumberOptions(junit = {"option1", "option2=value"})
-    static class ClassWithJunitOption {
+    private static class ClassWithJunitOption {
         // empty
     }
 

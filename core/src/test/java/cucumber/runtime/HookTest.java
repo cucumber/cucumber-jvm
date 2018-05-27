@@ -4,7 +4,6 @@ import cucumber.api.Scenario;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -18,7 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

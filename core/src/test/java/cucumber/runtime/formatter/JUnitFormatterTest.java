@@ -25,8 +25,6 @@ import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -46,8 +44,8 @@ import java.util.Scanner;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -567,7 +565,7 @@ public class JUnitFormatterTest {
         return formatterOutput;
     }
 
-    private void assertXmlEqual(String expectedPath, File actual) throws IOException, ParserConfigurationException, SAXException {
+    private void assertXmlEqual(String expectedPath, File actual) throws IOException, SAXException {
         XMLUnit.setIgnoreWhitespace(true);
         InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
         Diff diff = new Diff(control, new FileReader(actual));

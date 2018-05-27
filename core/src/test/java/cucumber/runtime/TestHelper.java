@@ -25,7 +25,6 @@ import junit.framework.AssertionFailedError;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -39,11 +38,11 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyCollectionOf;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -89,7 +88,7 @@ public class TestHelper {
     public static Answer<Object> createWriteHookAction(final String output) {
         Answer<Object> writer = new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 Scenario scenario = (Scenario) invocation.getArguments()[0];
                 scenario.write(output);
                 return null;
@@ -111,12 +110,12 @@ public class TestHelper {
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks,
-            final long stepHookDuration, final Formatter formatter) throws Throwable, FileNotFoundException {
+            final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable, FileNotFoundException {
+            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
@@ -278,7 +277,7 @@ public class TestHelper {
         AssertionFailedError error = mock(AssertionFailedError.class);
         Answer<Object> printStackTraceHandler = new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
                 writer.print("the stack trace");
                 return null;
@@ -292,7 +291,7 @@ public class TestHelper {
         AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
         Answer<Object> printStackTraceHandler = new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
                 writer.print("the stack trace");
                 return null;

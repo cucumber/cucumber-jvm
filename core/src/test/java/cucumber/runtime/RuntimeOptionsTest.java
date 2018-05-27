@@ -55,7 +55,7 @@ public class RuntimeOptionsTest {
     public void assigns_filters_from_tags() {
         RuntimeOptions options = new RuntimeOptions("--tags @keep_this somewhere_else");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(Arrays.<String>asList("@keep_this"), options.getTagFilters());
+        assertEquals(asList("@keep_this"), options.getTagFilters());
     }
 
     @Test
@@ -127,14 +127,14 @@ public class RuntimeOptionsTest {
     @Test
     public void name_without_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "someName"));
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("someName", actualPattern.pattern());
     }
 
     @Test
     public void name_with_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "some Name"));
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
@@ -143,14 +143,14 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--name 'some Name'");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
     @Test
     public void ensure_name_with_spaces_works_with_args() {
         RuntimeOptions options = new RuntimeOptions("--name 'some Name'");
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
@@ -359,7 +359,7 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new RuntimeOptions(new Env(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
         plugins.getPlugins();
-        AwareFormatter formatter = (AwareFormatter)plugins.getPlugins().get(0);
+        AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertTrue(formatter.isMonochrome());
     }
 
@@ -367,7 +367,7 @@ public class RuntimeOptionsTest {
     public void set_strict_on_strict_aware_formatters() throws Exception {
         RuntimeOptions options = new RuntimeOptions(new Env(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
-        AwareFormatter formatter = (AwareFormatter)plugins.getPlugins().get(0);
+        AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertTrue(formatter.isStrict());
     }
 

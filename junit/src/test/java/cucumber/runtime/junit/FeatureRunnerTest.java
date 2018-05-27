@@ -29,7 +29,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -207,7 +207,7 @@ public class FeatureRunnerTest {
         final TimeService timeServiceStub = new TimeService() {
             @Override
             public long time() {
-                return 0l;
+                return 0L;
             }
         };
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {

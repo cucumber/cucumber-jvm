@@ -18,7 +18,7 @@ public class RerunFilters {
     }
 
 
-    public Map<String, List<Long>> processRerunFiles() {
+    Map<String, List<Long>> processRerunFiles() {
         final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
         for (String featurePath : runtimeOptions.getFeaturePaths()) {
             if (featurePath.startsWith("@")) {
