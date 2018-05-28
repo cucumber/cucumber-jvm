@@ -1,6 +1,7 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [3.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...master) (In Git)
+
+## [3.0.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
 
 ### Added
  
@@ -9,6 +10,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+## [3.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
 
 ### Fixed
 * [Android] Fix PatternSyntaxException ([#1370](https://github.com/cucumber/cucumber-jvm/pull/1370) M.P. Korstanje)
