@@ -4,7 +4,6 @@ import cucumber.api.event.Event;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestCaseStarted;
 
 import java.util.ArrayList;
 import java.util.HashMap;

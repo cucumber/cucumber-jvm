@@ -44,8 +44,12 @@ public class HookTest {
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runner runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
-        runner.getGlue().addAfterHook(hook);
+
+        Supplier<Glue> glueSupplier = new TestGlueHelper();
+        Glue glue = glueSupplier.get();
+        
+        Runner runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        glue.addAfterHook(hook);
         PickleStep step = mock(PickleStep.class);
         PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 

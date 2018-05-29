@@ -1,23 +1,21 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
-import cucumber.runner.TimeService;
-import cucumber.runtime.Backend;
-import cucumber.runtime.RunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.Supplier;
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
+import cucumber.runner.TimeService;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Backend;
 import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.Glue;
+import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.Supplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -34,6 +32,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
+
+import io.cucumber.stepexpression.TypeRegistry;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -78,9 +78,18 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        this.runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
 
-        backend.loadGlue(runner.getGlue(), Collections.<String>emptyList());
+        final Glue glue = new RuntimeGlue();
+        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+            @Override
+            public Glue get() {
+                return glue;
+            }
+        };
+        
+        this.runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+
+        backend.loadGlue(glue, Collections.<String>emptyList());
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {

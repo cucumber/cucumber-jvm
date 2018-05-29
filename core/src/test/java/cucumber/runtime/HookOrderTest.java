@@ -32,7 +32,8 @@ public class HookOrderTest {
     private final static String ENGLISH = "en";
 
     private Runner runner;
-    private Glue glue;
+    private final Supplier<Glue> glueSupplier = new TestGlueHelper();
+    private final Glue glue = glueSupplier.get();
     private PickleEvent pickleEvent;
 
     @Before
@@ -48,9 +49,8 @@ public class HookOrderTest {
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
-        when(stepDefinition.getPattern()).thenReturn("pattern1");
-        runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
-        glue = runner.getGlue();
+        when(stepDefinition.getPattern()).thenReturn("pattern1");        
+        runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
         glue.addStepDefinition(stepDefinition);
 
         pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));

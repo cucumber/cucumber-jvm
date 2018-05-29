@@ -21,12 +21,9 @@ public class BackendSupplier implements Supplier<Collection<? extends Backend>> 
         this.runtimeOptions = runtimeOptions;
     }
 
-
     @Override
     public Collection<? extends Backend> get() {
-        Collection<? extends Backend> backends = loadBackends(resourceLoader, classFinder, runtimeOptions);
-
-        return backends;
+        return loadBackends(resourceLoader, classFinder, runtimeOptions);
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
