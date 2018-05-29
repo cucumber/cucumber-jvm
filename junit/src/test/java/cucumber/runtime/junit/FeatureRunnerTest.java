@@ -15,10 +15,8 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import org.junit.Test;
 import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 
 import java.util.Arrays;
@@ -346,32 +344,5 @@ public class FeatureRunnerTest {
         }
     }
 
-    private static final class DescriptionMatcher implements ArgumentMatcher<Description> {
-        private String name;
-
-        DescriptionMatcher(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public boolean matches(Description argument) {
-            return argument != null && argument.getDisplayName().equals(name);
-        }
-
-    }
-
-    private static final class FailureMatcher implements ArgumentMatcher<Failure> {
-        private String name;
-
-        FailureMatcher(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public boolean matches(Failure argument) {
-            return argument != null && argument.getDescription().getDisplayName().equals(name);
-        }
-
-    }
 }
 

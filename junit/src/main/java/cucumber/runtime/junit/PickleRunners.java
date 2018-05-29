@@ -171,14 +171,18 @@ class PickleRunners {
         return name.replaceAll("[^A-Za-z0-9_]", "_");
     }
 
-    private static final class PickleId implements Serializable {
+    static final class PickleId implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String uri;
         private int pickleLine;
 
+        PickleId(String uri, int pickleLine) {
+            this.uri = uri;
+            this.pickleLine = pickleLine;
+        }
+
         PickleId(PickleEvent pickleEvent) {
-            this.uri = pickleEvent.uri;
-            this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
+            this(pickleEvent.uri, pickleEvent.pickle.getLocations().get(0).getLine());
         }
 
         @Override

@@ -75,7 +75,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @param clazz the class with the @RunWith annotation.
      * @throws org.junit.runners.model.InitializationError if there is another problem
      */
-    public Cucumber(Class clazz) throws IOException, InitializationError {
+    public Cucumber(Class clazz) throws InitializationError {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
