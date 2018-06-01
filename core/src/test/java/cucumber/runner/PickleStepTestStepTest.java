@@ -183,6 +183,22 @@ public class PickleStepTestStepTest {
     }
 
     @Test
+    public void result_is_passed_when_step_definition_does_not_throw_exception_with_pending_tag() throws Throwable {
+        Collection<String> scenarioTags = new ArrayList<String>();
+        scenarioTags.add("@foo");
+        scenarioTags.add("@pending");
+        scenarioTags.add("@bar");
+
+        when(scenario.getSourceTagNames()).thenReturn(scenarioTags);
+
+        Result result = step.run(bus, language, scenario, false);
+
+        System.out.println(result);
+
+        assertEquals(PASSED, result.getStatus());
+    }
+
+    @Test
     public void step_execution_time_is_measured() throws Throwable {
         Long duration = 1234L;
         TestStep testStep = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
