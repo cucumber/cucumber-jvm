@@ -12,7 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static cucumber.api.Result.Type.PASSED;
+import static cucumber.api.Result.Type.PENDING;
 import static cucumber.api.Result.Type.SKIPPED;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -159,6 +163,39 @@ public class PickleStepTestStepTest {
         Result result = step.run(bus, language, scenario, false);
 
         assertEquals(Result.Type.PENDING, result.getStatus());
+    }
+
+    @Test
+    public void result_is_pending_when_step_definition_throws_exception_with_pending_tag() throws Throwable {
+        Collection<String> scenarioTags = new ArrayList<String>();
+        scenarioTags.add("@foo");
+        scenarioTags.add("@pending");
+        scenarioTags.add("@bar");
+
+        when(scenario.getSourceTagNames()).thenReturn(scenarioTags);
+        doThrow(Exception.class).when(definitionMatch).runStep(anyString(), (Scenario) any());
+
+        Result result = step.run(bus, language, scenario, false);
+
+        System.out.println(result);
+
+        assertEquals(PENDING, result.getStatus());
+    }
+
+    @Test
+    public void result_is_passed_when_step_definition_does_not_throw_exception_with_pending_tag() throws Throwable {
+        Collection<String> scenarioTags = new ArrayList<String>();
+        scenarioTags.add("@foo");
+        scenarioTags.add("@pending");
+        scenarioTags.add("@bar");
+
+        when(scenario.getSourceTagNames()).thenReturn(scenarioTags);
+
+        Result result = step.run(bus, language, scenario, false);
+
+        System.out.println(result);
+
+        assertEquals(PASSED, result.getStatus());
     }
 
     @Test
