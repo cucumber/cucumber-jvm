@@ -42,7 +42,7 @@ abstract class TestStep implements cucumber.api.TestStep {
             status = executeStep(language, scenario, skipSteps);
         } catch (Throwable t) {
             error = t;
-            status = mapThrowableToStatus(t);
+            status = mapThrowableToStatus(t, scenario.getSourceTagNames().contains("@pending"));
         }
         Long stopTime = bus.getTime();
         Result result = mapStatusToResult(status, error, stopTime - startTime);
@@ -60,8 +60,8 @@ abstract class TestStep implements cucumber.api.TestStep {
         }
     }
 
-    private Result.Type mapThrowableToStatus(Throwable t) {
-        if (t.getClass().isAnnotationPresent(Pending.class)) {
+    private Result.Type mapThrowableToStatus(Throwable t, boolean isPending) {
+        if (t.getClass().isAnnotationPresent(Pending.class) || isPending) {
             return Result.Type.PENDING;
         }
         if (Arrays.binarySearch(ASSUMPTION_VIOLATED_EXCEPTIONS, t.getClass().getName()) >= 0) {
