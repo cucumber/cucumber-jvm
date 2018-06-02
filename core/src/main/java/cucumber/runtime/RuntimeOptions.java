@@ -56,6 +56,7 @@ public class RuntimeOptions {
             return keyword.replaceAll("[\\s',!]", "");
         }
     };
+    private static boolean wip = false;
 
     private final List<String> glue = new ArrayList<String>();
     private final List<String> tagFilters = new ArrayList<String>();
@@ -175,6 +176,8 @@ public class RuntimeOptions {
                 for (String option : arg.substring("--junit,".length()).split(",")) {
                     parsedJunitOptions.add(option);
                 }
+            } else if (arg.equals("--wip") || arg.equals("-w")) {
+                wip = true;
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -185,6 +188,10 @@ public class RuntimeOptions {
                     String key = pathWithLines.path.replace("classpath:", "");
                     addLineFilters(parsedLineFilters, key, pathWithLines.lines);
                 }
+            }
+            if (strict && wip) {
+                System.err.println("You can't use both --strict and --wip");
+                System.exit(1);
             }
         }
         if (!parsedTagFilters.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
@@ -247,6 +254,10 @@ public class RuntimeOptions {
                 usageText = "Could not load usage text: " + e.toString();
             }
         }
+    }
+
+    public static boolean isWip() {
+        return wip;
     }
 
     private int printI18n(String language) {

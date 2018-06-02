@@ -1,5 +1,7 @@
 package cucumber.api;
 
+import cucumber.runtime.RuntimeOptions;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Comparator;
@@ -82,7 +84,7 @@ public class Result {
     }
 
     private boolean hasAlwaysOkStatus() {
-        return is(Result.Type.PASSED) || is(Result.Type.SKIPPED);
+        return (RuntimeOptions.isWip() ? is(Result.Type.FAILED) : is(Result.Type.PASSED)) || is(Result.Type.SKIPPED);
     }
 
     private boolean hasOkWhenNotStrictStatus() {
