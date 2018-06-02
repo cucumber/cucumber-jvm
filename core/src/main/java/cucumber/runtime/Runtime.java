@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Runtime {
 
-    private final ExitStatus exitStatus = new ExitStatus();
+    private final ExitStatus exitStatus;
 
     private final RuntimeOptions runtimeOptions;
 
@@ -42,6 +42,7 @@ public class Runtime {
         this.bus = bus;
         this.runner = runnerSupplier.get();
         this.featureSupplier = featureSupplier;
+        exitStatus = new ExitStatus(runtimeOptions.isWip());
         exitStatus.setEventPublisher(bus);
     }
 

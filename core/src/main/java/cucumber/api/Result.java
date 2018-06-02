@@ -78,11 +78,15 @@ public class Result {
     }
 
     public boolean isOk(boolean isStrict) {
-        return hasAlwaysOkStatus() || !isStrict && hasOkWhenNotStrictStatus();
+        return hasAlwaysOkStatus(false) || !isStrict && hasOkWhenNotStrictStatus();
     }
 
-    private boolean hasAlwaysOkStatus() {
-        return is(Result.Type.PASSED) || is(Result.Type.SKIPPED);
+    public boolean isOkWip(boolean isStrict) {
+        return hasAlwaysOkStatus(true) || !isStrict && hasOkWhenNotStrictStatus();
+    }
+
+    private boolean hasAlwaysOkStatus(boolean wip) {
+        return (wip ? is(Result.Type.FAILED) : is(Result.Type.PASSED)) || is(Result.Type.SKIPPED);
     }
 
     private boolean hasOkWhenNotStrictStatus() {

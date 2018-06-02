@@ -254,6 +254,100 @@ public class RuntimeTest {
     }
 
     @Test
+    public void strict_wip_with_passed_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_wip_with_passed_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_wip_with_undefined_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_undefined_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_pending_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_wip_with_pending_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_wip_with_skipped_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_skipped_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_wip_with_failed_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_failed_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_wip_with_ambiguous_scenarios() {
+        Runtime runtime = createNonStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_ambiguous_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
     public void reports_step_definitions_to_plugin() throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -469,6 +563,14 @@ public class RuntimeTest {
 
     private Runtime createNonStrictRuntime() {
         return createRuntime("-g", "anything");
+    }
+
+    private Runtime createStrictWipRuntime() {
+        return createRuntime("-g", "anything", "--strict", "--wip");
+    }
+
+    private Runtime createNonStrictWipRuntime() {
+        return createRuntime("-g", "anything", "--wip");
     }
 
     private Runtime createStrictRuntime(ResourceLoader resourceLoader) {

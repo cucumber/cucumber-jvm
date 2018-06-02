@@ -53,6 +53,7 @@ public class RuntimeOptions {
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
+    private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
@@ -161,6 +162,8 @@ public class RuntimeOptions {
                 for (String option : arg.substring("--junit,".length()).split(",")) {
                     parsedJunitOptions.add(option);
                 }
+            } else if (arg.equals("--wip") || arg.equals("-w")) {
+                wip = true;
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -297,6 +300,10 @@ public class RuntimeOptions {
 
     public boolean isDryRun() {
         return dryRun;
+    }
+
+    public boolean isWip() {
+        return wip;
     }
 
     public List<String> getFeaturePaths() {

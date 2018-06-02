@@ -125,6 +125,24 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void assigns_wip() {
+        RuntimeOptions options = new RuntimeOptions(asList("--wip", "--glue", "somewhere"));
+        assertTrue(options.isWip());
+    }
+
+    @Test
+    public void assigns_wip_short() {
+        RuntimeOptions options = new RuntimeOptions(asList("-w", "--glue", "somewhere"));
+        assertTrue(options.isWip());
+    }
+
+    @Test
+    public void default_wip() {
+        RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
+        assertFalse(options.isWip());
+    }
+
+    @Test
     public void name_without_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "someName"));
         Pattern actualPattern = options.getNameFilters().iterator().next();
