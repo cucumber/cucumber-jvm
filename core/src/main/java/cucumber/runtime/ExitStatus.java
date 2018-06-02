@@ -16,7 +16,7 @@ class ExitStatus implements EventListener {
     private static final byte ERRORS = 0x1;
 
     private final List<Result> results = new ArrayList<Result>();
-    private final boolean wip;
+    private final RuntimeOptions runtimeOptions;
 
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
@@ -25,18 +25,18 @@ class ExitStatus implements EventListener {
         }
     };
 
-    ExitStatus(boolean wip) {
-        this.wip = wip;
+    ExitStatus(RuntimeOptions runtimeOptions) {
+        this.runtimeOptions = runtimeOptions;
     }
-
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
-    public byte exitStatus(boolean isStrict) {
+    public byte exitStatus() {
         return results.isEmpty() ||
-            (wip ? max(results, SEVERITY).isOkWip(isStrict) : max(results, SEVERITY).isOk(isStrict)) ? 0x0 : ERRORS;
+            (runtimeOptions.isWip() ? max(results, SEVERITY).isOkWip(runtimeOptions.isStrict()) :
+                max(results, SEVERITY).isOk(runtimeOptions.isStrict())) ? 0x0 : ERRORS;
     }
 }

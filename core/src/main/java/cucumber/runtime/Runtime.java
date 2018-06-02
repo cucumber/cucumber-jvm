@@ -18,9 +18,6 @@ import java.util.List;
 public class Runtime {
 
     private final ExitStatus exitStatus;
-
-    private final RuntimeOptions runtimeOptions;
-
     private final Runner runner;
     private final Filters filters;
     private final EventBus bus;
@@ -37,12 +34,11 @@ public class Runtime {
     ) {
 
         this.plugins = plugins;
-        this.runtimeOptions = runtimeOptions;
         this.filters = filters;
         this.bus = bus;
         this.runner = runnerSupplier.get();
         this.featureSupplier = featureSupplier;
-        exitStatus = new ExitStatus(runtimeOptions.isWip());
+        exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
     }
 
@@ -73,7 +69,7 @@ public class Runtime {
     }
 
     public byte exitStatus() {
-        return exitStatus.exitStatus(runtimeOptions.isStrict());
+        return exitStatus.exitStatus();
     }
 
 }
