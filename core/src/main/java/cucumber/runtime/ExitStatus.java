@@ -13,6 +13,7 @@ import static cucumber.api.Result.SEVERITY;
 import static java.util.Collections.max;
 
 class ExitStatus implements EventListener {
+    private static final byte DEFAULT = 0x0;
     private static final byte ERRORS = 0x1;
 
     private final List<Result> results = new ArrayList<Result>();
@@ -35,8 +36,12 @@ class ExitStatus implements EventListener {
     }
 
     public byte exitStatus() {
-        return results.isEmpty() ||
-            (runtimeOptions.isWip() ? max(results, SEVERITY).isOkWip(runtimeOptions.isStrict()) :
-                max(results, SEVERITY).isOk(runtimeOptions.isStrict())) ? 0x0 : ERRORS;
+        if (results.isEmpty()) { return DEFAULT; }
+
+        if (runtimeOptions.isWip()) {
+            return max(results, SEVERITY.reversed()).isOkWip(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
+        }
+
+        return max(results, SEVERITY).isOk(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
     }
 }

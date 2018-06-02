@@ -254,11 +254,74 @@ public class RuntimeTest {
     }
 
     @Test
+    public void strict_with_passed_failed_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_failed_passed_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_failed_failed_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_passed_passed_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
     public void strict_wip_with_passed_scenarios() {
         Runtime runtime = createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_passed_failed_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_failed_passed_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_wip_with_failed_failed_scenarios() {
+        Runtime runtime = createStrictWipRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
