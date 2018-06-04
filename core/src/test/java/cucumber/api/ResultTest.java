@@ -39,14 +39,6 @@ public class ResultTest {
     }
 
     @Test
-    public void passed_result_is_only_no_ok_when_wip() {
-        Result passedResult = new Result(Result.Type.PASSED, null, null);
-
-        assertFalse(passedResult.isOkWip(isStrict(false)));
-        assertFalse(passedResult.isOkWip(isStrict(true)));
-    }
-
-    @Test
     public void skipped_result_is_always_ok() {
         Result skippedResult = new Result(Result.Type.SKIPPED, null, null);
 
@@ -60,14 +52,6 @@ public class ResultTest {
 
         assertFalse(failedResult.isOk(isStrict(false)));
         assertFalse(failedResult.isOk(isStrict(true)));
-    }
-
-    @Test
-    public void failed_result_is_only_ok_when_wip() {
-        Result failedResult = new Result(Result.Type.FAILED, null, null);
-
-        assertTrue(failedResult.isOkWip(isStrict(false)));
-        assertTrue(failedResult.isOkWip(isStrict(true)));
     }
 
     @Test

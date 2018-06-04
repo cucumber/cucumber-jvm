@@ -343,7 +343,7 @@ public class RuntimeTest {
     public void strict_wip_with_undefined_scenarios() {
         Runtime runtime = createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
-        assertEquals(0x1, runtime.exitStatus());
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
@@ -351,7 +351,7 @@ public class RuntimeTest {
         Runtime runtime = createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
@@ -399,7 +399,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
@@ -407,7 +407,7 @@ public class RuntimeTest {
         Runtime runtime = createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
