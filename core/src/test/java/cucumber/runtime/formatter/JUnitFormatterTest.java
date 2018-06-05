@@ -4,14 +4,14 @@ import cucumber.api.Result;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
-import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.Supplier;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -524,7 +524,7 @@ public class JUnitFormatterTest {
         args.addAll(featurePaths);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 Backend backend = mock(Backend.class);
@@ -534,9 +534,9 @@ public class JUnitFormatterTest {
         };
         EventBus bus = new EventBus(new TimeServiceStub(0L));
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);

@@ -10,15 +10,15 @@ import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.java.ObjectFactory;
@@ -104,9 +104,9 @@ public final class CucumberExecutor {
         this.bus = new EventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        this.runner = new RunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier).get();
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier).get();
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        FeatureSupplier featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
@@ -181,8 +181,8 @@ public final class CucumberExecutor {
         throw new CucumberException("No CucumberOptions annotation");
     }
 
-    private Supplier<Collection<? extends Backend>> createBackends() {
-        return new Supplier<Collection<? extends Backend>>() {
+    private BackendSupplier createBackends() {
+        return new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 final Reflections reflections = new Reflections(classFinder);

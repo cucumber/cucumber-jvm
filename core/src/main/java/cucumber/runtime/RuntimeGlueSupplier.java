@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-public final class RuntimeGlueSupplier implements Supplier<Glue> {
+public final class RuntimeGlueSupplier implements GlueSupplier {
 
     @Override
     public Glue get() {

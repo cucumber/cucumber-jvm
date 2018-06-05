@@ -16,13 +16,15 @@ import javax.inject.Inject;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.FeatureSupplier;
+import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import cucumber.runtime.formatter.PluginFactory;
@@ -103,16 +105,16 @@ public class CalculatorTest {
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         final EventBus bus = new EventBus(TimeService.SYSTEM);
         final Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 return Collections.singleton(backend);
             }
         };
         final RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        final Supplier<Runner> runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        final RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        final Supplier<List<CucumberFeature>> featureSupplier = new FeatureSupplier(featureLoader, runtimeOptions);
+        final FeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
         final RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         final Filters filters = new Filters(runtimeOptions, rerunFilters);
         final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);

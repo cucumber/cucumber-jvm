@@ -22,6 +22,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -39,17 +40,17 @@ public class HookOrderTest {
     public void buildMockWorld() {
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
-                return asList(mock(Backend.class));
+                return singletonList(mock(Backend.class));
             }
         };
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
         when(stepDefinition.getPattern()).thenReturn("pattern1");
-        runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
         glue = runner.getGlue();
         glue.addStepDefinition(stepDefinition);
 

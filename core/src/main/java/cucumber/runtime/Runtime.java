@@ -22,15 +22,15 @@ public class Runtime {
     private final Filters filters;
     private final EventBus bus;
     private final FeatureCompiler compiler = new FeatureCompiler();
-    private final Supplier<List<CucumberFeature>> featureSupplier;
+    private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
 
     public Runtime(Plugins plugins,
                    RuntimeOptions runtimeOptions,
                    EventBus bus,
                    Filters filters,
-                   Supplier<Runner> runnerSupplier,
-                   Supplier<List<CucumberFeature>> featureSupplier
+                   RunnerSupplier runnerSupplier,
+                   FeatureSupplier featureSupplier
     ) {
 
         this.plugins = plugins;

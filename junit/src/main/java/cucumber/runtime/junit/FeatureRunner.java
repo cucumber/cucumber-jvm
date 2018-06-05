@@ -3,7 +3,7 @@ package cucumber.runtime.junit;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.filter.Filters;
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
@@ -26,7 +26,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
+    public FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
         buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
@@ -73,7 +73,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         super.run(notifier);
     }
 
-    private void buildFeatureElementRunners(Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
+    private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
         Feature feature = cucumberFeature.getGherkinFeature().getFeature();
         if (feature == null) {
             return;
