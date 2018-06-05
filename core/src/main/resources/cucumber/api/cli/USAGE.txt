@@ -29,6 +29,7 @@ Options:
   --junit,OPTION[,OPTION]*               Pass the OPTION(s) to the JUnit module.
                                          Use --junit,-h or --junit,--help to print the
                                          options of the JUnit module.
+  -w, --wip                              Fail if there are any passing scenarios.
 
 Feature path examples:
   <path>                                 Load the files with the extension ".feature"

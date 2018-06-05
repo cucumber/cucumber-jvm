@@ -17,10 +17,6 @@ import java.util.List;
  */
 public class Runtime {
 
-    private final ExitStatus exitStatus = new ExitStatus();
-
-    private final RuntimeOptions runtimeOptions;
-
     private final Runner runner;
     private final Filters filters;
     private final EventBus bus;
@@ -29,7 +25,6 @@ public class Runtime {
     private final Plugins plugins;
 
     public Runtime(Plugins plugins,
-                   RuntimeOptions runtimeOptions,
                    EventBus bus,
                    Filters filters,
                    RunnerSupplier runnerSupplier,
@@ -37,12 +32,10 @@ public class Runtime {
     ) {
 
         this.plugins = plugins;
-        this.runtimeOptions = runtimeOptions;
         this.filters = filters;
         this.bus = bus;
         this.runner = runnerSupplier.get();
         this.featureSupplier = featureSupplier;
-        exitStatus.setEventPublisher(bus);
     }
 
     public void run() {
@@ -70,9 +63,4 @@ public class Runtime {
             }
         }
     }
-
-    public byte exitStatus() {
-        return exitStatus.exitStatus(runtimeOptions.isStrict());
-    }
-
 }

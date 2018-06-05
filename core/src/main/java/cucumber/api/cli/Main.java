@@ -4,6 +4,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.ExitStatus;
 import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.GlueSupplier;
@@ -45,14 +46,16 @@ public class Main {
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         EventBus bus = new EventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+        exitStatus.setEventPublisher(bus);
         GlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
-        return runtime.exitStatus();
+        return exitStatus.exitStatus();
     }
 }

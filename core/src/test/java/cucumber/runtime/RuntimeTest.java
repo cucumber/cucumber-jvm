@@ -5,8 +5,6 @@ import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
-import cucumber.api.TestCase;
-import cucumber.api.event.TestCaseFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.filter.Filters;
@@ -54,8 +52,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
-    private final static long ANY_TIMESTAMP = 1234567890;
     private EventBus bus;
+    private ExitStatus exitStatus;
 
     private HookDefinition createExceptionThrowingHook() throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
@@ -68,22 +66,6 @@ public class RuntimeTest {
         PickleStepDefinitionMatch match = mock(PickleStepDefinitionMatch.class);
         doThrow(exception).when(match).runStep(anyString(), (Scenario) any());
         return match;
-    }
-
-    @Test
-    public void non_strict_with_ambiguous_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
-
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    private Runtime createNonStrictRuntime() {
-        return createRuntime("-g", "anything");
-    }
-
-    private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, null, null));
     }
 
     private Runtime createRuntime(String... runtimeArgs) {
@@ -109,47 +91,10 @@ public class RuntimeTest {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
+        exitStatus = new ExitStatus(runtimeOptions);
+        exitStatus.setEventPublisher(bus);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
-        return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-    }
-
-    @Test
-    public void non_strict_with_failed_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
-
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_passed_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_pending_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_skipped_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void non_strict_with_undefined_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
-        assertEquals(0x0, runtime.exitStatus());
+        return new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
     }
 
     @Test
@@ -182,7 +127,7 @@ public class RuntimeTest {
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
-        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
 
         runtime.run();
 
@@ -223,7 +168,7 @@ public class RuntimeTest {
                 return singletonList(feature);
             }
         };
-        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
 
         runtime.run();
 
@@ -437,7 +382,7 @@ public class RuntimeTest {
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        return new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {
@@ -470,7 +415,7 @@ public class RuntimeTest {
 
         runtime.run();
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertEquals(0x0, exitStatus.exitStatus());
     }
 
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
@@ -481,57 +426,6 @@ public class RuntimeTest {
 
     private Runtime createStrictRuntime(ResourceLoader resourceLoader) {
         return createRuntime(resourceLoader, Thread.currentThread().getContextClassLoader(), "-g", "anything", "--strict");
-    }
-
-    @Test
-    public void strict_with_ambiguous_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
-
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    private Runtime createStrictRuntime() {
-        return createRuntime("-g", "anything", "--strict");
-    }
-
-    @Test
-    public void strict_with_failed_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
-
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    @Test
-    public void strict_with_passed_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void strict_with_pending_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
-
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    @Test
-    public void strict_with_skipped_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
-
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void strict_with_undefined_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
-        assertEquals(0x1, runtime.exitStatus());
     }
 
     public static class StepdefsPrinter implements StepDefinitionReporter {

@@ -540,7 +540,7 @@ public class JUnitFormatterTest {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        final cucumber.runtime.Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final cucumber.runtime.Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         return report;
     }

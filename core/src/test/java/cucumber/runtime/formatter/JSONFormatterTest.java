@@ -1206,7 +1206,7 @@ public class JSONFormatterTest {
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
         String formatterOutput = scanner.useDelimiter("\\A").next();

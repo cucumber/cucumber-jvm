@@ -174,7 +174,7 @@ public class TestHelper {
                 return features;
             }
         };
-        final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+        final Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
 
         runtime.run();
     }
