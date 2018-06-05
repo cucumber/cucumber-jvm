@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -152,22 +153,22 @@ public class TestHelper {
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         formatter.setEventPublisher(bus);
 
-        final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
-                return asList(mock(Backend.class));
+                return singletonList(mock(Backend.class));
             }
         };
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        Supplier<Runner> runnerSupplier = new Supplier<Runner>() {
+        RunnerSupplier runnerSupplier = new RunnerSupplier () {
             @Override
             public Runner get() {
                 return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
             }
         };
-        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return features;

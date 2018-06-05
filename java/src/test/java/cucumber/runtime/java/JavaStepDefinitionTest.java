@@ -5,7 +5,8 @@ import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.TypeRegistry;
@@ -15,9 +16,7 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -72,13 +71,13 @@ public class JavaStepDefinitionTest {
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 return asList(backend);
             }
         };
-        this.runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
 
         backend.loadGlue(runner.getGlue(), Collections.<String>emptyList());
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {

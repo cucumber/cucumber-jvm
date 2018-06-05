@@ -19,9 +19,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 
-public class RunnerSupplierTest {
+public class ThreadLocalRunnerSupplierTest {
 
-    private RunnerSupplier runnerSupplier;
+    private ThreadLocalRunnerSupplier runnerSupplier;
 
     @Before
     public void before() {
@@ -29,10 +29,10 @@ public class RunnerSupplierTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         EventBus eventBus = new EventBus(TimeService.SYSTEM);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        runnerSupplier = new RunnerSupplier(runtimeOptions, eventBus, backendSupplier, glueSupplier);
+        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, glueSupplier);
     }
 
 

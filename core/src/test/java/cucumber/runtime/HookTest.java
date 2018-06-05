@@ -10,14 +10,14 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
 
 import java.util.Collection;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,18 +33,20 @@ public class HookTest {
     @Test
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final Backend backend = mock(Backend.class);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
-                return asList(backend);
+                return singletonList(backend);
             }
         };
         EventBus bus = new EventBus(TimeService.SYSTEM);
-        Runner runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        Runner runner = runnerSupplier.get();
         runner.getGlue().addAfterHook(hook);
         PickleStep step = mock(PickleStep.class);
         PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
@@ -52,7 +54,7 @@ public class HookTest {
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hook, backend);
-        inOrder.verify(hook).execute(Matchers.<Scenario>any());
+        inOrder.verify(hook).execute(ArgumentMatchers.<Scenario>any());
         inOrder.verify(backend).disposeWorld();
     }
 
