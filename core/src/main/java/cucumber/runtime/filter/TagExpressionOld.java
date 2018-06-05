@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
 import gherkin.pickles.PickleTag;
 
@@ -8,13 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-
-public class TagExpressionOld {
+class TagExpressionOld {
     private final Map<String, Integer> limits = new HashMap<String, Integer>();
     private And and = new And();
 
-    public static boolean isOldTagExpression(String tagExpression) {
+    static boolean isOldTagExpression(String tagExpression) {
         if (tagExpression == null) {
             return false;
         }
@@ -27,13 +25,13 @@ public class TagExpressionOld {
         return tagExpression.contains(",") || tagExpression.contains("~");
     }
 
-    public TagExpressionOld(List<String> tagExpressions) {
+    TagExpressionOld(List<String> tagExpressions) {
         for (String tagExpression : tagExpressions) {
             add(tagExpression.split("\\s*,\\s*"));
         }
     }
 
-    public boolean evaluate(Collection<PickleTag> tags) {
+    boolean evaluate(Collection<PickleTag> tags) {
         return and.isEmpty() || and.eval(tags);
     }
 
@@ -82,7 +80,7 @@ public class TagExpressionOld {
     private class Not implements Expression {
         private final Expression expression;
 
-        public Not(Expression expression) {
+        Not(Expression expression) {
             this.expression = expression;
         }
 
@@ -132,7 +130,7 @@ public class TagExpressionOld {
     private class TagExp implements Expression {
         private final String tagName;
 
-        public TagExp(String tagName) {
+        TagExp(String tagName) {
             if (!tagName.startsWith("@")) {
                 throw new BadTagException(tagName);
             }
@@ -150,13 +148,13 @@ public class TagExpressionOld {
     }
 
     private class BadTagException extends RuntimeException {
-        public BadTagException(String tagName) {
+        BadTagException(String tagName) {
             super("Bad tag: \"" + tagName + "\"");
         }
     }
 
     private class BadTagLimitException extends RuntimeException {
-        public BadTagLimitException(String tag, int limitA, int limitB) {
+        BadTagLimitException(String tag, int limitA, int limitB) {
             super("Inconsistent tag limits for " + tag + ": " + limitA + " and " + limitB);
         }
     }

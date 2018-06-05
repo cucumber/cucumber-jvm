@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
@@ -103,7 +103,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
         return errors;
     }
 
-    public void printStats(PrintStream out) {
+    void printStats(PrintStream out) {
         printNonZeroResultScenarios(out);
         if (stepSubCounts.getTotal() == 0) {
             out.println("0 Scenarios");
@@ -249,7 +249,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
         public int pending = 0;
         public int undefined = 0;
 
-        public int getTotal() {
+        int getTotal() {
             return passed + failed + ambiguous + skipped + pending + undefined;
         }
     }

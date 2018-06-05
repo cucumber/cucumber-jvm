@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.mock;
 public class TagPredicateTest {
     private static final String NAME = "pickle_name";
     private static final String LANGUAGE = "en";
-    private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
+    private static final List<PickleStep> NO_STEPS = Collections.emptyList();
     private static final PickleLocation MOCK_LOCATION = mock(PickleLocation.class);
     private static final String FOO_TAG_VALUE = "@FOO";
     private static final PickleTag FOO_TAG = new PickleTag(MOCK_LOCATION, FOO_TAG_VALUE);

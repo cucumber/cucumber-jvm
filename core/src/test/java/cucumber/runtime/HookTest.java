@@ -1,21 +1,23 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
+import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
-import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runner.TimeService;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyListOf;
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,22 +32,29 @@ public class HookTest {
      */
     @Test
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
-        Backend backend = mock(Backend.class);
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
-        runtime.getGlue().addAfterHook(hook);
-        Runner runner = runtime.getRunner();
+        final Backend backend = mock(Backend.class);
+        BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return singletonList(backend);
+            }
+        };
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        Runner runner = runnerSupplier.get();
+        runner.getGlue().addAfterHook(hook);
         PickleStep step = mock(PickleStep.class);
         PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hook, backend);
-        inOrder.verify(hook).execute(Matchers.<Scenario>any());
+        inOrder.verify(hook).execute(ArgumentMatchers.<Scenario>any());
         inOrder.verify(backend).disposeWorld();
     }
 

@@ -1,9 +1,10 @@
 package cucumber.runtime;
 
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeService;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import cucumber.runner.Runner;
-import cucumber.runtime.io.ResourceLoader;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -12,14 +13,17 @@ import gherkin.pickles.PickleTag;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyListOf;
+
+import static java.util.Collections.singletonList;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -34,15 +38,20 @@ public class HookOrderTest {
 
     @Before
     public void buildMockWorld() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return singletonList(mock(Backend.class));
+            }
+        };
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
         when(stepDefinition.getPattern()).thenReturn("pattern1");
-        runner = runtime.getRunner();
-        glue = runtime.getGlue();
+        runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        glue = runner.getGlue();
         glue.addStepDefinition(stepDefinition);
 
         pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
@@ -58,13 +67,13 @@ public class HookOrderTest {
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
     }
 
     @Test
@@ -77,13 +86,13 @@ public class HookOrderTest {
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
     }
 
     @Test
@@ -96,13 +105,13 @@ public class HookOrderTest {
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
     }
 
     @Test
@@ -115,13 +124,13 @@ public class HookOrderTest {
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
-        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
     }
 
     @Test
@@ -142,12 +151,12 @@ public class HookOrderTest {
         allHooks.addAll(backend2Hooks);
 
         InOrder inOrder = inOrder(allHooks.toArray());
-        inOrder.verify(backend1Hooks.get(2)).execute(Matchers.<Scenario>any());
-        inOrder.verify(backend2Hooks.get(0)).execute(Matchers.<Scenario>any());
-        inOrder.verify(backend1Hooks.get(0)).execute(Matchers.<Scenario>any());
-        inOrder.verify(backend2Hooks.get(2)).execute(Matchers.<Scenario>any());
-        verify(backend2Hooks.get(1)).execute(Matchers.<Scenario>any());
-        verify(backend1Hooks.get(1)).execute(Matchers.<Scenario>any());
+        inOrder.verify(backend1Hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(backend2Hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(backend1Hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
+        verify(backend2Hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
+        verify(backend1Hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
     }
 
     private List<HookDefinition> mockHooks(int... ordering) {

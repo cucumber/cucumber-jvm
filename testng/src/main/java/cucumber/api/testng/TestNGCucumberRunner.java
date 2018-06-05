@@ -1,9 +1,21 @@
 package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestRunStarted;
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeService;
+import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.FeatureCompiler;
+import cucumber.runtime.FeaturePathFeatureSupplier;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.formatter.Plugins;
+import cucumber.runtime.filter.RerunFilters;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.model.FeatureLoader;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
@@ -20,10 +32,11 @@ import java.util.List;
  * Glue code for running Cucumber via TestNG.
  */
 public class TestNGCucumberRunner {
-    private Runtime runtime;
-    private TestNGReporter reporter;
-    private RuntimeOptions runtimeOptions;
-    private ResourceLoader resourceLoader;
+    private final EventBus bus;
+    private final Filters filters;
+    private final FeaturePathFeatureSupplier featureSupplier;
+    private final ThreadLocalRunnerSupplier runnerSupplier;
+    private final Plugins plugins;
     private TestCaseResultListener testCaseResultListener;
 
     /**
@@ -33,27 +46,35 @@ public class TestNGCucumberRunner {
      */
     public TestNGCucumberRunner(Class clazz) {
         ClassLoader classLoader = clazz.getClassLoader();
-        resourceLoader = new MultiLoader(classLoader);
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        runtimeOptions = runtimeOptionsFactory.create();
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        reporter = new TestNGReporter(new PrintStream(System.out) {
-                @Override
-                public void close() {
-                    // We have no intention to close System.out
-                }
-            });
+        TestNGReporter reporter = new TestNGReporter(new PrintStream(System.out) {
+            @Override
+            public void close() {
+                // We have no intention to close System.out
+            }
+        });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
-        reporter.setEventPublisher(runtime.getEventBus());
+        BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        bus = new EventBus(TimeService.SYSTEM);
+        plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        filters = new Filters(runtimeOptions, rerunFilters);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+        reporter.setEventPublisher(bus);
         testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
-        testCaseResultListener.setEventPublisher(runtime.getEventBus());
+        testCaseResultListener.setEventPublisher(bus);
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
         testCaseResultListener.startPickle();
-        runtime.getRunner().runPickle(pickle);
+        runnerSupplier.get().runPickle(pickle);
 
         if (!testCaseResultListener.isPassed()) {
             throw testCaseResultListener.getError();
@@ -61,7 +82,7 @@ public class TestNGCucumberRunner {
     }
 
     public void finish() {
-        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+        bus.send(new TestRunFinished(bus.getTime()));
     }
 
     /**
@@ -71,13 +92,13 @@ public class TestNGCucumberRunner {
     public Object[][] provideScenarios() {
         try {
             List<Object[]> scenarios = new ArrayList<Object[]>();
-
+            FeatureCompiler compiler = new FeatureCompiler();
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {
-                List<PickleEvent> pickles = runtime.compileFeature(feature);
+                List<PickleEvent> pickles = compiler.compileFeature(feature);
 
                 for (PickleEvent pickle : pickles) {
-                    if (runtime.matchesFilters(pickle)) {
+                    if (filters.matchesFilters(pickle)) {
                         scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
                             new CucumberFeatureWrapperImpl(feature)});
                     }
@@ -90,6 +111,12 @@ public class TestNGCucumberRunner {
     }
 
     List<CucumberFeature> getFeatures() {
-        return runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
+
+        List<CucumberFeature> features = featureSupplier.get();
+        bus.send(new TestRunStarted(bus.getTime()));
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
+        return features;
     }
 }

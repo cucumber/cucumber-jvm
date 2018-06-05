@@ -6,7 +6,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.Utils;
-import cucumber.runtime.TagPredicate;
+import cucumber.runtime.filter.TagPredicate;
 import gherkin.pickles.PickleTag;
 
 import java.lang.reflect.Method;

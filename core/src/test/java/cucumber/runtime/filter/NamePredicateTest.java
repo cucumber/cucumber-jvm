@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
@@ -17,8 +17,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class NamePredicateTest {
-    private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
-    private static final List<PickleTag> NO_TAGS = Collections.<PickleTag>emptyList();
+    private static final List<PickleStep> NO_STEPS = Collections.emptyList();
+    private static final List<PickleTag> NO_TAGS = Collections.emptyList();
     private static final PickleLocation MOCK_LOCATION = mock(PickleLocation.class);
 
     @Test

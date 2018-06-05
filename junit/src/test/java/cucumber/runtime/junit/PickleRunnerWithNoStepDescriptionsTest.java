@@ -3,8 +3,7 @@ package cucumber.runtime.junit;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import gherkin.events.PickleEvent;
 import org.junit.Test;
@@ -24,9 +23,9 @@ public class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
                 "feature name",
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickles.get(0),
-                createStandardJUnitReporter()
+                createJUnitOptions()
         );
 
         assertEquals("scenario name(feature name)", runner.getDescription().getDisplayName());
@@ -41,19 +40,19 @@ public class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
                 "feature name",
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickles.get(0),
-                createJUnitReporterWithOption("--filename-compatible-names")
+                createJUnitOptions("--filename-compatible-names")
         );
 
         assertEquals("scenario_name(feature_name)", runner.getDescription().getDisplayName());
     }
 
-    private JUnitReporter createStandardJUnitReporter() {
-        return new JUnitReporter(mock(EventBus.class), false, new JUnitOptions(Collections.<String>emptyList()));
+    private JUnitOptions createJUnitOptions() {
+        return new JUnitOptions(true, Collections.<String>emptyList());
     }
 
-    private JUnitReporter createJUnitReporterWithOption(String option) {
-        return new JUnitReporter(mock(EventBus.class), false, new JUnitOptions(Arrays.asList(option)));
+    private JUnitOptions createJUnitOptions(String option) {
+        return new JUnitOptions(true, Arrays.asList(option));
     }
 }

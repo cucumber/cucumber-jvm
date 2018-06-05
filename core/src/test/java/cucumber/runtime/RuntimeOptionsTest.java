@@ -5,8 +5,10 @@ import cucumber.api.SnippetType;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeService;
 import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.formatter.Plugins;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -22,8 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class RuntimeOptionsTest {
     @Test
@@ -48,14 +48,14 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
         Map<String, List<Long>> expectedLineFilters = new HashMap<String, List<Long>>(Collections.singletonMap("somewhere_else", asList(3L)));
-        assertEquals(expectedLineFilters, options.getLineFilters(mock(ResourceLoader.class)));
+        assertEquals(expectedLineFilters, options.getLineFilters());
     }
 
     @Test
     public void assigns_filters_from_tags() {
         RuntimeOptions options = new RuntimeOptions("--tags @keep_this somewhere_else");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(Arrays.<String>asList("@keep_this"), options.getTagFilters());
+        assertEquals(asList("@keep_this"), options.getTagFilters());
     }
 
     @Test
@@ -73,32 +73,37 @@ public class RuntimeOptionsTest {
     @Test
     public void creates_html_formatter() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.getPlugins().get(0).getClass().getName());
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertEquals("cucumber.runtime.formatter.HTMLFormatter", plugins.getPlugins().get(0).getClass().getName());
     }
 
     @Test
     public void creates_progress_formatter_as_default() {
         RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
-        assertEquals("cucumber.runtime.formatter.ProgressFormatter", options.getPlugins().get(0).getClass().getName());
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertEquals("cucumber.runtime.formatter.ProgressFormatter", plugins.getPlugins().get(0).getClass().getName());
     }
 
     @Test
     public void creates_progress_formatter_when_no_formatter_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "cucumber.runtime.formatter.AnyStepDefinitionReporter", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
     }
 
     @Test
     public void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "pretty", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
     public void creates_null_summary_printer() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "null_summary", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
-        assertPluginNotExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullSummaryPrinter");
+        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -122,14 +127,14 @@ public class RuntimeOptionsTest {
     @Test
     public void name_without_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "someName"));
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("someName", actualPattern.pattern());
     }
 
     @Test
     public void name_with_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "some Name"));
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
@@ -138,14 +143,14 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--name 'some Name'");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
     @Test
     public void ensure_name_with_spaces_works_with_args() {
         RuntimeOptions options = new RuntimeOptions("--name 'some Name'");
-        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
+        Pattern actualPattern = options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
@@ -257,8 +262,9 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
-        assertPluginNotExists(options.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
+        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
     }
 
     @Test
@@ -266,8 +272,9 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--add-plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
     }
 
     @Test
@@ -275,8 +282,9 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
-        assertPluginNotExists(options.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
+        assertPluginNotExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullSummaryPrinter");
     }
 
     @Test
@@ -284,8 +292,9 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--add-plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -293,8 +302,9 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "pretty", "--glue", "somewhere"));
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
 //        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -346,16 +356,18 @@ public class RuntimeOptionsTest {
 
     @Test
     public void set_monochrome_on_color_aware_formatters() throws Exception {
-        RuntimeOptions options = new RuntimeOptions(new Env(), new PluginFactory(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
-        options.getPlugins();
-        AwareFormatter formatter = (AwareFormatter)options.getPlugins().get(0);
+        RuntimeOptions options = new RuntimeOptions(new Env(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        plugins.getPlugins();
+        AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertTrue(formatter.isMonochrome());
     }
 
     @Test
     public void set_strict_on_strict_aware_formatters() throws Exception {
-        RuntimeOptions options = new RuntimeOptions(new Env(), new PluginFactory(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
-        AwareFormatter formatter = (AwareFormatter)options.getPlugins().get(0);
+        RuntimeOptions options = new RuntimeOptions(new Env(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), options);
+        AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertTrue(formatter.isStrict());
     }
 

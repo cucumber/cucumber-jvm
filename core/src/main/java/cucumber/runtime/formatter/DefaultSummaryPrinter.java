@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.formatter;
 
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.EventHandler;
@@ -7,11 +7,12 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
+import cucumber.runtime.UndefinedStepsTracker;
 
 import java.io.PrintStream;
 import java.util.List;
 
-public class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
+class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
 
     private final Stats stats = new Stats();
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();

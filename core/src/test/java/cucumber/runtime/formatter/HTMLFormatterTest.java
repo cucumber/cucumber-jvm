@@ -735,7 +735,7 @@ public class HTMLFormatterTest {
     }
 
     private void assertContains(String substring, String string) {
-        if (string.indexOf(substring) == -1) {
+        if (!string.contains(substring)) {
             fail(String.format("[%s] not contained in [%s]", substring, string));
         }
     }

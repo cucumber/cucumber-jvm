@@ -11,6 +11,7 @@ import java.util.List;
 public class JUnitOptions {
     private static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
     private static String optionsText;
+    private final boolean strict;
 
     private boolean filenameCompatibleNames = false;
     private boolean stepNotifications = false;
@@ -20,9 +21,11 @@ public class JUnitOptions {
      * <p/>
      * <pre<{@code Arrays.asList("--filename-compatible-names", "--step-notifications");}</pre>
      *
+     * @param strict
      * @param argv the arguments
      */
-    public JUnitOptions(List<String> argv) {
+    public JUnitOptions(boolean strict, List<String> argv) {
+        this.strict = strict;
         argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
     }
@@ -50,6 +53,9 @@ public class JUnitOptions {
     }
     public boolean stepNotifications(){
         return stepNotifications;
+    }
+    public boolean isStrict() {
+        return strict;
     }
 
     private void printOptions() {

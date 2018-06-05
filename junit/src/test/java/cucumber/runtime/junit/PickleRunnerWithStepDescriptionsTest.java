@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
+import cucumber.runtime.FeatureCompiler;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.junit.PickleRunners.WithStepDescriptions;
 import cucumber.runtime.model.CucumberFeature;
@@ -44,9 +44,9 @@ public class PickleRunnerWithStepDescriptionsTest {
         };
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickleEvents.get(0),
-                createStandardJUnitReporter()
+                createJUnitOptions()
         );
 
         // fish out the two occurrences of the same step and check whether we really got them
@@ -82,9 +82,9 @@ public class PickleRunnerWithStepDescriptionsTest {
         };
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickleEvents.get(0),
-                createStandardJUnitReporter()
+                createJUnitOptions()
         );
 
         Description runnerDescription = runner.getDescription();
@@ -107,16 +107,12 @@ public class PickleRunnerWithStepDescriptionsTest {
             "    Then another step\n"
         );
 
-        Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
-        }
-
+        FeatureCompiler compiler = new FeatureCompiler();
+        List<PickleEvent> pickleEvents = compiler.compileFeature(features);
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickleEvents.get(0),
-                createStandardJUnitReporter()
+                createJUnitOptions()
         );
 
         // fish out the data from runner
@@ -137,9 +133,9 @@ public class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickles.get(0),
-                createStandardJUnitReporter()
+                createJUnitOptions()
         );
 
         assertEquals("scenario name", runner.getDescription().getDisplayName());
@@ -153,9 +149,9 @@ public class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickleEvents.get(0),
-                createStandardJUnitReporter()
+                createJUnitOptions()
         );
 
         assertEquals("it works", runner.getDescription().getChildren().get(0).getMethodName());
@@ -169,9 +165,9 @@ public class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(Runner.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickles.get(0),
-                createJUnitReporterWithOption("--filename-compatible-names")
+                createJunitOptions("--filename-compatible-names")
         );
 
         assertEquals("scenario_name", runner.getDescription().getDisplayName());
@@ -179,11 +175,11 @@ public class PickleRunnerWithStepDescriptionsTest {
         assertEquals("it_works", runner.getDescription().getChildren().get(0).getMethodName());
     }
 
-    private JUnitReporter createStandardJUnitReporter() {
-        return new JUnitReporter(mock(EventBus.class), false, new JUnitOptions(Collections.<String>emptyList()));
+    private JUnitOptions createJUnitOptions() {
+        return new JUnitOptions(true, Collections.<String>emptyList());
     }
 
-    private JUnitReporter createJUnitReporterWithOption(String option) {
-        return new JUnitReporter(mock(EventBus.class), false, new JUnitOptions(Arrays.asList(option)));
+    private JUnitOptions createJunitOptions(String option) {
+        return new JUnitOptions(true, Arrays.asList(option));
     }
 }

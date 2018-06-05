@@ -1,14 +1,22 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.FeaturePathFeatureSupplier;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.filter.RerunFilters;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import org.custommonkey.xmlunit.Diff;
@@ -16,8 +24,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +34,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +44,8 @@ import java.util.Scanner;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -517,9 +524,23 @@ public class JUnitFormatterTest {
         args.addAll(featurePaths);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(0L), null);
+        BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                Backend backend = mock(Backend.class);
+                when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
+                return asList(backend);
+            }
+        };
+        EventBus bus = new EventBus(new TimeServiceStub(0L));
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
+        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        final cucumber.runtime.Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         return report;
     }
@@ -544,7 +565,7 @@ public class JUnitFormatterTest {
         return formatterOutput;
     }
 
-    private void assertXmlEqual(String expectedPath, File actual) throws IOException, ParserConfigurationException, SAXException {
+    private void assertXmlEqual(String expectedPath, File actual) throws IOException, SAXException {
         XMLUnit.setIgnoreWhitespace(true);
         InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
         Diff diff = new Diff(control, new FileReader(actual));

@@ -3,7 +3,10 @@ package cucumber.runtime;
 import cucumber.api.CucumberOptions;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
-import cucumber.runtime.io.ResourceLoader;
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeService;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -16,53 +19,54 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class RuntimeOptionsFactoryTest {
     @Test
-    public void create_strict() throws Exception {
+    public void create_strict() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Strict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.isStrict());
     }
 
     @Test
-    public void create_non_strict() throws Exception {
+    public void create_non_strict() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NotStrict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
-    public void create_without_options() throws Exception {
+    public void create_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
     }
 
     @Test
-    public void create_without_options_with_base_class_without_options() throws Exception {
+    public void create_without_options_with_base_class_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
     }
 
     @Test
-    public void create_with_no_name() throws Exception {
+    public void create_with_no_name() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NoName.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.getTagFilters().isEmpty());
         assertTrue(runtimeOptions.getNameFilters().isEmpty());
-        assertTrue(runtimeOptions.getLineFilters(mock(ResourceLoader.class)).isEmpty());
+        assertTrue(runtimeOptions.getLineFilters().isEmpty());
     }
 
     @Test
-    public void create_with_multiple_names() throws Exception {
+    public void create_with_multiple_names() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
 
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
@@ -99,22 +103,23 @@ public class RuntimeOptionsFactoryTest {
     public void create_null_formatter_when_no_formatter_plugin_is_defined() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoFormatterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
     }
 
     @Test
     public void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoSummaryPrinterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
     public void inherit_plugin_from_baseclass() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-
-        List<Plugin> plugins = runtimeOptions.getPlugins();
+        List<Plugin> plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions).getPlugins();
         assertPluginExists(plugins, "cucumber.runtime.formatter.JSONFormatter");
         assertPluginExists(plugins, "cucumber.runtime.formatter.PrettyFormatter");
     }
@@ -147,69 +152,69 @@ public class RuntimeOptionsFactoryTest {
 
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
-    static class Snippets {
+    private static class Snippets {
         // empty
     }
 
     @CucumberOptions(strict = true)
-    static class Strict {
+    private static class Strict {
         // empty
     }
 
     @CucumberOptions
-    static class NotStrict {
+    private static class NotStrict {
         // empty
     }
 
     @CucumberOptions(name = {"name1", "name2"})
-    static class MultipleNames {
+    private static class MultipleNames {
         // empty
     }
 
     @CucumberOptions
-    static class NoName {
+    private static class NoName {
         // empty
     }
-    static class WithoutOptions {
+    private static class WithoutOptions {
         // empty
     }
 
-    static class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
+    private static class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
         // empty
     }
 
     @CucumberOptions(plugin = "pretty")
-    static class SubClassWithFormatter extends BaseClassWithFormatter {
+    private static class SubClassWithFormatter extends BaseClassWithFormatter {
         // empty
     }
 
     @CucumberOptions(plugin = "json:test-json-report.json")
-    static class BaseClassWithFormatter {
+    private static class BaseClassWithFormatter {
         // empty
     }
 
     @CucumberOptions(monochrome = true)
-    static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
+    private static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
         // empty
     }
 
     @CucumberOptions(monochrome = false)
-    static class BaseClassWithMonoChromeFalse {
+    private static class BaseClassWithMonoChromeFalse {
         // empty
     }
 
     @CucumberOptions(plugin = "cucumber.runtime.formatter.AnyStepDefinitionReporter")
-    static class ClassWithNoFormatterPlugin {
+    private static class ClassWithNoFormatterPlugin {
         // empty
     }
 
     @CucumberOptions(plugin = "pretty")
-    static class ClassWithNoSummaryPrinterPlugin {
+    private static class ClassWithNoSummaryPrinterPlugin {
         // empty
     }
 
     @CucumberOptions(junit = {"option1", "option2=value"})
-    static class ClassWithJunitOption {
+    private static class ClassWithJunitOption {
         // empty
     }
 

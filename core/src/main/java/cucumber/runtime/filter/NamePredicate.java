@@ -1,14 +1,14 @@
-package cucumber.runtime;
+package cucumber.runtime.filter;
 
 import gherkin.events.PickleEvent;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class NamePredicate implements PicklePredicate {
+class NamePredicate implements PicklePredicate {
     private List<Pattern> patterns;
 
-    public NamePredicate(List<Pattern> patterns) {
+    NamePredicate(List<Pattern> patterns) {
         this.patterns = patterns;
     }
 
