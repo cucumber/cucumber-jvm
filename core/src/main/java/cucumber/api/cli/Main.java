@@ -18,8 +18,6 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.FeatureLoader;
 
-import java.util.ArrayList;
-
 import static java.util.Arrays.asList;
 
 public class Main {
@@ -37,7 +35,7 @@ public class Main {
      * @return 0 if execution was successful, 1 if it was not (test failures)
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new ArrayList<String>(asList(argv)));
+        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(argv));
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);

@@ -14,7 +14,12 @@ public class RunnerSupplier implements Supplier<Runner> {
 
     private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>();
 
-    public RunnerSupplier(RuntimeOptions runtimeOptions, EventBus eventBus, Supplier<Collection<? extends Backend>> backendSupplier, Supplier<Glue> glueSupplier) {
+    public RunnerSupplier(
+        RuntimeOptions runtimeOptions,
+        EventBus eventBus,
+        Supplier<Collection<? extends Backend>> backendSupplier,
+        Supplier<Glue> glueSupplier
+    ) {
         this.backendSupplier = backendSupplier;
         this.runtimeOptions = runtimeOptions;
         this.glueSupplier = glueSupplier;
