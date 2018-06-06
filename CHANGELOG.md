@@ -4,14 +4,14 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
 
 ### Added
- * [Core] Add --wip option (#1381 Hezoide)
+ * [Core] Add --wip option (#1381 Heziode)
  * [Core] Upgrade gherkin to 5.10  (#1377 Aslak Hellesøy)
   
 ### Changed
   * [Core] Upgrade cucumber expressions to 6.0.0 (#1377 Aslak Hellesøy)
     * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
     * Bugfix for nested capture groups.  
-  * [Core] Refactor Runtime (#1367 M.P. Korstanje)
+  * [Core] Refactor Runtime (#1367 M.P. Korstanje, Marit van Dijk)
 
 ### Deprecated
 
