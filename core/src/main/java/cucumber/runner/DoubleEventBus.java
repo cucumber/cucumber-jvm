@@ -23,6 +23,7 @@ public class DoubleEventBus extends BatchedSynchronizingEventBus {
         //TODO: as before it was new BatchedEventBus(this)
         //TODO: which would create a new EventBus with an empty hashset and thus the send would do nothing, from my thinking
         //TODO: as cucumber.api.junit.Cucumber.Cucumber used EventBus (now DefaultEventBus)
+        //TODO: pretty sure my change will result in the event being sent twice, but should write a test to verify
         super.send(event);
         queue(event);
     }
