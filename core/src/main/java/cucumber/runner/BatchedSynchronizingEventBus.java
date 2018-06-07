@@ -19,7 +19,7 @@ abstract class BatchedSynchronizingEventBus implements EventBus {
 
     void queue(final Event event) {
         queue.add(event);
-        if (event.getClass().isInstance(flushEvent)) {
+        if (flushEvent.isAssignableFrom(event.getClass())) {
             flushQueue();
         }
     }
@@ -27,7 +27,7 @@ abstract class BatchedSynchronizingEventBus implements EventBus {
     void flushQueue() {
         synchronized (getSyncObject()) {
             for (Event event : queue) {
-                BatchedSynchronizingEventBus.this.send(event);
+                delegateSend(event);
             }
             queue.clear();
         }
@@ -35,9 +35,13 @@ abstract class BatchedSynchronizingEventBus implements EventBus {
 
     abstract Object getSyncObject();
 
+    private void delegateSend(final Event event) {
+        delegate.send(event);
+    }
+
     @Override
     public void send(final Event event) {
-        delegate.send(event);
+        delegateSend(event);
     }
 
     @Override
