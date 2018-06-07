@@ -3,7 +3,7 @@ package cucumber.api.event;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 
-public final class TestCaseFinished extends TimeStampedEvent {
+public final class TestCaseFinished extends TimeStampedEvent implements TestCaseEvent {
     public final Result result;
     public final TestCase testCase;
 

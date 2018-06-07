@@ -21,7 +21,7 @@ import cucumber.api.TestStep;
  * @see PickleStepTestStep
  * @see HookTestStep
  */
-public final class TestStepFinished extends TimeStampedEvent {
+public final class TestStepFinished extends TimeStampedEvent implements TestCaseEvent {
     public final TestStep testStep;
     public final Result result;
 
