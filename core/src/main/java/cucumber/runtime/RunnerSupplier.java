@@ -13,7 +13,12 @@ public class RunnerSupplier implements Supplier<Runner> {
     private final Supplier<Glue> glueSupplier;
     private final EventBus eventBus;
 
-    private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>();
+    private final ThreadLocal<Runner> runner = new ThreadLocal<Runner>() {
+        @Override
+        protected Runner initialValue() {
+            return createRunner();
+        }
+    };
 
     public RunnerSupplier(RuntimeOptions runtimeOptions, EventBus eventBus, Supplier<Collection<? extends Backend>> backendSupplier, Supplier<Glue> glueSupplier) {
         this.backendSupplier = backendSupplier;
@@ -24,12 +29,7 @@ public class RunnerSupplier implements Supplier<Runner> {
 
     @Override
     public Runner get() {
-        Runner runner = runners.get();
-        if (runner == null) {
-            runner = createRunner();
-            runners.set(runner);
-        }
-        return runner;
+        return runner.get();
     }
 
     private Runner createRunner() {
