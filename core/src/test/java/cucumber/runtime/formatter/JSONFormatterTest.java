@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
@@ -1188,7 +1189,7 @@ public class JSONFormatterTest {
                 return asList(backend);
             }
         };
-        EventBus bus = new EventBus(new TimeServiceStub(1234));
+        EventBus bus = new DefaultEventBus(new TimeServiceStub(1234));
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
 
         Supplier<Glue> glueSupplier = new Supplier<Glue>() {

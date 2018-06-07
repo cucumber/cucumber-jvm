@@ -5,6 +5,7 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -71,7 +72,7 @@ public class JavaStepDefinitionTest {
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {

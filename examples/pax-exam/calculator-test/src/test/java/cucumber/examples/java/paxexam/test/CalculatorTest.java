@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -101,7 +102,7 @@ public class CalculatorTest {
 
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        final EventBus bus = new EventBus(TimeService.SYSTEM);
+        final EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         final Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override

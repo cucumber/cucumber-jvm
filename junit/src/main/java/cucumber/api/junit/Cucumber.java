@@ -4,6 +4,7 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
@@ -91,7 +92,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        this.bus = new EventBus(TimeService.SYSTEM);
+        this.bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         this.runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);

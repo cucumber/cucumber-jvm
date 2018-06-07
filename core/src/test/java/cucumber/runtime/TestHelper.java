@@ -4,6 +4,7 @@ import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.formatter.Formatter;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
@@ -147,7 +148,7 @@ public class TestHelper {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final EventBus bus = new EventBus(timeService);
+        final EventBus bus = new DefaultEventBus(timeService);
         timeService.setEventPublisher(bus);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         formatter.setEventPublisher(bus);
@@ -161,12 +162,13 @@ public class TestHelper {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        Supplier<Runner> runnerSupplier = new Supplier<Runner>() {
+        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
             @Override
-            public Runner get() {
-                return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
+            public Glue get() {
+                return glue;
             }
         };
+        Supplier<Runner> runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
             @Override
             public List<CucumberFeature> get() {

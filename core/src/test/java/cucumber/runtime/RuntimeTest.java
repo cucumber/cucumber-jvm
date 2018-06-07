@@ -5,6 +5,7 @@ import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.filter.Filters;
@@ -25,8 +26,6 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import java.io.IOException;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class RuntimeTest {
     private EventBus bus;
 
     @Test
-    public void runs_feature_with_json_formatter() throws Exception {
+    public void runs_feature_with_json_formatter() {
         final CucumberFeature feature = feature("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -77,7 +76,7 @@ public class RuntimeTest {
                 return singletonList(mock(Backend.class));
             }
         };
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         plugins.addPlugin(jsonFormatter);
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -244,7 +243,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_pass_if_no_features_are_found() throws IOException {
+    public void should_pass_if_no_features_are_found() {
         ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
         Runtime runtime = createStrictRuntime(resourceLoader);
 
@@ -254,18 +253,16 @@ public class RuntimeTest {
     }
 
     @Test
-    public void reports_step_definitions_to_plugin() throws IOException {
+    public void reports_step_definitions_to_plugin() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter"));
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
             public Collection<? extends Backend> get() {
-                Backend backend = mock(Backend.class);
-                Collection<Backend> backends = Arrays.asList(backend);
-                return backends;
+                return Collections.singletonList(mock(Backend.class));
             }
         };
         final StubStepDefinition stepDefinition = new StubStepDefinition("some pattern", new TypeRegistry(Locale.ENGLISH));
@@ -305,7 +302,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
+    public void should_throw_cucumber_exception_if_no_backends_are_found() {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
@@ -316,7 +313,7 @@ public class RuntimeTest {
             };
 
             RuntimeOptions runtimeOptions = new RuntimeOptions("");
-            EventBus bus = new EventBus(TimeService.SYSTEM);
+            EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
             Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
             ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
             FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
@@ -444,19 +441,6 @@ public class RuntimeTest {
         return formatterSpy.toString();
     }
 
-    private PickleStepDefinitionMatch createExceptionThrowingMatch(Exception exception) throws Throwable {
-        PickleStepDefinitionMatch match = mock(PickleStepDefinitionMatch.class);
-        doThrow(exception).when(match).runStep(anyString(), (Scenario) any());
-        return match;
-    }
-
-    private HookDefinition createExceptionThrowingHook() throws Throwable {
-        HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
-        doThrow(new Exception()).when(hook).execute((Scenario) any());
-        return hook;
-    }
-
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(anyString(), eq(".feature"))).thenReturn(Collections.<Resource>emptyList());
@@ -484,7 +468,7 @@ public class RuntimeTest {
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
 
-        this.bus = new EventBus(TimeService.SYSTEM);
+        this.bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override
@@ -535,7 +519,7 @@ public class RuntimeTest {
             }
         };
 
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
@@ -562,13 +546,13 @@ public class RuntimeTest {
     private void mockHook(RuntimeGlue glue, HookDefinition hook, HookType hookType) {
         switch (hookType) {
             case Before:
-                when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
+                when(glue.getBeforeHooks()).thenReturn(Collections.singletonList(hook));
                 return;
             case After:
-                when(glue.getAfterHooks()).thenReturn(Arrays.asList(hook));
+                when(glue.getAfterHooks()).thenReturn(Collections.singletonList(hook));
                 return;
             case AfterStep:
-                when(glue.getAfterStepHooks()).thenReturn(Arrays.asList(hook));
+                when(glue.getAfterStepHooks()).thenReturn(Collections.singletonList(hook));
                 return;
         }
     }

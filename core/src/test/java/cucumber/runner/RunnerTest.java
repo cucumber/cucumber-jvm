@@ -182,7 +182,7 @@ public class RunnerTest {
                 return asList(backend);
             }
         };
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         return new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
     }
 

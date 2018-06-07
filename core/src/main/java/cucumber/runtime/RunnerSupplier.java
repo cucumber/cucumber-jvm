@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runner.DoubleEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 
@@ -36,7 +37,7 @@ public class RunnerSupplier implements Supplier<Runner> {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
-        return new Runner(glueSupplier.get(), eventBus.createBatchedEventBus(), backends, runtimeOptions);
+        return new Runner(glueSupplier.get(), new DoubleEventBus(eventBus), backends, runtimeOptions);
     }
 
 }

@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
@@ -532,7 +533,7 @@ public class JUnitFormatterTest {
                 return asList(backend);
             }
         };
-        EventBus bus = new EventBus(new TimeServiceStub(0L));
+        EventBus bus = new DefaultEventBus(new TimeServiceStub(0L));
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();

@@ -1,5 +1,6 @@
 package cucumber.runtime.junit;
 
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
@@ -222,7 +223,7 @@ public class FeatureRunnerTest {
                 return glue;
             }
         };
-        EventBus bus = new EventBus(timeServiceStub);
+        EventBus bus = new DefaultEventBus(timeServiceStub);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);

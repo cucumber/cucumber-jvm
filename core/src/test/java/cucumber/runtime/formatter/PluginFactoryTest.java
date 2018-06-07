@@ -3,6 +3,7 @@ package cucumber.runtime.formatter;
 import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.TestStepFinished;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
@@ -94,7 +95,7 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
-            EventBus bus = new EventBus(new TimeServiceStub(0));
+            EventBus bus = new DefaultEventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, null, null);
             TestStepFinished event = new TestStepFinished(bus.getTime(), mock(PickleStepTestStep.class), result);

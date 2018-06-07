@@ -10,7 +10,7 @@ public interface EventPublisher {
      * <li>{@link TestRunStarted} - the first event sent.
      * <li>{@link TestSourceRead} - sent for each feature file read, contains the feature file source.
      * <li>{@link SnippetsSuggestedEvent} - sent for each step that could not be matched to a step definition, contains the raw snippets for the step.
-     * <li> {@link TestCaseStarted} - sent before starting the execution of a Test Case(/Pickle/Scenario), contains the Test Case
+     * <li>{@link TestCaseStarted} - sent before starting the execution of a Test Case(/Pickle/Scenario), contains the Test Case
      * <li>{@link TestStepStarted} - sent before starting the execution of a Test Step, contains the Test Step
      * <li>{@link EmbedEvent} - calling scenario.embed in a hook triggers this event.
      * <li>{@link WriteEvent} - calling scenario.write in a hook triggers this event.
@@ -25,4 +25,14 @@ public interface EventPublisher {
      * @param <T> the event type
      */
     <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler);
+
+    /**
+     * Unregister an event handler for a specific event
+     *
+     * @param eventType the event type for which the handler is being registered
+     * @param handler the event handler
+     * @param <T> the event type
+     */
+    <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler);
+
 }
