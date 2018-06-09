@@ -2,6 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.runner.Runner;
 import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.Supplier;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
@@ -39,13 +40,13 @@ class PickleRunners {
 
 
     static class WithStepDescriptions extends ParentRunner<PickleStep> implements PickleRunner {
-        private final Supplier<Runner> runnerSupplier;
+        private final RunnerSupplier runnerSupplier;
         private final PickleEvent pickleEvent;
         private final JUnitOptions jUnitOptions;
         private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
         private Description description;
 
-        WithStepDescriptions(Supplier<Runner> runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {
+        WithStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {
             super(null);
             this.runnerSupplier = runnerSupplier;
             this.pickleEvent = pickleEvent;
@@ -111,12 +112,12 @@ class PickleRunners {
 
     static final class NoStepDescriptions implements PickleRunner {
         private final String featureName;
-        private final Supplier<Runner> runnerSupplier;
+        private final RunnerSupplier runnerSupplier;
         private final PickleEvent pickleEvent;
         private final JUnitOptions jUnitOptions;
         private Description description;
 
-        NoStepDescriptions(String featureName, Supplier<Runner> runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) {
+        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) {
             this.featureName = featureName;
             this.runnerSupplier = runnerSupplier;
             this.pickleEvent = pickleEvent;
@@ -171,14 +172,18 @@ class PickleRunners {
         return name.replaceAll("[^A-Za-z0-9_]", "_");
     }
 
-    private static final class PickleId implements Serializable {
+    static final class PickleId implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String uri;
         private int pickleLine;
 
+        PickleId(String uri, int pickleLine) {
+            this.uri = uri;
+            this.pickleLine = pickleLine;
+        }
+
         PickleId(PickleEvent pickleEvent) {
-            this.uri = pickleEvent.uri;
-            this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
+            this(pickleEvent.uri, pickleEvent.pickle.getLocations().get(0).getLine());
         }
 
         @Override

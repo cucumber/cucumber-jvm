@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.HookType;
 import cucumber.api.Plugin;
 import cucumber.api.Result;
+import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.runner.DefaultEventBus;
@@ -11,20 +12,18 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.FormatterBuilder;
+import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.model.FeatureLoader;
-import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.Scenario;
-import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Rule;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
@@ -74,7 +73,7 @@ public class RuntimeTest {
         Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 return singletonList(mock(Backend.class));
@@ -88,8 +87,8 @@ public class RuntimeTest {
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return singletonList(feature);
@@ -153,41 +152,96 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_with_passed_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+    public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Background: background\n" +
+            "    Given first step\n" +
+            "  Scenario Outline: scenario outline name\n" +
+            "    When <x> step\n" +
+            "    Then <y> step\n" +
+            "    Examples: examples 1 name\n" +
+            "      |   x    |   y   |\n" +
+            "      | second | third |\n" +
+            "      | second | third |\n" +
+            "    Examples: examples 2 name\n" +
+            "      |   x    |   y   |\n" +
+            "      | second | third |\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
 
-        assertEquals(0x0, runtime.exitStatus());
+        String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
+
+        assertEquals("" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestRun finished\n", formatterOutput);
+    }
+
+    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
+        FormatterSpy formatterSpy = new FormatterSpy();
+        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy);
+        return formatterSpy.toString();
     }
 
     @Test
-    public void non_strict_with_passed_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+    public void should_call_formatter_for_two_scenarios_with_background() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Background: background\n" +
+            "    Given first step\n" +
+            "  Scenario: scenario_1 name\n" +
+            "    When second step\n" +
+            "    Then third step\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Then second step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
 
-        assertEquals(0x0, runtime.exitStatus());
-    }
+        String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
-    @Test
-    public void non_strict_with_undefined_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
-        assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void strict_with_undefined_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
-        assertEquals(0x1, runtime.exitStatus());
-    }
-
-    @Test
-    public void strict_with_pending_scenarios() {
-        Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
-
-        assertEquals(0x1, runtime.exitStatus());
+        assertEquals("" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestRun finished\n", formatterOutput);
     }
 
     @Test
@@ -538,15 +592,14 @@ public class RuntimeTest {
         }
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
 
-        Supplier<Collection<? extends Backend>> backends = backendSupplier != null
-            ? backendSupplier
-            : new Supplier<Collection<? extends Backend>>() {
-                @Override
-                public Collection<? extends Backend> get() {
-                    return Collections.singletonList(mock(Backend.class));
-                }
-            };
-        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                Backend backend = mock(Backend.class);
+                return singletonList(backend);
+            }
+        };
+        GlueSupplier glueSupplier = new GlueSupplier() {
             @Override
             public Glue get() {
                 final RuntimeGlue glue = mock(RuntimeGlue.class);
@@ -559,13 +612,13 @@ public class RuntimeTest {
         EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return singletonList(feature);
             }
         };
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backends, glueSupplier);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backends, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
@@ -594,7 +647,88 @@ public class RuntimeTest {
         }
     }
 
-    private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, null, null));
+    @Test
+    public void should_pass_if_no_features_are_found() throws IOException {
+        ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
+        Runtime runtime = createStrictRuntime(resourceLoader);
+
+        runtime.run();
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.resources(anyString(), eq(".feature"))).thenReturn(Collections.<Resource>emptyList());
+        return resourceLoader;
+    }
+
+    private Runtime createStrictRuntime(ResourceLoader resourceLoader) {
+        return createRuntime(resourceLoader, Thread.currentThread().getContextClassLoader(), "-g", "anything", "--strict");
+    }
+
+    @Test
+    public void strict_with_ambiguous_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    private Runtime createStrictRuntime() {
+        return createRuntime("-g", "anything", "--strict");
+    }
+
+    @Test
+    public void strict_with_failed_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_passed_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_pending_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_skipped_scenarios() {
+        Runtime runtime = createNonStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_undefined_scenarios() {
+        Runtime runtime = createStrictRuntime();
+        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    public static class StepdefsPrinter implements StepDefinitionReporter {
+        static StepdefsPrinter instance;
+        StepDefinition stepDefinition;
+
+        public StepdefsPrinter() {
+            instance = this;
+        }
+
+        @Override
+        public void stepDefinition(StepDefinition stepDefinition) {
+            this.stepDefinition = stepDefinition;
+        }
     }
 }

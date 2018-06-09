@@ -3,7 +3,7 @@ package cucumber.runtime.junit;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import gherkin.events.PickleEvent;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
                 "feature name",
-                mock(RunnerSupplier.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickles.get(0),
                 createJUnitOptions()
         );
@@ -40,7 +40,7 @@ public class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
                 "feature name",
-                mock(RunnerSupplier.class),
+                mock(ThreadLocalRunnerSupplier.class),
                 pickles.get(0),
                 createJUnitOptions("--filename-compatible-names")
         );

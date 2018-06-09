@@ -23,6 +23,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -33,7 +34,7 @@ public class HookOrderTest {
     private final static String ENGLISH = "en";
 
     private Runner runner;
-    private final Supplier<Glue> glueSupplier = new TestGlueHelper();
+    private final GlueSupplier glueSupplier = new TestGlueHelper();
     private final Glue glue = glueSupplier.get();
     private PickleEvent pickleEvent;
 
@@ -41,17 +42,17 @@ public class HookOrderTest {
     public void buildMockWorld() {
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
-                return asList(mock(Backend.class));
+                return singletonList(mock(Backend.class));
             }
         };
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
         when(stepDefinition.getPattern()).thenReturn("pattern1");        
-        runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
         glue.addStepDefinition(stepDefinition);
 
         pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));

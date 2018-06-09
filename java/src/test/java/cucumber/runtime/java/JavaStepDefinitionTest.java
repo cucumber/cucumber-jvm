@@ -16,7 +16,6 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.RunnerSupplier;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.Supplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -73,22 +72,20 @@ public class JavaStepDefinitionTest {
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 return asList(backend);
             }
         };
-
         final Glue glue = new RuntimeGlue();
-        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+        GlueSupplier glueSupplier = new GlueSupplier() {
             @Override
             public Glue get() {
                 return glue;
             }
-        };
-        
-        this.runner = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        };        
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
 
         backend.loadGlue(glue, Collections.<String>emptyList());
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {

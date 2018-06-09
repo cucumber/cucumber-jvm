@@ -2,7 +2,9 @@ package cucumber.runner;
 
 import cucumber.runtime.Glue;
 import cucumber.runtime.RunnerSupplier;
-import cucumber.runtime.Supplier;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runtime.RuntimeGlueSupplier;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
@@ -27,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -42,7 +45,7 @@ public class RunnerTest {
     private static final List<PickleTag> NO_TAGS = Collections.emptyList();
     private static final List<PickleLocation> MOCK_LOCATIONS = asList(mock(PickleLocation.class));
     private final Backend backend = mock(Backend.class);
-    private final Supplier<Glue> glueSupplier = new TestGlueHelper();
+    private final GlueSupplier glueSupplier = new TestGlueHelper();
     private final Glue glue = glueSupplier.get();
     private final Runner runner = createRunner(backend);
     
@@ -176,14 +179,14 @@ public class RunnerTest {
 
     private Runner createRunner(final Backend backend, String options) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(options);
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
-                return asList(backend);
+                return singletonList(backend);
             }
         };
         EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-        return new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        return new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
     }
 
     private HookDefinition addBeforeHook() {

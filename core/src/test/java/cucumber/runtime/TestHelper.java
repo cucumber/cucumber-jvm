@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -174,23 +175,23 @@ public class TestHelper {
         final EventBus bus = new TestTimeSupportingEventBus(actualBus);
         timeService.setEventPublisher(bus);
 
-        final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+        final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
-                return asList(mock(Backend.class));
+                return singletonList(mock(Backend.class));
             }
         };
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        Supplier<Glue> glueSupplier = new Supplier<Glue>() {
+        GlueSupplier glueSupplier = new GlueSupplier() {
             @Override
             public Glue get() {
                 return glue;
             }
         };
-        Supplier<Runner> runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        Supplier<List<CucumberFeature>> featureSupplier = new Supplier<List<CucumberFeature>>() {
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return features;
