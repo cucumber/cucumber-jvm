@@ -6,18 +6,11 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.FeaturePathFeatureSupplier;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import org.custommonkey.xmlunit.Diff;
@@ -513,6 +506,7 @@ public class JUnitFormatterTest {
 
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
+
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
@@ -524,7 +518,6 @@ public class JUnitFormatterTest {
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -534,15 +527,16 @@ public class JUnitFormatterTest {
             }
         };
         EventBus bus = new DefaultEventBus(new TimeServiceStub(0L));
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        final cucumber.runtime.Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-        runtime.run();
+
+        Runtime.builder()
+            .withArgs(args)
+            .withClassLoader(classLoader)
+            .withResourceLoader(resourceLoader)
+            .withEventBus(bus)
+            .withBackendSupplier(backendSupplier)
+            .build()
+            .run();
+
         return report;
     }
 

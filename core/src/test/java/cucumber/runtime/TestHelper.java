@@ -162,16 +162,24 @@ public class TestHelper {
         for(final String arg : runtimeArgs) {
             additionalArgs.append(" ").append(arg);
         }
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null" + additionalArgs.toString());
+
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
+        final GlueSupplier glueSupplier = new GlueSupplier() {
+            @Override
+            public Glue get() {
+                return glue;
+            }
+        };
+
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
         final EventBus actualBus = new TestCaseSyncEventBus(new DefaultEventBus(timeService));
         if (formatter != null) {
             formatter.setEventPublisher(actualBus);
         }
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), actualBus, runtimeOptions);
+
         final EventBus bus = new TestTimeSupportingEventBus(actualBus);
         timeService.setEventPublisher(bus);
 
@@ -181,25 +189,23 @@ public class TestHelper {
                 return singletonList(mock(Backend.class));
             }
         };
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                return glue;
-            }
-        };
-        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
+        final FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return features;
             }
         };
-        final Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 
-        runtime.run();
+        Runtime.builder()
+            .withArg("-p null" + additionalArgs.toString())
+            .withClassLoader(classLoader)
+            .withResourceLoader(resourceLoader)
+            .withEventBus(bus)
+            .withGlueSupplier(glueSupplier)
+            .withBackendSupplier(backendSupplier)
+            .withFeatureSupplier(featureSupplier)
+            .build()
+            .run();
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

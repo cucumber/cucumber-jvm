@@ -3,20 +3,14 @@ package cucumber.runtime;
 import cucumber.api.HookType;
 import cucumber.api.Plugin;
 import cucumber.api.Result;
+import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.FormatterBuilder;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.model.FeatureLoader;
-import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.Scenario;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -39,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.cucumber.stepexpression.TypeRegistry;
+
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
@@ -56,7 +52,7 @@ import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
-    private EventBus bus;
+    private final EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -73,31 +69,25 @@ public class RuntimeTest {
 
         Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions("");
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 return singletonList(mock(Backend.class));
             }
         };
-        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        plugins.addPlugin(jsonFormatter);
-        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return singletonList(feature);
             }
         };
-        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-
-        runtime.run();
+        Runtime.builder()
+            .withBackendSupplier(backendSupplier)
+            .withAdditionalPlugins(jsonFormatter)
+            .withResourceLoader(new ClasspathResourceLoader(classLoader))
+            .withFeatureSupplier(featureSupplier)
+            .build()
+            .run();
 
         String expected = "[\n" +
             "  {\n" +
@@ -259,10 +249,6 @@ public class RuntimeTest {
     @Test
     public void reports_step_definitions_to_plugin() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(asList("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter"));
-        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -279,14 +265,14 @@ public class RuntimeTest {
                 return glue;
             }
         };
-        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        FeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
-        Runtime runtime = new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
 
-        runtime.run();
+        Runtime.builder()
+            .withResourceLoader(resourceLoader)
+            .withArgs("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter")
+            .withBackendSupplier(backendSupplier)
+            .withGlueSupplier(glueSupplier)
+            .build()
+            .run();
 
         assertSame(stepDefinition, StepdefsPrinter.instance.stepDefinition);
     }
@@ -474,10 +460,6 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
-
-        this.bus = new DefaultEventBus(TimeService.SYSTEM);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -485,13 +467,14 @@ public class RuntimeTest {
                 return singletonList(backend);
             }
         };
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        FeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
-        return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+
+        return Runtime.builder()
+            .withArgs(runtimeArgs)
+            .withClassLoader(classLoader)
+            .withResourceLoader(resourceLoader)
+            .withBackendSupplier(backendSupplier)
+            .withEventBus(bus)
+            .build();
     }
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType,
@@ -510,7 +493,6 @@ public class RuntimeTest {
         if (!args.contains("-p")) {
             args.addAll(asList("-p", "null"));
         }
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
 
         BackendSupplier backends = backendSupplier != null
             ? backendSupplier
@@ -520,6 +502,7 @@ public class RuntimeTest {
                     return Collections.singletonList(mock(Backend.class));
                 }
             };
+
         GlueSupplier glueSupplier = new GlueSupplier() {
             @Override
             public Glue get() {
@@ -530,19 +513,22 @@ public class RuntimeTest {
             }
         };
 
-        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {
                 return singletonList(feature);
             }
         };
-        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backends, glueSupplier);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
+
+        return Runtime.builder()
+            .withResourceLoader(resourceLoader)
+            .withClassLoader(classLoader)
+            .withArgs(args)
+            .withBackendSupplier(backends)
+            .withGlueSupplier(glueSupplier)
+            .withFeatureSupplier(featureSupplier)
+            .build();
+
     }
 
     private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {

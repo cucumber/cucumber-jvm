@@ -1,14 +1,26 @@
 package cucumber.runtime;
 
+import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
+import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.ParallelFeatureRunner;
+import cucumber.runner.TestCaseSyncEventBus;
+import cucumber.runner.TimeService;
 import cucumber.runtime.filter.Filters;
+import cucumber.runtime.filter.RerunFilters;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,6 +38,9 @@ public class Runtime {
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
 
+    //TODO: would be nice to make this private and enforce usage of Builder
+    //TODO: this would mean any changes required would be nicely hidden away
+    //TODO: and all the complexity of setup remains within the builder itself
     public Runtime(Plugins plugins,
                    RuntimeOptions runtimeOptions,
                    EventBus bus,
@@ -65,4 +80,112 @@ public class Runtime {
         return exitStatus.exitStatus(runtimeOptions.isStrict());
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private EventBus eventBus = new TestCaseSyncEventBus(new DefaultEventBus(TimeService.SYSTEM));
+        private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        private RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        private BackendSupplier backendSupplier;
+        private ResourceLoader resourceLoader;
+        private ClassFinder classFinder;
+        private GlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        private FeatureSupplier featureSupplier;
+        private List<Plugin> additionalPlugins = Collections.emptyList();
+
+        private Builder() {
+        }
+
+        public Builder withArg(final String arg) {
+            this.runtimeOptions = new RuntimeOptions(arg);
+            return this;
+        }
+
+        public Builder withArgs(final String... args) {
+            return withArgs(Arrays.asList(args));
+        }
+
+        public Builder withArgs(final List<String> args) {
+            this.runtimeOptions = new RuntimeOptions(args);
+            return this;
+        }
+
+        public Builder withRuntimeOptions(final RuntimeOptions runtimeOptions) {
+            this.runtimeOptions = runtimeOptions;
+            return this;
+        }
+
+        public Builder withClassLoader(final ClassLoader classLoader) {
+            this.classLoader = classLoader;
+            return this;
+        }
+
+        public Builder withResourceLoader(final ResourceLoader resourceLoader) {
+            this.resourceLoader = resourceLoader;
+            return this;
+        }
+
+        public Builder withClassFinder(final ClassFinder classFinder) {
+            this.classFinder = classFinder;
+            return this;
+        }
+
+        public Builder withBackendSupplier(final BackendSupplier backendSupplier) {
+            this.backendSupplier = backendSupplier;
+            return this;
+        }
+
+        public Builder withGlueSupplier(final GlueSupplier glueSupplier) {
+            this.glueSupplier = glueSupplier;
+            return this;
+        }
+
+        public Builder withFeatureSupplier(final FeatureSupplier featureSupplier) {
+            this.featureSupplier = featureSupplier;
+            return this;
+        }
+
+        public Builder withAdditionalPlugins(final Plugin... plugins) {
+            this.additionalPlugins = Arrays.asList(plugins);
+            return this;
+        }
+
+        public Builder withEventBus(final EventBus eventBus) {
+            this.eventBus = eventBus;
+            return this;
+        }
+
+        public Runtime build() {
+            ResourceLoader resourceLoader = this.resourceLoader != null
+                ? this.resourceLoader
+                : new MultiLoader(this.classLoader);
+
+            ClassFinder classFinder = this.classFinder != null
+                ? this.classFinder
+                : new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
+
+            BackendSupplier backendSupplier = this.backendSupplier != null
+                ? this.backendSupplier
+                : new BackendModuleBackendSupplier(resourceLoader, classFinder, this.runtimeOptions);
+
+            final Plugins plugins = new Plugins(this.classLoader, new PluginFactory(), this.eventBus, this.runtimeOptions);
+            for (final Plugin plugin : additionalPlugins) {
+                plugins.addPlugin(plugin);
+            }
+
+            final RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+            final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+
+            final FeatureSupplier featureSupplier = this.featureSupplier != null
+                ? this.featureSupplier
+                : new FeaturePathFeatureSupplier(featureLoader, this.runtimeOptions);
+
+            final RerunFilters rerunFilters = new RerunFilters(this.runtimeOptions, featureLoader);
+            final Filters filters = new Filters(this.runtimeOptions, rerunFilters);
+            return new Runtime(plugins, this.runtimeOptions, this.eventBus, filters, runnerSupplier, featureSupplier);
+        }
+    }
 }
