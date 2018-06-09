@@ -1,7 +1,7 @@
 package cucumber.api.cli;
 
 import cucumber.runner.DefaultEventBus;
-import cucumber.runner.EventBus;
+import cucumber.runner.TestCaseSyncEventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
@@ -43,7 +43,7 @@ public class Main {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        DefaultEventBus bus = new DefaultEventBus(TimeService.SYSTEM);
+        TestCaseSyncEventBus bus = new TestCaseSyncEventBus(new DefaultEventBus(TimeService.SYSTEM));
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);

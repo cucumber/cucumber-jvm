@@ -8,6 +8,8 @@ import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
+import cucumber.runner.TestCaseSyncEventBus;
+import cucumber.runner.TestTimeSupportingEventBus;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PickleStepMatcher;
@@ -164,10 +166,11 @@ public class TestHelper {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final EventBus bus = new DefaultEventBus(timeService);
+        final EventBus actualBus = new TestCaseSyncEventBus(new DefaultEventBus(timeService));
+        formatter.setEventPublisher(actualBus);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), actualBus, runtimeOptions);
+        final EventBus bus = new TestTimeSupportingEventBus(actualBus);
         timeService.setEventPublisher(bus);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        formatter.setEventPublisher(bus);
 
         final Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
             @Override

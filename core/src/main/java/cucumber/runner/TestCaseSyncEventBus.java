@@ -14,7 +14,12 @@ public class TestCaseSyncEventBus implements EventBus {
     private static final Object SYNC = new Object();
     private static final Class<? extends Event> FLUSH_EVENT = TestCaseFinished.class;
 
-    private final List<Event> queue = new ArrayList<Event>();
+    private final ThreadLocal<List<Event>> queue = new ThreadLocal<List<Event>>() {
+        @Override
+        protected List<Event> initialValue() {
+            return new ArrayList<Event>();
+        }
+    };
     private final EventBus delegate;
 
     public TestCaseSyncEventBus(final EventBus delegate) {
@@ -32,7 +37,7 @@ public class TestCaseSyncEventBus implements EventBus {
     }
 
     void queue(final Event event) {
-        queue.add(event);
+        queue.get().add(event);
         if (FLUSH_EVENT.isAssignableFrom(event.getClass())) {
             flushQueue();
         }
@@ -40,10 +45,10 @@ public class TestCaseSyncEventBus implements EventBus {
 
     void flushQueue() {
         synchronized (SYNC) {
-            for (Event event : queue) {
+            for (Event event : queue.get()) {
                 delegate.send(event);
             }
-            queue.clear();
+            queue.get().clear();
         }
     }
 
