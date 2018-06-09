@@ -2,6 +2,8 @@ Usage: java cucumber.api.cli.Main [options] [[[FILE|DIR][:LINE[:LINE]*] ]+ | @FI
 
 Options:
 
+  --threads COUNT                        Number of threads to run tests under. 
+                                         Defaults to 1.
   -g, --glue PATH                        Where glue code (step definitions, hooks
                                          and plugins) are loaded from.
   -p, --[add-]plugin PLUGIN[:PATH_OR_URL]
