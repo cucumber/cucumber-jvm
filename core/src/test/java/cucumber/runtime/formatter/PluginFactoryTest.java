@@ -172,6 +172,12 @@ public class PluginFactoryTest {
         assertEquals("hello", plugin.arg);
     }
 
+    @Test
+    public void instantiates_timeline_plugin_with_dir_arg() throws IOException {
+        Object plugin = fc.create("timeline:" + TempDir.createTempDirectory().getAbsolutePath());
+        assertEquals(TimelineFormatter.class, plugin.getClass());
+    }
+
     public static class WantsAppendable extends StubFormatter {
         public final Appendable out;
 

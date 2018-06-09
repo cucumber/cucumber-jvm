@@ -167,7 +167,9 @@ public class TestHelper {
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
         final EventBus actualBus = new TestCaseSyncEventBus(new DefaultEventBus(timeService));
-        formatter.setEventPublisher(actualBus);
+        if (formatter != null) {
+            formatter.setEventPublisher(actualBus);
+        }
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), actualBus, runtimeOptions);
         final EventBus bus = new TestTimeSupportingEventBus(actualBus);
         timeService.setEventPublisher(bus);
