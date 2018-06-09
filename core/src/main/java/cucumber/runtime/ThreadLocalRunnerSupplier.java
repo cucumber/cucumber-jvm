@@ -13,7 +13,12 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final GlueSupplier glueSupplier;
     private final EventBus eventBus;
 
-    private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>();
+    private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>() {
+        @Override
+        protected Runner initialValue() {
+            return createRunner();
+        }
+    };
 
     public ThreadLocalRunnerSupplier(
         RuntimeOptions runtimeOptions,
@@ -29,16 +34,11 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
     @Override
     public Runner get() {
-        Runner runner = runners.get();
-        if (runner == null) {
-            runner = createRunner();
-            runners.set(runner);
-        }
-        return runner;
+        return runners.get();
     }
 
     private Runner createRunner() {
-        return new Runner(glueSupplier.get(), eventBus.createBatchedEventBus(), backendSupplier.get(), runtimeOptions);
+        return new Runner(glueSupplier.get(), eventBus, backendSupplier.get(), runtimeOptions);
     }
 
 }

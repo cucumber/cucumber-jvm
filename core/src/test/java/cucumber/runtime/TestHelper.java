@@ -190,7 +190,7 @@ public class TestHelper {
                 return glue;
             }
         };
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         FeatureSupplier featureSupplier = new FeatureSupplier() {
             @Override
             public List<CucumberFeature> get() {

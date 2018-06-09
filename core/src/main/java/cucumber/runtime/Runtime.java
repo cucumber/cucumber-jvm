@@ -5,7 +5,6 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.ParallelFeatureRunner;
-import cucumber.runner.Runner;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.model.CucumberFeature;
@@ -24,7 +23,6 @@ public class Runtime {
     private final RunnerSupplier runnerSupplier;
     private final Filters filters;
     private final EventBus bus;
-    private final FeatureCompiler compiler = new FeatureCompiler();
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
 

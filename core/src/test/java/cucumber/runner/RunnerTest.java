@@ -1,10 +1,9 @@
 package cucumber.runner;
 
 import cucumber.runtime.Glue;
-import cucumber.runtime.RunnerSupplier;
+import cucumber.runtime.GlueSupplier;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
