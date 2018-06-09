@@ -4,11 +4,11 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
+import cucumber.runner.ParallelFeatureRunner;
 import cucumber.runner.Runner;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.events.PickleEvent;
 
 import java.util.List;
 
@@ -21,10 +21,9 @@ public class Runtime {
 
     private final RuntimeOptions runtimeOptions;
 
-    private final Runner runner;
+    private final Supplier<Runner> runnerSupplier;
     private final Filters filters;
     private final EventBus bus;
-    private final FeatureCompiler compiler = new FeatureCompiler();
     private final Supplier<List<CucumberFeature>> featureSupplier;
     private final Plugins plugins;
 
@@ -40,7 +39,7 @@ public class Runtime {
         this.runtimeOptions = runtimeOptions;
         this.filters = filters;
         this.bus = bus;
-        this.runner = runnerSupplier.get();
+        this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         exitStatus.setEventPublisher(bus);
     }
@@ -48,27 +47,19 @@ public class Runtime {
     public void run() {
         List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(bus);
-        }
-
+        
         StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
-
-        runner.reportStepDefinitions(stepDefinitionReporter);
-
-        for (CucumberFeature cucumberFeature : features) {
-            runFeature(cucumberFeature);
+        runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
+        
+        final int requestedThreads = runtimeOptions.getThreads();
+        if (!features.isEmpty()) {
+            for (CucumberFeature feature : features) {
+                feature.sendTestSourceRead(bus);
+            }
+            ParallelFeatureRunner.run(new FeatureRunner(filters, runnerSupplier), features, requestedThreads);
         }
 
         bus.send(new TestRunFinished(bus.getTime()));
-    }
-
-    private void runFeature(CucumberFeature feature) {
-        for (PickleEvent pickleEvent : compiler.compileFeature(feature)) {
-            if (filters.matchesFilters(pickleEvent)) {
-                runner.runPickle(pickleEvent);
-            }
-        }
     }
 
     public byte exitStatus() {

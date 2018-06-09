@@ -9,7 +9,9 @@ import cucumber.runner.DefaultEventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +27,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class RuntimeOptionsTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     @Test
     public void has_version_from_properties_file() {
         assertTrue(RuntimeOptions.VERSION.matches("\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?"));
@@ -322,6 +328,25 @@ public class RuntimeOptionsTest {
         } catch (CucumberException e) {
             assertEquals("Unknown option: -concreteUnsupportedOption", e.getMessage());
         }
+    }
+
+    @Test
+    public void threads_default_1() {
+        RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
+        assertEquals(1, options.getThreads());
+    }
+
+    @Test
+    public void ensure_threads_param_is_used() {
+        RuntimeOptions options = new RuntimeOptions(asList("--threads", "10"));
+        assertEquals(10, options.getThreads());
+    }
+
+    @Test
+    public void ensure_less_than_1_thread_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("--threads must be > 0");
+        new RuntimeOptions(asList("--threads", "0"));
     }
 
     public static final class AwareFormatter implements StrictAware, ColorAware {

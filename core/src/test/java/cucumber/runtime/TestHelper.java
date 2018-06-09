@@ -131,19 +131,35 @@ public class TestHelper {
     }
 
     public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
+                                                final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
+        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks,
+            Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
+    }
+
+    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
+                                                final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter, int threads) throws Throwable {
+        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks,
+            Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(),
+            stepHookDuration, formatter, "--threads" , String.valueOf(threads));
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation,
                                                final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), Collections.<String, Result>emptyMap(), stepsToLocation,
-                Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), 0L, formatter);
+            Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), 0L, formatter);
     }
 
-    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null");
+    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
+                                                final Map<String, String> stepsToLocation, final List<SimpleEntry<String, Result>> hooks,
+                                                final List<String> hookLocations, final List<Answer<Object>> hookActions,
+                                                final long stepHookDuration, final Formatter formatter, final String... runtimeArgs
+    ) throws Throwable {
+
+        final StringBuilder additionalArgs = new StringBuilder();
+        for(final String arg : runtimeArgs) {
+            additionalArgs.append(" ").append(arg);
+        }
+        final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null" + additionalArgs.toString());
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);

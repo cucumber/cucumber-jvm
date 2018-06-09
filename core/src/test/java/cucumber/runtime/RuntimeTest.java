@@ -24,7 +24,9 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -43,7 +45,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollectionOf;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -56,6 +57,9 @@ import static org.mockito.Mockito.when;
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
     private EventBus bus;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void runs_feature_with_json_formatter() {
@@ -303,30 +307,28 @@ public class RuntimeTest {
 
     @Test
     public void should_throw_cucumber_exception_if_no_backends_are_found() {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
-                @Override
-                public Collection<? extends Backend> get() {
-                    return Collections.<Backend>emptyList();
-                }
-            };
 
-            RuntimeOptions runtimeOptions = new RuntimeOptions("");
-            EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
-            Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-            ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-            FeatureSupplier featureSupplier = new FeatureSupplier(new FeatureLoader(resourceLoader), runtimeOptions);
-            RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-            RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-            FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-            RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-            Filters filters = new Filters(runtimeOptions, rerunFilters);
-            new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
-            fail("A CucumberException should have been thrown");
-        } catch (CucumberException e) {
-            assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
-        }
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+            "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    When second step\n" +
+                "    Then third step\n");
+        HookDefinition beforeHook = mock(HookDefinition.class);
+        when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
+
+        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return Collections.<Backend>emptyList();
+            }
+        };
+
+        final Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), false, beforeHook, HookType.Before, feature, backendSupplier);
+        runtime.run();
     }
 
     @Test
@@ -435,6 +437,38 @@ public class RuntimeTest {
             "TestRun finished\n", formatterOutput);
     }
 
+    @Test
+    public void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() throws Throwable {
+        CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
+            "Feature: feature name 1\n" +
+            "  Scenario: scenario_1 name\n" +
+            "    Given first step\n");
+
+        CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+            "Feature: feature name 2\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Given first step\n");
+
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+
+        FormatterSpy formatterSpy = new FormatterSpy();
+        final List<CucumberFeature> features = Arrays.asList(feature1, feature2);
+        TestHelper.runFeaturesWithFormatter(features, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy, features.size());
+        String formatterOutput = formatterSpy.toString();
+
+        assertEquals("" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestRun finished\n", formatterOutput);
+    }
+
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
         FormatterSpy formatterSpy = new FormatterSpy();
         TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy);
@@ -488,11 +522,14 @@ public class RuntimeTest {
 
     private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType,
                                                 CucumberFeature feature, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, hookType, feature, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, hook, hookType, feature, null, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final boolean isAmbiguous,
-                                                final HookDefinition hook, final HookType hookType, final CucumberFeature feature, String... runtimeArgs) {
+                                                final HookDefinition hook, final HookType hookType,
+                                                final CucumberFeature feature,
+                                                final Supplier<Collection<? extends Backend>> backendSupplier,
+                                                final String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = getClass().getClassLoader();
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
@@ -501,14 +538,14 @@ public class RuntimeTest {
         }
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
 
-
-        Supplier<Collection<? extends Backend>> backendSupplier = new Supplier<Collection<? extends Backend>>() {
-            @Override
-            public Collection<? extends Backend> get() {
-                Backend backend = mock(Backend.class);
-                return singletonList(backend);
-            }
-        };
+        Supplier<Collection<? extends Backend>> backends = backendSupplier != null
+            ? backendSupplier
+            : new Supplier<Collection<? extends Backend>>() {
+                @Override
+                public Collection<? extends Backend> get() {
+                    return Collections.singletonList(mock(Backend.class));
+                }
+            };
         Supplier<Glue> glueSupplier = new Supplier<Glue>() {
             @Override
             public Glue get() {
@@ -528,7 +565,7 @@ public class RuntimeTest {
                 return singletonList(feature);
             }
         };
-        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        RunnerSupplier runnerSupplier = new RunnerSupplier(runtimeOptions, bus, backends, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         return new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier);
