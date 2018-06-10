@@ -19,10 +19,13 @@ import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,14 +42,15 @@ public class Runtime {
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
+    private final ExecutorService executor;
 
     public Runtime(final Plugins plugins,
-            final RuntimeOptions runtimeOptions,
-            final EventBus bus,
-            final Filters filters,
-            final RunnerSupplier runnerSupplier,
-            final FeatureSupplier featureSupplier
-    ) {
+                   final RuntimeOptions runtimeOptions,
+                   final EventBus bus,
+                   final Filters filters,
+                   final RunnerSupplier runnerSupplier,
+                   final FeatureSupplier featureSupplier,
+                   final ExecutorService executor) {
 
         this.plugins = plugins;
         this.runtimeOptions = runtimeOptions;
@@ -54,6 +58,7 @@ public class Runtime {
         this.bus = bus;
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
+        this.executor = executor;
         exitStatus.setEventPublisher(bus);
     }
 
@@ -67,12 +72,11 @@ public class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        final ExecutorService executor = Executors.newFixedThreadPool(runtimeOptions.getThreads());
         final FeatureCompiler compiler = new FeatureCompiler();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : compiler.compileFeature(feature)) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    executor.submit(new Runnable() {
+                    executor.execute(new Runnable() {
                         @Override
                         public void run() {
                             runnerSupplier.get().runPickle(pickleEvent);
@@ -82,10 +86,8 @@ public class Runtime {
             }
         }
         executor.shutdown();
-
-        do {
-            executor.awaitTermination(1, TimeUnit.DAYS);
-        } while (!executor.isShutdown());
+        //noinspection StatementWithEmptyBody we wait, nothing else
+        while (!executor.awaitTermination(1, TimeUnit.DAYS));
 
         bus.send(new TestRunFinished(bus.getTime()));
     }
@@ -190,7 +192,14 @@ public class Runtime {
                 plugins.addPlugin(plugin);
             }
 
-            final RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+            final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
+                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier)
+                : new SingletonRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+
+            final ExecutorService executor = runtimeOptions.isMultiThreaded()
+                ? Executors.newFixedThreadPool(runtimeOptions.getThreads())
+                : new SameThreadExecutorService();
+
 
             final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
 
@@ -200,7 +209,75 @@ public class Runtime {
 
             final RerunFilters rerunFilters = new RerunFilters(this.runtimeOptions, featureLoader);
             final Filters filters = new Filters(this.runtimeOptions, rerunFilters);
-            return new Runtime(plugins, this.runtimeOptions, this.eventBus, filters, runnerSupplier, featureSupplier);
+            return new Runtime(plugins, this.runtimeOptions, this.eventBus, filters, runnerSupplier, featureSupplier, executor);
+        }
+    }
+
+    private static final class SameThreadExecutorService implements ExecutorService {
+
+        @Override
+        public void execute(Runnable command) {
+            command.run();
+        }
+
+        @Override
+        public void shutdown() {
+            // no-op
+        }
+
+        @Override
+        public List<Runnable> shutdownNow() {
+            throw new UnsupportedOperationException("shutdownNow");
+        }
+
+        @Override
+        public boolean isShutdown() {
+            return true;
+        }
+
+        @Override
+        public boolean isTerminated() {
+            return true;
+        }
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) {
+            return true;
+        }
+
+        @Override
+        public <T> Future<T> submit(Callable<T> task) {
+            throw new UnsupportedOperationException("submit");
+        }
+
+        @Override
+        public <T> Future<T> submit(Runnable task, T result) {
+            throw new UnsupportedOperationException("submit");
+        }
+
+        @Override
+        public Future<?> submit(Runnable task) {
+            throw new UnsupportedOperationException("submit");
+        }
+
+        @Override
+        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) {
+            throw new UnsupportedOperationException("invokeAll");
+        }
+
+        @Override
+        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) {
+            throw new UnsupportedOperationException("invokeAll");
+        }
+
+        @Override
+        public <T> T invokeAny(Collection<? extends Callable<T>> tasks) {
+            throw new UnsupportedOperationException("invokeAny");
+        }
+
+        @Override
+        public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) {
+            throw new UnsupportedOperationException("invokeAny");
         }
     }
 }

@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
-import io.cucumber.datatable.DataTable;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.PathWithLines;
 import cucumber.util.FixJava;
@@ -9,6 +8,7 @@ import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
+import io.cucumber.datatable.DataTable;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -98,6 +98,10 @@ public class RuntimeOptions {
         if (pluginSummaryPrinterNames.isEmpty()) {
             pluginSummaryPrinterNames.add("default_summary");
         }
+    }
+
+    public boolean isMultiThreaded() {
+        return threads > 1;
     }
 
     public RuntimeOptions noSummaryPrinter() {
