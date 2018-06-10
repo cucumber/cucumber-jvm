@@ -19,13 +19,11 @@ import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,7 +60,7 @@ public class Runtime {
         exitStatus.setEventPublisher(bus);
     }
 
-    public void run() throws InterruptedException {
+    public void run() {
         final List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
@@ -86,8 +84,12 @@ public class Runtime {
             }
         }
         executor.shutdown();
-        //noinspection StatementWithEmptyBody we wait, nothing else
-        while (!executor.awaitTermination(1, TimeUnit.DAYS));
+        try{
+            //noinspection StatementWithEmptyBody we wait, nothing else
+            while (!executor.awaitTermination(1, TimeUnit.DAYS)) ;
+        }catch (InterruptedException e){
+            throw new CucumberException(e);
+        }
 
         bus.send(new TestRunFinished(bus.getTime()));
     }
@@ -213,7 +215,7 @@ public class Runtime {
         }
     }
 
-    private static final class SameThreadExecutorService implements ExecutorService {
+    private static final class SameThreadExecutorService extends AbstractExecutorService {
 
         @Override
         public void execute(Runnable command) {
@@ -222,12 +224,12 @@ public class Runtime {
 
         @Override
         public void shutdown() {
-            // no-op
+            //no-op
         }
 
         @Override
         public List<Runnable> shutdownNow() {
-            throw new UnsupportedOperationException("shutdownNow");
+            return Collections.emptyList();
         }
 
         @Override
@@ -243,41 +245,6 @@ public class Runtime {
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) {
             return true;
-        }
-
-        @Override
-        public <T> Future<T> submit(Callable<T> task) {
-            throw new UnsupportedOperationException("submit");
-        }
-
-        @Override
-        public <T> Future<T> submit(Runnable task, T result) {
-            throw new UnsupportedOperationException("submit");
-        }
-
-        @Override
-        public Future<?> submit(Runnable task) {
-            throw new UnsupportedOperationException("submit");
-        }
-
-        @Override
-        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) {
-            throw new UnsupportedOperationException("invokeAll");
-        }
-
-        @Override
-        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) {
-            throw new UnsupportedOperationException("invokeAll");
-        }
-
-        @Override
-        public <T> T invokeAny(Collection<? extends Callable<T>> tasks) {
-            throw new UnsupportedOperationException("invokeAny");
-        }
-
-        @Override
-        public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) {
-            throw new UnsupportedOperationException("invokeAny");
         }
     }
 }

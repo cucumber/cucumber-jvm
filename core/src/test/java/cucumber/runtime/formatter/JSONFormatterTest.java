@@ -1172,7 +1172,7 @@ public class JSONFormatterTest {
         assertEquals(o1, o2);
     }
 
-    private String runFeaturesWithJSONPrettyFormatterInParallel(final List<String> featurePaths) throws IOException, InterruptedException {
+    private String runFeaturesWithJSONPrettyFormatterInParallel(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
@@ -1225,7 +1225,7 @@ public class JSONFormatterTest {
 
 
 
-    private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException, InterruptedException {
+    private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");

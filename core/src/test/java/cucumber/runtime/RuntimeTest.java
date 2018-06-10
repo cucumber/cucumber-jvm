@@ -58,7 +58,7 @@ public class RuntimeTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void runs_feature_with_json_formatter() throws InterruptedException {
+    public void runs_feature_with_json_formatter() {
         final CucumberFeature feature = feature("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -237,7 +237,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_pass_if_no_features_are_found() throws InterruptedException {
+    public void should_pass_if_no_features_are_found() {
         ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
         Runtime runtime = createStrictRuntime(resourceLoader);
 
@@ -247,7 +247,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void reports_step_definitions_to_plugin() throws InterruptedException {
+    public void reports_step_definitions_to_plugin() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

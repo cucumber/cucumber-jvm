@@ -4,7 +4,7 @@ import cucumber.runtime.Runtime;
 
 public class Main {
 
-    public static void main(String[] argv) throws Exception {
+    public static void main(String[] argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
         System.exit(exitStatus);
     }
@@ -16,7 +16,7 @@ public class Main {
      * @param classLoader classloader used to load the runtime
      * @return 0 if execution was successful, 1 if it was not (test failures)
      */
-    public static byte run(String[] argv, ClassLoader classLoader) throws Exception {
+    public static byte run(String[] argv, ClassLoader classLoader) {
 
         final Runtime runtime = Runtime.builder()
             .withArgs(argv)

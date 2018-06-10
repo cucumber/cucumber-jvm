@@ -3,16 +3,11 @@ package cucumber.runtime.formatter;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.formatter.JSONFormatterTest;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.deps.com.google.gson.JsonArray;
 import gherkin.pickles.PickleStep;
-import org.hamcrest.CoreMatchers;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -29,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class JsonParallelRuntimeTest {
 
     @Test
-    public void testSingleFeature() throws InterruptedException, JSONException {
+    public void testSingleFeature() throws JSONException {
         final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -49,8 +44,6 @@ public class JsonParallelRuntimeTest {
             .run();
 
 
-
-
         StringBuilder stringBuilderB = new StringBuilder();
 
         Runtime.builder()
@@ -65,7 +58,7 @@ public class JsonParallelRuntimeTest {
     }
 
     @Test
-    public void testMultipleFeatures() throws InterruptedException, JSONException {
+    public void testMultipleFeatures() throws JSONException {
         final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -85,8 +78,6 @@ public class JsonParallelRuntimeTest {
             .withBackendSupplier(backendSupplier)
             .build()
             .run();
-
-
 
 
         StringBuilder stringBuilderB = new StringBuilder();

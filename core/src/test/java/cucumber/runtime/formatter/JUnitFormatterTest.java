@@ -500,11 +500,11 @@ public class JUnitFormatterTest {
         assertXmlEqual(expected, formatterOutput);
     }
 
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException, InterruptedException {
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
         return runFeaturesWithJunitFormatter(featurePaths, false);
     }
 
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException, InterruptedException {
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

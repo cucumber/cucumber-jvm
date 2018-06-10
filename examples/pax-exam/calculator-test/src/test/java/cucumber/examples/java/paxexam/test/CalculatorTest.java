@@ -80,7 +80,7 @@ public class CalculatorTest {
     }
 
     @Test
-    public void cucumber() throws InterruptedException {
+    public void cucumber() {
         assertNotNull(injector);
         assertNotNull(bundleContext);
         final ResourceLoader resourceLoader = new FileResourceLoader();
