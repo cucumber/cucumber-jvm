@@ -1,41 +1,39 @@
 package cucumber.runner;
 
 import cucumber.api.event.Event;
-import cucumber.api.event.EventHandler;
 
-import java.util.Collections;
+import java.util.Collection;
 
-public class SynchronizedEventBus implements EventBus {
+public final class SynchronizedEventBus extends AbstractEventBus {
 
     private final EventBus delegate;
 
-    public SynchronizedEventBus(final EventBus delegate) {
+    public static SynchronizedEventBus synchronize(EventBus eventBus) {
+        if (eventBus instanceof SynchronizedEventBus) {
+            return (SynchronizedEventBus) eventBus;
+        }
+
+        return new SynchronizedEventBus(eventBus);
+    }
+
+    private SynchronizedEventBus(final EventBus delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public Long getTime() {
-        return this.delegate.getTime();
+    public synchronized Long getTime() {
+        return delegate.getTime();
     }
 
     @Override
     public synchronized void send(final Event event) {
-        sendAll(Collections.singletonList(event));
-    }
-
-    protected synchronized void sendAll(final Iterable<Event> events) {
-        for (final Event e : events) {
-            this.delegate.send(e);
-        }
+        super.send(event);
+        delegate.send(event);
     }
 
     @Override
-    public <T extends Event> void registerHandlerFor(final Class<T> eventType, final EventHandler<T> handler) {
-        this.delegate.registerHandlerFor(eventType, handler);
+    public synchronized void sendAll(final Collection<Event> events) {
+        super.sendAll(events);
     }
 
-    @Override
-    public <T extends Event> void removeHandlerFor(final Class<T> eventType, final EventHandler<T> handler) {
-        this.delegate.removeHandlerFor(eventType, handler);
-    }
 }

@@ -2,6 +2,10 @@ package cucumber.runtime;
 
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
+import cucumber.runner.SynchronizedEventBus;
+import cucumber.runner.TestCaseEventBus;
+
+import static cucumber.runner.SynchronizedEventBus.synchronize;
 
 /**
  * Returns a distinct runner for each calling thread.
@@ -11,7 +15,7 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final BackendSupplier backendSupplier;
     private final RuntimeOptions runtimeOptions;
     private final GlueSupplier glueSupplier;
-    private final EventBus eventBus;
+    private final SynchronizedEventBus eventBus;
 
     private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>() {
         @Override
@@ -29,7 +33,7 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
         this.backendSupplier = backendSupplier;
         this.runtimeOptions = runtimeOptions;
         this.glueSupplier = glueSupplier;
-        this.eventBus = eventBus;
+        this.eventBus = synchronize(eventBus);
     }
 
     @Override
@@ -38,7 +42,7 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(glueSupplier.get(), eventBus, backendSupplier.get(), runtimeOptions);
+        return new Runner(glueSupplier.get(), new TestCaseEventBus(eventBus), backendSupplier.get(), runtimeOptions);
     }
 
 }

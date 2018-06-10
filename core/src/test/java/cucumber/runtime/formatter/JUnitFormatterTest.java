@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
@@ -500,11 +500,11 @@ public class JUnitFormatterTest {
         assertXmlEqual(expected, formatterOutput);
     }
 
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException, InterruptedException {
         return runFeaturesWithJunitFormatter(featurePaths, false);
     }
 
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException, InterruptedException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -526,7 +526,7 @@ public class JUnitFormatterTest {
                 return asList(backend);
             }
         };
-        EventBus bus = new DefaultEventBus(new TimeServiceStub(0L));
+        EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0L));
 
         Runtime.builder()
             .withArgs(args)

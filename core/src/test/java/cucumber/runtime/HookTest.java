@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -44,7 +44,7 @@ public class HookTest {
                 return singletonList(backend);
             }
         };
-        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
         GlueSupplier glueSupplier = new TestGlueHelper();
         Glue glue = glueSupplier.get();

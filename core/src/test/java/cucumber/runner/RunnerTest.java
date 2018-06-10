@@ -184,7 +184,7 @@ public class RunnerTest {
                 return singletonList(backend);
             }
         };
-        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         return new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
     }
 

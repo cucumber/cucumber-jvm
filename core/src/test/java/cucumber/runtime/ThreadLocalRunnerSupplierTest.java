@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -31,7 +31,7 @@ public class ThreadLocalRunnerSupplierTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        EventBus eventBus = new DefaultEventBus(TimeService.SYSTEM);
+        EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, glueSupplier);
     }

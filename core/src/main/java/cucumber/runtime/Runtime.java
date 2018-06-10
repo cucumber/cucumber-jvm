@@ -4,11 +4,9 @@ import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
-import cucumber.runner.ParallelFeatureRunner;
-import cucumber.runner.TestCaseEventBus;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
@@ -18,10 +16,14 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import gherkin.events.PickleEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the main entry point for running Cucumber features from the CLI.
@@ -38,12 +40,12 @@ public class Runtime {
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
 
-    private Runtime(final Plugins plugins,
-                    final RuntimeOptions runtimeOptions,
-                    final EventBus bus,
-                    final Filters filters,
-                    final RunnerSupplier runnerSupplier,
-                    final FeatureSupplier featureSupplier
+    public Runtime(final Plugins plugins,
+            final RuntimeOptions runtimeOptions,
+            final EventBus bus,
+            final Filters filters,
+            final RunnerSupplier runnerSupplier,
+            final FeatureSupplier featureSupplier
     ) {
 
         this.plugins = plugins;
@@ -55,7 +57,7 @@ public class Runtime {
         exitStatus.setEventPublisher(bus);
     }
 
-    public void run() {
+    public void run() throws InterruptedException {
         final List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
@@ -65,10 +67,25 @@ public class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        final int requestedThreads = runtimeOptions.getThreads();
-        if (!features.isEmpty()) {
-            ParallelFeatureRunner.run(filters, runnerSupplier, features, requestedThreads);
+        final ExecutorService executor = Executors.newFixedThreadPool(runtimeOptions.getThreads());
+        final FeatureCompiler compiler = new FeatureCompiler();
+        for (CucumberFeature feature : features) {
+            for (final PickleEvent pickleEvent : compiler.compileFeature(feature)) {
+                if (filters.matchesFilters(pickleEvent)) {
+                    executor.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            runnerSupplier.get().runPickle(pickleEvent);
+                        }
+                    });
+                }
+            }
         }
+        executor.shutdown();
+
+        do {
+            executor.awaitTermination(1, TimeUnit.DAYS);
+        } while (!executor.isShutdown());
 
         bus.send(new TestRunFinished(bus.getTime()));
     }
@@ -83,13 +100,12 @@ public class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TestCaseEventBus(new DefaultEventBus(TimeService.SYSTEM));
+        private EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         private RuntimeOptions runtimeOptions = new RuntimeOptions("");
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
         private ClassFinder classFinder;
-        private RunnerSupplier runnerSupplier;
         private GlueSupplier glueSupplier = new RuntimeGlueSupplier();
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = Collections.emptyList();
@@ -128,11 +144,6 @@ public class Runtime {
 
         public Builder withClassFinder(final ClassFinder classFinder) {
             this.classFinder = classFinder;
-            return this;
-        }
-
-        public Builder withRunnerSupplier(final RunnerSupplier runnerSupplier) {
-            this.runnerSupplier = runnerSupplier;
             return this;
         }
 
@@ -179,9 +190,7 @@ public class Runtime {
                 plugins.addPlugin(plugin);
             }
 
-            final RunnerSupplier runnerSupplier = this.runnerSupplier != null
-                ? this.runnerSupplier
-                : new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+            final RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
 
             final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
 

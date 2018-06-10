@@ -7,7 +7,7 @@ import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.formatter.FormatterBuilder;
@@ -52,13 +52,13 @@ import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
-    private final EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void runs_feature_with_json_formatter() {
+    public void runs_feature_with_json_formatter() throws InterruptedException {
         final CucumberFeature feature = feature("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -237,7 +237,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_pass_if_no_features_are_found() {
+    public void should_pass_if_no_features_are_found() throws InterruptedException {
         ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
         Runtime runtime = createStrictRuntime(resourceLoader);
 
@@ -247,7 +247,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void reports_step_definitions_to_plugin() {
+    public void reports_step_definitions_to_plugin() throws InterruptedException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

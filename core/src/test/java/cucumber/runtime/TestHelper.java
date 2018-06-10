@@ -4,14 +4,20 @@ import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.formatter.Formatter;
-import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
 import cucumber.runner.TestCaseEventBus;
 import cucumber.runner.TestTimeSupportingEventBus;
+import cucumber.runner.TimeServiceEventBus;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PickleStepMatcher;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
@@ -151,10 +157,11 @@ public class TestHelper {
                                                 final long stepHookDuration, final Formatter formatter, final String... runtimeArgs
     ) throws Throwable {
 
-        final StringBuilder additionalArgs = new StringBuilder();
-        for(final String arg : runtimeArgs) {
-            additionalArgs.append(" ").append(arg);
+        final StringBuilder args = new StringBuilder("-p null");
+        for (final String arg : runtimeArgs) {
+            args.append(" ").append(arg);
         }
+        final RuntimeOptions runtimeOptions = new RuntimeOptions(args.toString());
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -168,12 +175,12 @@ public class TestHelper {
         };
 
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final EventBus actualBus = new TestCaseEventBus(new DefaultEventBus(timeService));
+        final EventBus bus = new TimeServiceEventBus(timeService);
         if (formatter != null) {
-            formatter.setEventPublisher(actualBus);
+            formatter.setEventPublisher(bus);
         }
+        final Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
 
-        final EventBus bus = new TestTimeSupportingEventBus(actualBus);
         timeService.setEventPublisher(bus);
 
         final BackendSupplier backendSupplier = new BackendSupplier() {
@@ -189,16 +196,18 @@ public class TestHelper {
             }
         };
 
-        Runtime.builder()
-            .withArg("-p null" + additionalArgs.toString())
-            .withClassLoader(classLoader)
-            .withResourceLoader(resourceLoader)
-            .withEventBus(bus)
-            .withGlueSupplier(glueSupplier)
-            .withBackendSupplier(backendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .build()
-            .run();
+        RunnerSupplier runnerSupplier = new RunnerSupplier() {
+            @Override
+            public Runner get() {
+                return new Runner(glueSupplier.get(), bus, backendSupplier.get(), runtimeOptions);
+            }
+        };
+
+        final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        final RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        final Filters filters = new Filters(runtimeOptions, rerunFilters);
+        new Runtime(plugins, runtimeOptions, bus, filters, runnerSupplier, featureSupplier).run();
+
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

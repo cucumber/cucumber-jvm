@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import io.cucumber.stepexpression.Argument;
@@ -41,7 +41,7 @@ public class HookOrderTest {
     @Before
     public void buildMockWorld() {
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {

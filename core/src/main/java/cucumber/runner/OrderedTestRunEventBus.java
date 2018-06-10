@@ -1,18 +1,17 @@
 package cucumber.runner;
 
 import cucumber.api.event.Event;
-import cucumber.api.event.TestCaseEvent;
-import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestRunFinished;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestCaseEventBus extends AbstractEventBus {
+public class OrderedTestRunEventBus extends AbstractEventBus {
 
-    private final SynchronizedEventBus parent;
+    private final EventBus parent;
     private List<Event> queue = new ArrayList<Event>();
 
-    public TestCaseEventBus(final SynchronizedEventBus parent) {
+    public OrderedTestRunEventBus(final EventBus parent) {
         this.parent = parent;
     }
 
@@ -21,17 +20,14 @@ public class TestCaseEventBus extends AbstractEventBus {
         return parent.getTime();
     }
 
-    @Override
     public void send(final Event event) {
         super.send(event);
-        if (event instanceof TestCaseEvent) {
-            queue(event);
-        }
+        queue(event);
     }
 
     private void queue(final Event event) {
         queue.add(event);
-        if (event instanceof TestCaseFinished) {
+        if (event instanceof TestRunFinished) {
             parent.sendAll(queue);
             queue.clear();
         }

@@ -6,7 +6,7 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.java.runtime.osgi.OsgiClassFinder;
 import cucumber.java.runtime.osgi.PaxExamObjectFactory;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
@@ -80,7 +80,7 @@ public class CalculatorTest {
     }
 
     @Test
-    public void cucumber() {
+    public void cucumber() throws InterruptedException {
         assertNotNull(injector);
         assertNotNull(bundleContext);
         final ResourceLoader resourceLoader = new FileResourceLoader();
@@ -100,7 +100,7 @@ public class CalculatorTest {
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        final EventBus bus = new DefaultEventBus(TimeService.SYSTEM);
+        final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
         final Runtime runtime = Runtime.builder()
             .withResourceLoader(resourceLoader)

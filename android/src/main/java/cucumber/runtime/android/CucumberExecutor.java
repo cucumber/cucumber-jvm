@@ -7,9 +7,10 @@ import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunStarted;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.filter.Filters;
@@ -79,7 +80,7 @@ public final class CucumberExecutor {
     private final RuntimeOptions runtimeOptions;
 
     private final List<PickleEvent> pickleEvents;
-    private final DefaultEventBus bus;
+    private final EventBus bus;
     private final Plugins plugins;
     private final Runner runner;
 
@@ -101,7 +102,7 @@ public final class CucumberExecutor {
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
 
-        this.bus = new DefaultEventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, createBackends(), glueSupplier).get();

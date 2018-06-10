@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
@@ -52,6 +52,15 @@ public class JSONFormatterTest {
     @Test
     public void featureWithOutlineTest() throws Exception {
         String actual = runFeaturesWithJSONPrettyFormatter(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
+        String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
+
+        assertPrettyJsonEquals(expected, actual);
+    }
+
+
+    @Test
+    public void featureWithOutlineTestParallel() throws Exception {
+        String actual = runFeaturesWithJSONPrettyFormatterInParallel(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
 
         assertPrettyJsonEquals(expected, actual);
@@ -1163,7 +1172,60 @@ public class JSONFormatterTest {
         assertEquals(o1, o2);
     }
 
-    private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {
+    private String runFeaturesWithJSONPrettyFormatterInParallel(final List<String> featurePaths) throws IOException, InterruptedException {
+        final HookDefinition hook = mock(HookDefinition.class);
+        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        File report = File.createTempFile("cucumber-jvm-junit", ".json");
+
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+
+        List<String> args = new ArrayList<String>();
+        args.add("--threads");
+        args.add("4");
+        args.add("--plugin");
+        args.add("json:" + report.getAbsolutePath());
+        args.addAll(featurePaths);
+
+        final BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                Backend backend = mock(Backend.class);
+                when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
+                return singletonList(backend);
+            }
+        };
+        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
+
+        final GlueSupplier glueSupplier = new GlueSupplier() {
+            @Override
+            public Glue get() {
+                Glue glue = new RuntimeGlue();
+                glue.addBeforeHook(hook);
+                return glue;
+            }
+        };
+
+        Runtime.builder()
+            .withClassLoader(classLoader)
+            .withResourceLoader(resourceLoader)
+            .withArgs(args)
+            .withEventBus(bus)
+            .withBackendSupplier(backendSupplier)
+            .withGlueSupplier(glueSupplier)
+            .build()
+            .run();
+
+
+        Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
+        String formatterOutput = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return formatterOutput;
+    }
+
+
+
+    private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException, InterruptedException {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
@@ -1184,7 +1246,7 @@ public class JSONFormatterTest {
                 return singletonList(backend);
             }
         };
-        final EventBus bus = new DefaultEventBus(new TimeServiceStub(1234));
+        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
 
         final GlueSupplier glueSupplier = new GlueSupplier() {
             @Override

@@ -2,7 +2,7 @@ package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.runner.DefaultEventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendModuleBackendSupplier;
@@ -60,7 +60,7 @@ public class TestNGCucumberRunner {
         });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        bus = new DefaultEventBus(TimeService.SYSTEM);
+        bus = new TimeServiceEventBus(TimeService.SYSTEM);
         plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
