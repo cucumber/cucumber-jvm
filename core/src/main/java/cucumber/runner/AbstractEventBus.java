@@ -23,7 +23,7 @@ abstract class AbstractEventBus implements EventBus {
     }
 
     @Override
-    public void sendAll(Collection<Event> events) {
+    public void sendAll(Iterable<Event> events) {
         for (Event event : events) {
             send(event);
         }

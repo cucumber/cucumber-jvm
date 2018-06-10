@@ -32,7 +32,7 @@ public final class SynchronizedEventBus implements EventBus {
     }
 
     @Override
-    public synchronized void sendAll(final Collection<Event> events) {
+    public synchronized void sendAll(final Iterable<Event> events) {
         delegate.sendAll(events);
     }
 
