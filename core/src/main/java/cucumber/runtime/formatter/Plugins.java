@@ -87,8 +87,8 @@ public final class Plugins {
     }
 
     private void setEventBusOnEventListenerPlugins(Object plugin) {
-        if (plugin instanceof EventListener && eventPublisher != null) {
-            Formatter formatter = (Formatter) plugin;
+        if (plugin instanceof EventListener) {
+            EventListener formatter = (EventListener) plugin;
             formatter.setEventPublisher(eventPublisher);
         }
     }
