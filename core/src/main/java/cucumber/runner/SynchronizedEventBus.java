@@ -1,10 +1,11 @@
 package cucumber.runner;
 
 import cucumber.api.event.Event;
+import cucumber.api.event.EventHandler;
 
 import java.util.Collection;
 
-public final class SynchronizedEventBus extends AbstractEventBus {
+public final class SynchronizedEventBus implements EventBus {
 
     private final EventBus delegate;
 
@@ -27,13 +28,21 @@ public final class SynchronizedEventBus extends AbstractEventBus {
 
     @Override
     public synchronized void send(final Event event) {
-        super.send(event);
         delegate.send(event);
     }
 
     @Override
     public synchronized void sendAll(final Collection<Event> events) {
-        super.sendAll(events);
+        delegate.sendAll(events);
     }
 
+    @Override
+    public synchronized <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+        delegate.registerHandlerFor(eventType, handler);
+    }
+
+    @Override
+    public synchronized <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+        delegate.removeHandlerFor(eventType, handler);
+    }
 }
