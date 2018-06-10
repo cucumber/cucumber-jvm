@@ -6,6 +6,7 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
+import cucumber.runner.ThreadLocalHandlersEventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.BackendSupplier;
@@ -96,7 +97,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.bus = new DefaultEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         GlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        final EventBus eventBusForRunner = new ThreadLocalHandlersEventBus(TimeService.SYSTEM);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBusForRunner, backendSupplier, glueSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         this.filters = new Filters(runtimeOptions, rerunFilters);
         this.junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());

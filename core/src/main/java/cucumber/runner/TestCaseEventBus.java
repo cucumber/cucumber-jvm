@@ -32,7 +32,7 @@ public class TestCaseEventBus extends SynchronizedEventBus {
 
     void queue(final Event event) {
         queue.get().add(event);
-        if (TestCaseFinished.class.isAssignableFrom(event.getClass())) {
+        if (event instanceof TestCaseFinished) {
             super.sendAll(queue.get());
             queue.get().clear();
         }
