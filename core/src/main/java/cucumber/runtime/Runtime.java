@@ -5,6 +5,7 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
+import cucumber.runner.OrderedTestRunEventBus;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.filter.Filters;
@@ -84,10 +85,10 @@ public class Runtime {
             }
         }
         executor.shutdown();
-        try{
+        try {
             //noinspection StatementWithEmptyBody we wait, nothing else
             while (!executor.awaitTermination(1, TimeUnit.DAYS)) ;
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             throw new CucumberException(e);
         }
 
@@ -194,9 +195,14 @@ public class Runtime {
                 plugins.addPlugin(plugin);
             }
 
+            //TODO: Less hacky. This bus is in the wrong place. It should sit between this.eventBus and some plugins.
+            final EventBus orderedEventBus = runtimeOptions.isMultiThreaded()
+                ? new OrderedTestRunEventBus(this.eventBus)
+                : this.eventBus;
+
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier)
-                : new SingletonRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, orderedEventBus, backendSupplier, this.glueSupplier)
+                : new SingletonRunnerSupplier(this.runtimeOptions, orderedEventBus, backendSupplier, this.glueSupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads())
@@ -211,7 +217,7 @@ public class Runtime {
 
             final RerunFilters rerunFilters = new RerunFilters(this.runtimeOptions, featureLoader);
             final Filters filters = new Filters(this.runtimeOptions, rerunFilters);
-            return new Runtime(plugins, this.runtimeOptions, this.eventBus, filters, runnerSupplier, featureSupplier, executor);
+            return new Runtime(plugins, this.runtimeOptions, orderedEventBus, filters, runnerSupplier, featureSupplier, executor);
         }
     }
 
