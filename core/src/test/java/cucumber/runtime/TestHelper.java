@@ -6,18 +6,12 @@ import cucumber.api.Scenario;
 import cucumber.api.formatter.Formatter;
 import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
-import cucumber.runner.TestCaseSyncEventBus;
+import cucumber.runner.TestCaseEventBus;
 import cucumber.runner.TestTimeSupportingEventBus;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PickleStepMatcher;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.FeatureLoader;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
@@ -39,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -175,7 +168,7 @@ public class TestHelper {
         };
 
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final EventBus actualBus = new TestCaseSyncEventBus(new DefaultEventBus(timeService));
+        final EventBus actualBus = new TestCaseEventBus(new DefaultEventBus(timeService));
         if (formatter != null) {
             formatter.setEventPublisher(actualBus);
         }

@@ -402,6 +402,8 @@ public class RuntimeTest {
         CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
+            "    Given first step\n" +
+            "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
         CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
@@ -409,15 +411,28 @@ public class RuntimeTest {
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
+        CucumberFeature feature3 = TestHelper.feature("path/test3.feature", "" +
+            "Feature: feature name 3\n" +
+            "  Scenario: scenario_3 name\n" +
+            "    Given first step\n");
+
         Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
 
         FormatterSpy formatterSpy = new FormatterSpy();
-        final List<CucumberFeature> features = Arrays.asList(feature1, feature2);
+        final List<CucumberFeature> features = Arrays.asList(feature1, feature2, feature3);
         TestHelper.runFeaturesWithFormatter(features, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy, features.size());
         String formatterOutput = formatterSpy.toString();
 
         assertEquals("" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
+            "TestCase started\n" +
+            "  TestStep started\n" +
+            "  TestStep finished\n" +
+            "TestCase finished\n" +
             "TestCase started\n" +
             "  TestStep started\n" +
             "  TestStep finished\n" +

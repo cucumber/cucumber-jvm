@@ -7,7 +7,7 @@ import cucumber.api.event.TestRunStarted;
 import cucumber.runner.DefaultEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.ParallelFeatureRunner;
-import cucumber.runner.TestCaseSyncEventBus;
+import cucumber.runner.TestCaseEventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
@@ -38,15 +38,12 @@ public class Runtime {
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
 
-    //TODO: would be nice to make this private and enforce usage of Builder
-    //TODO: this would mean any changes required would be nicely hidden away
-    //TODO: and all the complexity of setup remains within the builder itself
-    public Runtime(Plugins plugins,
-                   RuntimeOptions runtimeOptions,
-                   EventBus bus,
-                   Filters filters,
-                   RunnerSupplier runnerSupplier,
-                   FeatureSupplier featureSupplier
+    private Runtime(final Plugins plugins,
+                    final RuntimeOptions runtimeOptions,
+                    final EventBus bus,
+                    final Filters filters,
+                    final RunnerSupplier runnerSupplier,
+                    final FeatureSupplier featureSupplier
     ) {
 
         this.plugins = plugins;
@@ -59,18 +56,18 @@ public class Runtime {
     }
 
     public void run() {
-        List<CucumberFeature> features = featureSupplier.get();
+        final List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
-        
-        StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
+
+        final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
-        
+
         final int requestedThreads = runtimeOptions.getThreads();
         if (!features.isEmpty()) {
-            for (CucumberFeature feature : features) {
-                feature.sendTestSourceRead(bus);
-            }
-            ParallelFeatureRunner.run(new FeatureRunner(filters, runnerSupplier), features, requestedThreads);
+            ParallelFeatureRunner.run(filters, runnerSupplier, features, requestedThreads);
         }
 
         bus.send(new TestRunFinished(bus.getTime()));
@@ -86,12 +83,13 @@ public class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TestCaseSyncEventBus(new DefaultEventBus(TimeService.SYSTEM));
+        private EventBus eventBus = new TestCaseEventBus(new DefaultEventBus(TimeService.SYSTEM));
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         private RuntimeOptions runtimeOptions = new RuntimeOptions("");
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
         private ClassFinder classFinder;
+        private RunnerSupplier runnerSupplier;
         private GlueSupplier glueSupplier = new RuntimeGlueSupplier();
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = Collections.emptyList();
@@ -133,6 +131,11 @@ public class Runtime {
             return this;
         }
 
+        public Builder withRunnerSupplier(final RunnerSupplier runnerSupplier) {
+            this.runnerSupplier = runnerSupplier;
+            return this;
+        }
+
         public Builder withBackendSupplier(final BackendSupplier backendSupplier) {
             this.backendSupplier = backendSupplier;
             return this;
@@ -159,15 +162,15 @@ public class Runtime {
         }
 
         public Runtime build() {
-            ResourceLoader resourceLoader = this.resourceLoader != null
+            final ResourceLoader resourceLoader = this.resourceLoader != null
                 ? this.resourceLoader
                 : new MultiLoader(this.classLoader);
 
-            ClassFinder classFinder = this.classFinder != null
+            final ClassFinder classFinder = this.classFinder != null
                 ? this.classFinder
                 : new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
 
-            BackendSupplier backendSupplier = this.backendSupplier != null
+            final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
                 : new BackendModuleBackendSupplier(resourceLoader, classFinder, this.runtimeOptions);
 
@@ -176,7 +179,10 @@ public class Runtime {
                 plugins.addPlugin(plugin);
             }
 
-            final RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+            final RunnerSupplier runnerSupplier = this.runnerSupplier != null
+                ? this.runnerSupplier
+                : new ThreadLocalRunnerSupplier(this.runtimeOptions, this.eventBus, backendSupplier, this.glueSupplier);
+
             final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
