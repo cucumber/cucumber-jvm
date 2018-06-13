@@ -19,13 +19,13 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Fixed
 
-## [3.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
+## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
 
 ### Fixed
 * [Android] Fix PatternSyntaxException ([#1370](https://github.com/cucumber/cucumber-jvm/pull/1370) M.P. Korstanje)
 
 
-## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...v3.0.1)
+## [3.0.1](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...v3.0.1)
 
 ### Changed
  * [Core] Upgrade cucumber expressions to 5.0.18 ([#1368](https://github.com/cucumber/cucumber-jvm/pull/1368) Aslak Hellesøy)
@@ -34,7 +34,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
 
-## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
+## [3.0.0](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
 
 ### Added
  * [Core] Implement [cucumber expressions](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)
