@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.runtime.snippets.Snippet;
+import io.cucumber.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -24,7 +25,7 @@ abstract class AbstractJavaSnippet implements Snippet {
     private String getArgType(Type argType) {
         if (argType instanceof Class) {
             Class cType = (Class) argType;
-            if (cType.getSimpleName().equals("DataTable")) {
+            if (cType.equals(DataTable.class)) {
                 return cType.getName();
             }
             return cType.getSimpleName();
