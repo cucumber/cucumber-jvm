@@ -35,9 +35,9 @@ abstract class AbstractJavaSnippet implements Snippet {
     public final String tableHint() {
         return "" +
             "    // For automatic transformation, change DataTable to one of\n" +
-            "    // List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
+            "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
             "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
-            "    // Double, Byte Short, Long, BigInteger or BigDecimal.\n" +
+            "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n"; //TODO: Add doc URL
     }
