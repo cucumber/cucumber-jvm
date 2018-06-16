@@ -4,25 +4,25 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
 
 ### Added
- * [Core] Add --wip option (#1381 Heziode)
- * [Core] Upgrade gherkin to 5.10  (#1377 Aslak Hellesøy)
- * [Weld] Document the need for a beans.xml per source root (#923 Harald Albers)
+ * [Core] Add --wip option ([#1381](https://github.com/cucumber/cucumber-jvm/pull/1381) Heziode)
+ * [Core] Upgrade gherkin to 5.10  ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
+ * [Weld] Document the need for a beans.xml per source root ([#923](https://github.com/cucumber/cucumber-jvm/pull/923) Harald Albers)
  
 ### Changed
-  * [Core] Upgrade cucumber expressions to 6.0.0 (#1377 Aslak Hellesøy)
+  * [Core] Upgrade cucumber expressions to 6.0.0 ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
     * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
     * Bugfix for nested capture groups.  
-  * [Core] Refactor Runtime (#1367 M.P. Korstanje, Marit van Dijk)
+  * [Core] Refactor Runtime ([#1367](https://github.com/cucumber/cucumber-jvm/pull/1367) M.P. Korstanje, Marit van Dijk)
     * Significant structural changes in the `cucumber.runtime` package
-  * [Examples] Simplify Gradle example (#1394 Piotr Kubowicz)
-  * [Build] Use 1.7 as the source and target level for compilation (#1147 M.P. Korstanje)
-  * [Core] Use fully classified name for PendingException (#1398 Marit van Dijk)
-  * [Core] Update DataTable hint (#1397 Marit van Dijk)
+  * [Examples] Simplify Gradle example ([#1394](https://github.com/cucumber/cucumber-jvm/pull/1394) Piotr Kubowicz)
+  * [Build] Use 1.7 as the source and target level for compilation ([#1147](https://github.com/cucumber/cucumber-jvm/pull/1147) M.P. Korstanje)
+  * [Core] Use fully classified name for PendingException ([#1398](https://github.com/cucumber/cucumber-jvm/pull/1398) Marit van Dijk)
+  * [Core] Update DataTable hint ([#1397](https://github.com/cucumber/cucumber-jvm/pull/1397) Marit van Dijk)
   
 ### Deprecated
 
 ### Removed
-  * [Core] Remove deprecated TestStep methods (#1391 M.P. Korstanje)
+  * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
    
 ### Fixed
 
