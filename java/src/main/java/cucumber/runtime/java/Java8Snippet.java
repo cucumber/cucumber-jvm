@@ -7,7 +7,7 @@ final class Java8Snippet extends AbstractJavaSnippet {
         return "" +
             "{0}(\"{1}\", ({3}) -> '{'\n" +
             "    // {4}\n" +
-            "{5}    throw new PendingException();\n" +
+            "{5}    throw new cucumber.api.PendingException();\n" +
             "'}');\n";
     }
 }
