@@ -64,11 +64,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!--TODO: Clean up version numbers-->
         <dependency>
             <groupId>uk.co.datumedge</groupId>
             <artifactId>hamcrest-json</artifactId>
-            <version>0.2</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
