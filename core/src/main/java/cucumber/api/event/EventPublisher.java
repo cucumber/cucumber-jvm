@@ -7,6 +7,7 @@ public interface EventPublisher {
      *
      * The available events types are:
      * <ul>
+     * <li>{@link Event} - all events.
      * <li>{@link TestRunStarted} - the first event sent.
      * <li>{@link TestSourceRead} - sent for each feature file read, contains the feature file source.
      * <li>{@link SnippetsSuggestedEvent} - sent for each step that could not be matched to a step definition, contains the raw snippets for the step.

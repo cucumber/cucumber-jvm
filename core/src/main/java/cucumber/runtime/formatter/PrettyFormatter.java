@@ -1,10 +1,11 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Argument;
-import cucumber.api.Result;
-import cucumber.api.TestStep;
-import cucumber.api.TestCase;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
+import cucumber.api.TestCase;
+import cucumber.api.TestStep;
+import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
@@ -29,7 +30,7 @@ import gherkin.pickles.PickleTag;
 
 import java.util.List;
 
-final class PrettyFormatter implements Formatter, ColorAware {
+final class PrettyFormatter implements Formatter, ColorAware, ConcurrentEventListener {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";

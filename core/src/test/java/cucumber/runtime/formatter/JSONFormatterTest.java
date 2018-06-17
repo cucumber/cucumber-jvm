@@ -857,7 +857,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test

@@ -1,10 +1,11 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
+import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
-import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
@@ -98,7 +99,7 @@ public class PluginFactoryTest {
             EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, null, null);
-            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(PickleStepTestStep.class), result);
+            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));

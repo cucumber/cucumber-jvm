@@ -1,12 +1,6 @@
-package cucumber.runner;
+package cucumber.api.event;
 
 import cucumber.api.TestCase;
-import cucumber.api.event.Event;
-import cucumber.api.event.SnippetsSuggestedEvent;
-import cucumber.api.event.TestCaseStarted;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestRunStarted;
-import cucumber.api.event.TestSourceRead;
 import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 
@@ -19,13 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-public class EventListComparatorTest {
+public class CanonicalEventOrderTest {
 
     private static final int LESS_THAN = -1;
     private static final int EQUAL_TO = 0;
     private static final int GREATER_THAN = 1;
 
-    private EventListComparator comparator = new EventListComparator();
+    private CanonicalEventOrder comparator = new CanonicalEventOrder();
 
     static long getTime() {
         return new Date().getTime();
@@ -38,14 +32,14 @@ public class EventListComparatorTest {
         return new TestCaseStarted(getTime(), testCase);
     }
 
-    private List<Event> runStarted = Collections.<Event>singletonList(new TestRunStarted(getTime()));
-    private List<Event> testRead = Collections.<Event>singletonList(new TestSourceRead(getTime(), "uri", "source"));
-    private List<Event> suggested = Collections.<Event>singletonList(new SnippetsSuggestedEvent(getTime(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList()));
-    private List<Event> feature1Case1Started = Collections.singletonList(createTestCaseEvent("feature1", 1));
-    private List<Event> feature1Case2Started = Collections.singletonList(createTestCaseEvent("feature1", 9));
-    private List<Event> feature1Case3Started = Collections.singletonList(createTestCaseEvent("feature1", 11));
-    private List<Event> feature2Case1Started = Collections.singletonList(createTestCaseEvent("feature2", 1));
-    private List<Event> runFinished = Collections.<Event>singletonList(new TestRunFinished(getTime()));
+    private Event runStarted = new TestRunStarted(getTime());
+    private Event testRead = new TestSourceRead(getTime(), "uri", "source");
+    private Event suggested = new SnippetsSuggestedEvent(getTime(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
+    private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
+    private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
+    private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
+    private Event feature2Case1Started = createTestCaseEvent("feature2", 1);
+    private Event runFinished = new TestRunFinished(getTime());
 
     @Test
     public void verifyTestRunStartedSortedCorrectly() {
@@ -85,16 +79,16 @@ public class EventListComparatorTest {
 
     @Test
     public void verifyTestCaseStartedSortedCorrectly() {
-        final List<List<Event>> greaterThan = Arrays.asList(runStarted, testRead, suggested);
-        for (final List<Event> e : greaterThan) {
+        final List<Event> greaterThan = Arrays.asList(runStarted, testRead, suggested);
+        for (final Event e : greaterThan) {
             assertThat(comparator.compare(feature1Case1Started, e)).isEqualTo(GREATER_THAN);
             assertThat(comparator.compare(feature1Case2Started, e)).isEqualTo(GREATER_THAN);
             assertThat(comparator.compare(feature1Case3Started, e)).isEqualTo(GREATER_THAN);
             assertThat(comparator.compare(feature2Case1Started, e)).isEqualTo(GREATER_THAN);
         }
 
-        final List<List<Event>> lessThan = Collections.singletonList(runFinished);
-        for (final List<Event> e : lessThan) {
+        final List<Event> lessThan = Collections.singletonList(runFinished);
+        for (final Event e : lessThan) {
             assertThat(comparator.compare(feature1Case1Started, e)).isEqualTo(LESS_THAN);
             assertThat(comparator.compare(feature1Case2Started, e)).isEqualTo(LESS_THAN);
             assertThat(comparator.compare(feature1Case3Started, e)).isEqualTo(LESS_THAN);
