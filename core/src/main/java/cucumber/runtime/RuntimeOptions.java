@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
+import io.cucumber.datatable.DataTable;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.PathWithLines;
 import cucumber.util.FixJava;
@@ -13,6 +14,7 @@ import io.cucumber.datatable.DataTable;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class RuntimeOptions {
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
+    private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
 
@@ -169,9 +172,9 @@ public class RuntimeOptions {
                 Pattern patternFilter = Pattern.compile(nextArg);
                 parsedNameFilters.add(patternFilter);
             } else if (arg.startsWith("--junit,")) {
-                for (String option : arg.substring("--junit,".length()).split(",")) {
-                    parsedJunitOptions.add(option);
-                }
+                parsedJunitOptions.addAll(asList(arg.substring("--junit,".length()).split(",")));
+            } else if (arg.equals("--wip") || arg.equals("-w")) {
+                wip = true;
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -308,6 +311,10 @@ public class RuntimeOptions {
 
     public boolean isDryRun() {
         return dryRun;
+    }
+
+    public boolean isWip() {
+        return wip;
     }
 
     public List<String> getFeaturePaths() {

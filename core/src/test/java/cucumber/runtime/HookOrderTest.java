@@ -51,7 +51,7 @@ public class HookOrderTest {
         PickleStep step = mock(PickleStep.class);
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
-        when(stepDefinition.getPattern()).thenReturn("pattern1");        
+        when(stepDefinition.getPattern()).thenReturn("pattern1");
         runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
         glue.addStepDefinition(stepDefinition);
 

@@ -86,7 +86,7 @@ public class JavaStepDefinitionTest {
             public Glue get() {
                 return glue;
             }
-        };        
+        };
         this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
 
         backend.loadGlue(glue, Collections.<String>emptyList());

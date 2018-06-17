@@ -47,7 +47,7 @@ public class RunnerTest {
     private final GlueSupplier glueSupplier = new TestGlueHelper();
     private final Glue glue = glueSupplier.get();
     private final Runner runner = createRunner(backend);
-    
+
     @Test
     public void hooks_execute_when_world_exist() throws Throwable {
         PickleStep step = mock(PickleStep.class);

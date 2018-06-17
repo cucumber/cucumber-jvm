@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Runtime {
 
-    private final ExitStatus exitStatus = new ExitStatus();
+    private final ExitStatus exitStatus;
 
     private final RuntimeOptions runtimeOptions;
 
@@ -57,6 +57,7 @@ public class Runtime {
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
+        this.exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
     }
 
@@ -95,7 +96,7 @@ public class Runtime {
     }
 
     public byte exitStatus() {
-        return exitStatus.exitStatus(runtimeOptions.isStrict());
+        return exitStatus.exitStatus();
     }
 
     public static Builder builder() {

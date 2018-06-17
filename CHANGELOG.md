@@ -1,25 +1,37 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [3.0.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
+## [4.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
 
 ### Added
+ * [Core] Add --wip option ([#1381](https://github.com/cucumber/cucumber-jvm/pull/1381) Heziode)
+ * [Core] Upgrade gherkin to 5.10  ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
+ * [Weld] Document the need for a beans.xml per source root ([#923](https://github.com/cucumber/cucumber-jvm/pull/923) Harald Albers)
  
 ### Changed
-     
+  * [Core] Upgrade cucumber expressions to 6.0.0 ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
+    * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
+    * Bugfix for nested capture groups.  
+  * [Core] Refactor Runtime ([#1367](https://github.com/cucumber/cucumber-jvm/pull/1367) M.P. Korstanje, Marit van Dijk)
+    * Significant structural changes in the `cucumber.runtime` package
+  * [Examples] Simplify Gradle example ([#1394](https://github.com/cucumber/cucumber-jvm/pull/1394) Piotr Kubowicz)
+  * [Build] Use 1.7 as the source and target level for compilation ([#1147](https://github.com/cucumber/cucumber-jvm/pull/1147) M.P. Korstanje)
+  * [Core] Use fully classified name for PendingException ([#1398](https://github.com/cucumber/cucumber-jvm/pull/1398) Marit van Dijk)
+  * [Core] Update DataTable hint ([#1397](https://github.com/cucumber/cucumber-jvm/pull/1397) Marit van Dijk)
+  
 ### Deprecated
 
 ### Removed
-
+  * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
+   
 ### Fixed
 
-## [3.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
+## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
 
 ### Fixed
 * [Android] Fix PatternSyntaxException ([#1370](https://github.com/cucumber/cucumber-jvm/pull/1370) M.P. Korstanje)
 
-
-## [3.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...v3.0.1)
+## [3.0.1](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...v3.0.1)
 
 ### Changed
  * [Core] Upgrade cucumber expressions to 5.0.18 ([#1368](https://github.com/cucumber/cucumber-jvm/pull/1368) Aslak Hellesøy)
@@ -28,7 +40,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
 
-## [3.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
+## [3.0.0](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
 
 ### Added
  * [Core] Implement [cucumber expressions](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)

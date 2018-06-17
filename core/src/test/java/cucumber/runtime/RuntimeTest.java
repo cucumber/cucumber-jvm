@@ -512,11 +512,11 @@ public class RuntimeTest {
         BackendSupplier backends = backendSupplier != null
             ? backendSupplier
             : new BackendSupplier() {
-                @Override
-                public Collection<? extends Backend> get() {
-                    return Collections.singletonList(mock(Backend.class));
-                }
-            };
+            @Override
+            public Collection<? extends Backend> get() {
+                return Collections.singletonList(mock(Backend.class));
+            }
+        };
 
         GlueSupplier glueSupplier = new GlueSupplier() {
             @Override
