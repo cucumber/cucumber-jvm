@@ -51,7 +51,7 @@ public class JSONFormatterTest {
         String actual = runFeaturesWithJSONPrettyFormatter(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
 
-        assertThat(expected, sameJSONAs(actual));
+        assertThat(actual, sameJSONAs(expected));
     }
 
 
@@ -60,7 +60,7 @@ public class JSONFormatterTest {
         String actual = runFeaturesWithJSONPrettyFormatterInParallel(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
 
-        assertThat(expected, sameJSONAs(actual));
+        assertThat(actual, sameJSONAs(expected));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -217,7 +217,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -274,7 +274,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -402,7 +402,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -485,7 +485,7 @@ public class JSONFormatterTest {
             "    ]\n" +
             "  }\n" +
             "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -567,7 +567,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -706,7 +706,7 @@ public class JSONFormatterTest {
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -780,7 +780,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -918,7 +918,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -980,7 +980,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
 
@@ -1051,7 +1051,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     @Test
@@ -1145,7 +1145,7 @@ public class JSONFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(expected, sameJSONAs(formatterOutput));
+        assertThat(formatterOutput, sameJSONAs(expected));
     }
 
     private String runFeaturesWithJSONPrettyFormatterInParallel(final List<String> featurePaths) throws IOException {
