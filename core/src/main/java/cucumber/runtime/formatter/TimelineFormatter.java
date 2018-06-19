@@ -1,7 +1,10 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Plugin;
 import cucumber.api.TestCase;
+import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
@@ -27,13 +30,17 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-public class TimelineFormatter implements Formatter {
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+
+public class TimelineFormatter implements ConcurrentEventListener, Plugin {
 
     private static final Comparator<TestData> TEST_DATA_COMPARATOR = new Comparator<TestData>() {
         @Override
@@ -84,18 +91,19 @@ public class TimelineFormatter implements Formatter {
     };
 
     private final TestSourcesModel testSources = new TestSourcesModel();
-    private final List<TestData> allTests = new LinkedList<TestData>();
-    private final Map<Long, GroupData> allGroups = new ConcurrentHashMap<Long, GroupData>();
+    private final List<TestData> allTests = new LinkedList<>();
+    private final Map<Long, GroupData> allGroups = new HashMap<>();
     private final URL reportDir;
     private final NiceAppendable reportJs;
 
     private TestData currentTest;
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public TimelineFormatter(final URL reportDir) {
         this(reportDir, createJsonOut(reportDir, "report.js"));
     }
 
-    TimelineFormatter(final URL reportDir, final NiceAppendable reportJs) {
+    private TimelineFormatter(final URL reportDir, final NiceAppendable reportJs) {
         this.reportDir = reportDir;
         this.reportJs = reportJs;
     }
@@ -231,7 +239,7 @@ public class TimelineFormatter implements Formatter {
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = started.testCase.getName();
             this.content = String.format(CONTENT_TEMPLATE, this.feature, this.scenario);
-            this.startTime = System.currentTimeMillis();
+            this.startTime = NANOSECONDS.toMillis(started.getTimeStamp());
             this.threadId = threadId;
             this.tags = buildTagsValue(started.testCase);
         }
@@ -245,7 +253,7 @@ public class TimelineFormatter implements Formatter {
         }
 
         public void end(final TestCaseFinished event) {
-            this.endTime = System.currentTimeMillis();
+            this.endTime = NANOSECONDS.toMillis(event.getTimeStamp());
             this.className = event.result.getStatus().lowerCaseName();
         }
     }

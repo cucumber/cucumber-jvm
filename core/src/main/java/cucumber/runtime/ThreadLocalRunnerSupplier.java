@@ -8,7 +8,9 @@ import cucumber.runner.TestCaseEventBus;
 import static cucumber.runner.SynchronizedEventBus.synchronize;
 
 /**
- * Returns a distinct runner for each calling thread.
+ * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.
+ * <p>
+ * Each runners bus passes all events to the event bus of this supplier.
  */
 public class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
