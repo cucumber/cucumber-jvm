@@ -1,10 +1,10 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Plugin;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventPublisher;
-import cucumber.api.formatter.Formatter;
 
-final class NullFormatter implements Formatter, ConcurrentEventListener {
+final class NullFormatter implements ConcurrentEventListener, Plugin {
     public NullFormatter() {
     }
 

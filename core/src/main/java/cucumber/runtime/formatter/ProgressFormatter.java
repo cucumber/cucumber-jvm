@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.ConcurrentEventListener;
@@ -10,13 +11,12 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.AnsiEscapes;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-final class ProgressFormatter implements Formatter, ColorAware, ConcurrentEventListener {
+final class ProgressFormatter implements ColorAware, ConcurrentEventListener, Plugin {
     private static final Map<Result.Type, Character> CHARS = new HashMap<Result.Type, Character>() {{
         put(Result.Type.PASSED, '.');
         put(Result.Type.UNDEFINED, 'U');
