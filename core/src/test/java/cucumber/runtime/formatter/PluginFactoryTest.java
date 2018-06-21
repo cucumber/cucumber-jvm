@@ -37,40 +37,6 @@ public class PluginFactoryTest {
     }
 
     @Test
-    public void instantiates_junit_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create("junit:" + File.createTempFile("cucumber", "xml"));
-        assertEquals(JUnitFormatter.class, plugin.getClass());
-    }
-
-    @Test
-    public void instantiates_html_plugin_with_dir_arg() throws IOException {
-        Object plugin = fc.create("html:" + TempDir.createTempDirectory().getAbsolutePath());
-        assertEquals(HTMLFormatter.class, plugin.getClass());
-    }
-
-    @Test
-    public void fails_to_instantiate_html_plugin_without_dir_arg() throws IOException {
-        try {
-            fc.create("html");
-            fail();
-        } catch (CucumberException e) {
-            assertEquals("You must supply an output argument to html. Like so: html:output", e.getMessage());
-        }
-    }
-
-    @Test
-    public void instantiates_pretty_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create("pretty:" + Utils.toURL(TempDir.createTempFile().getAbsolutePath()));
-        assertEquals(PrettyFormatter.class, plugin.getClass());
-    }
-
-    @Test
-    public void instantiates_pretty_plugin_without_file_arg() {
-        Object plugin = fc.create("pretty");
-        assertEquals(PrettyFormatter.class, plugin.getClass());
-    }
-
-    @Test
     public void instantiates_usage_plugin_without_file_arg() {
         Object plugin = fc.create("usage");
         assertEquals(UsageFormatter.class, plugin.getClass());

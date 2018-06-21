@@ -1,7 +1,7 @@
 package cucumber.api.testng;
 
+import cucumber.messages.Pickles.Pickle;
 import cucumber.runtime.CucumberException;
-import gherkin.events.PickleEvent;
 
 /**
  * The only purpose of this class is to move parse errors from the DataProvider
@@ -17,7 +17,7 @@ class CucumberExceptionWrapper implements PickleEventWrapper {
     }
 
     @Override
-    public PickleEvent getPickleEvent() {
+    public Pickle getPickle() {
         throw this.exception;
     }
 

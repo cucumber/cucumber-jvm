@@ -1,7 +1,6 @@
 package cucumber.runtime.formatter;
 
-import gherkin.pickles.PickleStep;
-
+import cucumber.messages.Pickles.PickleStep;
 import org.mockito.ArgumentMatcher;
 
 public class PickleStepMatcher implements ArgumentMatcher<PickleStep> {

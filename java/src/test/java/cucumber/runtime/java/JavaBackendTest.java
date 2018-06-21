@@ -1,18 +1,18 @@
 package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
 import cucumber.runtime.PickleStepDefinitionMatch;
+import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.java.stepdefs.Stepdefs;
-import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class JavaBackendTest {
     private JavaBackend backend;
 
     @Before
-    public void createBackend(){
+    public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);

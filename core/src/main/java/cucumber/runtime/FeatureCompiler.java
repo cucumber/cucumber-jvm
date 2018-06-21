@@ -1,21 +1,15 @@
 package cucumber.runtime;
 
+import cucumber.messages.Pickles.Pickle;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleCompiler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class FeatureCompiler {
-    private final Compiler compiler = new Compiler();
+    private final PickleCompiler compiler = new PickleCompiler();
 
-    public List<PickleEvent> compileFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
-        }
-        return pickleEvents;
+    public List<Pickle> compileFeature(CucumberFeature feature) {
+        return compiler.compile(feature.getGherkinFeature(), feature.getUri());
     }
 }

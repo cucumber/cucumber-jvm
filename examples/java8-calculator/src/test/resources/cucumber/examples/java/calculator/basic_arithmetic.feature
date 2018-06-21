@@ -14,7 +14,7 @@ Feature: Basic Arithmetic
     When I add 4 and 7
     Then the result is 11
 
-  Scenario Outline: Many additions
+  Scenario Outline: Many additions <a> + <b> = <c>
     Given the previous entries:
       | first | second | operation |
       | 1     | 1      | +         |

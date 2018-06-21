@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.TypeRegistry;
 
 import java.util.List;

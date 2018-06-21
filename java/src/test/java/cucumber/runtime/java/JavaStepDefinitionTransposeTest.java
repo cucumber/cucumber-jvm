@@ -1,31 +1,30 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
-import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.runtime.PickleStepDefinitionMatch;
-import io.cucumber.datatable.DataTable;
 import cucumber.api.java.ObjectFactory;
+import cucumber.messages.Pickles.PickleStep;
+import cucumber.messages.Pickles.PickleTable;
+import cucumber.messages.Pickles.PickleTableRow;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.stepexpression.Argument;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTable;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static cucumber.runtime.PickleHelper.cell;
+import static cucumber.runtime.PickleHelper.row;
+import static cucumber.runtime.PickleHelper.table;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class JavaStepDefinitionTransposeTest {
     @Rule
@@ -70,7 +69,7 @@ public class JavaStepDefinitionTransposeTest {
     @Test
     public void transforms_to_map_of_double_to_double() throws Throwable {
         Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
-        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDoublesWithoutHeader()));
+        StepDefs stepDefs = runStepDef(m, table(listOfDoublesWithoutHeader()));
         assertEquals(Double.valueOf(999.0), stepDefs.mapOfDoubleToDouble.get(1000.0));
         assertEquals(Double.valueOf(-0.5), stepDefs.mapOfDoubleToDouble.get(0.5));
         assertEquals(Double.valueOf(99.5), stepDefs.mapOfDoubleToDouble.get(100.5));
@@ -79,28 +78,28 @@ public class JavaStepDefinitionTransposeTest {
     @Test
     public void transforms_transposed_to_map_of_double_to_double() throws Throwable {
         Method m = StepDefs.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
-        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDoublesWithoutHeader()));
+        StepDefs stepDefs = runStepDef(m, table(listOfDoublesWithoutHeader()));
         assertEquals(asList(0.5, 1000.0), stepDefs.mapOfDoubleToListOfDouble.get(100.5));
     }
 
     @Test
     public void transforms_to_list_of_single_values() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
-        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDoublesWithoutHeader()));
+        StepDefs stepDefs = runStepDef(m, table(listOfDoublesWithoutHeader()));
         assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
     }
 
     @Test
     public void transforms_to_list_of_single_values_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoublesTransposed", List.class);
-        StepDefs stepDefs = runStepDef(m, new PickleTable(transposedListOfDoublesWithoutHeader()));
+        StepDefs stepDefs = runStepDef(m, table(transposedListOfDoublesWithoutHeader()));
         assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
     }
 
     @Test
     public void passes_plain_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
-        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
+        StepDefs stepDefs = runStepDef(m, table(listOfDatesWithHeader()));
         assertEquals("Birth Date", stepDefs.dataTable.cell(0, 0));
         assertEquals("1957-05-10", stepDefs.dataTable.cell(1, 0));
     }
@@ -108,7 +107,7 @@ public class JavaStepDefinitionTransposeTest {
     @Test
     public void passes_transposed_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("transposedDataTable", DataTable.class);
-        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
+        StepDefs stepDefs = runStepDef(m, table(listOfDatesWithHeader()));
         assertEquals("Birth Date", stepDefs.dataTable.cell(0, 0));
         assertEquals("1957-05-10", stepDefs.dataTable.cell(0, 1));
     }
@@ -118,7 +117,10 @@ public class JavaStepDefinitionTransposeTest {
         ObjectFactory objectFactory = new SingletonFactory(stepDefs);
 
         StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", 0, objectFactory, typeRegistry);
-        PickleStep stepWithTable = new PickleStep("some text", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+        PickleStep stepWithTable = PickleStep.newBuilder()
+            .setText("some text")
+            .setDataTable(table)
+            .build();
         List<Argument> arguments = stepDefinition.matchedArguments(stepWithTable);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithTable);
@@ -126,27 +128,26 @@ public class JavaStepDefinitionTransposeTest {
         return stepDefs;
     }
 
-    private List<PickleRow> listOfDatesWithHeader() {
-        List<PickleRow> rows = new ArrayList<PickleRow>();
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"))));
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1957-05-10"))));
-        return rows;
+    private List<PickleTableRow> listOfDatesWithHeader() {
+        return asList(
+            row(cell("Birth Date")),
+            row(cell("1957-05-10"))
+        );
     }
 
-    private List<PickleRow> listOfDoublesWithoutHeader() {
-        List<PickleRow> rows = new ArrayList<PickleRow>();
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "100.5"), new PickleCell(mock(PickleLocation.class), "99.5"))));
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "0.5"), new PickleCell(mock(PickleLocation.class), "-0.5"))));
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1000"), new PickleCell(mock(PickleLocation.class), "999"))));
-        return rows;
+    private List<PickleTableRow> listOfDoublesWithoutHeader() {
+        return asList(
+            row(cell("100.5"), cell("99.5")),
+            row(cell("0.5"), cell("-0.5")),
+            row(cell("1000"), cell("999"))
+        );
     }
 
-    private List<PickleRow> transposedListOfDoublesWithoutHeader() {
-        List<PickleRow> rows = new ArrayList<PickleRow>();
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "100.5"), new PickleCell(mock(PickleLocation.class), "0.5"), new PickleCell(mock(PickleLocation.class), "1000"))));
-        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "99.5"), new PickleCell(mock(PickleLocation.class), "-0.5"), new PickleCell(mock(PickleLocation.class), "999"))));
-        return rows;
+    private List<PickleTableRow> transposedListOfDoublesWithoutHeader() {
+        return asList(
+            row(cell("100.5"), cell("0.5"), cell("1000")),
+            row(cell("99.5"), cell("-0.5"), cell("999"))
+        );
     }
-
 
 }

@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.pickles.PickleStep;
 
 import java.util.List;
 

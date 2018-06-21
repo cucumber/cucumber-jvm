@@ -1,22 +1,20 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
+import cucumber.messages.Pickles;
+import cucumber.messages.Pickles.Pickle;
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
 import java.util.Collection;
-import java.util.Collections;
 
-import static java.util.Arrays.asList;
+import static cucumber.runtime.PickleHelper.pickle;
+import static cucumber.runtime.PickleHelper.step;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -33,7 +31,7 @@ public class HookTest {
     @Test
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<Pickles.PickleTag>anyList())).thenReturn(true);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final Backend backend = mock(Backend.class);
@@ -48,10 +46,10 @@ public class HookTest {
         RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         Runner runner = runnerSupplier.get();
         runner.getGlue().addAfterHook(hook);
-        PickleStep step = mock(PickleStep.class);
-        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
-        runner.runPickle(pickleEvent);
+        Pickle pickle = pickle(step());
+
+        runner.runPickle(pickle);
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(ArgumentMatchers.<Scenario>any());

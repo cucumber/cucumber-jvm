@@ -108,23 +108,6 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoSummaryPrinterPlugin.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
-    }
-
-    @Test
-    public void inherit_plugin_from_baseclass() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        List<Plugin> plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions).getPlugins();
-        assertPluginExists(plugins, "cucumber.runtime.formatter.JSONFormatter");
-        assertPluginExists(plugins, "cucumber.runtime.formatter.PrettyFormatter");
-    }
-
-    @Test
     public void override_monochrome_flag_from_baseclass() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithMonoChromeTrue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();

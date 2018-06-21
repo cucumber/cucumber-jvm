@@ -1,13 +1,13 @@
 package cucumber.runtime.model;
 
+import cucumber.messages.Gherkin.GherkinDocument;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.Resource;
 import cucumber.util.Encoding;
-import gherkin.AstBuilder;
+import gherkin.GherkinDocumentBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
 import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,16 +50,17 @@ public class FeatureBuilder {
         }
         pathsByChecksum.put(checksum, resource.getPath());
 
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument.Builder> parser = new Parser<>(new GherkinDocumentBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
-            GherkinDocument gherkinDocument = parser.parse(gherkin, matcher);
-            CucumberFeature feature = new CucumberFeature(gherkinDocument, convertFileSeparatorToForwardSlash(resource.getPath()), gherkin);
+            String uri = convertFileSeparatorToForwardSlash(resource.getPath());
+            GherkinDocument gherkinDocument = parser.parse(gherkin, matcher).setUri(uri).build();
+            CucumberFeature feature = new CucumberFeature(gherkinDocument, gherkin);
             cucumberFeatures.add(feature);
         } catch (ParserException e) {
             throw new CucumberException(e);
         }
-     }
+    }
 
     private String convertFileSeparatorToForwardSlash(String path) {
         return path.replace(fileSeparatorChar, '/');

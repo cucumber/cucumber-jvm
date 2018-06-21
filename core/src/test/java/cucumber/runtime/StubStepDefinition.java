@@ -1,12 +1,12 @@
 package cucumber.runtime;
 
-import io.cucumber.stepexpression.TypeRegistry;
+import cucumber.messages.Pickles.PickleStep;
 import io.cucumber.stepexpression.Argument;
-import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

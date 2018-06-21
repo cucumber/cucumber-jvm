@@ -39,7 +39,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.3</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>5.1.0</gherkin.version>
+        <gherkin.version>6.0.0-SNAPSHOT</gherkin.version>
         <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <spring.version>4.3.10.RELEASE</spring.version>

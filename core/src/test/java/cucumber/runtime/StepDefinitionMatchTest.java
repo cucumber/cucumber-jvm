@@ -1,27 +1,25 @@
 package cucumber.runtime;
 
-import io.cucumber.stepexpression.TypeRegistry;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTable;
+import cucumber.messages.Pickles.PickleStep;
+import cucumber.messages.Pickles.PickleTable;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.Transformer;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellTransformer;
 import io.cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static cucumber.runtime.PickleHelper.cell;
+import static cucumber.runtime.PickleHelper.location;
+import static cucumber.runtime.PickleHelper.row;
+import static cucumber.runtime.PickleHelper.step;
+import static cucumber.runtime.PickleHelper.table;
 import static java.util.Locale.ENGLISH;
-import static org.mockito.Mockito.mock;
 
 public class StepDefinitionMatchTest {
 
@@ -31,7 +29,8 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void executes_a_step() throws Throwable {
-        PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
+        PickleStep step = PickleStep.newBuilder().setText("I have 4 cukes in my belly").build();
+//        PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
@@ -41,7 +40,8 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments() throws Throwable {
-        PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
+        PickleStep step = PickleStep.newBuilder().setText("I have 4 cukes in my belly").build();
+//        PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
@@ -59,14 +59,15 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments_with_data_table() throws Throwable {
-        PickleTable table = new PickleTable(
-            asList(
-                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "A"), new PickleCell(mock(PickleLocation.class), "B"))),
-                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "C"), new PickleCell(mock(PickleLocation.class), "D")))
-            )
+        PickleTable table = table(
+            row(cell("A"), cell("B")),
+            row(cell("C"), cell("D"))
         );
-
-        PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+        PickleStep step = PickleStep.newBuilder()
+            .setText("I have 4 cukes in my belly")
+            .addLocations(location())
+            .setDataTable(table)
+            .build();
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
@@ -87,7 +88,7 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() throws Throwable {
-        PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) mock(PickleTable.class)), asList(mock(PickleLocation.class)));
+        PickleStep step = step("I have 4 cukes in my belly", table());
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
@@ -101,10 +102,9 @@ public class StepDefinitionMatchTest {
         stepDefinitionMatch.runStep(null, null);
     }
 
-
     @Test
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_and_no_arguments() throws Throwable {
-        PickleStep step = new PickleStep("I have cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
+        PickleStep step = step("I have cukes in my belly");
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
@@ -118,9 +118,12 @@ public class StepDefinitionMatchTest {
     @Test
     public void throws_register_type_in_configuration_exception_when_there_is_no_data_table_type_defined() throws Throwable {
         // Empty table maps to null and doesn't trigger a type check.
-        PickleTable table = new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "A")))));
+        PickleTable table = table(row(cell("A")));
+        PickleStep step = PickleStep.newBuilder()
+            .setText("I have a datatable")
+            .setDataTable(table)
+            .build();
 
-        PickleStep step = new PickleStep("I have a datatable", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
         StepDefinition stepDefinition = new StubStepDefinition("I have a datatable", typeRegistry, UndefinedDataTableType.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 
@@ -134,7 +137,7 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void throws_could_not_convert_exception_for_transfomer_and_capture_group_mismatch() throws Throwable {
-        typeRegistry.defineParameterType(new ParameterType<ItemQuantity>(
+        typeRegistry.defineParameterType(new ParameterType<>(
             "itemQuantity",
             "(few|some|lots of) (cukes|gherkins)",
             ItemQuantity.class,
@@ -145,7 +148,7 @@ public class StepDefinitionMatchTest {
                 }
             }));
 
-        PickleStep step = new PickleStep("I have some cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
+        PickleStep step = step("I have some cukes in my belly");
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", typeRegistry, ItemQuantity.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 
@@ -160,11 +163,9 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void throws_could_not_convert_exception_for_singleton_table_dimension_mismatch() throws Throwable {
-        PickleTable table = new PickleTable(
-            asList(
-                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "A"), new PickleCell(mock(PickleLocation.class), "B"))),
-                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "C"), new PickleCell(mock(PickleLocation.class), "D")))
-            )
+        PickleTable table = table(
+            row(cell("A"), cell("B")),
+            row(cell("C"), cell("D"))
         );
 
         typeRegistry.defineDataTableType(new DataTableType(
@@ -178,7 +179,9 @@ public class StepDefinitionMatchTest {
 
         ));
 
-        PickleStep step = new PickleStep("I have some cukes in my belly", singletonList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+        PickleStep step = PickleStep.newBuilder()
+            .setText("I have some cukes in my belly")
+            .setDataTable(table).build();
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", typeRegistry, ItemQuantity.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
 

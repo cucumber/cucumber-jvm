@@ -1,20 +1,15 @@
 package cucumber.runtime;
 
-import io.cucumber.stepexpression.TypeRegistry;
+import cucumber.messages.Pickles.PickleStep;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import java.util.Collections;
 
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
@@ -131,7 +126,7 @@ public class RuntimeGlueTest {
 
         //check cache
         RuntimeGlue.CacheEntry entry = glue.matchedStepDefinitionsCache.get(stepText);
-        assertEquals(stepDefinition1,entry.stepDefinition);
+        assertEquals(stepDefinition1, entry.stepDefinition);
 
         PickleStep pickleStep2 = getPickleStep(stepText);
         assertEquals(stepDefinition1, glue.stepDefinitionMatch(featurePath, pickleStep2).getStepDefinition());
@@ -162,14 +157,14 @@ public class RuntimeGlueTest {
 
             glue.stepDefinitionMatch(featurePath, getPickleStep("pattern1"));
         } catch (AmbiguousStepDefinitionsException e) {
-            assertEquals(2,e.getMatches().size());
+            assertEquals(2, e.getMatches().size());
             ambiguousCalled = true;
         }
         assertTrue(ambiguousCalled);
     }
 
     private static PickleStep getPickleStep(String text) {
-        return new PickleStep(text, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
+        return PickleStep.newBuilder().setText(text).build();
     }
 
     private static StepDefinition getStepDefinitionMockWithPattern(String pattern) {

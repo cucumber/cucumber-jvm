@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import io.cucumber.stepexpression.Argument;
 import cucumber.api.StepDefinitionReporter;
-import gherkin.pickles.PickleStep;
+import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.stepexpression.Argument;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +40,7 @@ public class RuntimeGlue implements Glue {
         beforeStepHooks.add(hookDefinition);
         Collections.sort(beforeStepHooks, new HookComparator(true));
     }
+
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
@@ -93,7 +94,7 @@ public class RuntimeGlue implements Glue {
 
         // We can only cache step definitions without arguments.
         // DocString and TableArguments are not included in the stepText used as the cache key.
-        if(match.getArguments().isEmpty()) {
+        if (match.getArguments().isEmpty()) {
             matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition()));
         }
 
@@ -147,9 +148,9 @@ public class RuntimeGlue implements Glue {
         }
 
         Iterator<Map.Entry<String, CacheEntry>> cachedStepDefs = matchedStepDefinitionsCache.entrySet().iterator();
-        while(cachedStepDefs.hasNext()){
+        while (cachedStepDefs.hasNext()) {
             StepDefinition stepDefinition = cachedStepDefs.next().getValue().stepDefinition;
-            if(stepDefinition.isScenarioScoped()){
+            if (stepDefinition.isScenarioScoped()) {
                 cachedStepDefs.remove();
             }
         }

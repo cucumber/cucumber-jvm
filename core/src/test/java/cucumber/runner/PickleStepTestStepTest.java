@@ -6,7 +6,6 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.PickleStepDefinitionMatch;
-import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +13,7 @@ import org.mockito.InOrder;
 
 import static cucumber.api.Result.Type.PASSED;
 import static cucumber.api.Result.Type.SKIPPED;
+import static cucumber.runtime.PickleHelper.step;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -37,14 +37,14 @@ public class PickleStepTestStepTest {
     private final HookTestStep afterHook = mock(HookTestStep.class);
     private final PickleStepTestStep step = new PickleStepTestStep(
         "uri",
-        mock(PickleStep.class),
+        step(),
         singletonList(beforeHook),
         singletonList(afterHook),
         definitionMatch
     );
 
     @Before
-    public void setup(){
+    public void setup() {
         when(beforeHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean()))
             .thenReturn(new Result(PASSED, 0L, null));
         when(afterHook.run(any(EventBus.class), anyString(), any(Scenario.class), anyBoolean()))
@@ -162,9 +162,9 @@ public class PickleStepTestStepTest {
     }
 
     @Test
-    public void step_execution_time_is_measured() throws Throwable {
+    public void step_execution_time_is_measured() {
         Long duration = 1234L;
-        TestStep testStep = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
+        TestStep testStep = new PickleStepTestStep("uri", step(), definitionMatch);
         when(bus.getTime()).thenReturn(0l, 1234l);
 
         when(bus.getTime())

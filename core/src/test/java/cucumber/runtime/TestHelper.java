@@ -4,6 +4,9 @@ import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.formatter.Formatter;
+import cucumber.messages.Gherkin.GherkinDocument;
+import cucumber.messages.Pickles.PickleStep;
+import cucumber.messages.Pickles.PickleTag;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
@@ -15,12 +18,9 @@ import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
-import gherkin.AstBuilder;
+import gherkin.GherkinDocumentBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
 import junit.framework.AssertionFailedError;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,11 +53,11 @@ public class TestHelper {
     }
 
     public static CucumberFeature feature(final String path, final String source) {
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument.Builder> parser = new Parser<>(new GherkinDocumentBuilder());
         TokenMatcher matcher = new TokenMatcher();
 
-        GherkinDocument gherkinDocument = parser.parse(source, matcher);
-        return new CucumberFeature(gherkinDocument, path, source);
+        GherkinDocument gherkinDocument = parser.parse(source, matcher).setUri(path).build();
+        return new CucumberFeature(gherkinDocument, source);
     }
 
     public static Result result(String status) {
@@ -71,14 +70,14 @@ public class TestHelper {
 
     public static Result result(Result.Type status) {
         switch (status) {
-        case FAILED:
-            return result(status, mockAssertionFailedError());
-        case AMBIGUOUS:
-            return result(status, mockAmbiguousStepDefinitionException());
-        case PENDING:
-            return result(status, new PendingException());
-        default:
-            return result(status, null);
+            case FAILED:
+                return result(status, mockAssertionFailedError());
+            case AMBIGUOUS:
+                return result(status, mockAmbiguousStepDefinitionException());
+            case PENDING:
+                return result(status, new PendingException());
+            default:
+                return result(status, null);
         }
     }
 
@@ -111,38 +110,38 @@ public class TestHelper {
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks,
-            final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
+                                               final long stepHookDuration, final Formatter formatter) throws Throwable {
+        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String, String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
+                                               final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final long stepHookDuration, final Formatter formatter) throws Throwable {
+                                               final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
+                                               final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, hookActions, stepHookDuration, formatter);
     }
 
     public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
+                                                final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
+        runFeaturesWithFormatter(features, stepsToResult, Collections.<String, String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation,
                                                final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), Collections.<String, Result>emptyMap(), stepsToLocation,
-                Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), 0L, formatter);
+            Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), 0L, formatter);
     }
 
     public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
+                                                final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -162,7 +161,7 @@ public class TestHelper {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        RunnerSupplier runnerSupplier = new RunnerSupplier () {
+        RunnerSupplier runnerSupplier = new RunnerSupplier() {
             @Override
             public Runner get() {
                 return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
@@ -208,7 +207,7 @@ public class TestHelper {
         } else if (stepResult.is(Result.Type.SKIPPED) && stepResult.getError() != null) {
             doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (!stepResult.is(Result.Type.PASSED) &&
-                   !stepResult.is(Result.Type.SKIPPED)) {
+            !stepResult.is(Result.Type.SKIPPED)) {
             fail("Cannot mock step to the result: " + stepResult.getStatus());
         }
     }
@@ -218,14 +217,14 @@ public class TestHelper {
     }
 
     private static void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations,
-            final List<Answer<Object>> hookActions) throws Throwable {
+                                  final List<Answer<Object>> hookActions) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
         for (int i = 0; i < hooks.size(); ++i) {
             String hookLocation = hookLocations.size() > i ? hookLocations.get(i) : null;
-            Answer<Object> hookAction  = hookActions.size() > i ? hookActions.get(i) : null;
+            Answer<Object> hookAction = hookActions.size() > i ? hookActions.get(i) : null;
             TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks, beforeStepHooks, afterStepHooks);
         }
         if (!beforeHooks.isEmpty()) {
@@ -250,7 +249,7 @@ public class TestHelper {
             when(hook.getLocation(anyBoolean())).thenReturn(hookLocation);
         }
         if (action != null) {
-            doAnswer(action).when(hook).execute((Scenario)any());
+            doAnswer(action).when(hook).execute((Scenario) any());
         }
         if (hookEntry.getValue().is(Result.Type.FAILED)) {
             doThrow(hookEntry.getValue().getError()).when(hook).execute((cucumber.api.Scenario) any());

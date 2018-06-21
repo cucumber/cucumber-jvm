@@ -3,44 +3,43 @@ package cucumber.runtime.android;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.util.Log;
-import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.TypeRegistryConfigurer;
+import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
+import cucumber.api.java.ObjectFactory;
+import cucumber.messages.Pickles.Pickle;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.FeaturePathFeatureSupplier;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.model.FeatureLoader;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
-import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Backend;
+import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.DefaultTypeRegistryConfiguration;
 import cucumber.runtime.Env;
+import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.Reflections;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
-import cucumber.runtime.formatter.Stats;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.UndefinedStepsTracker;
-import cucumber.runtime.formatter.AndroidInstrumentationReporter;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.AndroidLogcatReporter;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
+import cucumber.runtime.formatter.Stats;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactoryLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import dalvik.system.DexFile;
-import gherkin.events.PickleEvent;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -78,7 +77,7 @@ public final class CucumberExecutor {
      */
     private final RuntimeOptions runtimeOptions;
 
-    private final List<PickleEvent> pickleEvents;
+    private final List<Pickle> pickleEvents;
     private final EventBus bus;
     private final Plugins plugins;
     private final Runner runner;
@@ -114,8 +113,6 @@ public final class CucumberExecutor {
         Stats stats = new Stats();
         stats.setEventPublisher(bus);
 
-        AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(undefinedStepsTracker, instrumentation);
-        plugins.addPlugin(instrumentationReporter);
         plugins.addPlugin(new AndroidLogcatReporter(stats, undefinedStepsTracker, TAG));
 
         // Start the run before reading the features.
@@ -126,7 +123,6 @@ public final class CucumberExecutor {
             feature.sendTestSourceRead(bus);
         }
         this.pickleEvents = FeatureCompiler.compile(features, filters);
-        instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
 
     /**
@@ -135,7 +131,7 @@ public final class CucumberExecutor {
     public void execute() {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runner.reportStepDefinitions(stepDefinitionReporter);
-        for (final PickleEvent pickleEvent : pickleEvents) {
+        for (final Pickle pickleEvent : pickleEvents) {
             runner.runPickle(pickleEvent);
         }
         bus.send(new TestRunFinished(bus.getTime()));

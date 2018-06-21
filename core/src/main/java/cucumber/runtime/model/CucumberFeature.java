@@ -1,22 +1,20 @@
 package cucumber.runtime.model;
 
 import cucumber.api.event.TestSourceRead;
+import cucumber.messages.Gherkin.GherkinDocument;
 import cucumber.runner.EventBus;
-import gherkin.ast.GherkinDocument;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
 public class CucumberFeature implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final String uri;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
 
 
-    public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource) {
+    public CucumberFeature(GherkinDocument gherkinDocument, String gherkinSource) {
         this.gherkinDocument = gherkinDocument;
-        this.uri = uri;
         this.gherkinSource = gherkinSource;
     }
 
@@ -25,11 +23,11 @@ public class CucumberFeature implements Serializable {
     }
 
     public String getUri() {
-        return uri;
+        return gherkinDocument.getUri();
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), uri, gherkinSource));
+        bus.send(new TestSourceRead(bus.getTime(), gherkinSource));
     }
 
     public static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {

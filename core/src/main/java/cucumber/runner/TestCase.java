@@ -4,16 +4,16 @@ import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
+import cucumber.messages.Pickles;
+import cucumber.messages.Pickles.Pickle;
+import cucumber.messages.Sources.Location;
 import cucumber.runtime.ScenarioImpl;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleTag;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class TestCase implements cucumber.api.TestCase {
-    private final PickleEvent pickleEvent;
+    private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
@@ -22,12 +22,12 @@ class TestCase implements cucumber.api.TestCase {
     public TestCase(List<PickleStepTestStep> testSteps,
                     List<HookTestStep> beforeHooks,
                     List<HookTestStep> afterHooks,
-                    PickleEvent pickleEvent,
+                    Pickle pickle,
                     boolean dryRun) {
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
-        this.pickleEvent = pickleEvent;
+        this.pickle = pickle;
         this.dryRun = dryRun;
     }
 
@@ -35,22 +35,22 @@ class TestCase implements cucumber.api.TestCase {
         boolean skipNextStep = this.dryRun;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
-        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
+        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickle);
 
         for (HookTestStep before : beforeHooks) {
-            Result stepResult = before.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
+            Result stepResult = before.run(bus, pickle.getLanguage(), scenarioResult, dryRun);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
+            Result stepResult = step.run(bus, pickle.getLanguage(), scenarioResult, skipNextStep);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
         }
 
         for (HookTestStep after : afterHooks) {
-            Result stepResult = after.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
+            Result stepResult = after.run(bus, pickle.getLanguage(), scenarioResult, dryRun);
             scenarioResult.add(stepResult);
         }
 
@@ -73,30 +73,30 @@ class TestCase implements cucumber.api.TestCase {
 
     @Override
     public String getName() {
-        return pickleEvent.pickle.getName();
+        return pickle.getName();
     }
 
     @Override
     public String getScenarioDesignation() {
-        return fileColonLine(pickleEvent.pickle.getLocations().get(0)) + " # " + getName();
+        return fileColonLine(pickle.getLocations(0)) + " # " + getName();
     }
 
     @Override
     public String getUri() {
-        return pickleEvent.uri;
+        return pickle.getUri();
     }
 
     @Override
     public int getLine() {
-        return pickleEvent.pickle.getLocations().get(0).getLine();
+        return pickle.getLocations(pickle.getLocationsCount() - 1).getLine();
     }
 
-    private String fileColonLine(PickleLocation location) {
-        return pickleEvent.uri + ":" + location.getLine();
+    private String fileColonLine(Location location) {
+        return pickle.getUri() + ":" + location.getLine();
     }
 
     @Override
-    public List<PickleTag> getTags() {
-        return pickleEvent.pickle.getTags();
+    public List<Pickles.PickleTag> getTags() {
+        return pickle.getTagsList();
     }
 }

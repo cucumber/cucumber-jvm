@@ -4,15 +4,13 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.util.Arrays;
 import java.util.Collections;
 
+import static cucumber.runtime.PickleHelper.pickle;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -91,14 +89,7 @@ public class TestCaseTest {
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(Arrays.asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickleEvent(), false);
-    }
-
-    private PickleEvent pickleEvent() {
-        Pickle pickle = mock(Pickle.class);
-        when(pickle.getLanguage()).thenReturn(ENGLISH);
-        when(pickle.getLocations()).thenReturn(Arrays.asList(new PickleLocation(1, 1)));
-        return new PickleEvent("uri", pickle);
+        return new TestCase(Arrays.asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickle(), false);
     }
 
     private Result resultWithStatus(Result.Type status) {

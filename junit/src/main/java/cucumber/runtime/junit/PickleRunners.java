@@ -1,12 +1,10 @@
 package cucumber.runtime.junit;
 
+import cucumber.messages.Pickles.Pickle;
+import cucumber.messages.Pickles.PickleStep;
+import cucumber.messages.Sources;
 import cucumber.runner.Runner;
 import cucumber.runtime.RunnerSupplier;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.Supplier;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -16,6 +14,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 class PickleRunners {
@@ -29,44 +28,44 @@ class PickleRunners {
 
     }
 
-    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {
-        return new WithStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
+    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
+        return new WithStepDescriptions(runnerSupplier, pickle, jUnitOptions);
     }
 
 
-    static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) {
-        return new NoStepDescriptions(featureName, runnerSupplier, pickleEvent, jUnitOptions);
+    static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) {
+        return new NoStepDescriptions(featureName, runnerSupplier, pickle, jUnitOptions);
     }
 
 
     static class WithStepDescriptions extends ParentRunner<PickleStep> implements PickleRunner {
         private final RunnerSupplier runnerSupplier;
-        private final PickleEvent pickleEvent;
+        private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
         private Description description;
 
-        WithStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {
+        WithStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
             super(null);
             this.runnerSupplier = runnerSupplier;
-            this.pickleEvent = pickleEvent;
+            this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
         }
 
         @Override
         protected List<PickleStep> getChildren() {
-            return pickleEvent.pickle.getSteps();
+            return pickle.getStepsList();
         }
 
         @Override
         public String getName() {
-            return getPickleName(pickleEvent, jUnitOptions.filenameCompatibleNames());
+            return getPickleName(pickle, jUnitOptions.filenameCompatibleNames());
         }
 
         @Override
         public Description getDescription() {
             if (description == null) {
-                description = Description.createSuiteDescription(getName(), new PickleId(pickleEvent));
+                description = Description.createSuiteDescription(getName(), new PickleId(pickle));
                 for (PickleStep step : getChildren()) {
                     description.addChild(describeChild(step));
                 }
@@ -84,7 +83,7 @@ class PickleRunners {
                 } else {
                     testName = step.getText();
                 }
-                description = Description.createTestDescription(getName(), testName, new PickleStepId(pickleEvent, step));
+                description = Description.createTestDescription(getName(), testName, new PickleStepId(pickle.getUri(), step));
                 stepDescriptions.put(step, description);
             }
             return description;
@@ -96,7 +95,7 @@ class PickleRunners {
             Runner runner = runnerSupplier.get();
             JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
             jUnitReporter.startExecutionUnit(this, notifier);
-            runner.runPickle(pickleEvent);
+            runner.runPickle(pickle);
             jUnitReporter.finishExecutionUnit();
         }
 
@@ -113,14 +112,14 @@ class PickleRunners {
     static final class NoStepDescriptions implements PickleRunner {
         private final String featureName;
         private final RunnerSupplier runnerSupplier;
-        private final PickleEvent pickleEvent;
+        private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private Description description;
 
-        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) {
+        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) {
             this.featureName = featureName;
             this.runnerSupplier = runnerSupplier;
-            this.pickleEvent = pickleEvent;
+            this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
         }
 
@@ -128,8 +127,8 @@ class PickleRunners {
         public Description getDescription() {
             if (description == null) {
                 String className = createName(featureName, jUnitOptions.filenameCompatibleNames());
-                String name = getPickleName(pickleEvent, jUnitOptions.filenameCompatibleNames());
-                description = Description.createTestDescription(className, name, new PickleId(pickleEvent));
+                String name = getPickleName(pickle, jUnitOptions.filenameCompatibleNames());
+                description = Description.createTestDescription(className, name, new PickleId(pickle));
             }
             return description;
         }
@@ -145,13 +144,13 @@ class PickleRunners {
             Runner runner = runnerSupplier.get();
             JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
             jUnitReporter.startExecutionUnit(this, notifier);
-            runner.runPickle(pickleEvent);
+            runner.runPickle(pickle);
             jUnitReporter.finishExecutionUnit();
         }
     }
 
-    private static String getPickleName(PickleEvent pickleEvent, boolean useFilenameCompatibleNames) {
-        final String name = pickleEvent.pickle.getName();
+    private static String getPickleName(Pickle pickleEvent, boolean useFilenameCompatibleNames) {
+        final String name = pickleEvent.getName();
         return createName(name, useFilenameCompatibleNames);
     }
 
@@ -182,8 +181,8 @@ class PickleRunners {
             this.pickleLine = pickleLine;
         }
 
-        PickleId(PickleEvent pickleEvent) {
-            this(pickleEvent.uri, pickleEvent.pickle.getLocations().get(0).getLine());
+        PickleId(Pickle pickle) {
+            this(pickle.getUri(), pickle.getLocations(pickle.getLocationsCount() - 1).getLine());
         }
 
         @Override
@@ -209,15 +208,14 @@ class PickleRunners {
 
     private static final class PickleStepId implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String uri;
-        private final int pickleLine;
-        private int pickleStepLine;
+        private final String id;
 
-        PickleStepId(PickleEvent pickleEvent, PickleStep pickleStep) {
-            this.uri = pickleEvent.uri;
-            this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
-            List<PickleLocation> stepLocations = pickleStep.getLocations();
-            this.pickleStepLine = stepLocations.get(stepLocations.size() - 1).getLine();
+        PickleStepId(String uri, PickleStep pickleStep) {
+            StringBuilder b = new StringBuilder(uri);
+            for (Sources.Location location : pickleStep.getLocationsList()) {
+                b.append(":").append(location.getLine());
+            }
+            this.id = b.toString();
         }
 
         @Override
@@ -225,20 +223,17 @@ class PickleRunners {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             PickleStepId that = (PickleStepId) o;
-            return pickleLine == that.pickleLine && pickleStepLine == that.pickleStepLine && uri.equals(that.uri);
+            return Objects.equals(id, that.id);
         }
 
         @Override
         public int hashCode() {
-            int result = pickleLine;
-            result = 31 * result + uri.hashCode();
-            result = 31 * result + pickleStepLine;
-            return result;
+            return Objects.hash(id);
         }
 
         @Override
         public String toString() {
-            return uri + ":" + pickleLine + ":" + pickleStepLine;
+            return id;
         }
     }
 

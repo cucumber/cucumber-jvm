@@ -53,16 +53,16 @@ public class CucumberFeatureTest {
     public void loads_features_specified_in_rerun_file() throws Exception {
         String featurePath1 = "path/bar.feature";
         String feature1 = "" +
-                "Feature: bar\n" +
-                "  Scenario: scenario bar\n" +
-                "    * step\n";
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
         String featurePath2 = "path/foo.feature";
         String feature2 = "" +
-                "Feature: foo\n" +
-                "  Scenario: scenario 1\n" +
-                "    * step\n" +
-                "  Scenario: scenario 2\n" +
-                "    * step\n";
+            "Feature: foo\n" +
+            "  Scenario: scenario 1\n" +
+            "    * step\n" +
+            "  Scenario: scenario 2\n" +
+            "    * step\n";
         String rerunPath = "path/rerun.txt";
         String rerunFile = featurePath1 + ":2\n" + featurePath2 + ":4\n";
         ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
@@ -72,19 +72,19 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren(1).getScenario().getName());
     }
 
     @Test
     public void loads_no_features_when_rerun_file_is_empty() throws Exception {
         String feature = "" +
-                "Feature: bar\n" +
-                "  Scenario: scenario bar\n" +
-                "    * step\n";
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
         String rerunPath = "path/rerun.txt";
         String rerunFile = "";
         ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
@@ -166,20 +166,20 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren(1).getScenario().getName());
     }
 
     @Test
     public void loads_features_specified_in_rerun_file_from_classpath_when_not_in_file_system() throws Exception {
         String featurePath = "path/bar.feature";
         String feature = "" +
-                "Feature: bar\n" +
-                "  Scenario: scenario bar\n" +
-                "    * step\n";
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
         String rerunPath = "path/rerun.txt";
         String rerunFile = featurePath + ":2";
         ResourceLoader resourceLoader = mockFeatureFileResource("classpath:" + featurePath, feature);
@@ -189,8 +189,8 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(1, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
     }
 
     @Test
@@ -209,8 +209,8 @@ public class CucumberFeatureTest {
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
             assertEquals("Neither found on file system or on classpath: " +
-                            "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
-                    exception.getMessage());
+                    "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
+                exception.getMessage());
         }
     }
 
@@ -229,8 +229,8 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(1, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
     }
 
 
@@ -257,11 +257,11 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren(1).getScenario().getName());
     }
 
 
@@ -288,22 +288,22 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList("@" + rerunPath), new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
-        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildrenCount());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren(0).getScenario().getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren(1).getScenario().getName());
     }
 
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)
-            throws IOException {
+        throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         mockFeatureFileResource(resourceLoader, featurePath, feature);
         return resourceLoader;
     }
 
     private ResourceLoader mockFeatureFileResourceForAnyFeaturePath(String feature)
-            throws IOException {
+        throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         Resource resource = mock(Resource.class);
         when(resource.getPath()).thenReturn("");
@@ -313,12 +313,12 @@ public class CucumberFeatureTest {
     }
 
     private void mockFeatureFileResource(ResourceLoader resourceLoader, String featurePath, String feature)
-            throws IOException {
+        throws IOException {
         mockFileResource(resourceLoader, featurePath, ".feature", feature);
     }
 
     private void mockFileResource(ResourceLoader resourceLoader, String featurePath, String extension, String feature)
-            throws IOException {
+        throws IOException {
         Resource resource = mock(Resource.class);
         when(resource.getPath()).thenReturn(featurePath);
         when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));

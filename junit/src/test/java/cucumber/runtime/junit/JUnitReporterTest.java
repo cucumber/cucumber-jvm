@@ -1,13 +1,13 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runner.EventBus;
 import cucumber.runtime.junit.JUnitReporter.EachTestNotifier;
 import cucumber.runtime.junit.JUnitReporter.NoTestNotifier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
-import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static cucumber.runtime.PickleHelper.step;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,7 +29,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static java.util.Arrays.asList;
 
 
 public class JUnitReporterTest {
@@ -50,7 +51,7 @@ public class JUnitReporterTest {
     @Test
     public void test_step_started_does_not_fire_test_started_for_step_by_default() {
         createNonStrictReporter();
-        PickleStep runnerStep = mockStep();
+        PickleStep runnerStep = step();
         PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
         runNotifier = mock(RunNotifier.class);
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
@@ -63,7 +64,7 @@ public class JUnitReporterTest {
     @Test
     public void test_step_started_fires_test_started_for_step_when_using_step_notifications() {
         createNonStrictReporter("--step-notifications");
-        PickleStep runnerStep = mockStep();
+        PickleStep runnerStep = step();
         PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
         runNotifier = mock(RunNotifier.class);
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
@@ -494,17 +495,6 @@ public class JUnitReporterTest {
 
     private Description stepDescription(PickleStep runnerStep) {
         return Description.createTestDescription("", runnerStep.getText());
-    }
-
-    private PickleStep mockStep() {
-        String stepName = "step name";
-        return mockStep(stepName);
-    }
-
-    private PickleStep mockStep(String stepName) {
-        PickleStep step = mock(PickleStep.class);
-        when(step.getText()).thenReturn(stepName);
-        return step;
     }
 
     private PickleStepTestStep mockTestStep(String stepText) {

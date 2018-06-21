@@ -19,7 +19,7 @@ public abstract class AbstractTestNGCucumberTests {
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
     public void runScenario(PickleEventWrapper pickleWrapper, CucumberFeatureWrapper featureWrapper) throws Throwable {
         // the 'featureWrapper' parameter solely exists to display the feature file in a test report
-        testNGCucumberRunner.runScenario(pickleWrapper.getPickleEvent());
+        testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 
     /**

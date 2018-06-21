@@ -8,7 +8,6 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.GlueSupplier;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.Supplier;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;

@@ -1,12 +1,13 @@
 package cucumber.runtime.junit;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runner.EventBus;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
@@ -96,7 +97,7 @@ public class JUnitReporter {
         stepErrors = new ArrayList<Throwable>();
     }
 
-    void handleStepStarted(gherkin.pickles.PickleStep step) {
+    void handleStepStarted(PickleStep step) {
         if (junitOptions.stepNotifications()) {
             Description description = pickleRunner.describeChild(step);
             stepNotifier = new EachTestNotifier(runNotifier, description);
@@ -109,35 +110,35 @@ public class JUnitReporter {
     void handleStepResult(PickleStepTestStep testStep, Result result) {
         Throwable error = result.getError();
         switch (result.getStatus()) {
-        case PASSED:
-            // do nothing
-            break;
-        case SKIPPED:
-            if (error == null) {
-                error = new SkippedThrowable(NotificationLevel.STEP);
-            } else {
+            case PASSED:
+                // do nothing
+                break;
+            case SKIPPED:
+                if (error == null) {
+                    error = new SkippedThrowable(NotificationLevel.STEP);
+                } else {
+                    stepErrors.add(error);
+                }
+                stepNotifier.addFailedAssumption(error);
+                break;
+            case PENDING:
                 stepErrors.add(error);
-            }
-            stepNotifier.addFailedAssumption(error);
-            break;
-        case PENDING:
-            stepErrors.add(error);
-            addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
-            break;
-        case UNDEFINED:
-            if (error == null) {
-                error = new UndefinedThrowable();
-            }
-            stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
-            addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
-            break;
-        case AMBIGUOUS:
-        case FAILED:
-            stepErrors.add(error);
-            stepNotifier.addFailure(error);
-            break;
-        default:
-            throw new IllegalStateException("Unexpected result status: " + result.getStatus());
+                addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+                break;
+            case UNDEFINED:
+                if (error == null) {
+                    error = new UndefinedThrowable();
+                }
+                stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
+                addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+                break;
+            case AMBIGUOUS:
+            case FAILED:
+                stepErrors.add(error);
+                stepNotifier.addFailure(error);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected result status: " + result.getStatus());
         }
         stepNotifier.fireTestFinished();
     }
@@ -150,29 +151,29 @@ public class JUnitReporter {
 
     void handleTestCaseResult(Result result) {
         switch (result.getStatus()) {
-        case PASSED:
-            // do nothing
-            break;
-        case SKIPPED:
-            if (stepErrors.isEmpty()) {
-                stepErrors.add(new SkippedThrowable(NotificationLevel.SCENARIO));
-            }
-            for (Throwable error : stepErrors) {
-                pickleRunnerNotifier.addFailedAssumption(error);
-            }
-            break;
-        case PENDING:
-        case UNDEFINED:
-            for (Throwable error : stepErrors) {
-                addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error);
-            }
-            break;
-        case AMBIGUOUS:
-        case FAILED:
-            for (Throwable error : stepErrors) {
-                pickleRunnerNotifier.addFailure(error);
-            }
-            break;
+            case PASSED:
+                // do nothing
+                break;
+            case SKIPPED:
+                if (stepErrors.isEmpty()) {
+                    stepErrors.add(new SkippedThrowable(NotificationLevel.SCENARIO));
+                }
+                for (Throwable error : stepErrors) {
+                    pickleRunnerNotifier.addFailedAssumption(error);
+                }
+                break;
+            case PENDING:
+            case UNDEFINED:
+                for (Throwable error : stepErrors) {
+                    addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error);
+                }
+                break;
+            case AMBIGUOUS:
+            case FAILED:
+                for (Throwable error : stepErrors) {
+                    pickleRunnerNotifier.addFailure(error);
+                }
+                break;
         }
         pickleRunnerNotifier.fireTestFinished();
     }

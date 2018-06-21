@@ -1,31 +1,27 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
-import cucumber.runner.TimeService;
-import cucumber.runtime.Backend;
-import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.Supplier;
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
+import cucumber.messages.Pickles.Pickle;
+import cucumber.messages.Pickles.PickleStep;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
+import cucumber.runner.TimeService;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Backend;
+import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.PickleHelper;
+import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Argument;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,13 +30,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
+import static cucumber.runtime.PickleHelper.pickle;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class JavaStepDefinitionTest {
     private static final Method THREE_DISABLED_MICE;
@@ -99,24 +95,22 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
         backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
 
-        PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
-        PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
-        Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
-        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runner.runPickle(pickleEvent);
+        Pickle pickle = pickle(step("three blind mice"));
+        runner.runPickle(pickle);
 
         assertEquals(AmbiguousStepDefinitionsException.class, latestReceivedResult.getError().getClass());
+    }
+
+    private PickleStep step(String text) {
+        return PickleStep.newBuilder().setText(text).build();
     }
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
         backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
 
-        PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
-        PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
-        Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
-        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runner.runPickle(pickleEvent);
+        Pickle pickle = pickle(step("three blind mice"));
+        runner.runPickle(pickle);
 
         assertNull(latestReceivedResult.getError());
         assertTrue(defs.foo);

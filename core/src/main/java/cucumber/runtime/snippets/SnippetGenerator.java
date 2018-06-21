@@ -1,14 +1,11 @@
 package cucumber.runtime.snippets;
 
+import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.datatable.DataTable;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
-import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
@@ -44,7 +41,7 @@ public class SnippetGenerator {
             functionName(expression.getSource(), functionNameGenerator),
             snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
             REGEXP_HINT,
-            !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
+            step.hasDataTable() ? snippet.tableHint() : ""
         );
     }
 
@@ -68,15 +65,10 @@ public class SnippetGenerator {
             arguments.put(parameterName, parameterType.getType());
         }
 
-        if (step.getArgument().isEmpty()) {
-            return arguments;
-        }
-
-        Argument arg = step.getArgument().get(0);
-        if (arg instanceof PickleString) {
+        if (step.hasDocString()) {
             arguments.put(parameterName("docString", parameterNames), String.class);
         }
-        if (arg instanceof PickleTable) {
+        if (step.hasDataTable()) {
             arguments.put(parameterName("dataTable", parameterNames), DataTable.class);
         }
 

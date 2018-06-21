@@ -1,11 +1,11 @@
 package cucumber.runtime;
 
+import cucumber.api.Scenario;
+import cucumber.messages.Pickles.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.stepexpression.Argument;
-import cucumber.api.Scenario;
-import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,6 +163,6 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
     }
 
     public static int getStepLine(PickleStep step) {
-        return step.getLocations().get(step.getLocations().size() - 1).getLine();
+        return step.getLocationsList().get(step.getLocationsCount() - 1).getLine();
     }
 }

@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
  * AbstractTestNGCucumberTests but still executes each scenario as a separate
  * TestNG test.
  */
-@CucumberOptions(strict = true, plugin = "json:target/cucumber-report-feature-composite.json")
+@CucumberOptions(strict = true)
 public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
     private TestNGCucumberRunner testNGCucumberRunner;
 
@@ -25,7 +25,7 @@ public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
 
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
     public void scenario(PickleEventWrapper pickleEvent, CucumberFeatureWrapper cucumberFeature) throws Throwable {
-        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent());
+        testNGCucumberRunner.runScenario(pickleEvent.getPickle());
     }
 
     @DataProvider

@@ -1,6 +1,6 @@
 package cucumber.runtime.filter;
 
-import gherkin.events.PickleEvent;
+import cucumber.messages.Pickles.Pickle;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -13,8 +13,8 @@ class NamePredicate implements PicklePredicate {
     }
 
     @Override
-    public boolean apply(PickleEvent pickleEvent) {
-        String name = pickleEvent.pickle.getName();
+    public boolean apply(Pickle pickle) {
+        String name = pickle.getName();
         for (Pattern pattern : patterns) {
             if (pattern.matcher(name).find()) {
                 return true;

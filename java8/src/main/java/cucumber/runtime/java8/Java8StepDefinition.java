@@ -1,20 +1,16 @@
 package cucumber.runtime.java8;
 
-import static cucumber.runtime.java8.ParameterInfo.fromTypes;
-import static java.lang.String.format;
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
-
-import io.cucumber.stepexpression.Argument;
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
-import io.cucumber.stepexpression.ArgumentMatcher;
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runtime.CucumberException;
-import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
+import io.cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.ArgumentMatcher;
+import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
-import cucumber.runtime.Utils;
-import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 import io.cucumber.stepexpression.TypeResolver;
 
 import java.lang.reflect.Method;
@@ -22,6 +18,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static cucumber.runtime.java8.ParameterInfo.fromTypes;
+import static java.lang.String.format;
+import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 public class Java8StepDefinition implements StepDefinition {
 

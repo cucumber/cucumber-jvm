@@ -1,25 +1,23 @@
 package cucumber.runtime;
 
 import cucumber.api.HookType;
-import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.messages.Pickles;
+import cucumber.messages.Pickles.PickleStep;
+import cucumber.messages.Pickles.PickleTag;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.formatter.FormatterBuilder;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
 import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,13 +33,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollectionOf;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -132,97 +128,6 @@ public class RuntimeTest {
         runtime.run();
 
         assertSame(stepDefinition, StepdefsPrinter.instance.stepDefinition);
-    }
-
-    @Test
-    public void runs_feature_with_json_formatter() throws Exception {
-        final CucumberFeature feature = feature("test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background name\n" +
-            "    Given b\n" +
-            "  Scenario: scenario name\n" +
-            "    When s\n");
-        StringBuilder out = new StringBuilder();
-
-        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        BackendSupplier backendSupplier = new BackendSupplier() {
-            @Override
-            public Collection<? extends Backend> get() {
-                return singletonList(mock(Backend.class));
-            }
-        };
-        EventBus bus = new EventBus(TimeService.SYSTEM);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        plugins.addPlugin(jsonFormatter);
-        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
-        Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
-
-        runtime.run();
-
-        String expected = "[\n" +
-            "  {\n" +
-            "    \"line\": 1,\n" +
-            "    \"elements\": [\n" +
-            "      {\n" +
-            "        \"line\": 2,\n" +
-            "        \"name\": \"background name\",\n" +
-            "        \"description\": \"\",\n" +
-            "        \"type\": \"background\",\n" +
-            "        \"keyword\": \"Background\",\n" +
-            "        \"steps\": [\n" +
-            "          {\n" +
-            "            \"result\": {\n" +
-            "              \"status\": \"undefined\"\n" +
-            "            },\n" +
-            "            \"line\": 3,\n" +
-            "            \"name\": \"b\",\n" +
-            "            \"match\": {},\n" +
-            "            \"keyword\": \"Given \"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"line\": 4,\n" +
-            "        \"name\": \"scenario name\",\n" +
-            "        \"description\": \"\",\n" +
-            "        \"id\": \"feature-name;scenario-name\",\n" +
-            "        \"type\": \"scenario\",\n" +
-            "        \"keyword\": \"Scenario\",\n" +
-            "        \"steps\": [\n" +
-            "          {\n" +
-            "            \"result\": {\n" +
-            "              \"status\": \"undefined\"\n" +
-            "            },\n" +
-            "            \"line\": 5,\n" +
-            "            \"name\": \"s\",\n" +
-            "            \"match\": {},\n" +
-            "            \"keyword\": \"When \"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"name\": \"feature name\",\n" +
-            "    \"description\": \"\",\n" +
-            "    \"id\": \"feature-name\",\n" +
-            "    \"keyword\": \"Feature\",\n" +
-            "    \"uri\": \"test.feature\",\n" +
-            "    \"tags\": []\n" +
-            "  }\n" +
-            "]";
-        assertEquals(expected, out.toString());
     }
 
     @Test

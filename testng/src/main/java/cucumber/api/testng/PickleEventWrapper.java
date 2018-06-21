@@ -1,6 +1,6 @@
 package cucumber.api.testng;
 
-import gherkin.events.PickleEvent;
+import cucumber.messages.Pickles.Pickle;
 
 /**
  * The only purpose of this interface is to be able to provide a custom
@@ -10,6 +10,6 @@ import gherkin.events.PickleEvent;
  */
 public interface PickleEventWrapper {
 
-    PickleEvent getPickleEvent();
+    Pickle getPickle();
 
 }

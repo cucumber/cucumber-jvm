@@ -1,21 +1,21 @@
 package cucumber.api.testng;
 
-import gherkin.events.PickleEvent;
+import cucumber.messages.Pickles.Pickle;
 
 class PickleEventWrapperImpl implements PickleEventWrapper {
 
-    private final PickleEvent pickleEvent;
+    private final Pickle pickle;
 
-    PickleEventWrapperImpl(PickleEvent pickleEvent) {
-        this.pickleEvent = pickleEvent;
+    PickleEventWrapperImpl(Pickle pickle) {
+        this.pickle = pickle;
     }
 
-    public PickleEvent getPickleEvent() {
-        return pickleEvent;
+    public Pickle getPickle() {
+        return pickle;
     }
 
     @Override
     public String toString() {
-        return "\"" + pickleEvent.pickle.getName() + "\"";
+        return "\"" + pickle.getName() + "\"";
     }
 }

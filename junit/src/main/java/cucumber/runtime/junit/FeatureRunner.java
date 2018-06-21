@@ -1,13 +1,13 @@
 package cucumber.runtime.junit;
 
+import cucumber.messages.Gherkin.Feature;
+import cucumber.messages.Pickles.Pickle;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
-import cucumber.runtime.filter.Filters;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runtime.filter.Filters;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.ast.Feature;
-import gherkin.events.PickleEvent;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -79,17 +79,17 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
             return;
         }
         FeatureCompiler compiler = new FeatureCompiler();
-        List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
-        for (PickleEvent pickleEvent : pickleEvents) {
-            if (filters.matchesFilters(pickleEvent)) {
+        List<Pickle> pickles = compiler.compileFeature(cucumberFeature);
+        for (Pickle pickle : pickles) {
+            if (filters.matchesFilters(pickle)) {
                 try {
                     if (jUnitOptions.stepNotifications()) {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
+                        picklePickleRunner = withStepDescriptions(runnerSupplier, pickle, jUnitOptions);
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
+                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runnerSupplier, pickle, jUnitOptions);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {

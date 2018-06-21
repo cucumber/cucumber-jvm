@@ -1,17 +1,17 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import gherkin.pickles.PickleStep;
+import cucumber.messages.Pickles.PickleStep;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class AmbiguousStepDefinitionMatchsTest {
     public static final String ENGLISH = "en";
     public final AmbiguousStepDefinitionsException e = mock(AmbiguousStepDefinitionsException.class);
-    public final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch("uri", mock(PickleStep.class), e);
+    public final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch("uri", PickleStep.newBuilder().build(), e);
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {

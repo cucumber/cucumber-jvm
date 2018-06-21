@@ -1,8 +1,6 @@
 package io.cucumber.stepexpression;
 
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
+import cucumber.messages.Pickles.PickleStep;
 
 import java.util.List;
 
@@ -16,21 +14,13 @@ public class ExpressionArgumentMatcher implements ArgumentMatcher {
 
     @Override
     public List<Argument> argumentsFrom(PickleStep step) {
-        if (step.getArgument().isEmpty()) {
-            return expression.match(step.getText());
+        if (step.hasDocString()) {
+            return expression.match(step.getText(), step.getDocString().getContent());
         }
-
-        gherkin.pickles.Argument argument = step.getArgument().get(0);
-
-        if (argument instanceof PickleString) {
-            return expression.match(step.getText(), ((PickleString) argument).getContent());
+        if (step.hasDataTable()) {
+            return expression.match(step.getText(), PickleTableConverter.toTable(step.getDataTable()));
         }
-
-        if (argument instanceof PickleTable) {
-            return expression.match(step.getText(), PickleTableConverter.toTable((PickleTable) argument));
-        }
-
-        throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
+        return expression.match(step.getText());
     }
 
 }

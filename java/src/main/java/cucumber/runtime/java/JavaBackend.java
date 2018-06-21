@@ -1,16 +1,12 @@
 package cucumber.runtime.java;
 
-import static cucumber.runtime.io.MultiLoader.packageName;
-import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
-import static java.lang.Thread.currentThread;
-
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
+import cucumber.messages.Pickles.PickleStep;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -24,13 +20,17 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static cucumber.runtime.io.MultiLoader.packageName;
+import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
+import static java.lang.Thread.currentThread;
 
 public class JavaBackend implements Backend, LambdaGlueRegistry {
 
@@ -67,7 +67,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
