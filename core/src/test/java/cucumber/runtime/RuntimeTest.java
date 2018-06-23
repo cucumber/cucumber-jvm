@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.cucumber.stepexpression.TypeRegistry;
-import org.mockito.stubbing.Answer;
 
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
@@ -312,7 +310,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_for_two_scenarios_with_background() throws Throwable {
+    public void should_call_formatter_for_two_scenarios_with_background() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
@@ -348,7 +346,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() throws Throwable {
+    public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
@@ -422,16 +420,16 @@ public class RuntimeTest {
 
         FormatterSpy formatterSpy = new FormatterSpy();
         final List<CucumberFeature> features = Arrays.asList(feature1, feature2, feature3);
-        TestHelper.runFeaturesWithFormatter(features,
-            stepsToResult,
-            Collections.<String, String>emptyMap(),
-            Collections.<SimpleEntry<String, Result>>emptyList(),
-            Collections.<String>emptyList(),
-            Collections.<Answer<Object>>emptyList(),
-            0L,
-            formatterSpy,
-            false,
-            "--threads" , String.valueOf(features.size()));
+
+        TestHelper.builder()
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withFormatterUnderTest(formatterSpy)
+            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+            .withRuntimeArgs("--threads", String.valueOf(features.size()))
+            .build()
+            .run();
+
         String formatterOutput = formatterSpy.toString();
 
         assertEquals("" +
@@ -454,9 +452,17 @@ public class RuntimeTest {
             "TestRun finished\n", formatterOutput);
     }
 
-    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
+    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy);
+
+        TestHelper.builder()
+            .withFeatures(feature)
+            .withStepsToResult(stepsToResult)
+            .withFormatterUnderTest(formatterSpy)
+            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+            .build()
+            .run();
+
         return formatterSpy.toString();
     }
 

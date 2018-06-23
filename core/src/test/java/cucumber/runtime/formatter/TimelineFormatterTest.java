@@ -7,15 +7,12 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,14 +179,14 @@ public class TimelineFormatterTest {
     }
 
     private void runFormatterWithPlugin() {
-        try {
-            TestHelper.runFeaturesWithFormatter(Arrays.asList(failingFeature, successfulFeature, pendingFeature), stepsToResult, stepsToLocation,
-                Collections.<AbstractMap.SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(),
-                Collections.<Answer<Object>>emptyList(), STEP_DURATION, null, "--plugin", "timeline:" + reportDir.getAbsolutePath());
-        }
-        catch (final Throwable e) {
-            throw new RuntimeException(e);
-        }
+        TestHelper.builder()
+            .withFeatures(failingFeature, successfulFeature, pendingFeature)
+            .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath())
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withTimeServiceIncrement(STEP_DURATION)
+            .build()
+            .run();
     }
 
     private ActualReportOutput readReport() throws IOException {
