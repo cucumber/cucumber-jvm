@@ -9,6 +9,12 @@ CucumberHTML.timelineGroups = [];
 CucumberHTML.timelineItems = [];
 CucumberHTML.timeline = null;
 
+CucumberHTML.PrepareData = function () {
+    $.each( CucumberHTML.timelineItems, function( index, item ){
+        item.content = item.feature + '<br/>' + item.scenario;
+    });
+};
+
 CucumberHTML.PreparePage = function () {
     CucumberHTML.RenderTimeline(CucumberHTML.timelineItems);
     CucumberHTML.bindScenarioSelector(CucumberHTML.timelineItems);
@@ -32,7 +38,6 @@ CucumberHTML.RenderTimeline = function (timelineItems) {
         stack: false,
         min: startTime,
         max: endTime,
-        dataAttributes: "all",
         groupOrder: function(a,b) {return a.id - b.id;}
     };
 

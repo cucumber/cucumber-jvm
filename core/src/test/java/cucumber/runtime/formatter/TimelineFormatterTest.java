@@ -17,18 +17,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TimelineFormatterTest {
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/cucumber/formatter/timeline";
     private static final String REPORT_JS = "report.js";
-    private static final long STEP_DURATION = 1000;
+    private static final long STEP_DURATION_MS = 1000;
 
     private final Gson gson = new GsonBuilder().create();
     private final Map<String, Result> stepsToResult = new HashMap<String, Result>();
@@ -124,55 +124,64 @@ public class TimelineFormatterTest {
 
         assertTrue(REPORT_JS + " was not found", reportJsFile.exists());
 
-        final TimelineFormatter.TestData[] expectedTests = gson.fromJson("[\n" +
+        final Long groupId = Thread.currentThread().getId();
+        final String groupName = Thread.currentThread().toString();
+
+        String expectedJson = ("[\n" +
             "  {\n" +
             "    \"id\": \"failing-feature;scenario-1\",\n" +
             "    \"feature\": \"Failing Feature\",\n" +
             "    \"start\": 0,\n" +
-            "    \"end\": 1000,\n" +
-            "    \"group\": 0,\n" +
-            "    \"content\": \"Failing Feature<br/>Scenario 1\",\n" +
+            "    \"end\": 6000,\n" +
+            "    \"group\": groupId,\n" +
+            "    \"content\": \"\",\n" +
             "    \"tags\": \"@taga,\",\n" +
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": \"failing-feature;scenario-2\",\n" +
             "    \"feature\": \"Failing Feature\",\n" +
-            "    \"start\": 0,\n" +
-            "    \"end\": 1000,\n" +
-            "    \"group\": 0,\n" +
-            "    \"content\": \"Failing Feature<br/>Scenario 2\",\n" +
+            "    \"start\": 6000,\n" +
+            "    \"end\": 12000,\n" +
+            "    \"group\": groupId,\n" +
+            "    \"content\": \"\",\n" +
             "    \"tags\": \"\",\n" +
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
-            "    \"id\": \"pending-feature;scenario-1\",\n" +
-            "    \"feature\": \"Pending Feature\",\n" +
-            "    \"start\": 0,\n" +
-            "    \"end\": 1000,\n" +
-            "    \"group\": 0,\n" +
-            "    \"content\": \"Pending Feature<br/>Scenario 1\",\n" +
-            "    \"tags\": \"\",\n" +
-            "    \"className\": \"undefined\"\n" +
-            "  },\n" +
-            "  {\n" +
             "    \"id\": \"successful-feature;scenario-1\",\n" +
             "    \"feature\": \"Successful Feature\",\n" +
-            "    \"start\": 0,\n" +
-            "    \"end\": 1000,\n" +
-            "    \"group\": 0,\n" +
-            "    \"content\": \"Successful Feature<br/>Scenario 1\",\n" +
+            "    \"start\": 12000,\n" +
+            "    \"end\": 18000,\n" +
+            "    \"group\": groupId,\n" +
+            "    \"content\": \"\",\n" +
             "    \"tags\": \"@tagb,@tagc,\",\n" +
             "    \"className\": \"passed\"\n" +
-            "  }\n" +
-            "]", TimelineFormatter.TestData[].class);
-
-        final TimelineFormatter.GroupData[] expectedGroups = gson.fromJson("[\n" +
+            "  },\n" +
             "  {\n" +
-            "    \"id\": 0,\n" +
-            "    \"content\": \"Thread 0\"\n" +
+            "    \"id\": \"pending-feature;scenario-1\",\n" +
+            "    \"feature\": \"Pending Feature\",\n" +
+            "    \"start\": 18000,\n" +
+            "    \"end\": 24000,\n" +
+            "    \"group\": groupId,\n" +
+            "    \"content\": \"\",\n" +
+            "    \"tags\": \"\",\n" +
+            "    \"className\": \"undefined\"\n" +
             "  }\n" +
-            "]", TimelineFormatter.GroupData[].class);
+            "]").replaceAll("groupId", groupId.toString());
+
+        final TimelineFormatter.TestData[] expectedTests = gson.fromJson(expectedJson, TimelineFormatter.TestData[].class);
+
+        final TimelineFormatter.GroupData[] expectedGroups = gson.fromJson(
+            ("[\n" +
+                "  {\n" +
+                "    \"id\": groupId,\n" +
+                "    \"content\": \"groupName\"\n" +
+                "  }\n" +
+                "]")
+                .replaceAll("groupId", groupId.toString())
+                .replaceAll("groupName", groupName)
+            , TimelineFormatter.GroupData[].class);
 
         final ActualReportOutput actualOutput = readReport();
         assertTimelineDataIsAsExpected(expectedTests, expectedGroups, actualOutput);
@@ -184,7 +193,7 @@ public class TimelineFormatterTest {
             .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath())
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(STEP_DURATION)
+            .withTimeServiceIncrement(TimeUnit.MILLISECONDS.toNanos(STEP_DURATION_MS))
             .build()
             .run();
     }
@@ -221,9 +230,9 @@ public class TimelineFormatterTest {
         return contents;
     }
 
-    private void assertTimelineDataIsAsExpected(final TimelineFormatter.TestData[] expectedTests, final TimelineFormatter.GroupData[] expectedGroups, final ActualReportOutput actualOutput) {
-        final List<Long> usedThreads = new ArrayList<Long>();
-
+    private void assertTimelineDataIsAsExpected(final TimelineFormatter.TestData[] expectedTests,
+                                                final TimelineFormatter.GroupData[] expectedGroups,
+                                                final ActualReportOutput actualOutput) {
         assertEquals("Number of tests was not as expected", expectedTests.length, actualOutput.tests.length);
         for (int i = 0; i < expectedTests.length; i++) {
             final TimelineFormatter.TestData expected = expectedTests[i];
@@ -231,19 +240,21 @@ public class TimelineFormatterTest {
 
             assertEquals(String.format("id on item %s, was not as expected", i), expected.id, actual.id);
             assertEquals(String.format("feature on item %s, was not as expected", i), expected.feature, actual.feature);
-            assertNotNull(String.format("startTime on item %s, was not as expected", i), actual.startTime);
-            assertNotNull(String.format("endTime on item %s, was not as expected", i), actual.endTime);
+            assertEquals(String.format("startTime on item %s, was not as expected", i), expected.startTime, actual.startTime);
+            assertEquals(String.format("endTime on item %s, was not as expected", i), expected.endTime, actual.endTime);
             assertEquals(String.format("className on item %s, was not as expected", i), expected.className, actual.className);
             assertEquals(String.format("content on item %s, was not as expected", i), expected.content, actual.content);
             assertEquals(String.format("tags on item %s, was not as expected", i), expected.tags, actual.tags);
-            assertNotNull(String.format("threadId on item %s, was not as expected", i), actual.threadId);
-            usedThreads.add(actual.threadId);
+            assertEquals(String.format("threadId on item %s, was not as expected", i), expected.threadId, actual.threadId);
         }
 
         assertEquals("Number of groups was not as expected", expectedGroups.length, actualOutput.groups.length);
         for (int i = 0; i < actualOutput.groups.length; i++) {
+            final TimelineFormatter.GroupData expected = expectedGroups[i];
             final TimelineFormatter.GroupData actual = actualOutput.groups[i];
-            assertTrue(String.format("Group Thread Id [%s] was not in Used Thread Ids [%s]", actual.id, usedThreads), usedThreads.contains(actual.id));
+
+            assertEquals(String.format("id on group %s, was not as expected", i), expected.id, actual.id);
+            assertEquals(String.format("content on group %s, was not as expected", i), expected.content, actual.content);
         }
     }
 

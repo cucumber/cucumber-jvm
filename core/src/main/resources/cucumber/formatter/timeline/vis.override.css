@@ -6,3 +6,8 @@
 .vis-item.failed {
     background-color: #f5f5f5;
 }
+
+.vis-item.vis-selected {
+    background-color: #000000 !important;
+    color: #ffffff;
+}

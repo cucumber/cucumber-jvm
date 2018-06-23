@@ -9,4 +9,6 @@ public interface Event {
 
     Long getTimeStamp();
 
+    Thread getThread();
+
 }

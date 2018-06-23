@@ -25,8 +25,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,14 +34,6 @@ import java.util.TreeMap;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class TimelineFormatter implements ConcurrentFormatter {
-
-    private static final Comparator<TestData> TEST_DATA_COMPARATOR = new Comparator<TestData>() {
-        @Override
-        public int compare(final TestData o1, final TestData o2) {
-            return o1.id.compareTo(o2.id);
-        }
-    };
-    private static final String CONTENT_TEMPLATE = "%s<br/>%s";
 
     //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{
@@ -112,12 +102,12 @@ public class TimelineFormatter implements ConcurrentFormatter {
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
-        final Long threadId = Thread.currentThread().getId();
-        final TestData test = new TestData(event, threadId);
+        final TestData test = new TestData(event);
         currentTest = test;
         allTests.add(test);
+        final Long threadId = event.getThread().getId();
         if (!allGroups.containsKey(threadId)) {
-            allGroups.put(threadId, new GroupData(threadId));
+            allGroups.put(threadId, new GroupData(event.getThread()));
         }
     }
 
@@ -129,12 +119,10 @@ public class TimelineFormatter implements ConcurrentFormatter {
         final Gson gson = new GsonBuilder().setPrettyPrinting().create();
         reportJs.append("$(document).ready(function() {");
         reportJs.println();
-        //Sort results into feature, so can guarantee output of order
-        Collections.sort(allTests, TEST_DATA_COMPARATOR);
         appendAsJsonToJs(gson, reportJs, "timelineItems", allTests);
         reportJs.println();
-        //Sort results into feature, so can guarantee output of order
-        appendAsJsonToJs(gson, reportJs, "timelineGroups", new TreeMap<Long, GroupData>(allGroups).values());
+        //Need to sort groups by id, so can guarantee output of order in rendered timeline
+        appendAsJsonToJs(gson, reportJs, "timelineGroups", new TreeMap<>(allGroups).values());
         reportJs.println();
         reportJs.append("});");
         reportJs.close();
@@ -220,22 +208,21 @@ public class TimelineFormatter implements ConcurrentFormatter {
         @SerializedName("group")
         final long threadId;
         @SerializedName("content")
-        final String content;
+        final String content = ""; //Replaced in JS file
         @SerializedName("className")
         String className;
         @SerializedName("tags")
         final String tags;
 
-        TestData(final TestCaseStarted started, long threadId) {
+        TestData(final TestCaseStarted started) {
             final String uri = started.testCase.getUri();
             final TestSourcesModel.AstNode astNode = testSources.getAstNode(uri, started.testCase.getLine());
 
             this.id = TestSourcesModel.calculateId(astNode);
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = started.testCase.getName();
-            this.content = String.format(CONTENT_TEMPLATE, this.feature, this.scenario);
             this.startTime = NANOSECONDS.toMillis(started.getTimeStamp());
-            this.threadId = threadId;
+            this.threadId = started.getThread().getId();
             this.tags = buildTagsValue(started.testCase);
         }
 
@@ -259,9 +246,9 @@ public class TimelineFormatter implements ConcurrentFormatter {
         @SerializedName("content")
         final String content;
 
-        GroupData(long threadId) {
-            id = threadId;
-            content = "Thread " + threadId;
+        GroupData(Thread thread) {
+            id = thread.getId();
+            content = thread.toString();
         }
     }
 
