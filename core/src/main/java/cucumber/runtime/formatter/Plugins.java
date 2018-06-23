@@ -103,7 +103,7 @@ public final class Plugins {
 
     private void setEventBusOnEventListenerPlugins(Object plugin) {
         if (plugin instanceof ConcurrentEventListener) {
-            EventListener formatter = (EventListener) plugin;
+            ConcurrentEventListener formatter = (ConcurrentEventListener) plugin;
             formatter.setEventPublisher(eventPublisher);
         } else if (plugin instanceof EventListener) {
             EventListener formatter = (EventListener) plugin;

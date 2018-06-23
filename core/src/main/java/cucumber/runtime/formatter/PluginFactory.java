@@ -3,6 +3,7 @@ package cucumber.runtime.formatter;
 import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.formatter.ConcurrentFormatter;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
@@ -198,7 +199,7 @@ public final class PluginFactory {
 
     public static boolean isFormatterName(String name) {
         Class pluginClass = getPluginClass(name);
-        return Formatter.class.isAssignableFrom(pluginClass);
+        return Formatter.class.isAssignableFrom(pluginClass) || ConcurrentFormatter.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isStepDefinitionReporterName(String name) {

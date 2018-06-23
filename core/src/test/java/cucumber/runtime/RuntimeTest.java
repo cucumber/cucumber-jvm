@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.cucumber.stepexpression.TypeRegistry;
+import org.mockito.stubbing.Answer;
 
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
@@ -421,7 +422,16 @@ public class RuntimeTest {
 
         FormatterSpy formatterSpy = new FormatterSpy();
         final List<CucumberFeature> features = Arrays.asList(feature1, feature2, feature3);
-        TestHelper.runFeaturesWithFormatter(features, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy, features.size());
+        TestHelper.runFeaturesWithFormatter(features,
+            stepsToResult,
+            Collections.<String, String>emptyMap(),
+            Collections.<SimpleEntry<String, Result>>emptyList(),
+            Collections.<String>emptyList(),
+            Collections.<Answer<Object>>emptyList(),
+            0L,
+            formatterSpy,
+            false,
+            "--threads" , String.valueOf(features.size()));
         String formatterOutput = formatterSpy.toString();
 
         assertEquals("" +

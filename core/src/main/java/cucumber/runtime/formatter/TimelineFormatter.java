@@ -1,16 +1,13 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Plugin;
 import cucumber.api.TestCase;
-import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
-import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.ConcurrentFormatter;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
@@ -35,12 +32,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-public class TimelineFormatter implements ConcurrentEventListener, Plugin {
+public class TimelineFormatter implements ConcurrentFormatter {
 
     private static final Comparator<TestData> TEST_DATA_COMPARATOR = new Comparator<TestData>() {
         @Override

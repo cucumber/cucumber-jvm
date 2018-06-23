@@ -148,6 +148,14 @@ public class TestHelper {
                                                 final List<String> hookLocations, final List<Answer<Object>> hookActions,
                                                 final long stepHookDuration, final Formatter formatter, final String... runtimeArgs
     ) throws Throwable {
+        runFeaturesWithFormatter(features, stepsToResult, stepsToLocation, hooks, hookLocations, hookActions, stepHookDuration, formatter, true, runtimeArgs);
+    }
+
+    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
+                                                final Map<String, String> stepsToLocation, final List<SimpleEntry<String, Result>> hooks,
+                                                final List<String> hookLocations, final List<Answer<Object>> hookActions,
+                                                final long stepHookDuration, final Formatter formatter, final boolean useFixedIncrementTimeService, final String... runtimeArgs
+    ) throws Throwable {
 
         final StringBuilder additionalArgs = new StringBuilder();
         for(final String arg : runtimeArgs) {
@@ -164,15 +172,6 @@ public class TestHelper {
                 return glue;
             }
         };
-
-        final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final EventBus bus = new TimeServiceEventBus(timeService);
-        if (formatter != null) {
-            formatter.setEventPublisher(bus);
-        }
-
-        timeService.setEventPublisher(bus);
-
         final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -186,16 +185,28 @@ public class TestHelper {
             }
         };
 
-        Runtime.builder()
+        Runtime.Builder builder = Runtime.builder()
             .withArg("-p null" + additionalArgs.toString())
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
-            .withEventBus(bus)
             .withGlueSupplier(glueSupplier)
             .withBackendSupplier(backendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .build()
-            .run();
+            .withFeatureSupplier(featureSupplier);
+
+        if (useFixedIncrementTimeService) {
+            final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
+            final EventBus bus = new TimeServiceEventBus(timeService);
+            if (formatter != null) {
+                formatter.setEventPublisher(bus);
+            }
+
+            timeService.setEventPublisher(bus);
+            builder.withEventBus(bus);
+        } else {
+            builder.withAdditionalPlugins(formatter);
+        }
+
+        builder.build().run();
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
