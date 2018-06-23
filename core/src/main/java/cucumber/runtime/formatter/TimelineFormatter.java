@@ -3,6 +3,7 @@ package cucumber.runtime.formatter;
 import cucumber.api.TestCase;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseEvent;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
@@ -26,8 +27,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -76,12 +75,10 @@ public class TimelineFormatter implements ConcurrentFormatter {
     };
 
     private final TestSourcesModel testSources = new TestSourcesModel();
-    private final List<TestData> allTests = new LinkedList<>();
+    private final Map<String, TestData> allTests = new HashMap<>();
     private final Map<Long, GroupData> allGroups = new HashMap<>();
     private final URL reportDir;
     private final NiceAppendable reportJs;
-
-    private TestData currentTest;
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public TimelineFormatter(final URL reportDir) {
@@ -103,8 +100,7 @@ public class TimelineFormatter implements ConcurrentFormatter {
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
         final TestData test = new TestData(event);
-        currentTest = test;
-        allTests.add(test);
+        allTests.put(getId(event), test);
         final Long threadId = event.getThread().getId();
         if (!allGroups.containsKey(threadId)) {
             allGroups.put(threadId, new GroupData(event.getThread()));
@@ -112,14 +108,15 @@ public class TimelineFormatter implements ConcurrentFormatter {
     }
 
     private void handleTestCaseFinished(final TestCaseFinished event) {
-        currentTest.end(event);
+        final String id = getId(event);
+        allTests.get(id).end(event);
     }
 
     private void finishReport(final TestRunFinished event) {
         final Gson gson = new GsonBuilder().setPrettyPrinting().create();
         reportJs.append("$(document).ready(function() {");
         reportJs.println();
-        appendAsJsonToJs(gson, reportJs, "timelineItems", allTests);
+        appendAsJsonToJs(gson, reportJs, "timelineItems", allTests.values());
         reportJs.println();
         //Need to sort groups by id, so can guarantee output of order in rendered timeline
         appendAsJsonToJs(gson, reportJs, "timelineGroups", new TreeMap<>(allGroups).values());
@@ -194,6 +191,13 @@ public class TimelineFormatter implements ConcurrentFormatter {
         }
     }
 
+    private String getId(final TestCaseEvent testCaseEvent) {
+        final TestCase testCase = testCaseEvent.getTestCase();
+        final String uri = testCase.getUri();
+        final TestSourcesModel.AstNode astNode = testSources.getAstNode(uri, testCase.getLine());
+        return TestSourcesModel.calculateId(astNode);
+    }
+
     class TestData {
         @SerializedName("id")
         final String id;
@@ -215,15 +219,14 @@ public class TimelineFormatter implements ConcurrentFormatter {
         final String tags;
 
         TestData(final TestCaseStarted started) {
-            final String uri = started.testCase.getUri();
-            final TestSourcesModel.AstNode astNode = testSources.getAstNode(uri, started.testCase.getLine());
-
-            this.id = TestSourcesModel.calculateId(astNode);
+            this.id = getId(started);
+            final TestCase testCase = started.getTestCase();
+            final String uri = testCase.getUri();
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
-            this.scenario = started.testCase.getName();
+            this.scenario = testCase.getName();
             this.startTime = NANOSECONDS.toMillis(started.getTimeStamp());
             this.threadId = started.getThread().getId();
-            this.tags = buildTagsValue(started.testCase);
+            this.tags = buildTagsValue(testCase);
         }
 
         private String buildTagsValue(final TestCase testCase) {
