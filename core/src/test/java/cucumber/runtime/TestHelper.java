@@ -8,6 +8,7 @@ import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventListener;
 import cucumber.runner.EventBus;
 import cucumber.runner.StepDurationTimeService;
+import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.formatter.PickleStepMatcher;
@@ -68,9 +69,9 @@ public class TestHelper {
 
     public void run() {
 
-        final StringBuilder additionalArgs = new StringBuilder();
+        final StringBuilder args = new StringBuilder("-p null");
         for (final String arg : runtimeArgs) {
-            additionalArgs.append(" ").append(arg);
+            args.append(" ").append(arg);
         }
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -106,7 +107,7 @@ public class TestHelper {
             };
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withArg("-p null" + additionalArgs.toString())
+            .withArg(args.toString())
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withGlueSupplier(glueSupplier)
@@ -199,12 +200,16 @@ public class TestHelper {
         }
 
         /**
-         * Specifies whether to use an instance of {@link StepDurationTimeService} as the {@link EventBus}.
-         * Defaults to FIXED_INCREMENT_ON_STEP_START
+         * Specifies what type of TimeService to be used by the {@link EventBus}
+         * {@link TimeServiceType#REAL_TIME} > {@link TimeService#SYSTEM}
+         * {@link TimeServiceType#FIXED_INCREMENT} > {@link TimeServiceStub}
+         * {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START} > {@link StepDurationTimeService}
+         *
+         * Defaults to {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
          * <p>
-         * Note: when running tests with multiple threads & setting this to true
+         * Note: when running tests with multiple threads & not using {@link TimeServiceType#REAL_TIME}
          * it can inadvertently affect the order of {@link cucumber.api.event.Event}s
-         * published to {@link cucumber.api.formatter.ConcurrentFormatter}s used during the test run
+         * published to any {@link cucumber.api.formatter.ConcurrentFormatter}s used during the test run
          * @return this instance
          */
         public Builder withTimeServiceType(TimeServiceType timeServiceType) {
