@@ -18,7 +18,6 @@
         <module>java-calculator-testng</module>
         <module>java-wicket</module>
         <module>java-webbit-websockets-selenium</module>
-        <module>pax-exam</module>
     </modules>
 
     <profiles>
