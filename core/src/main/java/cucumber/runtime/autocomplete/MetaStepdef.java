@@ -1,7 +1,7 @@
 package cucumber.runtime.autocomplete;
 
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
+import io.cucumber.messages.com.google.gson.Gson;
+import io.cucumber.messages.com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

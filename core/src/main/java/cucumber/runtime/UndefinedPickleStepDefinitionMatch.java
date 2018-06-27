@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import io.cucumber.stepexpression.Argument;
 
 import java.util.Collections;

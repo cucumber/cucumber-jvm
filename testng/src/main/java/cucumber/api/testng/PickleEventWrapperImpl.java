@@ -1,6 +1,6 @@
 package cucumber.api.testng;
 
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 
 class PickleEventWrapperImpl implements PickleEventWrapper {
 

@@ -1,6 +1,6 @@
 package cucumber.runtime.junit;
 
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import org.junit.Test;

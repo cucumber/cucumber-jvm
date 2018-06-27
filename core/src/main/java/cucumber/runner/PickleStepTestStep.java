@@ -2,9 +2,9 @@ package cucumber.runner;
 
 import cucumber.api.Result;
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles.PickleDocString;
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Pickles.PickleTable;
+import io.cucumber.messages.Messages.PickleDocString;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTable;
 import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.PickleStepDefinitionMatch;
 

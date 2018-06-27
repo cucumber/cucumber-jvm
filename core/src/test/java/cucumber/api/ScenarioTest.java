@@ -1,6 +1,6 @@
 package cucumber.api;
 
-import cucumber.messages.Sources.Location;
+import io.cucumber.messages.Messages.Location;
 import cucumber.runner.EventBus;
 import cucumber.runtime.ScenarioImpl;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package cucumber.runtime.junit;
 import cucumber.api.PendingException;
 import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runner.EventBus;
 import cucumber.runtime.junit.JUnitReporter.EachTestNotifier;
 import cucumber.runtime.junit.JUnitReporter.NoTestNotifier;

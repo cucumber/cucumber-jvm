@@ -1,6 +1,6 @@
 package cucumber.runtime.java;
 
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.snippets.SnippetGenerator;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;

@@ -3,12 +3,12 @@ package cucumber.runtime;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.messages.Pickles;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.messages.Messages.Pickle;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class Runtime {
     }
 
     private void runFeature(CucumberFeature feature) {
-        for (Pickles.Pickle pickleEvent : compiler.compileFeature(feature)) {
+        for (Pickle pickleEvent : compiler.compileFeature(feature)) {
             if (filters.matchesFilters(pickleEvent)) {
                 runner.runPickle(pickleEvent);
             }

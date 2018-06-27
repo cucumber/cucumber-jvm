@@ -4,10 +4,10 @@ import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
-import cucumber.messages.Pickles;
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Sources.Location;
 import cucumber.runtime.ScenarioImpl;
+import io.cucumber.messages.Messages.Location;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +96,7 @@ class TestCase implements cucumber.api.TestCase {
     }
 
     @Override
-    public List<Pickles.PickleTag> getTags() {
+    public List<PickleTag> getTags() {
         return pickle.getTagsList();
     }
 }

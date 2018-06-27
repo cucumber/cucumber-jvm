@@ -1,10 +1,10 @@
 package cucumber.runtime.junit;
 
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Sources;
 import cucumber.runner.Runner;
 import cucumber.runtime.RunnerSupplier;
+import io.cucumber.messages.Messages.Location;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -212,7 +212,7 @@ class PickleRunners {
 
         PickleStepId(String uri, PickleStep pickleStep) {
             StringBuilder b = new StringBuilder(uri);
-            for (Sources.Location location : pickleStep.getLocationsList()) {
+            for (Location location : pickleStep.getLocationsList()) {
                 b.append(":").append(location.getLine());
             }
             this.id = b.toString();

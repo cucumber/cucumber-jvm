@@ -1,6 +1,6 @@
 package io.cucumber.stepexpression;
 
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 
 import java.util.List;
 

@@ -1,13 +1,13 @@
 package cucumber.runtime;
 
-import cucumber.messages.Pickles;
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Pickles.PickleTable;
-import cucumber.messages.Pickles.PickleTableCell;
-import cucumber.messages.Pickles.PickleTableRow;
-import cucumber.messages.Pickles.PickleTag;
-import cucumber.messages.Sources.Location;
+import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTable;
+import io.cucumber.messages.Messages.PickleTableCell;
+import io.cucumber.messages.Messages.PickleTableRow;
+import io.cucumber.messages.Messages.PickleTag;
+import io.cucumber.messages.Messages.Location;
 
 import java.util.List;
 

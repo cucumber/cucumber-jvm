@@ -1,11 +1,11 @@
 package cucumber.runtime.snippets;
 
-import cucumber.messages.Pickles.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.messages.Messages.PickleStep;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;

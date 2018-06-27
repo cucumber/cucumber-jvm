@@ -1,12 +1,11 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles;
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleStep;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleTag;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -21,8 +20,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HookTest {
-    private final static String ENGLISH = "en";
-
     /**
      * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
      * TODO: ensure this is no longer needed with the alternate approach taken in Runtime
@@ -31,7 +28,7 @@ public class HookTest {
     @Test
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(ArgumentMatchers.<Pickles.PickleTag>anyList())).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final Backend backend = mock(Backend.class);

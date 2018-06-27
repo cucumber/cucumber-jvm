@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles.PickleTag;
+import io.cucumber.messages.Messages.PickleTag;
 
 import java.util.Collection;
 

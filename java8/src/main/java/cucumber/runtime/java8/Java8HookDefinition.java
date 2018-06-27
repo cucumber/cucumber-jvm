@@ -3,7 +3,7 @@ package cucumber.runtime.java8;
 import cucumber.api.Scenario;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
-import cucumber.messages.Pickles.PickleTag;
+import io.cucumber.messages.Messages.PickleTag;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
 import cucumber.runtime.filter.TagPredicate;

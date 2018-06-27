@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import org.junit.Test;
 
 import static cucumber.runtime.PickleHelper.step;

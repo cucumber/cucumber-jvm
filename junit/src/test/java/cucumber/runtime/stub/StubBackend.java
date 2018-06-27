@@ -1,6 +1,6 @@
 package cucumber.runtime.stub;
 
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.StepDefinition;

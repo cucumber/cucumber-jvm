@@ -1,6 +1,6 @@
 package cucumber.runtime.model;
 
-import cucumber.messages.Gherkin.GherkinDocument;
+import io.cucumber.messages.Messages.GherkinDocument;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.Resource;
 import cucumber.util.Encoding;

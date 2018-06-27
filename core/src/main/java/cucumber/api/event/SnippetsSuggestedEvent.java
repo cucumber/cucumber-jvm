@@ -1,6 +1,6 @@
 package cucumber.api.event;
 
-import cucumber.messages.Sources.Location;
+import io.cucumber.messages.Messages.Location;
 
 import java.util.Collections;
 import java.util.List;

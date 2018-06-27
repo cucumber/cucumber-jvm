@@ -1,8 +1,8 @@
 package io.cucumber.stepexpression;
 
-import cucumber.messages.Pickles.PickleTable;
-import cucumber.messages.Pickles.PickleTableCell;
-import cucumber.messages.Pickles.PickleTableRow;
+import io.cucumber.messages.Messages.PickleTable;
+import io.cucumber.messages.Messages.PickleTableCell;
+import io.cucumber.messages.Messages.PickleTableRow;
 
 import java.util.ArrayList;
 import java.util.List;

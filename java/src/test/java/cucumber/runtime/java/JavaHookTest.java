@@ -5,7 +5,6 @@ import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
-import cucumber.messages.Pickles;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -14,6 +13,7 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+import io.cucumber.messages.Messages.PickleTag;
 import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Test;
 
@@ -133,8 +133,8 @@ public class JavaHookTest {
         assertTrue(before.matches(asList(tag("@bar"), tag("@zap"))));
     }
 
-    private Pickles.PickleTag tag(String name) {
-        return Pickles.PickleTag.newBuilder().setName(name).build();
+    private PickleTag tag(String name) {
+        return PickleTag.newBuilder().setName(name).build();
     }
 
     @Test

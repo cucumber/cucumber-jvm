@@ -2,8 +2,8 @@ package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.messages.Pickles;
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendModuleBackendSupplier;

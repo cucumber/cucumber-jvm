@@ -1,7 +1,7 @@
 package cucumber.runtime.filter;
 
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Sources.Location;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.Location;
 
 import java.util.List;
 import java.util.Map;

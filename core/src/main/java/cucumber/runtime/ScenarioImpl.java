@@ -4,9 +4,9 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleTag;
-import cucumber.messages.Sources.Location;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleTag;
+import io.cucumber.messages.Messages.Location;
 import cucumber.runner.EventBus;
 
 import java.util.ArrayList;

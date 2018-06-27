@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
-import cucumber.messages.Gherkin.GherkinDocument;
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.GherkinDocument;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.GherkinDocumentBuilder;
 import gherkin.Parser;

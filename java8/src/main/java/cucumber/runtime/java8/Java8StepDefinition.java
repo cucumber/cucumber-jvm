@@ -1,7 +1,7 @@
 package cucumber.runtime.java8;
 
 import cucumber.api.java8.StepdefBody;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;

@@ -1,6 +1,6 @@
 package cucumber.api.testng;
 
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 
 /**
  * The only purpose of this interface is to be able to provide a custom

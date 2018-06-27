@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;

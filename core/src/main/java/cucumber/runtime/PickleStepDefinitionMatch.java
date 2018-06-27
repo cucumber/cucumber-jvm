@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;

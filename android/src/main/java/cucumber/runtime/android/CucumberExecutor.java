@@ -9,7 +9,7 @@ import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.java.ObjectFactory;
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;

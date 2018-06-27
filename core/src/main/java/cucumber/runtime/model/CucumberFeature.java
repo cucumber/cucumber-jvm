@@ -1,7 +1,7 @@
 package cucumber.runtime.model;
 
 import cucumber.api.event.TestSourceRead;
-import cucumber.messages.Gherkin.GherkinDocument;
+import io.cucumber.messages.Messages.GherkinDocument;
 import cucumber.runner.EventBus;
 
 import java.io.Serializable;

@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
-import cucumber.messages.Gherkin.Feature;
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Feature;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.ThreadLocalRunnerSupplier;

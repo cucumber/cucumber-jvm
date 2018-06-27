@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Pickles.PickleTable;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTable;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.Transformer;
 import io.cucumber.datatable.DataTableType;

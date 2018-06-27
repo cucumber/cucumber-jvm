@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.PickleCompiler;
 

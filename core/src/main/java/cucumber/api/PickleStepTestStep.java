@@ -1,8 +1,8 @@
 package cucumber.api;
 
-import cucumber.messages.Pickles.PickleDocString;
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Pickles.PickleTable;
+import io.cucumber.messages.Messages.PickleDocString;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTable;
 
 import java.util.List;
 

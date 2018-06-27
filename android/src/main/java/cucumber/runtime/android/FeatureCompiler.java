@@ -1,6 +1,6 @@
 package cucumber.runtime.android;
 
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.model.CucumberFeature;
 

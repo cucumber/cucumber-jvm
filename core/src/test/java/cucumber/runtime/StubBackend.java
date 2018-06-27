@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import io.cucumber.stepexpression.TypeRegistry;

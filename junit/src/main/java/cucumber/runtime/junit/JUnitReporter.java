@@ -7,7 +7,7 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runner.EventBus;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;

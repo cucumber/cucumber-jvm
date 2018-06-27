@@ -1,15 +1,15 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
+import io.cucumber.messages.com.google.gson.Gson;
+import io.cucumber.messages.com.google.gson.GsonBuilder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

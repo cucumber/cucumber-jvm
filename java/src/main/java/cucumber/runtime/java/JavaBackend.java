@@ -6,7 +6,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;

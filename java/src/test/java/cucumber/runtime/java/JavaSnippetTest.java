@@ -1,7 +1,5 @@
 package cucumber.runtime.java;
 
-import cucumber.messages.Pickles;
-import cucumber.messages.Pickles.PickleDocString;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 import cucumber.runtime.snippets.UnderscoreConcatenator;
@@ -9,6 +7,11 @@ import io.cucumber.cucumberexpressions.CaptureGroupTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.TypeReference;
+import io.cucumber.messages.Messages.PickleDocString;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTable;
+import io.cucumber.messages.Messages.PickleTableCell;
+import io.cucumber.messages.Messages.PickleTableRow;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -230,7 +233,7 @@ public class JavaSnippetTest {
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new cucumber.api.PendingException();\n" +
             "}\n";
-        Pickles.PickleTable dataTable = oneCellTable();
+        PickleTable dataTable = oneCellTable();
         assertEquals(expected, snippetForDataTable("I have:", dataTable));
     }
 
@@ -264,12 +267,12 @@ public class JavaSnippetTest {
 //            "    // See: TODO URL\n" +
             "    throw new cucumber.api.PendingException();\n" +
             "}\n";
-        Pickles.PickleTable dataTable = oneCellTable();
+        PickleTable dataTable = oneCellTable();
         assertEquals(expected, snippetForDataTable("I have in table \"M6\":", dataTable, customParameterType));
     }
 
-    private Pickles.PickleTable oneCellTable() {
-        return Pickles.PickleTable.newBuilder().addRows(Pickles.PickleTableRow.newBuilder().addCells(Pickles.PickleTableCell.newBuilder().setValue("col1"))).build();
+    private PickleTable oneCellTable() {
+        return PickleTable.newBuilder().addRows(PickleTableRow.newBuilder().addCells(PickleTableCell.newBuilder().setValue("col1"))).build();
     }
 
     @Test
@@ -285,40 +288,40 @@ public class JavaSnippetTest {
     }
 
     private String snippetFor(String name) {
-        Pickles.PickleStep step = Pickles.PickleStep.newBuilder().setText(name).build();
+        PickleStep step = PickleStep.newBuilder().setText(name).build();
         return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
 
     private String snippetFor(String name, ParameterType<?> parameterType) {
-        Pickles.PickleStep step = Pickles.PickleStep.newBuilder().setText(name).build();
+        PickleStep step = PickleStep.newBuilder().setText(name).build();
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
         return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
     private String snippetForDocString(String name, PickleDocString docString) {
-        Pickles.PickleStep step = Pickles.PickleStep.newBuilder().setText(name).setDocString(docString).build();
+        PickleStep step = PickleStep.newBuilder().setText(name).setDocString(docString).build();
         return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
 
     private String snippetForDocString(String name, PickleDocString docString, ParameterType<String> parameterType) {
-        Pickles.PickleStep step = Pickles.PickleStep.newBuilder().setText(name).setDocString(docString).build();
+        PickleStep step = PickleStep.newBuilder().setText(name).setDocString(docString).build();
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
         return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
 
-    private String snippetForDataTable(String name, Pickles.PickleTable dataTable) {
-        Pickles.PickleStep step = Pickles.PickleStep.newBuilder().setText(name).setDataTable(dataTable).build();
+    private String snippetForDataTable(String name, PickleTable dataTable) {
+        PickleStep step = PickleStep.newBuilder().setText(name).setDataTable(dataTable).build();
         return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
 
-    private String snippetForDataTable(String name, Pickles.PickleTable dataTable, ParameterType<String> parameterType) {
-        Pickles.PickleStep step = Pickles.PickleStep.newBuilder().setText(name).setDataTable(dataTable).build();
+    private String snippetForDataTable(String name, PickleTable dataTable, ParameterType<String> parameterType) {
+        PickleStep step = PickleStep.newBuilder().setText(name).setDataTable(dataTable).build();
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
         return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);

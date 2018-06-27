@@ -2,9 +2,9 @@ package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
 import cucumber.api.java.ObjectFactory;
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Pickles.PickleTable;
-import cucumber.messages.Pickles.PickleTableRow;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTable;
+import io.cucumber.messages.Messages.PickleTableRow;
 import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;

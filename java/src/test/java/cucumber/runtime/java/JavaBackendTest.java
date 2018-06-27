@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.java.ObjectFactory;
-import cucumber.messages.Pickles.PickleStep;
+import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;

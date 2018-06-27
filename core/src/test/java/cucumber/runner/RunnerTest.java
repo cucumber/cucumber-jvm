@@ -2,9 +2,9 @@ package cucumber.runner;
 
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleStep;
-import cucumber.messages.Pickles.PickleTag;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleStep;
+import io.cucumber.messages.Messages.PickleTag;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.HookDefinition;

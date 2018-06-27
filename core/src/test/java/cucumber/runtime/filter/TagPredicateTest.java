@@ -1,7 +1,7 @@
 package cucumber.runtime.filter;
 
-import cucumber.messages.Pickles.Pickle;
-import cucumber.messages.Pickles.PickleTag;
+import io.cucumber.messages.Messages.Pickle;
+import io.cucumber.messages.Messages.PickleTag;
 import org.junit.Test;
 
 import static cucumber.runtime.PickleHelper.pickle;

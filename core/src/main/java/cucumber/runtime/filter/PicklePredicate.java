@@ -1,6 +1,6 @@
 package cucumber.runtime.filter;
 
-import cucumber.messages.Pickles.Pickle;
+import io.cucumber.messages.Messages.Pickle;
 
 interface PicklePredicate {
 
