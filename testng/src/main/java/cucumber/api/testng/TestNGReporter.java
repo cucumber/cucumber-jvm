@@ -1,20 +1,20 @@
 package cucumber.api.testng;
 
-import static org.testng.Reporter.getCurrentTestResult;
-import static org.testng.Reporter.log;
-
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.Utils;
 import org.testng.ITestResult;
 
-class TestNGReporter implements Formatter {
+import static org.testng.Reporter.getCurrentTestResult;
+import static org.testng.Reporter.log;
+
+class TestNGReporter implements EventListener {
     private final NiceAppendable out;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override

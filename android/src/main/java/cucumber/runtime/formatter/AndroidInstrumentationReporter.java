@@ -2,15 +2,16 @@ package cucumber.runtime.formatter;
 
 import android.app.Instrumentation;
 import android.os.Bundle;
+import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.Formatter;
 import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.Utils;
 
@@ -41,7 +42,7 @@ import java.util.Set;
  *     hook threw an exception other than an {@link AssertionError}</li>
  * </ul>
  */
-public final class AndroidInstrumentationReporter implements Formatter {
+public final class AndroidInstrumentationReporter implements Plugin, EventListener {
 
     /**
      * Tests status keys.

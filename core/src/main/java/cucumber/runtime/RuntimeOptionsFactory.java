@@ -86,7 +86,7 @@ public class RuntimeOptionsFactory {
         for (String plugin : plugins) {
             args.add("--plugin");
             args.add(plugin);
-            if (PluginFactory.isFormatterName(plugin)) {
+            if (PluginFactory.isPluginName(plugin)) {
                 pluginSpecified = true;
             }
         }

@@ -3,7 +3,7 @@ package cucumber.runtime;
 import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
-import cucumber.api.formatter.Formatter;
+import cucumber.api.event.EventListener;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,38 +110,22 @@ public class TestHelper {
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks,
-            final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
+            final long stepHookDuration, final EventListener eventListener) throws Throwable {
+        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, eventListener);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, hookActions, stepHookDuration, formatter);
+            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final EventListener eventListener) throws Throwable {
+        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, hookActions, stepHookDuration, eventListener);
     }
 
     public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation,
-                                               final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), Collections.<String, Result>emptyMap(), stepsToLocation,
-                Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), 0L, formatter);
+            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final EventListener eventListener) throws Throwable {
+        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, eventListener);
     }
 
     public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
+            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final EventListener eventListener) throws Throwable {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -151,7 +134,7 @@ public class TestHelper {
         final EventBus bus = new EventBus(timeService);
         timeService.setEventPublisher(bus);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        formatter.setEventPublisher(bus);
+        eventListener.setEventPublisher(bus);
 
         final BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

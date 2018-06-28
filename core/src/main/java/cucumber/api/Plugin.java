@@ -14,7 +14,6 @@ import java.net.URL;
  * <ul>
  * <li>{@link cucumber.api.StepDefinitionReporter}</li>
  * <li>{@link cucumber.api.SummaryPrinter}</li>
- * <li>{@link cucumber.api.formatter.Formatter}</li>
  * </ul>
  * <p>
  * Plugins are added to the runtime from the command line or @{@link CucumberOptions} and may be provided with a

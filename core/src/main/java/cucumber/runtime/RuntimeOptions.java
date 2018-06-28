@@ -13,7 +13,6 @@ import gherkin.IGherkinDialectProvider;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -343,7 +342,7 @@ public class RuntimeOptions {
                 stepDefinitionReporterNames.addName(name, isAddPlugin);
             } else if (PluginFactory.isSummaryPrinterName(name)) {
                 summaryPrinterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isFormatterName(name)) {
+            } else if (PluginFactory.isPluginName(name)) {
                 formatterNames.addName(name, isAddPlugin);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);

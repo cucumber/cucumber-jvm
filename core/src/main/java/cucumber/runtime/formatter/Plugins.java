@@ -4,12 +4,10 @@ import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.EventListener;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.EventBus;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Utils;
-import cucumber.runtime.formatter.PluginFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -89,8 +87,8 @@ public final class Plugins {
 
     private void setEventBusOnEventListenerPlugins(Object plugin) {
         if (plugin instanceof EventListener && bus != null) {
-            Formatter formatter = (Formatter) plugin;
-            formatter.setEventPublisher(bus);
+            EventListener eventListener = (EventListener) plugin;
+            eventListener.setEventPublisher(bus);
         }
     }
 

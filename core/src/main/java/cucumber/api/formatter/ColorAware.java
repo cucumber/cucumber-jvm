@@ -1,9 +1,11 @@
 package cucumber.api.formatter;
 
+import cucumber.api.Plugin;
+
 /**
- * Interface for Formatters that use ANSI escape codes to print coloured output.
+ * Interface for Plugins that use ANSI escape codes to print coloured output.
  */
-public interface ColorAware extends Formatter {
+public interface ColorAware extends Plugin {
     /**
      * When set to monochrome the formatter should not use colored output.
      * <p>
