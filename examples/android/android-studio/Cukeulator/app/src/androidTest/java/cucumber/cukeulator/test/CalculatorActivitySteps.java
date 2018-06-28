@@ -5,7 +5,6 @@ import android.support.test.rule.ActivityTestRule;
 
 import org.junit.Rule;
 
-import cucumber.api.CucumberOptions;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -32,24 +31,24 @@ import static org.junit.Assert.assertNotNull;
  * The options need to at least specify features = "features". Features must be placed inside
  * assets/features/ of the test project (or a subdirectory thereof).
  */
-@CucumberOptions
 public class CalculatorActivitySteps {
+
+    /**
+     * Since {@link CucumberRunner} and {@link cucumber.api.android.CucumberInstrumentationCore} have the control over the
+     * test lifecycle, activity test rules must not be launched automatically. Automatic launching of test rules is only
+     * feasible for JUnit tests. Fortunately, we are able to launch the activity in Cucumber's {@link Before} method.
+     */
+    @Rule
+    ActivityTestRule rule = new ActivityTestRule<>(CalculatorActivity.class, false, false);
 
     public CalculatorActivitySteps(SomeDependency dependency) {
         assertNotNull(dependency);
     }
 
     /**
-    * Since {@link CucumberRunner} and {@link cucumber.api.android.CucumberInstrumentationCore} have the control over the
-    * test lifecycle, activity test rules must not be launched automatically. Automatic launching of test rules is only
-    * feasible for JUnit tests. Fortunately, we are able to launch the activity in Cucumber's {@link Before} method.
-    */
-    @Rule
-    ActivityTestRule rule = new ActivityTestRule<>(CalculatorActivity.class, false, false);
-
-    /**
      * We launch the activity in Cucumber's {@link Before} hook.
      * See the notes above for the reasons why we are doing this.
+     *
      * @throws Exception any possible Exception
      */
     @Before
@@ -67,18 +66,19 @@ public class CalculatorActivitySteps {
 
     /**
      * Gets the activity from our test rule.
+     *
      * @return the activity
      */
     private Activity getActivity() {
         return rule.getActivity();
     }
 
-    @Given("^I have a CalculatorActivity$")
+    @Given("I have a CalculatorActivity")
     public void I_have_a_CalculatorActivity() {
         assertNotNull(getActivity());
     }
 
-    @When("^I press (\\d)$")
+    @When("I press {digit}")
     public void I_press_d(final int d) {
         switch (d) {
             case 0:
@@ -114,7 +114,7 @@ public class CalculatorActivitySteps {
         }
     }
 
-    @When("^I press ([+–x\\/=])$")
+    @When("I press {operator}")
     public void I_press_op(final char op) {
         switch (op) {
             case '+':
@@ -135,7 +135,7 @@ public class CalculatorActivitySteps {
         }
     }
 
-    @Then("^I should see (\\S+) on the display$")
+    @Then("I should see {string} on the display")
     public void I_should_see_s_on_the_display(final String s) {
         onView(withId(R.id.txt_calc_display)).check(matches(withText(s)));
     }

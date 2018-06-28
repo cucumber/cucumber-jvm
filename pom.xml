@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.cucumber</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -38,8 +39,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.3</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>5.0.0</gherkin.version>
-        <groovy.version>2.4.12</groovy.version>
+        <gherkin.version>5.1.0</gherkin.version>
+        <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <spring.version>4.3.10.RELEASE</spring.version>
         <spring.data.version>1.11.6.RELEASE</spring.data.version>
@@ -47,21 +48,21 @@
         <hibernate.version>5.1.1.Final</hibernate.version>
         <!-- version 2.4.0 does not work on Java 7 -->
         <hsqldb.version>2.3.5</hsqldb.version>
-        <guice.version>4.0</guice.version>
-        <jsoup.version>1.10.3</jsoup.version>
-        <!-- TestNG 6.11 makes the tests of the testng module to fail -->
-        <testng.version>6.10</testng.version>
+        <guice.version>4.2.0</guice.version>
+        <jsoup.version>1.11.3</jsoup.version>
+        <testng.version>6.14.3</testng.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito.version>1.10.19</mockito.version>
-        <selenium.version>3.5.2</selenium.version>
+        <mockito.version>2.18.3</mockito.version>
+        <selenium.version>3.12.0</selenium.version>
+        <htmlunit.version>2.30.1</htmlunit.version>
         <driver-binary-downloader-maven-plugin.version>1.0.17</driver-binary-downloader-maven-plugin.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <weld-se.version>2.4.4.Final</weld-se.version>
         <!-- version 2.0 does not work on Java 7 -->
         <cdi-api.version>1.2</cdi-api.version>
-        <openejb-core.version>4.7.4</openejb-core.version>
+        <openejb-core.version>4.7.5</openejb-core.version>
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
@@ -70,7 +71,7 @@
         <dbunit.version>2.5.4</dbunit.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.28</freemarker.version>
         <!-- version 4.0.0 does not work on Java 7 -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <android-maven-plugin.version>4.4.3</android-maven-plugin.version>
@@ -81,7 +82,6 @@
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <joda-time.version>2.9.9</joda-time.version>
         <osgi.version>6.0.0</osgi.version>
         <!-- At some version above this (not sure which one), pax-exam and/or pax-url stops working on Java 7. -->
         <pax-exam.version>4.3.0</pax-exam.version>
@@ -89,6 +89,8 @@
         <felix.version>5.6.6</felix.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
+        <cucumber-expressions.version>6.0.0</cucumber-expressions.version>
+        <datatable.version>1.0.3</datatable.version>
     </properties>
     <licenses>
         <license>
@@ -108,21 +110,6 @@
         <dependencies>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.6</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.thoughtworks.xstream</groupId>
-                        <artifactId>xstream</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.googlecode.java-diff-utils</groupId>
-                        <artifactId>diffutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
                 <exclusions>
@@ -136,6 +123,16 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>tag-expressions</artifactId>
                 <version>${tag-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-expressions</artifactId>
+                <version>${cucumber-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>datatable</artifactId>
+                <version>${datatable.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -173,9 +170,9 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-html</artifactId>
-                <version>0.2.6</version>
+                <version>0.2.7</version>
             </dependency>
             <dependency>
                 <groupId>org.picocontainer</groupId>
@@ -397,6 +394,23 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>htmlunit-driver</artifactId>
+                <version>${htmlunit.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.github.detro</groupId>
+                <artifactId>ghostdriver</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
                 <version>${webbit.version}</version>
@@ -482,11 +496,6 @@
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>${xmlunit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
             </dependency>
 
             <dependency>
@@ -637,7 +646,7 @@
                                 <instrumentation>
                                     <ignoreTrivial>true</ignoreTrivial>
                                 </instrumentation>
-                                <check />
+                                <check/>
                             </configuration>
                         </plugin>
                         <plugin>
@@ -655,6 +664,27 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <id>check-semantic-version</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.revapi</groupId>
+                        <artifactId>revapi-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>check</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
             </build>
         </profile>
     </profiles>
@@ -686,16 +716,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.0.0</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>.</directory>
-                                <includes>
-                                    <include>**/*.ser</include>
-                                </includes>
-                            </fileset>
-                        </filesets>
-                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -704,8 +724,8 @@
                     <version>3.6.2</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                         <compilerArgument>-Werror</compilerArgument>
                     </configuration>
                 </plugin>
@@ -864,12 +884,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.10.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.15.1</version>
+                            <version>0.17.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -884,6 +904,14 @@
                             </revapi.semver.ignore>
                             <revapi.java>
                                 <filter>
+                                    <classes>
+                                        <regex>true</regex>
+                                        <exclude>
+                                            <item>cucumber\.runner\..*</item>
+                                            <item>cucumber\.runtime\..*</item>
+                                            <item>cucumber\.util\..*</item>
+                                        </exclude>
+                                    </classes>
                                     <packages>
                                         <regex>true</regex>
                                         <exclude>
@@ -909,18 +937,6 @@
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.revapi</groupId>
-                <artifactId>revapi-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -981,12 +997,5 @@
             </plugin>
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.10</version>
-            </extension>
-        </extensions>
     </build>
 </project>

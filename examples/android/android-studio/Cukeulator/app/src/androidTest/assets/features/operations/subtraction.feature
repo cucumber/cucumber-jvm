@@ -7,7 +7,7 @@ Feature: Subtract two numbers
     And I press –
     And I press <num2>
     And I press =
-    Then I should see <delta> on the display
+    Then I should see "<delta>" on the display
 
   Examples:
     | num1 | num2 | delta |
@@ -23,7 +23,7 @@ Feature: Subtract two numbers
     And I press <num3>
     And I press <num4>
     And I press =
-    Then I should see <delta> on the display
+    Then I should see "<delta>" on the display
 
   Examples:
     | num1 | num2 | num3 | num4 | delta |

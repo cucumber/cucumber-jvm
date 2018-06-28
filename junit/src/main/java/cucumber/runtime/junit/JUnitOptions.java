@@ -11,6 +11,7 @@ import java.util.List;
 public class JUnitOptions {
     private static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
     private static String optionsText;
+    private final boolean strict;
 
     private boolean filenameCompatibleNames = false;
     private boolean stepNotifications = false;
@@ -18,11 +19,13 @@ public class JUnitOptions {
     /**
      * Create a new instance from a list of options, for example:
      * <p/>
-     * <pre<{@code Arrays.asList("--allow-started-ignored", "--filename-compatible-names");}</pre>
+     * <pre<{@code Arrays.asList("--filename-compatible-names", "--step-notifications");}</pre>
      *
+     * @param strict
      * @param argv the arguments
      */
-    public JUnitOptions(List<String> argv) {
+    public JUnitOptions(boolean strict, List<String> argv) {
+        this.strict = strict;
         argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
     }
@@ -34,10 +37,6 @@ public class JUnitOptions {
             if (arg.equals("--help") || arg.equals("-h")) {
                 printOptions();
                 System.exit(0);
-            } else if (arg.equals("--no-allow-started-ignored") || arg.equals("--allow-started-ignored")) {
-                System.err.println("WARNING: Found tags option '" + arg + "'. " +
-                        "--allow-started-ignored has no effect, testStarted is always fired before a test is started." +
-                        "--allow-started-ignored will be removed from the next release of Cucumber-JVM");
             } else if (arg.equals("--no-filename-compatible-names") || arg.equals("--filename-compatible-names")) {
                 filenameCompatibleNames = !arg.startsWith("--no-");
             } else if (arg.equals("--no-step-notifications") || arg.equals("--step-notifications")) {
@@ -54,6 +53,9 @@ public class JUnitOptions {
     }
     public boolean stepNotifications(){
         return stepNotifications;
+    }
+    public boolean isStrict() {
+        return strict;
     }
 
     private void printOptions() {

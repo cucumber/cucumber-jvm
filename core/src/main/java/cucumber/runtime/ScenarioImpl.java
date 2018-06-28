@@ -17,10 +17,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.max;
 
 public class ScenarioImpl implements Scenario {
-    private static final List<Result.Type> SEVERITY = asList(Result.Type.PASSED, Result.Type.SKIPPED, Result.Type.PENDING, Result.Type.UNDEFINED, Result.Type.AMBIGUOUS, Result.Type.FAILED);
+
     private final List<Result> stepResults = new ArrayList<Result>();
     private final List<PickleTag> tags;
     private final String uri;
@@ -63,11 +63,8 @@ public class ScenarioImpl implements Scenario {
         if (stepResults.isEmpty()) {
             return Result.Type.UNDEFINED;
         }
-        int pos = 0;
-        for (Result stepResult : stepResults) {
-            pos = Math.max(pos, SEVERITY.indexOf(stepResult.getStatus()));
-        }
-        return SEVERITY.get(pos);
+
+        return max(stepResults, Result.SEVERITY).getStatus();
     }
 
     @Override
@@ -110,15 +107,10 @@ public class ScenarioImpl implements Scenario {
     }
 
     public Throwable getError() {
-        Throwable error = null;
-        int maxPos = 0;
-        for (Result stepResult : stepResults) {
-            int currentPos = SEVERITY.indexOf(stepResult.getStatus());
-            if (currentPos > maxPos) {
-                maxPos = currentPos;
-                error = stepResult.getError();
-            }
+        if(stepResults.isEmpty()){
+            return null;
         }
-        return error;
+
+        return max(stepResults, Result.SEVERITY).getError();
     }
 }

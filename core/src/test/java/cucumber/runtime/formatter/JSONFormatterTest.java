@@ -1,14 +1,24 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.FeaturePathFeatureSupplier;
+import cucumber.runtime.GlueSupplier;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.filter.RerunFilters;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.deps.com.google.gson.JsonParser;
 import gherkin.pickles.PickleStep;
@@ -21,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +43,12 @@ import static cucumber.runtime.TestHelper.result;
 import static cucumber.runtime.TestHelper.createEmbedHookAction;
 import static cucumber.runtime.TestHelper.createWriteHookAction;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.sort;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -558,6 +570,145 @@ public class JSONFormatterTest {
     }
 
     @Test
+    public void should_add_step_hooks_to_step() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+            "Feature: Banana party\n" +
+            "\n" +
+            "  Scenario: Monkey eats bananas\n" +
+            "    Given there are bananas\n" +
+            "    When monkey arrives\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("there are bananas", result("passed"));
+        stepsToResult.put("monkey arrives", result("passed"));
+        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
+        stepsToLocation.put("monkey arrives", "StepDefs.monkey_arrives()");
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("beforestep", result("passed")));
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        List<String> hookLocations = new ArrayList<String>();
+        hookLocations.add("Hooks.beforestep_hooks_1()");
+        hookLocations.add("Hooks.afterstep_hooks_1()");
+        hookLocations.add("Hooks.afterstep_hooks_2()");
+        Long stepHookDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJSONPrettyFormatter(feature, stepsToResult, stepsToLocation, hooks, hookLocations, stepHookDuration);
+
+        String expected = "" +
+            "[\n" +
+            "  {\n" +
+            "    \"line\": 1,\n" +
+            "    \"elements\": [\n" +
+            "      {\n" +
+            "        \"line\": 3,\n" +
+            "        \"name\": \"Monkey eats bananas\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
+            "        \"type\": \"scenario\",\n" +
+            "        \"keyword\": \"Scenario\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"before\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.beforestep_hooks_1()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"line\": 4,\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"after\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                }\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"before\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.beforestep_hooks_1()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"line\": 5,\n" +
+            "            \"name\": \"monkey arrives\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.monkey_arrives()\"\n" +
+            "            },\n" +
+            "            \"after\": [\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                }\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"result\": {\n" +
+            "                  \"duration\": 1000000,\n" +
+            "                  \"status\": \"passed\"\n" +
+            "                },\n" +
+            "                \"match\": {\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"keyword\": \"When \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"name\": \"Banana party\",\n" +
+            "    \"description\": \"\",\n" +
+            "    \"id\": \"banana-party\",\n" +
+            "    \"keyword\": \"Feature\",\n" +
+            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"tags\": []\n" +
+            "  }\n" +
+            "]";
+        assertPrettyJsonEquals(expected, formatterOutput);
+    }
+
+    @Test
     public void should_handle_write_from_a_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
@@ -1018,7 +1169,7 @@ public class JSONFormatterTest {
     }
 
     private String runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {
-        HookDefinition hook = mock(HookDefinition.class);
+        final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -1030,10 +1181,32 @@ public class JSONFormatterTest {
         args.addAll(featurePaths);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(1234), null);
-        runtime.getGlue().addBeforeHook(hook);
+
+        BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                Backend backend = mock(Backend.class);
+                when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
+                return singletonList(backend);
+            }
+        };
+        EventBus bus = new EventBus(new TimeServiceStub(1234));
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+
+        GlueSupplier glueSupplier = new GlueSupplier() {
+            @Override
+            public Glue get() {
+                Glue glue = new RuntimeGlue();
+                glue.addBeforeHook(hook);
+                return glue;
+            }
+        };
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        final Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
         String formatterOutput = scanner.useDelimiter("\\A").next();

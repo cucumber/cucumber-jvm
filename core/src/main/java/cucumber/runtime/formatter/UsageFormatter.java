@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
@@ -61,8 +62,9 @@ final class UsageFormatter implements Formatter {
     }
 
     void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook() && event.result.is(Result.Type.PASSED)) {
-            addUsageEntry(event.result, event.testStep.getPattern(), event.testStep.getStepText(), event.testStep.getStepLocation());
+        if (event.testStep instanceof PickleStepTestStep && event.result.is(Result.Type.PASSED)) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+            addUsageEntry(event.result, testStep.getPattern(), testStep.getStepText(), testStep.getStepLocation());
         }
     }
 

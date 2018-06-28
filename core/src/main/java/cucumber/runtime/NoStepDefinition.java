@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
+import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 class NoStepDefinition implements StepDefinition {
@@ -23,13 +23,7 @@ class NoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public ParameterInfo getParameterType(int n, Type argumentType)
-            throws IndexOutOfBoundsException {
-        return null;
-    }
-
-    @Override
-    public void execute(String language, Object[] args) throws Throwable {
+    public void execute(String language, Object[] args) {
     }
 
     @Override

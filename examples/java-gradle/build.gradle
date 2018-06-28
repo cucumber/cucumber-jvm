@@ -1,25 +1,18 @@
 apply plugin: 'java'
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testRuntime
-    }
-}
-
-task cucumber() {
-    dependsOn assemble, compileTestJava
+task cucumber(dependsOn: testClasses) {
     doLast {
         javaexec {
             main = "cucumber.api.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
             args = ['--plugin', 'pretty', '--glue', 'gradle.cucumber', 'src/test/resources']
         }
     }
 }
 
 dependencies {
-    testCompile 'io.cucumber:cucumber-java:2.4.0'
-    testCompile 'io.cucumber:cucumber-junit:2.4.0'
+    testCompile 'io.cucumber:cucumber-java:3.0.2'
+    testCompile 'io.cucumber:cucumber-junit:3.0.2'
 
     testCompile 'junit:junit:4.12'
 }

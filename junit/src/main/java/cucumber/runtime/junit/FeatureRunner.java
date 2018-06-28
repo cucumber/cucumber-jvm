@@ -1,16 +1,13 @@
 package cucumber.runtime.junit;
 
-import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
-import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
-
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.FeatureCompiler;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -20,16 +17,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
+import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
+
 public class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children = new ArrayList<PickleRunner>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
+    public FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
-        buildFeatureElementRunners(runtime, jUnitReporter);
+        buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
     }
 
     @Override
@@ -73,26 +73,23 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         super.run(notifier);
     }
 
-    private void buildFeatureElementRunners(Runtime runtime, JUnitReporter jUnitReporter) {
+    private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
         Feature feature = cucumberFeature.getGherkinFeature().getFeature();
         if (feature == null) {
             return;
         }
-        Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(cucumberFeature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(cucumberFeature.getUri(), pickle));
-        }
+        FeatureCompiler compiler = new FeatureCompiler();
+        List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
         for (PickleEvent pickleEvent : pickleEvents) {
-            if (runtime.matchesFilters(pickleEvent)) {
+            if (filters.matchesFilters(pickleEvent)) {
                 try {
-                    if(jUnitReporter.stepNotifications()) {
+                    if (jUnitOptions.stepNotifications()) {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withStepDescriptions(runtime.getRunner(), pickleEvent, jUnitReporter);
+                        picklePickleRunner = withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runtime.getRunner(), pickleEvent, jUnitReporter);
+                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {

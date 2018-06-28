@@ -17,17 +17,17 @@ public class ScenarioStepDefs {
        scenarioName = scenario.getName();
     }
 
-    @Given("^I am running a scenario$")
+    @Given("I am running a scenario")
     public void i_am_running_a_scenario() {
 
     }
 
-    @When("^I try to get the scenario name$")
+    @When("I try to get the scenario name")
     public void i_try_to_get_the_scenario_name() {
 
     }
 
-    @Then("^The scenario name is \"([^\"]*)\"$")
+    @Then("The scenario name is {string}")
     public void the_scenario_name_is(String scenarioName) {
         assertEquals(this.scenarioName, scenarioName);
     }

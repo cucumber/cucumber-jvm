@@ -1,8 +1,11 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
+import cucumber.api.java.BeforeStep;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -11,13 +14,13 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -29,12 +32,16 @@ import static org.mockito.Mockito.mock;
 public class JavaHookTest {
     private static final Method BEFORE;
     private static final Method AFTER;
+    private static final Method BEFORESTEP;
+    private static final Method AFTERSTEP;
     private static final Method BAD_AFTER;
 
     static {
         try {
             BEFORE = HasHooks.class.getMethod("before");
             AFTER = HasHooks.class.getMethod("after");
+            BEFORESTEP = HasHooks.class.getMethod("beforeStep");
+            AFTERSTEP = HasHooks.class.getMethod("afterStep");
             BAD_AFTER = BadHook.class.getMethod("after", String.class);
         } catch (NoSuchMethodException e) {
             throw new InternalError("dang");
@@ -53,10 +60,9 @@ public class JavaHookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        this.backend = new JavaBackend(objectFactory, classFinder);
-
-        LocalizedXStreams localizedXStreams = new LocalizedXStreams(classLoader);
-        this.glue = new RuntimeGlue(localizedXStreams);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
+        this.glue = new RuntimeGlue();
 
         backend.loadGlue(glue, Collections.<String>emptyList());
     }
@@ -69,6 +75,26 @@ public class JavaHookTest {
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
         assertEquals(0, glue.getAfterHooks().size());
         assertEquals(BEFORE, hookDef.getMethod());
+    }
+
+    @Test
+    public void before_step_hooks_get_registered() throws Exception {
+        objectFactory.setInstance(new HasHooks());
+        backend.buildWorld();
+        backend.addHook(BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeStepHooks().get(0);
+        assertEquals(0, glue.getAfterStepHooks().size());
+        assertEquals(BEFORESTEP, hookDef.getMethod());
+    }
+
+    @Test
+    public void after_step_hooks_get_registered() throws Exception {
+        objectFactory.setInstance(new HasHooks());
+        backend.buildWorld();
+        backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
+        assertEquals(0, glue.getBeforeStepHooks().size());
+        assertEquals(AFTERSTEP, hookDef.getMethod());
     }
 
     @Test
@@ -135,6 +161,16 @@ public class JavaHookTest {
 
         @Before({"(@foo or @bar) and @zap"})
         public void before() {
+
+        }
+
+        @BeforeStep
+        public void beforeStep() {
+
+        }
+
+        @AfterStep
+        public void afterStep() {
 
         }
 

@@ -9,6 +9,10 @@ and will be executed whenever a non-snapshot version is committed.
 
 Is the build passing?
 
+```
+git checkout master
+```
+
 Also check if you can upgrade any dependencies:
 
 ```

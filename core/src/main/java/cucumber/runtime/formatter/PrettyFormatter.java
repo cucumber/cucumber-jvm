@@ -1,8 +1,10 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Argument;
 import cucumber.api.Result;
-import cucumber.api.TestCase;
 import cucumber.api.TestStep;
+import cucumber.api.TestCase;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
@@ -14,7 +16,6 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.Argument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.ast.Background;
@@ -59,7 +60,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -131,8 +132,8 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (!event.testStep.isHook()) {
-            if (isFirstStepAfterBackground(event.testStep)) {
+        if (event.testStep instanceof PickleStepTestStep) {
+            if (isFirstStepAfterBackground((PickleStepTestStep) event.testStep)) {
                 printScenarioDefinition(currentTestCase);
                 currentTestCase = null;
             }
@@ -140,9 +141,8 @@ final class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        TestStep testStep = event.testStep;
-        if (!testStep.isHook()) {
-            printStep(testStep, event.result);
+        if (event.testStep instanceof PickleStepTestStep) {
+            printStep((PickleStepTestStep) event.testStep, event.result);
         }
         printError(event.result);
     }
@@ -200,7 +200,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
         printDescription(examples.getDescription());
     }
 
-    private void printStep(TestStep testStep, Result result) {
+    private void printStep(PickleStepTestStep testStep, Result result) {
         String keyword = getStepKeyword(testStep);
         String stepText = testStep.getStepText();
         String locationPadding = createPaddingToLocation(STEP_INDENT, keyword + stepText);
@@ -213,20 +213,21 @@ final class PrettyFormatter implements Formatter, ColorAware {
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
         for (Argument argument : arguments) {
             // can be null if the argument is missing.
-            if (argument.getOffset() != null) {
-                int argumentOffset = argument.getOffset();
+            if (argument.getValue() != null) {
+                int argumentOffset = argument.getStart();
                 // a nested argument starts before the enclosing argument ends; ignore it when formatting
-                if (argumentOffset < beginIndex ) {
+                if (argumentOffset < beginIndex) {
                     continue;
                 }
                 String text = stepText.substring(beginIndex, argumentOffset);
                 result.append(textFormat.text(text));
             }
             // val can be null if the argument isn't there, for example @And("(it )?has something")
-            if (argument.getVal() != null) {
-                result.append(argFormat.text(argument.getVal()));
+            if (argument.getValue() != null) {
+                String text = stepText.substring(argument.getStart(), argument.getEnd());
+                result.append(argFormat.text(text));
                 // set beginIndex to end of argument
-                beginIndex = argument.getOffset() + argument.getVal().length();
+                beginIndex = argument.getEnd();
             }
         }
         if (beginIndex != stepText.length()) {
@@ -248,12 +249,12 @@ final class PrettyFormatter implements Formatter, ColorAware {
         return formats.get("comment").text("# " + location);
     }
 
-    private StringBuffer stepText(TestStep testStep) {
+    private StringBuffer stepText(PickleStepTestStep testStep) {
         String keyword = getStepKeyword(testStep);
         return new StringBuffer(keyword + testStep.getStepText());
     }
 
-    private String getStepKeyword(TestStep testStep) {
+    private String getStepKeyword(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             Step step = (Step) astNode.node;
@@ -263,11 +264,11 @@ final class PrettyFormatter implements Formatter, ColorAware {
         }
     }
 
-    private boolean isFirstStepAfterBackground(TestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         return currentTestCase != null && !isBackgroundStep(testStep);
     }
 
-    private boolean isBackgroundStep(TestStep testStep) {
+    private boolean isBackgroundStep(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             return TestSourcesModel.isBackgroundStep(astNode);
@@ -342,12 +343,12 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void calculateLocationIndentation(String definitionText, List<TestStep> testSteps, boolean useBackgroundSteps) {
         int maxTextLength = definitionText.length();
         for (TestStep step : testSteps) {
-            if (step.isHook()) {
-                continue;
-            }
-            if (isBackgroundStep(step) == useBackgroundSteps) {
-                StringBuffer stepText = stepText(step);
-                maxTextLength = Math.max(maxTextLength, STEP_INDENT.length() + stepText.length());
+            if (step instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) step;
+                if (isBackgroundStep(testStep) == useBackgroundSteps) {
+                    StringBuffer stepText = stepText(testStep);
+                    maxTextLength = Math.max(maxTextLength, STEP_INDENT.length() + stepText.length());
+                }
             }
         }
         locationIndentation = maxTextLength + 1;

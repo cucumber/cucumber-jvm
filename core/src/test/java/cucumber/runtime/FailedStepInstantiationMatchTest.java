@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 
 public class FailedStepInstantiationMatchTest {
     public final static String ENGLISH = "en";
-    private FailedStepInstantiationMatch match;
+    private FailedPickleStepInstantiationMatch match;
 
     @Before
     public void create_match() {
@@ -25,7 +25,7 @@ public class FailedStepInstantiationMatchTest {
         Exception exception = mock(Exception.class);
         StackTraceElement[] stackTrace = {new StackTraceElement("declaringClass", "methodName", "fileName", 1)};
         when(exception.getStackTrace()).thenReturn(stackTrace);
-        match = new FailedStepInstantiationMatch("uri", step, exception);
+        match = new FailedPickleStepInstantiationMatch("uri", step, exception);
     }
 
     @Test(expected=Exception.class)

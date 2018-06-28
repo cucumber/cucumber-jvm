@@ -22,22 +22,22 @@ public class CalculatorSteps {
         result = 0;
     }
 
-    @When("^I set a to (\\d+)$")
+    @When("I set a to {int}")
     public void i_set_a_to(int v) throws Throwable {
         a = v;
     }
 
-    @When("^I set b to (\\d+)$")
+    @When("I set b to {int}")
     public void i_set_b_to(int v) throws Throwable {
         b = v;
     }
 
-    @When("^I call the calculator service$")
+    @When("I call the calculator service")
     public void i_call_the_calculator_service() throws Throwable {
         result = calculatorService.add(a, b);
     }
 
-    @When("^the result is (\\d+)$")
+    @When("the result is {int}")
     public void the_result_is(int expected) throws Throwable {
         assertEquals(expected, result);
     }

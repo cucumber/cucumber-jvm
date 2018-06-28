@@ -5,17 +5,17 @@ import gherkin.pickles.PickleStep;
 import java.util.List;
 
 public class AmbiguousStepDefinitionsException extends CucumberException {
-    private final List<StepDefinitionMatch> matches;
+    private final List<PickleStepDefinitionMatch> matches;
 
-    public AmbiguousStepDefinitionsException(PickleStep step, List<StepDefinitionMatch> matches) {
+    public AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {
         super(createMessage(step, matches));
         this.matches = matches;
     }
 
-    private static String createMessage(PickleStep step, List<StepDefinitionMatch> matches) {
+    private static String createMessage(PickleStep step, List<PickleStepDefinitionMatch> matches) {
         StringBuilder msg = new StringBuilder();
         msg.append(quoteText(step.getText())).append(" matches more than one step definition:\n");
-        for (StepDefinitionMatch match : matches) {
+        for (PickleStepDefinitionMatch match : matches) {
             msg.append("  ").append(quoteText(match.getPattern())).append(" in ").append(match.getLocation()).append("\n");
         }
         return msg.toString();
@@ -25,7 +25,7 @@ public class AmbiguousStepDefinitionsException extends CucumberException {
         return "\"" + text + "\"";
     }
 
-    public List<StepDefinitionMatch> getMatches() {
+    public List<PickleStepDefinitionMatch> getMatches() {
         return matches;
     }
 }

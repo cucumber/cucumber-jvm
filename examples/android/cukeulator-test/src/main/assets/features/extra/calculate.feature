@@ -9,7 +9,7 @@ Feature: Calculate a result
     And I press <op>
     And I press <num2>
     And I press =
-    Then I should see <result> on the display
+    Then I should see "<result>" on the display
 
   Examples:
     | num1 | num2 | op | result   |

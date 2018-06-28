@@ -1,10 +1,7 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.api.DataTable;
-import cucumber.api.Transformer;
+import io.cucumber.datatable.DataTable;
 import cucumber.api.java8.En;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
-
 
 import java.util.List;
 
@@ -17,7 +14,7 @@ public class ShoppingStepdefs implements En {
     public ShoppingStepdefs() {
 
 
-        Given("^the following groceries:$", (DataTable dataTable) -> {
+        Given("the following groceries:", (DataTable dataTable) -> {
             List<Grocery> groceries = dataTable.asList(Grocery.class);
             for (Grocery grocery : groceries) {
                 calc.push(grocery.price.value);
@@ -25,39 +22,36 @@ public class ShoppingStepdefs implements En {
             }
         });
 
-        When("^I pay (\\d+)$", (Integer amount) -> {
+        When("I pay {int}", (Integer amount) -> {
             calc.push(amount);
             calc.push("-");
         });
 
-        Then("^my change should be (\\d+)$", (Integer change) -> {
+        Then("my change should be {int}", (Integer change) -> {
             assertEquals(-calc.value().intValue(), change.intValue());
         });
     }
 
-
     static class Grocery {
-        public String name;
-        @XStreamConverter(Price.Converter.class)
-        public Price price;
+        private String name;
+        private Price price;
 
-        public Grocery() {
-            super();
+        Grocery(String name, Price price) {
+            this.name = name;
+            this.price = price;
         }
     }
 
-    static class Price {
-        public int value;
+    static final class Price {
+        private int value;
 
-        public Price(int value) {
+        Price(int value) {
             this.value = value;
         }
 
-        public static class Converter extends Transformer<Price> {
-            @Override
-            public Price transform(String value) {
-                return new Price(Integer.parseInt(value));
-            }
+        static Price fromString(String value) {
+            return new Price(Integer.parseInt(value));
         }
+
     }
 }

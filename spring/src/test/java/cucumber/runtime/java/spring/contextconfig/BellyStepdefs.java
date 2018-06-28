@@ -21,12 +21,12 @@ public class BellyStepdefs {
         return bellyBean;
     }
 
-    @Then("^I have belly$")
+    @Then("I have belly")
     public void I_have_belly() throws Throwable {
         assertNotNull(belly);
     }
 
-    @Then("^I have belly bean$")
+    @Then("I have belly bean")
     public void I_have_belly_bean() throws Throwable {
         assertNotNull(bellyBean);
     }

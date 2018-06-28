@@ -28,11 +28,10 @@ If you're writing your step definitions in Java then the Gradle script needs to 
 
 Here are some caveats:
 
- * The `cucumber` task has to depend on `compileTestJava` task in order to compile test sources
+ * The `cucumber` task has to depend on `testClasses` task in order to compile test sources
 
  ```groovy
- task cucumber() {
-     dependsOn assemble, compileTestJava
+ task cucumber(dependsOn: testClasses) {
      ...
  }
  ```
@@ -41,7 +40,7 @@ Here are some caveats:
  Otherwise Cucumber-JVM will not find your production classes/resources and step definitions respectively.
 
  ```groovy
- classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+ classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
  ```
 
  * Cucumber's `--glue` should be set to your package name (e.g. `gradle.cucumber`) and **NOT** to `src/test/java`

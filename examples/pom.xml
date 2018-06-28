@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-examples</artifactId>
@@ -16,9 +16,8 @@
         <module>java-calculator</module>
         <module>java8-calculator</module>
         <module>java-calculator-testng</module>
-        <module>pax-exam</module>
         <module>java-wicket</module>
-        <module>java-webbit-websockets-selenium</module>
+        <module>pax-exam</module>
     </modules>
 
     <profiles>

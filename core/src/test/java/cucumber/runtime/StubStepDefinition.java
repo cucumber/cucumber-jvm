@@ -1,47 +1,55 @@
 package cucumber.runtime;
 
+import io.cucumber.stepexpression.TypeRegistry;
+import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.ArgumentMatcher;
+import io.cucumber.stepexpression.ExpressionArgumentMatcher;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
-public class StubStepDefinition implements StepDefinition {
-    private final Object target;
-    private final Method method;
-    private final String pattern;
-    private List<ParameterInfo> parameterInfos;
+import static org.junit.Assert.assertEquals;
 
-    public StubStepDefinition(Object target, Method method, String pattern) {
-        this.target = target;
-        this.method = method;
-        this.pattern = pattern;
-        this.parameterInfos = ParameterInfo.fromMethod(method);
+public class StubStepDefinition implements StepDefinition {
+    private final StepExpression expression;
+    private List<Type> parameters;
+
+    StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
+        this.parameters = Arrays.asList(types);
+        if (parameters.isEmpty()) {
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern);
+        } else {
+            Type lastParameter = parameters.get(parameters.size() - 1);
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern, lastParameter);
+        }
     }
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
-        throw new UnsupportedOperationException();
+        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+        return argumentMatcher.argumentsFrom(step);
     }
 
     @Override
     public String getLocation(boolean detail) {
-        return method.getName();
+        return "{stubbed location" + (detail ? " with details" : "") + "}";
     }
 
     @Override
     public Integer getParameterCount() {
-        return parameterInfos.size();
+        return parameters.size();
     }
 
     @Override
-    public ParameterInfo getParameterType(int n, Type argumentType) {
-        return parameterInfos.get(n);
-    }
-
-    @Override
-    public void execute(String language, Object[] args) throws Throwable {
-        Utils.invoke(target, method, 0, args);
+    public void execute(String language, Object[] args) {
+        assertEquals(parameters.size(), args.length);
+        for (int i = 0; i < args.length; i++) {
+            assertEquals(parameters.get(i), args[i].getClass());
+        }
     }
 
     @Override
@@ -51,7 +59,7 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public String getPattern() {
-        return pattern;
+        return expression.getSource();
     }
 
     @Override

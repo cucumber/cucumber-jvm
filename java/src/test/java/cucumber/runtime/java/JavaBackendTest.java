@@ -1,12 +1,13 @@
 package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.PickleStepDefinitionMatch;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -17,6 +18,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -33,7 +35,8 @@ public class JavaBackendTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         this.factory = new DefaultJavaObjectFactory();
-        this.backend = new JavaBackend(factory, classFinder);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
     }
 
     @Test
@@ -67,7 +70,17 @@ public class JavaBackendTest {
         }
 
         @Override
+        public void addBeforeStepHook(HookDefinition beforeStepHook) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void addBeforeHook(HookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addAfterStepHook(HookDefinition hookDefinition) {
             throw new UnsupportedOperationException();
         }
 
@@ -82,12 +95,22 @@ public class JavaBackendTest {
         }
 
         @Override
+        public List<HookDefinition> getAfterStepHooks() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<HookDefinition> getBeforeStepHooks() {
+            return null;
+        }
+
+        @Override
         public List<HookDefinition> getAfterHooks() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+        public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
             throw new UnsupportedOperationException();
         }
 

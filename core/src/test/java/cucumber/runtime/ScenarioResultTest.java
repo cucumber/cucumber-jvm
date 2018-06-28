@@ -113,33 +113,34 @@ public class ScenarioResultTest {
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
         return pickleEvent;
     }
-}
 
-class EmbedEventMatcher extends ArgumentMatcher<WriteEvent> {
-    private byte[] data;
-    private String mimeType;
 
-    public EmbedEventMatcher(byte[] data, String mimeType) {
-        this.data = data;
-        this.mimeType = mimeType;
+    private final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
+        private byte[] data;
+        private String mimeType;
+
+        EmbedEventMatcher(byte[] data, String mimeType) {
+            this.data = data;
+            this.mimeType = mimeType;
+        }
+
+        @Override
+        public boolean matches(EmbedEvent argument) {
+            return (argument != null &&
+                argument.data.equals(data) && argument.mimeType.equals(mimeType));
+        }
     }
 
-    @Override
-    public boolean matches(Object argument) {
-        return (argument instanceof EmbedEvent &&
-                ((EmbedEvent)argument).data.equals(data) && ((EmbedEvent)argument).mimeType.equals(mimeType));
-    }
-}
+    private final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
+        private String text;
 
-class WriteEventMatcher extends ArgumentMatcher<WriteEvent> {
-    private String text;
+        WriteEventMatcher(String text) {
+            this.text = text;
+        }
 
-    public WriteEventMatcher(String text) {
-        this.text = text;
-    }
-
-    @Override
-    public boolean matches(Object argument) {
-        return (argument instanceof WriteEvent && ((WriteEvent)argument).text.equals(text));
+        @Override
+        public boolean matches(WriteEvent argument) {
+            return (argument != null && argument.text.equals(text));
+        }
     }
 }

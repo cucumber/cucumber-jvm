@@ -1,15 +1,22 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
+import cucumber.runner.TimeService;
+import cucumber.runtime.Backend;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runtime.RuntimeGlueSupplier;
+import cucumber.runtime.Supplier;
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -23,7 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -49,8 +58,8 @@ public class JavaStepDefinitionTest {
 
     private final Defs defs = new Defs();
     private JavaBackend backend;
-    private Runtime runtime;
     private Result latestReceivedResult;
+    private Runner runner;
 
     @Before
     public void createBackendAndLoadNoGlue() {
@@ -58,12 +67,20 @@ public class JavaStepDefinitionTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactory factory = new SingletonFactory(defs);
-        this.backend = new JavaBackend(factory, classFinder);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+        EventBus bus = new EventBus(TimeService.SYSTEM);
+        BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return asList(backend);
+            }
+        };
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
 
-        backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
-        runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
+        backend.loadGlue(runner.getGlue(), Collections.<String>emptyList());
+        bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {
                 latestReceivedResult = event.result;
@@ -86,7 +103,7 @@ public class JavaStepDefinitionTest {
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runtime.getRunner().runPickle(pickleEvent);
+        runner.runPickle(pickleEvent);
 
         assertEquals(AmbiguousStepDefinitionsException.class, latestReceivedResult.getError().getClass());
     }
@@ -99,7 +116,7 @@ public class JavaStepDefinitionTest {
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runtime.getRunner().runPickle(pickleEvent);
+        runner.runPickle(pickleEvent);
 
         assertNull(latestReceivedResult.getError());
         assertTrue(defs.foo);

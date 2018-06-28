@@ -11,7 +11,7 @@ import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.Utils;
 
 import java.io.PrintWriter;
@@ -67,11 +67,6 @@ public final class AndroidInstrumentationReporter implements Formatter {
      * The collected TestSourceRead events.
      */
     private final TestSourcesModel testSources = new TestSourcesModel();
-
-    /**
-     * The current cucumber runtime.
-     */
-    private final Runtime runtime;
 
     /**
      * The instrumentation to report to.
@@ -144,14 +139,16 @@ public final class AndroidInstrumentationReporter implements Formatter {
         }
     };
 
+    private final UndefinedStepsTracker undefinedStepsTracker;
+
+
     /**
      * Creates a new instance for the given parameters
      *
-     * @param runtime         the {@link cucumber.runtime.Runtime} to use
      * @param instrumentation the {@link android.app.Instrumentation} to report statuses to
      */
-    public AndroidInstrumentationReporter(final Runtime runtime, final Instrumentation instrumentation) {
-        this.runtime = runtime;
+    public AndroidInstrumentationReporter(final UndefinedStepsTracker undefinedStepsTracker, final Instrumentation instrumentation) {
+        this.undefinedStepsTracker = undefinedStepsTracker;
         this.instrumentation = instrumentation;
     }
 
@@ -242,7 +239,7 @@ public final class AndroidInstrumentationReporter implements Formatter {
      * @return string representation of the snippet
      */
     private String getLastSnippet() {
-        return runtime.getSnippets().get(runtime.getSnippets().size() - 1);
+        return undefinedStepsTracker.getSnippets().get(undefinedStepsTracker.getSnippets().size() - 1);
     }
 
     /**

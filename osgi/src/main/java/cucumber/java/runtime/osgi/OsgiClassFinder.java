@@ -25,6 +25,8 @@ public class OsgiClassFinder implements ClassFinder {
 
     @Override
     public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packageName) {
+
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Looking for sub classes of " + parentType.getName() + " in '" + packageName + "' package");
 

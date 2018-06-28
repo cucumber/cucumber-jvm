@@ -3,12 +3,18 @@ package cucumber.runtime;
 import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
-import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PickleStepMatcher;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
@@ -16,16 +22,14 @@ import gherkin.ast.GherkinDocument;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import junit.framework.AssertionFailedError;
-import org.junit.Ignore;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -33,23 +37,23 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyCollectionOf;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class TestHelper {
     private TestHelper() {
     }
 
-    public static CucumberFeature feature(final String path, final String source) throws IOException {
+    public static CucumberFeature feature(final String path, final String source) {
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
 
@@ -85,7 +89,7 @@ public class TestHelper {
     public static Answer<Object> createWriteHookAction(final String output) {
         Answer<Object> writer = new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 Scenario scenario = (Scenario) invocation.getArguments()[0];
                 scenario.write(output);
                 return null;
@@ -107,12 +111,12 @@ public class TestHelper {
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks,
-            final long stepHookDuration, final Formatter formatter) throws Throwable, FileNotFoundException {
+            final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable, FileNotFoundException {
+            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
         runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
     }
 
@@ -144,15 +148,35 @@ public class TestHelper {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
         final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, timeService, glue);
-        timeService.setEventPublisher(runtime.getEventBus());
+        final EventBus bus = new EventBus(timeService);
+        timeService.setEventPublisher(bus);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        formatter.setEventPublisher(bus);
 
-        formatter.setEventPublisher(runtime.getEventBus());
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(runtime.getEventBus());
-            runtime.runFeature(feature);
-        }
-        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+        final BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return singletonList(mock(Backend.class));
+            }
+        };
+        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
+        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        RunnerSupplier runnerSupplier = new RunnerSupplier () {
+            @Override
+            public Runner get() {
+                return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
+            }
+        };
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
+            @Override
+            public List<CucumberFeature> get() {
+                return features;
+            }
+        };
+        final Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
+
+        runtime.run();
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
@@ -168,8 +192,7 @@ public class TestHelper {
         for (String stepText : mergeStepSets(stepsToResult, stepsToLocation)) {
             Result stepResult = getResultWithDefaultPassed(stepsToResult, stepText);
             if (!stepResult.is(Result.Type.UNDEFINED)) {
-                StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
-                when(matchStep.getMatch()).thenReturn(matchStep);
+                PickleStepDefinitionMatch matchStep = mock(PickleStepDefinitionMatch.class);
                 when(glue.stepDefinitionMatch(anyString(), TestHelper.stepWithName(stepText))).thenReturn(matchStep);
                 mockStepResult(stepResult, matchStep);
                 mockStepLocation(getLocationWithDefaultEmptyString(stepsToLocation, stepText), matchStep);
@@ -177,7 +200,7 @@ public class TestHelper {
         }
     }
 
-    private static void mockStepResult(Result stepResult, StepDefinitionMatch matchStep) throws Throwable {
+    private static void mockStepResult(Result stepResult, PickleStepDefinitionMatch matchStep) throws Throwable {
         if (stepResult.is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (stepResult.is(Result.Type.FAILED)) {
@@ -190,7 +213,7 @@ public class TestHelper {
         }
     }
 
-    private static void mockStepLocation(String stepLocation, StepDefinitionMatch matchStep) {
+    private static void mockStepLocation(String stepLocation, PickleStepDefinitionMatch matchStep) {
         when(matchStep.getCodeLocation()).thenReturn(stepLocation);
     }
 
@@ -198,10 +221,12 @@ public class TestHelper {
             final List<Answer<Object>> hookActions) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
         for (int i = 0; i < hooks.size(); ++i) {
             String hookLocation = hookLocations.size() > i ? hookLocations.get(i) : null;
             Answer<Object> hookAction  = hookActions.size() > i ? hookActions.get(i) : null;
-            TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks);
+            TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks, beforeStepHooks, afterStepHooks);
         }
         if (!beforeHooks.isEmpty()) {
             when(glue.getBeforeHooks()).thenReturn(beforeHooks);
@@ -209,10 +234,16 @@ public class TestHelper {
         if (!afterHooks.isEmpty()) {
             when(glue.getAfterHooks()).thenReturn(afterHooks);
         }
+        if (!beforeStepHooks.isEmpty()) {
+            when(glue.getBeforeStepHooks()).thenReturn(beforeStepHooks);
+        }
+        if (!afterStepHooks.isEmpty()) {
+            when(glue.getAfterStepHooks()).thenReturn(afterStepHooks);
+        }
     }
 
     private static void mockHook(final SimpleEntry<String, Result> hookEntry, final String hookLocation, final Answer<Object> action,
-                                 final List<HookDefinition> beforeHooks, final List<HookDefinition> afterHooks) throws Throwable {
+                                 final List<HookDefinition> beforeHooks, final List<HookDefinition> afterHooks, final List<HookDefinition> beforeStepHooks, final List<HookDefinition> afterStepHooks) throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
         if (hookLocation != null) {
@@ -230,8 +261,12 @@ public class TestHelper {
             beforeHooks.add(hook);
         } else if ("after".equals(hookEntry.getKey())) {
             afterHooks.add(hook);
+        } else if ("afterstep".equals(hookEntry.getKey())) {
+            afterStepHooks.add(hook);
+        } else if ("beforestep".equals(hookEntry.getKey())) {
+            beforeStepHooks.add(hook);
         } else {
-            fail("Only before and after hooks are allowed, hook type found was: " + hookEntry.getKey());
+            fail("Only before, after and afterstep hooks are allowed, hook type found was: " + hookEntry.getKey());
         }
     }
 
@@ -243,7 +278,7 @@ public class TestHelper {
         AssertionFailedError error = mock(AssertionFailedError.class);
         Answer<Object> printStackTraceHandler = new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
                 writer.print("the stack trace");
                 return null;
@@ -257,7 +292,7 @@ public class TestHelper {
         AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
         Answer<Object> printStackTraceHandler = new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
                 writer.print("the stack trace");
                 return null;

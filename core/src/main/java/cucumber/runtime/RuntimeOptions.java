@@ -1,20 +1,9 @@
 package cucumber.runtime;
 
-import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
-import cucumber.api.event.TestRunStarted;
-import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
-import cucumber.api.formatter.StrictAware;
-import cucumber.runner.EventBus;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
+import io.cucumber.datatable.DataTable;
 import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.PathWithLines;
-import cucumber.runtime.table.TablePrinter;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
@@ -23,21 +12,17 @@ import gherkin.IGherkinDialectProvider;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import static cucumber.runtime.model.CucumberFeature.load;
 import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
@@ -64,19 +49,18 @@ public class RuntimeOptions {
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
     private final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
     private final List<String> featurePaths = new ArrayList<String>();
-    private final List<String> pluginFormatterNames = new ArrayList<String>();
-    private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
-    private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
+
     private final List<String> junitOptions = new ArrayList<String>();
-    private final PluginFactory pluginFactory;
-    private final List<Plugin> plugins = new ArrayList<Plugin>();
-    private final List<XStreamConverter> converters = new ArrayList<XStreamConverter>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
+    private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
-    private boolean pluginNamesInstantiated;
-    private EventBus bus;
+
+    private final List<String> pluginFormatterNames = new ArrayList<String>();
+    private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
+    private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
+
 
     /**
      * Create a new instance from a string of options, for example:
@@ -86,7 +70,7 @@ public class RuntimeOptions {
      * @param argv the arguments
      */
     public RuntimeOptions(String argv) {
-        this(new PluginFactory(), Shellwords.parse(argv));
+        this(Shellwords.parse(argv));
     }
 
     /**
@@ -97,20 +81,10 @@ public class RuntimeOptions {
      * @param argv the arguments
      */
     public RuntimeOptions(List<String> argv) {
-        this(new PluginFactory(), argv);
+        this(Env.INSTANCE, argv);
     }
 
     public RuntimeOptions(Env env, List<String> argv) {
-        this(env, new PluginFactory(), argv);
-    }
-
-    public RuntimeOptions(PluginFactory pluginFactory, List<String> argv) {
-        this(Env.INSTANCE, pluginFactory, argv);
-    }
-
-    public RuntimeOptions(Env env, PluginFactory pluginFactory, List<String> argv) {
-        this.pluginFactory = pluginFactory;
-
         argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
@@ -125,6 +99,23 @@ public class RuntimeOptions {
         if (pluginSummaryPrinterNames.isEmpty()) {
             pluginSummaryPrinterNames.add("default_summary");
         }
+    }
+
+    public RuntimeOptions noSummaryPrinter() {
+        pluginSummaryPrinterNames.clear();
+        return this;
+    }
+
+    public List<String> getPluginFormatterNames() {
+        return pluginFormatterNames;
+    }
+
+    public List<String> getPluginSummaryPrinterNames() {
+        return pluginSummaryPrinterNames;
+    }
+
+    public List<String> getPluginStepDefinitionReporterNames() {
+        return pluginStepDefinitionReporterNames;
     }
 
     private void parse(List<String> args) {
@@ -169,9 +160,9 @@ public class RuntimeOptions {
                 Pattern patternFilter = Pattern.compile(nextArg);
                 parsedNameFilters.add(patternFilter);
             } else if (arg.startsWith("--junit,")) {
-                for (String option : arg.substring("--junit,".length()).split(",")) {
-                    parsedJunitOptions.add(option);
-                }
+                parsedJunitOptions.addAll(asList(arg.substring("--junit,".length()).split(",")));
+            } else if (arg.equals("--wip") || arg.equals("-w")) {
+                wip = true;
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -211,11 +202,6 @@ public class RuntimeOptions {
         parsedPluginData.updatePluginFormatterNames(pluginFormatterNames);
         parsedPluginData.updatePluginStepDefinitionReporterNames(pluginStepDefinitionReporterNames);
         parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
-    }
-
-    RuntimeOptions withConverters(List<XStreamConverter> converters) {
-        this.converters.addAll(converters);
-        return this;
     }
 
     private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
@@ -271,7 +257,6 @@ public class RuntimeOptions {
 
     private int printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
-        TablePrinter printer = new TablePrinter();
         List<List<String>> table = new ArrayList<List<String>>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
         addKeywordRow(table, "background", dialect.getBackgroundKeywords());
@@ -288,7 +273,7 @@ public class RuntimeOptions {
         addCodeKeywordRow(table, "then", dialect.getThenKeywords());
         addCodeKeywordRow(table, "and", dialect.getAndKeywords());
         addCodeKeywordRow(table, "but", dialect.getButKeywords());
-        printer.printTable(table, builder);
+        DataTable.create(table).print(builder);
         System.out.println(builder.toString());
         return 0;
     }
@@ -304,105 +289,6 @@ public class RuntimeOptions {
         table.add(cells);
     }
 
-    public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader, EventBus bus) {
-        List<CucumberFeature> features = load(resourceLoader, featurePaths, System.out);
-        getPlugins(); // to create the formatter objects
-        bus.send(new TestRunStarted(bus.getTime()));
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(bus);
-        }
-        return features;
-    }
-
-    public List<Plugin> getPlugins() {
-        if (!pluginNamesInstantiated) {
-            for (String pluginName : pluginFormatterNames) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-                setMonochromeOnColorAwarePlugins(plugin);
-                setStrictOnStrictAwarePlugins(plugin);
-                setEventBusFormatterPlugins(plugin);
-            }
-            for (String pluginName : pluginStepDefinitionReporterNames) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-            }
-            for (String pluginName : pluginSummaryPrinterNames) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                plugins.add(plugin);
-            }
-            pluginNamesInstantiated = true;
-        }
-        return plugins;
-    }
-
-    List<XStreamConverter> getConverters() {
-        return unmodifiableList(converters);
-    }
-
-    public Formatter formatter(ClassLoader classLoader) {
-        return pluginProxy(classLoader, Formatter.class);
-    }
-
-    public StepDefinitionReporter stepDefinitionReporter(ClassLoader classLoader) {
-        return pluginProxy(classLoader, StepDefinitionReporter.class);
-    }
-
-    public SummaryPrinter summaryPrinter(ClassLoader classLoader) {
-        return pluginProxy(classLoader, SummaryPrinter.class);
-    }
-
-    /**
-     * Creates a dynamic proxy that multiplexes method invocations to all plugins of the same type.
-     *
-     * @param classLoader used to create the proxy
-     * @param type        proxy type
-     * @param <T>         generic proxy type
-     * @return a proxy
-     */
-    private <T> T pluginProxy(ClassLoader classLoader, final Class<T> type) {
-        Object proxy = Proxy.newProxyInstance(classLoader, new Class<?>[]{type}, new InvocationHandler() {
-            @Override
-            public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-                for (Object plugin : getPlugins()) {
-                    if (type.isInstance(plugin)) {
-                        try {
-                            Utils.invoke(plugin, method, 0, args);
-                        } catch (Throwable t) {
-                            if (!method.getName().equals("startOfScenarioLifeCycle") && !method.getName().equals("endOfScenarioLifeCycle")) {
-                                // IntelliJ has its own formatter which doesn't yet implement these methods.
-                                throw t;
-                            }
-                        }
-                    }
-                }
-                return null;
-            }
-        });
-        return type.cast(proxy);
-    }
-
-    private void setMonochromeOnColorAwarePlugins(Object plugin) {
-        if (plugin instanceof ColorAware) {
-            ColorAware colorAware = (ColorAware) plugin;
-            colorAware.setMonochrome(monochrome);
-        }
-    }
-
-    private void setStrictOnStrictAwarePlugins(Object plugin) {
-        if (plugin instanceof StrictAware) {
-            StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(strict);
-        }
-    }
-
-    private void setEventBusFormatterPlugins(Object plugin) {
-        if (plugin instanceof Formatter && bus != null) {
-            Formatter formatter = (Formatter) plugin;
-            formatter.setEventPublisher(bus);
-        }
-    }
-
     public List<String> getGlue() {
         return glue;
     }
@@ -415,13 +301,12 @@ public class RuntimeOptions {
         return dryRun;
     }
 
-    public List<String> getFeaturePaths() {
-        return featurePaths;
+    public boolean isWip() {
+        return wip;
     }
 
-    public void addPlugin(Formatter plugin) {
-        plugins.add(plugin);
-        setEventBusFormatterPlugins(plugin);
+    public List<String> getFeaturePaths() {
+        return featurePaths;
     }
 
     public List<Pattern> getNameFilters() {
@@ -432,19 +317,8 @@ public class RuntimeOptions {
         return tagFilters;
     }
 
-    public Map<String, List<Long>> getLineFilters(ResourceLoader resourceLoader) {
-        processRerunFiles(resourceLoader);
+    public Map<String, List<Long>> getLineFilters() {
         return lineFilters;
-    }
-
-    private void processRerunFiles(ResourceLoader resourceLoader) {
-        for (String featurePath : featurePaths) {
-            if (featurePath.startsWith("@")) {
-                for (PathWithLines pathWithLines : CucumberFeature.loadRerunFile(resourceLoader, featurePath.substring(1))) {
-                    addLineFilters(lineFilters, pathWithLines.path, pathWithLines.lines);
-                }
-            }
-        }
     }
 
     public boolean isMonochrome() {
@@ -465,12 +339,12 @@ public class RuntimeOptions {
         ParsedOptionNames summaryPrinterNames = new ParsedOptionNames();
 
         public void addPluginName(String name, boolean isAddPlugin) {
-            if (PluginFactory.isFormatterName(name)) {
-                formatterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isStepDefinitionReporterName(name)) {
+            if (PluginFactory.isStepDefinitionReporterName(name)) {
                 stepDefinitionReporterNames.addName(name, isAddPlugin);
             } else if (PluginFactory.isSummaryPrinterName(name)) {
                 summaryPrinterNames.addName(name, isAddPlugin);
+            } else if (PluginFactory.isFormatterName(name)) {
+                formatterNames.addName(name, isAddPlugin);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);
             }
@@ -510,7 +384,4 @@ public class RuntimeOptions {
         }
     }
 
-    void setEventBus(EventBus bus) {
-        this.bus = bus;
-    }
 }
