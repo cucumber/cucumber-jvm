@@ -99,11 +99,12 @@ public class TimelineFormatter implements ConcurrentFormatter {
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
-        final TestData test = new TestData(event);
+        Thread currentThread = Thread.currentThread();
+        final Long threadId = currentThread.getId();
+        final TestData test = new TestData(event, threadId);
         allTests.put(getId(event), test);
-        final Long threadId = event.getThread().getId();
         if (!allGroups.containsKey(threadId)) {
-            allGroups.put(threadId, new GroupData(event.getThread()));
+            allGroups.put(threadId, new GroupData(currentThread));
         }
     }
 
@@ -218,14 +219,14 @@ public class TimelineFormatter implements ConcurrentFormatter {
         @SerializedName("tags")
         final String tags;
 
-        TestData(final TestCaseStarted started) {
+        TestData(final TestCaseStarted started, final Long threadId) {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
             final String uri = testCase.getUri();
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = testCase.getName();
             this.startTime = NANOSECONDS.toMillis(started.getTimeStamp());
-            this.threadId = started.getThread().getId();
+            this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
         }
 
