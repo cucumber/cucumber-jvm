@@ -1,9 +1,9 @@
 Cucumber Spring
 ===============
 
-Use Cucumber-Spring to manage state between steps and for scenarios.
+Use Cucumber Spring to manage state between steps and for scenarios.
 
-Add the `cucumber-spring` dependency to your pom.
+Add the `cucumber-spring` dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -79,16 +79,15 @@ public class StepDefs {
 
 ## XML Configuration
 
-If you are using xml based configaration, you can to register the beans in a `cucumber.xml` file:
+If you are using xml based configuration, you can to register the beans in a `cucumber.xml` file:
 
 ```xml
 <bean class="your.package.YourClass" scope="cucumber-glue" />
 <bean class="other.framework.Class" scope="cucumber-glue" />
 ```
 
-Annotate your StepDefs with `@ContextConfiguration("classpath:cucumber.xml")`
+Annotate your StepDefinition class with `@ContextConfiguration("classpath:cucumber.xml")`
 
 ## SpringBoot
 
-If you are using SpringBoot, you can annotate your StepDefs with `@SpringBootTest(classes = TestConfig.class)`
-
+If you are using SpringBoot, you can annotate your StepDefinition class with `@SpringBootTest(classes = TestConfig.class)`.
