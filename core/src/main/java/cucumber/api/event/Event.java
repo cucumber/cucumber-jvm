@@ -8,4 +8,5 @@ public interface Event {
     Comparator<Event> CANONICAL_ORDER = new CanonicalEventOrder();
 
     Long getTimeStamp();
+
 }

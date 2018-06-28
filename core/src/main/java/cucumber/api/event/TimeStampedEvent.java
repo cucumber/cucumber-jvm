@@ -11,5 +11,4 @@ abstract class TimeStampedEvent implements Event {
     public Long getTimeStamp() {
         return timeStamp;
     }
-
 }

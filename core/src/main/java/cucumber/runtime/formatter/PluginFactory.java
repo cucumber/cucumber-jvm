@@ -199,7 +199,7 @@ public final class PluginFactory {
 
     public static boolean isFormatterName(String name) {
         Class pluginClass = getPluginClass(name);
-        return Formatter.class.isAssignableFrom(pluginClass) || ConcurrentFormatter.class.isAssignableFrom(pluginClass);
+        return Formatter.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isStepDefinitionReporterName(String name) {
