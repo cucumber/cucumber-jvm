@@ -2,6 +2,7 @@ package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
+import cucumber.runner.Runner;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
@@ -37,8 +38,7 @@ public class TestNGCucumberRunner {
     private final Filters filters;
     private final FeaturePathFeatureSupplier featureSupplier;
     private final ThreadLocalRunnerSupplier runnerSupplier;
-    private final Plugins plugins;
-    private TestCaseResultListener testCaseResultListener;
+    private final RuntimeOptions runtimeOptions;
 
     /**
      * Bootstrap the cucumber runtime
@@ -50,32 +50,27 @@ public class TestNGCucumberRunner {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        runtimeOptions = runtimeOptionsFactory.create();
 
-        TestNGReporter reporter = new TestNGReporter(new PrintStream(System.out) {
-            @Override
-            public void close() {
-                // We have no intention to close System.out
-            }
-        });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        plugins.addPlugin(new TestNGReporter());
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         filters = new Filters(runtimeOptions, rerunFilters);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
-        reporter.setEventPublisher(bus);
-        testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
-        testCaseResultListener.setEventPublisher(bus);
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
-        testCaseResultListener.startPickle();
-        runnerSupplier.get().runPickle(pickle);
+        //Possibly invoked in a multi-threaded context
+        Runner runner = runnerSupplier.get();
+        TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
+        runner.runPickle(pickle);
+        testCaseResultListener.finishExecutionUnit();
 
         if (!testCaseResultListener.isPassed()) {
             throw testCaseResultListener.getError();

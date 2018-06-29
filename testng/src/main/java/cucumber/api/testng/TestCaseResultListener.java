@@ -2,15 +2,15 @@ package cucumber.api.testng;
 
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
+import cucumber.runner.EventBus;
 import cucumber.runtime.CucumberException;
 import org.testng.SkipException;
 
-class TestCaseResultListener implements EventListener {
+class TestCaseResultListener {
     static final String UNDEFINED_MESSAGE = "There are undefined steps";
     static final String SKIPPED_MESSAGE = "This scenario is skipped";
+    private final EventBus bus;
     private boolean strict;
     private Result result;
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
@@ -20,14 +20,16 @@ class TestCaseResultListener implements EventListener {
         }
     };
 
-    TestCaseResultListener(boolean strict) {
+    TestCaseResultListener(EventBus bus, boolean strict) {
         this.strict = strict;
+        this.bus = bus;
+        bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
-    @Override
-    public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+    void finishExecutionUnit() {
+        bus.removeHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
+
 
     void receiveResult(Result result) {
         this.result = result;
@@ -75,7 +77,4 @@ class TestCaseResultListener implements EventListener {
         }
     }
 
-    void startPickle() {
-        result = null;
-    }
 }
