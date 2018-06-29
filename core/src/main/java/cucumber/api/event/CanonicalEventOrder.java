@@ -7,7 +7,7 @@ import static java.util.Arrays.asList;
 
 final class CanonicalEventOrder implements Comparator<Event> {
 
-    private static final EventListComparator fixedOrder = new EventListComparator();
+    private static final FixedEventOrderComparator fixedOrder = new FixedEventOrderComparator();
     private static final TestCaseEventComparator testCaseOrder = new TestCaseEventComparator();
 
     @Override
@@ -24,7 +24,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
         return testCaseOrder.compare((TestCaseEvent) a, (TestCaseEvent) b);
     }
 
-    private static final class EventListComparator implements Comparator<Event> {
+    private static final class FixedEventOrderComparator implements Comparator<Event> {
 
         private final List<Class<? extends Event>> fixedOrder = asList(
             (Class<? extends Event>)
