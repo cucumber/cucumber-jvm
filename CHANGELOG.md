@@ -23,6 +23,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
 
 ### Removed
+  * [OSGi] Jars are no longer packaged as OSGi bundles. The `osgi` module and `pax-exam` examples have been removed as well.
+    ([#1404](https://github.com/cucumber/cucumber-jvm/pull/1404)
+     [cucumber/cucumber#412](https://github.com/cucumber/cucumber/issues/412)
+     Aslak Hellesøy)
   * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
 
 ### Fixed

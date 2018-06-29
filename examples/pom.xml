@@ -17,7 +17,6 @@
         <module>java8-calculator</module>
         <module>java-calculator-testng</module>
         <module>java-wicket</module>
-        <module>pax-exam</module>
     </modules>
 
     <profiles>
