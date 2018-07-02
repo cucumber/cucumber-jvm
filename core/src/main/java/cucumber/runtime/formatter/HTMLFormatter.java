@@ -2,7 +2,6 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.HookTestStep;
 import cucumber.api.PickleStepTestStep;
-import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
@@ -51,7 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class HTMLFormatter implements Plugin, EventListener {
+final class HTMLFormatter implements EventListener {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";

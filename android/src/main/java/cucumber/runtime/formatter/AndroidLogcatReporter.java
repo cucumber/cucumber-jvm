@@ -2,7 +2,6 @@ package cucumber.runtime.formatter;
 
 import android.util.Log;
 import cucumber.api.PickleStepTestStep;
-import cucumber.api.Plugin;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -14,7 +13,7 @@ import cucumber.runtime.UndefinedStepsTracker;
 /**
  * Logs information about the currently executed statements to androids logcat.
  */
-public final class AndroidLogcatReporter implements Plugin, EventListener {
+public final class AndroidLogcatReporter implements EventListener {
 
     /**
      * The log tag to be used when logging to logcat.

@@ -3,7 +3,6 @@ package cucumber.runtime.formatter;
 import cucumber.api.HookTestStep;
 import cucumber.api.HookType;
 import cucumber.api.PickleStepTestStep;
-import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
@@ -38,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class JSONFormatter implements Plugin, EventListener {
+final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> currentElementsList;

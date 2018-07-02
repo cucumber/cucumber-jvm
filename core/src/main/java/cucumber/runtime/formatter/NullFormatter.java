@@ -1,10 +1,9 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Plugin;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 
-final class NullFormatter implements Plugin, EventListener {
+final class NullFormatter implements EventListener {
     public NullFormatter() {
     }
 
