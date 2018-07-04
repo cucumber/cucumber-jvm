@@ -20,8 +20,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_leave_report_empty_when_exit_code_is_zero() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario: passed scenario\n" +
                 "    Given passed step\n" +
                 "  Scenario: pending scenario\n" +
@@ -40,8 +40,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_put_data_in_report_when_exit_code_is_non_zero() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario: failed scenario\n" +
                 "    Given failed step\n" +
                 "  Scenario: pending scenario\n" +
@@ -60,8 +60,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_use_scenario_location_when_scenario_step_fails() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
                 "    When second step\n" +
@@ -78,8 +78,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_use_scenario_location_when_background_step_fails() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Background: the background\n" +
                 "    Given background step\n" +
                 "  Scenario: scenario name\n" +
@@ -97,8 +97,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_use_example_row_location_when_scenario_outline_fails() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario Outline: scenario name\n" +
                 "    When executing <row> row\n" +
                 "    Then everything is ok\n" +
@@ -118,8 +118,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_use_scenario_location_when_before_hook_fails() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
                 "    When second step\n" +
@@ -138,8 +138,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_use_scenario_location_when_after_hook_fails() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
                 "    When second step\n" +
@@ -158,8 +158,8 @@ public class RerunFormatterTest {
 
     @Test
     public void should_one_entry_for_feature_with_many_failing_scenarios() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+                "Feature: fromSourceForTest name\n" +
                 "  Scenario: scenario 1 name\n" +
                 "    When first step\n" +
                 "    Then second step\n" +
@@ -179,13 +179,13 @@ public class RerunFormatterTest {
 
     @Test
     public void should_one_entry_for_each_failing_feature() throws Throwable {
-        CucumberFeature feature1 = TestHelper.feature("path/first.feature", "" +
-                "Feature: feature 1 name\n" +
+        CucumberFeature feature1 = CucumberFeature.fromSourceForTest("path/first.feature", "" +
+                "Feature: fromSourceForTest 1 name\n" +
                 "  Scenario: scenario 1 name\n" +
                 "    When first step\n" +
                 "    Then second step\n");
-        CucumberFeature feature2 = TestHelper.feature("path/second.feature", "" +
-                "Feature: feature 2 name\n" +
+        CucumberFeature feature2 = CucumberFeature.fromSourceForTest("path/second.feature", "" +
+                "Feature: fromSourceForTest 2 name\n" +
                 "  Scenario: scenario 2 name\n" +
                 "    When third step\n" +
                 "    Then forth step\n");

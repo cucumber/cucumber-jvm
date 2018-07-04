@@ -68,7 +68,7 @@ public class CucumberTest {
             new Cucumber(LexerErrorFeature.class);
             fail("Expecting error");
         } catch (CucumberException e) {
-            assertThat(e.getMessage(), startsWith("gherkin.ParserException$CompositeParserException: Parser errors:"));
+            assertThat(e.getMessage(), startsWith("(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'"));
         }
     }
 

@@ -20,7 +20,6 @@ public class Runtime {
     private final Runner runner;
     private final Filters filters;
     private final EventBus bus;
-    private final FeatureCompiler compiler = new FeatureCompiler();
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
 
@@ -57,7 +56,7 @@ public class Runtime {
     }
 
     private void runFeature(CucumberFeature feature) {
-        for (Pickle pickleEvent : compiler.compileFeature(feature)) {
+        for (Pickle pickleEvent : feature.getPickles()) {
             if (filters.matchesFilters(pickleEvent)) {
                 runner.runPickle(pickleEvent);
             }

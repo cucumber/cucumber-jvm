@@ -52,8 +52,8 @@ public class FeatureRunnerTest {
 
     @Test
     public void should_not_create_step_descriptions_by_default() throws Exception {
-        CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature cucumberFeature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background:\n" +
             "    Given background step\n" +
             "  Scenario: A\n" +
@@ -87,8 +87,8 @@ public class FeatureRunnerTest {
 
     @Test
     public void should_not_issue_notification_for_steps_by_default_scenario_outline_with_two_examples_table_and_background() throws Throwable {
-        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
             "  Scenario Outline: scenario outline name\n" +
@@ -106,21 +106,21 @@ public class FeatureRunnerTest {
 
         InOrder order = inOrder(notifier);
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
+        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(fromSourceForTest name)")));
     }
 
     @Test
     public void should_not_issue_notification_for_steps_by_default_two_scenarios_with_background() throws Throwable {
-        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
             "  Scenario: scenario_1 name\n" +
@@ -133,12 +133,12 @@ public class FeatureRunnerTest {
 
         InOrder order = inOrder(notifier);
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
-        order.verify(notifier, times(2)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_2 name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
+        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name(fromSourceForTest name)")));
+        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_1 name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name(fromSourceForTest name)")));
+        order.verify(notifier, times(2)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_2 name(fromSourceForTest name)")));
+        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name(fromSourceForTest name)")));
     }
 
     private RunNotifier runFeatureWithNotifier(CucumberFeature cucumberFeature, String... options) throws InitializationError {
@@ -187,8 +187,8 @@ public class FeatureRunnerTest {
 
     @Test
     public void should_populate_descriptions_with_stable_unique_ids() throws Exception {
-        CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature cucumberFeature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background:\n" +
             "    Given background step\n" +
             "  Scenario: A\n" +
@@ -217,8 +217,8 @@ public class FeatureRunnerTest {
 
     @Test
     public void step_descriptions_can_be_turned_on() throws Exception {
-        CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature cucumberFeature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background:\n" +
             "    Given background step\n" +
             "  Scenario: A\n" +
@@ -252,8 +252,8 @@ public class FeatureRunnerTest {
 
     @Test
     public void step_notification_can_be_turned_on_scenario_outline_with_two_examples_table_and_background() throws Throwable {
-        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
             "  Scenario Outline: scenario outline name\n" +
@@ -308,8 +308,8 @@ public class FeatureRunnerTest {
 
     @Test
     public void step_notification_can_be_turned_on_two_scenarios_with_background() throws Throwable {
-        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
             "  Scenario: scenario_1 name\n" +

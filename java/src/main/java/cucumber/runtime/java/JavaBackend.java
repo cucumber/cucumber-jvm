@@ -6,7 +6,6 @@ import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
-import io.cucumber.messages.Messages.PickleStep;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -20,6 +19,7 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
+import io.cucumber.messages.Messages.PickleStep;
 import io.cucumber.stepexpression.TypeRegistry;
 
 import java.lang.annotation.Annotation;

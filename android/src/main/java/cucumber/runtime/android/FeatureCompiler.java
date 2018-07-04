@@ -1,8 +1,8 @@
 package cucumber.runtime.android;
 
-import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.messages.Messages.Pickle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +20,8 @@ final class FeatureCompiler {
      */
     static List<Pickle> compile(final List<CucumberFeature> cucumberFeatures, final Filters filters) {
         List<Pickle> pickles = new ArrayList<Pickle>();
-        cucumber.runtime.FeatureCompiler compiler = new cucumber.runtime.FeatureCompiler();
         for (final CucumberFeature feature : cucumberFeatures) {
-            for (final Pickle pickle : compiler.compileFeature(feature)) {
+            for (final Pickle pickle : feature.getPickles()) {
                 if (filters.matchesFilters(pickle)) {
                     pickles.add(pickle);
                 }

@@ -1,13 +1,12 @@
 package cucumber.runtime.junit;
 
-import io.cucumber.messages.Messages.Feature;
-import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.messages.Messages.Feature;
+import io.cucumber.messages.Messages.Pickle;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -78,8 +77,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         if (feature == null) {
             return;
         }
-        FeatureCompiler compiler = new FeatureCompiler();
-        List<Pickle> pickles = compiler.compileFeature(cucumberFeature);
+        List<Pickle> pickles = cucumberFeature.getPickles();
         for (Pickle pickle : pickles) {
             if (filters.matchesFilters(pickle)) {
                 try {

@@ -2,14 +2,12 @@ package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Pickle;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
@@ -93,10 +91,9 @@ public class TestNGCucumberRunner {
     public Object[][] provideScenarios() {
         try {
             List<Object[]> scenarios = new ArrayList<Object[]>();
-            FeatureCompiler compiler = new FeatureCompiler();
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {
-                List<Pickle> pickles = compiler.compileFeature(feature);
+                List<Pickle> pickles = feature.getPickles();
 
                 for (Pickle pickle : pickles) {
                     if (filters.matchesFilters(pickle)) {

@@ -10,13 +10,6 @@ import io.cucumber.messages.Messages.FeatureChild;
 import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.Step;
 import io.cucumber.messages.Messages.Location;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
-import gherkin.GherkinDocumentBuilder;
-import gherkin.IGherkinDialectProvider;
-import gherkin.Parser;
-import gherkin.ParserException;
-import gherkin.TokenMatcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +18,6 @@ import java.util.Map;
 
 public class UndefinedStepsTracker implements EventListener {
     private final List<String> snippets = new ArrayList<String>();
-    private final IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
     private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
 //    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
     private boolean hasUndefinedSteps = false;

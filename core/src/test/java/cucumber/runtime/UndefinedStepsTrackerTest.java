@@ -42,12 +42,12 @@ public class UndefinedStepsTrackerTest {
 //        EventBus bus = new EventBus(new TimeServiceStub(0));
 //        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 //        tracker.setEventPublisher(bus);
-//        CucumberFeature feature = TestHelper.feature("" +
-//                "Feature: feature name\n" +
+//        CucumberFeature fromSourceForTest = TestHelper.fromSourceForTest("" +
+//                "Feature: fromSourceForTest name\n" +
 //                "  Scenario: scenario name\n" +
 //                "    Given A\n" +
 //                "    Then B\n");
-//        feature.sendTestSourceRead(bus);
+//        fromSourceForTest.sendTestSourceRead(bus);
 //        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(4)), asList("**KEYWORD** ^B$"));
 //        assertEquals("[Then ^B$]", tracker.getSnippets().toString());
 //    }
@@ -57,13 +57,13 @@ public class UndefinedStepsTrackerTest {
 //        EventBus bus = new EventBus(new TimeServiceStub(0));
 //        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 //        tracker.setEventPublisher(bus);
-//        CucumberFeature feature = TestHelper.feature("" +
-//                "Feature: feature name\n" +
+//        CucumberFeature fromSourceForTest = TestHelper.fromSourceForTest("" +
+//                "Feature: fromSourceForTest name\n" +
 //                "  Scenario: scenario name\n" +
 //                "    When A\n" +
 //                "    And B\n" +
 //                "    But C\n");
-//        feature.sendTestSourceRead(bus);
+//        fromSourceForTest.sendTestSourceRead(bus);
 //        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
 //        assertEquals("[When ^C$]", tracker.getSnippets().toString());
 //    }
@@ -73,14 +73,14 @@ public class UndefinedStepsTrackerTest {
 //        EventBus bus = new EventBus(new TimeServiceStub(0));
 //        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 //        tracker.setEventPublisher(bus);
-//        CucumberFeature feature = TestHelper.feature("" +
-//                "Feature: feature name\n" +
+//        CucumberFeature fromSourceForTest = TestHelper.fromSourceForTest("" +
+//                "Feature: fromSourceForTest name\n" +
 //                "  Background:\n" +
 //                "    When A\n" +
 //                "  Scenario: scenario name\n" +
 //                "    And B\n" +
 //                "    But C\n");
-//        feature.sendTestSourceRead(bus);
+//        fromSourceForTest.sendTestSourceRead(bus);
 //        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
 //        assertEquals("[When ^C$]", tracker.getSnippets().toString());
 //    }
@@ -90,13 +90,13 @@ public class UndefinedStepsTrackerTest {
 //        EventBus bus = new EventBus(new TimeServiceStub(0));
 //        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 //        tracker.setEventPublisher(bus);
-//        CucumberFeature feature = TestHelper.feature("" +
-//                "Feature: feature name\n" +
+//        CucumberFeature fromSourceForTest = TestHelper.fromSourceForTest("" +
+//                "Feature: fromSourceForTest name\n" +
 //                "  Scenario: scenario name\n" +
 //                "    When A\n" +
 //                "    And B\n" +
 //                "    * C\n");
-//        feature.sendTestSourceRead(bus);
+//        fromSourceForTest.sendTestSourceRead(bus);
 //        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
 //        assertEquals("[When ^C$]", tracker.getSnippets().toString());
 //    }
@@ -106,11 +106,11 @@ public class UndefinedStepsTrackerTest {
 //        EventBus bus = new EventBus(new TimeServiceStub(0));
 //        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 //        tracker.setEventPublisher(bus);
-//        CucumberFeature feature = TestHelper.feature("" +
-//                "Feature: feature name\n" +
+//        CucumberFeature fromSourceForTest = TestHelper.fromSourceForTest("" +
+//                "Feature: fromSourceForTest name\n" +
 //                "  Scenario: scenario name\n" +
 //                "    * A\n");
-//        feature.sendTestSourceRead(bus);
+//        fromSourceForTest.sendTestSourceRead(bus);
 //        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(3)), asList("**KEYWORD** ^A$"));
 //        assertEquals("[Given ^A$]", tracker.getSnippets().toString());
 //    }
@@ -120,12 +120,12 @@ public class UndefinedStepsTrackerTest {
 //        EventBus bus = new EventBus(new TimeServiceStub(0));
 //        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
 //        tracker.setEventPublisher(bus);
-//        CucumberFeature feature = TestHelper.feature("" +
+//        CucumberFeature fromSourceForTest = TestHelper.fromSourceForTest("" +
 //                "#language:ru\n" +
 //                "Функция:\n" +
 //                "  Сценарий: \n" +
 //                "    * Б\n");
-//        feature.sendTestSourceRead(bus);
+//        fromSourceForTest.sendTestSourceRead(bus);
 //        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(4)), asList("**KEYWORD** ^Б$"));
 //        assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());
 //    }

@@ -4,7 +4,6 @@ import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
-import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.PickleStep;
 import io.cucumber.messages.Messages.PickleTag;
 import cucumber.runner.EventBus;
@@ -132,8 +131,8 @@ public class RuntimeTest {
 
     @Test
     public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
             "  Scenario Outline: scenario outline name\n" +
@@ -189,8 +188,8 @@ public class RuntimeTest {
 
     @Test
     public void should_call_formatter_for_two_scenarios_with_background() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
             "  Scenario: scenario_1 name\n" +
@@ -225,8 +224,8 @@ public class RuntimeTest {
 
     @Test
     public void should_make_scenario_name_available_to_hooks() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
-            "Feature: feature name\n" +
+        CucumberFeature feature = CucumberFeature.fromSourceForTest("path/test.feature",
+            "Feature: fromSourceForTest name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
                 "    When second step\n" +

@@ -14,9 +14,9 @@ import static org.junit.Assert.assertTrue;
 public class LinePredicateTest {
     @Test
     public void matches_pickles_from_files_not_in_the_predicate_map() {
-        // the argument "path/file.feature another_path/file.feature:8"
-        // results in only line predicates only for another_path/file.feature,
-        // but all pickles from path/file.feature shall also be executed.
+        // the argument "path/file.fromSourceForTest another_path/file.feature:8"
+        // results in only line predicates only for another_path/file.fromSourceForTest,
+        // but all pickles from path/file.fromSourceForTest shall also be executed.
         Pickle pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4)));
         LinePredicate predicate = new LinePredicate(singletonMap("another_path/file.feature", asList(8L)));
 

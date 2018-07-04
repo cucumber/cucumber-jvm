@@ -18,13 +18,15 @@ import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
-import gherkin.GherkinDocumentBuilder;
-import gherkin.Parser;
-import gherkin.TokenMatcher;
 import junit.framework.AssertionFailedError;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -50,14 +52,6 @@ import static org.mockito.Mockito.when;
 
 public class TestHelper {
     private TestHelper() {
-    }
-
-    public static CucumberFeature feature(final String path, final String source) {
-        Parser<GherkinDocument.Builder> parser = new Parser<>(new GherkinDocumentBuilder());
-        TokenMatcher matcher = new TokenMatcher();
-
-        GherkinDocument gherkinDocument = parser.parse(source, matcher).setUri(path).build();
-        return new CucumberFeature(gherkinDocument, source);
     }
 
     public static Result result(String status) {

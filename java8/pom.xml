@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -47,12 +48,13 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
-import gherkin.GherkinDialect
-import gherkin.GherkinDialectProvider
+import groovy.json.JsonSlurper
+import io.cucumber.gherkin.GherkinExe
 
 def engine = new SimpleTemplateEngine()
 
@@ -65,15 +67,15 @@ def normalize(s) {
 }
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
-def dialectProvider = new GherkinDialectProvider()
+def dialectsJson = new GherkinExe().execute(["--dialects"]).text
+def dialects = new JsonSlurper().parseText(dialectsJson)
 
-GherkinDialectProvider.DIALECTS.keySet().each { language ->
-  def dialect = dialectProvider.getDialect(language, null)
-  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
+dialects.each { language, dialect ->
+  def normalized_language = language.replaceAll("[\\s-]", "_").toLowerCase()
   if (!unsupported.contains(normalized_language)) {
     def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java8.txt").getText()
     def className = "${normalized_language}".capitalize()
-    def binding = [ "i18n":dialect, "className":className ]
+    def binding = [ "dialect":dialect, "className":className ]
     def template = engine.createTemplate(templateSource).make(binding)
     def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
     file.parentFile.mkdirs()

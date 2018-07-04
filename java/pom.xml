@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -48,12 +49,13 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
-import gherkin.GherkinDialect
-import gherkin.GherkinDialectProvider
+import groovy.json.JsonSlurper
+import io.cucumber.gherkin.GherkinExe
 
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java.txt").getText()
@@ -85,13 +87,14 @@ def package_html = """\
 """
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
-def dialectProvider = new GherkinDialectProvider()
+def dialectsJson = new GherkinExe().execute(["--dialects"]).text
+def dialects = new JsonSlurper().parseText(dialectsJson)
 
-GherkinDialectProvider.DIALECTS.keySet().each { language ->
-  def dialect = dialectProvider.getDialect(language, null)
-  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
+dialects.each { language, dialect ->
+  def normalized_language = language.replaceAll("[\\s-]", "_").toLowerCase()
   if (!unsupported.contains(normalized_language)) {
-    dialect.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.unique().each { kw ->
+    def step_keywords = ['given', 'when', 'then', 'and', 'but'].collect { key -> dialect[key] }.flatten().findAll { !it.contains('*') && !it.matches("^\\d.*") }.unique()
+    step_keywords.each { kw ->
       def normalized_kw = normalize(kw.replaceAll("[\\s',!\u00AD]", ""))
       def binding = ["lang":normalized_language, "kw":normalized_kw]
       def template = engine.createTemplate(templateSource).make(binding)
@@ -105,7 +108,7 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
     }
 
     // html
-    def locale = localeFor(dialect.language)
+    def locale = localeFor(language)
     def binding = ["locale":locale]
     def html = engine.createTemplate(package_html).make(binding).toString()
     def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${normalized_language}${File.separator}package.html")
@@ -136,26 +139,6 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Description />
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
     </build>

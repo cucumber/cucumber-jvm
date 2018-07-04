@@ -34,7 +34,7 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedStepsStrict.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios();
 
-        // the feature file only contains one scenario
+        // the fromSourceForTest file only contains one scenario
         Assert.assertEquals(scenarios.length, 1);
         Object[] scenario = scenarios[0];
         PickleEventWrapper pickleEvent = (PickleEventWrapper) scenario[0];

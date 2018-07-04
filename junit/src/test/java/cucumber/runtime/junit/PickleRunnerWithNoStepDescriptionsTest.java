@@ -1,8 +1,9 @@
 package cucumber.runtime.junit;
 
-import io.cucumber.messages.Messages.Pickle;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
+import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.messages.Messages.Pickle;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -16,27 +17,27 @@ public class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     public void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() throws Exception {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
-            "Feature: feature name\n" +
+        List<Pickle> pickles = CucumberFeature.fromSourceForTest("featurePath", "" +
+            "Feature: fromSourceForTest name\n" +
             "  Scenario: scenario name\n" +
-            "    Then it works\n");
+            "    Then it works\n").getPickles();
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
-            "feature name",
+            "fromSourceForTest name",
             mock(ThreadLocalRunnerSupplier.class),
             pickles.get(0),
             createJUnitOptions()
         );
 
-        assertEquals("scenario name(feature name)", runner.getDescription().getDisplayName());
+        assertEquals("scenario name(fromSourceForTest name)", runner.getDescription().getDisplayName());
     }
 
     @Test
     public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() throws Exception {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = CucumberFeature.fromSourceForTest("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
-            "    Then it works\n");
+            "    Then it works\n").getPickles();
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "feature name",
