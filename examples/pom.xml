@@ -21,13 +21,6 @@
 
     <profiles>
         <profile>
-            <id>android-examples</id>
-            <modules>
-                <module>android</module>
-            </modules>
-        </profile>
-
-        <profile>
             <id>coveralls.io</id>
             <build>
                 <pluginManagement>
