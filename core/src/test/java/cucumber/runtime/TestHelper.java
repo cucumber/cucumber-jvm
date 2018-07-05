@@ -80,8 +80,7 @@ public class TestHelper {
         final RuntimeGlue glue;
         try {
             glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             throw new RuntimeException(e);
         }
 
@@ -100,11 +99,11 @@ public class TestHelper {
         final FeatureSupplier featureSupplier = features.isEmpty()
             ? null // assume feature paths passed in as args instead
             : new FeatureSupplier() {
-                @Override
-                public List<CucumberFeature> get() {
-                    return features;
-                }
-            };
+            @Override
+            public List<CucumberFeature> get() {
+                return features;
+            }
+        };
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
             .withArg(args.toString())
@@ -118,31 +117,26 @@ public class TestHelper {
             if (formatterUnderTest instanceof Plugin) {
                 runtimeBuilder.withAdditionalPlugins((Plugin) formatterUnderTest);
             }
-        }
-        else {
+        } else {
             EventBus bus = null;
             if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
                 final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
                 bus = new TimeServiceEventBus(timeService);
                 timeService.setEventPublisher(bus);
-            }
-            else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
+            } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
                 bus = new TimeServiceEventBus(new TimeServiceStub(this.timeServiceIncrement));
             }
 
             runtimeBuilder.withEventBus(bus);
             if (formatterUnderTest instanceof ConcurrentEventListener) {
                 ((ConcurrentEventListener) formatterUnderTest).setEventPublisher(bus);
-            }
-            else if (formatterUnderTest instanceof EventListener) {
+            } else if (formatterUnderTest instanceof EventListener) {
                 ((EventListener) formatterUnderTest).setEventPublisher(bus);
             }
         }
 
         runtimeBuilder.build().run();
     }
-
-    //<editor-fold description="Builder Stuff">
 
     public static Builder builder() {
         return new Builder();
@@ -191,6 +185,7 @@ public class TestHelper {
         /**
          * Set what the time increment should be when using {@link TimeServiceType#FIXED_INCREMENT}
          * or {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
+         *
          * @param timeServiceIncrement increment to be used
          * @return this instance
          */
@@ -204,12 +199,13 @@ public class TestHelper {
          * {@link TimeServiceType#REAL_TIME} > {@link TimeService#SYSTEM}
          * {@link TimeServiceType#FIXED_INCREMENT} > {@link TimeServiceStub}
          * {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START} > {@link StepDurationTimeService}
-         *
+         * <p>
          * Defaults to {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
          * <p>
          * Note: when running tests with multiple threads & not using {@link TimeServiceType#REAL_TIME}
          * it can inadvertently affect the order of {@link cucumber.api.event.Event}s
          * published to any {@link cucumber.api.formatter.ConcurrentFormatter}s used during the test run
+         *
          * @return this instance
          */
         public Builder withTimeServiceType(TimeServiceType timeServiceType) {
@@ -219,6 +215,7 @@ public class TestHelper {
 
         /**
          * Specify a formatter under test, Formatter or ConcurrentFormatter
+         *
          * @param formatter the formatter under test
          * @return this instance
          */
@@ -245,8 +242,6 @@ public class TestHelper {
             return this.instance;
         }
     }
-
-    //</editor-fold>
 
     public static CucumberFeature feature(final String path, final String source) {
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
@@ -329,15 +324,12 @@ public class TestHelper {
     private static void mockStepResult(Result stepResult, PickleStepDefinitionMatch matchStep) throws Throwable {
         if (stepResult.is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
-        }
-        else if (stepResult.is(Result.Type.FAILED)) {
+        } else if (stepResult.is(Result.Type.FAILED)) {
             doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
-        }
-        else if (stepResult.is(Result.Type.SKIPPED) && stepResult.getError() != null) {
+        } else if (stepResult.is(Result.Type.SKIPPED) && stepResult.getError() != null) {
             doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
-        }
-        else if (!stepResult.is(Result.Type.PASSED) &&
-            !stepResult.is(Result.Type.SKIPPED)) {
+        } else if (!stepResult.is(Result.Type.PASSED) &&
+                   !stepResult.is(Result.Type.SKIPPED)) {
             fail("Cannot mock step to the result: " + stepResult.getStatus());
         }
     }
@@ -347,14 +339,14 @@ public class TestHelper {
     }
 
     private static void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations,
-                                  final List<Answer<Object>> hookActions) throws Throwable {
+            final List<Answer<Object>> hookActions) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
         for (int i = 0; i < hooks.size(); ++i) {
             String hookLocation = hookLocations.size() > i ? hookLocations.get(i) : null;
-            Answer<Object> hookAction = hookActions.size() > i ? hookActions.get(i) : null;
+            Answer<Object> hookAction  = hookActions.size() > i ? hookActions.get(i) : null;
             TestHelper.mockHook(hooks.get(i), hookLocation, hookAction, beforeHooks, afterHooks, beforeStepHooks, afterStepHooks);
         }
         if (!beforeHooks.isEmpty()) {
@@ -379,27 +371,22 @@ public class TestHelper {
             when(hook.getLocation(anyBoolean())).thenReturn(hookLocation);
         }
         if (action != null) {
-            doAnswer(action).when(hook).execute((Scenario) any());
+            doAnswer(action).when(hook).execute((Scenario)any());
         }
         if (hookEntry.getValue().is(Result.Type.FAILED)) {
             doThrow(hookEntry.getValue().getError()).when(hook).execute((cucumber.api.Scenario) any());
-        }
-        else if (hookEntry.getValue().is(Result.Type.PENDING)) {
+        } else if (hookEntry.getValue().is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(hook).execute((cucumber.api.Scenario) any());
         }
         if ("before".equals(hookEntry.getKey())) {
             beforeHooks.add(hook);
-        }
-        else if ("after".equals(hookEntry.getKey())) {
+        } else if ("after".equals(hookEntry.getKey())) {
             afterHooks.add(hook);
-        }
-        else if ("afterstep".equals(hookEntry.getKey())) {
+        } else if ("afterstep".equals(hookEntry.getKey())) {
             afterStepHooks.add(hook);
-        }
-        else if ("beforestep".equals(hookEntry.getKey())) {
+        } else if ("beforestep".equals(hookEntry.getKey())) {
             beforeStepHooks.add(hook);
-        }
-        else {
+        } else {
             fail("Only before, after and afterstep hooks are allowed, hook type found was: " + hookEntry.getKey());
         }
     }

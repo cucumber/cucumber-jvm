@@ -26,7 +26,6 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 

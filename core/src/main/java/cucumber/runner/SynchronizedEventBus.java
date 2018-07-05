@@ -3,8 +3,6 @@ package cucumber.runner;
 import cucumber.api.event.Event;
 import cucumber.api.event.EventHandler;
 
-import java.util.Collection;
-
 public final class SynchronizedEventBus implements EventBus {
 
     private final EventBus delegate;
