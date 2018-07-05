@@ -4,7 +4,7 @@ public interface EventPublisher {
 
     /**
      * Registers an event handler for a specific event.
-     *
+     * <p>
      * The available events types are:
      * <ul>
      * <li>{@link Event} - all events.
@@ -20,10 +20,10 @@ public interface EventPublisher {
      * <li>{@link TestRunFinished} - the last event sent.
      * </ul>
      *
-     *
      * @param eventType the event type for which the handler is being registered
-     * @param handler the event handler
-     * @param <T> the event type
+     * @param handler   the event handler
+     * @param <T>       the event type
+     * @see Event
      */
     <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler);
 
@@ -31,8 +31,8 @@ public interface EventPublisher {
      * Unregister an event handler for a specific event
      *
      * @param eventType the event type for which the handler is being registered
-     * @param handler the event handler
-     * @param <T> the event type
+     * @param handler   the event handler
+     * @param <T>       the event type
      */
     <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler);
 
