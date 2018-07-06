@@ -36,17 +36,17 @@ public class TimelineFormatter implements ConcurrentFormatter {
 
     //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{
-        "/cucumber/formatter/timeline/index.html",
-        "/cucumber/formatter/timeline/formatter.js",
-        "/cucumber/formatter/timeline/report.css",
-        "/cucumber/formatter/timeline/jquery-3.3.1.min.js",
-        "/cucumber/formatter/timeline/vis.min.css",
-        "/cucumber/formatter/timeline/vis.min.js",
-        "/cucumber/formatter/timeline/vis.override.css",
-        "/cucumber/formatter/timeline/chosen.jquery.min.js",
-        "/cucumber/formatter/timeline/chosen.min.css",
-        "/cucumber/formatter/timeline/chosen.override.css",
-        "/cucumber/formatter/timeline/chosen-sprite.png"
+        "/io/cucumber/formatter/timeline/index.html",
+        "/io/cucumber/formatter/timeline/formatter.js",
+        "/io/cucumber/formatter/timeline/report.css",
+        "/io/cucumber/formatter/timeline/jquery-3.3.1.min.js",
+        "/io/cucumber/formatter/timeline/vis.min.css",
+        "/io/cucumber/formatter/timeline/vis.min.js",
+        "/io/cucumber/formatter/timeline/vis.override.css",
+        "/io/cucumber/formatter/timeline/chosen.jquery.min.js",
+        "/io/cucumber/formatter/timeline/chosen.min.css",
+        "/io/cucumber/formatter/timeline/chosen.override.css",
+        "/io/cucumber/formatter/timeline/chosen-sprite.png"
     };
 
     private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {

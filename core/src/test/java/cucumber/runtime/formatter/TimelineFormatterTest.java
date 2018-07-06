@@ -36,7 +36,7 @@ public class TimelineFormatterTest {
         }
     };
 
-    private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/cucumber/formatter/timeline";
+    private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/formatter/timeline";
     private static final String REPORT_JS = "report.js";
     private static final long STEP_DURATION_MS = 1000;
 
