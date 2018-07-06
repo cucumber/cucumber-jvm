@@ -74,8 +74,6 @@
         <freemarker.version>2.3.28</freemarker.version>
         <!-- version 4.0.0 does not work on Java 7 -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <android-maven-plugin.version>4.4.3</android-maven-plugin.version>
-        <android.version>4.1.1.4</android.version>
         <!-- Apparently Wicket 8.x requires Java 8.
         Stay on 7.0 as long as we support Java 7. -->
         <wicket.version>7.0.0</wicket.version>
@@ -168,16 +166,6 @@
                 <groupId>org.picocontainer</groupId>
                 <artifactId>picocontainer</artifactId>
                 <version>${picocontainer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-android</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>android-examples</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -530,7 +518,6 @@
         <module>weld</module>
         <module>openejb</module>
         <module>needle</module>
-        <module>android</module>
         <module>examples</module>
         <!--This should always be the last module -->
         <module>continuous-deployment</module>
