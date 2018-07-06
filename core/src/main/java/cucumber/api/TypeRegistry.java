@@ -1,12 +1,9 @@
 package cucumber.api;
 
 import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.DataTableTypeRegistry;
-
-import java.lang.reflect.Type;
-import java.util.Locale;
+import io.cucumber.datatable.DefaultDataTableEntryTransformer;
+import io.cucumber.datatable.TableCellByTypeTransformer;
 
 public interface TypeRegistry {
 
@@ -14,4 +11,13 @@ public interface TypeRegistry {
 
     void defineDataTableType(DataTableType tableType);
 
+    /**
+     * Set default transformer for entries which are not defined by {@code defineDataTableType(new DataTableType(Class<T>,TableEntryTransformer<T>))}
+     */
+    void setDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformer defaultDataTableEntryTransformer);
+
+    /**
+     * Set default transformer for cells which are not defined by {@code defineDataTableType(new DataTableType(Class<T>,TableCellTransformer<T>))}
+     */
+    void setDefaultDataTableCellTransformer(TableCellByTypeTransformer defaultDataTableCellTransformer);
 }
