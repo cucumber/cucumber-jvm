@@ -2,14 +2,15 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.ConcurrentEventListener;
+import cucumber.api.event.Event;
+import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
+import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
-import cucumber.runner.EventBus;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Utils;
-import cucumber.runtime.formatter.PluginFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -23,15 +24,28 @@ public final class Plugins {
     private boolean pluginNamesInstantiated;
 
     private final PluginFactory pluginFactory;
-    private final EventBus bus;
+    private final EventPublisher eventPublisher;
+    private final EventPublisher orderedEventPublisher;
     private final RuntimeOptions runtimeOptions;
 
-    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventBus bus, RuntimeOptions runtimeOptions) {
+    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventPublisher eventPublisher, RuntimeOptions runtimeOptions) {
         this.classLoader = classLoader;
         this.pluginFactory = pluginFactory;
-        this.bus = bus;
+        this.eventPublisher = eventPublisher;
+        this.orderedEventPublisher = createCanonicalOrderEventPublisher();
         this.runtimeOptions = runtimeOptions;
         this.plugins = createPlugins();
+    }
+
+    private EventPublisher createCanonicalOrderEventPublisher() {
+        final CanonicalOrderEventPublisher canonicalOrderEventPublisher = new CanonicalOrderEventPublisher();
+        this.eventPublisher.registerHandlerFor(Event.class, new EventHandler<Event>() {
+            @Override
+            public void receive(Event event) {
+                canonicalOrderEventPublisher.handle(event);
+            }
+        });
+        return canonicalOrderEventPublisher;
     }
 
     private List<Plugin> createPlugins() {
@@ -88,9 +102,12 @@ public final class Plugins {
     }
 
     private void setEventBusOnEventListenerPlugins(Object plugin) {
-        if (plugin instanceof EventListener && bus != null) {
-            Formatter formatter = (Formatter) plugin;
-            formatter.setEventPublisher(bus);
+        if (plugin instanceof ConcurrentEventListener) {
+            ConcurrentEventListener formatter = (ConcurrentEventListener) plugin;
+            formatter.setEventPublisher(eventPublisher);
+        } else if (plugin instanceof EventListener) {
+            EventListener formatter = (EventListener) plugin;
+            formatter.setEventPublisher(orderedEventPublisher);
         }
     }
 

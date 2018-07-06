@@ -7,16 +7,14 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
+import org.mockito.stubbing.Answer;
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +27,14 @@ import static org.junit.Assert.assertTrue;
 
 public final class TestNGFormatterTest {
 
+    private final List<CucumberFeature> features = new ArrayList<>();
+    private final Map<String, Result> stepsToResult = new HashMap<>();
+    private final Map<String, String> stepsToLocation = new HashMap<>();
+    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
+    private final List<String> hookLocations = new ArrayList<>();
+    private final List<Answer<Object>> hookActions = new ArrayList<>();
+    private Long stepDuration = null;
+
     @Test
     public final void testScenarioWithUndefinedSteps() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -36,10 +42,10 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step", result("undefined"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
@@ -60,10 +66,10 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step", result("undefined"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithStrictTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(true);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -91,11 +97,11 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step1\n" +
                 "    Then step2\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step1", result("pending"));
         stepsToResult.put("step2", result("skipped"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
@@ -116,11 +122,11 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step1\n" +
                 "    Then step2\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step1", result("failed", new TestNGException("message", "stacktrace")));
         stepsToResult.put("step2", result("skipped"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -148,10 +154,10 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step", result("passed"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"1\" failed=\"0\" skipped=\"0\">" +
@@ -175,11 +181,11 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("background", result("undefined"));
         stepsToResult.put("step", result("undefined"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
@@ -204,10 +210,10 @@ public final class TestNGFormatterTest {
                 "    | arg |\n" +
                 "    |  1  |\n" +
                 "    |  2  |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step", result("undefined"));
-        long stepDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, stepDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                     "<testng-results total=\"2\" passed=\"0\" failed=\"0\" skipped=\"2\">" +
@@ -237,13 +243,13 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario_3\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature1);
+        features.add(feature2);
         stepsToResult.put("step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        long stepHookDuration = milliSeconds(1);
-        String actual = runFeaturesWithTestNGFormatter(Arrays.asList(feature1, feature2), stepsToResult, hooks, stepHookDuration);
+        stepDuration = milliSeconds(1);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"3\" passed=\"3\" failed=\"0\" skipped=\"0\">" +
@@ -268,12 +274,11 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step", result("skipped"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("failed", new TestNGException("message", "stacktrace"))));
-        long stepHookDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -301,12 +306,11 @@ public final class TestNGFormatterTest {
                 "  Scenario: scenario\n" +
                 "    When step\n" +
                 "    Then step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("failed", new TestNGException("message", "stacktrace"))));
-        long stepHookDuration = milliSeconds(0);
-        String actual = runFeatureWithTestNGFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        stepDuration = milliSeconds(0);
+        String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -327,33 +331,6 @@ public final class TestNGFormatterTest {
                 "</testng-results>", actual);
     }
 
-    private String runFeatureWithTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult, long stepDuration)
-            throws IOException, Throwable, FileNotFoundException {
-        return runFeatureWithTestNGFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepDuration);
-    }
-
-    private String runFeatureWithTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult,
-            List<SimpleEntry<String, Result>> hooks, long stepDuration) throws IOException, Throwable, FileNotFoundException {
-        return runFeaturesWithTestNGFormatter(Arrays.asList(feature), stepsToResult, hooks, stepDuration);
-    }
-
-    private String runFeaturesWithTestNGFormatter(List<CucumberFeature> features, Map<String, Result> stepsToResult,
-            List<SimpleEntry<String, Result>> hooks, long stepDuration) throws IOException, Throwable, FileNotFoundException {
-        final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
-        final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
-        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepDuration, formatter);
-        return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
-    }
-
-    private String runFeatureWithStrictTestNGFormatter(CucumberFeature feature, Map<String, Result> stepsToResult, long stepDuration)
-            throws IOException, Throwable, FileNotFoundException {
-        final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
-        final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
-        formatter.setStrict(true);
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepDuration, formatter);
-        return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
-    }
-
     private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = new Diff(expected, actual) {
@@ -366,6 +343,26 @@ public final class TestNGFormatterTest {
             }
         };
         assertTrue("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical());
+    }
+
+    private String runFeaturesWithFormatter(boolean strict) throws IOException {
+        final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
+        final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
+        formatter.setStrict(strict);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceIncrement(stepDuration)
+            .build()
+            .run();
+
+        return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
     }
 
     private Long milliSeconds(int milliSeconds) {

@@ -9,6 +9,7 @@ import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
+import io.cucumber.datatable.DataTable;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -56,6 +57,7 @@ public class RuntimeOptions {
     private boolean monochrome = false;
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
+    private int threads = 1;
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
@@ -101,6 +103,10 @@ public class RuntimeOptions {
         }
     }
 
+    public boolean isMultiThreaded() {
+        return threads > 1;
+    }
+
     public RuntimeOptions noSummaryPrinter() {
         pluginSummaryPrinterNames.clear();
         return this;
@@ -139,6 +145,12 @@ public class RuntimeOptions {
             } else if (arg.equals("--i18n")) {
                 String nextArg = args.remove(0);
                 System.exit(printI18n(nextArg));
+            } else if (arg.equals("--threads")) {
+                String threads = args.remove(0);
+                this.threads = Integer.parseInt(threads);
+                if (this.threads < 1) {
+                    throw new CucumberException("--threads must be > 0");
+                }
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
                 parsedGlue.add(gluePath);
@@ -331,6 +343,10 @@ public class RuntimeOptions {
 
     public List<String> getJunitOptions() {
         return junitOptions;
+    }
+
+    public int getThreads() {
+        return threads;
     }
 
     class ParsedPluginData {

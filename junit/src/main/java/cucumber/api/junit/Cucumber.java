@@ -8,6 +8,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.BackendSupplier;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.GlueSupplier;
@@ -92,7 +93,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        this.bus = new EventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         GlueSupplier glueSupplier = new RuntimeGlueSupplier();
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);

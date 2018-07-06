@@ -6,6 +6,7 @@ import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -36,7 +37,7 @@ public class ExitStatusTest {
 
     private void createExitStatus(String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
-        this.bus = new EventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
     }

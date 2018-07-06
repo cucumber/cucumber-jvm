@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Result;
+import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
 import cucumber.runner.EventBus;
@@ -21,7 +22,7 @@ import static org.mockito.Matchers.argThat;
 public class ScenarioResultTest {
 
     private EventBus bus = mock(EventBus.class);
-    private ScenarioImpl s = new ScenarioImpl(bus, pickleEvent());
+    private ScenarioImpl s = new ScenarioImpl(bus, mock(TestCase.class), pickleEvent());
 
     @Test
     public void no_steps_is_undefined() throws Exception {

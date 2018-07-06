@@ -3,6 +3,7 @@ package cucumber.runner;
 import cucumber.api.Pending;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
+import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
@@ -33,9 +34,9 @@ abstract class TestStep implements cucumber.api.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    Result run(TestCase testCase, EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
-        bus.send(new TestStepStarted(startTime, this));
+        bus.send(new TestStepStarted(startTime, testCase, this));
         Result.Type status;
         Throwable error = null;
         try {
@@ -46,7 +47,7 @@ abstract class TestStep implements cucumber.api.TestStep {
         }
         Long stopTime = bus.getTime();
         Result result = mapStatusToResult(status, error, stopTime - startTime);
-        bus.send(new TestStepFinished(stopTime, this, result));
+        bus.send(new TestStepFinished(stopTime, testCase, this, result));
         return result;
     }
 
@@ -77,13 +78,12 @@ abstract class TestStep implements cucumber.api.TestStep {
     }
 
     private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
-        Long resultDuration = duration;
         if (status == Result.Type.SKIPPED && error == null) {
             return Result.SKIPPED;
         }
         if (status == Result.Type.UNDEFINED) {
             return Result.UNDEFINED;
         }
-        return new Result(status, resultDuration, error);
+        return new Result(status, duration, error);
     }
 }

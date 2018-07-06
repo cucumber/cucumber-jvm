@@ -1,20 +1,19 @@
 package cucumber.runtime;
 
 import cucumber.api.PendingException;
+import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
-import cucumber.api.formatter.Formatter;
+import cucumber.api.event.ConcurrentEventListener;
+import cucumber.api.event.EventListener;
 import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
 import cucumber.runner.StepDurationTimeService;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.filter.RerunFilters;
+import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.formatter.PickleStepMatcher;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.FeatureLoader;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
@@ -36,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -50,7 +47,200 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestHelper {
+
+    public enum TimeServiceType {
+        REAL_TIME, FIXED_INCREMENT, FIXED_INCREMENT_ON_STEP_START
+    }
+
+    private List<CucumberFeature> features = Collections.emptyList();
+    private Map<String, Result> stepsToResult = Collections.emptyMap();
+    private Map<String, String> stepsToLocation = Collections.emptyMap();
+    private List<SimpleEntry<String, Result>> hooks = Collections.emptyList();
+    private List<String> hookLocations = Collections.emptyList();
+    private List<Answer<Object>> hookActions = Collections.emptyList();
+    private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
+    private long timeServiceIncrement = 0L;
+    private Object formatterUnderTest = null;
+    private Iterable<String> runtimeArgs = Collections.emptyList();
+    private Collection<? extends Backend> backends = Collections.singletonList(mock(Backend.class));
+
     private TestHelper() {
+    }
+
+    public void run() {
+
+        final StringBuilder args = new StringBuilder("-p null");
+        for (final String arg : runtimeArgs) {
+            args.append(" ").append(arg);
+        }
+
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+
+        final RuntimeGlue glue;
+        try {
+            glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
+        } catch (final Throwable e) {
+            throw new RuntimeException(e);
+        }
+
+        final GlueSupplier glueSupplier = new GlueSupplier() {
+            @Override
+            public Glue get() {
+                return glue;
+            }
+        };
+        final BackendSupplier backendSupplier = new BackendSupplier() {
+            @Override
+            public Collection<? extends Backend> get() {
+                return backends;
+            }
+        };
+        final FeatureSupplier featureSupplier = features.isEmpty()
+            ? null // assume feature paths passed in as args instead
+            : new FeatureSupplier() {
+            @Override
+            public List<CucumberFeature> get() {
+                return features;
+            }
+        };
+
+        Runtime.Builder runtimeBuilder = Runtime.builder()
+            .withArg(args.toString())
+            .withClassLoader(classLoader)
+            .withResourceLoader(resourceLoader)
+            .withGlueSupplier(glueSupplier)
+            .withBackendSupplier(backendSupplier)
+            .withFeatureSupplier(featureSupplier);
+
+        if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
+            if (formatterUnderTest instanceof Plugin) {
+                runtimeBuilder.withAdditionalPlugins((Plugin) formatterUnderTest);
+            }
+        } else {
+            EventBus bus = null;
+            if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
+                final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
+                bus = new TimeServiceEventBus(timeService);
+                timeService.setEventPublisher(bus);
+            } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
+                bus = new TimeServiceEventBus(new TimeServiceStub(this.timeServiceIncrement));
+            }
+
+            runtimeBuilder.withEventBus(bus);
+            if (formatterUnderTest instanceof ConcurrentEventListener) {
+                ((ConcurrentEventListener) formatterUnderTest).setEventPublisher(bus);
+            } else if (formatterUnderTest instanceof EventListener) {
+                ((EventListener) formatterUnderTest).setEventPublisher(bus);
+            }
+        }
+
+        runtimeBuilder.build().run();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private final TestHelper instance = new TestHelper();
+
+        private Builder() {
+        }
+
+        public Builder withFeatures(CucumberFeature... features) {
+            return withFeatures(Arrays.asList(features));
+        }
+
+        public Builder withFeatures(List<CucumberFeature> features) {
+            this.instance.features = features;
+            return this;
+        }
+
+        public Builder withStepsToResult(Map<String, Result> stepsToResult) {
+            this.instance.stepsToResult = stepsToResult;
+            return this;
+        }
+
+        public Builder withStepsToLocation(Map<String, String> stepsToLocation) {
+            this.instance.stepsToLocation = stepsToLocation;
+            return this;
+        }
+
+        public Builder withHooks(List<SimpleEntry<String, Result>> hooks) {
+            this.instance.hooks = hooks;
+            return this;
+        }
+
+        public Builder withHookLocations(List<String> hookLocations) {
+            this.instance.hookLocations = hookLocations;
+            return this;
+        }
+
+        public Builder withHookActions(List<Answer<Object>> hookActions) {
+            this.instance.hookActions = hookActions;
+            return this;
+        }
+
+        /**
+         * Set what the time increment should be when using {@link TimeServiceType#FIXED_INCREMENT}
+         * or {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
+         *
+         * @param timeServiceIncrement increment to be used
+         * @return this instance
+         */
+        public Builder withTimeServiceIncrement(long timeServiceIncrement) {
+            this.instance.timeServiceIncrement = timeServiceIncrement;
+            return this;
+        }
+
+        /**
+         * Specifies what type of TimeService to be used by the {@link EventBus}
+         * {@link TimeServiceType#REAL_TIME} > {@link TimeService#SYSTEM}
+         * {@link TimeServiceType#FIXED_INCREMENT} > {@link TimeServiceStub}
+         * {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START} > {@link StepDurationTimeService}
+         * <p>
+         * Defaults to {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
+         * <p>
+         * Note: when running tests with multiple threads & not using {@link TimeServiceType#REAL_TIME}
+         * it can inadvertently affect the order of {@link cucumber.api.event.Event}s
+         * published to any {@link cucumber.api.formatter.ConcurrentFormatter}s used during the test run
+         *
+         * @return this instance
+         */
+        public Builder withTimeServiceType(TimeServiceType timeServiceType) {
+            this.instance.timeServiceType = timeServiceType;
+            return this;
+        }
+
+        /**
+         * Specify a formatter under test, Formatter or ConcurrentFormatter
+         *
+         * @param formatter the formatter under test
+         * @return this instance
+         */
+        public Builder withFormatterUnderTest(Object formatter) {
+            this.instance.formatterUnderTest = formatter;
+            return this;
+        }
+
+        public Builder withRuntimeArgs(String... runtimeArgs) {
+            return withRuntimeArgs(Arrays.asList(runtimeArgs));
+        }
+
+        public Builder withRuntimeArgs(List<String> runtimeArgs) {
+            this.instance.runtimeArgs = runtimeArgs;
+            return this;
+        }
+
+        public Builder withBackends(Backend... backends) {
+            this.instance.backends = Arrays.asList(backends);
+            return this;
+        }
+
+        public TestHelper build() {
+            return this.instance;
+        }
     }
 
     public static CucumberFeature feature(final String path, final String source) {
@@ -108,75 +298,6 @@ public class TestHelper {
             }
         };
         return embedder;
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks,
-            final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, stepsToLocation, hooks, hookLocations, hookActions, stepHookDuration, formatter);
-    }
-
-    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks, Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), stepHookDuration, formatter);
-    }
-
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation,
-                                               final Formatter formatter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), Collections.<String, Result>emptyMap(), stepsToLocation,
-                Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<String>emptyList(), Collections.<Answer<Object>>emptyList(), 0L, formatter);
-    }
-
-    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
-            final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations, final List<Answer<Object>> hookActions, final long stepHookDuration, final Formatter formatter) throws Throwable {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null");
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
-        final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
-        final EventBus bus = new EventBus(timeService);
-        timeService.setEventPublisher(bus);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        formatter.setEventPublisher(bus);
-
-        final BackendSupplier backendSupplier = new BackendSupplier() {
-            @Override
-            public Collection<? extends Backend> get() {
-                return singletonList(mock(Backend.class));
-            }
-        };
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
-        RunnerSupplier runnerSupplier = new RunnerSupplier () {
-            @Override
-            public Runner get() {
-                return new Runner(glue, bus, backendSupplier.get(), runtimeOptions);
-            }
-        };
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return features;
-            }
-        };
-        final Runtime runtime = new Runtime(plugins, bus, filters, runnerSupplier, featureSupplier);
-
-        runtime.run();
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

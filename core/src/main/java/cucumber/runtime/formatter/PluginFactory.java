@@ -3,6 +3,7 @@ package cucumber.runtime.formatter;
 import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.formatter.ConcurrentFormatter;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
@@ -47,6 +48,7 @@ public final class PluginFactory {
         put("rerun", RerunFormatter.class);
         put("default_summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
+        put("timeline", TimelineFormatter.class);
     }};
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private String defaultOutFormatter = null;

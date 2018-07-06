@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.Result;
 import cucumber.api.Scenario;
+import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
 import cucumber.runner.EventBus;
@@ -28,9 +29,11 @@ public class ScenarioImpl implements Scenario {
     private final String scenarioId;
     private final List<Integer> scenarioLines;
     private final EventBus bus;
+    private final TestCase testCase;
 
-    public ScenarioImpl(EventBus bus, PickleEvent pickleEvent) {
+    public ScenarioImpl(EventBus bus, TestCase testCase, PickleEvent pickleEvent) {
         this.bus = bus;
+        this.testCase = testCase;
         Pickle pickle = pickleEvent.pickle;
         this.tags = pickle.getTags();
         this.uri = pickleEvent.uri;
@@ -75,14 +78,14 @@ public class ScenarioImpl implements Scenario {
     @Override
     public void embed(byte[] data, String mimeType) {
         if (bus != null) {
-            bus.send(new EmbedEvent(bus.getTime(), data, mimeType));
+            bus.send(new EmbedEvent(bus.getTime(), testCase, data, mimeType));
         }
     }
 
     @Override
     public void write(String text) {
         if (bus != null) {
-            bus.send(new WriteEvent(bus.getTime(), text));
+            bus.send(new WriteEvent(bus.getTime(), testCase, text));
         }
     }
 
@@ -107,7 +110,7 @@ public class ScenarioImpl implements Scenario {
     }
 
     public Throwable getError() {
-        if(stepResults.isEmpty()){
+        if (stepResults.isEmpty()) {
             return null;
         }
 

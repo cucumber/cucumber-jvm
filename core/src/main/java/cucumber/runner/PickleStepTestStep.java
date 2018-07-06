@@ -2,6 +2,7 @@ package cucumber.runner;
 
 import cucumber.api.Result;
 import cucumber.api.Scenario;
+import cucumber.api.TestCase;
 import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
@@ -39,20 +40,20 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
     }
 
     @Override
-    Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    Result run(TestCase testCase, EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         boolean skipNextStep = skipSteps;
         List<Result> results = new ArrayList<Result>();
 
         for (HookTestStep before : beforeStepHookSteps) {
-            Result result = before.run(bus, language, scenario, skipSteps);
+            Result result = before.run(testCase, bus, language, scenario, skipSteps);
             skipNextStep |= !result.is(Result.Type.PASSED);
             results.add(result);
         }
 
-        results.add(super.run(bus, language, scenario, skipNextStep));
+        results.add(super.run(testCase, bus, language, scenario, skipNextStep));
 
         for (HookTestStep after : afterStepHookSteps) {
-            results.add(after.run(bus, language, scenario, skipSteps));
+            results.add(after.run(testCase, bus, language, scenario, skipSteps));
         }
 
         return max(results, SEVERITY);
