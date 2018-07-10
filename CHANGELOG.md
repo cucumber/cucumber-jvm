@@ -4,6 +4,14 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
 
 ### Added
+ * [Core] Support parallel execution of pickles ([#1389](https://github.com/cucumber/cucumber-jvm/pull/1389) Kiel Boatman, M.P. Korstanje) 
+    * When running with parallel support enabled all Plugins implementing `EventHandler`/`Formater` will receive events
+    after execution has completed in `Event.CANONICAL_ORDER`.
+    * Plugins implementations implementing `ConcurrentEventListener` will receive events in real time.
+    * Plugins implementations are synchronized on and will not receive concurrent events.
+    * Added the `--threads`  commandline argument for the CLI. 
+    * When `--threads` is used with a value greater then 1 parallel support is enabled for the CLI.
+    * JUnit/TestNG have parallel support enabled by default. Consult their respective documentation for parallel executions.
  * [Spring] Add documentation for spring object factory ([#1405](https://github.com/cucumber/cucumber-jvm/pull/1405) Marit van Dijk) 
  * [Core] Add --wip option ([#1381](https://github.com/cucumber/cucumber-jvm/pull/1381) Heziode)
  * [Core] Upgrade gherkin to 5.1.0  ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
