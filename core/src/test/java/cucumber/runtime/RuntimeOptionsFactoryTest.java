@@ -104,7 +104,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoFormatterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.AnyStepDefinitionReporter");
     }
 
     @Test
