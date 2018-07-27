@@ -1,9 +1,12 @@
 package cucumber.runtime;
 
 
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -17,11 +20,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class ThreadLocalRunnerSupplierTest {
 
     private ThreadLocalRunnerSupplier runnerSupplier;
+    private TimeServiceEventBus eventBus;
 
     @Before
     public void before() {
@@ -30,7 +35,7 @@ public class ThreadLocalRunnerSupplierTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        EventBus eventBus = new EventBus(TimeService.SYSTEM);
+        eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
         RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
         runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, glueSupplier);
     }
@@ -72,4 +77,22 @@ public class ThreadLocalRunnerSupplierTest {
         assertSame(runnerSupplier.get(), runnerSupplier.get());
     }
 
+    @Test
+    public void runner_should_wrap_event_bus_bus() {
+        //This avoids problems with JUnit which listens to individual runners
+        EventBus runnerBus = runnerSupplier.get().getBus();
+        assertNotSame(eventBus, runnerBus);
+    }
+
+    @Test
+    public void should_limit_runner_bus_scope_to_events_generated_by_runner() {
+        //This avoids problems with JUnit which listens to individual runners
+        runnerSupplier.get().getBus().registerHandlerFor(TestCaseStarted.class, new EventHandler<TestCaseStarted>() {
+            @Override
+            public void receive(TestCaseStarted event) {
+                fail();
+            }
+        });
+        eventBus.send(new TestCaseStarted(0L, null));
+    }
 }

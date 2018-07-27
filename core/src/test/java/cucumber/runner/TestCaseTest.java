@@ -13,6 +13,7 @@ import org.mockito.InOrder;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -28,14 +29,14 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
 
         TestCase testCase = createTestCase(testStep);
         testCase.run(bus);
 
         InOrder order = inOrder(bus, testStep);
         order.verify(bus).send(isA(TestCaseStarted.class));
-        order.verify(testStep).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(false));
         order.verify(bus).send(isA(TestCaseFinished.class));
     }
 
@@ -44,16 +45,16 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
+        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
         PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
+        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
-        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep1).run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep2).run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), eq(false));
     }
 
     @Test
@@ -61,16 +62,16 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
         PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
+        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
-        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(true));
+        order.verify(testStep1).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep2).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(true));
     }
 
     @Test
@@ -78,16 +79,16 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
         PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
+        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
-        order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(true));
+        order.verify(testStep1).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(testStep2).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(true));
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {

@@ -1,22 +1,23 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
-import cucumber.runner.TimeService;
-import cucumber.runtime.Backend;
-import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.Supplier;
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
+import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
+import cucumber.runner.TimeService;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Backend;
+import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.GlueSupplier;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -33,6 +34,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
+
+import io.cucumber.stepexpression.TypeRegistry;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -70,16 +73,23 @@ public class JavaStepDefinitionTest {
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
                 return asList(backend);
             }
         };
-        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
+        final Glue glue = new RuntimeGlue();
+        GlueSupplier glueSupplier = new GlueSupplier() {
+            @Override
+            public Glue get() {
+                return glue;
+            }
+        };
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
 
-        backend.loadGlue(runner.getGlue(), Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<String>emptyList());
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {

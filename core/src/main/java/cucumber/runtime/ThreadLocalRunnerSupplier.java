@@ -2,18 +2,29 @@ package cucumber.runtime;
 
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
+import cucumber.runner.SynchronizedEventBus;
+import cucumber.runner.TestCaseEventBus;
+
+import static cucumber.runner.SynchronizedEventBus.synchronize;
 
 /**
- * Returns a distinct runner for each calling thread.
+ * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.
+ * <p>
+ * Each runners bus passes all events to the event bus of this supplier.
  */
 public class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
     private final RuntimeOptions runtimeOptions;
     private final GlueSupplier glueSupplier;
-    private final EventBus eventBus;
+    private final SynchronizedEventBus eventBus;
 
-    private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>();
+    private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>() {
+        @Override
+        protected Runner initialValue() {
+            return createRunner();
+        }
+    };
 
     public ThreadLocalRunnerSupplier(
         RuntimeOptions runtimeOptions,
@@ -24,21 +35,16 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
         this.backendSupplier = backendSupplier;
         this.runtimeOptions = runtimeOptions;
         this.glueSupplier = glueSupplier;
-        this.eventBus = eventBus;
+        this.eventBus = synchronize(eventBus);
     }
 
     @Override
     public Runner get() {
-        Runner runner = runners.get();
-        if (runner == null) {
-            runner = createRunner();
-            runners.set(runner);
-        }
-        return runner;
+        return runners.get();
     }
 
     private Runner createRunner() {
-        return new Runner(glueSupplier.get(), eventBus.createBatchedEventBus(), backendSupplier.get(), runtimeOptions);
+        return new Runner(glueSupplier.get(), new TestCaseEventBus(eventBus), backendSupplier.get(), runtimeOptions);
     }
 
 }

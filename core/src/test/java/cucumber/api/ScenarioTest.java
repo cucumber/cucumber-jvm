@@ -56,15 +56,15 @@ public class ScenarioTest {
     }
 
     private Scenario createScenarioWithFeatureFileUri(String uri) {
-        return new ScenarioImpl(mock(EventBus.class), new PickleEvent(uri, mockPickle()));
+        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent(uri, mockPickle()));
     }
 
     private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
-        return new ScenarioImpl(mock(EventBus.class), new PickleEvent(uri, mockPickle(locations)));
+        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent(uri, mockPickle(locations)));
     }
 
     private Scenario createScenarioWithScenarioLocations(List<PickleLocation> locations) {
-        return new ScenarioImpl(mock(EventBus.class), new PickleEvent("uri", mockPickle(locations)));
+        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent("uri", mockPickle(locations)));
     }
 
     private Pickle mockPickle() {

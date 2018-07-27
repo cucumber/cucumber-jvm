@@ -1,8 +1,9 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
-import cucumber.api.TestStep;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
+import cucumber.api.TestCase;
+import cucumber.api.TestStep;
 import cucumber.api.event.TestStepFinished;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -38,7 +39,7 @@ public class UsageFormatterTest {
         Result result = mock(Result.class);
         when(result.is(Result.Type.PASSED)).thenReturn(false);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mockTestStep(), result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -52,7 +53,7 @@ public class UsageFormatterTest {
         when(result.getDuration()).thenReturn(12345L);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -73,7 +74,7 @@ public class UsageFormatterTest {
         when(result.getDuration()).thenReturn(0L);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -94,7 +95,7 @@ public class UsageFormatterTest {
         when(result.getDuration()).thenReturn(null);
         when(result.is(Result.Type.PASSED)).thenReturn(true);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l,mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -140,7 +141,7 @@ public class UsageFormatterTest {
         when(usageStatisticStrategy.calculate(Arrays.asList(12345678L))).thenReturn(23456L);
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
 
-        usageFormatter.finishReport();;
+        usageFormatter.finishReport();
 
         assertTrue(out.toString().contains("0.000023456"));
         assertTrue(out.toString().contains("0.012345678"));

@@ -1,9 +1,9 @@
 package cucumber.runner;
 
+import cucumber.runtime.Glue;
+import cucumber.runtime.GlueSupplier;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
-import cucumber.runtime.Supplier;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.HookType;
 import cucumber.api.Scenario;
@@ -11,6 +11,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.TestGlueHelper;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
@@ -43,6 +44,8 @@ public class RunnerTest {
     private static final List<PickleTag> NO_TAGS = Collections.emptyList();
     private static final List<PickleLocation> MOCK_LOCATIONS = asList(mock(PickleLocation.class));
     private final Backend backend = mock(Backend.class);
+    private final GlueSupplier glueSupplier = new TestGlueHelper();
+    private final Glue glue = glueSupplier.get();
     private final Runner runner = createRunner(backend);
 
     @Test
@@ -181,8 +184,7 @@ public class RunnerTest {
                 return singletonList(backend);
             }
         };
-        EventBus bus = new EventBus(TimeService.SYSTEM);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         return new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
     }
 
@@ -202,11 +204,11 @@ public class RunnerTest {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
         if (hookType == HookType.Before) {
-            runner.getGlue().addBeforeHook(hook);
+            glue.addBeforeHook(hook);
         } else if (hookType == HookType.After){
-            runner.getGlue().addAfterHook(hook);
+            glue.addAfterHook(hook);
         } else if (hookType == HookType.AfterStep) {
-            runner.getGlue().addAfterStepHook(hook);
+            glue.addAfterStepHook(hook);
         }
         return hook;
     }
@@ -223,7 +225,7 @@ public class RunnerTest {
             steps.add(step);
             when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
             when(stepDefinition.getPattern()).thenReturn("pattern" + Integer.toString(++i));
-            runner.getGlue().addStepDefinition(stepDefinition);
+            glue.addStepDefinition(stepDefinition);
         }
         return new PickleEvent("uri", new Pickle(NAME, ENGLISH, steps, NO_TAGS, MOCK_LOCATIONS));
     }

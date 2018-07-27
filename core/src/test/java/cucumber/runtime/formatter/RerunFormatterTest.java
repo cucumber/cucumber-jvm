@@ -7,8 +7,6 @@ import org.junit.Test;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +15,10 @@ import static cucumber.runtime.TestHelper.result;
 import static org.junit.Assert.assertEquals;
 
 public class RerunFormatterTest {
+
+    private final List<CucumberFeature> features = new ArrayList<>();
+    private final Map<String, Result> stepsToResult = new HashMap<>();
+    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
 
     @Test
     public void should_leave_report_empty_when_exit_code_is_zero() throws Throwable {
@@ -28,12 +30,12 @@ public class RerunFormatterTest {
                 "    Given pending step\n" +
                 "  Scenario: undefined scenario\n" +
                 "    Given undefined step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("passed step", result("passed"));
         stepsToResult.put("pending step", result("pending"));
         stepsToResult.put("undefined step", result("undefined"));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("", formatterOutput);
     }
@@ -48,12 +50,12 @@ public class RerunFormatterTest {
                 "    Given pending step\n" +
                 "  Scenario: undefined scenario\n" +
                 "    Given undefined step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("failed step", result("failed"));
         stepsToResult.put("pending step", result("pending"));
         stepsToResult.put("undefined step", result("undefined"));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, strict(true));
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertEquals("path/test.feature:2:4:6\n", formatterOutput);
     }
@@ -66,12 +68,12 @@ public class RerunFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/test.feature:2\n", formatterOutput);
     }
@@ -85,12 +87,12 @@ public class RerunFormatterTest {
                 "  Scenario: scenario name\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("background step", result("failed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/test.feature:4\n", formatterOutput);
     }
@@ -106,12 +108,12 @@ public class RerunFormatterTest {
                 "    |  row   |\n" +
                 "    | first  |\n" +
                 "    | second |");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("executing first row", result("passed"));
         stepsToResult.put("executing second row", result("failed"));
         stepsToResult.put("everything is ok", result("passed"));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/test.feature:8\n", formatterOutput);
     }
@@ -124,14 +126,13 @@ public class RerunFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("failed")));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, hooks);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/test.feature:2\n", formatterOutput);
     }
@@ -144,14 +145,13 @@ public class RerunFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("failed")));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, hooks);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/test.feature:2\n", formatterOutput);
     }
@@ -166,13 +166,13 @@ public class RerunFormatterTest {
                 "  Scenario: scenario 2 name\n" +
                 "    When third step\n" +
                 "    Then forth step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("failed"));
         stepsToResult.put("third step", result("failed"));
         stepsToResult.put("forth step", result("passed"));
 
-        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/test.feature:2:5\n", formatterOutput);
     }
@@ -189,55 +189,33 @@ public class RerunFormatterTest {
                 "  Scenario: scenario 2 name\n" +
                 "    When third step\n" +
                 "    Then forth step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature1);
+        features.add(feature2);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("failed"));
         stepsToResult.put("third step", result("failed"));
         stepsToResult.put("forth step", result("passed"));
 
-        String formatterOutput = runFeaturesWithRerunFormatter(Arrays.asList(feature1, feature2), stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertEquals("path/second.feature:2\npath/first.feature:2\n", formatterOutput);
     }
 
-    private String runFeatureWithRerunFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult)
-            throws Throwable {
-        return runFeatureWithRerunFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), false);
+    private String runFeaturesWithFormatter(boolean isStrict) {
+        final StringBuffer report = new StringBuffer();
+        final RerunFormatter formatter = new RerunFormatter(report);
+        formatter.setStrict(isStrict);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withHooks(hooks)
+            .withTimeServiceIncrement(0L)
+            .build()
+            .run();
+
+        return report.toString();
     }
 
-    private String runFeatureWithRerunFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, boolean isStrict)
-            throws Throwable {
-        return runFeatureWithRerunFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), isStrict);
-    }
-
-    private String runFeatureWithRerunFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult,
-                                                final List<SimpleEntry<String, Result>> hooks) throws Throwable {
-        return runFeaturesWithRerunFormatter(Arrays.asList(feature), stepsToResult, hooks, strict(false));
-    }
-
-    private String runFeatureWithRerunFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult,
-                                                final List<SimpleEntry<String, Result>> hooks, boolean isStrict) throws Throwable {
-        return runFeaturesWithRerunFormatter(Arrays.asList(feature), stepsToResult, hooks, isStrict);
-    }
-
-    private String runFeaturesWithRerunFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult)
-            throws Throwable {
-        return runFeaturesWithRerunFormatter(features, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), strict(false));
-    }
-
-    private String runFeaturesWithRerunFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
-            final List<SimpleEntry<String, Result>> hooks, boolean isStrict) throws Throwable {
-        final StringBuffer buffer = new StringBuffer();
-        final RerunFormatter rerunFormatter = new RerunFormatter(buffer);
-        if (isStrict) {
-            rerunFormatter.setStrict(isStrict);
-        }
-        final long stepHookDuration = 0;
-        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepHookDuration, rerunFormatter);
-        return buffer.toString();
-    }
-
-    private boolean strict(boolean value) {
-        return value;
-    }
 }

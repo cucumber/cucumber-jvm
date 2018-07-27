@@ -49,11 +49,6 @@ public class Runner {
         disposeBackendWorlds();
     }
 
-    public Glue getGlue() {
-        return glue;
-    }
-
-
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
         glue.reportStepDefinitions(stepDefinitionReporter);
     }

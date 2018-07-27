@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -43,11 +44,13 @@ public class HookTest {
                 return singletonList(backend);
             }
         };
-        EventBus bus = new EventBus(TimeService.SYSTEM);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        RunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
-        Runner runner = runnerSupplier.get();
-        runner.getGlue().addAfterHook(hook);
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+
+        GlueSupplier glueSupplier = new TestGlueHelper();
+        Glue glue = glueSupplier.get();
+        
+        Runner runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        glue.addAfterHook(hook);
         PickleStep step = mock(PickleStep.class);
         PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 

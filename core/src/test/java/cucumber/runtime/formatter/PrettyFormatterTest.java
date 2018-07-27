@@ -13,7 +13,6 @@ import org.mockito.stubbing.Answer;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +27,13 @@ import static org.junit.Assert.assertThat;
 
 public class PrettyFormatterTest {
 
+    private final List<CucumberFeature> features = new ArrayList<>();
+    private final Map<String, Result> stepsToResult = new HashMap<>();
+    private final Map<String, String> stepsToLocation = new HashMap<>();
+    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
+    private final List<String> hookLocations = new ArrayList<>();
+    private final List<Answer<Object>> hookActions = new ArrayList<>();
+
     @Test
     public void should_align_the_indentation_of_location_strings() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
@@ -36,12 +42,12 @@ public class PrettyFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, equalTo("" +
                 "Feature: feature name\n" +
@@ -62,12 +68,12 @@ public class PrettyFormatterTest {
                 "    Then second step\n" +
                 "  Scenario: s2\n" +
                 "    Then third step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("\n" +
                 "  Background: background name # path/test.feature:2\n" +
@@ -94,12 +100,12 @@ public class PrettyFormatterTest {
                 "      |  name  |  arg   |\n" +
                 "      | name 1 | second |\n" +
                 "      | name 2 | third  |\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("\n" +
                 "  Scenario Outline: <name> # path/test.feature:2\n" +
@@ -136,12 +142,12 @@ public class PrettyFormatterTest {
                 "      examples description\n" +
                 "      |  arg   |\n" +
                 "      | third  |\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, equalTo("" +
                 "Feature: feature name\n" +
@@ -187,11 +193,11 @@ public class PrettyFormatterTest {
                 "    Examples: examples name\n" +
                 "      |  arg   |\n" +
                 "      | third  |\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, equalTo("" +
                 "@feature_tag\n" +
@@ -219,12 +225,11 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("failed"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
                 "    Given first step      # path/step_definitions.java:3\n" +
@@ -237,14 +242,12 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("failed")));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
                 "  Scenario: scenario name # path/test.feature:2\n" +
@@ -258,14 +261,12 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("failed")));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
                 "    Given first step      # path/step_definitions.java:3\n" +
@@ -278,16 +279,13 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createWriteHookAction("printed from hook"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, hookActions);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
                 "  Scenario: scenario name # path/test.feature:2\n" +
@@ -301,16 +299,13 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createWriteHookAction("printed from hook"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, hookActions);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
                 "    Given first step      # path/step_definitions.java:3\n" +
@@ -324,18 +319,15 @@ public class PrettyFormatterTest {
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
             "    When second step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:4");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createWriteHookAction("printed from afterstep hook"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, hookActions);
+        String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
             "    Given first step      # path/step_definitions.java:3\n" +
@@ -350,12 +342,11 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertThat(formatterOutput, containsString("" +
             "    " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
@@ -367,12 +358,11 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("passed"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertThat(formatterOutput, containsString("" +
             AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
@@ -384,12 +374,11 @@ public class PrettyFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
         stepsToResult.put("first step", result("failed"));
 
-        String formatterOutput = runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, monochrome(false));
+        String formatterOutput = runFeaturesWithFormatter(false);
 
         assertThat(formatterOutput, containsString("" +
             "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
@@ -448,37 +437,23 @@ public class PrettyFormatterTest {
             AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
-    private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {
-        return runFeatureWithPrettyFormatter(feature, stepsToLocation, Collections.<String, Result>emptyMap());
+    private String runFeaturesWithFormatter(boolean monochrome) {
+        final StringBuilder report = new StringBuilder();
+        final PrettyFormatter formatter = new PrettyFormatter(report);
+        formatter.setMonochrome(monochrome);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .build()
+            .run();
+
+        return report.toString();
     }
 
-    private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation, final Map<String, Result> stepsToResult) throws Throwable {
-        return runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, true);
-    }
-
-    private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation, final Map<String, Result> stepsToResult, final boolean monochrome) throws Throwable {
-        return runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), Collections.<Answer<Object>>emptyList(), monochrome);
-    }
-
-    private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks) throws Throwable {
-        return runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, Collections.<Answer<Object>>emptyList(), true);
-    }
-
-    private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks, final List<Answer<Object>> hookActions) throws Throwable {
-        return runFeatureWithPrettyFormatter(feature, stepsToLocation, stepsToResult, hooks, hookActions, true);
-    }
-
-    private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks, final List<Answer<Object>> hookActions, final boolean monochrome) throws Throwable {
-        final StringBuilder out = new StringBuilder();
-        final PrettyFormatter prettyFormatter = new PrettyFormatter(out);
-        if (monochrome) {
-            prettyFormatter.setMonochrome(true);
-        }
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), hookActions, 0l, prettyFormatter);
-        return out.toString();
-    }
-
-    private boolean monochrome(boolean value) {
-        return value;
-    }
 }

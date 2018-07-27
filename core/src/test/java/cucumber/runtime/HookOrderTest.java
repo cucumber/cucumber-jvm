@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import io.cucumber.stepexpression.Argument;
@@ -33,13 +34,14 @@ public class HookOrderTest {
     private final static String ENGLISH = "en";
 
     private Runner runner;
-    private Glue glue;
+    private final GlueSupplier glueSupplier = new TestGlueHelper();
+    private final Glue glue = glueSupplier.get();
     private PickleEvent pickleEvent;
 
     @Before
     public void buildMockWorld() {
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        EventBus bus = new EventBus(TimeService.SYSTEM);
+        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {
@@ -50,8 +52,7 @@ public class HookOrderTest {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
         when(stepDefinition.getPattern()).thenReturn("pattern1");
-        runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, new RuntimeGlueSupplier()).get();
-        glue = runner.getGlue();
+        runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
         glue.addStepDefinition(stepDefinition);
 
         pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
