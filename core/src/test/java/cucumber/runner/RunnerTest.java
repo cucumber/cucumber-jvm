@@ -173,7 +173,7 @@ public class RunnerTest {
     }
 
     private Runner createRunner(Backend backend) {
-        return createRunner(backend, "-p null");
+        return createRunner(backend, "");
     }
 
     private Runner createRunner(final Backend backend, String options) {

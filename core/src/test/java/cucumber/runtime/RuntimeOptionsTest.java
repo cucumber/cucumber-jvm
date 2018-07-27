@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
@@ -367,7 +368,7 @@ public class RuntimeOptionsTest {
         new RuntimeOptions(asList("--threads", "0"));
     }
 
-    public static final class AwareFormatter implements StrictAware, ColorAware {
+    public static final class AwareFormatter implements StrictAware, ColorAware, EventListener {
 
         private boolean strict;
         private boolean monochrome;

@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.TestCase;
+import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseEvent;
@@ -8,7 +9,6 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
-import cucumber.api.formatter.ConcurrentFormatter;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
@@ -32,7 +32,7 @@ import java.util.TreeMap;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-public class TimelineFormatter implements ConcurrentFormatter {
+public class TimelineFormatter implements ConcurrentEventListener {
 
     //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{

@@ -87,21 +87,21 @@ public final class Plugins {
         setEventBusOnEventListenerPlugins(plugin);
     }
 
-    private void setMonochromeOnColorAwarePlugins(Object plugin) {
+    private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
         if (plugin instanceof ColorAware) {
             ColorAware colorAware = (ColorAware) plugin;
             colorAware.setMonochrome(runtimeOptions.isMonochrome());
         }
     }
 
-    private void setStrictOnStrictAwarePlugins(Object plugin) {
+    private void setStrictOnStrictAwarePlugins(Plugin plugin) {
         if (plugin instanceof StrictAware) {
             StrictAware strictAware = (StrictAware) plugin;
             strictAware.setStrict(runtimeOptions.isStrict());
         }
     }
 
-    private void setEventBusOnEventListenerPlugins(Object plugin) {
+    private void setEventBusOnEventListenerPlugins(Plugin plugin) {
         if (plugin instanceof ConcurrentEventListener) {
             ConcurrentEventListener formatter = (ConcurrentEventListener) plugin;
             formatter.setEventPublisher(eventPublisher);

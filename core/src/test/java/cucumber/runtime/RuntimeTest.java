@@ -521,10 +521,6 @@ public class RuntimeTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = getClass().getClassLoader();
         List<String> args = new ArrayList<String>(asList(runtimeArgs));
-        if (!args.contains("-p")) {
-            args.addAll(asList("-p", "null"));
-        }
-
         BackendSupplier backends = backendSupplier != null
             ? backendSupplier
             : new BackendSupplier() {

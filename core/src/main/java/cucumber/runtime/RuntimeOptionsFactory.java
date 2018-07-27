@@ -14,7 +14,6 @@ public class RuntimeOptionsFactory {
     private final Class clazz;
     private boolean featuresSpecified = false;
     private boolean glueSpecified = false;
-    private boolean pluginSpecified = false;
 
     public RuntimeOptionsFactory(Class clazz) {
         this.clazz = clazz;
@@ -45,7 +44,6 @@ public class RuntimeOptionsFactory {
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
         addDefaultGlueIfNoGlueIsSpecified(args, clazz);
-        addNullFormatIfNoPluginIsSpecified(args);
         return args;
     }
 
@@ -81,21 +79,11 @@ public class RuntimeOptionsFactory {
     }
 
     private void addPlugins(CucumberOptions options, List<String> args) {
-        List<String> plugins = new ArrayList<String>();
+        List<String> plugins = new ArrayList<>();
         plugins.addAll(asList(options.plugin()));
         for (String plugin : plugins) {
             args.add("--plugin");
             args.add(plugin);
-            if (PluginFactory.isFormatterName(plugin)) {
-                pluginSpecified = true;
-            }
-        }
-    }
-
-    private void addNullFormatIfNoPluginIsSpecified(List<String> args) {
-        if (!pluginSpecified) {
-            args.add("--plugin");
-            args.add("null");
         }
     }
 

@@ -69,7 +69,7 @@ public class TestHelper {
 
     public void run() {
 
-        final StringBuilder args = new StringBuilder("-p null");
+        final StringBuilder args = new StringBuilder();
         for (final String arg : runtimeArgs) {
             args.append(" ").append(arg);
         }
@@ -204,7 +204,7 @@ public class TestHelper {
          * <p>
          * Note: when running tests with multiple threads & not using {@link TimeServiceType#REAL_TIME}
          * it can inadvertently affect the order of {@link cucumber.api.event.Event}s
-         * published to any {@link cucumber.api.formatter.ConcurrentFormatter}s used during the test run
+         * published to any {@link cucumber.api.event.ConcurrentEventListener}s used during the test run
          *
          * @return this instance
          */
