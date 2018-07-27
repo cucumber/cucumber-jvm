@@ -1,5 +1,7 @@
 package cucumber.api.event;
 
+import cucumber.api.Plugin;
+
 /**
  * When cucumber executes test in parallel or in a framework
  * that supports parallel execution (e.g. JUnit or TestNG)
@@ -25,7 +27,7 @@ package cucumber.api.event;
  *
  * @see Event
  */
-public interface ConcurrentEventListener {
+public interface ConcurrentEventListener extends Plugin {
 
     /**
      * Set the event publisher. The formatter can register event listeners with the publisher.

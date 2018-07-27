@@ -33,12 +33,6 @@ public class PluginFactoryTest {
     private PluginFactory fc = new PluginFactory();
 
     @Test
-    public void instantiates_null_plugin() {
-        Object plugin = fc.create("null");
-        assertEquals(NullFormatter.class, plugin.getClass());
-    }
-
-    @Test
     public void instantiates_junit_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create("junit:" + File.createTempFile("cucumber", "xml"));
         assertEquals(JUnitFormatter.class, plugin.getClass());

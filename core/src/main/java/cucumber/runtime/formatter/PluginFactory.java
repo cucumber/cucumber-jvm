@@ -3,8 +3,8 @@ package cucumber.runtime.formatter;
 import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
-import cucumber.api.formatter.ConcurrentFormatter;
-import cucumber.api.formatter.Formatter;
+import cucumber.api.event.ConcurrentEventListener;
+import cucumber.api.event.EventListener;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -199,7 +198,7 @@ public final class PluginFactory {
 
     public static boolean isFormatterName(String name) {
         Class pluginClass = getPluginClass(name);
-        return EventListener.class.isAssignableFrom(pluginClass);
+        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isStepDefinitionReporterName(String name) {

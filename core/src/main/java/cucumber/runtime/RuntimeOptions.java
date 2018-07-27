@@ -358,7 +358,7 @@ public class RuntimeOptions {
                 stepDefinitionReporterNames.addName(name, isAddPlugin);
             } else if (PluginFactory.isSummaryPrinterName(name)) {
                 summaryPrinterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isPluginName(name)) {
+            } else if (PluginFactory.isFormatterName(name)) {
                 formatterNames.addName(name, isAddPlugin);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);

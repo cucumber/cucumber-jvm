@@ -3,13 +3,10 @@ package cucumber.api.testng;
 import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.NiceAppendable;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.Utils;
 import org.testng.ITestResult;
@@ -17,8 +14,9 @@ import org.testng.Reporter;
 
 import java.util.concurrent.TimeUnit;
 
+import static cucumber.api.Result.Type.SKIPPED;
+
 class TestNGReporter implements ConcurrentEventListener, StrictAware {
-    private final NiceAppendable out;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
@@ -34,6 +32,7 @@ class TestNGReporter implements ConcurrentEventListener, StrictAware {
             handleTestCaseFinished(event.result);
         }
     };
+    private boolean strict;
 
     TestNGReporter() {
     }

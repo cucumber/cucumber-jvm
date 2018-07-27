@@ -155,7 +155,7 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null");
+        final RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);

@@ -16,8 +16,10 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.RuntimeOptionsFactory.packageName;
 import static cucumber.runtime.RuntimeOptionsFactory.packagePath;
 import static java.util.Arrays.asList;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class RuntimeOptionsFactoryTest {
@@ -43,7 +45,10 @@ public class RuntimeOptionsFactoryTest {
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+
+        assertThat(plugins.getPlugins(), hasSize(2));
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -53,7 +58,10 @@ public class RuntimeOptionsFactoryTest {
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+
+        assertThat(plugins.getPlugins(), hasSize(2));
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -97,14 +105,6 @@ public class RuntimeOptionsFactoryTest {
     @Test
     public void finds_path_for_class_in_toplevel_package() {
         assertEquals("", packageName("TopLevelClass"));
-    }
-
-    @Test
-    public void create_null_formatter_when_no_formatter_plugin_is_defined() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoFormatterPlugin.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
     }
 
     @Test
