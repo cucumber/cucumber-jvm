@@ -4,6 +4,8 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTableTypeRegistry;
+import io.cucumber.datatable.DefaultDataTableEntryTransformer;
+import io.cucumber.datatable.TableCellByTypeTransformer;
 
 import java.util.Locale;
 
@@ -35,4 +37,13 @@ public final class TypeRegistry implements cucumber.api.TypeRegistry {
         dataTableTypeRegistry.defineDataTableType(tableType);
     }
 
+    @Override
+    public void setDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformer defaultDataTableEntryTransformer) {
+        dataTableTypeRegistry.setDefaultDataTableEntryTransformer(defaultDataTableEntryTransformer);
+    }
+
+    @Override
+    public void setDefaultDataTableCellTransformer(TableCellByTypeTransformer defaultDataTableCellTransformer) {
+        dataTableTypeRegistry.setDefaultDataTableCellTransformer(defaultDataTableCellTransformer);
+    }
 }
