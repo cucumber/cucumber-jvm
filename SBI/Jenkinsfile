@@ -57,7 +57,7 @@ stage('Deploy Image to ECS') {
                // }
            // }
 	  stage("Publish Reports") {
-	         def runClassifications = getClassificationsFromFile()
+	        // def runClassifications = getClassificationsFromFile()
                 // println "runClassifications - " + runClassifications
 		  steps
 		  {
