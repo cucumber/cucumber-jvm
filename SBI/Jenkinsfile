@@ -57,7 +57,7 @@ stage('Deploy Image to ECS') {
                // }
            // }
 	  stage("Publish Reports") {
-                step([
+                steps([
                     $class: 'CucumberReportPublisher',
                     fileIncludePattern: '**/cucumber-report*.json',
                     jsonReportDirectory: 'examples'
