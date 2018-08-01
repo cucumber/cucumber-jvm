@@ -59,10 +59,22 @@ stage('Deploy Image to ECS') {
 	  stage("Publish Reports") {
                 steps
 		  {
+	         def runClassifications = getClassificationsFromFile()
+                 println "runClassifications - " + runClassifications
 			  step([
                     $class: 'CucumberReportPublisher',
+	            failedFeaturesNumber: 0,
+                    failedScenariosNumber: 0,
+                    failedStepsNumber: 0,
+                    fileExcludePattern: '',
                     fileIncludePattern: '**/cucumber-report*.json',
-                    jsonReportDirectory: 'examples'
+                    jsonReportDirectory: 'examples',
+	            parallelTesting: true,
+                    pendingStepsNumber: 0,
+                    skippedStepsNumber: 0,
+                    trendsLimit: 0,
+                    undefinedStepsNumber: 0,
+                    classifications: runClassifications
                    ])
             }
 	  }
