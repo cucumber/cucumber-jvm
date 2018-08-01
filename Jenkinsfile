@@ -26,7 +26,7 @@ pipeline {
       steps {
         script {
           sh '''
-           echo "building image
+           echo "building image"
                       '''
         }
       }
