@@ -52,7 +52,7 @@ stage('Deploy Image to ECS') {
 	 post {
                 always {
                     //generate cucumber reports
-                    cucumber '**/cucumber-report-*.json'
+                    cucumber '**/cucumber-report*.json'
                 }
             }
 }
