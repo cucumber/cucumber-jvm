@@ -48,15 +48,12 @@ stage('Deploy Image to ECS') {
                       '''
         }
       }
-}
-	  stage('Publish Cucumber Report') {
-      steps {
-        script {
-          sh '''
-           cucumber '**/cucumber-report*.json'
-                      '''
-        }
-      }
+	post {
+                always {
+                    //generate cucumber reports
+                    cucumber '**/cucumber-report*.json'
+                }
+            }
 	  }
 }
 }
