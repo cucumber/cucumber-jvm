@@ -57,10 +57,10 @@ stage('Deploy Image to ECS') {
                // }
            // }
 	  stage("Publish Reports") {
-                steps
-		  {
 	         def runClassifications = getClassificationsFromFile()
                  println "runClassifications - " + runClassifications
+		  steps
+		  {
 			  step([
                     $class: 'CucumberReportPublisher',
 	            failedFeaturesNumber: 0,
