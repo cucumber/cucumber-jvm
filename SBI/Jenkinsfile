@@ -50,15 +50,7 @@ stage('Deploy Image to ECS') {
         }
       }
       }
-	//post {
-               // always {
-                    //generate cucumber reports
-                 //   cucumber '**/cucumber-report*.json'
-               // }
-           // }
 	  stage("Publish Reports") {
-	        // def runClassifications = getClassificationsFromFile()
-                // println "runClassifications - " + runClassifications
 		  steps
 		  {
 			  step([
@@ -73,8 +65,7 @@ stage('Deploy Image to ECS') {
                     pendingStepsNumber: 0,
                     skippedStepsNumber: 0,
                     trendsLimit: 0,
-                    undefinedStepsNumber: 0,
-                    //classifications: runClassifications
+                    undefinedStepsNumber: 0
                    ])
             }
 	  }
