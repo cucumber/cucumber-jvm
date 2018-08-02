@@ -52,10 +52,10 @@ stage('Deploy Image to ECS') {
       }
 	  stage("Publish Reports") {
 		//  when {
-      //  expression {
-        //  return new File("$WORKSPACE/jenkins-cucumber-results/cucumber-report*.json").exists()
-      //  }
+        //expression {
+        // return new File("$WORKSPACE/examples/cucumber-report*.json").exists()
      // }
+    //  }
 		  steps
 		  {
 			  step([
