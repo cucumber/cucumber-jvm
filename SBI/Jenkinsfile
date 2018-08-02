@@ -51,11 +51,11 @@ stage('Deploy Image to ECS') {
       }
       }
 	  stage("Publish Reports") {
-		  when {
-        expression {
-          return new File("$WORKSPACE/jenkins-cucumber-results/cucumber-report*.json").exists()
-        }
-      }
+		//  when {
+      //  expression {
+        //  return new File("$WORKSPACE/jenkins-cucumber-results/cucumber-report*.json").exists()
+      //  }
+     // }
 		  steps
 		  {
 			  step([
@@ -64,8 +64,8 @@ stage('Deploy Image to ECS') {
                     failedScenariosNumber: 0,
                     failedStepsNumber: 0,
                     fileExcludePattern: '',
-                    fileIncludePattern: '**/*.json',
-                    jsonReportDirectory: 'jenkins-cucumber-results',
+                    fileIncludePattern: '**/cucumber-report*.json',
+                    jsonReportDirectory: 'examples',
 	            parallelTesting: true,
                     pendingStepsNumber: 0,
                     skippedStepsNumber: 0,
