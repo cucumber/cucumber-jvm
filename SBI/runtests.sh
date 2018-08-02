@@ -2,10 +2,11 @@
 mvn test
 RESULT=$?
 
-[ ! -d jenkins-test-results ] && mkdir jenkins-test-results
+[ ! -d jenkins-cucumber-results ] && mkdir jenkins-cucumber-results
 
-clover=$(find . -name clover.xml)
-if [ -n "$clover" ]
+cucumber=$(find . -name cucumber-report*.json -type f)
+if [ -n "$cucumber" ]
 then
-    cp -p $clover jenkins-test-results/
+    cp -p $cucumber jenkins-cucumber-results/
 fi
+exit $RESULT
