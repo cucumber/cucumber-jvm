@@ -71,7 +71,7 @@ stage('Deploy Image to ECS') {
                     skippedStepsNumber: 0,
                     trendsLimit: 0,
                     undefinedStepsNumber: 0,
-		    classifications: getClassifications()
+		   // classifications: getClassifications()
                    ])
             }
 	  }
