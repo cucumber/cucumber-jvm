@@ -1,15 +1,14 @@
 package cucumber.runtime;
 
+import cucumber.api.Scenario;
+import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.stepexpression.Argument;
-import cucumber.api.Scenario;
-import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -26,28 +25,26 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
     }
 
     @Override
-    public void runStep(String language, Scenario scenario) throws Throwable {
+    public void runStep(Scenario scenario) throws Throwable {
         int argumentCount = getArguments().size();
 
         Integer parameterCount = stepDefinition.getParameterCount();
         if (parameterCount != null && argumentCount != parameterCount) {
             throw arityMismatch(parameterCount);
         }
-        List<Object> result = new ArrayList<Object>();
+        List<Object> result = new ArrayList<>();
         try {
             for (Argument argument : getArguments()) {
                 result.add(argument.getValue());
             }
         } catch (UndefinedDataTableTypeException e) {
             throw registerTypeInConfiguration(e);
-        } catch (CucumberExpressionException e) {
-            throw couldNotConvertArguments(e);
-        } catch (CucumberDataTableException e) {
+        } catch (CucumberExpressionException | CucumberDataTableException e) {
             throw couldNotConvertArguments(e);
         }
 
         try {
-            stepDefinition.execute(language, result.toArray(new Object[result.size()]));
+            stepDefinition.execute(result.toArray(new Object[0]));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -75,7 +72,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
     }
 
     @Override
-    public void dryRunStep(String language, Scenario scenario) throws Throwable {
+    public void dryRunStep(Scenario scenario) throws Throwable{
         // Do nothing
     }
 
@@ -106,14 +103,14 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
     }
 
     private List<String> createArgumentsForErrorMessage() {
-        List<String> arguments = new ArrayList<String>(getArguments().size());
+        List<String> arguments = new ArrayList<>(getArguments().size());
         for (Argument argument : getArguments()) {
             arguments.add(argument.toString());
         }
         return arguments;
     }
 
-    protected Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
+    Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;
@@ -132,20 +129,11 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return error;
     }
 
-    private Locale localeFor(String language) {
-        String[] languageAndCountry = language.split("-");
-        if (languageAndCountry.length == 1) {
-            return new Locale(language);
-        } else {
-            return new Locale(languageAndCountry[0], languageAndCountry[1]);
-        }
-    }
-
     public String getPattern() {
         return stepDefinition.getPattern();
     }
 
-    public StackTraceElement getStepLocation() {
+    StackTraceElement getStepLocation() {
         return new StackTraceElement("✽", step.getText(), featurePath, getStepLine(step));
     }
 
@@ -162,7 +150,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getLocation(false);
     }
 
-    public static int getStepLine(PickleStep step) {
+    private static int getStepLine(PickleStep step) {
         return step.getLocations().get(step.getLocations().size() - 1).getLine();
     }
 }

@@ -3,8 +3,9 @@ package cucumber.api;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Comparator;
+import java.util.Objects;
 
-public class Result {
+public final class Result {
 
     public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
 
@@ -13,8 +14,6 @@ public class Result {
             return a.status == b.status ? 0 : a.status.ordinal() > b.status.ordinal() ? 1 : -1;
         }
     };
-
-    private static final long serialVersionUID = 1L;
 
     private final Type status;
     private final Long duration;
@@ -103,5 +102,20 @@ public class Result {
             ", duration=" + duration +
             ", error=" + error +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Result result = (Result) o;
+        return status == result.status &&
+            Objects.equals(duration, result.duration) &&
+            Objects.equals(error, result.error);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, duration, error);
     }
 }

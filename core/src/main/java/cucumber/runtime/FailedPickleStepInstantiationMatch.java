@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.Argument;
 
 import java.util.Collections;
 
@@ -15,13 +15,13 @@ public class FailedPickleStepInstantiationMatch extends PickleStepDefinitionMatc
     }
 
     @Override
-    public void runStep(String language, Scenario scenario) throws Throwable {
+    public void runStep(Scenario scenario) throws Throwable {
         throw throwable;
     }
 
     @Override
-    public void dryRunStep(String language, Scenario scenario) throws Throwable {
-        runStep(language, scenario);
+    public void dryRunStep(Scenario scenario) throws Throwable {
+        runStep(scenario);
     }
 
 }

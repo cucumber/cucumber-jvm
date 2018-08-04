@@ -1,12 +1,11 @@
-package cucumber.api;
+package cucumber.runner;
 
-import cucumber.runner.EventBus;
-import cucumber.runtime.ScenarioImpl;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -56,19 +55,23 @@ public class ScenarioTest {
     }
 
     private Scenario createScenarioWithFeatureFileUri(String uri) {
-        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent(uri, mockPickle()));
-    }
-
-    private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
-        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent(uri, mockPickle(locations)));
+        return createScenarioWithFeatureFileUriAndScenarioLocations(uri, asList(new PickleLocation(1, 1)));
     }
 
     private Scenario createScenarioWithScenarioLocations(List<PickleLocation> locations) {
-        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent("uri", mockPickle(locations)));
+        return createScenarioWithFeatureFileUriAndScenarioLocations("uri", locations);
     }
 
-    private Pickle mockPickle() {
-        return mockPickle(asList(new PickleLocation(1, 1)));
+    private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
+        PickleEvent pickle = new PickleEvent(uri, mockPickle(locations));
+        TestCase testCase = new TestCase(
+            Collections.<PickleStepTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            pickle,
+            false
+        );
+        return new Scenario(mock(EventBus.class), testCase);
     }
 
     private Pickle mockPickle(List<PickleLocation> locations) {

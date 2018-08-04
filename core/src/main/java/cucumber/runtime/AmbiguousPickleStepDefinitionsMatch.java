@@ -15,13 +15,13 @@ public class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMat
     }
 
     @Override
-    public void runStep(String language, Scenario scenario) throws Throwable {
+    public void runStep(Scenario scenario) {
         throw exception;
     }
 
     @Override
-    public void dryRunStep(String language, Scenario scenario) throws Throwable {
-        runStep(language, scenario);
+    public void dryRunStep(Scenario scenario) {
+        runStep(scenario);
     }
 
     @Override

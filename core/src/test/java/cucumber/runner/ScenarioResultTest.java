@@ -1,42 +1,40 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Result;
-import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
-import cucumber.runner.EventBus;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
-import static java.util.Arrays.asList;
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.argThat;
 
 public class ScenarioResultTest {
 
     private EventBus bus = mock(EventBus.class);
-    private ScenarioImpl s = new ScenarioImpl(bus, mock(TestCase.class), pickleEvent());
+    private Scenario s = new Scenario(bus, mock(TestCase.class));
 
     @Test
-    public void no_steps_is_undefined() throws Exception {
+    public void no_steps_is_undefined() {
         assertEquals(Result.Type.UNDEFINED, s.getStatus());
     }
 
     @Test
-    public void one_passed_step_is_passed() throws Exception {
+    public void one_passed_step_is_passed() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         assertEquals(Result.Type.PASSED, s.getStatus());
     }
 
     @Test
-    public void passed_failed_pending_undefined_skipped_is_failed() throws Exception {
+    public void passed_failed_pending_undefined_skipped_is_failed() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.FAILED, 0L, null));
         s.add(new Result(Result.Type.PENDING, 0L, null));
@@ -47,7 +45,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() throws Exception {
+    public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
         assertEquals(Result.Type.SKIPPED, s.getStatus());
@@ -55,7 +53,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_pending_undefined_skipped_is_pending() throws Exception {
+    public void passed_pending_undefined_skipped_is_pending() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.UNDEFINED, 0L, null));
         s.add(new Result(Result.Type.PENDING, 0L, null));
@@ -65,7 +63,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_undefined_skipped_is_undefined() throws Exception {
+    public void passed_undefined_skipped_is_undefined() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.UNDEFINED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
@@ -108,14 +106,6 @@ public class ScenarioResultTest {
         assertThat(s.getError(), sameInstance(failedError));
     }
 
-    private PickleEvent pickleEvent() {
-        Pickle pickle = mock(Pickle.class);
-        when(pickle.getLocations()).thenReturn(asList(new PickleLocation(1, 1)));
-        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        return pickleEvent;
-    }
-
-
     private final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
         private byte[] data;
         private String mimeType;
@@ -128,7 +118,7 @@ public class ScenarioResultTest {
         @Override
         public boolean matches(EmbedEvent argument) {
             return (argument != null &&
-                argument.data.equals(data) && argument.mimeType.equals(mimeType));
+                Arrays.equals(argument.data, data) && argument.mimeType.equals(mimeType));
         }
     }
 

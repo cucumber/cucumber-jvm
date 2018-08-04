@@ -44,7 +44,7 @@ class JavaStepDefinition implements StepDefinition {
         }
     }
 
-    public void execute(String language, Object[] args) throws Throwable {
+    public void execute(Object[] args) throws Throwable {
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 

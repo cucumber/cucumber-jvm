@@ -2,7 +2,6 @@ package cucumber.runner;
 
 import cucumber.api.Pending;
 import cucumber.api.Result;
-import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
@@ -34,29 +33,39 @@ abstract class TestStep implements cucumber.api.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    Result run(TestCase testCase, EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    /**
+     * Runs a test step.
+     *
+     * @param testCase
+     * @param bus
+     * @param scenario
+     * @param skipSteps
+     * @return true iff subsequent skippable steps should be skipped
+     */
+    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, testCase, this));
         Result.Type status;
         Throwable error = null;
         try {
-            status = executeStep(language, scenario, skipSteps);
+            status = executeStep(scenario, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
         }
         Long stopTime = bus.getTime();
         Result result = mapStatusToResult(status, error, stopTime - startTime);
+        scenario.add(result);
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        return result;
+        return !result.is(Result.Type.PASSED);
     }
 
-    private Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    private Result.Type executeStep(cucumber.api.Scenario scenario, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
-            stepDefinitionMatch.runStep(language, scenario);
+            stepDefinitionMatch.runStep(scenario);
             return Result.Type.PASSED;
         } else {
-            stepDefinitionMatch.dryRunStep(language, scenario);
+            stepDefinitionMatch.dryRunStep(scenario);
             return Result.Type.SKIPPED;
         }
     }

@@ -30,7 +30,7 @@ public interface StepDefinition {
      * Invokes the step definition. The method should raise a Throwable
      * if the invocation fails, which will cause the step to fail.
      */
-    void execute(String language, Object[] args) throws Throwable;
+    void execute(Object[] args) throws Throwable;
 
     /**
      * Return true if this matches the location. This is used to filter

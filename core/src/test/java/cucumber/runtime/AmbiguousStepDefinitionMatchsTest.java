@@ -9,14 +9,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class AmbiguousStepDefinitionMatchsTest {
-    public static final String ENGLISH = "en";
     public final AmbiguousStepDefinitionsException e = mock(AmbiguousStepDefinitionsException.class);
     public final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch("uri", mock(PickleStep.class), e);
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {
         try {
-            match.runStep(ENGLISH, mock(Scenario.class));
+            match.runStep(mock(Scenario.class));
             fail("AmbiguousStepDefinitionsException expected");
         } catch (Throwable thrown) {
             assertEquals(e, thrown);
@@ -26,7 +25,7 @@ public class AmbiguousStepDefinitionMatchsTest {
     @Test
     public void throws_ambiguous_step_definitions_exception_when_dry_run() {
         try {
-            match.dryRunStep(ENGLISH, mock(Scenario.class));
+            match.dryRunStep(mock(Scenario.class));
             fail("AmbiguousStepDefinitionsException expected");
         } catch (Throwable thrown) {
             assertEquals(e, thrown);
