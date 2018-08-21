@@ -1,11 +1,13 @@
-package cucumber.runtime;
+package cucumber.runner;
+
+import cucumber.runtime.HookDefinition;
 
 import java.util.Comparator;
 
 class HookComparator implements Comparator<HookDefinition> {
     private final boolean ascending;
 
-    public HookComparator(boolean ascending) {
+    HookComparator(boolean ascending) {
         this.ascending = ascending;
     }
 

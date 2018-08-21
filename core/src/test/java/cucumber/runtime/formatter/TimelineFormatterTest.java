@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import static cucumber.runtime.TestHelper.feature;
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.feature;
+import static cucumber.runner.TestHelper.result;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

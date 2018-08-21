@@ -5,7 +5,6 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;

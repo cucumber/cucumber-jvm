@@ -32,8 +32,7 @@ public class SingletonRunnerSupplierTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, glueSupplier);
+        runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier);
     }
 
     @Test

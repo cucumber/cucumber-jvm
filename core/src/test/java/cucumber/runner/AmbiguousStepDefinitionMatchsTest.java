@@ -1,12 +1,12 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class AmbiguousStepDefinitionMatchsTest {
     public static final String ENGLISH = "en";

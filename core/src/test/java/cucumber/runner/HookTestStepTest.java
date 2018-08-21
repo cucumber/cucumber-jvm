@@ -6,7 +6,6 @@ import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runtime.HookDefinitionMatch;
 import org.junit.Test;
 import org.mockito.InOrder;
 

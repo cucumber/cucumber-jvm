@@ -6,9 +6,7 @@ import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.UndefinedStepDefinitionException;
 
 import java.util.Arrays;
 

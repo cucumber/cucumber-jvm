@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
@@ -8,7 +8,7 @@ import java.util.Collections;
 
 public class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
 
-    public UndefinedPickleStepDefinitionMatch(PickleStep step) {
+    UndefinedPickleStepDefinitionMatch(PickleStep step) {
         super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step);
     }
 

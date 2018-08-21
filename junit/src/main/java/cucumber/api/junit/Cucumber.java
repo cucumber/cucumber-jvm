@@ -18,7 +18,6 @@ import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeGlueSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
@@ -50,7 +49,7 @@ import java.util.List;
  * &#64;CucumberOptions(plugin = "pretty")
  * public class RunCukesTest {
  * }
- * </pre></blockquote>
+Fail * </pre></blockquote>
  * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).

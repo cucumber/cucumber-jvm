@@ -2,7 +2,7 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.util.FixJava;
@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cucumber.runtime.TestHelper.createEmbedHookAction;
-import static cucumber.runtime.TestHelper.createWriteHookAction;
-import static cucumber.runtime.TestHelper.feature;
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.createEmbedHookAction;
+import static cucumber.runner.TestHelper.createWriteHookAction;
+import static cucumber.runner.TestHelper.feature;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

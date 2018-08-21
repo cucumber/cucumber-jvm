@@ -1,6 +1,7 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Scenario;
+import cucumber.runner.FailedPickleStepInstantiationMatch;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import org.junit.Before;

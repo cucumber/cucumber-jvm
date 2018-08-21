@@ -1,5 +1,8 @@
-package cucumber.runtime;
+package cucumber.runner;
 
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StepDefinitionMatch;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
@@ -40,14 +43,12 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
             }
         } catch (UndefinedDataTableTypeException e) {
             throw registerTypeInConfiguration(e);
-        } catch (CucumberExpressionException e) {
-            throw couldNotConvertArguments(e);
-        } catch (CucumberDataTableException e) {
+        } catch (CucumberExpressionException | CucumberDataTableException e) {
             throw couldNotConvertArguments(e);
         }
 
         try {
-            stepDefinition.execute(language, result.toArray(new Object[result.size()]));
+            stepDefinition.execute(language, result.toArray(new Object[0]));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -130,15 +131,6 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         newStackTrace[newStackTraceLength] = stepLocation;
         error.setStackTrace(newStackTrace);
         return error;
-    }
-
-    private Locale localeFor(String language) {
-        String[] languageAndCountry = language.split("-");
-        if (languageAndCountry.length == 1) {
-            return new Locale(language);
-        } else {
-            return new Locale(languageAndCountry[0], languageAndCountry[1]);
-        }
     }
 
     public String getPattern() {

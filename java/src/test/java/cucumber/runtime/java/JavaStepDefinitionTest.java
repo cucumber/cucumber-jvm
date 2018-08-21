@@ -9,13 +9,12 @@ import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runner.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
 import cucumber.runtime.GlueSupplier;
-import cucumber.runtime.RuntimeGlue;
+import cucumber.runner.Glue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
@@ -80,10 +79,10 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        final Glue glue = new RuntimeGlue();
+        final cucumber.runtime.Glue glue = new Glue();
         GlueSupplier glueSupplier = new GlueSupplier() {
             @Override
-            public Glue get() {
+            public cucumber.runtime.Glue get() {
                 return glue;
             }
         };

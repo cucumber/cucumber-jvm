@@ -16,7 +16,6 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
     private final RuntimeOptions runtimeOptions;
-    private final GlueSupplier glueSupplier;
     private final SynchronizedEventBus eventBus;
 
     private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>() {
@@ -29,12 +28,10 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     public ThreadLocalRunnerSupplier(
         RuntimeOptions runtimeOptions,
         EventBus eventBus,
-        BackendSupplier backendSupplier,
-        GlueSupplier glueSupplier
+        BackendSupplier backendSupplier
     ) {
         this.backendSupplier = backendSupplier;
         this.runtimeOptions = runtimeOptions;
-        this.glueSupplier = glueSupplier;
         this.eventBus = synchronize(eventBus);
     }
 
@@ -44,7 +41,7 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(glueSupplier.get(), new TestCaseEventBus(eventBus), backendSupplier.get(), runtimeOptions);
+        return new Runner(new TestCaseEventBus(eventBus), backendSupplier.get(), runtimeOptions);
     }
 
 }

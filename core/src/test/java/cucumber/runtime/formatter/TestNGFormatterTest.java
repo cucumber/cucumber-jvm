@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
 
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.result;
 import static cucumber.runtime.Utils.toURL;
 import static org.junit.Assert.assertTrue;
 

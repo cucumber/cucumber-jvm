@@ -4,7 +4,6 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.runtime.DefinitionArgument;
-import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;

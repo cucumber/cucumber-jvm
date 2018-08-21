@@ -8,9 +8,8 @@ import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeGlue;
+import cucumber.runner.Glue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -50,7 +49,7 @@ public class JavaHookTest {
 
 
     private JavaBackend backend;
-    private Glue glue;
+    private cucumber.runtime.Glue glue;
     private SingletonFactory objectFactory;
 
     @org.junit.Before
@@ -62,7 +61,7 @@ public class JavaHookTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
-        this.glue = new RuntimeGlue();
+        this.glue = new Glue();
 
         backend.loadGlue(glue, Collections.<String>emptyList());
     }

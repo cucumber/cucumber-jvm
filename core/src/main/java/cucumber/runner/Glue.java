@@ -1,5 +1,8 @@
-package cucumber.runtime;
+package cucumber.runner;
 
+import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.StepDefinitionReporter;
 import gherkin.pickles.PickleStep;
@@ -12,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class RuntimeGlue implements Glue {
+class Glue implements cucumber.runtime.Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
@@ -52,27 +55,22 @@ public class RuntimeGlue implements Glue {
         Collections.sort(afterStepHooks, new HookComparator(false));
     }
 
-    @Override
     public List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
     }
 
-    @Override
     public List<HookDefinition> getBeforeStepHooks() {
         return beforeStepHooks;
     }
 
-    @Override
     public List<HookDefinition> getAfterHooks() {
         return afterHooks;
     }
 
-    @Override
     public List<HookDefinition> getAfterStepHooks() {
         return afterStepHooks;
     }
 
-    @Override
     public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
@@ -111,8 +109,7 @@ public class RuntimeGlue implements Glue {
         return result;
     }
 
-    @Override
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
+    void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             stepDefinitionReporter.stepDefinition(stepDefinition);
         }

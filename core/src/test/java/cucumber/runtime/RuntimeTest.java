@@ -7,9 +7,12 @@ import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
-import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
+import cucumber.runner.PickleStepDefinitionMatch;
+import cucumber.runner.TestBackendSupplier;
+import cucumber.runner.TestHelper;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.formatter.FormatterBuilder;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -18,6 +21,8 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,10 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.cucumber.stepexpression.TypeRegistry;
-
-import static cucumber.runtime.TestHelper.feature;
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.feature;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +47,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollectionOf;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -248,28 +250,18 @@ public class RuntimeTest {
     @Test
     public void reports_step_definitions_to_plugin() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        BackendSupplier backendSupplier = new BackendSupplier() {
-            @Override
-            public Collection<? extends Backend> get() {
-                return Collections.singletonList(mock(Backend.class));
-            }
-        };
         final StubStepDefinition stepDefinition = new StubStepDefinition("some pattern", new TypeRegistry(Locale.ENGLISH));
-
-        GlueSupplier glueSupplier = new GlueSupplier() {
+        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
             @Override
-            public Glue get() {
-                Glue glue = new RuntimeGlue();
+            public void loadGlue(Glue glue, List<String> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
-                return glue;
             }
         };
 
         Runtime.builder()
             .withResourceLoader(resourceLoader)
             .withArgs("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter")
-            .withBackendSupplier(backendSupplier)
-            .withGlueSupplier(glueSupplier)
+            .withBackendSupplier(testBackendSupplier)
             .build()
             .run();
 
@@ -508,35 +500,13 @@ public class RuntimeTest {
             .build();
     }
 
-    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType,
-                                                CucumberFeature feature, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, hookType, feature, null, runtimeArgs);
-    }
-
-    private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final boolean isAmbiguous,
-                                                final HookDefinition hook, final HookType hookType,
-                                                final CucumberFeature feature,
-                                                final BackendSupplier backendSupplier,
-                                                final String... runtimeArgs) {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = getClass().getClassLoader();
-        List<String> args = new ArrayList<String>(asList(runtimeArgs));
-        BackendSupplier backends = backendSupplier != null
-            ? backendSupplier
-            : new BackendSupplier() {
+    private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final HookDefinition hook, final HookType hookType,
+                                                final CucumberFeature feature, String... runtimeArgs) {
+        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
             @Override
-            public Collection<? extends Backend> get() {
-                return Collections.singletonList(mock(Backend.class));
-            }
-        };
-
-        GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                final RuntimeGlue glue = mock(RuntimeGlue.class);
-                mockMatch(glue, match, isAmbiguous);
+            public void loadGlue(Glue glue, List<String> gluePaths) {
+                mockMatch(glue, match);
                 mockHook(glue, hook, hookType);
-                return glue;
             }
         };
 
@@ -548,36 +518,32 @@ public class RuntimeTest {
         };
 
         return Runtime.builder()
-            .withResourceLoader(resourceLoader)
-            .withClassLoader(classLoader)
-            .withArgs(args)
-            .withBackendSupplier(backends)
-            .withGlueSupplier(glueSupplier)
+            .withArgs(runtimeArgs)
+            .withBackendSupplier(testBackendSupplier)
             .withFeatureSupplier(featureSupplier)
             .build();
 
     }
 
-    private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {
-        if (isAmbiguous) {
-            Exception exception = new AmbiguousStepDefinitionsException(mock(PickleStep.class), Arrays.asList(match, match));
-            doThrow(exception).when(glue).stepDefinitionMatch(anyString(), (PickleStep) any());
-        } else {
-            when(glue.stepDefinitionMatch(anyString(), (PickleStep) any())).thenReturn(match);
-        }
+    private void mockMatch(Glue glue, PickleStepDefinitionMatch match) {
+        StepDefinition stepDefinition = new StubStepDefinition();
+        when(stepDefinition.matchedArguments(any(PickleStep.class))).thenReturn(Collections.<Argument>emptyList());
+        glue.addStepDefinition(stepDefinition);
     }
 
-    private void mockHook(RuntimeGlue glue, HookDefinition hook, HookType hookType) {
+    private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
         switch (hookType) {
             case Before:
-                when(glue.getBeforeHooks()).thenReturn(Collections.singletonList(hook));
+                glue.addBeforeHook(hook);
                 return;
             case After:
-                when(glue.getAfterHooks()).thenReturn(Collections.singletonList(hook));
+                glue.addAfterHook(hook);
                 return;
             case AfterStep:
-                when(glue.getAfterStepHooks()).thenReturn(Collections.singletonList(hook));
+                glue.addBeforeHook(hook);
                 return;
+            default:
+                throw new IllegalArgumentException(hookType.name());
         }
     }
 
