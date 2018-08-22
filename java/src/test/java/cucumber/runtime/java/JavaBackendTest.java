@@ -89,32 +89,26 @@ public class JavaBackendTest {
             throw new UnsupportedOperationException();
         }
 
-        @Override
         public List<HookDefinition> getBeforeHooks() {
             throw new UnsupportedOperationException();
         }
 
-        @Override
         public List<HookDefinition> getAfterStepHooks() {
             throw new UnsupportedOperationException();
         }
 
-        @Override
         public List<HookDefinition> getBeforeStepHooks() {
             return null;
         }
 
-        @Override
         public List<HookDefinition> getAfterHooks() {
             throw new UnsupportedOperationException();
         }
 
-        @Override
         public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
             throw new UnsupportedOperationException();
         }
 
-        @Override
         public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
             throw new UnsupportedOperationException();
         }

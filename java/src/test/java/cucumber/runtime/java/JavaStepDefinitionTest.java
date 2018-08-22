@@ -14,7 +14,6 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.GlueSupplier;
-import cucumber.runner.Glue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
@@ -79,16 +78,8 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        final cucumber.runtime.Glue glue = new Glue();
-        GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public cucumber.runtime.Glue get() {
-                return glue;
-            }
-        };
-        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier).get();
 
-        backend.loadGlue(glue, Collections.<String>emptyList());
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {

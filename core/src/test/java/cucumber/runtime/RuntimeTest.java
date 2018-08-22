@@ -19,6 +19,8 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.stepexpression.Argument;
@@ -53,6 +55,8 @@ import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
+
+    private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
     @Rule
@@ -293,7 +297,7 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), beforeHook, HookType.Before, feature);
+        Runtime runtime = createRuntimeWithMockedGlue(beforeHook, HookType.Before, feature);
         runtime.run();
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -500,12 +504,18 @@ public class RuntimeTest {
             .build();
     }
 
-    private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final HookDefinition hook, final HookType hookType,
-                                                final CucumberFeature feature, String... runtimeArgs) {
+    private Runtime createRuntimeWithMockedGlue(final HookDefinition hook,
+                                                final HookType hookType,
+                                                final CucumberFeature feature,
+                                                String... runtimeArgs) {
         TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<String> gluePaths) {
-                mockMatch(glue, match);
+                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
+                    for (Step step : child.getSteps()) {
+                        mockMatch(glue, step.getText());
+                    }
+                }
                 mockHook(glue, hook, hookType);
             }
         };
@@ -525,9 +535,8 @@ public class RuntimeTest {
 
     }
 
-    private void mockMatch(Glue glue, PickleStepDefinitionMatch match) {
-        StepDefinition stepDefinition = new StubStepDefinition();
-        when(stepDefinition.matchedArguments(any(PickleStep.class))).thenReturn(Collections.<Argument>emptyList());
+    private void mockMatch(Glue glue, String text) {
+        StepDefinition stepDefinition = new StubStepDefinition(text, TYPE_REGISTRY);
         glue.addStepDefinition(stepDefinition);
     }
 

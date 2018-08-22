@@ -57,8 +57,7 @@ public class TestNGCucumberRunner {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         filters = new Filters(runtimeOptions, rerunFilters);
-        RuntimeGlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
     }
 

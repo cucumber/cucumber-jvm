@@ -5,8 +5,6 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.GlueSupplier;
-import cucumber.runner.Glue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
@@ -157,7 +155,6 @@ public class FeatureRunnerTest {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        final Glue glue = mock(Glue.class);
 
         final TimeService timeServiceStub = new TimeService() {
             @Override

@@ -94,8 +94,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        GlueSupplier glueSupplier = new RuntimeGlueSupplier();
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         this.filters = new Filters(runtimeOptions, rerunFilters);
         this.junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
