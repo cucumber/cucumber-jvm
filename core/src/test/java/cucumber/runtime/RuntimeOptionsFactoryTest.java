@@ -150,6 +150,44 @@ public class RuntimeOptionsFactoryTest {
         assertTrue(pluginName + " not found among the plugins", found);
     }
 
+    @Test
+    public void create_with_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void create_with_extra_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithExtraGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void create_with_extra_glue_in_subclass_of_extra_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithExtraGlueOfExtraGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.user.hooks", "app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void create_with_extra_glue_in_subclass_of_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithExtraGlueOfGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.user.hooks", "app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+    }
+
+    @Test(expected = CucumberException.class)
+    public void cannot_create_with_glue_and_extra_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlueAndExtraGlue.class);
+        runtimeOptionsFactory.create();
+    }
+
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
     private static class Snippets {
@@ -215,6 +253,31 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(junit = {"option1", "option2=value"})
     private static class ClassWithJunitOption {
+        // empty
+    }
+
+    @CucumberOptions(glue = {"app.features.user.registration", "app.features.hooks"})
+    private static class ClassWithGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.hooks"})
+    private static class ClassWithExtraGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.user.hooks"})
+    private static class SubClassWithExtraGlueOfExtraGlue extends ClassWithExtraGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.user.hooks"})
+    private static class SubClassWithExtraGlueOfGlue extends ClassWithGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.hooks"}, glue = {"app.features.user.registration"})
+    private static class ClassWithGlueAndExtraGlue {
         // empty
     }
 
