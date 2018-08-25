@@ -57,7 +57,6 @@
         <mockito.version>2.18.3</mockito.version>
         <selenium.version>3.12.0</selenium.version>
         <htmlunit.version>2.30.1</htmlunit.version>
-        <driver-binary-downloader-maven-plugin.version>1.0.17</driver-binary-downloader-maven-plugin.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <weld-se.version>2.4.4.Final</weld-se.version>
@@ -409,11 +408,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>com.github.detro</groupId>
-                <artifactId>ghostdriver</artifactId>
-                <version>2.0.0</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.webbitserver</groupId>
@@ -445,26 +439,6 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android</artifactId>
-                <version>${android.version}</version>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android-test</artifactId>
-                <version>${android.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>

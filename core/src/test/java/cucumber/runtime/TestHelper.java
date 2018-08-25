@@ -323,11 +323,11 @@ public class TestHelper {
 
     private static void mockStepResult(Result stepResult, PickleStepDefinitionMatch matchStep) throws Throwable {
         if (stepResult.is(Result.Type.PENDING)) {
-            doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
+            doThrow(new PendingException()).when(matchStep).runStep(any(Scenario.class));
         } else if (stepResult.is(Result.Type.FAILED)) {
-            doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
+            doThrow(stepResult.getError()).when(matchStep).runStep(any(Scenario.class));
         } else if (stepResult.is(Result.Type.SKIPPED) && stepResult.getError() != null) {
-            doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
+            doThrow(stepResult.getError()).when(matchStep).runStep(any(Scenario.class));
         } else if (!stepResult.is(Result.Type.PASSED) &&
                    !stepResult.is(Result.Type.SKIPPED)) {
             fail("Cannot mock step to the result: " + stepResult.getStatus());
@@ -340,10 +340,10 @@ public class TestHelper {
 
     private static void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations,
             final List<Answer<Object>> hookActions) throws Throwable {
-        List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-        List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-        List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
-        List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> beforeHooks = new ArrayList<>();
+        List<HookDefinition> afterHooks = new ArrayList<>();
+        List<HookDefinition> beforeStepHooks = new ArrayList<>();
+        List<HookDefinition> afterStepHooks = new ArrayList<>();
         for (int i = 0; i < hooks.size(); ++i) {
             String hookLocation = hookLocations.size() > i ? hookLocations.get(i) : null;
             Answer<Object> hookAction  = hookActions.size() > i ? hookActions.get(i) : null;

@@ -18,7 +18,7 @@ public class EventBusTest {
     public void handlers_receive_the_events_they_registered_for() {
         EventHandler<TestStepFinished> handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        Result result = mock(Result.class);
+        Result result = new Result(Result.Type.PASSED, 0L, null);
         TestCase testCase = mock(TestCase.class);
         TestStepFinished event = new TestStepFinished(0L, testCase, testStep, result);
 

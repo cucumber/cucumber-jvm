@@ -31,7 +31,6 @@ public class JavaStepDefinitionTransposeTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private static final String ENGLISH = "en";
     private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
 
     public static class StepDefs {
@@ -122,7 +121,7 @@ public class JavaStepDefinitionTransposeTest {
         List<Argument> arguments = stepDefinition.matchedArguments(stepWithTable);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithTable);
-        stepDefinitionMatch.runStep(ENGLISH, null);
+        stepDefinitionMatch.runStep(null);
         return stepDefs;
     }
 

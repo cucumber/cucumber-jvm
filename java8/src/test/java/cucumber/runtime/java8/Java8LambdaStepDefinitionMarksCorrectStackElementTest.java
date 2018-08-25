@@ -38,7 +38,7 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
             }
         });
 
-        stepDefinition.execute("en", new Object[0]);
+        stepDefinition.execute(new Object[0]);
     }
 
 

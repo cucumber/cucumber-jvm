@@ -11,10 +11,10 @@ import org.mockito.Mockito;
 import java.io.Closeable;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -36,10 +36,8 @@ public class UsageFormatterTest {
     public void resultWithoutSkippedSteps() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = mock(Result.class);
-        when(result.is(Result.Type.PASSED)).thenReturn(false);
-
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), mockTestStep(), result));
+        Result result = new Result(Result.Type.FAILED, 0L, null);
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -49,9 +47,8 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         TestStep testStep = mockTestStep();
-        Result result = mock(Result.class);
-        when(result.getDuration()).thenReturn(12345L);
-        when(result.is(Result.Type.PASSED)).thenReturn(true);
+        Result result = new Result(Result.Type.PASSED, 12345L, null);
+
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), testStep, result));
 
@@ -70,11 +67,9 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         TestStep testStep = mockTestStep();
-        Result result = mock(Result.class);
-        when(result.getDuration()).thenReturn(0L);
-        when(result.is(Result.Type.PASSED)).thenReturn(true);
+        Result result = new Result(Result.Type.PASSED, 0L, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -91,11 +86,9 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         PickleStepTestStep testStep = mockTestStep();
-        Result result = mock(Result.class);
-        when(result.getDuration()).thenReturn(null);
-        when(result.is(Result.Type.PASSED)).thenReturn(true);
+        Result result = new Result(Result.Type.PASSED, null, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l,mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L,mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -115,9 +108,9 @@ public class UsageFormatterTest {
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
         stepDuration.duration = BigDecimal.valueOf(12345678L);
         stepDuration.location = "location.feature";
-        stepContainer.durations = Arrays.asList(stepDuration);
+        stepContainer.durations = asList(stepDuration);
 
-        usageFormatter.usageMap.put("aStep", Arrays.asList(stepContainer));
+        usageFormatter.usageMap.put("aStep", asList(stepContainer));
 
         usageFormatter.finishReport();
 
@@ -133,12 +126,12 @@ public class UsageFormatterTest {
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
         stepDuration.duration = BigDecimal.valueOf(12345678L);
         stepDuration.location = "location.feature";
-        stepContainer.durations = Arrays.asList(stepDuration);
+        stepContainer.durations = asList(stepDuration);
 
-        usageFormatter.usageMap.put("aStep", Arrays.asList(stepContainer));
+        usageFormatter.usageMap.put("aStep", asList(stepContainer));
 
         UsageFormatter.UsageStatisticStrategy usageStatisticStrategy = mock(UsageFormatter.UsageStatisticStrategy.class);
-        when(usageStatisticStrategy.calculate(Arrays.asList(12345678L))).thenReturn(23456L);
+        when(usageStatisticStrategy.calculate(asList(12345678L))).thenReturn(23456L);
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
 
         usageFormatter.finishReport();

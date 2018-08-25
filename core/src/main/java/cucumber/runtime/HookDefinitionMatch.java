@@ -10,12 +10,12 @@ public class HookDefinitionMatch implements StepDefinitionMatch {
     }
 
     @Override
-    public void runStep(String language, Scenario scenario) throws Throwable {
+    public void runStep(Scenario scenario) throws Throwable {
         hookDefinition.execute(scenario);
     }
 
     @Override
-    public void dryRunStep(String language, Scenario scenario) throws Throwable {
+    public void dryRunStep(Scenario scenario) {
         // Do nothing
     }
 

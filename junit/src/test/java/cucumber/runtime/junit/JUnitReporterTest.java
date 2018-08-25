@@ -285,7 +285,6 @@ public class JUnitReporterTest {
         setUpNoStepNotifierAndStepErrors();
         Throwable exception = new PendingException();
         Result result = mockResult(Result.Type.FAILED, exception);
-        when(result.getError()).thenReturn(exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -462,18 +461,11 @@ public class JUnitReporterTest {
     }
 
     private Result mockResult(Result.Type status, Throwable exception) {
-        Result result = mockResult(status);
-        when(result.getError()).thenReturn(exception);
-        return result;
+        return new Result(status, 0L, exception);
     }
 
     private Result mockResult(Result.Type status) {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(status);
-        for (Result.Type type : Result.Type.values()) {
-            when(result.is(type)).thenReturn(type == status);
-        }
-        return result;
+        return new Result(status, 0L, null);
     }
 
     private PickleRunner mockPickleRunner(List<PickleStep> runnerSteps) {

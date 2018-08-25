@@ -45,7 +45,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(String language, Object[] args) {
+    public void execute(Object[] args) {
         assertEquals(parameters.size(), args.length);
         for (int i = 0; i < args.length; i++) {
             assertEquals(parameters.get(i), args[i].getClass());
