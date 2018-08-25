@@ -36,6 +36,8 @@ import static org.mockito.quality.Strictness.STRICT_STUBS;
 
 public class JavaHookTest {
 
+    private final PickleTag pickleTagBar = new PickleTag(mock(PickleLocation.class), "@bar");
+    private final PickleTag pickleTagZap = new PickleTag(mock(PickleLocation.class), "@zap");
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule().strictness(STRICT_STUBS);
 
@@ -98,7 +100,7 @@ public class JavaHookTest {
     }
 
     @Test
-    public void before_step_hooks_get_registered() throws Exception {
+    public void before_step_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
@@ -107,7 +109,7 @@ public class JavaHookTest {
     }
 
     @Test
-    public void after_step_hooks_get_registered() throws Exception {
+    public void after_step_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
@@ -115,7 +117,7 @@ public class JavaHookTest {
     }
 
     @Test
-    public void after_hooks_get_registered() throws Exception {
+    public void after_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
@@ -128,7 +130,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
-        verify(glue).addBeforeHook(argThat(isHookWithOrder(1)));
+        verify(glue).addAfterHook(argThat(isHookWithOrder(1)));
 
     }
 
@@ -146,7 +148,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        verify(glue).addBeforeHook(argThat(isHookWithOrder(1000)));
+        verify(glue).addBeforeHook(argThat(isHookWithOrder(10000)));
     }
 
     @Test
@@ -154,7 +156,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        verify(glue).addBeforeHook(argThat(isHookThatMatches(new PickleTag(mock(PickleLocation.class), "@bar"), new PickleTag(mock(PickleLocation.class), "@zap"))));
+        verify(glue).addBeforeHook(argThat(isHookThatMatches(pickleTagBar, pickleTagZap)));
     }
 
     private static ArgumentMatcher<JavaHookDefinition> isHookThatMatches(final PickleTag... pickleTag) {
@@ -171,7 +173,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        verify(glue).addBeforeHook(argThat(not(isHookThatMatches(new PickleTag(mock(PickleLocation.class), "@bar")))));
+        verify(glue).addBeforeHook(not(argThat(isHookThatMatches(pickleTagBar))));
     }
 
     @Test
