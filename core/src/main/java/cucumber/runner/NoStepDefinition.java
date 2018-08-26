@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-class NoStepDefinition implements StepDefinition {
+final class NoStepDefinition implements StepDefinition {
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {

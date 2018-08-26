@@ -4,6 +4,7 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
+import cucumber.runner.EventBus;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;

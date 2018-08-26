@@ -1,11 +1,10 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
-import cucumber.runner.EventBus;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -20,7 +19,7 @@ import java.util.Set;
 
 import static java.util.Collections.max;
 
-public class ScenarioImpl implements Scenario {
+class ScenarioImpl implements Scenario {
 
     private final List<Result> stepResults = new ArrayList<Result>();
     private final List<PickleTag> tags;
@@ -31,7 +30,7 @@ public class ScenarioImpl implements Scenario {
     private final EventBus bus;
     private final TestCase testCase;
 
-    public ScenarioImpl(EventBus bus, TestCase testCase, PickleEvent pickleEvent) {
+    ScenarioImpl(EventBus bus, TestCase testCase, PickleEvent pickleEvent) {
         this.bus = bus;
         this.testCase = testCase;
         Pickle pickle = pickleEvent.pickle;

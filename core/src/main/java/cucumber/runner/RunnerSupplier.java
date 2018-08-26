@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.runner.Runner;
 

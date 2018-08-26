@@ -12,9 +12,8 @@ import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
+class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
     private final transient String featurePath;
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
@@ -137,7 +136,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getPattern();
     }
 
-    public StackTraceElement getStepLocation() {
+    StackTraceElement getStepLocation() {
         return new StackTraceElement("✽", step.getText(), featurePath, getStepLine(step));
     }
 
@@ -154,7 +153,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
         return stepDefinition.getLocation(false);
     }
 
-    public static int getStepLine(PickleStep step) {
+    private static int getStepLine(PickleStep step) {
         return step.getLocations().get(step.getLocations().size() - 1).getLine();
     }
 }

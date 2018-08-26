@@ -1,18 +1,16 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
-import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.runner.PickleStepDefinitionMatch;
-import io.cucumber.datatable.DataTable;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
-import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTable;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -121,8 +119,12 @@ public class JavaStepDefinitionTransposeTest {
         PickleStep stepWithTable = new PickleStep("some text", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
         List<Argument> arguments = stepDefinition.matchedArguments(stepWithTable);
 
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithTable);
-        stepDefinitionMatch.runStep(ENGLISH, null);
+        List<Object> result = new ArrayList<>();
+        for (Argument argument : arguments) {
+            result.add(argument.getValue());
+        }
+        stepDefinition.execute(ENGLISH, result.toArray(new Object[0]));
+
         return stepDefs;
     }
 
@@ -147,6 +149,5 @@ public class JavaStepDefinitionTransposeTest {
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "99.5"), new PickleCell(mock(PickleLocation.class), "-0.5"), new PickleCell(mock(PickleLocation.class), "999"))));
         return rows;
     }
-
 
 }

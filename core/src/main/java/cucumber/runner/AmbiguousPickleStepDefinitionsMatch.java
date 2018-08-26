@@ -6,7 +6,7 @@ import io.cucumber.stepexpression.Argument;
 
 import java.util.Collections;
 
-class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
+final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
     private AmbiguousStepDefinitionsException exception;
 
     AmbiguousPickleStepDefinitionsMatch(String uri, PickleStep step, AmbiguousStepDefinitionsException e) {

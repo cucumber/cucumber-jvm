@@ -5,7 +5,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-public class AmbiguousStepDefinitionsException extends CucumberException {
+final public class AmbiguousStepDefinitionsException extends CucumberException {
     private final List<PickleStepDefinitionMatch> matches;
 
     AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {

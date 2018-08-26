@@ -7,6 +7,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;

@@ -1,10 +1,12 @@
-package cucumber.runtime;
+package cucumber.runner;
 
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.RuntimeOptions;
 
 /**
- * Returns a distinct runner.
+ * Returns a single unique runner.
+ *
+ * Not thread safe.
  */
 public class SingletonRunnerSupplier implements RunnerSupplier {
 
@@ -14,7 +16,7 @@ public class SingletonRunnerSupplier implements RunnerSupplier {
     private Runner runner;
 
 
-    SingletonRunnerSupplier(
+    public SingletonRunnerSupplier(
         RuntimeOptions runtimeOptions,
         EventBus eventBus,
         BackendSupplier backendSupplier

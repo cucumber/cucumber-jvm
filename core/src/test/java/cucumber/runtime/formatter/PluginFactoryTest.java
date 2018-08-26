@@ -92,7 +92,7 @@ public class PluginFactoryTest {
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
             EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
-            Result result = new Result(Result.Type.PASSED, null, null);
+            Result result = new Result(Result.Type.PASSED, 0L, null);
             TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 

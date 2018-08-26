@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
 
-class FailedPickleStepInstantiationMatch extends PickleStepDefinitionMatch {
+final class FailedPickleStepInstantiationMatch extends PickleStepDefinitionMatch {
     private final Throwable throwable;
 
     FailedPickleStepInstantiationMatch(String uri, PickleStep step, Throwable throwable) {

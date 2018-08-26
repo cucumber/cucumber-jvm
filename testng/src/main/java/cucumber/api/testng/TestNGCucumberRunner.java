@@ -16,7 +16,7 @@ import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;

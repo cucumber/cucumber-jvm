@@ -6,7 +6,7 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.io.ClasspathResourceLoader;

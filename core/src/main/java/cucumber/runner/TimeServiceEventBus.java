@@ -1,6 +1,6 @@
 package cucumber.runner;
 
-public class TimeServiceEventBus extends AbstractEventBus {
+public final class TimeServiceEventBus extends AbstractEventBus {
     private final TimeService stopWatch;
 
     public TimeServiceEventBus(TimeService stopWatch) {

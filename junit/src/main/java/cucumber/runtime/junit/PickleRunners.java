@@ -1,9 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.runner.Runner;
-import cucumber.runtime.RunnerSupplier;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
-import cucumber.runtime.Supplier;
+import cucumber.runner.RunnerSupplier;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;

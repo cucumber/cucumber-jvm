@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-class Glue implements cucumber.runtime.Glue {
-    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
-    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
+final class Glue implements cucumber.runtime.Glue {
+    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<>();
+    final List<HookDefinition> beforeHooks = new ArrayList<>();
+    final List<HookDefinition> beforeStepHooks = new ArrayList<>();
+    final List<HookDefinition> afterHooks = new ArrayList<>();
+    final List<HookDefinition> afterStepHooks = new ArrayList<>();
+    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<>();
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -55,23 +55,23 @@ class Glue implements cucumber.runtime.Glue {
         Collections.sort(afterStepHooks, new HookComparator(false));
     }
 
-    public List<HookDefinition> getBeforeHooks() {
+    List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
     }
 
-    public List<HookDefinition> getBeforeStepHooks() {
+    List<HookDefinition> getBeforeStepHooks() {
         return beforeStepHooks;
     }
 
-    public List<HookDefinition> getAfterHooks() {
+    List<HookDefinition> getAfterHooks() {
         return afterHooks;
     }
 
-    public List<HookDefinition> getAfterStepHooks() {
+    List<HookDefinition> getAfterStepHooks() {
         return afterStepHooks;
     }
 
-    public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);

@@ -6,6 +6,8 @@ import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
+import cucumber.runner.EventBus;
+import cucumber.runtime.HookDefinition;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -13,9 +15,11 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 
 public class HookTestStepTest {
-    private final HookDefinitionMatch definitionMatch = mock(HookDefinitionMatch.class);
+    private final HookDefinition hookDefintion = mock(HookDefinition.class);
+    private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = mock(TestCase.class);
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
@@ -26,9 +30,9 @@ public class HookTestStepTest {
     public void run_does_run() throws Throwable {
         step.run(testCase, bus, language, scenario, false);
 
-        InOrder order = inOrder(bus, definitionMatch);
+        InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
-        order.verify(definitionMatch).runStep(language, scenario);
+        order.verify(hookDefintion).execute(scenario);
         order.verify(bus).send(isA(TestStepFinished.class));
     }
 
@@ -36,9 +40,9 @@ public class HookTestStepTest {
     public void run_does_dry_run() throws Throwable {
         step.run(testCase, bus, language, scenario, true);
 
-        InOrder order = inOrder(bus, definitionMatch);
+        InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
-        order.verify(definitionMatch).dryRunStep(language, scenario);
+        order.verify(hookDefintion, never()).execute(scenario);
         order.verify(bus).send(isA(TestStepFinished.class));
     }
 

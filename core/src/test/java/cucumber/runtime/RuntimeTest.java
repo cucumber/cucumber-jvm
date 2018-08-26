@@ -8,7 +8,6 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.runner.EventBus;
-import cucumber.runner.PickleStepDefinitionMatch;
 import cucumber.runner.TestBackendSupplier;
 import cucumber.runner.TestHelper;
 import cucumber.runner.TimeService;
@@ -21,16 +20,14 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
-import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,12 +38,9 @@ import java.util.Map;
 
 import static cucumber.runner.TestHelper.feature;
 import static cucumber.runner.TestHelper.result;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollectionOf;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -295,7 +289,7 @@ public class RuntimeTest {
                 "    When second step\n" +
                 "    Then third step\n");
         HookDefinition beforeHook = mock(HookDefinition.class);
-        when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
+        when(beforeHook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
 
         Runtime runtime = createRuntimeWithMockedGlue(beforeHook, HookType.Before, feature);
         runtime.run();
@@ -316,7 +310,7 @@ public class RuntimeTest {
             "    Then third step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Then second step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
@@ -357,7 +351,7 @@ public class RuntimeTest {
             "    Examples: examples 2 name\n" +
             "      |   x    |   y   |\n" +
             "      | second | third |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
@@ -393,7 +387,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() throws Throwable {
+    public void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
         CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
@@ -411,7 +405,7 @@ public class RuntimeTest {
             "  Scenario: scenario_3 name\n" +
             "    Given first step\n");
 
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
 
         FormatterSpy formatterSpy = new FormatterSpy();

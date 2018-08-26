@@ -76,9 +76,6 @@ abstract class TestStep implements cucumber.api.TestStep {
     }
 
     private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
-        if (status == Result.Type.SKIPPED && error == null) {
-            return Result.SKIPPED;
-        }
         if (status == Result.Type.UNDEFINED) {
             return Result.UNDEFINED;
         }

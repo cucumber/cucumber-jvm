@@ -1,19 +1,16 @@
 package cucumber.runner;
 
-import cucumber.runner.AmbiguousStepDefinitionsException;
-import cucumber.runner.Glue;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import io.cucumber.stepexpression.TypeRegistry;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;

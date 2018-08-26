@@ -4,7 +4,7 @@ import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 
-class HookDefinitionMatch implements StepDefinitionMatch {
+final class HookDefinitionMatch implements StepDefinitionMatch {
     private final HookDefinition hookDefinition;
 
     HookDefinitionMatch(HookDefinition hookDefinition) {

@@ -1,10 +1,11 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
 import cucumber.runner.EventBus;
+import cucumber.runner.ScenarioImpl;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -25,18 +26,18 @@ public class ScenarioResultTest {
     private ScenarioImpl s = new ScenarioImpl(bus, mock(TestCase.class), pickleEvent());
 
     @Test
-    public void no_steps_is_undefined() throws Exception {
+    public void no_steps_is_undefined() {
         assertEquals(Result.Type.UNDEFINED, s.getStatus());
     }
 
     @Test
-    public void one_passed_step_is_passed() throws Exception {
+    public void one_passed_step_is_passed() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         assertEquals(Result.Type.PASSED, s.getStatus());
     }
 
     @Test
-    public void passed_failed_pending_undefined_skipped_is_failed() throws Exception {
+    public void passed_failed_pending_undefined_skipped_is_failed() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.FAILED, 0L, null));
         s.add(new Result(Result.Type.PENDING, 0L, null));
@@ -47,7 +48,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() throws Exception {
+    public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
         assertEquals(Result.Type.SKIPPED, s.getStatus());
@@ -55,7 +56,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_pending_undefined_skipped_is_pending() throws Exception {
+    public void passed_pending_undefined_skipped_is_pending() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.UNDEFINED, 0L, null));
         s.add(new Result(Result.Type.PENDING, 0L, null));
@@ -65,7 +66,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_undefined_skipped_is_undefined() throws Exception {
+    public void passed_undefined_skipped_is_undefined() {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.UNDEFINED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));

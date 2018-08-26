@@ -9,6 +9,7 @@ import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
+import cucumber.runner.CanonicalOrderEventPublisher;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Utils;
 

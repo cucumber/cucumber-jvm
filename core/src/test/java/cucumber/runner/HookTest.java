@@ -1,10 +1,10 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Scenario;
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
-import cucumber.runner.TimeService;
-import cucumber.runner.TimeServiceEventBus;
+import cucumber.runtime.Backend;
+import cucumber.runtime.Glue;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.RuntimeOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
@@ -47,7 +47,7 @@ public class HookTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) {
-                Glue glue = invocation.getArgument(0);
+                cucumber.runtime.Glue glue = invocation.getArgument(0);
                 glue.addBeforeHook(hook);
                 return null;
             }

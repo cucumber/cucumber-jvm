@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Runner {
+public final class Runner {
     private final Glue glue = new Glue();
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
