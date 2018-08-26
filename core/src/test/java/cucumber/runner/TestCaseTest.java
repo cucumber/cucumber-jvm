@@ -5,21 +5,30 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StubStepDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
+import static cucumber.api.Result.Type.PASSED;
+import static cucumber.api.Result.Type.UNDEFINED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
 public class TestCaseTest {
@@ -30,7 +39,7 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        when(testStep.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(UNDEFINED));
 
         TestCase testCase = createTestCase(testStep);
         testCase.run(bus);
@@ -46,9 +55,9 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
+        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(PASSED));
         PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
+        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(PASSED));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
@@ -63,7 +72,7 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(UNDEFINED));
         PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
         when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
@@ -80,7 +89,7 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
+        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(UNDEFINED));
         PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
         when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
