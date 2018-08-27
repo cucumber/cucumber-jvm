@@ -1,13 +1,13 @@
 package cucumber.runner;
 
-import cucumber.api.Scenario;
-import cucumber.api.TestCase;
-import cucumber.runner.EventBus;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -57,25 +57,27 @@ public class ScenarioTest {
     }
 
     private Scenario createScenarioWithFeatureFileUri(String uri) {
-        return new ScenarioImpl(mock(EventBus.class), mock(cucumber.api.TestCase.class), new PickleEvent(uri, mockPickle()));
-    }
-
-    private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
-        return new ScenarioImpl(mock(EventBus.class), mock(cucumber.api.TestCase.class), new PickleEvent(uri, mockPickle(locations)));
+        return createScenarioWithFeatureFileUriAndScenarioLocations(uri, asList(new PickleLocation(1, 1)));
     }
 
     private Scenario createScenarioWithScenarioLocations(List<PickleLocation> locations) {
-        return new ScenarioImpl(mock(EventBus.class), mock(TestCase.class), new PickleEvent("uri", mockPickle(locations)));
+        return createScenarioWithFeatureFileUriAndScenarioLocations("uri", locations);
     }
 
-    private Pickle mockPickle() {
-        return mockPickle(asList(new PickleLocation(1, 1)));
-    }
-
-    private Pickle mockPickle(List<PickleLocation> locations) {
-        Pickle pickle = mock(Pickle.class);
-        when(pickle.getLocations()).thenReturn(locations);
-        return pickle;
+    private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
+        return new Scenario(mock(EventBus.class), new TestCase(
+            Collections.<PickleStepTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            new PickleEvent(uri, new Pickle(
+                "name",
+                "en",
+                Collections.<PickleStep>emptyList(),
+                Collections.<PickleTag>emptyList(),
+                locations
+            )),
+            false
+        ));
     }
 
     private String uri(String uri) {

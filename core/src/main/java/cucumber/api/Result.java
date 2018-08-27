@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-public class Result {
+public final class Result {
 
     public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
 

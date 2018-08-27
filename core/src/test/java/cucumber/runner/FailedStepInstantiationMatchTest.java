@@ -1,14 +1,12 @@
 package cucumber.runner;
 
 import cucumber.api.Scenario;
-import cucumber.runner.FailedPickleStepInstantiationMatch;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,12 +29,10 @@ public class FailedStepInstantiationMatchTest {
     @Test(expected=Exception.class)
     public void throws_the_exception_passed_to_the_match_when_run() throws Throwable {
         match.runStep(mock(Scenario.class));
-        fail("The exception passed to the FailedStepInstatiationMetch should be thrown");
     }
 
     @Test(expected=Exception.class)
     public void throws_the_exception_passed_to_the_match_when_dry_run() throws Throwable {
         match.dryRunStep(mock(Scenario.class));
-        fail("The exception passed to the FailedStepInstatiationMetch should be thrown");
     }
 }

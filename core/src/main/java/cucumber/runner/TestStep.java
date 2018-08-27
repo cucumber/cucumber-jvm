@@ -2,7 +2,6 @@ package cucumber.runner;
 
 import cucumber.api.Pending;
 import cucumber.api.Result;
-import cucumber.api.Scenario;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
@@ -32,7 +31,16 @@ abstract class TestStep implements cucumber.api.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    Result run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
+    /**
+     * Runs a test step.
+     *
+     * @param testCase
+     * @param bus
+     * @param scenario
+     * @param skipSteps
+     * @return true iff subsequent skippable steps should be skipped
+     */
+    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, testCase, this));
         Result.Type status;
@@ -45,8 +53,9 @@ abstract class TestStep implements cucumber.api.TestStep {
         }
         Long stopTime = bus.getTime();
         Result result = mapStatusToResult(status, error, stopTime - startTime);
+        scenario.add(result);
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        return result;
+        return !result.is(Result.Type.PASSED);
     }
 
     private Result.Type executeStep(Scenario scenario, boolean skipSteps) throws Throwable {

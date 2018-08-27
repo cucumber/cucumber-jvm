@@ -1,14 +1,14 @@
 package cucumber.runner;
 
+import cucumber.api.Scenario;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
+import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.stepexpression.Argument;
-import cucumber.api.Scenario;
-import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         if (parameterCount != null && argumentCount != parameterCount) {
             throw arityMismatch(parameterCount);
         }
-        List<Object> result = new ArrayList<Object>();
+        List<Object> result = new ArrayList<>();
         try {
             for (Argument argument : getArguments()) {
                 result.add(argument.getValue());

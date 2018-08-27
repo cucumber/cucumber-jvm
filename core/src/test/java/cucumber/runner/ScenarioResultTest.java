@@ -1,29 +1,37 @@
 package cucumber.runner;
 
 import cucumber.api.Result;
-import cucumber.api.TestCase;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
-import cucumber.runner.EventBus;
-import cucumber.runner.ScenarioImpl;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
-import static java.util.Arrays.asList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.argThat;
 
 public class ScenarioResultTest {
 
     private EventBus bus = mock(EventBus.class);
-    private ScenarioImpl s = new ScenarioImpl(bus, mock(TestCase.class), pickleEvent());
+    private Scenario s = new Scenario(
+        bus,
+        new TestCase(
+            Collections.<PickleStepTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            mock(PickleEvent.class),
+            false
+        )
+    );
 
     @Test
     public void no_steps_is_undefined() {
@@ -109,14 +117,6 @@ public class ScenarioResultTest {
         assertThat(s.getError(), sameInstance(failedError));
     }
 
-    private PickleEvent pickleEvent() {
-        Pickle pickle = mock(Pickle.class);
-        when(pickle.getLocations()).thenReturn(asList(new PickleLocation(1, 1)));
-        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        return pickleEvent;
-    }
-
-
     private final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
         private byte[] data;
         private String mimeType;
@@ -129,7 +129,7 @@ public class ScenarioResultTest {
         @Override
         public boolean matches(EmbedEvent argument) {
             return (argument != null &&
-                argument.data.equals(data) && argument.mimeType.equals(mimeType));
+                Arrays.equals(argument.data, data) && argument.mimeType.equals(mimeType));
         }
     }
 

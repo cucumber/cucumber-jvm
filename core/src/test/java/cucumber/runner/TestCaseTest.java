@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import static cucumber.api.HookType.AfterStep;
 import static cucumber.api.HookType.BeforeStep;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
@@ -116,7 +117,7 @@ public class TestCaseTest {
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(Arrays.asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickleEvent(), false);
+        return new TestCase(asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickleEvent(), false);
     }
 
     private PickleEvent pickleEvent() {

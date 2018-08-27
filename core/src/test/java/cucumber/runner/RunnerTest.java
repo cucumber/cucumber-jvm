@@ -28,6 +28,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -70,8 +71,8 @@ public class RunnerTest {
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
-        inOrder.verify(beforeHook).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(afterHook).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(beforeHook).execute(any(Scenario.class));
+        inOrder.verify(afterHook).execute(any(Scenario.class));
         inOrder.verify(backend).disposeWorld();
     }
 
@@ -93,8 +94,8 @@ public class RunnerTest {
         runnerSupplier.get().runPickle(pickleEventMatchingStepDefinitions);
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
-        inOrder.verify(failingBeforeHook).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(stepDefinition, never()).execute(ArgumentMatchers.<Object[]>any());
+        inOrder.verify(failingBeforeHook).execute(any(Scenario.class));
+        inOrder.verify(stepDefinition, never()).execute(any(Object[].class));
     }
 
     @Test
@@ -116,8 +117,8 @@ public class RunnerTest {
         runnerSupplier.get().runPickle(pickleEventMatchingStepDefinitions);
 
         InOrder inOrder = inOrder(afteStepHook, stepDefinition);
-        inOrder.verify(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
-        inOrder.verify(afteStepHook).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(stepDefinition).execute(any(Object[].class));
+        inOrder.verify(afteStepHook).execute(any(Scenario.class));
     }
 
     @Test
@@ -140,15 +141,15 @@ public class RunnerTest {
         runnerSupplier.get().runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
-        inOrder.verify(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
-        inOrder.verify(afteStepHook1).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(afteStepHook2).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(stepDefinition).execute(any(Object[].class));
+        inOrder.verify(afteStepHook1).execute(any(Scenario.class));
+        inOrder.verify(afteStepHook2).execute(any(Scenario.class));
     }
 
     @Test
     public void hooks_execute_also_after_failure() throws Throwable {
         final HookDefinition failingBeforeHook = addBeforeHook();
-        doThrow(RuntimeException.class).when(failingBeforeHook).execute(ArgumentMatchers.<Scenario>any());
+        doThrow(RuntimeException.class).when(failingBeforeHook).execute(any(Scenario.class));
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();
 
@@ -165,9 +166,9 @@ public class RunnerTest {
         runnerSupplier.get().runPickle(createPickleEventWithSteps(asList(step)));
 
         InOrder inOrder = inOrder(failingBeforeHook, beforeHook, afterHook);
-        inOrder.verify(failingBeforeHook).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(beforeHook).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(afterHook).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(failingBeforeHook).execute(any(Scenario.class));
+        inOrder.verify(beforeHook).execute(any(Scenario.class));
+        inOrder.verify(afterHook).execute(any(Scenario.class));
     }
 
     @Test
@@ -181,7 +182,7 @@ public class RunnerTest {
             }
         };
         runnerSupplier.get().runPickle(pickleEventMatchingStepDefinitions);
-        verify(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
+        verify(stepDefinition).execute(any(Object[].class));
     }
 
     @Test
@@ -197,7 +198,7 @@ public class RunnerTest {
         };
 
         runnerSupplier.get().runPickle(pickleEvent);
-        verify(stepDefinition, never()).execute(ArgumentMatchers.<Object[]>any());
+        verify(stepDefinition, never()).execute(any(Object[].class));
     }
 
     @Test
@@ -221,9 +222,9 @@ public class RunnerTest {
 
         runnerSupplier.get().runPickle(createPickleEventWithSteps(asList(step)));
 
-        verify(beforeHook, never()).execute(ArgumentMatchers.<Scenario>any());
-        verify(afterStepHook, never()).execute(ArgumentMatchers.<Scenario>any());
-        verify(afterHook, never()).execute(ArgumentMatchers.<Scenario>any());
+        verify(beforeHook, never()).execute(any(Scenario.class));
+        verify(afterStepHook, never()).execute(any(Scenario.class));
+        verify(afterHook, never()).execute(any(Scenario.class));
     }
 
     @Test
@@ -244,18 +245,18 @@ public class RunnerTest {
 
         runnerSupplier.get().runPickle(createEmptyPickleEvent());
 
-        verify(beforeHook, never()).execute(ArgumentMatchers.<Scenario>any());
-        verify(afterStepHook, never()).execute(ArgumentMatchers.<Scenario>any());
-        verify(afterHook, never()).execute(ArgumentMatchers.<Scenario>any());
+        verify(beforeHook, never()).execute(any(Scenario.class));
+        verify(afterStepHook, never()).execute(any(Scenario.class));
+        verify(afterHook, never()).execute(any(Scenario.class));
     }
 
     @Test
-    public void backends_are_asked_for_snippets_for_undefined_steps() throws Throwable {
+    public void backends_are_asked_for_snippets_for_undefined_steps() {
         PickleStep step = mock(PickleStep.class);
         Backend backend = mock(Backend.class);
         Runner runner = new Runner(bus, singletonList(backend), runtimeOptions);
         runner.runPickle(createPickleEventWithSteps(asList(step)));
-        verify(backend).getSnippet(ArgumentMatchers.eq(step), ArgumentMatchers.anyString(), ArgumentMatchers.<FunctionNameGenerator>any());
+        verify(backend).getSnippet(ArgumentMatchers.eq(step), anyString(), any(FunctionNameGenerator.class));
     }
 
     private HookDefinition addBeforeHook() {
@@ -272,7 +273,7 @@ public class RunnerTest {
 
     private HookDefinition addHook() {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
         return hook;
     }
 
@@ -281,7 +282,7 @@ public class RunnerTest {
     }
 
     private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions) {
-        List<PickleStep> steps = new ArrayList<PickleStep>(stepDefinitions.size());
+        List<PickleStep> steps = new ArrayList<>(stepDefinitions.size());
         int i = 0;
         for (StepDefinition stepDefinition : stepDefinitions) {
             PickleStep step = mock(PickleStep.class);

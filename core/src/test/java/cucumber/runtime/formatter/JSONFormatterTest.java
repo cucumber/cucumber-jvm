@@ -14,6 +14,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
@@ -1126,7 +1127,7 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -1170,7 +1171,7 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatter(final List<String> featurePaths) {
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);

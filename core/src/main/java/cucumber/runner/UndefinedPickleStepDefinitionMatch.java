@@ -13,7 +13,7 @@ class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
     }
 
     @Override
-    public void runStep(Scenario scenario) throws Throwable {
+    public void runStep(Scenario scenario) {
         throw new UndefinedStepDefinitionException();
     }
 
