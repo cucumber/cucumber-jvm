@@ -1,104 +1,120 @@
 package cucumber.runner;
 
-import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
-import cucumber.runner.EventBus;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StubStepDefinition;
+import cucumber.runtime.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import io.cucumber.stepexpression.Argument;
-import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Locale;
 
-import static cucumber.api.Result.Type.PASSED;
-import static cucumber.api.Result.Type.UNDEFINED;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
+import static cucumber.api.HookType.AfterStep;
+import static cucumber.api.HookType.BeforeStep;
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 public class TestCaseTest {
     private final static String ENGLISH = "en";
 
+    private final EventBus bus = mock(EventBus.class);
+
+
+    private final PickleStepDefinitionMatch definitionMatch1 = mock(PickleStepDefinitionMatch.class);
+    private HookDefinition beforeStep1HookDefinition1 = mock(HookDefinition.class);
+    private HookDefinition afterStep1HookDefinition1 = mock(HookDefinition.class);
+
+    private final PickleStepTestStep testStep1 = new PickleStepTestStep(
+        "uri",
+        mock(PickleStep.class),
+        singletonList(new HookTestStep(BeforeStep, new HookDefinitionMatch(beforeStep1HookDefinition1))),
+        singletonList(new HookTestStep(AfterStep, new HookDefinitionMatch(afterStep1HookDefinition1))),
+        definitionMatch1
+    );
+
+    private final PickleStepDefinitionMatch definitionMatch2 = mock(PickleStepDefinitionMatch.class);
+    private HookDefinition beforeStep1HookDefinition2 = mock(HookDefinition.class);
+    private HookDefinition afterStep1HookDefinition2 = mock(HookDefinition.class);
+
+    private final PickleStepTestStep testStep2 = new PickleStepTestStep(
+        "uri",
+        mock(PickleStep.class),
+        singletonList(new HookTestStep(BeforeStep, new HookDefinitionMatch(beforeStep1HookDefinition2))),
+        singletonList(new HookTestStep(AfterStep, new HookDefinitionMatch(afterStep1HookDefinition2))),
+        definitionMatch2
+    );
+
+
     @Test
     public void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
-        EventBus bus = mock(EventBus.class);
-        String language = ENGLISH;
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        when(testStep.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(UNDEFINED));
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
 
-        TestCase testCase = createTestCase(testStep);
-        testCase.run(bus);
+        createTestCase(testStep1).run(bus);
 
-        InOrder order = inOrder(bus, testStep);
+        InOrder order = inOrder(bus, definitionMatch1);
         order.verify(bus).send(isA(TestCaseStarted.class));
-        order.verify(testStep).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(false));
+        order.verify(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
         order.verify(bus).send(isA(TestCaseFinished.class));
     }
 
     @Test
     public void run_all_steps() throws Throwable {
-        EventBus bus = mock(EventBus.class);
-        String language = ENGLISH;
-        PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(PASSED));
-        PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(PASSED));
-
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
-        InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), eq(false));
-        order.verify(testStep2).run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), eq(false));
+        InOrder order = inOrder(definitionMatch1, definitionMatch2);
+        order.verify(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
+        order.verify(definitionMatch2).runStep(eq(ENGLISH), isA(Scenario.class));
     }
 
     @Test
     public void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
-        EventBus bus = mock(EventBus.class);
-        String language = ENGLISH;
-        PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(UNDEFINED));
-        PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
-        InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(false));
-        order.verify(testStep2).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(true));
+        InOrder order = inOrder(beforeStep1HookDefinition1, definitionMatch1, afterStep1HookDefinition1);
+        order.verify(beforeStep1HookDefinition1).execute(isA(Scenario.class));
+        order.verify(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
+        order.verify(afterStep1HookDefinition1).execute(isA(Scenario.class));
+    }
+
+
+    @Test
+    public void skip_hooks_of_step_after_skipped_step() throws Throwable {
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
+
+        TestCase testCase = createTestCase(testStep1, testStep2);
+        testCase.run(bus);
+
+        InOrder order = inOrder(beforeStep1HookDefinition2, definitionMatch2, afterStep1HookDefinition2);
+        order.verify(beforeStep1HookDefinition2, never()).execute(isA(Scenario.class));
+        order.verify(definitionMatch2).dryRunStep(eq(ENGLISH), isA(Scenario.class));
+        order.verify(afterStep1HookDefinition2, never()).execute(isA(Scenario.class));
     }
 
     @Test
-    public void skip_steps_at_first_gherkin_step_after_nonn_passed_result() throws Throwable {
-        EventBus bus = mock(EventBus.class);
-        String language = ENGLISH;
-        PickleStepTestStep testStep1 = mock(PickleStepTestStep.class);
-        when(testStep1.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(UNDEFINED));
-        PickleStepTestStep testStep2 = mock(PickleStepTestStep.class);
-        when(testStep2.run(any(TestCase.class), eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
+    public void skip_steps_at_first_gherkin_step_after_non_passed_result() throws Throwable {
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
-        InOrder order = inOrder(testStep1, testStep2);
-        order.verify(testStep1).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(false));
-        order.verify(testStep2).run(eq(testCase), eq(bus), eq(language), isA(Scenario.class), eq(true));
+        InOrder order = inOrder(definitionMatch1, definitionMatch2);
+        order.verify(definitionMatch1).runStep(eq(ENGLISH), isA(Scenario.class));
+        order.verify(definitionMatch2).dryRunStep(eq(ENGLISH), isA(Scenario.class));
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
@@ -112,7 +128,4 @@ public class TestCaseTest {
         return new PickleEvent("uri", pickle);
     }
 
-    private Result resultWithStatus(Result.Type status) {
-        return new Result(status, null, null);
-    }
 }
