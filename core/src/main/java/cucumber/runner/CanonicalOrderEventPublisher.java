@@ -1,14 +1,13 @@
-package cucumber.runtime.formatter;
+package cucumber.runner;
 
 import cucumber.api.event.Event;
 import cucumber.api.event.TestRunFinished;
-import cucumber.runner.AbstractEventPublisher;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-class CanonicalOrderEventPublisher extends AbstractEventPublisher {
+public class CanonicalOrderEventPublisher extends AbstractEventPublisher {
 
     private final List<Event> queue = new LinkedList<>();
 

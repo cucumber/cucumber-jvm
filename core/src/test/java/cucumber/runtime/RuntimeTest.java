@@ -7,23 +7,27 @@ import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
-import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
+import cucumber.runner.TestBackendSupplier;
+import cucumber.runner.TestHelper;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.formatter.FormatterBuilder;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.pickles.PickleStep;
+import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.Step;
 import gherkin.pickles.PickleTag;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,25 +36,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.cucumber.stepexpression.TypeRegistry;
-
-import static cucumber.runtime.TestHelper.feature;
-import static cucumber.runtime.TestHelper.result;
-import static java.util.Arrays.asList;
+import static cucumber.runner.TestHelper.feature;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollectionOf;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
+
+    private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
     @Rule
@@ -248,28 +248,18 @@ public class RuntimeTest {
     @Test
     public void reports_step_definitions_to_plugin() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        BackendSupplier backendSupplier = new BackendSupplier() {
-            @Override
-            public Collection<? extends Backend> get() {
-                return Collections.singletonList(mock(Backend.class));
-            }
-        };
         final StubStepDefinition stepDefinition = new StubStepDefinition("some pattern", new TypeRegistry(Locale.ENGLISH));
-
-        GlueSupplier glueSupplier = new GlueSupplier() {
+        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
             @Override
-            public Glue get() {
-                Glue glue = new RuntimeGlue();
+            public void loadGlue(Glue glue, List<String> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
-                return glue;
             }
         };
 
         Runtime.builder()
             .withResourceLoader(resourceLoader)
             .withArgs("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter")
-            .withBackendSupplier(backendSupplier)
-            .withGlueSupplier(glueSupplier)
+            .withBackendSupplier(testBackendSupplier)
             .build()
             .run();
 
@@ -299,9 +289,9 @@ public class RuntimeTest {
                 "    When second step\n" +
                 "    Then third step\n");
         HookDefinition beforeHook = mock(HookDefinition.class);
-        when(beforeHook.matches(anyCollectionOf(PickleTag.class))).thenReturn(true);
+        when(beforeHook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(PickleStepDefinitionMatch.class), beforeHook, HookType.Before, feature);
+        Runtime runtime = createRuntimeWithMockedGlue(beforeHook, HookType.Before, feature);
         runtime.run();
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -320,7 +310,7 @@ public class RuntimeTest {
             "    Then third step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Then second step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
@@ -361,7 +351,7 @@ public class RuntimeTest {
             "    Examples: examples 2 name\n" +
             "      |   x    |   y   |\n" +
             "      | second | third |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
@@ -397,7 +387,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() throws Throwable {
+    public void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
         CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
@@ -415,7 +405,7 @@ public class RuntimeTest {
             "  Scenario: scenario_3 name\n" +
             "    Given first step\n");
 
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
 
         FormatterSpy formatterSpy = new FormatterSpy();
@@ -508,35 +498,19 @@ public class RuntimeTest {
             .build();
     }
 
-    private Runtime createRuntimeWithMockedGlue(PickleStepDefinitionMatch match, HookDefinition hook, HookType hookType,
-                                                CucumberFeature feature, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, hookType, feature, null, runtimeArgs);
-    }
-
-    private Runtime createRuntimeWithMockedGlue(final PickleStepDefinitionMatch match, final boolean isAmbiguous,
-                                                final HookDefinition hook, final HookType hookType,
+    private Runtime createRuntimeWithMockedGlue(final HookDefinition hook,
+                                                final HookType hookType,
                                                 final CucumberFeature feature,
-                                                final BackendSupplier backendSupplier,
-                                                final String... runtimeArgs) {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = getClass().getClassLoader();
-        List<String> args = new ArrayList<String>(asList(runtimeArgs));
-        BackendSupplier backends = backendSupplier != null
-            ? backendSupplier
-            : new BackendSupplier() {
+                                                String... runtimeArgs) {
+        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
             @Override
-            public Collection<? extends Backend> get() {
-                return Collections.singletonList(mock(Backend.class));
-            }
-        };
-
-        GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                final RuntimeGlue glue = mock(RuntimeGlue.class);
-                mockMatch(glue, match, isAmbiguous);
+            public void loadGlue(Glue glue, List<String> gluePaths) {
+                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
+                    for (Step step : child.getSteps()) {
+                        mockMatch(glue, step.getText());
+                    }
+                }
                 mockHook(glue, hook, hookType);
-                return glue;
             }
         };
 
@@ -548,40 +522,35 @@ public class RuntimeTest {
         };
 
         return Runtime.builder()
-            .withResourceLoader(resourceLoader)
-            .withClassLoader(classLoader)
-            .withArgs(args)
-            .withBackendSupplier(backends)
-            .withGlueSupplier(glueSupplier)
+            .withArgs(runtimeArgs)
+            .withBackendSupplier(testBackendSupplier)
             .withFeatureSupplier(featureSupplier)
             .build();
 
     }
 
-    private void mockMatch(RuntimeGlue glue, PickleStepDefinitionMatch match, boolean isAmbiguous) {
-        if (isAmbiguous) {
-            Exception exception = new AmbiguousStepDefinitionsException(mock(PickleStep.class), Arrays.asList(match, match));
-            doThrow(exception).when(glue).stepDefinitionMatch(anyString(), (PickleStep) any());
-        } else {
-            when(glue.stepDefinitionMatch(anyString(), (PickleStep) any())).thenReturn(match);
-        }
+    private void mockMatch(Glue glue, String text) {
+        StepDefinition stepDefinition = new StubStepDefinition(text, TYPE_REGISTRY);
+        glue.addStepDefinition(stepDefinition);
     }
 
-    private void mockHook(RuntimeGlue glue, HookDefinition hook, HookType hookType) {
+    private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
         switch (hookType) {
             case Before:
-                when(glue.getBeforeHooks()).thenReturn(Collections.singletonList(hook));
+                glue.addBeforeHook(hook);
                 return;
             case After:
-                when(glue.getAfterHooks()).thenReturn(Collections.singletonList(hook));
+                glue.addAfterHook(hook);
                 return;
             case AfterStep:
-                when(glue.getAfterStepHooks()).thenReturn(Collections.singletonList(hook));
+                glue.addBeforeHook(hook);
                 return;
+            default:
+                throw new IllegalArgumentException(hookType.name());
         }
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, null, null));
+        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
     }
 }

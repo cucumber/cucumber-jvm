@@ -7,6 +7,9 @@ import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.RunnerSupplier;
+import cucumber.runner.SingletonRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
@@ -111,7 +114,6 @@ public class Runtime {
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
         private ClassFinder classFinder;
-        private GlueSupplier glueSupplier = new RuntimeGlueSupplier();
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = Collections.emptyList();
 
@@ -157,11 +159,6 @@ public class Runtime {
             return this;
         }
 
-        public Builder withGlueSupplier(final GlueSupplier glueSupplier) {
-            this.glueSupplier = glueSupplier;
-            return this;
-        }
-
         public Builder withFeatureSupplier(final FeatureSupplier featureSupplier) {
             this.featureSupplier = featureSupplier;
             return this;
@@ -196,8 +193,8 @@ public class Runtime {
             }
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier, this.glueSupplier)
-                : new SingletonRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier, this.glueSupplier);
+                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier)
+                : new SingletonRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads())

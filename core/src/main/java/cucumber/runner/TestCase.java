@@ -11,7 +11,7 @@ import gherkin.pickles.PickleTag;
 import java.util.ArrayList;
 import java.util.List;
 
-class TestCase implements cucumber.api.TestCase {
+final class TestCase implements cucumber.api.TestCase {
     private final PickleEvent pickleEvent;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;

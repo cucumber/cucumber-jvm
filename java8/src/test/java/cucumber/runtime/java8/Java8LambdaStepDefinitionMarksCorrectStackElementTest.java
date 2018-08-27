@@ -71,7 +71,7 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
         }
 
-        public StepDefinition getStepDefinition() {
+        StepDefinition getStepDefinition() {
             return stepDefinition;
         }
     }

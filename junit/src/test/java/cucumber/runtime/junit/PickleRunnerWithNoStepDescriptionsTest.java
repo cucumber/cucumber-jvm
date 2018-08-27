@@ -3,7 +3,7 @@ package cucumber.runtime.junit;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import gherkin.events.PickleEvent;
 import org.junit.Test;

@@ -2,7 +2,6 @@ package cucumber.runner;
 
 import cucumber.api.TestCase;
 import cucumber.runtime.DefinitionArgument;
-import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 
 import java.util.Collections;

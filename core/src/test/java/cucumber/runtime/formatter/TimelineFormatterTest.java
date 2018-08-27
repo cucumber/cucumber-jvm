@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import static cucumber.runtime.TestHelper.feature;
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.feature;
+import static cucumber.runner.TestHelper.result;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,8 +41,8 @@ public class TimelineFormatterTest {
     private static final long STEP_DURATION_MS = 1000;
 
     private final Gson gson = new GsonBuilder().create();
-    private final Map<String, Result> stepsToResult = new HashMap<String, Result>();
-    private final Map<String, String> stepsToLocation = new HashMap<String, String>();
+    private final Map<String, Result> stepsToResult = new HashMap<>();
+    private final Map<String, String> stepsToLocation = new HashMap<>();
 
     private final CucumberFeature failingFeature = feature("some\\windows\\path\\failing.feature", "" +
         "Feature: Failing Feature\n" +
@@ -91,15 +91,8 @@ public class TimelineFormatterTest {
         reportDir = TempDir.createTempDirectory();
         reportJsFile = new File(reportDir, REPORT_JS);
 
-        stepsToResult.put("bg_1", result("passed"));
-        stepsToResult.put("bg_2", result("passed"));
-        stepsToResult.put("bg_3", result("passed"));
-        stepsToResult.put("step_01", result("passed"));
-        stepsToResult.put("step_02", result("passed"));
         stepsToResult.put("step_03", result("failed"));
-        stepsToResult.put("step_10", result("passed"));
-        stepsToResult.put("step_20", result("passed"));
-        stepsToResult.put("step_30", result("passed"));
+        stepsToResult.put("step_50", result("undefined"));
 
         stepsToLocation.put("bg_1", "path/step_definitions.java:3");
         stepsToLocation.put("bg_2", "path/step_definitions.java:4");

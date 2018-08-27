@@ -1,14 +1,16 @@
-package cucumber.runtime;
+package cucumber.runner;
 
-import io.cucumber.stepexpression.TypeRegistry;
+import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StepDefinition;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -26,18 +28,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RuntimeGlueTest {
+public class GlueTest {
 
-    private RuntimeGlue glue;
+    private Glue glue;
 
     @Before
     public void setUp() {
-        glue = new RuntimeGlue();
+        glue = new Glue();
     }
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
-        RuntimeGlue glue = new RuntimeGlue();
+        Glue glue = new Glue();
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
@@ -130,7 +132,7 @@ public class RuntimeGlueTest {
         verify(stepDefinition2).matchedArguments(pickleStep1);
 
         //check cache
-        RuntimeGlue.CacheEntry entry = glue.matchedStepDefinitionsCache.get(stepText);
+        Glue.CacheEntry entry = glue.matchedStepDefinitionsCache.get(stepText);
         assertEquals(stepDefinition1,entry.stepDefinition);
 
         PickleStep pickleStep2 = getPickleStep(stepText);

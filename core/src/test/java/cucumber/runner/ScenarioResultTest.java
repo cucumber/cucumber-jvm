@@ -3,24 +3,35 @@ package cucumber.runner;
 import cucumber.api.Result;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
+import gherkin.events.PickleEvent;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class ScenarioResultTest {
 
     private EventBus bus = mock(EventBus.class);
-    private Scenario s = new Scenario(bus, mock(TestCase.class));
+    private Scenario s = new Scenario(
+        bus,
+        new TestCase(
+            Collections.<PickleStepTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            Collections.<HookTestStep>emptyList(),
+            mock(PickleEvent.class),
+            false
+        )
+    );
 
     @Test
     public void no_steps_is_undefined() {

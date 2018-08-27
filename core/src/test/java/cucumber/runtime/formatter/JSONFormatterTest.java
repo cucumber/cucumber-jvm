@@ -2,43 +2,36 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.runner.EventBus;
+import cucumber.runner.TestBackendSupplier;
+import cucumber.runner.TestHelper;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
-import cucumber.runtime.Backend;
-import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.Glue;
-import cucumber.runtime.GlueSupplier;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.TestHelper;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static cucumber.runtime.TestHelper.createEmbedHookAction;
-import static cucumber.runtime.TestHelper.createWriteHookAction;
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.createEmbedHookAction;
+import static cucumber.runner.TestHelper.createWriteHookAction;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyListOf;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -1134,7 +1127,7 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -1147,24 +1140,19 @@ public class JSONFormatterTest {
         args.add("json:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        final BackendSupplier backendSupplier = new BackendSupplier() {
+        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public Collection<? extends Backend> get() {
-                Backend backend = mock(Backend.class);
-                when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-                return singletonList(backend);
+            public void loadGlue(cucumber.runtime.Glue glue, List<String> gluePaths) {
+                glue.addBeforeHook(hook);
+
+            }
+
+            @Override
+            public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+                return "TEST SNIPPET";
             }
         };
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
-
-        final GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                Glue glue = new RuntimeGlue();
-                glue.addBeforeHook(hook);
-                return glue;
-            }
-        };
 
         Appendable stringBuilder = new StringBuilder();
         Runtime.builder()
@@ -1173,7 +1161,6 @@ public class JSONFormatterTest {
             .withArgs(featurePaths)
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withGlueSupplier(glueSupplier)
             .withAdditionalPlugins(new JSONFormatter(stringBuilder))
             .build()
             .run();
@@ -1184,29 +1171,24 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatter(final List<String> featurePaths) {
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
-        final BackendSupplier backendSupplier = new BackendSupplier() {
+        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public Collection<? extends Backend> get() {
-                Backend backend = mock(Backend.class);
-                when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-                return singletonList(backend);
+            public void loadGlue(cucumber.runtime.Glue glue, List<String> gluePaths) {
+                glue.addBeforeHook(hook);
+
+            }
+
+            @Override
+            public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+                return "TEST SNIPPET";
             }
         };
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
-
-        final GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                Glue glue = new RuntimeGlue();
-                glue.addBeforeHook(hook);
-                return glue;
-            }
-        };
 
         Appendable stringBuilder = new StringBuilder();
         Runtime.builder()
@@ -1215,7 +1197,6 @@ public class JSONFormatterTest {
             .withArgs(featurePaths)
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withGlueSupplier(glueSupplier)
             .withAdditionalPlugins(new JSONFormatter(stringBuilder))
             .build()
             .run();

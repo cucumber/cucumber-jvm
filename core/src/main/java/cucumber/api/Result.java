@@ -5,6 +5,8 @@ import java.io.StringWriter;
 import java.util.Comparator;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 public final class Result {
 
     public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
@@ -18,8 +20,7 @@ public final class Result {
     private final Type status;
     private final Long duration;
     private final Throwable error;
-    public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
-    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, null, null);
+    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, 0L, null);
     public enum Type {
         PASSED,
         SKIPPED,
@@ -51,8 +52,8 @@ public final class Result {
      * @param error the error that caused the failure if any
      */
     public Result(Result.Type status, Long duration, Throwable error) {
-        this.status = status;
-        this.duration = duration;
+        this.status = requireNonNull(status);
+        this.duration = requireNonNull(duration);
         this.error = error;
     }
 

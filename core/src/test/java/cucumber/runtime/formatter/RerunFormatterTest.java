@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.result;
 import static org.junit.Assert.assertEquals;
 
 public class RerunFormatterTest {

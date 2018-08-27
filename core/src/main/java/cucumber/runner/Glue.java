@@ -1,5 +1,8 @@
-package cucumber.runtime;
+package cucumber.runner;
 
+import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.StepDefinitionReporter;
 import gherkin.pickles.PickleStep;
@@ -12,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class RuntimeGlue implements Glue {
-    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> beforeStepHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
-    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
+final class Glue implements cucumber.runtime.Glue {
+    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<>();
+    final List<HookDefinition> beforeHooks = new ArrayList<>();
+    final List<HookDefinition> beforeStepHooks = new ArrayList<>();
+    final List<HookDefinition> afterHooks = new ArrayList<>();
+    final List<HookDefinition> afterStepHooks = new ArrayList<>();
+    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<>();
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -52,28 +55,23 @@ public class RuntimeGlue implements Glue {
         Collections.sort(afterStepHooks, new HookComparator(false));
     }
 
-    @Override
-    public List<HookDefinition> getBeforeHooks() {
+    List<HookDefinition> getBeforeHooks() {
         return beforeHooks;
     }
 
-    @Override
-    public List<HookDefinition> getBeforeStepHooks() {
+    List<HookDefinition> getBeforeStepHooks() {
         return beforeStepHooks;
     }
 
-    @Override
-    public List<HookDefinition> getAfterHooks() {
+    List<HookDefinition> getAfterHooks() {
         return afterHooks;
     }
 
-    @Override
-    public List<HookDefinition> getAfterStepHooks() {
+    List<HookDefinition> getAfterStepHooks() {
         return afterStepHooks;
     }
 
-    @Override
-    public PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
@@ -111,8 +109,7 @@ public class RuntimeGlue implements Glue {
         return result;
     }
 
-    @Override
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
+    void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             stepDefinitionReporter.stepDefinition(stepDefinition);
         }

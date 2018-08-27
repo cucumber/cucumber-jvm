@@ -3,6 +3,8 @@ package cucumber.runner;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -63,21 +65,19 @@ public class ScenarioTest {
     }
 
     private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
-        PickleEvent pickle = new PickleEvent(uri, mockPickle(locations));
-        TestCase testCase = new TestCase(
+        return new Scenario(mock(EventBus.class), new TestCase(
             Collections.<PickleStepTestStep>emptyList(),
             Collections.<HookTestStep>emptyList(),
             Collections.<HookTestStep>emptyList(),
-            pickle,
+            new PickleEvent(uri, new Pickle(
+                "name",
+                "en",
+                Collections.<PickleStep>emptyList(),
+                Collections.<PickleTag>emptyList(),
+                locations
+            )),
             false
-        );
-        return new Scenario(mock(EventBus.class), testCase);
-    }
-
-    private Pickle mockPickle(List<PickleLocation> locations) {
-        Pickle pickle = mock(Pickle.class);
-        when(pickle.getLocations()).thenReturn(locations);
-        return pickle;
+        ));
     }
 
     private String uri(String uri) {

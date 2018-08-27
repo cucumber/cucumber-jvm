@@ -1,11 +1,12 @@
-package cucumber.runtime;
+package cucumber.runner;
 
-import gherkin.pickles.PickleStep;
+import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.Argument;
+import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-class NoStepDefinition implements StepDefinition {
+final class NoStepDefinition implements StepDefinition {
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {

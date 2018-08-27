@@ -1,11 +1,13 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Scenario;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StepDefinitionMatch;
 
-public class HookDefinitionMatch implements StepDefinitionMatch {
+final class HookDefinitionMatch implements StepDefinitionMatch {
     private final HookDefinition hookDefinition;
 
-    public HookDefinitionMatch(HookDefinition hookDefinition) {
+    HookDefinitionMatch(HookDefinition hookDefinition) {
         this.hookDefinition = hookDefinition;
     }
 

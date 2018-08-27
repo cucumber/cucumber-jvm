@@ -5,9 +5,7 @@ import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.UndefinedStepDefinitionException;
 
 import java.util.Arrays;
 
@@ -60,7 +58,7 @@ abstract class TestStep implements cucumber.api.TestStep {
         return !result.is(Result.Type.PASSED);
     }
 
-    private Result.Type executeStep(cucumber.api.Scenario scenario, boolean skipSteps) throws Throwable {
+    private Result.Type executeStep(Scenario scenario, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
             stepDefinitionMatch.runStep(scenario);
             return Result.Type.PASSED;
@@ -87,9 +85,6 @@ abstract class TestStep implements cucumber.api.TestStep {
     }
 
     private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
-        if (status == Result.Type.SKIPPED && error == null) {
-            return Result.SKIPPED;
-        }
         if (status == Result.Type.UNDEFINED) {
             return Result.UNDEFINED;
         }

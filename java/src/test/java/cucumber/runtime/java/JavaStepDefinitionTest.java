@@ -9,15 +9,12 @@ import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runner.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.GlueSupplier;
-import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -80,16 +77,8 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        final Glue glue = new RuntimeGlue();
-        GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                return glue;
-            }
-        };
-        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier).get();
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier).get();
 
-        backend.loadGlue(glue, Collections.<String>emptyList());
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {

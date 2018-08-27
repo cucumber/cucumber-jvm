@@ -1,13 +1,14 @@
-package cucumber.runtime;
+package cucumber.runner;
 
+import cucumber.runtime.CucumberException;
 import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-public class AmbiguousStepDefinitionsException extends CucumberException {
+final public class AmbiguousStepDefinitionsException extends CucumberException {
     private final List<PickleStepDefinitionMatch> matches;
 
-    public AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {
+    AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {
         super(createMessage(step, matches));
         this.matches = matches;
     }

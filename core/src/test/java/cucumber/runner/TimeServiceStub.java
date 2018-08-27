@@ -1,5 +1,7 @@
 package cucumber.runner;
 
+import cucumber.runner.TimeService;
+
 public class TimeServiceStub implements TimeService {
     private final long duration;
     private final ThreadLocal<Long> currentTime = new ThreadLocal<Long>();

@@ -3,7 +3,7 @@ package cucumber.runtime.junit;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.filter.Filters;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;

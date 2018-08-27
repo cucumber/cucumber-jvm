@@ -5,11 +5,8 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.Glue;
-import cucumber.runtime.GlueSupplier;
-import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -158,7 +155,6 @@ public class FeatureRunnerTest {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        final RuntimeGlue glue = mock(RuntimeGlue.class);
 
         final TimeService timeServiceStub = new TimeService() {
             @Override
@@ -172,17 +168,12 @@ public class FeatureRunnerTest {
                 return asList(mock(Backend.class));
             }
         };
-        GlueSupplier glueSupplier = new GlueSupplier() {
-            @Override
-            public Glue get() {
-                return glue;
-            }
-        };
+
         EventBus bus = new TimeServiceEventBus(timeServiceStub);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, glueSupplier);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
     }
 

@@ -18,7 +18,7 @@ public class StubStepDefinition implements StepDefinition {
     private final StepExpression expression;
     private List<Type> parameters;
 
-    StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
+    public StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
         this.parameters = Arrays.asList(types);
         if (parameters.isEmpty()) {
             this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern);
@@ -45,7 +45,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Object[] args) {
+    public void execute(Object[] args) throws Throwable {
         assertEquals(parameters.size(), args.length);
         for (int i = 0; i < args.length; i++) {
             assertEquals(parameters.get(i), args[i].getClass());

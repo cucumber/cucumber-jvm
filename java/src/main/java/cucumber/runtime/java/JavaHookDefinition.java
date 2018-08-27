@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
-class JavaHookDefinition implements HookDefinition {
+public class JavaHookDefinition implements HookDefinition {
 
     private final Method method;
     private final long timeoutMillis;
@@ -22,7 +22,7 @@ class JavaHookDefinition implements HookDefinition {
     private final int order;
     private final ObjectFactory objectFactory;
 
-    public JavaHookDefinition(Method method, String[] tagExpressions, int order, long timeoutMillis, ObjectFactory objectFactory) {
+    JavaHookDefinition(Method method, String[] tagExpressions, int order, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
         this.tagPredicate = new TagPredicate(asList(tagExpressions));

@@ -1,6 +1,9 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Scenario;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
@@ -10,7 +13,7 @@ import io.cucumber.stepexpression.Argument;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
+class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
     private final transient String featurePath;
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
@@ -72,7 +75,7 @@ public class PickleStepDefinitionMatch extends Match implements StepDefinitionMa
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) throws Throwable{
+    public void dryRunStep(Scenario scenario) throws Throwable {
         // Do nothing
     }
 

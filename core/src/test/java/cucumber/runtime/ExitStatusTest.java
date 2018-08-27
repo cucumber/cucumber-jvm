@@ -32,7 +32,7 @@ public class ExitStatusTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, null, null));
+        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
     }
 
     private void createExitStatus(String... runtimeArgs) {

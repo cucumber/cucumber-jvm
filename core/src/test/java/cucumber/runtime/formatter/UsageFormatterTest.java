@@ -86,7 +86,7 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         PickleStepTestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, null, null);
+        Result result = new Result(Result.Type.PASSED, 0L, null);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(0L,mock(TestCase.class), testStep, result));
 

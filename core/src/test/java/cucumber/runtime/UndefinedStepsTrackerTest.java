@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runner.TestHelper;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeServiceStub;

@@ -1,29 +1,28 @@
-package cucumber.runtime;
+package cucumber.runner;
 
-import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
+import cucumber.runtime.BackendSupplier;
+import cucumber.runtime.RuntimeOptions;
 
 /**
- * Returns a distinct runner.
+ * Returns a single unique runner.
+ *
+ * Not thread safe.
  */
 public class SingletonRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
     private final RuntimeOptions runtimeOptions;
-    private final GlueSupplier glueSupplier;
     private final EventBus eventBus;
     private Runner runner;
 
 
-    SingletonRunnerSupplier(
+    public SingletonRunnerSupplier(
         RuntimeOptions runtimeOptions,
         EventBus eventBus,
-        BackendSupplier backendSupplier,
-        GlueSupplier glueSupplier
+        BackendSupplier backendSupplier
     ) {
         this.backendSupplier = backendSupplier;
         this.runtimeOptions = runtimeOptions;
-        this.glueSupplier = glueSupplier;
         this.eventBus = eventBus;
     }
 
@@ -36,7 +35,7 @@ public class SingletonRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(glueSupplier.get(), eventBus, backendSupplier.get(), runtimeOptions);
+        return new Runner(eventBus, backendSupplier.get(), runtimeOptions);
     }
 
 }

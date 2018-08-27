@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleLocation;
@@ -11,7 +11,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class FailedStepInstantiationMatchTest {
-    public final static String ENGLISH = "en";
     private FailedPickleStepInstantiationMatch match;
 
     @Before

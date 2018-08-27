@@ -2,7 +2,7 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.runtime.Backend;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -511,11 +511,7 @@ public class JUnitFormatterTest {
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        final Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-
         TestHelper.builder()
-            .withBackends(backend)
             .withRuntimeArgs(args)
             .withFeatures(features)
             .withStepsToResult(stepsToResult)

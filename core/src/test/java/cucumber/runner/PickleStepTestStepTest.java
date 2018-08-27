@@ -5,8 +5,8 @@ import cucumber.api.Result;
 import cucumber.api.event.TestCaseEvent;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.runtime.HookDefinitionMatch;
-import cucumber.runtime.PickleStepDefinitionMatch;
+import cucumber.runtime.HookDefinition;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
@@ -14,10 +14,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 
+import java.util.Collections;
 import java.util.List;
 
-import static cucumber.api.HookType.After;
-import static cucumber.api.HookType.Before;
+import static cucumber.api.HookType.AfterStep;
+import static cucumber.api.HookType.BeforeStep;
 import static cucumber.api.Result.Type.FAILED;
 import static cucumber.api.Result.Type.PASSED;
 import static cucumber.api.Result.Type.SKIPPED;
@@ -39,17 +40,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PickleStepTestStepTest {
-    private final TestCase testCase = mock(TestCase.class);
+    private PickleEvent pickle = mock(PickleEvent.class);
+    private final TestCase testCase = new TestCase(Collections.<PickleStepTestStep>emptyList(), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickle, false);
     private final EventBus bus = mock(EventBus.class);
     private final Scenario scenario = new Scenario(bus, testCase);
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
-    private final HookDefinitionMatch beforeHookDefinitionMatch = mock(HookDefinitionMatch.class);
-    private HookDefinitionMatch afterHookDefinitionMatch = mock(HookDefinitionMatch.class);
+    private HookDefinition afterHookDefinition = mock(HookDefinition.class);
+    private HookDefinition beforeHookDefinition = mock(HookDefinition.class);
+    private final HookTestStep beforeHook = new HookTestStep(BeforeStep, new HookDefinitionMatch(beforeHookDefinition));
+    private final HookTestStep afterHook = new HookTestStep(AfterStep, new HookDefinitionMatch(afterHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
         "uri",
         mock(PickleStep.class),
-        singletonList(new HookTestStep(Before, beforeHookDefinitionMatch)),
-        singletonList(new HookTestStep(After, afterHookDefinitionMatch)),
+        singletonList(beforeHook),
+        singletonList(afterHook),
         definitionMatch
     );
 
@@ -91,7 +95,7 @@ public class PickleStepTestStepTest {
 
     @Test
     public void result_is_skipped_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(new AssumptionViolatedException("whoops")).when(beforeHookDefinitionMatch).runStep(any(Scenario.class));
+        doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
         assertEquals(SKIPPED, scenario.getStatus());
@@ -99,16 +103,16 @@ public class PickleStepTestStepTest {
 
     @Test
     public void step_execution_is_dry_run_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(new RuntimeException()).when(beforeHookDefinitionMatch).runStep(any(Scenario.class));
+        doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
         step.run(testCase, bus, scenario, false);
         verify(definitionMatch).dryRunStep(any(Scenario.class));
     }
 
     @Test
     public void result_is_result_from_hook_when_before_step_hook_does_not_pass() throws Throwable {
-        RuntimeException runtimeException = new RuntimeException();
-        Result failure = new Result(Result.Type.FAILED, 0L, runtimeException);
-        doThrow(runtimeException).when(beforeHookDefinitionMatch).runStep(any(Scenario.class));
+        Exception exception = new RuntimeException();
+        doThrow(exception).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
+        Result failure = new Result(Result.Type.FAILED, 0L, exception);
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
         assertEquals(FAILED, scenario.getStatus());
@@ -133,12 +137,11 @@ public class PickleStepTestStepTest {
         List<TestCaseEvent> allValues = captor.getAllValues();
         assertEquals(failure, ((TestStepFinished) allValues.get(3)).result);
     }
-
     @Test
     public void result_is_result_from_hook_when_after_step_hook_does_not_pass() throws Throwable {
-        RuntimeException runtimeException = new RuntimeException();
-        Result failure = new Result(Result.Type.FAILED, 0L, runtimeException);
-        doThrow(runtimeException).when(afterHookDefinitionMatch).runStep(any(Scenario.class));
+        Exception exception = new RuntimeException();
+        Result failure = new Result(Result.Type.FAILED, 0L, exception);
+        doThrow(exception).when(afterHookDefinition).execute(any(cucumber.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
         assertEquals(FAILED, scenario.getStatus());
@@ -148,26 +151,25 @@ public class PickleStepTestStepTest {
         List<TestCaseEvent> allValues = captor.getAllValues();
         assertEquals(failure, ((TestStepFinished) allValues.get(5)).result);
     }
-
     @Test
     public void after_step_hook_is_run_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(new RuntimeException()).when(beforeHookDefinitionMatch).runStep(any(Scenario.class));
+        doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
         step.run(testCase, bus, scenario, false);
-        verify(afterHookDefinitionMatch).runStep(any(Scenario.class));
+        verify(afterHookDefinition).execute(any(cucumber.api.Scenario.class));
     }
 
     @Test
     public void after_step_hook_is_run_when_step_does_not_pass() throws Throwable {
         doThrow(Exception.class).when(definitionMatch).runStep(any(Scenario.class));
         step.run(testCase, bus, scenario, false);
-        verify(afterHookDefinitionMatch).runStep(any(Scenario.class));
+        verify(afterHookDefinition).execute(any(cucumber.api.Scenario.class));
     }
 
     @Test
     public void after_step_hook_scenario_contains_step_failure_when_step_does_not_pass() throws Throwable {
         Throwable expectedError = new AssumptionViolatedException("oops");
         doThrow(expectedError).when(definitionMatch).runStep(any(Scenario.class));
-        doThrow(new Exception()).when(afterHookDefinitionMatch).runStep(argThat(scenarioDoesNotHave(expectedError)));
+        doThrow(new Exception()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
         step.run(testCase, bus, scenario, false);
         assertThat(scenario.getError(),is(expectedError));
     }
@@ -175,8 +177,8 @@ public class PickleStepTestStepTest {
     @Test
     public void after_step_hook_scenario_contains_before_step_hook_failure_when_before_step_hook_does_not_pass() throws Throwable {
         Throwable expectedError = new AssumptionViolatedException("oops");
-        doThrow(expectedError).when(beforeHookDefinitionMatch).runStep(any(Scenario.class));
-        doThrow(new Exception()).when(afterHookDefinitionMatch).runStep(argThat(scenarioDoesNotHave(expectedError)));
+        doThrow(expectedError).when(beforeHookDefinition).execute(any(Scenario.class));
+        doThrow(new Exception()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
         step.run(testCase, bus, scenario, false);
         assertThat(scenario.getError(),is(expectedError));
     }
@@ -192,7 +194,7 @@ public class PickleStepTestStepTest {
 
     @Test
     public void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
-        doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep(any(Scenario.class));
+        doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep((Scenario) any());
 
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
