@@ -1,9 +1,6 @@
 package cucumber.runner;
 
 import cucumber.api.Scenario;
-import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
-import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
@@ -97,13 +94,13 @@ public class RunnerTest {
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
         inOrder.verify(failingBeforeHook).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(stepDefinition, never()).execute(ArgumentMatchers.anyString(), ArgumentMatchers.<Object[]>any());
+        inOrder.verify(stepDefinition, never()).execute(ArgumentMatchers.<Object[]>any());
     }
 
     @Test
     public void aftersteps_are_executed_after_failed_step() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
-        doThrow(RuntimeException.class).when(stepDefinition).execute(ArgumentMatchers.anyString(), ArgumentMatchers.<Object[]>any());
+        doThrow(RuntimeException.class).when(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
         PickleEvent pickleEventMatchingStepDefinitions = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
 
         final HookDefinition afteStepHook = addAfterStepHook();
@@ -119,7 +116,7 @@ public class RunnerTest {
         runnerSupplier.get().runPickle(pickleEventMatchingStepDefinitions);
 
         InOrder inOrder = inOrder(afteStepHook, stepDefinition);
-        inOrder.verify(stepDefinition).execute(ArgumentMatchers.anyString(), ArgumentMatchers.<Object[]>any());
+        inOrder.verify(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
         inOrder.verify(afteStepHook).execute(ArgumentMatchers.<Scenario>any());
     }
 
@@ -143,7 +140,7 @@ public class RunnerTest {
         runnerSupplier.get().runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
-        inOrder.verify(stepDefinition).execute(ArgumentMatchers.anyString(), ArgumentMatchers.<Object[]>any());
+        inOrder.verify(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
         inOrder.verify(afteStepHook1).execute(ArgumentMatchers.<Scenario>any());
         inOrder.verify(afteStepHook2).execute(ArgumentMatchers.<Scenario>any());
     }
@@ -184,7 +181,7 @@ public class RunnerTest {
             }
         };
         runnerSupplier.get().runPickle(pickleEventMatchingStepDefinitions);
-        verify(stepDefinition).execute(ArgumentMatchers.anyString(), ArgumentMatchers.<Object[]>any());
+        verify(stepDefinition).execute(ArgumentMatchers.<Object[]>any());
     }
 
     @Test
@@ -200,7 +197,7 @@ public class RunnerTest {
         };
 
         runnerSupplier.get().runPickle(pickleEvent);
-        verify(stepDefinition, never()).execute(ArgumentMatchers.anyString(), ArgumentMatchers.<Object[]>any());
+        verify(stepDefinition, never()).execute(ArgumentMatchers.<Object[]>any());
     }
 
     @Test

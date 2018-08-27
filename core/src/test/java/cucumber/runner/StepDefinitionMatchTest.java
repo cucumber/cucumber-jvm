@@ -39,7 +39,7 @@ public class StepDefinitionMatchTest {
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.class);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class StepDefinitionMatchTest {
                 "However, the gherkin step has 1 arguments:\n" +
                 " * 4\n" +
                 "Step text: I have 4 cukes in my belly");
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class StepDefinitionMatchTest {
                 "      | C | D |\n" +
                 "\n" +
                 "Step text: I have 4 cukes in my belly");
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class StepDefinitionMatchTest {
             " * Table:\n" +
             "\n" +
             "Step text: I have 4 cukes in my belly");
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
     }
 
 
@@ -115,7 +115,7 @@ public class StepDefinitionMatchTest {
             "Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
             "However, the gherkin step has 0 arguments.\n" +
             "Step text: I have cukes in my belly");
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class StepDefinitionMatchTest {
         expectedException.expectMessage("" +
             "Could not convert arguments for step [I have a datatable] defined at '{stubbed location with details}'.\n" +
             "It appears you did not register a data table type. The details are in the stacktrace below.");
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
 
     }
 
@@ -157,7 +157,7 @@ public class StepDefinitionMatchTest {
             "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'.\n" +
             "The details are in the stacktrace below."
         );
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
 
     }
 
@@ -189,7 +189,7 @@ public class StepDefinitionMatchTest {
         expectedException.expectMessage("" +
             "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
             "The details are in the stacktrace below.");
-        stepDefinitionMatch.runStep(null, null);
+        stepDefinitionMatch.runStep(null);
 
     }
 

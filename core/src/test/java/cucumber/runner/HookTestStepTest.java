@@ -22,13 +22,12 @@ public class HookTestStepTest {
     private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = mock(TestCase.class);
     private final EventBus bus = mock(EventBus.class);
-    private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
     private HookTestStep step = new HookTestStep(HookType.AfterStep, definitionMatch);
 
     @Test
     public void run_does_run() throws Throwable {
-        step.run(testCase, bus, language, scenario, false);
+        step.run(testCase, bus, scenario, false);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -38,7 +37,7 @@ public class HookTestStepTest {
 
     @Test
     public void run_does_dry_run() throws Throwable {
-        step.run(testCase, bus, language, scenario, true);
+        step.run(testCase, bus, scenario, true);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -47,15 +46,15 @@ public class HookTestStepTest {
     }
 
     @Test
-    public void result_is_passed_when_step_definition_does_not_throw_exception() throws Throwable {
-        Result result = step.run(testCase, bus, language, scenario, false);
+    public void result_is_passed_when_step_definition_does_not_throw_exception() {
+        Result result = step.run(testCase, bus, scenario, false);
 
         assertEquals(Result.Type.PASSED, result.getStatus());
     }
 
     @Test
-    public void result_is_skipped_when_skip_step_is_skip_all_skipable() throws Throwable {
-        Result result = step.run(testCase, bus, language, scenario, true);
+    public void result_is_skipped_when_skip_step_is_skip_all_skipable() {
+        Result result = step.run(testCase, bus, scenario, true);
 
         assertEquals(Result.Type.SKIPPED, result.getStatus());
     }

@@ -29,11 +29,10 @@ public class JavaStepDefinitionTransposeTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private static final String ENGLISH = "en";
     private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
 
     public static class StepDefs {
-        public List<List<Double>> listOfListOfDoubles;
+        List<List<Double>> listOfListOfDoubles;
         public Map<Double, Double> mapOfDoubleToDouble;
 
         public DataTable dataTable;
@@ -123,20 +122,20 @@ public class JavaStepDefinitionTransposeTest {
         for (Argument argument : arguments) {
             result.add(argument.getValue());
         }
-        stepDefinition.execute(ENGLISH, result.toArray(new Object[0]));
+        stepDefinition.execute(result.toArray(new Object[0]));
 
         return stepDefs;
     }
 
     private List<PickleRow> listOfDatesWithHeader() {
-        List<PickleRow> rows = new ArrayList<PickleRow>();
+        List<PickleRow> rows = new ArrayList<>();
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"))));
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1957-05-10"))));
         return rows;
     }
 
     private List<PickleRow> listOfDoublesWithoutHeader() {
-        List<PickleRow> rows = new ArrayList<PickleRow>();
+        List<PickleRow> rows = new ArrayList<>();
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "100.5"), new PickleCell(mock(PickleLocation.class), "99.5"))));
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "0.5"), new PickleCell(mock(PickleLocation.class), "-0.5"))));
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1000"), new PickleCell(mock(PickleLocation.class), "999"))));
@@ -144,7 +143,7 @@ public class JavaStepDefinitionTransposeTest {
     }
 
     private List<PickleRow> transposedListOfDoublesWithoutHeader() {
-        List<PickleRow> rows = new ArrayList<PickleRow>();
+        List<PickleRow> rows = new ArrayList<>();
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "100.5"), new PickleCell(mock(PickleLocation.class), "0.5"), new PickleCell(mock(PickleLocation.class), "1000"))));
         rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "99.5"), new PickleCell(mock(PickleLocation.class), "-0.5"), new PickleCell(mock(PickleLocation.class), "999"))));
         return rows;

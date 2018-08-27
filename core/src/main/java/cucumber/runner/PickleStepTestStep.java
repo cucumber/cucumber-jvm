@@ -39,20 +39,20 @@ final class PickleStepTestStep extends TestStep implements cucumber.api.PickleSt
     }
 
     @Override
-    Result run(TestCase testCase, EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    Result run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
         boolean skipNextStep = skipSteps;
         List<Result> results = new ArrayList<Result>();
 
         for (HookTestStep before : beforeStepHookSteps) {
-            Result result = before.run(testCase, bus, language, scenario, skipSteps);
+            Result result = before.run(testCase, bus, scenario, skipSteps);
             skipNextStep |= !result.is(Result.Type.PASSED);
             results.add(result);
         }
 
-        results.add(super.run(testCase, bus, language, scenario, skipNextStep));
+        results.add(super.run(testCase, bus, scenario, skipNextStep));
 
         for (HookTestStep after : afterStepHookSteps) {
-            results.add(after.run(testCase, bus, language, scenario, skipSteps));
+            results.add(after.run(testCase, bus, scenario, skipSteps));
         }
 
         return max(results, SEVERITY);

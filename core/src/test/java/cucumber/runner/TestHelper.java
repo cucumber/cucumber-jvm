@@ -134,8 +134,8 @@ public class TestHelper {
                 StepDefinition stepDefinition = new StubStepDefinition(step.getText(), typeRegistry, types) {
 
                     @Override
-                    public void execute(String language, Object[] args) throws Throwable {
-                        super.execute(language, args);
+                    public void execute(Object[] args) throws Throwable {
+                        super.execute(args);
                         if (stepResult.is(PENDING)) {
                             throw new PendingException();
                         } else if (stepResult.is(FAILED)) {

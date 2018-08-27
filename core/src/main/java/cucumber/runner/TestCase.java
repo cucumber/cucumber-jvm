@@ -37,19 +37,19 @@ final class TestCase implements cucumber.api.TestCase {
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, this, pickleEvent);
 
         for (HookTestStep before : beforeHooks) {
-            Result stepResult = before.run(this, bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
+            Result stepResult = before.run(this, bus, scenarioResult, dryRun);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            Result stepResult = step.run(this, bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
+            Result stepResult = step.run(this, bus, scenarioResult, skipNextStep);
             skipNextStep |= !stepResult.is(Result.Type.PASSED);
             scenarioResult.add(stepResult);
         }
 
         for (HookTestStep after : afterHooks) {
-            Result stepResult = after.run(this, bus, pickleEvent.pickle.getLanguage(), scenarioResult, dryRun);
+            Result stepResult = after.run(this, bus, scenarioResult, dryRun);
             scenarioResult.add(stepResult);
         }
 

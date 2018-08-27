@@ -19,7 +19,6 @@ public class AmbiguousStepDefinitionMatchsTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    public static final String ENGLISH = "en";
     private final PickleStep pickleStep = new PickleStep("", Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
     private final AmbiguousStepDefinitionsException e = new AmbiguousStepDefinitionsException(pickleStep, Collections.<PickleStepDefinitionMatch>emptyList());
     public final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch("uri", mock(PickleStep.class), e);
@@ -27,12 +26,12 @@ public class AmbiguousStepDefinitionMatchsTest {
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {
         expectedException.expect(AmbiguousStepDefinitionsException.class);
-        match.runStep(ENGLISH, mock(Scenario.class));
+        match.runStep(mock(Scenario.class));
     }
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_dry_run() {
         expectedException.expect(AmbiguousStepDefinitionsException.class);
-        match.dryRunStep(ENGLISH, mock(Scenario.class));
+        match.dryRunStep(mock(Scenario.class));
     }
 }

@@ -28,7 +28,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     @Override
-    public void runStep(String language, Scenario scenario) throws Throwable {
+    public void runStep(Scenario scenario) throws Throwable {
         int argumentCount = getArguments().size();
 
         Integer parameterCount = stepDefinition.getParameterCount();
@@ -47,7 +47,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         }
 
         try {
-            stepDefinition.execute(language, result.toArray(new Object[0]));
+            stepDefinition.execute(result.toArray(new Object[0]));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -75,7 +75,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     @Override
-    public void dryRunStep(String language, Scenario scenario) throws Throwable {
+    public void dryRunStep(Scenario scenario) throws Throwable {
         // Do nothing
     }
 
@@ -106,14 +106,14 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     private List<String> createArgumentsForErrorMessage() {
-        List<String> arguments = new ArrayList<String>(getArguments().size());
+        List<String> arguments = new ArrayList<>(getArguments().size());
         for (Argument argument : getArguments()) {
             arguments.add(argument.toString());
         }
         return arguments;
     }
 
-    protected Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
+    Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;

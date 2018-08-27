@@ -24,7 +24,7 @@ final class NoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(String language, Object[] args) {
+    public void execute(Object[] args) {
     }
 
     @Override

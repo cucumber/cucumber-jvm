@@ -32,13 +32,13 @@ abstract class TestStep implements cucumber.api.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    Result run(TestCase testCase, EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    Result run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, testCase, this));
         Result.Type status;
         Throwable error = null;
         try {
-            status = executeStep(language, scenario, skipSteps);
+            status = executeStep(scenario, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
@@ -49,12 +49,12 @@ abstract class TestStep implements cucumber.api.TestStep {
         return result;
     }
 
-    private Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    private Result.Type executeStep(Scenario scenario, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
-            stepDefinitionMatch.runStep(language, scenario);
+            stepDefinitionMatch.runStep(scenario);
             return Result.Type.PASSED;
         } else {
-            stepDefinitionMatch.dryRunStep(language, scenario);
+            stepDefinitionMatch.dryRunStep(scenario);
             return Result.Type.SKIPPED;
         }
     }
