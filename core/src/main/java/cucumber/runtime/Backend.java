@@ -22,5 +22,5 @@ public interface Backend {
      */
     void disposeWorld();
 
-    String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator);
+    List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator);
 }

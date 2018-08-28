@@ -7,7 +7,10 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * We need an implementation of Backend to prevent Runtime from blowing up.
@@ -31,7 +34,7 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
-        return "STUB SNIPPET";
+    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return singletonList("STUB SNIPPET");
     }
 }

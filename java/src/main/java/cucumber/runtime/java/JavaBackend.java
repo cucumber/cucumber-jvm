@@ -132,7 +132,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
         return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
     }
 
