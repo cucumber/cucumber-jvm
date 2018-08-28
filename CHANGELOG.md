@@ -22,9 +22,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Changed
   * [Core] Upgrade datatable to 1.1.3 ([#1414](https://github.com/cucumber/cucumber-jvm/pull/1414) Łukasz Suski)
     * Allows the registration of default TableEntryByTypeTransformer and TableCellByTypeTransformer
+    * Adds DataTableType#entry(Class) to easily map tables to List<SomeClass>.
+    * Adds DataTableType#cell(Class) to easily map cells to SomeOtherClass.
   * [Core] Upgrade cucumber expressions to 6.0.0 ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
     * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
-    * Bugfix for nested capture groups.  
+    * Bugfix for nested capture groups.
   * [Core] Refactor Runtime ([#1367](https://github.com/cucumber/cucumber-jvm/pull/1367) M.P. Korstanje, Marit van Dijk)
     * Significant structural changes in the `cucumber.runtime` package
   * [Examples] Simplify Gradle example ([#1394](https://github.com/cucumber/cucumber-jvm/pull/1394) Piotr Kubowicz)
