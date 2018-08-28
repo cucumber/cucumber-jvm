@@ -233,7 +233,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDataTable() {
         String expected = "" +
             "@Given(\"I have:\")\n" +
-            "public void i_have(DataTable dataTable) {\n" +
+            "public void i_have(io.cucumber.datatable.DataTable dataTable) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    // For automatic transformation, change DataTable to one of\n" +
             "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
@@ -265,7 +265,7 @@ public class JavaSnippetTest {
 
         String expected = "" +
             "@Given(\"I have in table {dataTable}:\")\n" +
-            "public void i_have_in_table(String dataTable, DataTable dataTable1) {\n" +
+            "public void i_have_in_table(String dataTable, io.cucumber.datatable.DataTable dataTable1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    // For automatic transformation, change DataTable to one of\n" +
             "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
@@ -277,7 +277,7 @@ public class JavaSnippetTest {
             "}\n" +
             "\n" +
             "@Given(\"I have in table {string}:\")\n" +
-            "public void i_have_in_table(String string, DataTable dataTable) {\n" +
+            "public void i_have_in_table(String string, io.cucumber.datatable.DataTable dataTable) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    // For automatic transformation, change DataTable to one of\n" +
             "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
