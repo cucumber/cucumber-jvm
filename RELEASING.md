@@ -24,7 +24,6 @@ mvn versions:display-dependency-updates
 Replace version numbers in:
 
 * `examples/java-gradle/build.gradle`
-* `examples/android/android-studio/Cukeulator/app/build.gradle`
 * `CHANGELOG.md`
 
 Then run (replace X.Y.Z below with the next release number): 

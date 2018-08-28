@@ -1,35 +1,49 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
 import cucumber.runtime.ClassFinder;
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
+import io.cucumber.stepexpression.TypeRegistry;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Locale;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.quality.Strictness.STRICT_STUBS;
 
 public class JavaHookTest {
+
+    private final PickleTag pickleTagBar = new PickleTag(mock(PickleLocation.class), "@bar");
+    private final PickleTag pickleTagZap = new PickleTag(mock(PickleLocation.class), "@zap");
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule().strictness(STRICT_STUBS);
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     private static final Method BEFORE;
     private static final Method AFTER;
     private static final Method BEFORESTEP;
@@ -43,14 +57,16 @@ public class JavaHookTest {
             BEFORESTEP = HasHooks.class.getMethod("beforeStep");
             AFTERSTEP = HasHooks.class.getMethod("afterStep");
             BAD_AFTER = BadHook.class.getMethod("after", String.class);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException note) {
             throw new InternalError("dang");
         }
     }
 
+    @Mock
+    private Glue glue;
 
     private JavaBackend backend;
-    private Glue glue;
+
     private SingletonFactory objectFactory;
 
     @org.junit.Before
@@ -62,49 +78,51 @@ public class JavaHookTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
-        this.glue = new RuntimeGlue();
-
         backend.loadGlue(glue, Collections.<String>emptyList());
     }
 
     @Test
-    public void before_hooks_get_registered() throws Exception {
+    public void before_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
-        assertEquals(0, glue.getAfterHooks().size());
-        assertEquals(BEFORE, hookDef.getMethod());
+
+        verify(glue).addBeforeHook(argThat(isHookFor(BEFORE)));
+    }
+
+    private static ArgumentMatcher<JavaHookDefinition> isHookFor(final Method method) {
+        return new ArgumentMatcher<JavaHookDefinition>() {
+            @Override
+            public boolean matches(JavaHookDefinition javaHookDefinition) {
+                return method.equals(javaHookDefinition.getMethod());
+            }
+        };
     }
 
     @Test
-    public void before_step_hooks_get_registered() throws Exception {
+    public void before_step_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORESTEP.getAnnotation(BeforeStep.class), BEFORESTEP);
-        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeStepHooks().get(0);
-        assertEquals(0, glue.getAfterStepHooks().size());
-        assertEquals(BEFORESTEP, hookDef.getMethod());
+
+        verify(glue).addBeforeStepHook(argThat(isHookFor(BEFORESTEP)));
     }
 
     @Test
-    public void after_step_hooks_get_registered() throws Exception {
+    public void after_step_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTERSTEP.getAnnotation(AfterStep.class), AFTERSTEP);
-        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterStepHooks().get(0);
-        assertEquals(0, glue.getBeforeStepHooks().size());
-        assertEquals(AFTERSTEP, hookDef.getMethod());
+        verify(glue).addAfterStepHook(argThat(isHookFor(AFTERSTEP)));
     }
 
     @Test
-    public void after_hooks_get_registered() throws Exception {
+    public void after_hooks_get_registered() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
-        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterHooks().get(0);
-        assertEquals(0, glue.getBeforeHooks().size());
-        assertEquals(AFTER, hookDef.getMethod());
+        verify(glue).addAfterHook(argThat(isHookFor(AFTER)));
+
     }
 
     @Test
@@ -112,8 +130,17 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
-        HookDefinition hookDef = glue.getAfterHooks().get(0);
-        assertEquals(1, hookDef.getOrder());
+        verify(glue).addAfterHook(argThat(isHookWithOrder(1)));
+
+    }
+
+    private static ArgumentMatcher<JavaHookDefinition> isHookWithOrder(final int order) {
+        return new ArgumentMatcher<JavaHookDefinition>() {
+            @Override
+            public boolean matches(JavaHookDefinition argument) {
+                return argument.getOrder() == order;
+            }
+        };
     }
 
     @Test
@@ -121,8 +148,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition hookDef = glue.getBeforeHooks().get(0);
-        assertEquals(10000, hookDef.getOrder());
+        verify(glue).addBeforeHook(argThat(isHookWithOrder(10000)));
     }
 
     @Test
@@ -130,8 +156,16 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition before = glue.getBeforeHooks().get(0);
-        assertTrue(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"), new PickleTag(mock(PickleLocation.class), "@zap"))));
+        verify(glue).addBeforeHook(argThat(isHookThatMatches(pickleTagBar, pickleTagZap)));
+    }
+
+    private static ArgumentMatcher<JavaHookDefinition> isHookThatMatches(final PickleTag... pickleTag) {
+        return new ArgumentMatcher<JavaHookDefinition>() {
+            @Override
+            public boolean matches(JavaHookDefinition argument) {
+                return argument.matches(asList(pickleTag));
+            }
+        };
     }
 
     @Test
@@ -139,8 +173,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition before = glue.getBeforeHooks().get(0);
-        assertFalse(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"))));
+        verify(glue).addBeforeHook(not(argThat(isHookThatMatches(pickleTagBar))));
     }
 
     @Test
@@ -148,13 +181,13 @@ public class JavaHookTest {
         objectFactory.setInstance(new BadHook());
         backend.buildWorld();
         backend.addHook(BAD_AFTER.getAnnotation(After.class), BAD_AFTER);
-        HookDefinition bad = glue.getAfterHooks().get(0);
-        try {
-            bad.execute(mock(Scenario.class));
-            fail();
-        } catch (CucumberException expected) {
-            assertEquals("When a hook declares an argument it must be of type cucumber.api.Scenario. public void cucumber.runtime.java.JavaHookTest$BadHook.after(java.lang.String)", expected.getMessage());
-        }
+
+        ArgumentCaptor<JavaHookDefinition> javaHookDefinitionArgumentCaptor = ArgumentCaptor.forClass(JavaHookDefinition.class);
+        verify(glue).addAfterHook(javaHookDefinitionArgumentCaptor.capture());
+
+        HookDefinition bad = javaHookDefinitionArgumentCaptor.getValue();
+        expectedException.expectMessage("When a hook declares an argument it must be of type cucumber.api.Scenario. public void cucumber.runtime.java.JavaHookTest$BadHook.after(java.lang.String)");
+        bad.execute(mock(Scenario.class));
     }
 
     public static class HasHooks {

@@ -3,6 +3,7 @@ package cucumber.api.event;
 import cucumber.api.HookTestStep;
 import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
+import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 
 /**
@@ -21,12 +22,12 @@ import cucumber.api.TestStep;
  * @see PickleStepTestStep
  * @see HookTestStep
  */
-public final class TestStepFinished extends TimeStampedEvent {
+public final class TestStepFinished extends TestCaseEvent {
     public final TestStep testStep;
     public final Result result;
 
-    public TestStepFinished(Long timeStamp, TestStep testStep, Result result) {
-        super(timeStamp);
+    public TestStepFinished(Long timeStamp, TestCase testCase, TestStep testStep, Result result) {
+        super(timeStamp, testCase);
         this.testStep = testStep;
         this.result = result;
     }

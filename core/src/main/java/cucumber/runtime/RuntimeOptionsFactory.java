@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
-import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 
 import java.util.ArrayList;
@@ -13,8 +12,7 @@ import static java.util.Arrays.asList;
 public class RuntimeOptionsFactory {
     private final Class clazz;
     private boolean featuresSpecified = false;
-    private boolean glueSpecified = false;
-    private boolean pluginSpecified = false;
+    private boolean overridingGlueSpecified = false;
 
     public RuntimeOptionsFactory(Class clazz) {
         this.clazz = clazz;
@@ -44,8 +42,7 @@ public class RuntimeOptionsFactory {
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
-        addDefaultGlueIfNoGlueIsSpecified(args, clazz);
-        addNullFormatIfNoPluginIsSpecified(args);
+        addDefaultGlueIfNoOverridingGlueIsSpecified(args, clazz);
         return args;
     }
 
@@ -81,21 +78,11 @@ public class RuntimeOptionsFactory {
     }
 
     private void addPlugins(CucumberOptions options, List<String> args) {
-        List<String> plugins = new ArrayList<String>();
+        List<String> plugins = new ArrayList<>();
         plugins.addAll(asList(options.plugin()));
         for (String plugin : plugins) {
             args.add("--plugin");
             args.add(plugin);
-            if (PluginFactory.isFormatterName(plugin)) {
-                pluginSpecified = true;
-            }
-        }
-    }
-
-    private void addNullFormatIfNoPluginIsSpecified(List<String> args) {
-        if (!pluginSpecified) {
-            args.add("--plugin");
-            args.add("null");
         }
     }
 
@@ -113,15 +100,30 @@ public class RuntimeOptionsFactory {
     }
 
     private void addGlue(CucumberOptions options, List<String> args) {
-        for (String glue : options.glue()) {
+        boolean hasExtraGlue = options.extraGlue().length > 0;
+        boolean hasGlue = options.glue().length > 0;
+
+        if (hasExtraGlue && hasGlue) {
+            throw new CucumberException("glue and extraGlue cannot be specified at the same time");
+        }
+
+        String[] gluePaths = {};
+        if (hasExtraGlue) {
+            gluePaths = options.extraGlue();
+        }
+        if (hasGlue) {
+            gluePaths = options.glue();
+            overridingGlueSpecified = true;
+        }
+
+        for (String glue : gluePaths) {
             args.add("--glue");
             args.add(glue);
-            glueSpecified = true;
         }
     }
 
-    private void addDefaultGlueIfNoGlueIsSpecified(List<String> args, Class clazz) {
-        if (!glueSpecified) {
+    private void addDefaultGlueIfNoOverridingGlueIsSpecified(List<String> args, Class clazz) {
+        if (!overridingGlueSpecified) {
             args.add("--glue");
             args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }

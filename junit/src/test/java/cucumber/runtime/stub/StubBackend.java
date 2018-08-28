@@ -52,7 +52,7 @@ public class StubBackend implements Backend {
             }
 
             @Override
-            public void execute(String language, Object[] args) throws Throwable {
+            public void execute(Object[] args) {
 
             }
 

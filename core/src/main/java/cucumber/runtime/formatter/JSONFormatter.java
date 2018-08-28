@@ -2,12 +2,13 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.HookTestStep;
 import cucumber.api.HookType;
-import cucumber.api.Result;
-import cucumber.api.TestStep;
-import cucumber.api.TestCase;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
+import cucumber.api.TestCase;
+import cucumber.api.TestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
@@ -15,7 +16,6 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import gherkin.ast.Background;
 import gherkin.ast.DocString;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class JSONFormatter implements Formatter {
+final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> currentElementsList;

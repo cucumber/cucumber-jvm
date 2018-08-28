@@ -1,12 +1,13 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Plugin;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -22,7 +23,7 @@ import java.util.Map;
  * Formatter to measure performance of steps. Aggregated results for all steps can be computed
  * by adding {@link UsageStatisticStrategy} to the usageFormatter
  */
-final class UsageFormatter implements Formatter {
+final class UsageFormatter implements Plugin, EventListener {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
     final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
     private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();

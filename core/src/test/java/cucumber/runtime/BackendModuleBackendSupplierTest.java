@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.api.CucumberOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;

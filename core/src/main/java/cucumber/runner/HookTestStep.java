@@ -1,9 +1,8 @@
 package cucumber.runner;
 
 import cucumber.api.HookType;
-import cucumber.runtime.HookDefinitionMatch;
 
-class HookTestStep extends TestStep implements cucumber.api.HookTestStep {
+final class HookTestStep extends TestStep implements cucumber.api.HookTestStep {
     private final HookType hookType;
 
     HookTestStep(HookType hookType, HookDefinitionMatch definitionMatch) {

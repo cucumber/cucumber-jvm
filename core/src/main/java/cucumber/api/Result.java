@@ -3,8 +3,11 @@ package cucumber.api;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Comparator;
+import java.util.Objects;
 
-public class Result {
+import static java.util.Objects.requireNonNull;
+
+public final class Result {
 
     public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
 
@@ -14,13 +17,10 @@ public class Result {
         }
     };
 
-    private static final long serialVersionUID = 1L;
-
     private final Type status;
     private final Long duration;
     private final Throwable error;
-    public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
-    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, null, null);
+    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, 0L, null);
     public enum Type {
         PASSED,
         SKIPPED,
@@ -52,8 +52,8 @@ public class Result {
      * @param error the error that caused the failure if any
      */
     public Result(Result.Type status, Long duration, Throwable error) {
-        this.status = status;
-        this.duration = duration;
+        this.status = requireNonNull(status);
+        this.duration = requireNonNull(duration);
         this.error = error;
     }
 
@@ -103,5 +103,20 @@ public class Result {
             ", duration=" + duration +
             ", error=" + error +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Result result = (Result) o;
+        return status == result.status &&
+            Objects.equals(duration, result.duration) &&
+            Objects.equals(error, result.error);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, duration, error);
     }
 }

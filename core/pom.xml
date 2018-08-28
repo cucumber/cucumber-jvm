@@ -64,6 +64,23 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>uk.co.datumedge</groupId>
+            <artifactId>hamcrest-json</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -79,7 +96,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifest>
                             <mainClass>cucumber.api.cli.Main</mainClass>
                         </manifest>
@@ -92,17 +108,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-Duser.language=en</argLine>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Bundle-Description />
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                    </instructions>
                 </configuration>
             </plugin>
 

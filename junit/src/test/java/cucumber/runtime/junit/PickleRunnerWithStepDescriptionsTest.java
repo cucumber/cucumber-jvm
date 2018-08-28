@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
 import cucumber.runtime.FeatureCompiler;
-import cucumber.runtime.ThreadLocalRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.junit.PickleRunners.WithStepDescriptions;
 import cucumber.runtime.model.CucumberFeature;

@@ -4,11 +4,9 @@ import cucumber.api.Plugin;
 import cucumber.api.event.EventListener;
 
 /**
- * This is the interface you should implement if you want your own custom
- * formatter.
- *
- * @see EventListener
- * @see Plugin
+ * @deprecated as of version 4.0.0; use {@link EventListener } and {@link Plugin } instead.
+ * Optionally, use {@link ColorAware } and/or {@link StrictAware } instead of {@link Plugin }.
  */
+@Deprecated
 public interface Formatter extends EventListener, Plugin {
 }

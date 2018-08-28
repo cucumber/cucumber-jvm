@@ -2,6 +2,9 @@ package cucumber.api.testng;
 
 import cucumber.api.PendingException;
 import cucumber.api.Result;
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
@@ -14,9 +17,11 @@ import static org.testng.Assert.assertTrue;
 
 public class TestCaseResultListenerTest {
 
+    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+
     @Test
-    public void should_be_passed_for_passed_result() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
+    public void should_be_passed_for_passed_result() {
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
         resultListener.receiveResult(mockPassedResult());
 
@@ -25,9 +30,9 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_not_be_passed_for_failed_result() throws Exception {
+    public void should_not_be_passed_for_failed_result() {
         Result result = mockFailedResult();
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
         resultListener.receiveResult(result);
 
@@ -36,9 +41,9 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_not_be_passed_for_ambiguous_result() throws Exception {
+    public void should_not_be_passed_for_ambiguous_result() {
         Result result = mockAmbiguousResult();
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
         resultListener.receiveResult(result);
 
@@ -47,8 +52,8 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_be_skipped_for_undefined_result() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
+    public void should_be_skipped_for_undefined_result() {
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
         resultListener.receiveResult(mockUndefinedResult());
 
@@ -57,8 +62,8 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_not_be_skipped_for_undefined_result_in_strict_mode() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(true);
+    public void should_not_be_skipped_for_undefined_result_in_strict_mode() {
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
 
         resultListener.receiveResult(mockUndefinedResult());
 
@@ -67,8 +72,8 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_be_skipped_for_pending_result() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
+    public void should_be_skipped_for_pending_result() {
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
         resultListener.receiveResult(mockPendingResult());
 
@@ -77,8 +82,8 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_not_be_skipped_for_pending_result_in_strict_mode() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(true);
+    public void should_not_be_skipped_for_pending_result_in_strict_mode() {
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
 
         resultListener.receiveResult(mockPendingResult());
 
@@ -87,8 +92,8 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_be_skipped_for_skipped_result() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
+    public void should_be_skipped_for_skipped_result() {
+        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
         resultListener.receiveResult(mockSkippedResult());
 
@@ -96,56 +101,28 @@ public class TestCaseResultListenerTest {
         assertTrue(resultListener.getError() instanceof SkipException);
     }
 
-    @Test
-    public void should_reset_errors() throws Exception {
-        TestCaseResultListener resultListener = new TestCaseResultListener(false);
-        resultListener.receiveResult(mockFailedResult());
-
-        resultListener.startPickle();
-
-        assertTrue(resultListener.isPassed());
-        assertNull(resultListener.getError());
-    }
-
     private Result mockPassedResult() {
-        Result result = mockResult(Result.Type.PASSED);
-        return result;
+        return new Result(Result.Type.PASSED, 0L, null);
     }
 
     private Result mockSkippedResult() {
-        Result result = mockResult(Result.Type.SKIPPED);
-        return result;
+        return new Result(Result.Type.SKIPPED, 0L, null);
     }
 
     private Result mockUndefinedResult() {
-        Result result = mockResult(Result.Type.UNDEFINED);
-        return result;
+        return new Result(Result.Type.UNDEFINED, 0L, null);
     }
 
     private Result mockFailedResult() {
-        Result result = mockResult(Result.Type.FAILED);
-        when(result.getError()).thenReturn(mock(Throwable.class));
-        return result;
+        return new Result(Result.Type.FAILED, 0L, new Exception());
     }
 
     private Result mockAmbiguousResult() {
-        Result result = mockResult(Result.Type.AMBIGUOUS);
-        when(result.getError()).thenReturn(mock(Throwable.class));
-        return result;
+        return new Result(Result.Type.AMBIGUOUS, 0L, new Exception());
     }
 
     private Result mockPendingResult() {
-        Result result = mockResult(Result.Type.PENDING);
-        when(result.getError()).thenReturn(new PendingException());
-        return result;
+        return new Result(Result.Type.PENDING, 0L, new PendingException());
     }
 
-    private Result mockResult(Result.Type status) {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(status);
-        for (Result.Type type : Result.Type.values()) {
-            when(result.is(type)).thenReturn(type == status);
-        }
-        return result;
-    }
 }

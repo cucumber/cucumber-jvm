@@ -1,17 +1,32 @@
+
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
 ## [4.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
 
 ### Added
+ * [Core] Added extraGlue option to `@CucumberOptions` ([#1439](https://github.com/cucumber/cucumber-jvm/pull/1439) Eduardo Kalinowski) 
+ * [Core] Support parallel execution of pickles ([#1389](https://github.com/cucumber/cucumber-jvm/pull/1389) Kiel Boatman, M.P. Korstanje) 
+    * When running with parallel support enabled all Plugins implementing `EventHandler`/`Formater` will receive events
+    after execution has completed in `Event.CANONICAL_ORDER`.
+    * Plugins implementations implementing `ConcurrentEventListener` will receive events in real time.
+    * Plugins implementations are synchronized on and will not receive concurrent events.
+    * Added the `--threads`  commandline argument for the CLI. 
+    * When `--threads` is used with a value greater then 1 parallel support is enabled for the CLI.
+    * JUnit/TestNG have parallel support enabled by default. Consult their respective documentation for parallel executions.
+ * [Spring] Add documentation for spring object factory ([#1405](https://github.com/cucumber/cucumber-jvm/pull/1405) Marit van Dijk) 
  * [Core] Add --wip option ([#1381](https://github.com/cucumber/cucumber-jvm/pull/1381) Heziode)
- * [Core] Upgrade gherkin to 5.10  ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
+ * [Core] Upgrade gherkin to 5.1.0  ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
  * [Weld] Document the need for a beans.xml per source root ([#923](https://github.com/cucumber/cucumber-jvm/pull/923) Harald Albers)
  
 ### Changed
+  * [Core] Upgrade datatable to 1.1.3 ([#1414](https://github.com/cucumber/cucumber-jvm/pull/1414) Łukasz Suski)
+    * Allows the registration of default TableEntryByTypeTransformer and TableCellByTypeTransformer
+    * Adds DataTableType#entry(Class) to easily map tables to List<SomeClass>.
+    * Adds DataTableType#cell(Class) to easily map cells to SomeOtherClass.
   * [Core] Upgrade cucumber expressions to 6.0.0 ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
     * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
-    * Bugfix for nested capture groups.  
+    * Bugfix for nested capture groups.
   * [Core] Refactor Runtime ([#1367](https://github.com/cucumber/cucumber-jvm/pull/1367) M.P. Korstanje, Marit van Dijk)
     * Significant structural changes in the `cucumber.runtime` package
   * [Examples] Simplify Gradle example ([#1394](https://github.com/cucumber/cucumber-jvm/pull/1394) Piotr Kubowicz)
@@ -20,11 +35,18 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
   * [Core] Update DataTable hint ([#1397](https://github.com/cucumber/cucumber-jvm/pull/1397) Marit van Dijk)
   
 ### Deprecated
-
-### Removed
-  * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
+  * [Core] Deprecate Formatter interface ([#1407](https://github.com/cucumber/cucumber-jvm/pull/1407) Marit van Dijk)
    
+### Removed
+  * [TestNG] Remove TestNGReporter ([#1408](https://github.com/cucumber/cucumber-jvm/pull/1408) M.P. Korstanje)
+  * [OSGi] Jars are no longer packaged as OSGi bundles. The `osgi` module and `pax-exam` examples have been removed as well.
+    ([#1404](https://github.com/cucumber/cucumber-jvm/pull/1404)
+     [cucumber/cucumber#412](https://github.com/cucumber/cucumber/issues/412)
+     Aslak Hellesøy)
+  * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
+
 ### Fixed
+  * [Core] Set scenario result as step finishes ([#1430](https://github.com/cucumber/cucumber-jvm/pull/1430) M.P. Korstanje)
 
 ## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
 

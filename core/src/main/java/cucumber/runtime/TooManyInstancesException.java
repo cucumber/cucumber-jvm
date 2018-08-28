@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class TooManyInstancesException extends CucumberException {
 
-    public TooManyInstancesException(Collection instances) {
+    TooManyInstancesException(Collection instances) {
         super(createMessage(instances));
     }
 

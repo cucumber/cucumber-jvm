@@ -1,17 +1,11 @@
 package cucumber.runner;
 
-import cucumber.api.Result;
-import cucumber.api.Scenario;
+import cucumber.api.TestCase;
 import cucumber.runtime.DefinitionArgument;
-import cucumber.runtime.PickleStepDefinitionMatch;
 import gherkin.pickles.PickleStep;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static cucumber.api.Result.SEVERITY;
-import static java.util.Collections.max;
 
 class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTestStep {
     private final String uri;
@@ -39,23 +33,20 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
     }
 
     @Override
-    Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
         boolean skipNextStep = skipSteps;
-        List<Result> results = new ArrayList<Result>();
 
         for (HookTestStep before : beforeStepHookSteps) {
-            Result result = before.run(bus, language, scenario, skipSteps);
-            skipNextStep |= !result.is(Result.Type.PASSED);
-            results.add(result);
+            skipNextStep |= before.run(testCase, bus,  scenario, skipSteps);
         }
 
-        results.add(super.run(bus, language, scenario, skipNextStep));
+        skipNextStep |= super.run(testCase, bus,  scenario, skipNextStep);
 
         for (HookTestStep after : afterStepHookSteps) {
-            results.add(after.run(bus, language, scenario, skipSteps));
+            skipNextStep |=  after.run(testCase, bus,  scenario, skipSteps);
         }
 
-        return max(results, SEVERITY);
+        return skipNextStep;
     }
 
     List<HookTestStep> getBeforeStepHookSteps() {

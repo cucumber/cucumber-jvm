@@ -3,8 +3,8 @@ package cucumber.runtime;
 import cucumber.api.CucumberOptions;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
-import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
 import org.junit.Test;
@@ -16,8 +16,10 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.RuntimeOptionsFactory.packageName;
 import static cucumber.runtime.RuntimeOptionsFactory.packagePath;
 import static java.util.Arrays.asList;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class RuntimeOptionsFactoryTest {
@@ -42,18 +44,24 @@ public class RuntimeOptionsFactoryTest {
         assertFalse(runtimeOptions.isStrict());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
+
+        assertThat(plugins.getPlugins(), hasSize(2));
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
     public void create_without_options_with_base_class_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+
+        assertThat(plugins.getPlugins(), hasSize(2));
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
+        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
     @Test
@@ -100,18 +108,10 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void create_null_formatter_when_no_formatter_plugin_is_defined() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoFormatterPlugin.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
-        assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
-    }
-
-    @Test
     public void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoSummaryPrinterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions);
+        Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
         assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
@@ -119,7 +119,7 @@ public class RuntimeOptionsFactoryTest {
     public void inherit_plugin_from_baseclass() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        List<Plugin> plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new EventBus(TimeService.SYSTEM), runtimeOptions).getPlugins();
+        List<Plugin> plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions).getPlugins();
         assertPluginExists(plugins, "cucumber.runtime.formatter.JSONFormatter");
         assertPluginExists(plugins, "cucumber.runtime.formatter.PrettyFormatter");
     }
@@ -148,6 +148,44 @@ public class RuntimeOptionsFactoryTest {
             }
         }
         assertTrue(pluginName + " not found among the plugins", found);
+    }
+
+    @Test
+    public void create_with_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void create_with_extra_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithExtraGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void create_with_extra_glue_in_subclass_of_extra_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithExtraGlueOfExtraGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.user.hooks", "app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void create_with_extra_glue_in_subclass_of_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithExtraGlueOfGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("app.features.user.hooks", "app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+    }
+
+    @Test(expected = CucumberException.class)
+    public void cannot_create_with_glue_and_extra_glue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlueAndExtraGlue.class);
+        runtimeOptionsFactory.create();
     }
 
 
@@ -215,6 +253,31 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(junit = {"option1", "option2=value"})
     private static class ClassWithJunitOption {
+        // empty
+    }
+
+    @CucumberOptions(glue = {"app.features.user.registration", "app.features.hooks"})
+    private static class ClassWithGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.hooks"})
+    private static class ClassWithExtraGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.user.hooks"})
+    private static class SubClassWithExtraGlueOfExtraGlue extends ClassWithExtraGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.user.hooks"})
+    private static class SubClassWithExtraGlueOfGlue extends ClassWithGlue {
+        // empty
+    }
+
+    @CucumberOptions(extraGlue = {"app.features.hooks"}, glue = {"app.features.user.registration"})
+    private static class ClassWithGlueAndExtraGlue {
         // empty
     }
 
