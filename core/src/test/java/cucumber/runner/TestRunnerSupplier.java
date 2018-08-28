@@ -1,6 +1,5 @@
 package cucumber.runner;
 
-import cucumber.runner.EventBus;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.RuntimeOptions;
@@ -9,6 +8,8 @@ import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 public class TestRunnerSupplier implements Backend, RunnerSupplier {
 
@@ -36,8 +37,8 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier {
     }
 
     @Override
-    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
-        return null;
+    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return emptyList();
     }
 
     @Override

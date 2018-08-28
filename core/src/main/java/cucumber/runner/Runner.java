@@ -65,10 +65,8 @@ public final class Runner {
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
                     for (Backend backend : backends) {
-                        String snippet = backend.getSnippet(step, "**KEYWORD**", runtimeOptions.getSnippetType().getFunctionNameGenerator());
-                        if (snippet != null) {
-                            snippets.add(snippet);
-                        }
+                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runtimeOptions.getSnippetType().getFunctionNameGenerator());
+                        snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {
                         bus.send(new SnippetsSuggestedEvent(bus.getTime(), pickleEvent.uri, step.getLocations(), snippets));
