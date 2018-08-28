@@ -286,6 +286,18 @@ public class JavaSnippetTest {
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new cucumber.api.PendingException();\n" +
+            "}\n" +
+            "\n" +
+            "@Given(\"I have in table {string}:\")\n" +
+            "public void i_have_in_table(String string, DataTable dataTable) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    // For automatic transformation, change DataTable to one of\n" +
+            "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
+            "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
+            "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
+            "    //\n" +
+            "    // For other transformations you can register a DataTableType.\n" +
+            "    throw new cucumber.api.PendingException();\n" +
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
         assertEquals(expected, snippetForDataTable("I have in table \"M6\":", dataTable, customParameterType));
