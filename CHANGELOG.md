@@ -21,6 +21,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  
 ### Changed
   * [Core] Upgrade datatable to 1.1.3 ([#1414](https://github.com/cucumber/cucumber-jvm/pull/1414) Łukasz Suski)
+    * Allows the registration of default TableEntryByTypeTransformer and TableCellByTypeTransformer
   * [Core] Upgrade cucumber expressions to 6.0.0 ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
     * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
     * Bugfix for nested capture groups.  
