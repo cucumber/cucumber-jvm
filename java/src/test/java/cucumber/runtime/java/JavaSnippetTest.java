@@ -277,7 +277,7 @@ public class JavaSnippetTest {
             "}\n" +
             "\n" +
             "@Given(\"I have in table {string}:\")\n" +
-            "public void i_have_in_table(String string, DataTable dataTable) {\n" +
+            "public void i_have_in_table(String string, io.cucumber.datatable.DataTable dataTableg) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    // For automatic transformation, change DataTable to one of\n" +
             "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
