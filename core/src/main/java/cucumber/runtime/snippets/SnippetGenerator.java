@@ -11,11 +11,13 @@ import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Type;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import static java.text.MessageFormat.format;
 
 public class SnippetGenerator {
     @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped braces.
@@ -33,19 +35,23 @@ public class SnippetGenerator {
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
-        List<GeneratedExpression> expressions = generator.generateExpressions(step.getText());
-        GeneratedExpression expression = expressions.get(0);
+    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        List<GeneratedExpression> generatedExpressions = generator.generateExpressions(step.getText());
+        List<String> snippets = new ArrayList<>(generatedExpressions.size());
 
-        return MessageFormat.format(
-            snippet.template(),
-            keyword,
-            snippet.escapePattern(expression.getSource()),
-            functionName(expression.getSource(), functionNameGenerator),
-            snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
-            REGEXP_HINT,
-            !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
-        );
+        for (GeneratedExpression expression : generatedExpressions) {
+            snippets.add(format(
+                snippet.template(),
+                keyword,
+                snippet.escapePattern(expression.getSource()),
+                functionName(expression.getSource(), functionNameGenerator),
+                snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
+                REGEXP_HINT,
+                !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
+            ));
+        }
+
+        return snippets;
     }
 
     private String functionName(String sentence, FunctionNameGenerator functionNameGenerator) {

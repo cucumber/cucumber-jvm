@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,8 @@ import static cucumber.runner.TestHelper.createEmbedHookAction;
 import static cucumber.runner.TestHelper.createWriteHookAction;
 import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -1148,8 +1149,8 @@ public class JSONFormatterTest {
             }
 
             @Override
-            public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
-                return "TEST SNIPPET";
+            public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+                return singletonList("TEST SNIPPET");
             }
         };
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
@@ -1184,8 +1185,8 @@ public class JSONFormatterTest {
             }
 
             @Override
-            public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
-                return "TEST SNIPPET";
+            public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+                return singletonList("TEST SNIPPET");
             }
         };
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));

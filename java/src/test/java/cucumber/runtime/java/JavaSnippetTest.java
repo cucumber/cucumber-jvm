@@ -13,7 +13,6 @@ import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.CaptureGroupTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
-import io.cucumber.cucumberexpressions.Transformer;
 import io.cucumber.cucumberexpressions.TypeReference;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -209,6 +208,12 @@ public class JavaSnippetTest {
             "public void i_have_a(String docString, String docString1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new cucumber.api.PendingException();\n" +
+            "}\n" +
+            "\n" +
+            "@Given(\"I have a {string}:\")\n" +
+            "public void i_have_a(String string, String docString) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    throw new cucumber.api.PendingException();\n" +
             "}\n";
         assertEquals(expected, snippetForDocString("I have a \"Documentation String\":", new PickleString(null, "hello"), customParameterType));
     }
@@ -268,8 +273,18 @@ public class JavaSnippetTest {
             "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n" +
-//            "    //\n" +
-//            "    // See: TODO URL\n" +
+            "    throw new cucumber.api.PendingException();\n" +
+            "}\n" +
+            "\n" +
+            "@Given(\"I have in table {string}:\")\n" +
+            "public void i_have_in_table(String string, DataTable dataTable) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    // For automatic transformation, change DataTable to one of\n" +
+            "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
+            "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
+            "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
+            "    //\n" +
+            "    // For other transformations you can register a DataTableType.\n" +
             "    throw new cucumber.api.PendingException();\n" +
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
@@ -290,7 +305,8 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return StringJoiner.join("\n", snippet);
     }
 
 
@@ -298,12 +314,14 @@ public class JavaSnippetTest {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return StringJoiner.join("\n", snippet);
     }
 
     private String snippetForDocString(String name, PickleString docString) {
         PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return StringJoiner.join("\n", snippet);
     }
 
 
@@ -311,13 +329,15 @@ public class JavaSnippetTest {
         PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return StringJoiner.join("\n", snippet);
     }
 
 
     private String snippetForDataTable(String name, PickleTable dataTable) {
         PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return StringJoiner.join("\n", snippet);
     }
 
 
@@ -325,7 +345,8 @@ public class JavaSnippetTest {
         PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        return new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return StringJoiner.join("\n", snippet);
     }
 
     private static class Size {
