@@ -1,8 +1,7 @@
 package io.cucumber.java;
 
-import io.cucumber.core.snippets.FunctionNameGenerator;
+import cucumber.api.SnippetType;
 import io.cucumber.core.snippets.SnippetGenerator;
-import io.cucumber.core.snippets.UnderscoreConcatenator;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
@@ -28,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class JavaSnippetTest {
 
     private static final String GIVEN_KEYWORD = "Given";
-    private final FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(new UnderscoreConcatenator());
+    private final SnippetType.FunctionNameGenerator functionNameGenerator = SnippetType.UNDERSCORE.getFunctionNameGenerator();
 
     @Test
     public void generatesPlainSnippet() {

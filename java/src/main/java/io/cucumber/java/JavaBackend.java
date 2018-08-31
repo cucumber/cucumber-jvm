@@ -4,6 +4,7 @@ import static io.cucumber.core.io.MultiLoader.packageName;
 import static io.cucumber.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
+import cucumber.api.SnippetType;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
@@ -21,7 +22,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.snippets.FunctionNameGenerator;
 import io.cucumber.core.snippets.Snippet;
 import io.cucumber.core.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
@@ -131,7 +131,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
         return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
     }
 
