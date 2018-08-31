@@ -1,6 +1,6 @@
 package cucumber.api.needle;
 
-import cucumber.runtime.java.needle.NeedleFactory;
+import io.cucumber.needle.NeedleFactory;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 
