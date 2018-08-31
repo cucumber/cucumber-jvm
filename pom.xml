@@ -683,8 +683,7 @@
                     <version>3.0.0-M1</version>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>cucumber.runtime,cucumber.runtime.*,org.springframework
-                        </excludePackageNames>
+                        <excludePackageNames>io.cucumber.*,org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/7/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
@@ -810,17 +809,13 @@
                                     <classes>
                                         <regex>true</regex>
                                         <exclude>
-                                            <item>cucumber\.runner\..*</item>
-                                            <item>cucumber\.runtime\..*</item>
-                                            <item>cucumber\.util\..*</item>
+                                            <item>io\.cucumber..*</item>
                                         </exclude>
                                     </classes>
                                     <packages>
                                         <regex>true</regex>
                                         <exclude>
-                                            <item>cucumber\.runner\..*</item>
-                                            <item>cucumber\.runtime\..*</item>
-                                            <item>cucumber\.util\..*</item>
+                                            <item>io\.cucumber\..*</item>
                                             <!--The logging dependencies for Spring are provided. This causes them to
                                             be missing in the dependency hierarchy. A false positive. -->
                                             <item>org\.springframework\.core\..*</item>
