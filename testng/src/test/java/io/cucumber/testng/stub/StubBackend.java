@@ -1,10 +1,10 @@
 package io.cucumber.runtime.stub;
 
+import cucumber.api.SnippetType;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
         return singletonList("STUB SNIPPET");
     }
 }

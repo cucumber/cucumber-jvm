@@ -53,7 +53,7 @@ public class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        new Plugins(new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         filters = new Filters(runtimeOptions, rerunFilters);
