@@ -1,4 +1,4 @@
-package cucumber.runtime.kotlin.test
+package io.cucumber.runtime.kotlin.test
 
 import cucumber.api.TypeRegistryConfigurer
 import cucumber.api.TypeRegistry

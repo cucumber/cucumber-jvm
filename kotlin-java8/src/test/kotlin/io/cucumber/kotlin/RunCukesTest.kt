@@ -1,4 +1,4 @@
-package cucumber.runtime.kotlin.test
+package io.cucumber.runtime.kotlin.test
 
 import cucumber.api.junit.Cucumber
 import org.junit.runner.RunWith
