@@ -1,7 +1,7 @@
-package cucumber.runtime.java.picocontainer;
+package io.cucumber.picocontainer;
 
 import cucumber.api.java.ObjectFactory;
-import cucumber.runtime.Utils;
+import io.cucumber.core.reflection.Reflections;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
@@ -30,7 +30,7 @@ public class PicoFactory implements ObjectFactory {
     }
 
     public boolean addClass(Class<?> clazz) {
-        if (Utils.isInstantiable(clazz) && classes.add(clazz)) {
+        if (Reflections.isInstantiable(clazz) && classes.add(clazz)) {
             addConstructorDependencies(clazz);
         }
         return true;
