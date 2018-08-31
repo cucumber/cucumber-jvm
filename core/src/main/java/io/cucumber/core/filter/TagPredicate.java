@@ -12,7 +12,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 
-public class TagPredicate implements PicklePredicate {
+public final class TagPredicate implements PicklePredicate {
     private final List<Expression> expressions = new ArrayList<Expression>();
     private final List<TagExpressionOld> oldStyleExpressions = new ArrayList<TagExpressionOld>();
 

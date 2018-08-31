@@ -4,7 +4,7 @@ import io.cucumber.core.backend.HookDefinition;
 
 import java.util.Comparator;
 
-class HookComparator implements Comparator<HookDefinition> {
+final class HookComparator implements Comparator<HookDefinition> {
     private final boolean ascending;
 
     HookComparator(boolean ascending) {

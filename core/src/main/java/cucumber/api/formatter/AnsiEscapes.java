@@ -1,6 +1,6 @@
 package cucumber.api.formatter;
 
-public class AnsiEscapes {
+public final class AnsiEscapes {
     private static final char ESC = 27;
     private static final char BRACKET = '[';
 

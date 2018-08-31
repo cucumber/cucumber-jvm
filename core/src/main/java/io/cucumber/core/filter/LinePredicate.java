@@ -6,7 +6,7 @@ import gherkin.pickles.PickleLocation;
 import java.util.List;
 import java.util.Map;
 
-class LinePredicate implements PicklePredicate {
+final class LinePredicate implements PicklePredicate {
     private Map<String, List<Long>> lineFilters;
 
     LinePredicate(Map<String, List<Long>> lineFilters) {

@@ -1,13 +1,14 @@
 package io.cucumber.core.snippets;
 
+import cucumber.api.SnippetType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class FunctionNameGeneratorTest {
 
-    private FunctionNameGenerator underscore = new FunctionNameGenerator(new UnderscoreConcatenator());
-    private FunctionNameGenerator camelCase = new FunctionNameGenerator(new CamelCaseConcatenator());
+    private SnippetType.FunctionNameGenerator underscore = SnippetType.UNDERSCORE.getFunctionNameGenerator();
+    private SnippetType.FunctionNameGenerator camelCase = SnippetType.CAMELCASE.getFunctionNameGenerator();
 
     private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
         assertEquals(expectedUnderscore, underscore.generateFunctionName(sentence));

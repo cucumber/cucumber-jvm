@@ -1,9 +1,9 @@
 package io.cucumber.core.io;
 
-public class ClasspathResourceLoader implements ResourceLoader {
+final class ClasspathResourceLoader implements ResourceLoader {
     private final ClassLoader classLoader;
 
-    public ClasspathResourceLoader(ClassLoader classLoader) {
+    ClasspathResourceLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 

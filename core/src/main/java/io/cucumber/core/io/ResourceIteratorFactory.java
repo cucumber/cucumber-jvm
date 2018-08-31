@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * Factory contract for creating resource iterators.
  */
-public interface ResourceIteratorFactory {
+interface ResourceIteratorFactory {
 
     /**
      * Gets a value indicating whether the factory can create iterators for the

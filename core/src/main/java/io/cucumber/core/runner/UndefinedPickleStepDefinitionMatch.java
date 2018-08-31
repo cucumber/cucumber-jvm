@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
 
-class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
+final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
 
     UndefinedPickleStepDefinitionMatch(PickleStep step) {
         super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step);

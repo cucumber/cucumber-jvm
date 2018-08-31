@@ -47,11 +47,9 @@ import static java.util.Collections.min;
 /**
  * This is the main entry point for running Cucumber features from the CLI.
  */
-public class Runtime {
+public final class Runtime {
 
     private final ExitStatus exitStatus;
-
-    private final RuntimeOptions runtimeOptions;
 
     private final RunnerSupplier runnerSupplier;
     private final Filters filters;
@@ -60,16 +58,15 @@ public class Runtime {
     private final Plugins plugins;
     private final ExecutorService executor;
 
-    public Runtime(final Plugins plugins,
-                   final RuntimeOptions runtimeOptions,
-                   final EventBus bus,
-                   final Filters filters,
-                   final RunnerSupplier runnerSupplier,
-                   final FeatureSupplier featureSupplier,
-                   final ExecutorService executor) {
+    private Runtime(final Plugins plugins,
+                    final RuntimeOptions runtimeOptions,
+                    final EventBus bus,
+                    final Filters filters,
+                    final RunnerSupplier runnerSupplier,
+                    final FeatureSupplier featureSupplier,
+                    final ExecutorService executor) {
 
         this.plugins = plugins;
-        this.runtimeOptions = runtimeOptions;
         this.filters = filters;
         this.bus = bus;
         this.runnerSupplier = runnerSupplier;
@@ -199,7 +196,7 @@ public class Runtime {
                 ? this.backendSupplier
                 : new BackendModuleBackendSupplier(resourceLoader, classFinder, this.runtimeOptions);
 
-            final Plugins plugins = new Plugins(this.classLoader, new PluginFactory(), this.eventBus, this.runtimeOptions);
+            final Plugins plugins = new Plugins(new PluginFactory(), this.eventBus, this.runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
                 plugins.addPlugin(plugin);
             }

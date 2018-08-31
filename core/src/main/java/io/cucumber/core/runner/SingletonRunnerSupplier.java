@@ -5,10 +5,10 @@ import io.cucumber.core.options.RuntimeOptions;
 
 /**
  * Returns a single unique runner.
- *
+ * <p>
  * Not thread safe.
  */
-public class SingletonRunnerSupplier implements RunnerSupplier {
+public final class SingletonRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
     private final RuntimeOptions runtimeOptions;

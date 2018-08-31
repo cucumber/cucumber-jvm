@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RerunFilters {
+public final class RerunFilters {
     private final RuntimeOptions runtimeOptions;
     private final FeatureLoader featureLoader;
 

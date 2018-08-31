@@ -1,4 +1,4 @@
-package io.cucumber.core.io;
+package io.cucumber.core.plugin;
 
 import gherkin.deps.com.google.gson.Gson;
 import io.cucumber.core.util.FixJava;
@@ -9,22 +9,23 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
+
 /**
  * A stream that can write to both file and http URLs. If it's a file URL, writes with a {@link java.io.FileOutputStream},
  * if it's a http or https URL, writes with a HTTP PUT (by default) or with the specified method.
  */
-public class URLOutputStream extends OutputStream {
+class URLOutputStream extends OutputStream {
     private final URL url;
     private final String method;
     private final int expectedResponseCode;
     private final OutputStream out;
     private final HttpURLConnection urlConnection;
 
-    public URLOutputStream(URL url) throws IOException {
+    URLOutputStream(URL url) throws IOException {
         this(url, "PUT", Collections.<String, String>emptyMap(), 200);
     }
 
-    public URLOutputStream(URL url, String method, Map<String, String> headers, int expectedResponseCode) throws IOException {
+    private URLOutputStream(URL url, String method, Map<String, String> headers, int expectedResponseCode) throws IOException {
         this.url = url;
         this.method = method;
         this.expectedResponseCode = expectedResponseCode;

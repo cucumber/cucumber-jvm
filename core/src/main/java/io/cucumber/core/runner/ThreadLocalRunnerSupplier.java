@@ -10,7 +10,7 @@ import io.cucumber.core.options.RuntimeOptions;
  * <p>
  * Each runners bus passes all events to the event bus of this supplier.
  */
-public class ThreadLocalRunnerSupplier implements RunnerSupplier {
+public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
     private final RuntimeOptions runtimeOptions;

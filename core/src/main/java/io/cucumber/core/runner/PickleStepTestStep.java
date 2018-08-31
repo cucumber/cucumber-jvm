@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 import java.util.Collections;
 import java.util.List;
 
-class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTestStep {
+final class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTestStep {
     private final String uri;
     private final PickleStep step;
     private final List<HookTestStep> afterStepHookSteps;

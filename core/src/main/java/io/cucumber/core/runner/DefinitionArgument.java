@@ -6,7 +6,7 @@ import io.cucumber.core.stepexpression.ExpressionArgument;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class DefinitionArgument implements Argument {
+final class DefinitionArgument implements Argument {
 
     private final io.cucumber.cucumberexpressions.Group group;
 
@@ -14,7 +14,7 @@ public final class DefinitionArgument implements Argument {
         group = expressionArgument.getGroup();
     }
 
-    public static List<Argument> createArguments(List<io.cucumber.core.stepexpression.Argument> match) {
+    static List<Argument> createArguments(List<io.cucumber.core.stepexpression.Argument> match) {
         List<Argument> args = new ArrayList<Argument>();
         for (io.cucumber.core.stepexpression.Argument argument : match) {
             if (argument instanceof ExpressionArgument) {

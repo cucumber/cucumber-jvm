@@ -1,5 +1,6 @@
 package io.cucumber.core.snippets;
 
+import cucumber.api.SnippetType;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTable;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 
 import static java.text.MessageFormat.format;
 
-public class SnippetGenerator {
+public final class SnippetGenerator {
     @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped braces.
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
         new ArgumentPattern(Pattern.compile("\\{.*?\\}"))
@@ -35,7 +36,7 @@ public class SnippetGenerator {
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
         List<GeneratedExpression> generatedExpressions = generator.generateExpressions(step.getText());
         List<String> snippets = new ArrayList<>(generatedExpressions.size());
 
@@ -54,7 +55,7 @@ public class SnippetGenerator {
         return snippets;
     }
 
-    private String functionName(String sentence, FunctionNameGenerator functionNameGenerator) {
+    private String functionName(String sentence, SnippetType.FunctionNameGenerator functionNameGenerator) {
         if (functionNameGenerator == null) {
             return null;
         }

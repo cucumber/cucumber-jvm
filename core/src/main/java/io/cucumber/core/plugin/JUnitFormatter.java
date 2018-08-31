@@ -12,8 +12,6 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.StrictAware;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.URLOutputStream;
-import io.cucumber.core.io.UTF8OutputStreamWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

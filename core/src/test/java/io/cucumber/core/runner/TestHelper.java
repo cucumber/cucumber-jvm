@@ -10,10 +10,11 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubStepDefinition;
-import io.cucumber.core.io.ClasspathResourceLoader;
 import io.cucumber.core.model.CucumberFeature;
 import gherkin.AstBuilder;
 import gherkin.Parser;
@@ -253,7 +254,7 @@ public class TestHelper {
         }
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
 
 
         final BackendSupplier backendSupplier = new TestHelperBackendSupplier(

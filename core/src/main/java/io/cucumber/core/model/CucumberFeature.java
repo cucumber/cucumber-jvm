@@ -5,12 +5,10 @@ import gherkin.ast.GherkinDocument;
 import java.io.Serializable;
 import java.util.Comparator;
 
-public class CucumberFeature implements Serializable {
-    private static final long serialVersionUID = 1L;
+public final class CucumberFeature{
     private final String uri;
-    private GherkinDocument gherkinDocument;
-    private String gherkinSource;
-
+    private final GherkinDocument gherkinDocument;
+    private final String gherkinSource;
 
     public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource) {
         this.gherkinDocument = gherkinDocument;

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class TagExpressionOld {
+final class TagExpressionOld {
     private final Map<String, Integer> limits = new HashMap<String, Integer>();
     private And and = new And();
 

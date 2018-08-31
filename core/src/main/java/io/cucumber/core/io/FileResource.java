@@ -5,16 +5,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FileResource implements Resource {
+final class FileResource implements Resource {
     private final File root;
     private final File file;
     private final boolean classpathFileResource;
 
-    public static FileResource createFileResource(File root, File file) {
+    static FileResource createFileResource(File root, File file) {
         return new FileResource(root, file, false);
     }
 
-    public static FileResource createClasspathFileResource(File root, File file) {
+    static FileResource createClasspathFileResource(File root, File file) {
         return new FileResource(root, file, true);
     }
 

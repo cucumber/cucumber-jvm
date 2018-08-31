@@ -18,14 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FeatureBuilder {
+final class FeatureBuilder {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final List<CucumberFeature> cucumberFeatures;
     private final char fileSeparatorChar;
     private final MessageDigest md5;
     private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
 
-    public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
+    FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
         this(cucumberFeatures, File.separatorChar);
     }
 
@@ -39,7 +39,7 @@ public class FeatureBuilder {
         }
     }
 
-    public void parse(Resource resource) {
+    void parse(Resource resource) {
         String gherkin = read(resource);
 
         String checksum = checksum(gherkin);
@@ -58,7 +58,7 @@ public class FeatureBuilder {
         } catch (ParserException e) {
             throw new CucumberException(e);
         }
-     }
+    }
 
     private String convertFileSeparatorToForwardSlash(String path) {
         return path.replace(fileSeparatorChar, '/');
@@ -68,10 +68,9 @@ public class FeatureBuilder {
         return new BigInteger(1, md5.digest(gherkin.getBytes(UTF8))).toString(16);
     }
 
-    public String read(Resource resource) {
+    private String read(Resource resource) {
         try {
-            String source = Encoding.readFile(resource);
-            return source;
+            return Encoding.readFile(resource);
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }

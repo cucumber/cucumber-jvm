@@ -13,6 +13,7 @@ import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Collections.singletonList;
 
@@ -56,4 +57,17 @@ public final class BackendModuleBackendSupplier implements BackendSupplier {
         return reflections.instantiateSubclasses(Backend.class, packages, new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
     }
 
+    private static final class DefaultTypeRegistryConfiguration implements TypeRegistryConfigurer {
+
+        @Override
+        public Locale locale() {
+            return Locale.ENGLISH;
+        }
+
+        @Override
+        public void configureTypeRegistry(cucumber.api.TypeRegistry typeRegistry) {
+            //noop
+        }
+
+    }
 }

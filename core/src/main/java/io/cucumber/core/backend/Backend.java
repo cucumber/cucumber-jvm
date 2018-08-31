@@ -1,6 +1,6 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.snippets.FunctionNameGenerator;
+import cucumber.api.SnippetType;
 import gherkin.pickles.PickleStep;
 
 import java.util.List;
@@ -22,5 +22,5 @@ public interface Backend {
      */
     void disposeWorld();
 
-    List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator);
+    List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator);
 }

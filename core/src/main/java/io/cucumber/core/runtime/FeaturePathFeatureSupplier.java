@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Supplies a list of features found on the the feature path provided to RuntimeOptions.
  */
-public class FeaturePathFeatureSupplier implements FeatureSupplier {
+public final class FeaturePathFeatureSupplier implements FeatureSupplier {
     private final FeatureLoader featureLoader;
     private final RuntimeOptions runtimeOptions;
     private final EventBus bus;

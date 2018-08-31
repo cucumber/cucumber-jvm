@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
+import cucumber.api.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 
 import java.util.Collection;
@@ -24,7 +24,7 @@ public abstract class TestBackendSupplier implements Backend, BackendSupplier {
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
         return emptyList();
     }
 

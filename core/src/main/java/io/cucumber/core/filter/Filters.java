@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class Filters {
+public final class Filters {
 
     private final List<PicklePredicate> filters;
     private final RuntimeOptions runtimeOptions;
@@ -18,7 +18,7 @@ public class Filters {
         this.runtimeOptions = runtimeOptions;
         this.rerunFilters = rerunFilters;
 
-        filters = new ArrayList<PicklePredicate>();
+        filters = new ArrayList<>();
         List<String> tagFilters = this.runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
             this.filters.add(new TagPredicate(tagFilters));

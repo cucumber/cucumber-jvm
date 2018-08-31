@@ -13,8 +13,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Invoker {
+public final class Invoker {
+
     private Invoker() {
+
     }
 
     public static <T> T timeout(Callback<T> callback, long timeoutMillis) throws Throwable {
@@ -74,12 +76,12 @@ public class Invoker {
                     return targetMethod.invoke(target, args);
                 } catch (IllegalArgumentException e) {
                     throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
-                                                ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
+                        ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
                 } catch (InvocationTargetException e) {
                     throw e.getTargetException();
                 } catch (IllegalAccessException e) {
                     throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
-                                                ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
+                        ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
                 } finally {
                     targetMethod.setAccessible(accessible);
                 }

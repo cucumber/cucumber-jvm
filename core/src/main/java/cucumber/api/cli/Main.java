@@ -2,7 +2,7 @@ package cucumber.api.cli;
 
 import io.cucumber.core.runtime.Runtime;
 
-public class Main {
+public final class Main {
 
     public static void main(String[] argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());

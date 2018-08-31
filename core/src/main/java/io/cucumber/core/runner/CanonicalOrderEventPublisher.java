@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CanonicalOrderEventPublisher extends AbstractEventPublisher {
+public final class CanonicalOrderEventPublisher extends AbstractEventPublisher {
 
     private final List<Event> queue = new LinkedList<>();
 

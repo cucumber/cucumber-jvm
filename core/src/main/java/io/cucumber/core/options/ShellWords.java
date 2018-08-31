@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Shellwords {
+final class ShellWords {
     private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s']+|'([^']*)'");
 
-    private Shellwords() {
+    private ShellWords() {
     }
 
-    public static List<String> parse(String cmdline) {
+    static List<String> parse(String cmdline) {
         List<String> matchList = new ArrayList<String>();
         Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
         while (shellwordsMatcher.find()) {

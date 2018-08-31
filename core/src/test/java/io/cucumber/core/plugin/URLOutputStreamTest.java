@@ -1,5 +1,7 @@
-package io.cucumber.core.io;
+package io.cucumber.core.plugin;
 
+import io.cucumber.core.plugin.TestUTF8OutputStreamWriter;
+import io.cucumber.core.plugin.URLOutputStream;
 import io.cucumber.core.util.FixJava;
 import org.junit.After;
 import org.junit.Before;
@@ -78,7 +80,8 @@ public class URLOutputStreamTest {
         String baseURL = filesWithoutParent.toUri().toURL().toString();
         URL urlWithoutParentDirectory = createUrl(baseURL + "/non/existing/directory");
 
-        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(urlWithoutParentDirectory));
+
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(urlWithoutParentDirectory));
         w.write("Hellesøy");
         w.close();
 
@@ -89,25 +92,25 @@ public class URLOutputStreamTest {
     @Test
     public void can_write_to_file() throws IOException {
         File tmp = File.createTempFile("cucumber-jvm", "tmp");
-        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(tmp.toURI().toURL()));
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
         w.close();
         assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(tmp)));
     }
 
     @Test
-    public void can_http_put() throws IOException, ExecutionException, InterruptedException {
+    public void can_http_put() throws IOException, InterruptedException {
         final BlockingQueue<String> data = new LinkedBlockingDeque<String>();
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
             @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
                 data.offer(req.body());
                 res.end();
             }
         });
 
-        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(CUCUMBER_STEPDEFS));
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
         w.close();
@@ -115,8 +118,8 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void throws_fnfe_if_http_response_is_404() throws IOException, ExecutionException, InterruptedException {
-        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(CUCUMBER_STEPDEFS));
+    public void throws_fnfe_if_http_response_is_404() throws IOException {
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
         try {
@@ -127,18 +130,18 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void throws_ioe_if_http_response_is_500() throws IOException, ExecutionException, InterruptedException {
+    public void throws_ioe_if_http_response_is_500() throws IOException {
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
             @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
                 res.status(500);
                 res.content("something went wrong");
                 res.end();
             }
         });
 
-        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(CUCUMBER_STEPDEFS));
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
         try {

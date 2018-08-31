@@ -1,12 +1,12 @@
 package io.cucumber.core.runner;
 
 import cucumber.api.Scenario;
+import cucumber.api.SnippetType;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.snippets.FunctionNameGenerator;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -255,7 +255,7 @@ public class RunnerTest {
         Backend backend = mock(Backend.class);
         Runner runner = new Runner(bus, singletonList(backend), runtimeOptions);
         runner.runPickle(createPickleEventWithSteps(asList(step)));
-        verify(backend).getSnippet(ArgumentMatchers.eq(step), anyString(), any(FunctionNameGenerator.class));
+        verify(backend).getSnippet(ArgumentMatchers.eq(step), anyString(), any(SnippetType.FunctionNameGenerator.class));
     }
 
     private HookDefinition addBeforeHook() {

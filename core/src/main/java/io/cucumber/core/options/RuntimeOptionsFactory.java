@@ -10,7 +10,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class RuntimeOptionsFactory {
+public final class RuntimeOptionsFactory {
     private final Class clazz;
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;

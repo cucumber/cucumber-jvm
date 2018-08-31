@@ -7,7 +7,12 @@ import gherkin.pickles.PickleTable;
 import java.util.ArrayList;
 import java.util.List;
 
-class PickleTableConverter {
+final class PickleTableConverter {
+
+    private PickleTableConverter() {
+
+    }
+
     static List<List<String>> toTable(PickleTable pickleTable) {
         List<List<String>> table = new ArrayList<List<String>>();
         for (PickleRow pickleRow : pickleTable.getRows()) {

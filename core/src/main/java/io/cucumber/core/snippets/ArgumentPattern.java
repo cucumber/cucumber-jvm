@@ -3,7 +3,7 @@ package io.cucumber.core.snippets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class ArgumentPattern {
+final class ArgumentPattern {
 
     private final Pattern pattern;
     private final String replacement;

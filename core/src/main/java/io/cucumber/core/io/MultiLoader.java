@@ -3,7 +3,7 @@ package io.cucumber.core.io;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiLoader implements ResourceLoader {
+public final class MultiLoader implements ResourceLoader {
     public static final String CLASSPATH_SCHEME = "classpath:";
 
     private final ClasspathResourceLoader classpath;

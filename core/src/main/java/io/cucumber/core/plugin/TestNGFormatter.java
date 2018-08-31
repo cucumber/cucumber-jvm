@@ -13,8 +13,6 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.StrictAware;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.URLOutputStream;
-import io.cucumber.core.io.UTF8OutputStreamWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -40,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class TestNGFormatter implements EventListener, StrictAware {
+final class TestNGFormatter implements EventListener, StrictAware {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private final Writer writer;

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Helper class for formatting a method signature to a shorter form.
  */
-public class MethodFormat {
+public final class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private static final String PACKAGE_PATTERN = "[^,]*\\.";
     private final MessageFormat format;

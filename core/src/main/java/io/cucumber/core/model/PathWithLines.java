@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PathWithLines {
+public final class PathWithLines {
     private static final Pattern FILE_COLON_LINE_PATTERN = Pattern.compile("^([\\w\\W]*?):([\\d:]+)$");
 
     public final String path;
@@ -13,15 +13,6 @@ public class PathWithLines {
 
     public static boolean hasLineFilters(String pathName) {
         return FILE_COLON_LINE_PATTERN.matcher(pathName).matches();
-    }
-
-    public static String stripLineFilters(String pathName) {
-        Matcher matcher = FILE_COLON_LINE_PATTERN.matcher(pathName);
-        if (matcher.matches()) {
-            return matcher.group(1);
-        } else {
-            return pathName;
-        }
     }
 
     public PathWithLines(String pathName) {

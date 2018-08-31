@@ -9,6 +9,7 @@ import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.runner.EventBus;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -19,7 +20,6 @@ import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
-import io.cucumber.core.io.ClasspathResourceLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.model.CucumberFeature;
@@ -88,7 +88,7 @@ public class RuntimeTest {
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
-            .withResourceLoader(new ClasspathResourceLoader(classLoader))
+            .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();

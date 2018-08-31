@@ -17,7 +17,6 @@ import java.util.List;
 
 public final class Plugins {
     private final List<Plugin> plugins;
-    private final ClassLoader classLoader;
     private boolean pluginNamesInstantiated;
 
     private final PluginFactory pluginFactory;
@@ -25,8 +24,7 @@ public final class Plugins {
     private final EventPublisher orderedEventPublisher;
     private final Options options;
 
-    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventPublisher eventPublisher, Options options) {
-        this.classLoader = classLoader;
+    public Plugins(PluginFactory pluginFactory, EventPublisher eventPublisher, Options options) {
         this.pluginFactory = pluginFactory;
         this.eventPublisher = eventPublisher;
         this.orderedEventPublisher = createCanonicalOrderEventPublisher();

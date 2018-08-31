@@ -16,7 +16,7 @@ import static io.cucumber.core.io.Helpers.filePath;
  * service implementation for {@link ResourceIteratorFactory} as it could
  * easily hide other service implementations.</p>
  */
-public class FileResourceIteratorFactory implements ResourceIteratorFactory {
+final class FileResourceIteratorFactory implements ResourceIteratorFactory {
 
     @Override
     public boolean isFactoryFor(URL url) {

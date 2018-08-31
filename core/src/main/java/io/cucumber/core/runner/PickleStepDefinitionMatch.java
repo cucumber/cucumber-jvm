@@ -20,7 +20,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     // to prevent it from ending up in the JSON.
     private final transient PickleStep step;
 
-    public PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
+    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
         super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
         this.featurePath = featurePath;

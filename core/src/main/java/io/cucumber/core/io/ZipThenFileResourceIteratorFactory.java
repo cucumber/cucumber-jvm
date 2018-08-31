@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * Resource iterator factory implementation which delegates to zip then file.
  */
-public class ZipThenFileResourceIteratorFactory implements ResourceIteratorFactory {
+final class ZipThenFileResourceIteratorFactory implements ResourceIteratorFactory {
     private final ResourceIteratorFactory zipResourceIteratorFactory = new ZipResourceIteratorFactory();
     private final ResourceIteratorFactory fileResourceIteratorFactory = new FileResourceIteratorFactory();
 

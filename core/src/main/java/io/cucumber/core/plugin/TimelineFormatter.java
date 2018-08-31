@@ -11,7 +11,6 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
 import cucumber.api.formatter.NiceAppendable;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.URLOutputStream;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
@@ -32,7 +31,7 @@ import java.util.TreeMap;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-public class TimelineFormatter implements ConcurrentEventListener {
+final class TimelineFormatter implements ConcurrentEventListener {
 
     //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{

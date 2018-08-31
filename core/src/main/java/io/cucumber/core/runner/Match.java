@@ -7,11 +7,11 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-class Match {
+abstract class Match {
 
     private final List<Argument> arguments;
     private final String location;
-    public static final Match UNDEFINED = new Match(Collections.<Argument>emptyList(), null);
+    public static final Match UNDEFINED = new UndefinedMatch();
 
     Match(List<Argument> arguments, String location) {
         requireNonNull(arguments, "argument may not be null");
@@ -27,4 +27,9 @@ class Match {
         return location;
     }
 
+    private static final class UndefinedMatch extends Match {
+        UndefinedMatch() {
+            super(Collections.<Argument>emptyList(), null);
+        }
+    }
 }

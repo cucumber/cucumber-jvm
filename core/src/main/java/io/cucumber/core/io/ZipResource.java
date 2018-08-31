@@ -5,11 +5,11 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipResource implements Resource {
+final class ZipResource implements Resource {
     private final ZipFile jarFile;
     private final ZipEntry jarEntry;
 
-    public ZipResource(ZipFile jarFile, ZipEntry jarEntry) {
+    ZipResource(ZipFile jarFile, ZipEntry jarEntry) {
         this.jarFile = jarFile;
         this.jarEntry = jarEntry;
     }

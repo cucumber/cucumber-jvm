@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Stats implements EventListener, ColorAware, StrictAware {
+final class Stats implements EventListener, ColorAware, StrictAware {
     static final long ONE_SECOND = 1000000000;
     static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
@@ -65,7 +65,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     };
     private boolean strict;
 
-    public Stats() {
+    Stats() {
         this(Locale.getDefault());
     }
 

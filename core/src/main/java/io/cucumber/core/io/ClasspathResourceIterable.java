@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-public class ClasspathResourceIterable implements Iterable<Resource> {
+final class ClasspathResourceIterable implements Iterable<Resource> {
     private final ResourceIteratorFactory resourceIteratorFactory =
             new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
 
@@ -15,7 +15,7 @@ public class ClasspathResourceIterable implements Iterable<Resource> {
     private final String path;
     private final String suffix;
 
-    public ClasspathResourceIterable(ClassLoader classLoader, String path, String suffix) {
+    ClasspathResourceIterable(ClassLoader classLoader, String path, String suffix) {
         this.classLoader = classLoader;
         this.path = path;
         this.suffix = suffix;

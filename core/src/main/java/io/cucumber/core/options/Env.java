@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
  * <li>Resource bundle</li>
  * </ol>
  */
-public class Env {
+public final class Env {
     public static final Env INSTANCE = new Env("cucumber");
     private final Map<String, String> map = new HashMap<String, String>();
 

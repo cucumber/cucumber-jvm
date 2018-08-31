@@ -5,7 +5,7 @@ import gherkin.events.PickleEvent;
 import java.util.List;
 import java.util.regex.Pattern;
 
-class NamePredicate implements PicklePredicate {
+final class NamePredicate implements PicklePredicate {
     private List<Pattern> patterns;
 
     NamePredicate(List<Pattern> patterns) {

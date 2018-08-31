@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public class Reflections {
+public final class Reflections {
     private final ClassFinder classFinder;
 
     public Reflections(ClassFinder classFinder) {
@@ -49,7 +49,7 @@ public class Reflections {
     }
 
     public <T> T newInstance(Class[] constructorParams, Object[] constructorArgs, Class<? extends T> clazz) {
-        Constructor<? extends T> constructor = null;
+        Constructor<? extends T> constructor;
         try {
             constructor = clazz.getConstructor(constructorParams);
             try {
@@ -60,15 +60,6 @@ public class Reflections {
             }
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);
-        }
-    }
-
-    private boolean hasConstructor(Class<?> clazz, Class[] paramTypes) {
-        try {
-            clazz.getConstructor(paramTypes);
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
         }
     }
 

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class ResourceLoaderClassFinder implements ClassFinder {
+public final class ResourceLoaderClassFinder implements ClassFinder {
     private final ResourceLoader resourceLoader;
     private final ClassLoader classLoader;
 
@@ -25,8 +25,7 @@ public class ResourceLoaderClassFinder implements ClassFinder {
                 if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
                     result.add(clazz.asSubclass(parentType));
                 }
-            } catch (ClassNotFoundException ignore) {
-            } catch (NoClassDefFoundError ignore) {
+            } catch (ClassNotFoundException | NoClassDefFoundError ignore) {
             }
         }
         return result;

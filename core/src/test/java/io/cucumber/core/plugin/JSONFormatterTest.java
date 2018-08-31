@@ -1,6 +1,9 @@
 package io.cucumber.core.plugin;
 
 import cucumber.api.Result;
+import cucumber.api.SnippetType;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.runner.EventBus;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.runner.TestBackendSupplier;
@@ -9,9 +12,7 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runner.TimeServiceStub;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.core.io.ClasspathResourceLoader;
 import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.core.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
@@ -1132,7 +1133,7 @@ public class JSONFormatterTest {
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
 
         List<String> args = new ArrayList<String>();
         args.add("--threads");
@@ -1149,7 +1150,7 @@ public class JSONFormatterTest {
             }
 
             @Override
-            public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+            public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
                 return singletonList("TEST SNIPPET");
             }
         };
@@ -1175,7 +1176,7 @@ public class JSONFormatterTest {
         when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
 
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
@@ -1185,7 +1186,7 @@ public class JSONFormatterTest {
             }
 
             @Override
-            public List<String> getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+            public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
                 return singletonList("TEST SNIPPET");
             }
         };

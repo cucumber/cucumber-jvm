@@ -16,7 +16,6 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.NiceAppendable;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.URLOutputStream;
 import gherkin.ast.Background;
 import gherkin.ast.DataTable;
 import gherkin.ast.DocString;

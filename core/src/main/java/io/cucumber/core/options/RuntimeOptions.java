@@ -26,7 +26,7 @@ import static io.cucumber.core.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
-public class RuntimeOptions implements Options {
+public final class RuntimeOptions implements Options {
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
 
@@ -72,7 +72,7 @@ public class RuntimeOptions implements Options {
      * @param argv the arguments
      */
     public RuntimeOptions(String argv) {
-        this(Shellwords.parse(argv));
+        this(ShellWords.parse(argv));
     }
 
     /**
@@ -92,7 +92,7 @@ public class RuntimeOptions implements Options {
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
         if (cucumberOptionsFromEnv != null) {
-            parse(Shellwords.parse(cucumberOptionsFromEnv));
+            parse(ShellWords.parse(cucumberOptionsFromEnv));
         }
 
         if (pluginFormatterNames.isEmpty()) {

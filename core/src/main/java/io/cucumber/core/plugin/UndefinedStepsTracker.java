@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class UndefinedStepsTracker implements EventListener {
+final class UndefinedStepsTracker implements EventListener {
     private final List<String> snippets = new ArrayList<String>();
     private final IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
     private final Map<String, String> pathToSourceMap = new HashMap<String, String>();

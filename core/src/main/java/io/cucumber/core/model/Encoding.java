@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Utilities for reading the encoding of a file.
  */
-class Encoding {
+final class Encoding {
     private static final Pattern COMMENT_OR_EMPTY_LINE_PATTERN = Pattern.compile("^\\s*#|^\\s*$");
     private static final Pattern ENCODING_PATTERN = Pattern.compile("^\\s*#\\s*encoding\\s*:\\s*([0-9a-zA-Z\\-]+)", Pattern.CASE_INSENSITIVE);
     private static final String DEFAULT_ENCODING = "UTF-8";

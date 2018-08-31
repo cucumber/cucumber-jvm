@@ -10,7 +10,7 @@ import io.cucumber.core.exception.CucumberException;
  * Factory which creates {@link ZipResourceIterator}s for URL's with "jar", "zip" and "wsjar"
  * protocols.
  */
-public class ZipResourceIteratorFactory implements ResourceIteratorFactory {
+final class ZipResourceIteratorFactory implements ResourceIteratorFactory {
 
     @Override
     public boolean isFactoryFor(URL url) {

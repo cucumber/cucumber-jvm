@@ -8,7 +8,6 @@ import io.cucumber.core.runner.EventBus;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runner.TimeServiceStub;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.UTF8OutputStreamWriter;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
