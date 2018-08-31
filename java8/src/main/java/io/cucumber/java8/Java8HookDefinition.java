@@ -1,14 +1,14 @@
-package cucumber.runtime.java8;
+package io.cucumber.java8;
 
 import static java.util.Arrays.asList;
 
 import cucumber.api.Scenario;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.filter.TagPredicate;
-import cucumber.runtime.Timeout;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.filter.TagPredicate;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.runtime.Invoker;
 
 import java.util.Collection;
 
@@ -44,7 +44,7 @@ public class Java8HookDefinition implements HookDefinition {
 
     @Override
     public void execute(final Scenario scenario) throws Throwable {
-        Timeout.timeout(() -> {
+        Invoker.timeout(() -> {
             if (hookBody != null) {
                 hookBody.accept(scenario);
             } else {

@@ -1,10 +1,10 @@
-package cucumber.runtime.java8;
+package io.cucumber.java8;
 
-import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.java.Function;
-import cucumber.runtime.java.LambdaGlueRegistry;
+import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.java.Function;
+import io.cucumber.java.LambdaGlueRegistry;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;

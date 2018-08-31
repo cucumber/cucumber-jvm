@@ -1,10 +1,10 @@
-package cucumber.runtime.java8;
+package io.cucumber.java8;
 
 import static org.junit.Assert.assertEquals;
 
-import io.cucumber.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.CucumberException;
+import io.cucumber.core.exception.CucumberException;
 import org.junit.Test;
 
 import java.util.List;

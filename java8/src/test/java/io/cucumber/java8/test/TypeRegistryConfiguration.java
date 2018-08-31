@@ -1,9 +1,9 @@
-package cucumber.runtime.java8.test;
+package io.cucumber.java8.test;
 
 import cucumber.api.TypeRegistryConfigurer;
 import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTableType;
-import cucumber.runtime.java8.test.LambdaStepdefs.Person;
+import io.cucumber.java8.test.LambdaStepdefs.Person;
 
 import java.util.Locale;
 import java.util.Map;

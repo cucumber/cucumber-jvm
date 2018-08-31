@@ -1,9 +1,9 @@
-package cucumber.runtime.java8;
+package io.cucumber.java8;
 
 import cucumber.api.java8.GlueBase;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
-import cucumber.runtime.java.JavaBackend;
+import io.cucumber.java.JavaBackend;
 
 public interface LambdaGlueBase extends GlueBase {
 

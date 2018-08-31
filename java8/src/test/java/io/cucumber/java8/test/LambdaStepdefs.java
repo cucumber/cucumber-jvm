@@ -1,4 +1,4 @@
-package cucumber.runtime.java8.test;
+package io.cucumber.java8.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;

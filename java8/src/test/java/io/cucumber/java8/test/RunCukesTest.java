@@ -1,4 +1,4 @@
-package cucumber.runtime.java8.test;
+package io.cucumber.java8.test;
 
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;

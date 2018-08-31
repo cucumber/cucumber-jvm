@@ -1,4 +1,4 @@
-package cucumber.runtime.java8;
+package io.cucumber.java8;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

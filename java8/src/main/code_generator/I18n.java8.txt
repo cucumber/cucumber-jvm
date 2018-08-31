@@ -11,9 +11,9 @@ import cucumber.api.java8.StepdefBody.A7;
 import cucumber.api.java8.StepdefBody.A8;
 import cucumber.api.java8.StepdefBody.A9;
 
-import cucumber.runtime.java.LambdaGlueRegistry;
-import cucumber.runtime.java8.Java8StepDefinition;
-import cucumber.runtime.java8.LambdaGlueBase;
+import io.cucumber.java.LambdaGlueRegistry;
+import io.cucumber.java8.Java8StepDefinition;
+import io.cucumber.java8.LambdaGlueBase;
 
 /**
  * To execute steps in a feature file the steps must be
