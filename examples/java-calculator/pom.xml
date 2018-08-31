@@ -41,7 +41,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <groups>cucumber.examples.java.calculator.Example</groups>
+                    <groups>io.cucumber.examples.java.calculator.Example</groups>
                     <forkMode>never</forkMode>
                 </configuration>
             </plugin>
