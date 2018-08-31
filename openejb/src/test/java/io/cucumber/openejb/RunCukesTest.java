@@ -1,8 +1,7 @@
-package cucumber.runtime.java.needle;
-
-import org.junit.runner.RunWith;
+package io.cucumber.openejb;
 
 import cucumber.api.junit.Cucumber;
+import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 public class RunCukesTest {

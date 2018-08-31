@@ -1,4 +1,4 @@
-package cucumber.runtime.java.weld;
+package io.cucumber.openejb;
 
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;

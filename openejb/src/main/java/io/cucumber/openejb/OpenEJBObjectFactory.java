@@ -1,6 +1,6 @@
-package cucumber.runtime.java.openejb;
+package io.cucumber.openejb;
 
-import cucumber.runtime.CucumberException;
+import io.cucumber.core.exception.CucumberException;
 import cucumber.api.java.ObjectFactory;
 import org.apache.openejb.OpenEjbContainer;
 
