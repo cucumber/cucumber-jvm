@@ -6,6 +6,7 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventListener;
+import cucumber.api.event.TestSourceRead;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
@@ -26,6 +27,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.runtime.TestFeatureSupplier;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import junit.framework.AssertionFailedError;
@@ -76,7 +78,7 @@ public class TestHelper {
     private TestHelper() {
     }
 
-    private static final class TestHelperBackendSupplier extends TestBackendSupplier {
+    public static final class TestHelperBackendSupplier extends TestBackendSupplier {
 
         private final List<CucumberFeature> features;
         private final Map<String, Result> stepsToResult;
@@ -85,13 +87,35 @@ public class TestHelper {
         private final List<String> hookLocations;
         private final List<Answer<Object>> hookActions;
 
-        private TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
+        public TestHelperBackendSupplier(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+            this(
+                Collections.<CucumberFeature>emptyList(),
+                Collections.<String, Result>emptyMap(),
+                Collections.<String, String>emptyMap(),
+                Collections.<SimpleEntry<String, Result>>emptyList(),
+                Collections.<String>emptyList(),
+                Collections.<Answer<Object>>emptyList()
+            );
+        }
+
+        public TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
             this.features = features;
             this.stepsToResult = stepsToResult;
             this.stepsToLocation = stepsToLocation;
             this.hooks = hooks;
             this.hookLocations = hookLocations;
             this.hookActions = hookActions;
+        }
+
+        public TestHelperBackendSupplier(List<CucumberFeature> features) {
+            this(
+                features,
+                Collections.<String, Result>emptyMap(),
+                Collections.<String, String>emptyMap(),
+                Collections.<SimpleEntry<String, Result>>emptyList(),
+                Collections.<String>emptyList(),
+                Collections.<Answer<Object>>emptyList()
+            );
         }
 
 
@@ -266,45 +290,44 @@ public class TestHelper {
             hookActions
         );
 
+        final EventBus bus = createEventBus();
+
         final FeatureSupplier featureSupplier = features.isEmpty()
             ? null // assume feature paths passed in as args instead
-            : new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return features;
-            }
-        };
+            : new TestFeatureSupplier(bus, features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
             .withArg(args.toString())
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)
-            .withFeatureSupplier(featureSupplier);
+            .withFeatureSupplier(featureSupplier)
+            .withEventBus(bus);
 
-        if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
-            if (formatterUnderTest instanceof Plugin) {
-                runtimeBuilder.withAdditionalPlugins((Plugin) formatterUnderTest);
-            }
-        } else {
-            EventBus bus = null;
-            if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
-                final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
-                bus = new TimeServiceEventBus(timeService);
-                timeService.setEventPublisher(bus);
-            } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
-                bus = new TimeServiceEventBus(new TimeServiceStub(this.timeServiceIncrement));
-            }
-
-            runtimeBuilder.withEventBus(bus);
-            if (formatterUnderTest instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) formatterUnderTest).setEventPublisher(bus);
-            } else if (formatterUnderTest instanceof EventListener) {
-                ((EventListener) formatterUnderTest).setEventPublisher(bus);
-            }
+        if (formatterUnderTest instanceof ConcurrentEventListener) {
+            ((ConcurrentEventListener) formatterUnderTest).setEventPublisher(bus);
+        } else if (formatterUnderTest instanceof EventListener) {
+            ((EventListener) formatterUnderTest).setEventPublisher(bus);
+        } else if (formatterUnderTest instanceof Plugin) {
+            runtimeBuilder.withAdditionalPlugins((Plugin) formatterUnderTest);
         }
 
         runtimeBuilder.build().run();
+    }
+
+    private EventBus createEventBus() {
+        EventBus bus = null;
+
+        if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
+            bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
+            final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
+            bus = new TimeServiceEventBus(timeService);
+            timeService.setEventPublisher(bus);
+        } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
+            bus = new TimeServiceEventBus(new TimeServiceStub(this.timeServiceIncrement));
+        }
+        return bus;
     }
 
     public static Builder builder() {

@@ -32,7 +32,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+import org.mockito.stubbing.Answer;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -79,17 +81,13 @@ public class RuntimeTest {
                 return singletonList(mock(Backend.class));
             }
         };
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
+        FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
             .withFeatureSupplier(featureSupplier)
+            .withEventBus(bus)
             .build()
             .run();
 
@@ -287,21 +285,44 @@ public class RuntimeTest {
 
     @Test
     public void should_make_scenario_name_available_to_hooks() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+        final CucumberFeature feature = TestHelper.feature("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        HookDefinition beforeHook = mock(HookDefinition.class);
+        final HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(beforeHook, HookType.Before, feature);
+        TestBackendSupplier testBackendSupplier = createTestBackendSupplier(feature, beforeHook);
+
+        FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
+
+        Runtime runtime = Runtime.builder()
+            .withArgs()
+            .withBackendSupplier(testBackendSupplier)
+            .withFeatureSupplier(featureSupplier)
+            .withEventBus(bus)
+            .build();
         runtime.run();
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
         verify(beforeHook).execute(capturedScenario.capture());
         assertEquals("scenario name", capturedScenario.getValue().getName());
+    }
+
+    private TestBackendSupplier createTestBackendSupplier(final CucumberFeature feature, final HookDefinition beforeHook) {
+        return new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, List<String> gluePaths) {
+                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
+                    for (Step step : child.getSteps()) {
+                        mockMatch(glue, step.getText());
+                    }
+                }
+                mockHook(glue, beforeHook, HookType.Before);
+            }
+        };
     }
 
     @Test
@@ -410,18 +431,15 @@ public class RuntimeTest {
             "  Scenario: scenario_3 name\n" +
             "    Given first step\n");
 
-        Map<String, Result> stepsToResult = new HashMap<>();
-        stepsToResult.put("first step", result("passed"));
-
         FormatterSpy formatterSpy = new FormatterSpy();
         final List<CucumberFeature> features = Arrays.asList(feature1, feature2, feature3);
 
-        TestHelper.builder()
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withFormatterUnderTest(formatterSpy)
-            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs("--threads", String.valueOf(features.size()))
+        Runtime.builder()
+            .withFeatureSupplier(new TestFeatureSupplier(bus, features))
+            .withEventBus(bus)
+            .withArgs("--threads", String.valueOf(features.size()))
+            .withAdditionalPlugins(formatterSpy)
+            .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
             .build()
             .run();
 
@@ -501,37 +519,6 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withEventBus(bus)
             .build();
-    }
-
-    private Runtime createRuntimeWithMockedGlue(final HookDefinition hook,
-                                                final HookType hookType,
-                                                final CucumberFeature feature,
-                                                String... runtimeArgs) {
-        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
-                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
-                    for (Step step : child.getSteps()) {
-                        mockMatch(glue, step.getText());
-                    }
-                }
-                mockHook(glue, hook, hookType);
-            }
-        };
-
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
-
-        return Runtime.builder()
-            .withArgs(runtimeArgs)
-            .withBackendSupplier(testBackendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .build();
-
     }
 
     private void mockMatch(Glue glue, String text) {
