@@ -1,5 +1,7 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.io.Resource;
+import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runner.EventBus;
 import io.cucumber.core.runner.TimeService;
@@ -9,7 +11,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.filter.RerunFilters;
-import io.cucumber.core.io.ClasspathResourceLoader;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
 import org.junit.Test;
@@ -20,10 +21,12 @@ import org.mockito.InOrder;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -153,8 +156,6 @@ public class FeatureRunnerTest {
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
         final TimeService timeServiceStub = new TimeService() {
             @Override
@@ -170,7 +171,12 @@ public class FeatureRunnerTest {
         };
 
         EventBus bus = new TimeServiceEventBus(timeServiceStub);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+        FeatureLoader featureLoader = new FeatureLoader(new ResourceLoader() {
+            @Override
+            public Iterable<Resource> resources(String path, String suffix) {
+                return emptyList();
+            }
+        });
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         Filters filters = new Filters(runtimeOptions, rerunFilters);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);

@@ -91,7 +91,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        Plugins plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         this.filters = new Filters(runtimeOptions, rerunFilters);
