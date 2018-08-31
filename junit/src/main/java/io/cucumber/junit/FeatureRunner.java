@@ -1,13 +1,13 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureCompiler;
-import cucumber.runtime.filter.Filters;
-import cucumber.runner.ThreadLocalRunnerSupplier;
-import cucumber.runtime.junit.PickleRunners.PickleRunner;
-import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.filter.Filters;
+import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.model.FeatureCompiler;
+import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -17,11 +17,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
-import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
+import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
+import static io.cucumber.junit.PickleRunners.withStepDescriptions;
+
 
 public class FeatureRunner extends ParentRunner<PickleRunner> {
-    private final List<PickleRunner> children = new ArrayList<PickleRunner>();
+    private final List<PickleRunner> children = new ArrayList<>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;

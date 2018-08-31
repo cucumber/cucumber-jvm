@@ -1,4 +1,4 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 public enum NotificationLevel {
     SCENARIO,

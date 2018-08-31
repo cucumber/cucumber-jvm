@@ -1,6 +1,6 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
-import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.core.model.CucumberFeature;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;

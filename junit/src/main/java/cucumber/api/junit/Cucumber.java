@@ -4,28 +4,28 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
-import cucumber.runtime.BackendModuleBackendSupplier;
-import cucumber.runtime.BackendSupplier;
-import cucumber.runner.TimeServiceEventBus;
-import cucumber.runtime.ClassFinder;
-import cucumber.runtime.FeaturePathFeatureSupplier;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.model.FeatureLoader;
-import cucumber.runner.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.RuntimeOptionsFactory;
-import cucumber.runtime.io.MultiLoader;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.junit.Assertions;
-import cucumber.runtime.junit.FeatureRunner;
-import cucumber.runtime.junit.JUnitOptions;
-import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.junit.Assertions;
+import io.cucumber.junit.FeatureRunner;
+import io.cucumber.junit.JUnitOptions;
+import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runtime.BackendModuleBackendSupplier;
+import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.io.ClassFinder;
+import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
+import io.cucumber.core.filter.Filters;
+import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.filter.RerunFilters;
+import io.cucumber.core.plugin.PluginFactory;
+import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsFactory;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.model.CucumberFeature;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -48,7 +48,7 @@ import java.util.List;
  * &#64;CucumberOptions(plugin = "pretty")
  * public class RunCukesTest {
  * }
-Fail * </pre></blockquote>
+ * Fail * </pre></blockquote>
  * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
@@ -83,15 +83,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
+        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
-        // Parse the features early. Don't proceed when there are lexer errors
-        final List<CucumberFeature> features = featureSupplier.get();
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, bus);
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
-        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
@@ -102,11 +101,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         // Start the run before reading the features.
         // Allows the test source read events to be broadcast properly
         bus.send(new TestRunStarted(bus.getTime()));
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(bus);
-        }
+        addChildren(featureSupplier.get());
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
-        addChildren(features);
     }
 
     @Override

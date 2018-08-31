@@ -1,4 +1,4 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;

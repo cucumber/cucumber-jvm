@@ -1,6 +1,6 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
-import cucumber.runtime.CucumberException;
+import io.cucumber.core.exception.CucumberException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

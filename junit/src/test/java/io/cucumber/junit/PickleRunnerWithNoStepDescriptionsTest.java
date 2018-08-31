@@ -1,10 +1,10 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runner.ThreadLocalRunnerSupplier;
-import cucumber.runtime.junit.PickleRunners.PickleRunner;
+import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import gherkin.events.PickleEvent;
 import org.junit.Test;
 

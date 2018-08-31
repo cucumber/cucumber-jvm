@@ -1,4 +1,4 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 class SkippedThrowable extends Throwable {
     private static final long serialVersionUID = 1L;

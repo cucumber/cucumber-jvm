@@ -1,7 +1,7 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
-import cucumber.runtime.CucumberException;
-import cucumber.util.FixJava;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.util.FixJava;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -26,7 +26,7 @@ public class JUnitOptions {
      */
     public JUnitOptions(boolean strict, List<String> argv) {
         this.strict = strict;
-        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
     }
 

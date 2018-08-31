@@ -1,12 +1,12 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
-import cucumber.runner.EventBus;
-import cucumber.runtime.junit.JUnitReporter.EachTestNotifier;
-import cucumber.runtime.junit.JUnitReporter.NoTestNotifier;
-import cucumber.runtime.junit.PickleRunners.PickleRunner;
+import io.cucumber.core.runner.EventBus;
+import io.cucumber.junit.JUnitReporter.EachTestNotifier;
+import io.cucumber.junit.JUnitReporter.NoTestNotifier;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
