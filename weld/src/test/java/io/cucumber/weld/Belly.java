@@ -1,4 +1,4 @@
-package cucumber.runtime.java.openejb;
+package io.cucumber.weld;
 
 public class Belly {
     private int cukes;

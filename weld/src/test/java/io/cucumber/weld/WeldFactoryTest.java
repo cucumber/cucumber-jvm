@@ -1,4 +1,4 @@
-package cucumber.runtime.java.weld;
+package io.cucumber.weld;
 
 import cucumber.api.java.ObjectFactory;
 import org.junit.Test;
