@@ -1,10 +1,10 @@
-package cucumber.runtime.testng;
+package io.cucumber.testng;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.testng.AbstractTestNGCucumberTests;
 
 @CucumberOptions(
-    features = "classpath:cucumber/runtime/testng/three_scenarios.feature"
+    features = "classpath:io/cucumber/testng/three_scenarios.feature"
 )
 public class RunFeatureWithThreeScenariosTest extends AbstractTestNGCucumberTests {
 }

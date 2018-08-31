@@ -3,8 +3,8 @@ package cucumber.api.testng;
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseFinished;
-import cucumber.runner.EventBus;
-import cucumber.runtime.CucumberException;
+import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.exception.CucumberException;
 import org.testng.SkipException;
 
 class TestCaseResultListener {

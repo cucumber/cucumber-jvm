@@ -2,28 +2,28 @@ package cucumber.api.testng;
 
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.runner.Runner;
-import cucumber.runner.TimeServiceEventBus;
-import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
-import cucumber.runtime.BackendModuleBackendSupplier;
-import cucumber.runtime.ClassFinder;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureCompiler;
-import cucumber.runtime.FeaturePathFeatureSupplier;
-import cucumber.runtime.filter.Filters;
-import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.model.FeatureLoader;
-import cucumber.runner.ThreadLocalRunnerSupplier;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.RuntimeOptionsFactory;
-import cucumber.runtime.io.MultiLoader;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.core.runner.Runner;
+import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runtime.BackendModuleBackendSupplier;
+import io.cucumber.core.io.ClassFinder;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.model.FeatureCompiler;
+import io.cucumber.core.filter.Filters;
+import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.filter.RerunFilters;
+import io.cucumber.core.plugin.PluginFactory;
+import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsFactory;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.model.CucumberFeature;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class TestNGCucumberRunner {
         RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
         filters = new Filters(runtimeOptions, rerunFilters);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
-        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, bus);
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
@@ -103,12 +103,7 @@ public class TestNGCucumberRunner {
     }
 
     List<CucumberFeature> getFeatures() {
-
-        List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime()));
-        for (CucumberFeature feature : features) {
-            feature.sendTestSourceRead(bus);
-        }
-        return features;
+        return featureSupplier.get();
     }
 }

@@ -2,14 +2,13 @@ package cucumber.api.testng;
 
 import cucumber.api.PendingException;
 import cucumber.api.Result;
-import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
-import cucumber.runner.TimeServiceEventBus;
+import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
