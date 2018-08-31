@@ -30,7 +30,7 @@ import cucumber.api.Plugin;
 public interface ConcurrentEventListener extends Plugin {
 
     /**
-     * Set the event publisher. The formatter can register event listeners with the publisher.
+     * Set the event publisher. The plugin can register event listeners with the publisher.
      *
      * @param publisher the event publisher
      */

@@ -1,10 +1,9 @@
 package cucumber.api;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.snippets.CamelCaseConcatenator;
-import cucumber.runtime.snippets.Concatenator;
-import cucumber.runtime.snippets.FunctionNameGenerator;
-import cucumber.runtime.snippets.UnderscoreConcatenator;
+import io.cucumber.core.snippets.CamelCaseConcatenator;
+import io.cucumber.core.snippets.Concatenator;
+import io.cucumber.core.snippets.FunctionNameGenerator;
+import io.cucumber.core.snippets.UnderscoreConcatenator;
 
 public enum SnippetType {
     UNDERSCORE("underscore", new UnderscoreConcatenator()),
@@ -24,7 +23,7 @@ public enum SnippetType {
                 return snippetType;
             }
         }
-        throw new CucumberException(String.format("Unrecognized SnippetType %s", name));
+        throw new IllegalArgumentException(String.format("Unrecognized SnippetType %s", name));
     }
 
     public FunctionNameGenerator getFunctionNameGenerator() {

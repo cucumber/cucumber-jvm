@@ -1,6 +1,6 @@
 package cucumber.api.cli;
 
-import cucumber.runtime.Runtime;
+import io.cucumber.core.runtime.Runtime;
 
 public class Main {
 
