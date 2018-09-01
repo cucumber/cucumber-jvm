@@ -6,6 +6,7 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.event.EventBus;
 import org.junit.Test;
 import org.mockito.InOrder;
 

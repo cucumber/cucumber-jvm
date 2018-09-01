@@ -6,6 +6,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;

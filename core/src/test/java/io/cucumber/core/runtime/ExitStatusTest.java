@@ -4,7 +4,7 @@ package io.cucumber.core.runtime;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestCaseFinished;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.options.RuntimeOptions;

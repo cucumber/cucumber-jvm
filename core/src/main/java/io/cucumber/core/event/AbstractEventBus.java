@@ -1,8 +1,8 @@
-package io.cucumber.core.runner;
+package io.cucumber.core.event;
 
 import cucumber.api.event.Event;
 
-abstract class AbstractEventBus extends AbstractEventPublisher implements EventBus {
+public abstract class AbstractEventBus extends AbstractEventPublisher implements EventBus {
 
     @Override
     public void send(Event event) {

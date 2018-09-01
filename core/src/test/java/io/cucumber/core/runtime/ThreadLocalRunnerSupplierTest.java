@@ -3,11 +3,10 @@ package io.cucumber.core.runtime;
 
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseStarted;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;

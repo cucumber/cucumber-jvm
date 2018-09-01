@@ -1,7 +1,7 @@
 package io.cucumber.junit;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.runner.RunnerSupplier;
+import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.Test;
 

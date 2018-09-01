@@ -1,4 +1,4 @@
-package io.cucumber.core.runner;
+package io.cucumber.core.event;
 
 import cucumber.api.event.Event;
 import cucumber.api.event.EventHandler;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class AbstractEventPublisher implements EventPublisher {
+public abstract class AbstractEventPublisher implements EventPublisher {
     protected Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<Class<? extends Event>, List<EventHandler>>();
 
     @Override

@@ -2,7 +2,7 @@ package cucumber.api.testng;
 
 import cucumber.api.PendingException;
 import cucumber.api.Result;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.testng.SkipException;

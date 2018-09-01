@@ -5,6 +5,7 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.SnippetsSuggestedEvent;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
@@ -20,7 +21,7 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final RuntimeOptions runtimeOptions;
 
-    Runner(EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
         this.bus = bus;
         this.runtimeOptions = runtimeOptions;
         this.backends = backends;

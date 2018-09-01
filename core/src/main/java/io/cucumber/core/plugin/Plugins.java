@@ -10,7 +10,6 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.runner.CanonicalOrderEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;

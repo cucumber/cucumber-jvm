@@ -1,4 +1,4 @@
-package io.cucumber.core.runner;
+package io.cucumber.core.event;
 
 import cucumber.api.event.Event;
 import cucumber.api.event.EventPublisher;

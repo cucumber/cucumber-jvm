@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import cucumber.api.TestCase;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.event.EventBus;
 
 import java.util.Collections;
 import java.util.List;

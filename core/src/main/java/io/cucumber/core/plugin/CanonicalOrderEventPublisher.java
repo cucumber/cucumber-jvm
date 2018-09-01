@@ -1,13 +1,14 @@
-package io.cucumber.core.runner;
+package io.cucumber.core.plugin;
 
 import cucumber.api.event.Event;
 import cucumber.api.event.TestRunFinished;
+import io.cucumber.core.event.AbstractEventPublisher;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class CanonicalOrderEventPublisher extends AbstractEventPublisher {
+final class CanonicalOrderEventPublisher extends AbstractEventPublisher {
 
     private final List<Event> queue = new LinkedList<>();
 

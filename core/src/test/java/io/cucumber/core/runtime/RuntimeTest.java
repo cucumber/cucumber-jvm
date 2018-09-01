@@ -10,7 +10,7 @@ import cucumber.api.event.TestCaseFinished;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
@@ -32,9 +32,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-import org.mockito.stubbing.Answer;
 
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;

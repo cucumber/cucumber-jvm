@@ -6,6 +6,7 @@ import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import io.cucumber.core.backend.StepDefinitionMatch;
+import io.cucumber.core.event.EventBus;
 
 import java.util.Arrays;
 

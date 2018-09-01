@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runtime.BackendModuleBackendSupplier;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.options.RuntimeOptions;

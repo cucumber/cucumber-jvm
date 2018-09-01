@@ -4,7 +4,7 @@ import cucumber.api.Result;
 import cucumber.api.SnippetType;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;

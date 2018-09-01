@@ -1,5 +1,7 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.event.AbstractEventBus;
+
 public final class TimeServiceEventBus extends AbstractEventBus {
     private final TimeService stopWatch;
 

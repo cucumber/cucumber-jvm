@@ -3,7 +3,7 @@ package io.cucumber.core.plugin;
 import cucumber.api.event.TestSourceRead;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeServiceStub;
 import io.cucumber.core.model.CucumberFeature;
 import gherkin.pickles.PickleLocation;

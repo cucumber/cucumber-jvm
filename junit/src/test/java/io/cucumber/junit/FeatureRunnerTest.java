@@ -3,12 +3,12 @@ package io.cucumber.junit;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runner.ThreadLocalRunnerSupplier;
+import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.filter.RerunFilters;
 import io.cucumber.core.model.CucumberFeature;
@@ -21,7 +21,6 @@ import org.mockito.InOrder;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

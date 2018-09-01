@@ -4,7 +4,7 @@ import cucumber.api.event.TestSourceRead;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runner.EventBus;
+import io.cucumber.core.event.EventBus;
 
 import java.util.List;
 

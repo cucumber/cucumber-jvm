@@ -8,6 +8,7 @@ import cucumber.api.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.event.EventBus;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
