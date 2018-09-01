@@ -48,7 +48,7 @@ and `After` hooks.
 
 ## Using other JUnit features ##
 
-The Cucumber runner acts like a suite of a JUnit tests. As such other JUnit features such as Categories, Custom JUnit 
+The Cucumber runner acts like a suite of a JUnit tests. As such other JUnit features such as Custom JUnit 
 Listeners and Reporters can all be expected to work.
 
 For more information on JUnit, see the [JUnit web site](http://www.junit.org).
@@ -61,4 +61,23 @@ Through [Assume](https://junit.org/junit4/javadoc/4.12/org/junit/Assume.html) JU
 assumption does not mean the code is broken, but that the test provides no useful information. The default JUnit 
 runner skips tests with failing assumptions. Custom runners may behave differently. 
 
-The Cucumber runner supports `Assume` and will marked skipped scenarios as skipped.   
+The Cucumber runner supports `Assume` and will marked skipped scenarios as skipped.
+
+## Parallel Execution with Maven ##
+
+Cucumber JUnit supports parallel execution of feature files across multiple threads. To enable this with maven set the 
+`parallel` property to either `methods` or `both`.
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <parallel>both</parallel>
+                <threadCount>4</threadCount>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
