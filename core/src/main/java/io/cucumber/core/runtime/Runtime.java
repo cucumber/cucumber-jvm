@@ -14,7 +14,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.SingletonRunnerSupplier;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.filter.RerunFilters;
 import io.cucumber.core.plugin.PluginFactory;
