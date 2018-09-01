@@ -12,7 +12,8 @@ public class Assertions {
     public static void assertNoCucumberAnnotatedMethods(Class clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             for (Annotation annotation : method.getAnnotations()) {
-                if (annotation.annotationType().getName().startsWith("cucumber")) {
+                if (annotation.annotationType().getName().startsWith("cucumber") //TODO: Remove once migrated
+                 || annotation.annotationType().getName().startsWith("io.cucumber")) {
                     throw new CucumberException(
                             "\n\n" +
                                     "Classes annotated with @RunWith(Cucumber.class) must not define any\n" +
