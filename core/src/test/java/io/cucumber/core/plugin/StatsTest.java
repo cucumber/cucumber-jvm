@@ -6,7 +6,6 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 import cucumber.api.Result;
-import cucumber.api.formatter.AnsiEscapes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

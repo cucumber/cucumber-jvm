@@ -9,7 +9,6 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
-import cucumber.api.formatter.NiceAppendable;
 import io.cucumber.core.exception.CucumberException;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;

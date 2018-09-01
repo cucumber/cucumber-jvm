@@ -6,7 +6,6 @@ import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestRunFinished;
-import cucumber.api.formatter.NiceAppendable;
 import cucumber.api.formatter.StrictAware;
 
 import java.util.ArrayList;

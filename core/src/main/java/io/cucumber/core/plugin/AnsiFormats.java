@@ -1,7 +1,5 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.formatter.AnsiEscapes;
-
 import java.util.HashMap;
 import java.util.Map;
 

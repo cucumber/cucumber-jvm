@@ -8,9 +8,7 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.WriteEvent;
-import cucumber.api.formatter.AnsiEscapes;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.NiceAppendable;
 
 import java.util.HashMap;
 import java.util.Map;

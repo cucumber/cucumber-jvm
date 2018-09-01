@@ -1,6 +1,6 @@
-package cucumber.api.formatter;
+package io.cucumber.core.plugin;
 
-public final class AnsiEscapes {
+final class AnsiEscapes {
     private static final char ESC = 27;
     private static final char BRACKET = '[';
 

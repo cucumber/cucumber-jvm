@@ -15,7 +15,6 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.NiceAppendable;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import gherkin.ast.Background;

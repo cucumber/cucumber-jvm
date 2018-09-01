@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import cucumber.api.Result;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import cucumber.api.formatter.AnsiEscapes;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.stepexpression.StepExpression;

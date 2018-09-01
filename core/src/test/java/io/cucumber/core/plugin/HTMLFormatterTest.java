@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import cucumber.api.Result;
-import cucumber.api.formatter.NiceAppendable;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.util.FixJava;

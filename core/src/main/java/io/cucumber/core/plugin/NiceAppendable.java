@@ -1,4 +1,4 @@
-package cucumber.api.formatter;
+package io.cucumber.core.plugin;
 
 import java.io.Closeable;
 import java.io.Flushable;
@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * A nice appendable that doesn't throw checked exceptions
  */
-public final class NiceAppendable {
+final class NiceAppendable {
     private static final CharSequence NL = "\n";
     private final Appendable out;
 
