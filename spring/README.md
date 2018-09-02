@@ -3,7 +3,7 @@ Cucumber Spring
 
 Use Cucumber Spring to manage state between steps and for scenarios.
 
-Add the `cucumber-spring` dependency to your pom.xml:
+Add the `cucumber-spring` dependency to your `pom.xml`:
 
 ```xml
 <dependencies>
@@ -22,28 +22,31 @@ Add the `cucumber-spring` dependency to your pom.xml:
 
 For your own classes:
 
-* Add the `@Component` annotation to each of the classes cucumber-spring should manage.
-
-* Add a `@Scope("cucumber-glue")` annotation to have cucumber-spring remove them **after each scenario**
-
+* Add a `@Component` annotation to each of the classes cucumber-spring should manage.
 * Add the location of your classes to the `@ComponentScan` of your (test) configuration:
 
 ```java
+package com.example.app;
+
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("your.package")
+@ComponentScan("com.example.app")
 public class Config {
     // the rest of your configuration
 }
 ```
+
+* Add `@DirtiesContext` to your test configuration if each scenario should have a fresh application context.
 
 For classes from other frameworks:
 
 * You will have to explicitly register them as Beans in your (test) configuration:
 
 ```java
+package com.example.app;
+
 import other.framework.Class;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -51,43 +54,60 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@ComponentScan("your.package")
-public class Config {
+@ComponentScan("com.example.app")
+public class TestConfig {
     @Bean
-    @Scope("cucumber-glue")
-    public Class otherClass() {
-        // return an instance of the other class
+    public SomeOtherService someOtherService() {
+        // return an instance of some other service
     }
 }
 ```
 
-Now you can use the registered Beans by Autowiring them where you need them.
+To make Cucumber aware of your test configuration you can annotate a single step definition with 
+`@ContextConfiguration`, `@ContextHierarchy` or `@BootstrapWith`. If you are using SpringBoot, you can annotate a 
+single step definition class with `@SpringBootTest(classes = TestConfig.class)`.
 
 For example:
 ```java
-import your.package.OtherStepDefs;
+import com.example.app;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class StepDefs {
+@SpringBootTest(classes = TestConfig.class)
+public class SomeServiceSteps {
+
+    // the rest of your step definitions
+
+}
+```
+
+Now you can use the registered beans by autowiring them where you need them.
+
+For example:
+```java
+import com.example.app;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@SpringBootTest(classes = TestConfig.class)
+public class SomeServiceSteps {
+    
     @Autowired
-    OtherStepDefs otherStepDefs;
+    SomeService someService;
+
+    @Autowired
+    SomeOtherService someOtherService;
 
     // the rest of your step definitions
 }
-
 ```
 
-## XML Configuration
+### XML Configuration
 
 If you are using xml based configuration, you can to register the beans in a `cucumber.xml` file:
 
 ```xml
-<bean class="your.package.YourClass" scope="cucumber-glue" />
-<bean class="other.framework.Class" scope="cucumber-glue" />
+<bean class="com.example.app.MyService"/>
+<bean class="com.example.lib.SomeOtherService"/>
 ```
 
-Annotate your StepDefinition class with `@ContextConfiguration("classpath:cucumber.xml")`
+Annotate a single step definition class with `@ContextConfiguration("classpath:cucumber.xml")`
 
-## SpringBoot
-
-If you are using SpringBoot, you can annotate your StepDefinition class with `@SpringBootTest(classes = TestConfig.class)`.

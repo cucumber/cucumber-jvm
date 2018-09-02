@@ -35,7 +35,6 @@ This will execute all scenarios in same package as the runner, by default glue c
 package. The `@CucumberOptions` can be used to provide
 [additional configuration](https://cucumber.io/docs/reference/jvm#list-configuration-options) to the runner. 
 
-
 ## Test composition ##
 
 It is possible to use TestNG without inheriting from `AbstractTestNGCucumberTests` by using the `TestNGCucumberRunner`. 
@@ -49,3 +48,18 @@ Cucumber provides limited support for [SkipException](https://jitpack.io/com/git
 * Throwing a `SkipException` results in both Cucumber and TestNG marking the test as skipped.
 * Throwing a subclass of `SkipException` results in Cucumber marking the test as failed and TestNG marking the test 
 as skipped.
+
+## Parallel execution ##
+
+Cucumber TestNG supports parallel execution of scenarios. Override the `scenarios` method to enable parallel execution.
+
+```java
+public class RunCukesTest extends AbstractTestNGCucumberTests {
+
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}
+```
