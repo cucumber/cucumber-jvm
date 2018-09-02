@@ -28,7 +28,7 @@
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 
         <!-- THIS IS WHERE THE MODELS ARE -->
-        <property name="packagesToScan" value="cucumber.examples.spring.txn"/>
+        <property name="packagesToScan" value="io.cucumber.examples.spring.txn"/>
 
         <property name="dataSource" ref="dataSource"/>
         <property name="jpaVendorAdapter">
@@ -46,6 +46,6 @@
 
     <tx:annotation-driven/>
 
-    <jpa:repositories base-package="cucumber.examples.spring.txn"/>
+    <jpa:repositories base-package="io.cucumber.examples.spring.txn"/>
 
 </beans>

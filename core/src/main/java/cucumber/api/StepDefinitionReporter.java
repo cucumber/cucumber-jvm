@@ -1,6 +1,6 @@
 package cucumber.api;
 
-import cucumber.runtime.StepDefinition;
+import io.cucumber.core.backend.StepDefinition;
 
 public interface StepDefinitionReporter extends Plugin {
     /**

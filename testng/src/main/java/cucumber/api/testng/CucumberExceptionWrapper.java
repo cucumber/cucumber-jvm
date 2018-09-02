@@ -1,6 +1,6 @@
 package cucumber.api.testng;
 
-import cucumber.runtime.CucumberException;
+import io.cucumber.core.exception.CucumberException;
 import gherkin.events.PickleEvent;
 
 /**

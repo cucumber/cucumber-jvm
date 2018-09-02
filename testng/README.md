@@ -21,7 +21,7 @@ Add the `cucumber-testng` dependency to your pom.
 Create an empty class that extends the `AbstractTestNGCucumberTests`.
 
 ```java
-package cucumber.runtime.testng;
+package io.cucumber.runtime.testng;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.testng.AbstractTestNGCucumberTests;

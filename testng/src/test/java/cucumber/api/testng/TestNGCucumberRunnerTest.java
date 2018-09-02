@@ -1,10 +1,10 @@
 package cucumber.api.testng;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.testng.RunCukesStrict;
-import cucumber.runtime.testng.RunCukesTest;
-import cucumber.runtime.testng.RunScenarioWithUndefinedStepsStrict;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.testng.RunCukesStrict;
+import io.cucumber.testng.RunCukesTest;
+import io.cucumber.testng.RunScenarioWithUndefinedStepsStrict;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
