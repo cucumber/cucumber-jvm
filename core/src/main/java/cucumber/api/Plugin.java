@@ -28,6 +28,7 @@ import java.net.URL;
  * <li>{@link cucumber.api.formatter.ColorAware}</li>
  * <li>{@link cucumber.api.formatter.StrictAware}</li>
  * <li>{@link cucumber.api.event.EventListener}</li>
+ * <li>{@link cucumber.api.event.ConcurrentEventListener}</li>
  * <li>{@link cucumber.api.StepDefinitionReporter}</li>
  * <li>{@link cucumber.api.SummaryPrinter}</li>
  * </ul>
