@@ -120,4 +120,8 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.java8</project.Automatic-Module-Name>
+    </properties>
 </project>

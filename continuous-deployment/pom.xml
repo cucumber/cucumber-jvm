@@ -40,4 +40,7 @@
         </plugins>
     </build>
 
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.continuous.deployment</project.Automatic-Module-Name>
+    </properties>
 </project>

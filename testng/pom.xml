@@ -31,4 +31,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.testng</project.Automatic-Module-Name>
+    </properties>
 </project>

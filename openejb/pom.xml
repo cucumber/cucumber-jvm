@@ -51,4 +51,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
+    </properties>
 </project>
