@@ -16,7 +16,6 @@ import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.filter.RerunFilters;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
@@ -79,13 +78,13 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, resourceLoader);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, bus);
 
@@ -93,8 +92,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        this.filters = new Filters(runtimeOptions, rerunFilters);
+        this.filters = new Filters(runtimeOptions);
         this.junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
 

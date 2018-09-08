@@ -1,20 +1,14 @@
 package io.cucumber.core.model;
 
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class FeatureLoader {
-    private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     private final ResourceLoader resourceLoader;
 
@@ -38,45 +32,11 @@ public final class FeatureLoader {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         for (String featurePath : featurePaths) {
-            if (featurePath.startsWith("@")) {
-                loadFromRerunFile(builder, resourceLoader, featurePath.substring(1));
-            } else {
-                loadFromFeaturePath(builder, resourceLoader, featurePath, false);
-            }
+            loadFromFileSystemOrClasspath(builder, resourceLoader, featurePath);
         }
-        Collections.sort(cucumberFeatures, new CucumberFeature.CucumberFeatureUriComparator());
+        cucumberFeatures.sort(new CucumberFeature.CucumberFeatureUriComparator());
         return cucumberFeatures;
     }
-
-
-    private void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath) {
-        for (PathWithLines pathWithLines : loadRerunFile(rerunPath)) {
-            loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
-        }
-    }
-
-    public List<PathWithLines> loadRerunFile(String rerunPath) {
-        List<PathWithLines> featurePaths = new ArrayList<PathWithLines>();
-        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
-        for (Resource resource : resources) {
-            String source = read(resource);
-            if (!source.isEmpty()) {
-                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
-                while (matcher.find()) {
-                    featurePaths.add(new PathWithLines(matcher.group(1)));
-                }
-            }
-        }
-        return featurePaths;
-    }
-    private static String read(Resource resource) {
-        try {
-            return Encoding.readFile(resource);
-        } catch (IOException e) {
-            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
-        }
-    }
-
 
     private static void loadFromFileSystemOrClasspath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath) {
         try {

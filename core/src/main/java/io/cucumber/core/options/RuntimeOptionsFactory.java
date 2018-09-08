@@ -3,6 +3,7 @@ package io.cucumber.core.options;
 import cucumber.api.CucumberOptions;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,16 +13,22 @@ import static java.util.Arrays.asList;
 
 public final class RuntimeOptionsFactory {
     private final Class clazz;
+    private final ResourceLoader resoureceLoader;
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
 
     public RuntimeOptionsFactory(Class clazz) {
+        this(clazz, new MultiLoader(clazz.getClassLoader()));
+    }
+
+    public RuntimeOptionsFactory(Class clazz, ResourceLoader resourceLoader) {
         this.clazz = clazz;
+        this.resoureceLoader = resourceLoader;
     }
 
     public RuntimeOptions create() {
         List<String> args = buildArgsFromOptions();
-        return new RuntimeOptions(args);
+        return new RuntimeOptions(resoureceLoader, args);
     }
 
     private List<String> buildArgsFromOptions() {

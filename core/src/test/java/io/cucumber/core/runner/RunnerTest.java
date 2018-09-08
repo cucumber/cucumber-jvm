@@ -7,6 +7,8 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
@@ -25,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -44,7 +47,7 @@ public class RunnerTest {
     private static final List<PickleLocation> MOCK_LOCATIONS = asList(mock(PickleLocation.class));
 
 
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+    private final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
 
@@ -189,7 +192,7 @@ public class RunnerTest {
     public void steps_are_not_executed_on_dry_run() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
         final PickleEvent pickleEvent = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--dry-run");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, singletonList("--dry-run"));
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
             @Override
             public void loadGlue(Glue glue, List<String> gluePaths) {
@@ -203,7 +206,7 @@ public class RunnerTest {
 
     @Test
     public void hooks_not_executed_in_dry_run_mode() throws Throwable {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--dry-run");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, singletonList("--dry-run"));
 
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();

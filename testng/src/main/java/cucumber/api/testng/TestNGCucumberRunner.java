@@ -12,7 +12,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.model.FeatureCompiler;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.filter.RerunFilters;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
@@ -47,7 +46,7 @@ public class TestNGCucumberRunner {
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, resourceLoader);
         runtimeOptions = runtimeOptionsFactory.create();
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
@@ -55,8 +54,7 @@ public class TestNGCucumberRunner {
         bus = new TimeServiceEventBus(TimeService.SYSTEM);
         new Plugins(new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        filters = new Filters(runtimeOptions, rerunFilters);
+        filters = new Filters(runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, bus);
     }

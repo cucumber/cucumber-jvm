@@ -73,7 +73,7 @@ public class TestHelper {
     private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
     private long timeServiceIncrement = 0L;
     private Object formatterUnderTest = null;
-    private Iterable<String> runtimeArgs = Collections.emptyList();
+    private List<String> runtimeArgs = Collections.emptyList();
 
     private TestHelper() {
     }
@@ -272,11 +272,6 @@ public class TestHelper {
 
     public void run() {
 
-        final StringBuilder args = new StringBuilder();
-        for (final String arg : runtimeArgs) {
-            args.append(" ").append(arg);
-        }
-
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
 
@@ -297,7 +292,7 @@ public class TestHelper {
             : new TestFeatureSupplier(bus, features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withArg(args.toString())
+            .withArgs(runtimeArgs)
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)

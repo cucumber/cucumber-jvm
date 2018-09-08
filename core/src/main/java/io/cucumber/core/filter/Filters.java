@@ -11,15 +11,10 @@ import java.util.regex.Pattern;
 public final class Filters {
 
     private final List<PicklePredicate> filters;
-    private final RuntimeOptions runtimeOptions;
-    private final RerunFilters rerunFilters;
 
-    public Filters(RuntimeOptions runtimeOptions, RerunFilters rerunFilters) {
-        this.runtimeOptions = runtimeOptions;
-        this.rerunFilters = rerunFilters;
-
+    public Filters(RuntimeOptions runtimeOptions) {
         filters = new ArrayList<>();
-        List<String> tagFilters = this.runtimeOptions.getTagFilters();
+        List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
             this.filters.add(new TagPredicate(tagFilters));
         }
@@ -28,10 +23,6 @@ public final class Filters {
             this.filters.add(new NamePredicate(nameFilters));
         }
         Map<String, List<Long>> lineFilters = runtimeOptions.getLineFilters();
-        Map<String, List<Long>> rerunlineFilters = rerunFilters.processRerunFiles();
-        for (Map.Entry<String,List<Long>> line: rerunlineFilters.entrySet()) {
-            addLineFilters(lineFilters, line.getKey(), line.getValue());
-        }
         if (!lineFilters.isEmpty()) {
             this.filters.add(new LinePredicate(lineFilters));
         }
@@ -44,14 +35,6 @@ public final class Filters {
             }
         }
         return true;
-    }
-
-    private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
-        if (parsedLineFilters.containsKey(key)) {
-            parsedLineFilters.get(key).addAll(lines);
-        } else {
-            parsedLineFilters.put(key, lines);
-        }
     }
 
 }

@@ -2,6 +2,9 @@ package io.cucumber.core.options;
 
 import cucumber.api.SnippetType;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.Resource;
+import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.core.model.PathWithLines;
 import io.cucumber.core.util.FixJava;
@@ -10,6 +13,7 @@ import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -17,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.util.FixJava.join;
@@ -27,6 +32,7 @@ import static java.util.Arrays.asList;
 public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io.cucumber.core.runner.Options {
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
+    private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     static String usageText;
 
@@ -61,16 +67,7 @@ public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io
     private final List<Plugin> stepDefinitionReporters = new ArrayList<>();
     private final List<Plugin> summaryPrinters = new ArrayList<>();
 
-    /**
-     * Create a new instance from a string of options, for example:
-     * <p/>
-     * <pre<{@code "--name 'the fox' --plugin pretty --strict"}</pre>
-     *
-     * @param argv the arguments
-     */
-    public RuntimeOptions(String argv) {
-        this(ShellWords.parse(argv));
-    }
+    private final ResourceLoader resourceLoader;
 
     /**
      * Create a new instance from a list of options, for example:
@@ -79,11 +76,12 @@ public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io
      *
      * @param argv the arguments
      */
-    public RuntimeOptions(List<String> argv) {
-        this(Env.INSTANCE, argv);
+    public RuntimeOptions(ResourceLoader resourceLoader, List<String> argv) {
+        this(resourceLoader, Env.INSTANCE, argv);
     }
 
-    RuntimeOptions(Env env, List<String> argv) {
+    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
+        this.resourceLoader = resourceLoader;
         argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
@@ -172,13 +170,10 @@ public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
+            } else if (arg.startsWith("@")) {
+                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, arg.substring(1));
             } else {
-                PathWithLines pathWithLines = new PathWithLines(arg);
-                parsedFeaturePaths.add(pathWithLines.path);
-                if (!pathWithLines.lines.isEmpty()) {
-                    String key = pathWithLines.path.replace("classpath:", "");
-                    addLineFilters(parsedLineFilters, key, pathWithLines.lines);
-                }
+                processPathWithLines(parsedLineFilters, parsedFeaturePaths, new PathWithLines(arg));
             }
         }
         if (!parsedTagFilters.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
@@ -218,9 +213,46 @@ public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io
         }
     }
 
+    private void processPathWithLines(Map<String, List<Long>> parsedLineFilters, List<String> parsedFeaturePaths, PathWithLines pathWithLines) {
+        parsedFeaturePaths.add(pathWithLines.path);
+        if (!pathWithLines.lines.isEmpty()) {
+            String key = pathWithLines.path.replace("classpath:", "");
+            addLineFilters(parsedLineFilters, key, pathWithLines.lines);
+        }
+    }
+
+    private void processPathWitheLinesFromRerunFile(Map<String, List<Long>> parsedLineFilters, List<String> parsedFeaturePaths, String rerunPath) {
+        for (PathWithLines pathWithLines : loadRerunFile(rerunPath)) {
+            processPathWithLines(parsedLineFilters, parsedFeaturePaths, pathWithLines);
+        }
+    }
+
+    private List<PathWithLines> loadRerunFile(String rerunPath) {
+        List<PathWithLines> featurePaths = new ArrayList<>();
+        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
+        for (Resource resource : resources) {
+            String source = read(resource);
+            if (!source.isEmpty()) {
+                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
+                while (matcher.find()) {
+                    featurePaths.add(new PathWithLines(matcher.group(1)));
+                }
+            }
+        }
+        return featurePaths;
+    }
+
+    private static String read(Resource resource) {
+        try {
+            return FixJava.readReader(new InputStreamReader(resource.getInputStream()));
+        } catch (IOException e) {
+            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
+        }
+    }
+
     private boolean haveLineFilters(List<String> parsedFeaturePaths) {
         for (String pathName : parsedFeaturePaths) {
-            if (pathName.startsWith("@") || PathWithLines.hasLineFilters(pathName)) {
+            if (PathWithLines.hasLineFilters(pathName)) {
                 return true;
             }
         }

@@ -1,7 +1,9 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
@@ -10,7 +12,6 @@ import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.filter.RerunFilters;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
 import org.junit.Test;
@@ -154,7 +155,7 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
 
         final TimeService timeServiceStub = new TimeService() {
             @Override
@@ -176,8 +177,7 @@ public class FeatureRunnerTest {
                 return emptyList();
             }
         });
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        Filters filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
     }
