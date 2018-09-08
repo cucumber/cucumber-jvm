@@ -18,7 +18,7 @@ import java.util.Set;
  * Formatter for reporting all failed test cases and print their locations
  * Failed means: results that make the exit code non-zero.
  */
-final class RerunFormatter implements EventListener, StrictAware {
+public final class RerunFormatter implements EventListener, StrictAware {
     private final NiceAppendable out;
     private Map<String, ArrayList<Integer>> featureAndFailedLinesMapping = new HashMap<String, ArrayList<Integer>>();
     private boolean isStrict = false;

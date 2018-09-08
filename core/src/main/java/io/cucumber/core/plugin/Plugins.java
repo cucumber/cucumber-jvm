@@ -45,16 +45,8 @@ public final class Plugins {
     private List<Plugin> createPlugins() {
         List<Plugin> plugins = new ArrayList<Plugin>();
         if (!pluginNamesInstantiated) {
-            for (String pluginName : options.getPluginFormatterNames()) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                addPlugin(plugins, plugin);
-            }
-            for (String pluginName : options.getPluginStepDefinitionReporterNames()) {
-                Plugin plugin = pluginFactory.create(pluginName);
-                addPlugin(plugins, plugin);
-            }
-            for (String pluginName : options.getPluginSummaryPrinterNames()) {
-                Plugin plugin = pluginFactory.create(pluginName);
+            for (Options.Plugin pluginOption : options.plugins()) {
+                Plugin plugin = pluginFactory.create(pluginOption);
                 addPlugin(plugins, plugin);
             }
             pluginNamesInstantiated = true;

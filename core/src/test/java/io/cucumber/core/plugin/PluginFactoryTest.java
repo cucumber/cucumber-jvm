@@ -5,9 +5,9 @@ import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runner.TimeServiceStub;
-import io.cucumber.core.exception.CucumberException;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static io.cucumber.core.options.TestPluginOption.parse;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -33,20 +34,20 @@ public class PluginFactoryTest {
 
     @Test
     public void instantiates_junit_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create("junit:" + File.createTempFile("cucumber", "xml"));
+        Object plugin = fc.create(parse("junit:" + File.createTempFile("cucumber", "xml")));
         assertEquals(JUnitFormatter.class, plugin.getClass());
     }
 
     @Test
     public void instantiates_html_plugin_with_dir_arg() throws IOException {
-        Object plugin = fc.create("html:" + TempDir.createTempDirectory().getAbsolutePath());
+        Object plugin = fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()));
         assertEquals(HTMLFormatter.class, plugin.getClass());
     }
 
     @Test
     public void fails_to_instantiate_html_plugin_without_dir_arg() throws IOException {
         try {
-            fc.create("html");
+            fc.create(parse("html"));
             fail();
         } catch (CucumberException e) {
             assertEquals("You must supply an output argument to html. Like so: html:output", e.getMessage());
@@ -55,25 +56,25 @@ public class PluginFactoryTest {
 
     @Test
     public void instantiates_pretty_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create("pretty:" + TempDir.createTempFile().toURI().toURL());
+        Object plugin = fc.create(parse("pretty:" + TempDir.createTempFile().toURI().toURL()));
         assertEquals(PrettyFormatter.class, plugin.getClass());
     }
 
     @Test
     public void instantiates_pretty_plugin_without_file_arg() {
-        Object plugin = fc.create("pretty");
+        Object plugin = fc.create(parse("pretty"));
         assertEquals(PrettyFormatter.class, plugin.getClass());
     }
 
     @Test
     public void instantiates_usage_plugin_without_file_arg() {
-        Object plugin = fc.create("usage");
+        Object plugin = fc.create(parse("usage"));
         assertEquals(UsageFormatter.class, plugin.getClass());
     }
 
     @Test
     public void instantiates_usage_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create("usage:" + TempDir.createTempFile().getAbsolutePath());
+        Object plugin = fc.create(parse("usage:" + TempDir.createTempFile().getAbsolutePath()));
         assertEquals(UsageFormatter.class, plugin.getClass());
     }
 
@@ -88,7 +89,7 @@ public class PluginFactoryTest {
             // Need to create a new plugin factory here since we need it to pick up the new value of System.out
             fc = new PluginFactory();
 
-            ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
+            ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
             EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, 0L, null);
@@ -103,10 +104,10 @@ public class PluginFactoryTest {
 
     @Test
     public void instantiates_single_custom_appendable_plugin_with_stdout() {
-        WantsAppendable plugin = (WantsAppendable) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable");
+        WantsAppendable plugin = (WantsAppendable) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
         assertThat(plugin.out, is(instanceOf(PrintStream.class)));
         try {
-            fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable");
+            fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
             fail();
         } catch (CucumberException expected) {
             assertEquals("Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable " +
@@ -117,58 +118,58 @@ public class PluginFactoryTest {
 
     @Test
     public void instantiates_custom_appendable_plugin_with_stdout_and_file() throws IOException {
-        WantsAppendable plugin = (WantsAppendable) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable");
+        WantsAppendable plugin = (WantsAppendable) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
         assertThat(plugin.out, is(instanceOf(PrintStream.class)));
 
-        WantsAppendable plugin2 = (WantsAppendable) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable:" + TempDir.createTempFile().getAbsolutePath());
+        WantsAppendable plugin2 = (WantsAppendable) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable:" + TempDir.createTempFile().getAbsolutePath()));
         assertEquals(UTF8OutputStreamWriter.class, plugin2.out.getClass());
     }
 
     @Test
     public void instantiates_custom_url_plugin() throws IOException {
-        WantsUrl plugin = (WantsUrl) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsUrl:halp");
+        WantsUrl plugin = (WantsUrl) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsUrl:halp"));
         assertEquals(new URL("file:halp/"), plugin.out);
     }
 
     @Test
     public void instantiates_custom_url_plugin_with_http() throws IOException {
-        WantsUrl plugin = (WantsUrl) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsUrl:http://halp/");
+        WantsUrl plugin = (WantsUrl) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsUrl:http://halp/"));
         assertEquals(new URL("http://halp/"), plugin.out);
     }
 
     @Test
     public void instantiates_custom_uri_plugin_with_ws() throws IOException, URISyntaxException {
-        WantsUri plugin = (WantsUri) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsUri:ws://halp/");
+        WantsUri plugin = (WantsUri) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsUri:ws://halp/"));
         assertEquals(new URI("ws://halp/"), plugin.out);
     }
 
     @Test
     public void instantiates_custom_file_plugin() throws IOException {
-        WantsFile plugin = (WantsFile) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsFile:halp.txt");
+        WantsFile plugin = (WantsFile) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsFile:halp.txt"));
         assertEquals(new File("halp.txt"), plugin.out);
     }
 
     @Test
     public void instantiates_custom_string_arg_plugin() throws IOException {
-        WantsString plugin = (WantsString) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsString:hello");
+        WantsString plugin = (WantsString) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsString:hello"));
         assertEquals("hello", plugin.arg);
     }
 
     @Test
     public void instantiates_plugin_using_empty_constructor_when_unspecified() throws IOException {
-        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsStringOrDefault");
+        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsStringOrDefault"));
         assertEquals("defaultValue", plugin.arg);
     }
 
     @Test
     public void instantiates_plugin_using_arg_constructor_when_specified() throws IOException {
-        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("io.cucumber.core.plugin.PluginFactoryTest$WantsStringOrDefault:hello");
+        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsStringOrDefault:hello"));
         assertEquals("hello", plugin.arg);
     }
 
     @Test
     public void instantiates_timeline_plugin_with_dir_arg() throws IOException {
-        Object plugin = fc.create("timeline:" + TempDir.createTempDirectory().getAbsolutePath());
+        Object plugin = fc.create(parse("timeline:" + TempDir.createTempDirectory().getAbsolutePath()));
         assertEquals(TimelineFormatter.class, plugin.getClass());
     }
 

@@ -4,7 +4,6 @@ import cucumber.api.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.model.PathWithLines;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
@@ -59,10 +58,9 @@ public final class RuntimeOptions implements Options {
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
 
-    private final List<String> pluginFormatterNames = new ArrayList<String>();
-    private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
-    private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
-
+    private final List<Plugin> formatters = new ArrayList<>();
+    private final List<Plugin> stepDefinitionReporters = new ArrayList<>();
+    private final List<Plugin> summaryPrinters = new ArrayList<>();
 
     /**
      * Create a new instance from a string of options, for example:
@@ -95,11 +93,11 @@ public final class RuntimeOptions implements Options {
             parse(ShellWords.parse(cucumberOptionsFromEnv));
         }
 
-        if (pluginFormatterNames.isEmpty()) {
-            pluginFormatterNames.add("progress");
+        if (formatters.isEmpty()) {
+            formatters.add(PluginOption.parse("progress"));
         }
-        if (pluginSummaryPrinterNames.isEmpty()) {
-            pluginSummaryPrinterNames.add("default_summary");
+        if (summaryPrinters.isEmpty()) {
+            summaryPrinters.add(PluginOption.parse("default_summary"));
         }
     }
 
@@ -108,20 +106,17 @@ public final class RuntimeOptions implements Options {
     }
 
     public RuntimeOptions noSummaryPrinter() {
-        pluginSummaryPrinterNames.clear();
+        summaryPrinters.clear();
         return this;
     }
 
-    public List<String> getPluginFormatterNames() {
-        return pluginFormatterNames;
-    }
-
-    public List<String> getPluginSummaryPrinterNames() {
-        return pluginSummaryPrinterNames;
-    }
-
-    public List<String> getPluginStepDefinitionReporterNames() {
-        return pluginStepDefinitionReporterNames;
+    @Override
+    public List<Plugin> plugins() {
+        List<Plugin> plugins = new ArrayList<>();
+        plugins.addAll(formatters);
+        plugins.addAll(stepDefinitionReporters);
+        plugins.addAll(summaryPrinters);
+        return plugins;
     }
 
     private void parse(List<String> args) {
@@ -211,9 +206,9 @@ public final class RuntimeOptions implements Options {
             junitOptions.addAll(parsedJunitOptions);
         }
 
-        parsedPluginData.updatePluginFormatterNames(pluginFormatterNames);
-        parsedPluginData.updatePluginStepDefinitionReporterNames(pluginStepDefinitionReporterNames);
-        parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
+        parsedPluginData.updateFormatters(formatters);
+        parsedPluginData.updateStepDefinitionReporters(stepDefinitionReporters);
+        parsedPluginData.updateSummaryPrinters(summaryPrinters);
     }
 
     private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
@@ -349,55 +344,55 @@ public final class RuntimeOptions implements Options {
         return threads;
     }
 
-    class ParsedPluginData {
-        ParsedOptionNames formatterNames = new ParsedOptionNames();
-        ParsedOptionNames stepDefinitionReporterNames = new ParsedOptionNames();
-        ParsedOptionNames summaryPrinterNames = new ParsedOptionNames();
+    static final class ParsedPluginData {
+        private ParsedPlugins formatters = new ParsedPlugins();
+        private ParsedPlugins stepDefinitionReporters = new ParsedPlugins();
+        private ParsedPlugins summaryPrinters = new ParsedPlugins();
 
         void addPluginName(String name, boolean isAddPlugin) {
-            if (PluginFactory.isStepDefinitionReporterName(name)) {
-                stepDefinitionReporterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isSummaryPrinterName(name)) {
-                summaryPrinterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isFormatterName(name)) {
-                formatterNames.addName(name, isAddPlugin);
+            PluginOption pluginOption = PluginOption.parse(name);
+            if (pluginOption.isStepDefinitionReporter()) {
+                stepDefinitionReporters.addName(pluginOption, isAddPlugin);
+            } else if (pluginOption.isSummaryPrinter()) {
+                summaryPrinters.addName(pluginOption, isAddPlugin);
+            } else if (pluginOption.isFormatter()) {
+                formatters.addName(pluginOption, isAddPlugin);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);
             }
         }
 
-        void updatePluginFormatterNames(List<String> pluginFormatterNames) {
-            formatterNames.updateNameList(pluginFormatterNames);
+        void updateFormatters(List<Plugin> formatter) {
+            this.formatters.updateNameList(formatter);
         }
 
-        void updatePluginStepDefinitionReporterNames(List<String> pluginStepDefinitionReporterNames) {
-            stepDefinitionReporterNames.updateNameList(pluginStepDefinitionReporterNames);
+        void updateStepDefinitionReporters(List<Plugin> stepDefintionReporter) {
+            stepDefinitionReporters.updateNameList(stepDefintionReporter);
         }
 
-        void updatePluginSummaryPrinterNames(List<String> pluginSummaryPrinterNames) {
-            summaryPrinterNames.updateNameList(pluginSummaryPrinterNames);
-        }
-    }
-
-    class ParsedOptionNames {
-        private List<String> names = new ArrayList<String>();
-        private boolean clobber = false;
-
-        public void addName(String name, boolean isAddOption) {
-            names.add(name);
-            if (!isAddOption) {
-                clobber = true;
-            }
+        void updateSummaryPrinters(List<Plugin> pluginSummaryPrinterNames) {
+            summaryPrinters.updateNameList(pluginSummaryPrinterNames);
         }
 
-        public void updateNameList(List<String> nameList) {
-            if (!names.isEmpty()) {
-                if (clobber) {
-                    nameList.clear();
+        private static class ParsedPlugins {
+            private List<Plugin> names = new ArrayList<>();
+            private boolean clobber = false;
+
+            void addName(Plugin name, boolean isAddOption) {
+                names.add(name);
+                if (!isAddOption) {
+                    clobber = true;
                 }
-                nameList.addAll(names);
+            }
+
+            void updateNameList(List<Plugin> nameList) {
+                if (!names.isEmpty()) {
+                    if (clobber) {
+                        nameList.clear();
+                    }
+                    nameList.addAll(names);
+                }
             }
         }
     }
-
 }

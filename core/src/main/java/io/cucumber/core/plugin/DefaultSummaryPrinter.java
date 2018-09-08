@@ -11,7 +11,7 @@ import cucumber.api.formatter.StrictAware;
 import java.io.PrintStream;
 import java.util.List;
 
-final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
+public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
 
     private final Stats stats = new Stats();
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();

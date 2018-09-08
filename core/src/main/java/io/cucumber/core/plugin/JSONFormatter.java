@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class JSONFormatter implements EventListener {
+public final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> currentElementsList;

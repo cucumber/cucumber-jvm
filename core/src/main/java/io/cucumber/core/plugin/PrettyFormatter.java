@@ -28,7 +28,7 @@ import gherkin.pickles.PickleTag;
 
 import java.util.List;
 
-final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
+public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";

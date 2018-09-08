@@ -1,11 +1,8 @@
 package io.cucumber.core.plugin;
 
 import cucumber.api.Plugin;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
-import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.event.EventListener;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.options.PluginOption;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
@@ -34,20 +28,6 @@ import static java.util.Arrays.asList;
 public final class PluginFactory {
     private final Class[] CTOR_PARAMETERS = new Class[]{String.class, Appendable.class, URI.class, URL.class, File.class};
 
-    private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
-        put("junit", JUnitFormatter.class);
-        put("testng", TestNGFormatter.class);
-        put("html", HTMLFormatter.class);
-        put("pretty", PrettyFormatter.class);
-        put("progress", ProgressFormatter.class);
-        put("json", JSONFormatter.class);
-        put("usage", UsageFormatter.class);
-        put("rerun", RerunFormatter.class);
-        put("default_summary", DefaultSummaryPrinter.class);
-        put("null_summary", NullSummaryPrinter.class);
-        put("timeline", TimelineFormatter.class);
-    }};
-    private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private String defaultOutFormatter = null;
 
     private Appendable defaultOut = new PrintStream(System.out) {
@@ -72,23 +52,10 @@ public final class PluginFactory {
         }
     }
 
-    public Plugin create(String pluginString) {
-        Matcher pluginWithArgument = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(pluginString);
-        String pluginName;
-        String argument;
-        if (pluginWithArgument.matches()) {
-            pluginName = pluginWithArgument.group(1);
-            argument = pluginWithArgument.group(2);
-        } else {
-            pluginName = pluginString;
-            argument = null;
-        }
-        Class<? extends Plugin> pluginClass = pluginClass(pluginName);
+    public Plugin create(Options.Plugin plugin) {
         try {
-            return instantiate(pluginString, pluginClass, argument);
-        } catch (IOException e) {
-            throw new CucumberException(e);
-        } catch (URISyntaxException e) {
+            return instantiate(plugin.pluginString(), plugin.pluginClass(), plugin.argument());
+        } catch (IOException | URISyntaxException e) {
             throw new CucumberException(e);
         }
     }
@@ -114,9 +81,7 @@ public final class PluginFactory {
     private <T extends Plugin> T newInstance(Constructor<T> constructor, Object... ctorArgs) {
         try {
             return constructor.newInstance(ctorArgs);
-        } catch (InstantiationException e) {
-            throw new CucumberException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new CucumberException(e);
         } catch (InvocationTargetException e) {
             throw new CucumberException(e.getTargetException());
@@ -172,28 +137,6 @@ public final class PluginFactory {
         }
     }
 
-    private static Class<? extends Plugin> pluginClass(String pluginName) {
-        Class<? extends Plugin> pluginClass = PLUGIN_CLASSES.get(pluginName);
-        if (pluginClass == null) {
-            pluginClass = loadClass(pluginName);
-        }
-        return pluginClass;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Class<? extends Plugin> loadClass(String className) {
-        try {
-            Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-
-            if (Plugin.class.isAssignableFrom(aClass)) {
-                return (Class<? extends Plugin>) aClass;
-            }
-            throw new CucumberException("Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
-        } catch (ClassNotFoundException e) {
-            throw new CucumberException("Couldn't load plugin class: " + className, e);
-        }
-    }
-
     private Appendable defaultOutOrFailIfAlreadyUsed(String formatterString) {
         try {
             if (defaultOut != null) {
@@ -209,29 +152,4 @@ public final class PluginFactory {
         }
     }
 
-    public static boolean isFormatterName(String name) {
-        Class pluginClass = getPluginClass(name);
-        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
-    }
-
-    public static boolean isStepDefinitionReporterName(String name) {
-        Class pluginClass = getPluginClass(name);
-        return StepDefinitionReporter.class.isAssignableFrom(pluginClass);
-    }
-
-    public static boolean isSummaryPrinterName(String name) {
-        Class pluginClass = getPluginClass(name);
-        return SummaryPrinter.class.isAssignableFrom(pluginClass);
-    }
-
-    private static Class getPluginClass(String name) {
-        Matcher pluginWithFile = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(name);
-        String pluginName;
-        if (pluginWithFile.matches()) {
-            pluginName = pluginWithFile.group(1);
-        } else {
-            pluginName = name;
-        }
-        return pluginClass(pluginName);
-    }
 }

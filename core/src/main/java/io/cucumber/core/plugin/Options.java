@@ -3,13 +3,18 @@ package io.cucumber.core.plugin;
 import java.util.List;
 
 public interface Options {
-    List<String> getPluginFormatterNames();
-
-    List<String> getPluginStepDefinitionReporterNames();
-
-    List<String> getPluginSummaryPrinterNames();
+    Iterable<Plugin> plugins();
 
     boolean isMonochrome();
 
     boolean isStrict();
+
+    interface Plugin {
+
+        Class<? extends cucumber.api.Plugin> pluginClass();
+
+        String argument();
+
+        String pluginString();
+    }
 }

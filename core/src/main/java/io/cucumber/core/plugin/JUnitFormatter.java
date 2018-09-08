@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-final class JUnitFormatter implements EventListener, StrictAware {
+public final class JUnitFormatter implements EventListener, StrictAware {
     private final Writer out;
     private final Document doc;
     private final Element rootElement;
@@ -75,6 +75,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
         TestCase.treatConditionallySkippedAsFailure = false;

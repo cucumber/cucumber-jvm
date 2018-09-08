@@ -22,7 +22,7 @@ import java.util.Map;
  * Formatter to measure performance of steps. Aggregated results for all steps can be computed
  * by adding {@link UsageStatisticStrategy} to the usageFormatter
  */
-final class UsageFormatter implements Plugin, EventListener {
+public final class UsageFormatter implements Plugin, EventListener {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
     final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
     private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();

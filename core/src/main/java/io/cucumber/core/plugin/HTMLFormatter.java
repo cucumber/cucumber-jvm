@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class HTMLFormatter implements EventListener {
+public final class HTMLFormatter implements EventListener {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
@@ -118,6 +118,7 @@ final class HTMLFormatter implements EventListener {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HTMLFormatter(URL htmlReportDir) {
         this(htmlReportDir, createJsOut(htmlReportDir));
     }

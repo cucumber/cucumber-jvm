@@ -13,7 +13,7 @@ import cucumber.api.formatter.ColorAware;
 import java.util.HashMap;
 import java.util.Map;
 
-final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
+public final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
     private static final Map<Result.Type, Character> CHARS = new HashMap<Result.Type, Character>() {{
         put(Result.Type.PASSED, '.');
         put(Result.Type.UNDEFINED, 'U');

@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-final class TestNGFormatter implements EventListener, StrictAware {
+public final class TestNGFormatter implements EventListener, StrictAware {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private final Writer writer;

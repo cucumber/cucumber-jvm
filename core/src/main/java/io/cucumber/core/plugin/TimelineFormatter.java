@@ -30,7 +30,7 @@ import java.util.TreeMap;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-final class TimelineFormatter implements ConcurrentEventListener {
+public final class TimelineFormatter implements ConcurrentEventListener {
 
     //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{
