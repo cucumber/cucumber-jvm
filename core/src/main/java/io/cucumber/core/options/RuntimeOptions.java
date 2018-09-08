@@ -2,7 +2,6 @@ package io.cucumber.core.options;
 
 import cucumber.api.SnippetType;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.plugin.Options;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.core.model.PathWithLines;
 import io.cucumber.core.util.FixJava;
@@ -25,7 +24,7 @@ import static io.cucumber.core.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
-public final class RuntimeOptions implements Options {
+public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io.cucumber.core.runner.Options {
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
 
