@@ -29,7 +29,12 @@ import static io.cucumber.core.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
-public final class RuntimeOptions implements io.cucumber.core.plugin.Options, io.cucumber.core.runner.Options {
+public final class RuntimeOptions
+    implements
+    io.cucumber.core.plugin.Options,
+    io.cucumber.core.runner.Options,
+    io.cucumber.core.filter.Options {
+
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
     private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");

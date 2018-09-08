@@ -3,8 +3,8 @@ package io.cucumber.core.runtime;
 import cucumber.api.Plugin;
 import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestRunFinished;
@@ -56,7 +56,7 @@ public final class Runtime {
     private final ExecutorService executor;
 
     private Runtime(final Plugins plugins,
-                    final RuntimeOptions runtimeOptions,
+                    final ExitStatus exitStatus,
                     final EventBus bus,
                     final Filters filters,
                     final RunnerSupplier runnerSupplier,
@@ -69,8 +69,7 @@ public final class Runtime {
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
-        this.exitStatus = new ExitStatus(runtimeOptions);
-        exitStatus.setEventPublisher(bus);
+        this.exitStatus = exitStatus;
     }
 
     public void run() {
@@ -197,6 +196,8 @@ public final class Runtime {
             for (final Plugin plugin : additionalPlugins) {
                 plugins.addPlugin(plugin);
             }
+            final ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+            plugins.addPlugin(exitStatus);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
                 ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier)
@@ -214,7 +215,8 @@ public final class Runtime {
                 : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, this.eventBus);
 
             final Filters filters = new Filters(runtimeOptions);
-            return new Runtime(plugins, runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
+
+            return new Runtime(plugins, exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor);
         }
     }
 
@@ -251,7 +253,7 @@ public final class Runtime {
         }
     }
 
-    static final class ExitStatus implements EventListener {
+    static final class ExitStatus implements ConcurrentEventListener {
         private static final byte DEFAULT = 0x0;
         private static final byte ERRORS = 0x1;
 
