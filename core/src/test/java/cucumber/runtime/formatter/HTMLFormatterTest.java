@@ -1,12 +1,17 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runner.TestHelper;
+import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.Utils;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.util.FixJava;
 import gherkin.deps.com.google.gson.JsonParser;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +39,8 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class HTMLFormatterTest {
     private final static String jsFunctionCallRegexString = "formatter.(\\w*)\\(([^)]*)\\);";
@@ -163,6 +171,39 @@ public class HTMLFormatterTest {
                 "  \"status\": \"passed\"\n" +
                 "});"),
                 formatterOutput);
+    }
+
+    @Test
+    public void should_handle_arguments() {
+        final StringBuilder report = new StringBuilder();
+        final HTMLFormatter formatter = new HTMLFormatter(null, new NiceAppendable(report));
+
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("I add {int} and {int}");
+        String stepText = "I add 4 and 50";
+
+        PickleStepTestStep pickleStepTestStep = mock(PickleStepTestStep.class);
+        when(pickleStepTestStep.getStepText()).thenReturn(stepText);
+        when(pickleStepTestStep.getDefinitionArgument()).thenReturn(DefinitionArgument.createArguments(expression.match(stepText)));
+
+        Map<String, Object> result = formatter.createTestStep(pickleStepTestStep);
+
+        assertEquals("I add 4 and 50", result.get("name"));
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> arguments = (List<Map<String, Object>>) result.get("arguments");
+        assertEquals(2, arguments.size());
+
+        Map<String, Object> arg0 = arguments.get(0);
+        assertEquals("4", arg0.get("value"));
+        assertEquals(6, arg0.get("start"));
+        assertEquals(7, arg0.get("end"));
+
+        Map<String, Object> arg1 = arguments.get(1);
+        assertEquals("50", arg1.get("value"));
+        assertEquals(12, arg1.get("start"));
+        assertEquals(14, arg1.get("end"));
     }
 
     @Test
