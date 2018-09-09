@@ -35,7 +35,7 @@ public final class RuntimeOptions
     io.cucumber.core.filter.Options {
 
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
-    private static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
+    private static final String USAGE_RESOURCE = "/io/cucumber/core/api/cli/USAGE.txt";
     private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     static String usageText;
