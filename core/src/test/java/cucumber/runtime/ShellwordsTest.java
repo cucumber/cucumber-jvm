@@ -113,6 +113,18 @@ public class ShellwordsTest {
                 asList("--name", "The \" Fox")
             },
 
+            // double_quotes wrapped by single_quote
+            new Object[]{
+                "--name '\"The Fox\"'",
+                asList("--name", "\"The Fox\"")
+            },
+
+            // single_quote wrapped by double_quotes
+            new Object[]{
+                "--name \"'The Fox'\"",
+                asList("--name", "'The Fox'")
+            },
+
             // parses_both_single_and_double_quoted_strings
             new Object[]{
                 "--name \"The Fox\" --fur 'Brown White'",
