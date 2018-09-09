@@ -46,6 +46,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
   * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
 
 ### Fixed
+  * [Core] Support quoted strings in cucumber.options ([#1453](https://github.com/cucumber/cucumber-jvm/pull/1453) John Patrick)
   * [Core] Set scenario result as step finishes ([#1430](https://github.com/cucumber/cucumber-jvm/pull/1430) M.P. Korstanje)
 
 ## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
