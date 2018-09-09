@@ -1,6 +1,6 @@
 package io.cucumber.core.snippets;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

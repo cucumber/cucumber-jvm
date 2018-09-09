@@ -2,7 +2,7 @@ package io.cucumber.java8;
 
 import static java.util.Arrays.asList;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import io.cucumber.core.backend.HookDefinition;

@@ -1,9 +1,9 @@
 package io.cucumber.core.runtime;
 
 
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.options.Env;

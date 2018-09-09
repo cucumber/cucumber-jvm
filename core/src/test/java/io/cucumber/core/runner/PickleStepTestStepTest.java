@@ -1,10 +1,10 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.PendingException;
-import cucumber.api.Result;
-import cucumber.api.event.TestCaseEvent;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.event.TestStepStarted;
+import io.cucumber.core.runner.TestPendingException;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCaseEvent;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
@@ -18,11 +18,11 @@ import org.mockito.InOrder;
 import java.util.Collections;
 import java.util.List;
 
-import static cucumber.api.HookType.AfterStep;
-import static cucumber.api.HookType.BeforeStep;
-import static cucumber.api.Result.Type.FAILED;
-import static cucumber.api.Result.Type.PASSED;
-import static cucumber.api.Result.Type.SKIPPED;
+import static io.cucumber.core.api.event.HookType.AfterStep;
+import static io.cucumber.core.api.event.HookType.BeforeStep;
+import static io.cucumber.core.api.event.Result.Type.FAILED;
+import static io.cucumber.core.api.event.Result.Type.PASSED;
+import static io.cucumber.core.api.event.Result.Type.SKIPPED;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -96,7 +96,7 @@ public class PickleStepTestStepTest {
 
     @Test
     public void result_is_skipped_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
+        doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
         assertEquals(SKIPPED, scenario.getStatus());
@@ -104,7 +104,7 @@ public class PickleStepTestStepTest {
 
     @Test
     public void step_execution_is_dry_run_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
+        doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         step.run(testCase, bus, scenario, false);
         verify(definitionMatch).dryRunStep(any(Scenario.class));
     }
@@ -112,7 +112,7 @@ public class PickleStepTestStepTest {
     @Test
     public void result_is_result_from_hook_when_before_step_hook_does_not_pass() throws Throwable {
         Exception exception = new RuntimeException();
-        doThrow(exception).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
+        doThrow(exception).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         Result failure = new Result(Result.Type.FAILED, 0L, exception);
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
@@ -142,7 +142,7 @@ public class PickleStepTestStepTest {
     public void result_is_result_from_hook_when_after_step_hook_does_not_pass() throws Throwable {
         Exception exception = new RuntimeException();
         Result failure = new Result(Result.Type.FAILED, 0L, exception);
-        doThrow(exception).when(afterHookDefinition).execute(any(cucumber.api.Scenario.class));
+        doThrow(exception).when(afterHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
         assertEquals(FAILED, scenario.getStatus());
@@ -154,16 +154,16 @@ public class PickleStepTestStepTest {
     }
     @Test
     public void after_step_hook_is_run_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(cucumber.api.Scenario.class));
+        doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         step.run(testCase, bus, scenario, false);
-        verify(afterHookDefinition).execute(any(cucumber.api.Scenario.class));
+        verify(afterHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
     }
 
     @Test
     public void after_step_hook_is_run_when_step_does_not_pass() throws Throwable {
         doThrow(Exception.class).when(definitionMatch).runStep(any(Scenario.class));
         step.run(testCase, bus, scenario, false);
-        verify(afterHookDefinition).execute(any(cucumber.api.Scenario.class));
+        verify(afterHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
     }
 
     @Test
@@ -215,7 +215,7 @@ public class PickleStepTestStepTest {
 
     @Test
     public void result_is_pending_when_step_definition_throws_pending_exception() throws Throwable {
-        doThrow(PendingException.class).when(definitionMatch).runStep(any(Scenario.class));
+        doThrow(TestPendingException.class).when(definitionMatch).runStep(any(Scenario.class));
 
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);

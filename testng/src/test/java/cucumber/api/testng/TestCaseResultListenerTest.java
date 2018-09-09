@@ -1,7 +1,6 @@
 package cucumber.api.testng;
 
-import cucumber.api.PendingException;
-import cucumber.api.Result;
+import io.cucumber.core.api.event.Result;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -87,7 +86,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockPendingResult());
 
         assertFalse(resultListener.isPassed());
-        assertTrue(resultListener.getError() instanceof PendingException);
+        assertTrue(resultListener.getError() instanceof TestPendingException);
     }
 
     @Test
@@ -121,7 +120,7 @@ public class TestCaseResultListenerTest {
     }
 
     private Result mockPendingResult() {
-        return new Result(Result.Type.PENDING, 0L, new PendingException());
+        return new Result(Result.Type.PENDING, 0L, new TestPendingException());
     }
 
 }

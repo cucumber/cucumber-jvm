@@ -1,11 +1,11 @@
 package io.cucumber.core.options;
 
-import cucumber.api.Plugin;
-import cucumber.api.SnippetType;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.StrictAware;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.plugin.ColorAware;
+import io.cucumber.core.api.plugin.StrictAware;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;

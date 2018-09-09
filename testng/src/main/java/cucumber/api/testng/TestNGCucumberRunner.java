@@ -1,7 +1,7 @@
 package cucumber.api.testng;
 
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestRunStarted;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
@@ -40,7 +40,7 @@ public class TestNGCucumberRunner {
     /**
      * Bootstrap the cucumber runtime
      *
-     * @param clazz Which has the cucumber.api.CucumberOptions and org.testng.annotations.Test annotations
+     * @param clazz Which has the io.cucumber.core.api.options.CucumberOptions and org.testng.annotations.Test annotations
      */
     public TestNGCucumberRunner(Class clazz) {
         ClassLoader classLoader = clazz.getClassLoader();

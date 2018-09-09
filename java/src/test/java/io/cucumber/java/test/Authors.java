@@ -1,6 +1,6 @@
 package io.cucumber.java.test;
 
-import cucumber.api.Transpose;
+import cucumber.api.java.Transpose;
 import cucumber.api.java.en.Given;
 
 import java.util.List;

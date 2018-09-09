@@ -1,6 +1,6 @@
 package io.cucumber.spring.metaconfig.general;
 
-import cucumber.api.CucumberOptions;
+import io.cucumber.core.api.options.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 

@@ -1,6 +1,6 @@
 package io.cucumber.java.test;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;

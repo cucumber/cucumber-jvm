@@ -1,6 +1,6 @@
 package io.cucumber.examples.java.calculator;
 
-import cucumber.api.CucumberOptions;
+import io.cucumber.core.api.options.CucumberOptions;
 import cucumber.api.testng.AbstractTestNGCucumberTests;
 import org.testng.annotations.DataProvider;
 

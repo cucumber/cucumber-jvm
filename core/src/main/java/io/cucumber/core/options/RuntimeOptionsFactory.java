@@ -1,6 +1,6 @@
 package io.cucumber.core.options;
 
-import cucumber.api.CucumberOptions;
+import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;

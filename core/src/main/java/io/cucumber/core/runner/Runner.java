@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.HookType;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.event.SnippetsSuggestedEvent;
+import io.cucumber.core.api.event.HookType;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.SnippetsSuggestedEvent;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;

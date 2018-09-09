@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
-import cucumber.api.Result;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.TestStepFinished;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
 import io.cucumber.core.options.Env;

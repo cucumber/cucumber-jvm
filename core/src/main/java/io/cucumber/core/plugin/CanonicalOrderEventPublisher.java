@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.event.Event;
-import cucumber.api.event.TestRunFinished;
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.event.AbstractEventPublisher;
 
 import java.util.Collections;

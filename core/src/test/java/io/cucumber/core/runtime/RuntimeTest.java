@@ -1,12 +1,12 @@
 package io.cucumber.core.runtime;
 
-import cucumber.api.HookType;
-import cucumber.api.Plugin;
-import cucumber.api.Result;
-import cucumber.api.Scenario;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.TestCase;
-import cucumber.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.HookType;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.io.TestClasspathResourceLoader;

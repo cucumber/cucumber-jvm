@@ -26,7 +26,7 @@ public class ResourceLoaderTest {
 
     @Test
     public void loads_resource_from_filesystem_file() {
-        File file = new File(dir, "io/cucumber/core/io/bar.properties");
+        File file = new File(dir, "io/cucumber/core/bar.properties");
         Iterable<Resource> files = new FileResourceLoader().resources(file.getPath(), ".doesntmatter");
         assertEquals(1, toList(files).size());
     }

@@ -1,9 +1,9 @@
 package cucumber.api.junit;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestRunStarted;
+import io.cucumber.core.api.options.CucumberOptions;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.junit.Assertions;
 import io.cucumber.junit.FeatureRunner;
 import io.cucumber.junit.JUnitOptions;

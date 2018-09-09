@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.Result;
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.event.EventBus;

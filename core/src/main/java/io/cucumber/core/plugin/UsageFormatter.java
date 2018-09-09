@@ -1,13 +1,13 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.PickleStepTestStep;
-import cucumber.api.Plugin;
-import cucumber.api.Result;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestStepFinished;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestStepFinished;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 

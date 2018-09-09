@@ -1,7 +1,5 @@
 package io.cucumber.core.plugin;
 
-import java.util.List;
-
 public interface Options {
     Iterable<Plugin> plugins();
 
@@ -11,7 +9,7 @@ public interface Options {
 
     interface Plugin {
 
-        Class<? extends cucumber.api.Plugin> pluginClass();
+        Class<? extends io.cucumber.core.api.plugin.Plugin> pluginClass();
 
         String argument();
 

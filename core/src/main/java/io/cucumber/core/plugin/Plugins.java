@@ -1,14 +1,14 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.Plugin;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.event.Event;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.StrictAware;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.plugin.ColorAware;
+import io.cucumber.core.api.plugin.StrictAware;
 import io.cucumber.core.backend.StepDefinition;
 
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestStepStarted;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestStepStarted;
 
 public class StepDurationTimeService implements TimeService, EventListener {
     private long stepDuration;

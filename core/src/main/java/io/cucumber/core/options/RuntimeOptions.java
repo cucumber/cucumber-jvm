@@ -1,8 +1,7 @@
 package io.cucumber.core.options;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.datatable.DataTable;

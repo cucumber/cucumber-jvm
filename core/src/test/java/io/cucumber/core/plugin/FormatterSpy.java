@@ -1,13 +1,13 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestCaseStarted;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.event.TestStepStarted;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.event.TestStepStarted;
 
 public class FormatterSpy implements EventListener {
     StringBuilder calls = new StringBuilder();

@@ -1,6 +1,6 @@
 package io.cucumber.examples.java.calculator;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;

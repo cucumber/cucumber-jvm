@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.event.EventBus;

@@ -1,6 +1,6 @@
 package io.cucumber.junit.stub;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;

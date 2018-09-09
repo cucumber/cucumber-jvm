@@ -1,6 +1,6 @@
 package io.cucumber.core.runtime;
 
-import cucumber.api.TypeRegistryConfigurer;
+import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.io.ClassFinder;
@@ -65,7 +65,7 @@ public final class BackendModuleBackendSupplier implements BackendSupplier {
         }
 
         @Override
-        public void configureTypeRegistry(cucumber.api.TypeRegistry typeRegistry) {
+        public void configureTypeRegistry(io.cucumber.core.api.TypeRegistry typeRegistry) {
             //noop
         }
 

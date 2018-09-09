@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.PickleStepTestStep;
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.event.TestStepFinished;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.TimeServiceEventBus;

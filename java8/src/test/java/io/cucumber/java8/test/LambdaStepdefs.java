@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import io.cucumber.datatable.DataTable;
 import cucumber.api.java8.En;
 

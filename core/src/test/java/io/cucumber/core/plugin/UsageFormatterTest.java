@@ -1,10 +1,10 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.PickleStepTestStep;
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.TestStep;
-import cucumber.api.event.TestStepFinished;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestStep;
+import io.cucumber.core.api.event.TestStepFinished;
 import org.junit.Test;
 import org.mockito.Mockito;
 

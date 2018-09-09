@@ -1,6 +1,6 @@
 package io.cucumber.runtime.stub;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;

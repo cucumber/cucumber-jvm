@@ -1,7 +1,7 @@
 package io.cucumber.java.test;
 
-import cucumber.api.TypeRegistryConfigurer;
-import cucumber.api.TypeRegistry;
+import io.cucumber.core.api.TypeRegistryConfigurer;
+import io.cucumber.core.api.TypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;

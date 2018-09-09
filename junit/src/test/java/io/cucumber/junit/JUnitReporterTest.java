@@ -1,8 +1,7 @@
 package io.cucumber.junit;
 
-import cucumber.api.PendingException;
-import cucumber.api.Result;
-import cucumber.api.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.PickleStepTestStep;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.junit.JUnitReporter.EachTestNotifier;
 import io.cucumber.junit.JUnitReporter.NoTestNotifier;
@@ -157,7 +156,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
-        Throwable exception = new PendingException();
+        Throwable exception = new TestPendingException();
         Result result = mockResult(Result.Type.PENDING, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
@@ -177,7 +176,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
-        Throwable exception = new PendingException();
+        Throwable exception = new TestPendingException();
         Result result = mockResult(Result.Type.PENDING, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
@@ -196,7 +195,7 @@ public class JUnitReporterTest {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
-        Throwable exception = new PendingException();
+        Throwable exception = new TestPendingException();
         Result result = mockResult(Result.Type.PENDING, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
@@ -283,7 +282,7 @@ public class JUnitReporterTest {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
-        Throwable exception = new PendingException();
+        Throwable exception = new TestPendingException();
         Result result = mockResult(Result.Type.FAILED, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);

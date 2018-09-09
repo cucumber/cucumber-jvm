@@ -1,6 +1,6 @@
 package io.cucumber.core.backend;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import gherkin.pickles.PickleTag;
 
 import java.util.Collection;

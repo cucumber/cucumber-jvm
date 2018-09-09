@@ -1,10 +1,10 @@
 package io.cucumber.core.options;
 
-import cucumber.api.Plugin;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
-import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.event.EventListener;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.plugin.SummaryPrinter;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HTMLFormatter;

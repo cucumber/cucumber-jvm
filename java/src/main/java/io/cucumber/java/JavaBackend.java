@@ -4,7 +4,7 @@ import static io.cucumber.core.io.MultiLoader.packageName;
 import static io.cucumber.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import cucumber.api.java.After;

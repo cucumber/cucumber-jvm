@@ -1,7 +1,7 @@
 package io.cucumber.picocontainer;
 
-import cucumber.api.PendingException;
-import cucumber.api.Scenario;
+import cucumber.api.java.PendingException;
+import io.cucumber.core.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;

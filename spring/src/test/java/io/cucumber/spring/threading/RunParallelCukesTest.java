@@ -3,7 +3,7 @@ package io.cucumber.spring.threading;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.junit.Assert.assertEquals;
 
-import cucumber.api.cli.Main;
+import io.cucumber.core.api.cli.Main;
 import org.junit.Test;
 
 import java.util.concurrent.Callable;

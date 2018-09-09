@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import cucumber.api.java.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.HookDefinition;

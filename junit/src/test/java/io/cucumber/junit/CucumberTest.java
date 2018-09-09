@@ -1,7 +1,7 @@
 package io.cucumber.junit;
 
 import cucumber.annotation.DummyWhen;
-import cucumber.api.CucumberOptions;
+import io.cucumber.core.api.options.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.After;

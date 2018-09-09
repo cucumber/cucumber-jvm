@@ -5,7 +5,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.stepexpression.Argument;
-import cucumber.api.StepDefinitionReporter;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;

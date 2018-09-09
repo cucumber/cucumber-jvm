@@ -1,14 +1,14 @@
 package io.cucumber.core.runtime;
 
-import cucumber.api.Plugin;
-import cucumber.api.Result;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestRunStarted;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.event.EventBus;
@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cucumber.api.Result.SEVERITY;
+import static io.cucumber.core.api.event.Result.SEVERITY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;

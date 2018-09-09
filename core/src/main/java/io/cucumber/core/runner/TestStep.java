@@ -1,16 +1,16 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Pending;
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.event.TestStepStarted;
+import io.cucumber.core.backend.Pending;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.event.TestStepStarted;
 import io.cucumber.core.backend.StepDefinitionMatch;
 import io.cucumber.core.event.EventBus;
 
 import java.util.Arrays;
 
-abstract class TestStep implements cucumber.api.TestStep {
+abstract class TestStep implements io.cucumber.core.api.event.TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
         "org.junit.AssumptionViolatedException",
         "org.junit.internal.AssumptionViolatedException",

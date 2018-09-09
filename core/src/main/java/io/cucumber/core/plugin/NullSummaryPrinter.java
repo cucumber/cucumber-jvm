@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.SummaryPrinter;
+import io.cucumber.core.api.plugin.SummaryPrinter;
 
 public final class NullSummaryPrinter implements SummaryPrinter {
 
