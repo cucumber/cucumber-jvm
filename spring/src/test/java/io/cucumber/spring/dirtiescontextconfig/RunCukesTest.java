@@ -2,7 +2,7 @@ package io.cucumber.spring.dirtiescontextconfig;
 
 import io.cucumber.core.api.options.CucumberOptions;
 
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.api.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)

@@ -1,4 +1,4 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.model.CucumberFeature;
 import gherkin.AstBuilder;

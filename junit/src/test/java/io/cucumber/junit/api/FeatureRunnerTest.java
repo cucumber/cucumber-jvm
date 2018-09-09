@@ -1,4 +1,4 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;

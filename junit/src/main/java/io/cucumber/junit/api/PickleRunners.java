@@ -1,4 +1,4 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.RunnerSupplier;

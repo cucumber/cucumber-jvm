@@ -1,11 +1,11 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.PickleStepTestStep;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.junit.JUnitReporter.EachTestNotifier;
-import io.cucumber.junit.JUnitReporter.NoTestNotifier;
-import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.api.JUnitReporter.EachTestNotifier;
+import io.cucumber.junit.api.JUnitReporter.NoTestNotifier;
+import io.cucumber.junit.api.PickleRunners.PickleRunner;
 import gherkin.pickles.PickleStep;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;

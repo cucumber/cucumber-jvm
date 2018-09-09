@@ -1,4 +1,4 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.PickleStepTestStep;
@@ -7,7 +7,7 @@ import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestCaseStarted;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.api.event.TestStepStarted;
-import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.api.PickleRunners.PickleRunner;
 import io.cucumber.core.event.EventBus;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -15,6 +15,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
 import java.util.ArrayList;
+
+import static io.cucumber.junit.api.SkippedThrowable.NotificationLevel.SCENARIO;
+import static io.cucumber.junit.api.SkippedThrowable.NotificationLevel.STEP;
 
 class JUnitReporter {
 
@@ -67,7 +70,7 @@ class JUnitReporter {
 
     };
 
-    public JUnitReporter(EventBus bus, JUnitOptions junitOption) {
+    JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
         this.bus = bus;
         bus.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
@@ -76,7 +79,7 @@ class JUnitReporter {
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
-    public void finishExecutionUnit() {
+    void finishExecutionUnit() {
         bus.removeHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         bus.removeHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.removeHandlerFor(TestStepFinished.class, testStepFinishedHandler);
@@ -114,7 +117,7 @@ class JUnitReporter {
             break;
         case SKIPPED:
             if (error == null) {
-                error = new SkippedThrowable(NotificationLevel.STEP);
+                error = new SkippedThrowable(STEP);
             } else {
                 stepErrors.add(error);
             }
@@ -155,7 +158,7 @@ class JUnitReporter {
             break;
         case SKIPPED:
             if (stepErrors.isEmpty()) {
-                stepErrors.add(new SkippedThrowable(NotificationLevel.SCENARIO));
+                stepErrors.add(new SkippedThrowable(SCENARIO));
             }
             for (Throwable error : stepErrors) {
                 pickleRunnerNotifier.addFailedAssumption(error);

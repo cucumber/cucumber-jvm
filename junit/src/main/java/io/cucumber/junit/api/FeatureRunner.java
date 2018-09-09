@@ -1,10 +1,10 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.api.PickleRunners.PickleRunner;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureCompiler;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
@@ -17,17 +17,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
-import static io.cucumber.junit.PickleRunners.withStepDescriptions;
+import static io.cucumber.junit.api.PickleRunners.withNoStepDescriptions;
+import static io.cucumber.junit.api.PickleRunners.withStepDescriptions;
 
 
-public class FeatureRunner extends ParentRunner<PickleRunner> {
+class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children = new ArrayList<>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
+    FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
         buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);

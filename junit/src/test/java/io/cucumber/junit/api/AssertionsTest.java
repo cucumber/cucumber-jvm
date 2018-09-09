@@ -1,6 +1,5 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
-import cucumber.api.junit.Cucumber;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,7 @@ public class AssertionsTest {
 
 
     @RunWith(Cucumber.class)
-    public final static class WithCucumberMethod {
+    final static class WithCucumberMethod {
 
         @StubCucumberAnnotation
         public void before() {

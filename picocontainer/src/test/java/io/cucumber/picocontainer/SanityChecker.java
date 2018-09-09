@@ -1,4 +1,4 @@
-package io.cucumber.junit;
+package io.cucumber.picocontainer;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.JUnit4TestAdapter;

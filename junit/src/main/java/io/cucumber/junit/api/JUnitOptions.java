@@ -1,4 +1,4 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.util.FixJava;
@@ -8,8 +8,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JUnitOptions {
-    private static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
+class JUnitOptions {
+    private static final String OPTIONS_RESOURCE = "/io/cucumber/api/junit/OPTIONS.txt";
     private static String optionsText;
     private final boolean strict;
 
@@ -24,7 +24,7 @@ public class JUnitOptions {
      * @param strict
      * @param argv the arguments
      */
-    public JUnitOptions(boolean strict, List<String> argv) {
+    JUnitOptions(boolean strict, List<String> argv) {
         this.strict = strict;
         argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
@@ -51,10 +51,10 @@ public class JUnitOptions {
     boolean filenameCompatibleNames() {
         return filenameCompatibleNames;
     }
-    public boolean stepNotifications(){
+    boolean stepNotifications(){
         return stepNotifications;
     }
-    public boolean isStrict() {
+    boolean isStrict() {
         return strict;
     }
 

@@ -1,15 +1,15 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
 import io.cucumber.core.exception.CucumberException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class Assertions {
+class Assertions {
     private Assertions() {
     }
 
-    public static void assertNoCucumberAnnotatedMethods(Class clazz) {
+    static void assertNoCucumberAnnotatedMethods(Class clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             for (Annotation annotation : method.getAnnotations()) {
                 if (annotation.annotationType().getName().startsWith("cucumber") //TODO: Remove once migrated

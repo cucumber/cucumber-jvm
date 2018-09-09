@@ -1,8 +1,6 @@
-package io.cucumber.junit;
+package io.cucumber.junit.api;
 
-import cucumber.annotation.DummyWhen;
 import io.cucumber.core.api.options.CucumberOptions;
-import cucumber.api.junit.Cucumber;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +16,10 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -146,7 +148,7 @@ public class CucumberTest {
     public void cucumber_returns_description_tree_with_features_and_pickles() throws InitializationError {
         Description description = new Cucumber(RunCukesTestValidEmpty.class).getDescription();
 
-        assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$RunCukesTestValidEmpty"));
+        assertThat(description.getDisplayName(), is("io.cucumber.junit.api.CucumberTest$RunCukesTestValidEmpty"));
         Description feature = description.getChildren().get(0);
         assertThat(feature.getDisplayName(), is("Feature: Feature A"));
         Description pickle = feature.getChildren().get(0);
@@ -185,7 +187,7 @@ public class CucumberTest {
     public class ImplicitFeatureAndGluePath {
     }
 
-    @CucumberOptions(features = {"classpath:io/cucumber/junit"})
+    @CucumberOptions(features = {"classpath:io/cucumber/junit/api"})
     public class ExplicitFeaturePath {
     }
 
@@ -193,14 +195,19 @@ public class CucumberTest {
     public class ExplicitFeaturePathWithNoFeatures {
     }
 
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"})
+    @CucumberOptions(features = {"classpath:io/cucumber/junit/error/lexer_error.feature"})
     public class LexerErrorFeature {
 
     }
 
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
+    @CucumberOptions(features = {"classpath:io/cucumber/junit/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
     public class FormatterWithLexerErrorFeature {
 
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public static @interface DummyWhen {
+
+    }
 }

@@ -1,6 +1,6 @@
 package io.cucumber.picocontainer;
 
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.api.Cucumber;
 import org.junit.runner.RunWith;
 
 

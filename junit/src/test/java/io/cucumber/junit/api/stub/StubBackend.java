@@ -1,4 +1,4 @@
-package io.cucumber.junit.stub;
+package io.cucumber.junit.api.stub;
 
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.StepDefinition;
