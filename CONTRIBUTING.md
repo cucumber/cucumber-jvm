@@ -57,14 +57,3 @@ Please do *not* add @author tags - this project embraces collective code ownersh
 code, look in git. When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
 If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what
 you have changed, and your contribution might get rejected.
-
-## Troubleshooting
-
-Below are some common problems you might encounter while hacking on Cucumber-JVM - and solutions.
-
-### IntelliJ Idea fails to compile the generated I18n Java annotations
-
-This can be solved by changing the Compiler settings: `Preferences -> Compiler -> Java Compiler`:
-
-* *Use compiler:* `Javac`
-* *Additional command line parameters:* `-target 1.6 -source 1.6 -encoding UTF-8`
