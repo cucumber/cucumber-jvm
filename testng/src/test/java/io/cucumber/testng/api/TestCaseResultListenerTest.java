@@ -1,4 +1,4 @@
-package cucumber.api.testng;
+package io.cucumber.testng.api;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.event.EventBus;

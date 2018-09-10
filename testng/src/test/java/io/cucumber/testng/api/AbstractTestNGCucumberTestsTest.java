@@ -1,15 +1,11 @@
-package cucumber.api.testng;
+package io.cucumber.testng.api;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import io.cucumber.testng.RunFeatureWithThreeScenariosTest;
 import org.testng.Assert;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
 import org.testng.ITestNGListener;
-import org.testng.ITestResult;
 import org.testng.TestNG;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

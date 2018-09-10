@@ -1,4 +1,4 @@
-package io.cucumber.runtime.stub;
+package io.cucumber.testng.api;
 
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.stepexpression.TypeRegistry;

@@ -1,4 +1,4 @@
-package cucumber.api.testng;
+package io.cucumber.testng.api;
 
 import gherkin.events.PickleEvent;
 

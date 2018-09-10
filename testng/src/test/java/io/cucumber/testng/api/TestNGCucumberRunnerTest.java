@@ -1,10 +1,8 @@
-package cucumber.api.testng;
+package io.cucumber.testng.api;
 
+import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.testng.RunCukesStrict;
-import io.cucumber.testng.RunCukesTest;
-import io.cucumber.testng.RunScenarioWithUndefinedStepsStrict;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,21 +45,33 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner = new ParseErrorCucumberRunner(RunCukesTest.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios(); // a CucumberException is caught
         try {
-            ((PickleEventWrapper)scenarios[0][0]).getPickleEvent();
+            ((PickleEventWrapper) scenarios[0][0]).getPickleEvent();
             Assert.fail("CucumberException not thrown");
         } catch (CucumberException e) {
             Assert.assertEquals(e.getMessage(), "parse error");
         }
     }
-}
 
-class ParseErrorCucumberRunner extends TestNGCucumberRunner {
-    public ParseErrorCucumberRunner(Class clazz) {
-        super(clazz);
+
+    static class ParseErrorCucumberRunner extends TestNGCucumberRunner {
+        public ParseErrorCucumberRunner(Class clazz) {
+            super(clazz);
+        }
+
+        @Override
+        List<CucumberFeature> getFeatures() {
+            throw new CucumberException("parse error");
+        }
     }
 
-    @Override
-    List<CucumberFeature> getFeatures() {
-        throw new CucumberException("parse error");
+    @CucumberOptions(
+        features = "classpath:io/cucumber/testng/api/undefined_steps.feature",
+        strict = true
+    )
+    static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
+    }
+
+    @CucumberOptions(strict = true)
+    static class RunCukesStrict extends AbstractTestNGCucumberTests {
     }
 }

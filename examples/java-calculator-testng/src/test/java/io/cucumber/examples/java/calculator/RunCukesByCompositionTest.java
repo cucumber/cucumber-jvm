@@ -1,9 +1,9 @@
 package io.cucumber.examples.java.calculator;
 
 import io.cucumber.core.api.options.CucumberOptions;
-import cucumber.api.testng.CucumberFeatureWrapper;
-import cucumber.api.testng.PickleEventWrapper;
-import cucumber.api.testng.TestNGCucumberRunner;
+import io.cucumber.testng.api.CucumberFeatureWrapper;
+import io.cucumber.testng.api.PickleEventWrapper;
+import io.cucumber.testng.api.TestNGCucumberRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
