@@ -4,8 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
-import cucumber.api.needle.NeedleInjectionProvider;
-import io.cucumber.needle.injection.DefaultInstanceInjectionProvider;
+import io.cucumber.needle.api.NeedleInjectionProvider;
+import io.cucumber.needle.DefaultInstanceInjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 
 import javax.inject.Inject;

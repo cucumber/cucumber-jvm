@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ResourceBundle;
 
+import io.cucumber.needle.LoadResourceBundle;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 

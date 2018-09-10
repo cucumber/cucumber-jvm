@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,11 +9,10 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.cucumber.needle.injection.NamedInjectionProvider;
 import org.junit.Test;
 
-import cucumber.api.needle.InjectionProviderInstancesSupplier;
-import cucumber.api.needle.NeedleInjectionProvider;
+import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
+import io.cucumber.needle.api.NeedleInjectionProvider;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;

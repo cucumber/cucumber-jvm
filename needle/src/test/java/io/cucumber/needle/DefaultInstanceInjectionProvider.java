@@ -1,4 +1,4 @@
-package io.cucumber.needle.injection;
+package io.cucumber.needle;
 
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionTargetInformation;

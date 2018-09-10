@@ -1,4 +1,4 @@
-package cucumber.api.needle;
+package io.cucumber.needle.api;
 
 import io.cucumber.needle.NeedleFactory;
 import de.akquinet.jbosscc.needle.NeedleTestcase;

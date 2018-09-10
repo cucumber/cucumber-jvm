@@ -1,4 +1,4 @@
-package io.cucumber.needle.injection;
+package io.cucumber.needle;
 
 import javax.inject.Named;
 

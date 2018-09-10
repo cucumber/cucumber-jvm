@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import java.util.LinkedHashSet;
 import java.util.ResourceBundle;
@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Read ClassNames from properties.
  */
-public enum ReadInjectionProviderClassNames {
+enum ReadInjectionProviderClassNames {
     /**
      * Singleton Instance
      */

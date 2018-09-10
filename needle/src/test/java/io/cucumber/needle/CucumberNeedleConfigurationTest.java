@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import cucumber.api.needle.InjectionProviderInstancesSupplier;
+import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
 import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 

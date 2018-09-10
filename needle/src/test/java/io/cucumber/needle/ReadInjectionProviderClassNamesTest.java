@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -8,6 +8,9 @@ import static org.junit.Assert.assertThat;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import io.cucumber.needle.CucumberNeedleConfiguration;
+import io.cucumber.needle.LoadResourceBundle;
+import io.cucumber.needle.ReadInjectionProviderClassNames;
 import org.junit.Test;
 
 import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;

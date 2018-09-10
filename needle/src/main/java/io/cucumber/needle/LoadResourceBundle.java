@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 /**
  * Null safe Resource Loader. If ResourceBundle does not exist, an empty Bundle is returned.
  */
-public enum LoadResourceBundle {
+enum LoadResourceBundle {
     INSTANCE;
 
     public static final ResourceBundle EMPTY_RESOURCE_BUNDLE = new ResourceBundle() {

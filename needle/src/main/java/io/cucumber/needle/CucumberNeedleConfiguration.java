@@ -1,6 +1,6 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
-import cucumber.api.needle.InjectionProviderInstancesSupplier;
+import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +12,11 @@ import java.util.Set;
 /**
  * Reads cucumber-needle.properties to initialize additional {@link InjectionProvider}s.
  */
-public class CucumberNeedleConfiguration {
+class CucumberNeedleConfiguration {
     /**
      * Default properties fiel name.
      */
-    public static final String RESOURCE_CUCUMBER_NEEDLE = "cucumber-needle";
+    static final String RESOURCE_CUCUMBER_NEEDLE = "cucumber-needle";
 
     @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -34,7 +34,7 @@ public class CucumberNeedleConfiguration {
         this(RESOURCE_CUCUMBER_NEEDLE);
     }
 
-    public CucumberNeedleConfiguration(final String resourceName) {
+    CucumberNeedleConfiguration(final String resourceName) {
         final ResourceBundle resourceBundle = loadResourceBundle.apply(resourceName);
         final Set<String> classNames = readInjectionProviderClassNames.apply(resourceBundle);
 

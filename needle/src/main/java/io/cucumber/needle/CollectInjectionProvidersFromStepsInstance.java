@@ -1,8 +1,7 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
-import cucumber.api.needle.InjectionProviderInstancesSupplier;
-import cucumber.api.needle.NeedleInjectionProvider;
-import io.cucumber.needle.NeedleFactory;
+import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
+import io.cucumber.needle.api.NeedleInjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import de.akquinet.jbosscc.needle.reflection.ReflectionUtil;
 import org.slf4j.Logger;
@@ -16,7 +15,7 @@ import java.util.Set;
 /**
  * Collects {@link InjectionProvider} instances.
  */
-public enum CollectInjectionProvidersFromStepsInstance {
+enum CollectInjectionProvidersFromStepsInstance {
     /**
      * stateless Singleton
      */
@@ -33,7 +32,7 @@ public enum CollectInjectionProvidersFromStepsInstance {
      * @param instance step definition instance
      * @return collected injection providers.
      */
-    public final <T> InjectionProvider<?>[] apply(final T instance) {
+    final <T> InjectionProvider<?>[] apply(final T instance) {
         final Set<InjectionProvider<?>> providers = new LinkedHashSet<InjectionProvider<?>>();
         for (final Field field : ReflectionUtil.getAllFieldsWithAnnotation(instance, NeedleInjectionProvider.class)) {
             field.setAccessible(true);

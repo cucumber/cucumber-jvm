@@ -1,4 +1,4 @@
-package io.cucumber.needle.config;
+package io.cucumber.needle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Instantiates new java object by default constructor
  */
-public enum CreateInstanceByDefaultConstructor {
+enum CreateInstanceByDefaultConstructor {
     /**
      * Singleton
      */
@@ -14,7 +14,7 @@ public enum CreateInstanceByDefaultConstructor {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public final <T> T apply(final Class<T> type) {
+    final <T> T apply(final Class<T> type) {
         try {
             final T newInstance = type.getConstructor().newInstance();
             logger.debug("newInstance by DefaultConstructor: " + newInstance);

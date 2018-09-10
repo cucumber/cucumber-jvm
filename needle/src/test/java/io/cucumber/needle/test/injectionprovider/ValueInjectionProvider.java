@@ -1,6 +1,6 @@
 package io.cucumber.needle.test.injectionprovider;
 
-import io.cucumber.needle.injection.DefaultInstanceInjectionProvider;
+import io.cucumber.needle.DefaultInstanceInjectionProvider;
 
 /**
  * Returns a value provider returning the value given in constructor.
