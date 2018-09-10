@@ -1,7 +1,4 @@
-package cucumber.api.guice;
-
-import io.cucumber.guice.ScenarioScope;
-import io.cucumber.guice.impl.SequentialScenarioScope;
+package io.cucumber.guice.api;
 
 /**
  * Provides a convenient <code>ScenarioScope</code> instance for use when declaring bindings

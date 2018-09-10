@@ -1,8 +1,6 @@
-package io.cucumber.guice.impl;
+package io.cucumber.guice.api;
 
 import com.google.inject.AbstractModule;
-import io.cucumber.guice.ScenarioScoped;
-import io.cucumber.guice.ScenarioScope;
 
 public class ScenarioModule extends AbstractModule {
 

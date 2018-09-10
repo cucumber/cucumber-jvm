@@ -1,7 +1,6 @@
-package cucumber.api.guice;
+package io.cucumber.guice.api;
 
 import com.google.inject.Module;
-import io.cucumber.guice.impl.ScenarioModule;
 
 /**
  * Provides a convenient <code>com.google.inject.Module</code> instance that contains bindings for

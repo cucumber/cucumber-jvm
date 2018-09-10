@@ -1,4 +1,4 @@
-package cucumber.api.guice;
+package io.cucumber.guice.api;
 
 
 /**

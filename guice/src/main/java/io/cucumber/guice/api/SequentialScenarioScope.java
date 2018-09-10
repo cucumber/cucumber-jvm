@@ -1,14 +1,14 @@
-package io.cucumber.guice.impl;
+package io.cucumber.guice.api;
 
 import com.google.inject.Key;
 import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
-import io.cucumber.guice.ScenarioScope;
+import io.cucumber.guice.api.ScenarioScope;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SequentialScenarioScope implements ScenarioScope {
+class SequentialScenarioScope implements ScenarioScope {
 
     /**
      * Scopes a provider. The returned provider returns objects from this scope.

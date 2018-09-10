@@ -3,7 +3,7 @@ package io.cucumber.guice.impl;
 import com.google.inject.Injector;
 import cucumber.api.java.ObjectFactory;
 import io.cucumber.core.options.Env;
-import io.cucumber.guice.ScenarioScope;
+import io.cucumber.guice.api.ScenarioScope;
 
 /**
  * Guice implementation of the <code>cucumber.api.java.ObjectFactory</code>.

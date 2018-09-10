@@ -2,7 +2,7 @@ package io.cucumber.guice.integration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import cucumber.api.guice.CucumberScopes;
+import io.cucumber.guice.api.CucumberScopes;
 
 public class YourModule extends AbstractModule {
 

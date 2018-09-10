@@ -61,7 +61,7 @@
     <h3>Using scope annotations</h3>
 <p>
     This is the easy route if you're new to Guice. To bind a class in scenario scope add the
-    <code>io.cucumber.guice.ScenarioScoped</code> annotation to the class definition. The class should have
+    <code>io.cucumber.guice.api.ScenarioScoped</code> annotation to the class definition. The class should have
     a no-args constructor or one constructor that is annotated with <code>javax.inject.Inject</code>. For example:
 </p>
     <pre>
@@ -117,10 +117,10 @@
 <p>
     As an alternative to using annotations you may prefer to declare Guice bindings in a class that implements
     <code>com.google.inject.Module</code>. To do this you should create a class that implements
-    <code>io.cucumber.guice.InjectorSource</code>. This gives you complete control over how you obtain a
+    <code>io.cucumber.guice.api.InjectorSource</code>. This gives you complete control over how you obtain a
     Guice injector and it's Guice modules. The injector must provide a binding for
-    <code>io.cucumber.guice.ScenarioScope</code>. It should also provide a binding for the
-    <code>io.cucumber.guice.ScenarioScoped</code> annotation if your classes are using the annotation. The
+    <code>io.cucumber.guice.api.ScenarioScope</code>. It should also provide a binding for the
+    <code>io.cucumber.guice.api.ScenarioScoped</code> annotation if your classes are using the annotation. The
     easiest way to do this it to use <code>CucumberModules.SCENARIO</code>. For example:
 </p>
     <pre>
@@ -139,10 +139,10 @@
         }
     </pre>
 <p>
-    Cucumber needs to know where to find the <code>io.cucumber.guice.InjectorSource</code> that it will use.
+    Cucumber needs to know where to find the <code>io.cucumber.guice.api.InjectorSource</code> that it will use.
     You should create a properties file called <code>cucumber.properties</code> and place it in the root of the
     classpath. The file should contain a single property key called <code>guice.injector-source</code> with a value
-    equal to the fully qualified name of the <code>io.cucumber.guice.InjectorSource</code>. For example:
+    equal to the fully qualified name of the <code>io.cucumber.guice.api.InjectorSource</code>. For example:
 </p>
     <pre>
         guice.injector-source=com.company.YourInjectorSource

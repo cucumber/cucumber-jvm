@@ -1,4 +1,4 @@
-package io.cucumber.guice;
+package io.cucumber.guice.api;
 
 import com.google.inject.Scope;
 
