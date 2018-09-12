@@ -12,7 +12,7 @@ public final class FeatureCompiler {
     private final Compiler compiler = new Compiler();
 
     public List<PickleEvent> compileFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
         }

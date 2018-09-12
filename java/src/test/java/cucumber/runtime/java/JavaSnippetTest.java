@@ -43,7 +43,7 @@ public class JavaSnippetTest {
 
     @Test
     public void generatesPlainSnippetUsingCustomParameterTypes() {
-        ParameterType<Size> customParameterType = new ParameterType<Size>(
+        ParameterType<Size> customParameterType = new ParameterType<>(
             "size",
             "small|medium|large",
             Size.class,
@@ -66,7 +66,7 @@ public class JavaSnippetTest {
 
     @Test
     public void generatesPlainSnippetUsingComplexParameterTypes() {
-        ParameterType<List<Size>> customParameterType = new ParameterType<List<Size>>(
+        ParameterType<List<Size>> customParameterType = new ParameterType<>(
             "sizes",
             singletonList("(small|medium|large)(( and |, )(small|medium|large))*"),
             new TypeReference<List<Size>>() {
@@ -190,7 +190,7 @@ public class JavaSnippetTest {
 
     @Test
     public void generatesSnippetWithMultipleArgumentsNamedDocString() {
-        ParameterType<String> customParameterType = new ParameterType<String>(
+        ParameterType<String> customParameterType = new ParameterType<>(
             "docString",
             "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
             String.class,
@@ -250,7 +250,7 @@ public class JavaSnippetTest {
 
     @Test
     public void generatesSnippetWithMultipleArgumentsNamedDataTable() {
-        ParameterType<String> customParameterType = new ParameterType<String>(
+        ParameterType<String> customParameterType = new ParameterType<>(
             "dataTable",
             "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
             String.class,

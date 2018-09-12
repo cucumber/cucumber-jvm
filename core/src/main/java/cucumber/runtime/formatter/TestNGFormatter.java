@@ -209,9 +209,9 @@ class TestNGFormatter implements EventListener, StrictAware {
         static String previousTestCaseName;
         static int exampleNumber;
         static final TestSourcesModel testSources = new TestSourcesModel();
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
-        final List<Result> hooks = new ArrayList<Result>();
+        final List<PickleStepTestStep> steps = new ArrayList<>();
+        final List<Result> results = new ArrayList<>();
+        final List<Result> hooks = new ArrayList<>();
         final TestCase scenario;
 
         private TestMethod(TestCase scenario) {

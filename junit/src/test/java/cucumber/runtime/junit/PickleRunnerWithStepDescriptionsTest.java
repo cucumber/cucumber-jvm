@@ -38,7 +38,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(features.getUri(), pickle));
         }
@@ -76,7 +76,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(features.getUri(), pickle));
         }

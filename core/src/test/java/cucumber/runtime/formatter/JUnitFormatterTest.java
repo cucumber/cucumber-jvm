@@ -496,7 +496,7 @@ public class JUnitFormatterTest {
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         if (strict) {
             args.add("--strict");
         }

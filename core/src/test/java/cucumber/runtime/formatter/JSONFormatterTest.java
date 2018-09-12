@@ -1133,7 +1133,7 @@ public class JSONFormatterTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("--threads");
         args.add("4");
         args.add("--plugin");

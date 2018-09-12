@@ -24,7 +24,7 @@ public class RuntimeOptionsFactory {
     }
 
     private List<String> buildArgsFromOptions() {
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
 
         for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = getOptions(classWithOptions);

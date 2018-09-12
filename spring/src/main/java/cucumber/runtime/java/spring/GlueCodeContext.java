@@ -11,8 +11,8 @@ class GlueCodeContext {
         }
     };
 
-    private final Map<String, Object> objects = new HashMap<String, Object>();
-    private final Map<String, Runnable> callbacks = new HashMap<String, Runnable>();
+    private final Map<String, Object> objects = new HashMap<>();
+    private final Map<String, Runnable> callbacks = new HashMap<>();
     private int counter;
 
     private GlueCodeContext() {

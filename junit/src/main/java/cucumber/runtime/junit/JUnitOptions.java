@@ -26,7 +26,7 @@ public class JUnitOptions {
      */
     public JUnitOptions(boolean strict, List<String> argv) {
         this.strict = strict;
-        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
     }
 

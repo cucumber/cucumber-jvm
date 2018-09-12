@@ -21,7 +21,7 @@ import java.util.Set;
  */
 final class RerunFormatter implements EventListener, StrictAware {
     private final NiceAppendable out;
-    private Map<String, ArrayList<Integer>> featureAndFailedLinesMapping = new HashMap<String, ArrayList<Integer>>();
+    private Map<String, ArrayList<Integer>> featureAndFailedLinesMapping = new HashMap<>();
     private boolean isStrict = false;
 
     private EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
@@ -68,7 +68,7 @@ final class RerunFormatter implements EventListener, StrictAware {
         String path = testCase.getUri();
         ArrayList<Integer> failedTestCases = this.featureAndFailedLinesMapping.get(path);
         if (failedTestCases == null) {
-            failedTestCases = new ArrayList<Integer>();
+            failedTestCases = new ArrayList<>();
             this.featureAndFailedLinesMapping.put(path, failedTestCases);
         }
 

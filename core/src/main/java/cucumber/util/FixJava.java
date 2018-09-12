@@ -23,7 +23,7 @@ public class FixJava {
     }
 
     public static <T, R> List<R> map(List<T> objects, Mapper<T, R> mapper) {
-        List<R> result = new ArrayList<R>(objects.size());
+        List<R> result = new ArrayList<>(objects.size());
         for (T o : objects) {
             result.add(mapper.map(o));
         }

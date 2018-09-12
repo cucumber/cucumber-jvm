@@ -43,13 +43,13 @@ public class RuntimeOptions {
         }
     };
 
-    private final List<String> glue = new ArrayList<String>();
-    private final List<String> tagFilters = new ArrayList<String>();
-    private final List<Pattern> nameFilters = new ArrayList<Pattern>();
-    private final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
-    private final List<String> featurePaths = new ArrayList<String>();
+    private final List<String> glue = new ArrayList<>();
+    private final List<String> tagFilters = new ArrayList<>();
+    private final List<Pattern> nameFilters = new ArrayList<>();
+    private final Map<String, List<Long>> lineFilters = new HashMap<>();
+    private final List<String> featurePaths = new ArrayList<>();
 
-    private final List<String> junitOptions = new ArrayList<String>();
+    private final List<String> junitOptions = new ArrayList<>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -57,9 +57,9 @@ public class RuntimeOptions {
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
 
-    private final List<String> pluginFormatterNames = new ArrayList<String>();
-    private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
-    private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
+    private final List<String> pluginFormatterNames = new ArrayList<>();
+    private final List<String> pluginStepDefinitionReporterNames = new ArrayList<>();
+    private final List<String> pluginSummaryPrinterNames = new ArrayList<>();
 
 
     /**
@@ -85,7 +85,7 @@ public class RuntimeOptions {
     }
 
     public RuntimeOptions(Env env, List<String> argv) {
-        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
@@ -123,13 +123,13 @@ public class RuntimeOptions {
     }
 
     private void parse(List<String> args) {
-        List<String> parsedTagFilters = new ArrayList<String>();
-        List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
-        Map<String, List<Long>> parsedLineFilters = new HashMap<String, List<Long>>();
-        List<String> parsedFeaturePaths = new ArrayList<String>();
-        List<String> parsedGlue = new ArrayList<String>();
+        List<String> parsedTagFilters = new ArrayList<>();
+        List<Pattern> parsedNameFilters = new ArrayList<>();
+        Map<String, List<Long>> parsedLineFilters = new HashMap<>();
+        List<String> parsedFeaturePaths = new ArrayList<>();
+        List<String> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
-        List<String> parsedJunitOptions = new ArrayList<String>();
+        List<String> parsedJunitOptions = new ArrayList<>();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -267,7 +267,7 @@ public class RuntimeOptions {
 
     private int printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
-        List<List<String>> table = new ArrayList<List<String>>();
+        List<List<String>> table = new ArrayList<>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
         addKeywordRow(table, "background", dialect.getBackgroundKeywords());
         addKeywordRow(table, "scenario", dialect.getScenarioKeywords());
@@ -289,7 +289,7 @@ public class RuntimeOptions {
     }
 
     private void addCodeKeywordRow(List<List<String>> table, String key, List<String> keywords) {
-        List<String> codeKeywordList = new ArrayList<String>(keywords);
+        List<String> codeKeywordList = new ArrayList<>(keywords);
         codeKeywordList.remove("* ");
         addKeywordRow(table, key + " (code)", map(codeKeywordList, CODE_KEYWORD_MAPPER));
     }
@@ -378,7 +378,7 @@ public class RuntimeOptions {
     }
 
     class ParsedOptionNames {
-        private List<String> names = new ArrayList<String>();
+        private List<String> names = new ArrayList<>();
         private boolean clobber = false;
 
         public void addName(String name, boolean isAddOption) {

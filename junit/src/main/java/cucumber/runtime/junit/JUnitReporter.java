@@ -93,7 +93,7 @@ public class JUnitReporter {
 
     void handleTestCaseStarted() {
         pickleRunnerNotifier.fireTestStarted();
-        stepErrors = new ArrayList<Throwable>();
+        stepErrors = new ArrayList<>();
     }
 
     void handleStepStarted(gherkin.pickles.PickleStep step) {

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @ContextConfiguration("classpath:cucumber.xml")
 public class ThreadingStepDefs {
 
-    private static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<Thread, ThreadingStepDefs>();
+    private static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<>();
 
     private static final CountDownLatch latch = new CountDownLatch(2);
 

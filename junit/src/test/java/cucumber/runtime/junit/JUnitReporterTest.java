@@ -479,7 +479,7 @@ public class JUnitReporterTest {
     }
 
     private List<PickleStep> runnerSteps(PickleStep step) {
-        List<PickleStep> runnerSteps = new ArrayList<PickleStep>();
+        List<PickleStep> runnerSteps = new ArrayList<>();
         runnerSteps.add(step);
         return runnerSteps;
     }
@@ -526,16 +526,16 @@ public class JUnitReporterTest {
 
     private void setUpStepNotifierAndStepErrors(Description description) {
         jUnitReporter.stepNotifier = new EachTestNotifier(runNotifier, description);
-        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        jUnitReporter.stepErrors = new ArrayList<>();
     }
 
     private void setUpNoStepNotifierAndStepErrors() {
         jUnitReporter.stepNotifier = new NoTestNotifier();
-        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        jUnitReporter.stepErrors = new ArrayList<>();
     }
 
     private void populateStepErrors(List<Throwable> exceptions) {
-        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        jUnitReporter.stepErrors = new ArrayList<>();
         for (Throwable exception : exceptions) {
             jUnitReporter.stepErrors.add(exception);
         }

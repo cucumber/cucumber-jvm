@@ -17,7 +17,7 @@ public class ExitStatus implements EventListener {
     private static final byte DEFAULT = 0x0;
     private static final byte ERRORS = 0x1;
 
-    private final List<Result> results = new ArrayList<Result>();
+    private final List<Result> results = new ArrayList<>();
     private final RuntimeOptions runtimeOptions;
 
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {

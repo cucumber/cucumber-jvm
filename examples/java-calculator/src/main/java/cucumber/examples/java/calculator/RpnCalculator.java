@@ -7,7 +7,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class RpnCalculator {
-    private final Deque<Number> stack = new LinkedList<Number>();
+    private final Deque<Number> stack = new LinkedList<>();
     private static final List<String> OPS = asList("-", "+", "*", "/");
 
     public void push(Object arg) {

@@ -22,7 +22,7 @@ public class ElementsAreAllUniqueMatcher<E> extends ElementsAreAllMatcher<E> {
      */
     @Factory
     public static <E> Matcher<Collection<? extends E>> elementsAreAllUnique() {
-        return new ElementsAreAllUniqueMatcher<E>();
+        return new ElementsAreAllUniqueMatcher<>();
     }
 
     @Override

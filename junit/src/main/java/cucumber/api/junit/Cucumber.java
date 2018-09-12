@@ -63,7 +63,7 @@ Fail * </pre></blockquote>
  * @see CucumberOptions
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
-    private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
+    private final List<FeatureRunner> children = new ArrayList<>();
     private final EventBus bus;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final Filters filters;

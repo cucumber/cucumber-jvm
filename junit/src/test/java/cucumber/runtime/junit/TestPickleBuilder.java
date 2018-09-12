@@ -18,7 +18,7 @@ public class TestPickleBuilder {
     }
 
     static List<PickleEvent> pickleEventsFromFeature(final String path, final String source) {
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        List<PickleEvent> pickleEvents = new ArrayList<>();
         Compiler compiler = new Compiler();
 
         CucumberFeature feature = parseFeature(path, source);
@@ -29,7 +29,7 @@ public class TestPickleBuilder {
     }
 
     static CucumberFeature parseFeature(final String path, final String source) {
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
 
         GherkinDocument gherkinDocument = parser.parse(source, matcher);

@@ -13,8 +13,8 @@ import static java.util.Arrays.asList;
 
 
 public class TagPredicate implements PicklePredicate {
-    private final List<Expression> expressions = new ArrayList<Expression>();
-    private final List<TagExpressionOld> oldStyleExpressions = new ArrayList<TagExpressionOld>();
+    private final List<Expression> expressions = new ArrayList<>();
+    private final List<TagExpressionOld> oldStyleExpressions = new ArrayList<>();
 
     public TagPredicate(List<String> tagExpressions) {
         if (tagExpressions == null) {
@@ -41,7 +41,7 @@ public class TagPredicate implements PicklePredicate {
                 return false;
             }
         }
-        List<String> tags = new ArrayList<String>();
+        List<String> tags = new ArrayList<>();
         for (PickleTag pickleTag : pickleTags) {
             tags.add(pickleTag.getName());
         }

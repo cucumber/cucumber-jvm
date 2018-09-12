@@ -18,7 +18,7 @@ import javax.inject.Inject;
 public class MoreSteps {
 
     @NeedleInjectionProvider
-    private InjectionProvider<MoreSteps> thisInjectionProvider = new DefaultInstanceInjectionProvider<MoreSteps>(this);
+    private InjectionProvider<MoreSteps> thisInjectionProvider = new DefaultInstanceInjectionProvider<>(this);
 
     @Inject
     private AtmWithdrawalSteps atmWithdrawalSteps;

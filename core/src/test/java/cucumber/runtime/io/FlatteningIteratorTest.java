@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class FlatteningIteratorTest {
     @Test
     public void flattens_iterators() {
-        final FlatteningIterator<Integer> fi = new FlatteningIterator<Integer>();
+        final FlatteningIterator<Integer> fi = new FlatteningIterator<>();
         fi.push(asList(3, 4).iterator());
         fi.push(asList(1, 2).iterator());
 
@@ -35,7 +35,7 @@ public class FlatteningIteratorTest {
             }
         };
 
-        List<T> l = new ArrayList<T>();
+        List<T> l = new ArrayList<>();
         for (T o : i) {
             l.add(o);
         }

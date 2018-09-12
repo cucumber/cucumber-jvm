@@ -41,7 +41,7 @@ class PickleRunners {
         private final RunnerSupplier runnerSupplier;
         private final PickleEvent pickleEvent;
         private final JUnitOptions jUnitOptions;
-        private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
+        private final Map<PickleStep, Description> stepDescriptions = new HashMap<>();
         private Description description;
 
         WithStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {

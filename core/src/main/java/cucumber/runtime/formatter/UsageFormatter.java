@@ -25,8 +25,8 @@ import java.util.Map;
  */
 final class UsageFormatter implements Plugin, EventListener {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
-    final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
-    private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
+    final Map<String, List<StepContainer>> usageMap = new HashMap<>();
+    private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<>();
 
     private final NiceAppendable out;
 
@@ -70,7 +70,7 @@ final class UsageFormatter implements Plugin, EventListener {
     }
 
     void finishReport() {
-        List<StepDefContainer> stepDefContainers = new ArrayList<StepDefContainer>();
+        List<StepDefContainer> stepDefContainers = new ArrayList<>();
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
             StepDefContainer stepDefContainer = new StepDefContainer();
             stepDefContainers.add(stepDefContainer);
@@ -98,7 +98,7 @@ final class UsageFormatter implements Plugin, EventListener {
     }
 
     private Map<String, BigDecimal> createAggregatedDurations(StepContainer stepContainer) {
-        Map<String, BigDecimal> aggregatedResults = new HashMap<String, BigDecimal>();
+        Map<String, BigDecimal> aggregatedResults = new HashMap<>();
         for (Map.Entry<String, UsageStatisticStrategy> calculatorEntry : statisticStrategies.entrySet()) {
             UsageStatisticStrategy statisticStrategy = calculatorEntry.getValue();
             List<Long> rawDurations = getRawDurations(stepContainer.durations);
@@ -115,7 +115,7 @@ final class UsageFormatter implements Plugin, EventListener {
     }
 
     private List<Long> getRawDurations(List<StepDuration> stepDurations) {
-        List<Long> rawDurations = new ArrayList<Long>();
+        List<Long> rawDurations = new ArrayList<>();
 
         for (StepDuration stepDuration : stepDurations) {
             rawDurations.add(stepDuration.duration.longValue());
@@ -130,7 +130,7 @@ final class UsageFormatter implements Plugin, EventListener {
     private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs, String stepLocation) {
         List<StepContainer> stepContainers = usageMap.get(stepDefinition);
         if (stepContainers == null) {
-            stepContainers = new ArrayList<StepContainer>();
+            stepContainers = new ArrayList<>();
             usageMap.put(stepDefinition, stepContainers);
         }
         StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
@@ -193,8 +193,8 @@ final class UsageFormatter implements Plugin, EventListener {
      */
     static class StepContainer {
         public String name;
-        public Map<String, BigDecimal> aggregatedDurations = new HashMap<String, BigDecimal>();
-        public List<StepDuration> durations = new ArrayList<StepDuration>();
+        public Map<String, BigDecimal> aggregatedDurations = new HashMap<>();
+        public List<StepDuration> durations = new ArrayList<>();
     }
 
     static class StepDuration {

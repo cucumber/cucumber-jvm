@@ -52,7 +52,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     private final MethodScanner methodScanner;
     private Glue glue;
-    private List<Class<? extends GlueBase>> glueBaseClasses = new ArrayList<Class<? extends GlueBase>>();
+    private List<Class<? extends GlueBase>> glueBaseClasses = new ArrayList<>();
 
     /**
      * The constructor called by reflection by default.

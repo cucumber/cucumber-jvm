@@ -15,7 +15,7 @@ import static java.util.Collections.max;
 
 class Scenario implements cucumber.api.Scenario {
 
-    private final List<Result> stepResults = new ArrayList<Result>();
+    private final List<Result> stepResults = new ArrayList<>();
     private final EventBus bus;
     private final TestCase testCase;
 

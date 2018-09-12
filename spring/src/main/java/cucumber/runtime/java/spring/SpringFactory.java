@@ -64,7 +64,7 @@ public class SpringFactory implements ObjectFactory {
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
 
-    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
+    private final Collection<Class<?>> stepClasses = new HashSet<>();
     private Class<?> stepClassWithSpringContext = null;
 
     public SpringFactory() {
@@ -105,8 +105,8 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private static boolean hasAnnotation(Annotation annotation, Collection<Class<? extends Annotation>> desired) {
-        Set<Class<? extends Annotation>> seen = new HashSet<Class<? extends Annotation>>();
-        Stack<Class<? extends Annotation>> toCheck = new Stack<Class<? extends Annotation>>();
+        Set<Class<? extends Annotation>> seen = new HashSet<>();
+        Stack<Class<? extends Annotation>> toCheck = new Stack<>();
         toCheck.add(annotation.annotationType());
 
         while (!toCheck.isEmpty()) {

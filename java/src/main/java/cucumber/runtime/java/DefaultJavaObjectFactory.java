@@ -12,7 +12,7 @@ import java.util.Map;
  * thereby colliding with other DI implementations.
  */
 class DefaultJavaObjectFactory implements ObjectFactory {
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> instances = new HashMap<>();
 
     public void start() {
         // No-op

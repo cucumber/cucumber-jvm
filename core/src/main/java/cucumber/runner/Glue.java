@@ -99,7 +99,7 @@ final class Glue implements cucumber.runtime.Glue {
     }
 
     private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
-        List<PickleStepDefinitionMatch> result = new ArrayList<PickleStepDefinitionMatch>();
+        List<PickleStepDefinitionMatch> result = new ArrayList<>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {

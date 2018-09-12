@@ -8,7 +8,7 @@ import cucumber.runner.TimeService;
 
 public class StepDurationTimeService implements TimeService, EventListener {
     private long stepDuration;
-    private final ThreadLocal<Long> currentTime = new ThreadLocal<Long>();
+    private final ThreadLocal<Long> currentTime = new ThreadLocal<>();
     private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {

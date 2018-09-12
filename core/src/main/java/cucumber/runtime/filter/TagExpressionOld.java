@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 class TagExpressionOld {
-    private final Map<String, Integer> limits = new HashMap<String, Integer>();
+    private final Map<String, Integer> limits = new HashMap<>();
     private And and = new And();
 
     static boolean isOldTagExpression(String tagExpression) {
@@ -90,7 +90,7 @@ class TagExpressionOld {
     }
 
     private class And implements Expression {
-        private List<Expression> expressions = new ArrayList<Expression>();
+        private List<Expression> expressions = new ArrayList<>();
 
         public void add(Expression expression) {
             expressions.add(expression);
@@ -111,7 +111,7 @@ class TagExpressionOld {
     }
 
     private class Or implements Expression {
-        private List<Expression> expressions = new ArrayList<Expression>();
+        private List<Expression> expressions = new ArrayList<>();
 
         public void add(Expression expression) {
             expressions.add(expression);

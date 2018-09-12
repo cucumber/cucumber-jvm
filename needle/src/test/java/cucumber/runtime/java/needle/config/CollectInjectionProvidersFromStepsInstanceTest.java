@@ -27,7 +27,7 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
 
         @Override
         public Set<InjectionProvider<?>> get() {
-            final HashSet<InjectionProvider<?>> result = new HashSet<InjectionProvider<?>>();
+            final HashSet<InjectionProvider<?>> result = new HashSet<>();
 
             result.add(NamedInjectionProvider.forNamedValue("foo", "bar"));
 

@@ -16,7 +16,7 @@ public class FeatureBuilderTest {
 
     @Test
     public void ignores_duplicate_features() throws IOException {
-        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        List<CucumberFeature> features = new ArrayList<>();
         FeatureBuilder builder = new FeatureBuilder(features);
         String featurePath = "foo.feature";
         Resource resource1 = createResourceMock(featurePath);
@@ -33,7 +33,7 @@ public class FeatureBuilderTest {
         char fileSeparatorChar = '/';
         String featurePath = "path" + fileSeparatorChar + "foo.feature";
         Resource resource = createResourceMock(featurePath);
-        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        List<CucumberFeature> features = new ArrayList<>();
         FeatureBuilder builder = new FeatureBuilder(features, fileSeparatorChar);
 
         builder.parse(resource);
@@ -47,7 +47,7 @@ public class FeatureBuilderTest {
         char fileSeparatorChar = '\\';
         String featurePath = "path" + fileSeparatorChar + "foo.feature";
         Resource resource = createResourceMock(featurePath);
-        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        List<CucumberFeature> features = new ArrayList<>();
         FeatureBuilder builder = new FeatureBuilder(features, fileSeparatorChar);
 
         builder.parse(resource);

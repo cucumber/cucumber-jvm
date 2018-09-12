@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 public class UndefinedStepsTracker implements EventListener {
-    private final List<String> snippets = new ArrayList<String>();
+    private final List<String> snippets = new ArrayList<>();
     private final IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-    private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
-    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
+    private final Map<String, String> pathToSourceMap = new HashMap<>();
+    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<>();
     private boolean hasUndefinedSteps = false;
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
@@ -107,11 +107,11 @@ public class UndefinedStepsTracker implements EventListener {
         if (!pathToSourceMap.containsKey(path)) {
             return;
         }
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
             GherkinDocument gherkinDocument = parser.parse(pathToSourceMap.get(path), matcher);
-            Map<Integer, StepNode> stepMap = new HashMap<Integer, StepNode>();
+            Map<Integer, StepNode> stepMap = new HashMap<>();
             StepNode initialPreviousNode = null;
             for (ScenarioDefinition child : gherkinDocument.getFeature().getChildren()) {
                 StepNode lastStepNode = processScenarioDefinition(stepMap, initialPreviousNode, child);
@@ -136,7 +136,7 @@ public class UndefinedStepsTracker implements EventListener {
     }
 
     private List<String> getGivenWhenThenKeywords(GherkinDialect dialect) {
-        List<String> keywords = new ArrayList<String>();
+        List<String> keywords = new ArrayList<>();
         keywords.addAll(dialect.getGivenKeywords());
         keywords.addAll(dialect.getWhenKeywords());
         keywords.addAll(dialect.getThenKeywords());

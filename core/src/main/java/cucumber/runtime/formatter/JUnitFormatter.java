@@ -201,8 +201,8 @@ final class JUnitFormatter implements EventListener, StrictAware {
         static String previousTestCaseName;
         static int exampleNumber;
         static boolean treatConditionallySkippedAsFailure = false;
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
+        final List<PickleStepTestStep> steps = new ArrayList<>();
+        final List<Result> results = new ArrayList<>();
         private final cucumber.api.TestCase testCase;
 
         private Element createElement(Document doc) {

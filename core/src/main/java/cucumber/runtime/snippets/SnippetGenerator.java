@@ -66,7 +66,7 @@ public class SnippetGenerator {
 
 
     private Map<String, Type> arguments(PickleStep step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
-        Map<String, Type> arguments = new LinkedHashMap<String, Type>(parameterTypes.size() + 1);
+        Map<String, Type> arguments = new LinkedHashMap<>(parameterTypes.size() + 1);
 
         for (int i = 0; i < parameterTypes.size(); i++) {
             ParameterType<?> parameterType = parameterTypes.get(i);

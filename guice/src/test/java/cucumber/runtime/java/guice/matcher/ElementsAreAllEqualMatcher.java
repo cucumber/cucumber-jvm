@@ -30,7 +30,7 @@ public class ElementsAreAllEqualMatcher<E> extends ElementsAreAllMatcher<E> {
      */
     @Factory
     public static <E> Matcher<Collection<? extends E>> elementsAreAllEqual() {
-        return new ElementsAreAllEqualMatcher<E>();
+        return new ElementsAreAllEqualMatcher<>();
     }
 
     @Override

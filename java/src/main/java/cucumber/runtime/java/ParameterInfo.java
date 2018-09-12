@@ -16,7 +16,7 @@ class ParameterInfo {
     private final boolean transposed;
 
     static List<ParameterInfo> fromMethod(Method method) {
-        List<ParameterInfo> result = new ArrayList<ParameterInfo>();
+        List<ParameterInfo> result = new ArrayList<>();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
         for (int i = 0; i < genericParameterTypes.length; i++) {
