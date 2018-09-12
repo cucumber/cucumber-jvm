@@ -7,30 +7,47 @@ import java.util.regex.Pattern;
 
 public class Shellwords {
 
-    private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s'\"]+|[']([^']*)[']|[\"]([^\"]*)[\"]");
+    private static final Pattern SHELLWORDS_PATTERN;
+
+    static {
+        final String DEFAULT = "([^\\s'\"]+)";
+        final String SINGLE_QUOTES = "[\\^\\s]?[']([^']*)['$]?";
+        final String DOUBLE_QUOTES = "[\\^\\s]?[\"]([^\"]*)[\"$]?";
+        final String SHELLWORDS_FORMAT = String.format("%s|%s|%s",
+            SINGLE_QUOTES,
+            DOUBLE_QUOTES,
+            DEFAULT
+        );
+        SHELLWORDS_PATTERN = Pattern.compile(SHELLWORDS_FORMAT);
+    }
 
     private Shellwords() {
     }
 
-    public static List<String> parse(String cmdline) {
-        List<String> matchList = new ArrayList<>();
-        Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
+    /**
+     * <p>Parse command line input and extract all shellwords into a {@code List<String>}.</p>
+     *
+     * <p>Shellwords are whitespace seperated, apart from when a shellword starts with a Double Quotes {@code "}, or Single Quotes {@code '}.
+     * Where a Quote starts a shellword, the shellword is only closed by another quote or the end of the line.</p>
+     *
+     * @param cmdline the command line arguments passed in
+     * @return a {@code List<String>} of the individual words supplied.
+     */
+    public static List<String> parse(final String cmdline) {
+        final List<String> matchList = new ArrayList<>();
+        final Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
         while (shellwordsMatcher.find()) {
-            if (shellwordsMatcher.group(1) != null) {
-                matchList.add(shellwordsMatcher.group(1));
-            } else {
-                String token = shellwordsMatcher.group();
-                boolean singleQuoted = token.startsWith("'")
-                    && token.endsWith("'");
-                boolean doubleQuoted = token.startsWith("\"")
-                    && token.endsWith("\"");
-                boolean quoted = singleQuoted || doubleQuoted;
-                if (quoted
-                        && token.length() > 2) {
-                    token = token.substring(1, token.length() - 1);
+            // default token to group
+            String token = shellwordsMatcher.group();
+            // find highest group count that is not null and use that
+            for (int i = shellwordsMatcher.groupCount(); i > 0; --i) {
+                final String groupToken = shellwordsMatcher.group(i);
+                if (groupToken != null) {
+                    token = groupToken;
+                    break;
                 }
-                matchList.add(token);
             }
+            matchList.add(token);
         }
         return matchList;
     }
