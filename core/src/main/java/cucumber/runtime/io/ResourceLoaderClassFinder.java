@@ -27,8 +27,8 @@ public class ResourceLoaderClassFinder implements ClassFinder {
                 if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
                     result.add(clazz.asSubclass(parentType));
                 }
-            } catch (ClassNotFoundException ignore) {
-            } catch (NoClassDefFoundError ignore) {
+            } catch (ClassNotFoundException
+                    | NoClassDefFoundError ignore) {
             }
         }
         return result;

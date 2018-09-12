@@ -161,9 +161,8 @@ final class JUnitFormatter implements EventListener, StrictAware {
                 double testCaseTime =
                         Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
                 totalDurationSecondsForAllTimes += testCaseTime;
-            } catch ( NumberFormatException e ) {
-                throw new CucumberException(e);
-            } catch ( NullPointerException e ) {
+            } catch (NumberFormatException
+                    | NullPointerException e) {
                 throw new CucumberException(e);
             }
         }

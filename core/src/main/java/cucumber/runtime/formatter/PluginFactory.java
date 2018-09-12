@@ -73,9 +73,8 @@ public final class PluginFactory {
         Class<? extends Plugin> pluginClass = pluginClass(pluginName);
         try {
             return instantiate(pluginString, pluginClass, argument);
-        } catch (IOException e) {
-            throw new CucumberException(e);
-        } catch (URISyntaxException e) {
+        } catch (IOException
+                | URISyntaxException e) {
             throw new CucumberException(e);
         }
     }
@@ -101,9 +100,8 @@ public final class PluginFactory {
     private <T extends Plugin> T newInstance(Constructor<T> constructor, Object... ctorArgs) {
         try {
             return constructor.newInstance(ctorArgs);
-        } catch (InstantiationException e) {
-            throw new CucumberException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException
+                | IllegalAccessException e) {
             throw new CucumberException(e);
         } catch (InvocationTargetException e) {
             throw new CucumberException(e.getTargetException());

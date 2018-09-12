@@ -193,9 +193,8 @@ class TestNGFormatter implements EventListener, StrictAware {
             try {
                 String duration = testCaseNodes.item(i).getAttributes().getNamedItem("duration-ms").getNodeValue();
                 totalDuration += Long.parseLong(duration);
-            } catch (NumberFormatException e) {
-                throw new CucumberException(e);
-            } catch (NullPointerException e) {
+            } catch (NumberFormatException
+                    | NullPointerException e) {
                 throw new CucumberException(e);
             }
         }
