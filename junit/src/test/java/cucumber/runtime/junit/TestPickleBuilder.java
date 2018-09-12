@@ -24,7 +24,7 @@ public class TestPickleBuilder {
         CucumberFeature feature = parseFeature(path, source);
         for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
-        };
+        }
         return pickleEvents;
     }
 

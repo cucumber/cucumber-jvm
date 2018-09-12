@@ -17,7 +17,7 @@ import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 public class CucumberNeedleConfigurationTest {
 
     public abstract static class A implements InjectionProviderInstancesSupplier {
-    };
+    }
 
     @Test
     public void shouldReturnEmptyInstances() {

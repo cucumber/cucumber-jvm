@@ -41,7 +41,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(features.getUri(), pickle));
-        };
+        }
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
                 mock(ThreadLocalRunnerSupplier.class),
@@ -79,7 +79,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(features.getUri(), pickle));
-        };
+        }
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
                 mock(ThreadLocalRunnerSupplier.class),
