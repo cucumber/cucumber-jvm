@@ -2,13 +2,11 @@ package cucumber.examples.spring.txn;
 
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class UserStepdefs {
     @Autowired

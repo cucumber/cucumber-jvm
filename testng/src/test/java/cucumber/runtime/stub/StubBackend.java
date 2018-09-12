@@ -1,13 +1,12 @@
 package cucumber.runtime.stub;
 
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;

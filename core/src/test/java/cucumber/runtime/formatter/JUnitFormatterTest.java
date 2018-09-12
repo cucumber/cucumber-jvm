@@ -1,12 +1,9 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runtime.Backend;
 import cucumber.runner.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.pickles.PickleStep;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AssumptionViolatedException;
@@ -31,10 +28,6 @@ import java.util.Scanner;
 import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JUnitFormatterTest {
 

@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
-import io.cucumber.datatable.DataTable;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.PathWithLines;
 import cucumber.util.FixJava;

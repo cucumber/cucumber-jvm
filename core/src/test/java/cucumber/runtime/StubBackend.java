@@ -5,7 +5,6 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.TypeRegistry;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
