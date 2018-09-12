@@ -9,6 +9,6 @@ public class TooManyInstancesException extends CucumberException {
     }
 
     private static String createMessage(Collection instances) {
-        return String.format("Expected only one instance, but found too many: " + instances);
+        return String.format("Expected only one instance, but found too many: %s", String.valueOf(instances));
     }
 }
