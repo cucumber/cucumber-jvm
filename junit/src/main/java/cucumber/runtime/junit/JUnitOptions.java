@@ -21,8 +21,8 @@ public class JUnitOptions {
      * <p/>
      * <pre<{@code Arrays.asList("--filename-compatible-names", "--step-notifications");}</pre>
      *
-     * @param strict
-     * @param argv the arguments
+     * @param strict strict value.
+     * @param argv the arguments.
      */
     public JUnitOptions(boolean strict, List<String> argv) {
         this.strict = strict;

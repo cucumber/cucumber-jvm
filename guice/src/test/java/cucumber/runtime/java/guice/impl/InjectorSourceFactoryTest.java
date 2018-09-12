@@ -127,10 +127,9 @@ public class InjectorSourceFactoryTest {
    * of class LivesInChildClassLoader and the test will fail.
    * 
    * <p>See <a href="https://github.com/cucumber/cucumber-jvm/issues/1036">https://github.com/cucumber/cucumber-jvm/issues/1036</a>
-   * @throws Exception
    */
   @Test
-    public void instantiateClassInChildClassLoader() throws Exception {
+    public void instantiateClassInChildClassLoader() {
         ClassLoader childClassLoader = new MyChildClassLoader(this.getClass().getClassLoader());
         Thread.currentThread().setContextClassLoader( childClassLoader );
         

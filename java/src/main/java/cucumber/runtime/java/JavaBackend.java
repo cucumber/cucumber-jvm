@@ -57,7 +57,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     /**
      * The constructor called by reflection by default.
      *
-     * @param resourceLoader
+     * @param resourceLoader the resource loader to use.
+     * @param typeRegistry the type registry to use.
      */
     public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
         this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
