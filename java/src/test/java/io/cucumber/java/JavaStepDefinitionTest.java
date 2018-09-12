@@ -33,16 +33,23 @@ import java.util.Collections;
 import java.util.Locale;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
+import org.junit.jupiter.api.function.Executable;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class JavaStepDefinitionTest {
+
     private static final Method THREE_DISABLED_MICE;
     private static final Method THREE_BLIND_ANIMALS;
     private static final String ENGLISH = "en";
@@ -87,10 +94,12 @@ public class JavaStepDefinitionTest {
         });
     }
 
-    @Test(expected = DuplicateStepDefinitionException.class)
-    public void throws_duplicate_when_two_stepdefs_with_same_regexp_found() throws Throwable {
+    @Test
+    public void throws_duplicate_when_two_stepdefs_with_same_regexp_found() {
         backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_DISABLED_MICE);
-        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
+        final Executable testMethod = () -> backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
+        final DuplicateStepDefinitionException expectedThrown = assertThrows(DuplicateStepDefinitionException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(startsWith("Duplicate step definitions in io.cucumber.java.JavaStepDefinitionTest$Defs.threeDisabledMice(String) in file:")));
     }
 
     @Test
@@ -136,4 +145,5 @@ public class JavaStepDefinitionTest {
             bar = true;
         }
     }
+
 }

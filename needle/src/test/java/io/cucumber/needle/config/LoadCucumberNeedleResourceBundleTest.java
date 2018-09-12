@@ -1,15 +1,18 @@
 package io.cucumber.needle.config;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ResourceBundle;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 public class LoadCucumberNeedleResourceBundleTest {
 
@@ -38,19 +41,25 @@ public class LoadCucumberNeedleResourceBundleTest {
         assertFalse(resourceBundle.getKeys().hasMoreElements());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailWhenResourceNameIsNull() {
-        function.apply(null);
+        final Executable testMethod = () -> function.apply(null);
+        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailWhenResourceNameIsEmpty() {
-        function.apply("");
+        final Executable testMethod = () -> function.apply("");
+        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailWhenResourceNameIsBlank() {
-        function.apply(" ");
+        final Executable testMethod = () -> function.apply(" ");
+        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
 }

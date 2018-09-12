@@ -1,17 +1,21 @@
 package io.cucumber.core.runtime;
 
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InvokerTest {
+
     @Test
     public void doesnt_time_out_if_it_doesnt_take_too_long() throws Throwable {
         final Slow slow = new Slow();
@@ -24,55 +28,46 @@ public class InvokerTest {
         assertEquals("slept 10ms", what);
     }
 
-    @Test(expected = TimeoutException.class)
-    public void times_out_if_it_takes_too_long() throws Throwable {
+    @Test
+    public void times_out_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        Invoker.timeout(new Invoker.Callback<String>() {
-            @Override
-            public String call() throws Throwable {
-                return slow.slow(100);
-            }
-        }, 50);
-        fail();
+        final Executable testMethod = () -> Invoker.timeout(() -> slow.slow(100), 50);
+        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 50ms.")));
     }
 
-    @Test(expected = TimeoutException.class)
-    public void times_out_infinite_loop_if_it_takes_too_long() throws Throwable {
+    @Test
+    public void times_out_infinite_loop_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        Invoker.timeout(new Invoker.Callback<Void>() {
-            @Override
-            public Void call() throws Throwable {
-                slow.infinite();
-                return null;
-            }
+        final Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
+            slow.infinite();
+            return null;
         }, 10);
-        fail();
+        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 10ms.")));
     }
 
-    @Test(expected = TimeoutException.class)
-    public void times_out_infinite_latch_wait_if_it_takes_too_long() throws Throwable {
+    @Test
+    public void times_out_infinite_latch_wait_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        Invoker.timeout(new Invoker.Callback<Void>() {
-            @Override
-            public Void call() throws Throwable {
-                slow.infiniteLatchWait();
-                return null;
-            }
+        final Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
+            slow.infiniteLatchWait();
+            return null;
         }, 10);
-        fail();
+        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 10ms.")));
     }
 
 
-    @Test(expected = TimeoutException.class)
-    public void times_out_busy_wait_if_it_takes_too_long() throws Throwable {
+    @Test
+    public void times_out_busy_wait_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        Invoker.timeout(new Invoker.Callback<Void>() {
-            @Override
-            public Void call() throws Throwable {
-                slow.busyWait();
-                return null;
-            }
+        final Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
+            slow.busyWait();
+            return null;
         }, 1);
+        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 1ms.")));
     }
 
     @Test
@@ -127,4 +122,5 @@ public class InvokerTest {
             return busyCounter;
         }
     }
+
 }

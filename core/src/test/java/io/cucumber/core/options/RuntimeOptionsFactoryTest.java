@@ -3,12 +3,13 @@ package io.cucumber.core.options;
 import cucumber.api.CucumberOptions;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
-import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -18,12 +19,16 @@ import static io.cucumber.core.options.RuntimeOptionsFactory.packageName;
 import static io.cucumber.core.options.RuntimeOptionsFactory.packagePath;
 import static java.util.Arrays.asList;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RuntimeOptionsFactoryTest {
+
     @Test
     public void create_strict() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Strict.class);
@@ -183,10 +188,12 @@ public class RuntimeOptionsFactoryTest {
         assertEquals(asList("app.features.user.hooks", "app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
     }
 
-    @Test(expected = CucumberException.class)
+    @Test
     public void cannot_create_with_glue_and_extra_glue() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlueAndExtraGlue.class);
-        runtimeOptionsFactory.create();
+        final Executable testMethod = () -> runtimeOptionsFactory.create();
+        final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("glue and extraGlue cannot be specified at the same time")));
     }
 
 

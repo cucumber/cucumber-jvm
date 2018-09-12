@@ -2,12 +2,15 @@ package io.cucumber.guice.collection;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CollectionUtilTest {
 
@@ -18,14 +21,18 @@ public class CollectionUtilTest {
         list = new ArrayList<String>();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullPointerExceptionIsThrownWhenListIsNull() {
-        CollectionUtil.removeAllExceptFirstElement(null);
+        final Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(null);
+        final NullPointerException expectedThrown = assertThrows(NullPointerException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("List must not be null.")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalArgumentExceptionIsThrownWhenListIsEmpty() {
-        CollectionUtil.removeAllExceptFirstElement(list);
+        final Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(list);
+        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("List must contain at least one element.")));
     }
 
     @Test
@@ -56,4 +63,5 @@ public class CollectionUtilTest {
         assertThat(list.size(), equalTo(1));
         assertThat(list.get(0), equalTo(element));
     }
+
 }
