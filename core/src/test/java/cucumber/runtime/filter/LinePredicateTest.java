@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 public class LinePredicateTest {
     private static final String NAME = "pickle_name";
     private static final String LANGUAGE = "en";
-    private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
-    private static final List<PickleTag> NO_TAGS = Collections.<PickleTag>emptyList();
+    private static final List<PickleStep> NO_STEPS = Collections.emptyList();
+    private static final List<PickleTag> NO_TAGS = Collections.emptyList();
 
     @Test
     public void matches_pickles_from_files_not_in_the_predicate_map() {

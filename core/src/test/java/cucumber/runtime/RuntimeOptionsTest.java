@@ -229,7 +229,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "path/file.feature:3");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
-        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getTagFilters());
+        assertEquals(Collections.emptyList(), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "@rerun.txt");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
-        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getTagFilters());
+        assertEquals(Collections.emptyList(), runtimeOptions.getTagFilters());
     }
 
     @Test

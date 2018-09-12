@@ -32,7 +32,7 @@ public class AverageUsageStatisticStrategyTest {
     @Test
     public void calculateListWithNulls() throws Exception {
         UsageFormatter.AverageUsageStatisticStrategy averageUsageStatisticStrategy = new UsageFormatter.AverageUsageStatisticStrategy();
-        Long result = averageUsageStatisticStrategy.calculate(Arrays.<Long>asList(3L, null));
+        Long result = averageUsageStatisticStrategy.calculate(Arrays.asList(3L, null));
         assertEquals(result, Long.valueOf(0));
     }
 }

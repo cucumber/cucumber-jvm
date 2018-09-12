@@ -138,7 +138,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     private List<PickleLocation> locations() {
-        return Collections.<PickleLocation>emptyList();
+        return Collections.emptyList();
     }
 
     private String uri() {

@@ -39,7 +39,7 @@ public class MedianUsageStatisticStrategyTest {
     @Test
     public void calculateListWithNulls() throws Exception {
         UsageFormatter.MedianUsageStatisticStrategy medianUsageStatisticStrategy = new UsageFormatter.MedianUsageStatisticStrategy();
-        Long result = medianUsageStatisticStrategy.calculate(Arrays.<Long>asList(1L, null, 3L));
+        Long result = medianUsageStatisticStrategy.calculate(Arrays.asList(1L, null, 3L));
         assertEquals(result, Long.valueOf(0));
     }
 }
