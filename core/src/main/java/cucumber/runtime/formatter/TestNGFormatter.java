@@ -290,7 +290,8 @@ class TestNGFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
+                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()))
+                    .append(steps.get(i).getStepText());
                 do {
                     sb.append(".");
                 } while (sb.length() - length < 76);
