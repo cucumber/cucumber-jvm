@@ -50,7 +50,7 @@ public class UsageFormatterTest {
         Result result = new Result(Result.Type.PASSED, 12345L, null);
 
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);

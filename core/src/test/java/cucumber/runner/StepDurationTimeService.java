@@ -29,7 +29,7 @@ public class StepDurationTimeService implements TimeService, EventListener {
     @Override
     public long time() {
         Long result = currentTime.get();
-        return result != null ? result : 0l;
+        return result != null ? result : 0L;
     }
 
     private void handleTestStepStarted(TestStepStarted event) {

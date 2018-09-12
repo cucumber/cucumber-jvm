@@ -13,7 +13,7 @@ public class TimeServiceStub implements TimeService {
     @Override
     public long time() {
         Long result = currentTime.get();
-        result = result != null ? result : 0l;
+        result = result != null ? result : 0L;
         currentTime.set(result + duration);
         return result;
     }
