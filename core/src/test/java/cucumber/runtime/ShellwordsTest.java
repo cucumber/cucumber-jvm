@@ -143,38 +143,38 @@ public class ShellwordsTest {
             // TODO is this correct with trailing empty string
             new Object[]{
                 "--uniform \"Victor Whiskey --xray \"Yankee Zulu\"",
-                asList("--uniform", "Victor Whiskey --xray ", "Yankee", "Zulu", "")
+                asList("--uniform", "Victor Whiskey --xray ", "Yankee", "Zulu", "\"")
             },
 
             // opening double_quote only with following single_quotes
             new Object[]{
                 "--alfa \"Bravo Charlie --delta 'Echo Foxtrot'",
-                asList("--alfa", "Bravo Charlie --delta 'Echo Foxtrot'")
+                asList("--alfa", "\"", "Bravo", "Charlie", "--delta", "Echo Foxtrot")
             },
 
             // triple single_quotes
             // TODO is this correct with trailing empty string
             new Object[]{
                 "--golf 'Hotel India --juliett 'Kilo Lima'",
-                asList("--golf", "Hotel India --juliett ", "Kilo", "Lima", "")
+                asList("--golf", "Hotel India --juliett ", "Kilo", "Lima", "'")
             },
 
             // opening single_quotes only with following double_quotes
             new Object[]{
                 "--mike 'November Oscar --papa \"Quebec Romeo\"",
-                asList("--mike", "November Oscar --papa \"Quebec Romeo\"")
+                asList("--mike", "'", "November", "Oscar", "--papa", "Quebec Romeo")
             },
 
             // double_quotes within word
             new Object[]{
                 "sierra\"tango",
-                asList("sierra", "tango")
+                asList("sierra", "\"", "tango")
             },
 
             // single_quotes within word
             new Object[]{
                 "uniform'victor",
-                asList("uniform", "victor")
+                asList("uniform", "'", "victor")
             },
 
             // can_quote_both_single_and_double_quotes

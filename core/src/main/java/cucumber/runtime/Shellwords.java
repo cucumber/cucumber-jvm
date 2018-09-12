@@ -10,14 +10,7 @@ public class Shellwords {
     private static final Pattern SHELLWORDS_PATTERN;
 
     static {
-        final String DEFAULT = "([^\\s'\"]+)";
-        final String SINGLE_QUOTES = "[\\^\\s]?[']([^']*)['$]?";
-        final String DOUBLE_QUOTES = "[\\^\\s]?[\"]([^\"]*)[\"$]?";
-        final String SHELLWORDS_FORMAT = String.format("%s|%s|%s",
-            SINGLE_QUOTES,
-            DOUBLE_QUOTES,
-            DEFAULT
-        );
+        final String SHELLWORDS_FORMAT = "\\s*(?>([^\\s\\\\\\'\\\"]+)|'([^\\']*)'|\"((?:[^\\\"\\\\]|\\\\.)*)\"|(\\\\.?)|(\\S))(\\s|\\z)?";
         SHELLWORDS_PATTERN = Pattern.compile(SHELLWORDS_FORMAT);
     }
 
@@ -40,7 +33,7 @@ public class Shellwords {
             // default token to group
             String token = shellwordsMatcher.group();
             // find highest group count that is not null and use that
-            for (int i = shellwordsMatcher.groupCount(); i > 0; --i) {
+            for (int i = shellwordsMatcher.groupCount() - 1; i > 0; --i) {
                 final String groupToken = shellwordsMatcher.group(i);
                 if (groupToken != null) {
                     token = groupToken;
