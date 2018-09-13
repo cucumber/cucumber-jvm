@@ -1,8 +1,13 @@
 package io.cucumber.needle.config;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
 public class CreateInstanceByDefaultConstructorTest {
 
@@ -23,9 +28,11 @@ public class CreateInstanceByDefaultConstructorTest {
         assertNotNull(createInstanceByDefaultConstructor.apply(HasDefaultConstructor.class));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldNotCreateNewInstanceWhenConstructorIsMissing() {
-        createInstanceByDefaultConstructor.apply(DoesNotHaveDefaultConstructor.class);
+        final Executable testMethod = () -> createInstanceByDefaultConstructor.apply(DoesNotHaveDefaultConstructor.class);
+        final IllegalStateException expectedThrown = assertThrows(IllegalStateException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("Can not instantiate Instance by Default Constructor.")));
     }
 
 }

@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
@@ -22,11 +23,13 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 
 public class CucumberTest {
@@ -177,9 +180,11 @@ public class CucumberTest {
         Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestValidIgnored.class);
     }
 
-    @Test(expected = CucumberException.class)
+    @Test
     public void no_stepdefs_in_cucumber_runner_invalid() {
-        Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
+        final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
+        final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$RunCukesTestInvalid\n")));
     }
 
     public class ImplicitFeatureAndGluePath {

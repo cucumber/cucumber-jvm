@@ -2,8 +2,13 @@ package io.cucumber.core.snippets;
 
 import cucumber.api.SnippetType;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FunctionNameGeneratorTest {
 
@@ -15,9 +20,11 @@ public class FunctionNameGeneratorTest {
         assertEquals(expectedCamelCase, camelCase.generateFunctionName(sentence));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSanitizeEmptyFunctionName() {
-        underscore.generateFunctionName("");
+        final Executable testMethod = () -> underscore.generateFunctionName("");
+        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("Cannot create function name from empty sentence")));
     }
 
     @Test

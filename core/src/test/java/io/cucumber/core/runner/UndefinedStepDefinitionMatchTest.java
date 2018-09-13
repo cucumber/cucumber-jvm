@@ -3,22 +3,31 @@ package io.cucumber.core.runner;
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class UndefinedStepDefinitionMatchTest {
+
     public final UndefinedPickleStepDefinitionMatch match = new UndefinedPickleStepDefinitionMatch(mock(PickleStep.class));
 
-    @Test(expected=UndefinedStepDefinitionException.class)
-    public void throws_ambiguous_step_definitions_exception_when_run() throws Throwable {
-        match.runStep(mock(Scenario.class));
-        fail("UndefinedStepDefinitionsException expected");
+    @Test
+    public void throws_ambiguous_step_definitions_exception_when_run() {
+        final Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        final UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }
 
-    @Test(expected=UndefinedStepDefinitionException.class)
-    public void throws_ambiguous_step_definitions_exception_when_dry_run() throws Throwable {
-        match.dryRunStep(mock(Scenario.class));
-        fail("UndefinedStepDefinitionsException expected");
+    @Test
+    public void throws_ambiguous_step_definitions_exception_when_dry_run() {
+        final Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        final UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }
+
 }
