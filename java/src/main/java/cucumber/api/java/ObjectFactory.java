@@ -32,4 +32,5 @@ public interface ObjectFactory {
      * @return new Glue instance of type T
      */
     <T> T getInstance(Class<T> glueClass);
+
 }

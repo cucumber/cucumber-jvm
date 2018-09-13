@@ -8,7 +8,8 @@ import io.cucumber.guice.api.ScenarioScope;
 /**
  * Guice implementation of the <code>cucumber.api.java.ObjectFactory</code>.
  */
-public class GuiceFactory implements ObjectFactory {
+public class GuiceFactory
+        implements ObjectFactory {
 
     private final Injector injector;
 

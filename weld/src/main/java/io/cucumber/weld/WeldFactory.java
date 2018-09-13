@@ -5,7 +5,8 @@ import cucumber.api.java.ObjectFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-public class WeldFactory implements ObjectFactory {
+public class WeldFactory
+        implements ObjectFactory {
 
     private WeldContainer containerInstance;
 
@@ -53,4 +54,5 @@ public class WeldFactory implements ObjectFactory {
     public <T> T getInstance(Class<T> type) {
         return containerInstance.select(type).get();
     }
+
 }

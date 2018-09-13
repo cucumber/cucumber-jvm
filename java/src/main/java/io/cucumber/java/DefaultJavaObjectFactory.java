@@ -11,7 +11,9 @@ import java.util.Map;
  * This class has package scope so it doesn't loadGlue loaded by reflection,
  * thereby colliding with other DI implementations.
  */
-class DefaultJavaObjectFactory implements ObjectFactory {
+class DefaultJavaObjectFactory
+        implements ObjectFactory {
+
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
 
     public void start() {
