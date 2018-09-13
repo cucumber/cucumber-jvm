@@ -24,13 +24,13 @@ def localeFor(lang) {
 }
 
 // TODO: Need to add i18n.getName() and i18n.getNative() for better names.
-def package_html = """\
-<body>
-<p>
-    \${locale.getDisplayLanguage()}
-</p>
-</body>
+def package_info_java = """\
+/**
+ * \${locale.getDisplayLanguage()}
+ */
+package io.cucumber.java.api.annotation.\${normalized_language}; 
 """
+
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
 def dialectProvider = new GherkinDialectProvider()
@@ -52,11 +52,11 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
             }
         }
 
-        // html
+        // package-info.java
         def locale = localeFor(dialect.language)
-        def binding = ["locale": locale]
-        def html = engine.createTemplate(package_html).make(binding).toString()
-        def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/annotation/${normalized_language}/package.html")
+        def binding = [ "locale": locale, "normalized_language": normalized_language ]
+        def html = engine.createTemplate(package_info_java).make(binding).toString()
+        def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/annotation/${normalized_language}/package-info.java")
         file.write(html, "UTF-8")
     }
 }

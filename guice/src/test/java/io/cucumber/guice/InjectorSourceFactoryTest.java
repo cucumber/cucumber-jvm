@@ -1,7 +1,9 @@
-package io.cucumber.guice.impl;
+package io.cucumber.guice;
 
 import com.google.inject.Injector;
 import io.cucumber.core.options.Env;
+import io.cucumber.guice.InjectorSourceFactory;
+import io.cucumber.guice.InjectorSourceInstantiationFailed;
 import io.cucumber.guice.api.InjectorSource;
 import org.junit.Test;
 

@@ -23,7 +23,6 @@ import io.cucumber.core.api.plugin.Plugin;
  * will return different a different thread for two test cases
  * executed on a different thread (but not necessarily the
  * executing thread).
- * <p>
  *
  * @see Event
  */

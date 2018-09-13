@@ -687,23 +687,31 @@
                     <version>3.0.0-M1</version>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>io.cucumber.*,org.springframework</excludePackageNames>
+                        <excludePackageNames>io.cucumber.examples*,org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/7/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
                         <groups>
                             <group>
-                                <title>Core API Packages</title>
-                                <packages>io.cucumber.core.api.*:io.cucumber.junit.api.*:io.cucumber.testng.api.*</packages>
+                                <title>API Packages</title>
+                                <packages>
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit.api:io.cucumber.testng.api
+                                </packages>
                             </group>
                             <group>
-                                <title>I18n - Java</title>
-                                <packages>io.cucumber.java.api.*</packages>
+                                <title>I18n</title>
+                                <packages>io.cucumber.java.api.lambda:io.cucumber.java.api.annotation.*</packages>
                             </group>
+                            <group>
+                                <title>Dependency Injection Providers</title>
+                                <packages>
+                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb
+                                </packages>
+                            </group>
+
                         </groups>
                         <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->
-                        <!--<stylesheetfile>${basedir}/doc/javadoc.css</stylesheetfile>-->
                         <stylesheet>java</stylesheet>
                     </configuration>
                 </plugin>
@@ -827,16 +835,9 @@
                             </revapi.semver.ignore>
                             <revapi.java>
                                 <filter>
-                                    <classes>
-                                        <regex>true</regex>
-                                        <exclude>
-                                            <item>io\.cucumber..*</item>
-                                        </exclude>
-                                    </classes>
                                     <packages>
                                         <regex>true</regex>
                                         <exclude>
-                                            <item>io\.cucumber\..*</item>
                                             <!--The logging dependencies for Spring are provided. This causes them to
                                             be missing in the dependency hierarchy. A false positive. -->
                                             <item>org\.springframework\.core\..*</item>

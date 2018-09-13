@@ -7,7 +7,6 @@ public interface Snippet {
     /**
      * @return a {@link java.text.MessageFormat} template used to generate a snippet. The template can access the
      * following variables:
-     * <p/>
      * <ul>
      * <li>{0} : Step Keyword</li>
      * <li>{1} : Value of {@link #escapePattern(String)}</li>

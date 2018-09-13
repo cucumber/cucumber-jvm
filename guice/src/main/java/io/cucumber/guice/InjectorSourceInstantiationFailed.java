@@ -1,4 +1,4 @@
-package io.cucumber.guice.impl;
+package io.cucumber.guice;
 
 import io.cucumber.core.exception.CucumberException;
 

@@ -16,6 +16,8 @@ import io.cucumber.java.Java8StepDefinition;
 import io.cucumber.java.LambdaGlueBase;
 
 /**
+ * ${locale.getDisplayLanguage()}
+ * <p>
  * To execute steps in a feature file the steps must be
  * connected to executable code. This can be done by
  * implementing this interface.
@@ -67,7 +69,9 @@ public interface ${className} extends LambdaGlueBase {
      *
      * @param expression the cucumber expression
      * @param body       a lambda expression with ${arity} parameters
-     */      
+     * <% (1..arity).each { i -> %>
+     * @param <T${i}> type of argument ${i} <% } %>
+     */
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A${arity}<${genericSignature}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
             Java8StepDefinition.create(expression, A${arity}.class, body, typeRegistry)
@@ -80,6 +84,8 @@ public interface ${className} extends LambdaGlueBase {
      * @param expression    the cucumber expression
      * @param timeoutMillis max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.
      * @param body          a lambda expression with ${arity} parameters
+     * <% (1..arity).each { i -> %>
+     * @param <T${i}> type of argument ${i} <% } %>
      */
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A${arity}<${genericSignature}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->

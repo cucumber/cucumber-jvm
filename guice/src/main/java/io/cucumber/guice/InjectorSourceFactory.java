@@ -1,4 +1,4 @@
-package io.cucumber.guice.impl;
+package io.cucumber.guice;
 
 import com.google.inject.Guice;
 import com.google.inject.Stage;

@@ -20,7 +20,6 @@ import static java.util.Arrays.asList;
  * <p>
  * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in
  * short names. The output is optional for some plugins (and mandatory for some).
- * </ul>
  *
  * @see Plugin for specific requirements
  */

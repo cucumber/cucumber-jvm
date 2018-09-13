@@ -1,4 +1,4 @@
-package io.cucumber.guice.impl;
+package io.cucumber.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
+import io.cucumber.guice.GuiceFactory;
 import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.guice.api.CucumberModules;
 import io.cucumber.guice.api.CucumberScopes;

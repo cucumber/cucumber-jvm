@@ -1,16 +1,16 @@
 package io.cucumber.core.options;
 
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
+import gherkin.IGherkinDialectProvider;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.datatable.DataTable;
 import io.cucumber.core.model.PathWithLines;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
-import gherkin.IGherkinDialectProvider;
+import io.cucumber.datatable.DataTable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -75,10 +75,10 @@ public final class RuntimeOptions
 
     /**
      * Create a new instance from a list of options, for example:
-     * <p/>
-     * <pre<{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
+     * <pre>{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
      *
-     * @param argv the arguments
+     * @param resourceLoader used to load rerun files
+     * @param argv           the arguments
      */
     public RuntimeOptions(ResourceLoader resourceLoader, List<String> argv) {
         this(resourceLoader, Env.INSTANCE, argv);
