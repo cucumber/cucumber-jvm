@@ -1,6 +1,8 @@
 package io.cucumber.weld;
 
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.java.api.ObjectFactory;
+
 import org.jboss.weld.environment.se.Weld;
 import org.junit.After;
 import org.junit.Before;
@@ -91,7 +93,7 @@ public class WeldFactoryTest {
             "and we can't do much to fix it in Cucumber-JVM.\n" +
             "\n" +
             "java.lang.NullPointerException\n" +
-            "\tat cucumber.runtime.java.weld.WeldFactory.stop";
+            "\tat io.cucumber.weld.WeldFactory.stop";
 
         assertThat(this.errContent.toString(), is(startsWith(expectedErrOutput)));
     }
