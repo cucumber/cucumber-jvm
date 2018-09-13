@@ -5,6 +5,6 @@ import io.cucumber.junit.api.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(extraGlue = {"cucumber.api.spring"})
+@CucumberOptions(extraGlue = {"io.cucumber.spring.api"})
 public class RunCukesTest {
 }

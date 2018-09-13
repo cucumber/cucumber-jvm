@@ -169,11 +169,6 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java8</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-kotlin-java8</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -509,7 +504,6 @@
     <modules>
         <module>core</module>
         <module>java</module>
-        <module>java8</module>
         <module>kotlin-java8</module>
         <module>testng</module>
         <module>picocontainer</module>
@@ -690,12 +684,12 @@
                         </links>
                         <groups>
                             <group>
-                                <title>Main API Packages</title>
-                                <packages>cucumber.api:cucumber.api.*</packages>
+                                <title>Core API Packages</title>
+                                <packages>io.cucumber.core.api.*:io.cucumber.junit.api.*:io.cucumber.testng.api.*</packages>
                             </group>
                             <group>
                                 <title>I18n - Java</title>
-                                <packages>cucumber.api.java.*</packages>
+                                <packages>io.cucumber.java.api.*</packages>
                             </group>
                         </groups>
                         <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->

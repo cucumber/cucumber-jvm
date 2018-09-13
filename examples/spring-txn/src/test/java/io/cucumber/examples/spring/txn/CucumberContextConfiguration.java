@@ -1,6 +1,6 @@
 package io.cucumber.examples.spring.txn;
 
-import cucumber.api.java.Before;
+import io.cucumber.java.api.Before;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 

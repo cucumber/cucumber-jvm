@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.io.MultiLoader;
@@ -74,7 +74,7 @@ public class MethodScannerTest {
     }
 
     public static class BaseStepDefs {
-        @cucumber.api.java.Before
+        @io.cucumber.java.api.Before
         public void m() {
         }
     }

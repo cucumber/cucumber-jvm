@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.guice.api.CucumberModules;
 import io.cucumber.guice.api.CucumberScopes;
 import io.cucumber.guice.api.ScenarioScoped;

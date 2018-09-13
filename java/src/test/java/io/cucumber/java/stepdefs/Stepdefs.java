@@ -1,6 +1,6 @@
 package io.cucumber.java.stepdefs;
 
-import cucumber.api.java.en.Given;
+import io.cucumber.java.api.annotation.en.Given;
 
 public class Stepdefs {
 

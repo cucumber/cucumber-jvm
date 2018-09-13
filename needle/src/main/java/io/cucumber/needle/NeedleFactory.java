@@ -1,6 +1,6 @@
 package io.cucumber.needle;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import org.slf4j.Logger;

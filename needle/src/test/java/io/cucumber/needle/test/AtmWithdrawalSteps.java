@@ -6,10 +6,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.java.api.annotation.en.Then;
+import io.cucumber.java.api.annotation.en.When;
 import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
 import io.cucumber.needle.api.NeedleInjectionProvider;
 import io.cucumber.needle.DefaultInstanceInjectionProvider;

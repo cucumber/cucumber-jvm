@@ -1,10 +1,10 @@
 package io.cucumber.java;
 
 import io.cucumber.core.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.AfterStep;
-import cucumber.api.java.Before;
-import cucumber.api.java.BeforeStep;
+import io.cucumber.java.api.After;
+import io.cucumber.java.api.AfterStep;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.BeforeStep;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;

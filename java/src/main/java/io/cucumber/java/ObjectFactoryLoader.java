@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.reflection.NoInstancesException;
@@ -9,7 +9,7 @@ import io.cucumber.core.reflection.TooManyInstancesException;
 
 import static java.util.Arrays.asList;
 
-public class ObjectFactoryLoader {
+class ObjectFactoryLoader {
     private ObjectFactoryLoader() {
     }
 
@@ -21,7 +21,7 @@ public class ObjectFactoryLoader {
      * @param objectFactoryClassName specific class name of {@link ObjectFactory} implementation. May be null.
      * @return an instance of {@link ObjectFactory}
      */
-    public static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName) {
+    static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName) {
         ObjectFactory objectFactory;
         try {
             Reflections reflections = new Reflections(classFinder);

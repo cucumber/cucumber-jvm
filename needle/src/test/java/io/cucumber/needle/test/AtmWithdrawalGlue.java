@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import javax.inject.Inject;
 
-import cucumber.api.java.Before;
+import io.cucumber.java.api.Before;
 import io.cucumber.needle.test.injectionprovider.NameGetter;
 import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
 

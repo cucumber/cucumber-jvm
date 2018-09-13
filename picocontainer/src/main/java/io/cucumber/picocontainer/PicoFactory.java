@@ -1,6 +1,6 @@
 package io.cucumber.picocontainer;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.reflection.Reflections;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;

@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

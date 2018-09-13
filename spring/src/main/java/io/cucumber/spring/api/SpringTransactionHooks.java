@@ -1,7 +1,7 @@
 package io.cucumber.spring.api;
 
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
+import io.cucumber.java.api.After;
+import io.cucumber.java.api.Before;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

@@ -1,11 +1,11 @@
 package io.cucumber.picocontainer;
 
-import cucumber.api.java.PendingException;
+import io.cucumber.java.api.PendingException;
 import io.cucumber.core.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
+import io.cucumber.java.api.After;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.java.api.annotation.en.Then;
 
 import java.util.Collections;
 import java.util.List;

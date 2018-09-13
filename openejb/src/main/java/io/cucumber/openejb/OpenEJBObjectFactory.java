@@ -1,7 +1,7 @@
 package io.cucumber.openejb;
 
 import io.cucumber.core.exception.CucumberException;
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import org.apache.openejb.OpenEjbContainer;
 
 import javax.ejb.embeddable.EJBContainer;
