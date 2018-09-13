@@ -220,6 +220,7 @@ public class JavaSnippetTest {
 
     @Test
     @Ignore
+    // TODO issue tracked to within io.cucumber.cucumberexpressions.CucumberExpressionGenerator
     public void recognisesWordWithNumbers() {
         String expected = "" +
             "@Given(\"Then it responds ([\\\"]*)\")\n" +
@@ -305,7 +306,8 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
+            .getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
         return StringJoiner.join("\n", snippet);
     }
 
