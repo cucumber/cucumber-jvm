@@ -50,7 +50,7 @@ public class AtmWithdrawalSteps {
     private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = new InjectionProviderInstancesSupplier() {
         @Override
         public Set<InjectionProvider<?>> get() {
-            return Collections.<InjectionProvider<?>>singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
+            return Collections.<InjectionProvider<?>>singleton(new DefaultInstanceInjectionProvider<>(AtmWithdrawalSteps.this));
         }
     };
 

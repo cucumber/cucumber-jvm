@@ -32,7 +32,7 @@ public class NamedInjectionProvider<T> implements InjectionProvider<T> {
      * @return provider encapsulating the value.
      */
     public static <T> NamedInjectionProvider<T> forNamedValue(final String name, final T value) {
-        return new NamedInjectionProvider<T>(name, value);
+        return new NamedInjectionProvider<>(name, value);
     }
 
     /**

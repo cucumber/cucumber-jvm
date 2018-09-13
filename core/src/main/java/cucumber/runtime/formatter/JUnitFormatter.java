@@ -161,9 +161,8 @@ final class JUnitFormatter implements EventListener, StrictAware {
                 double testCaseTime =
                         Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
                 totalDurationSecondsForAllTimes += testCaseTime;
-            } catch ( NumberFormatException e ) {
-                throw new CucumberException(e);
-            } catch ( NullPointerException e ) {
+            } catch (NumberFormatException
+                    | NullPointerException e) {
                 throw new CucumberException(e);
             }
         }
@@ -201,8 +200,8 @@ final class JUnitFormatter implements EventListener, StrictAware {
         static String previousTestCaseName;
         static int exampleNumber;
         static boolean treatConditionallySkippedAsFailure = false;
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
+        final List<PickleStepTestStep> steps = new ArrayList<>();
+        final List<Result> results = new ArrayList<>();
         private final cucumber.api.TestCase testCase;
 
         private Element createElement(Document doc) {
@@ -274,7 +273,8 @@ final class JUnitFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(getKeywordFromSource(steps.get(i).getStepLine()) + steps.get(i).getStepText());
+                sb.append(getKeywordFromSource(steps.get(i).getStepLine()))
+                    .append(steps.get(i).getStepText());
                 do {
                   sb.append(".");
                 } while (sb.length() - length < 76);

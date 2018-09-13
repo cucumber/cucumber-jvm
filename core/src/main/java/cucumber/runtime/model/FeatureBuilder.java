@@ -24,7 +24,7 @@ public class FeatureBuilder {
     private final List<CucumberFeature> cucumberFeatures;
     private final char fileSeparatorChar;
     private final MessageDigest md5;
-    private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
+    private final Map<String, String> pathsByChecksum = new HashMap<>();
 
     public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
         this(cucumberFeatures, File.separatorChar);
@@ -50,7 +50,7 @@ public class FeatureBuilder {
         }
         pathsByChecksum.put(checksum, resource.getPath());
 
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
             GherkinDocument gherkinDocument = parser.parse(gherkin, matcher);

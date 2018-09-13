@@ -21,7 +21,7 @@ import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
 import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
 
 public class FeatureRunner extends ParentRunner<PickleRunner> {
-    private final List<PickleRunner> children = new ArrayList<PickleRunner>();
+    private final List<PickleRunner> children = new ArrayList<>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;

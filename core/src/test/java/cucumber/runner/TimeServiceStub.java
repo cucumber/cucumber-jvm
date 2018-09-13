@@ -4,7 +4,7 @@ import cucumber.runner.TimeService;
 
 public class TimeServiceStub implements TimeService {
     private final long duration;
-    private final ThreadLocal<Long> currentTime = new ThreadLocal<Long>();
+    private final ThreadLocal<Long> currentTime = new ThreadLocal<>();
 
     public TimeServiceStub(long duration) {
         this.duration = duration;
@@ -13,7 +13,7 @@ public class TimeServiceStub implements TimeService {
     @Override
     public long time() {
         Long result = currentTime.get();
-        result = result != null ? result : 0l;
+        result = result != null ? result : 0L;
         currentTime.set(result + duration);
         return result;
     }

@@ -21,12 +21,12 @@ public class JUnitOptions {
      * <p/>
      * <pre<{@code Arrays.asList("--filename-compatible-names", "--step-notifications");}</pre>
      *
-     * @param strict
-     * @param argv the arguments
+     * @param strict strict value.
+     * @param argv the arguments.
      */
     public JUnitOptions(boolean strict, List<String> argv) {
         this.strict = strict;
-        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
     }
 

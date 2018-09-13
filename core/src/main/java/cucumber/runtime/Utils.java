@@ -24,14 +24,12 @@ public class Utils {
                 try {
                     targetMethod.setAccessible(true);
                     return targetMethod.invoke(target, args);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException
+                        | IllegalAccessException e) {
                     throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
                                                 ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
                 } catch (InvocationTargetException e) {
                     throw e.getTargetException();
-                } catch (IllegalAccessException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
-                                                ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
                 } finally {
                     targetMethod.setAccessible(accessible);
                 }

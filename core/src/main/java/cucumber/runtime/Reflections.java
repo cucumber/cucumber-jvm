@@ -28,7 +28,7 @@ public class Reflections {
     }
 
     public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<String> packageNames, Class[] constructorParams, Object[] constructorArgs) {
-        Collection<T> result = new HashSet<T>();
+        Collection<T> result = new HashSet<>();
         for (String packageName : packageNames) {
             for (Class<? extends T> clazz : classFinder.getDescendants(parentType, packageName)) {
                 if (Utils.isInstantiable(clazz)) {

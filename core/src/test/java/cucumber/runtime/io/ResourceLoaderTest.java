@@ -38,7 +38,7 @@ public class ResourceLoaderTest {
     }
 
     private <T> List<T> toList(Iterable<T> it) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         for (T t : it) {
             result.add(t);
         }

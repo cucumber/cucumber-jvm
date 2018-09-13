@@ -32,11 +32,11 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     private long totalDuration = 0;
     private Formats formats = new AnsiFormats();
     private Locale locale;
-    private final List<String> failedScenarios = new ArrayList<String>();
-    private List<String> ambiguousScenarios = new ArrayList<String>();
-    private final List<String> pendingScenarios = new ArrayList<String>();
-    private final List<String> undefinedScenarios = new ArrayList<String>();
-    private final List<Throwable> errors = new ArrayList<Throwable>();
+    private final List<String> failedScenarios = new ArrayList<>();
+    private List<String> ambiguousScenarios = new ArrayList<>();
+    private final List<String> pendingScenarios = new ArrayList<>();
+    private final List<String> undefinedScenarios = new ArrayList<>();
+    private final List<Throwable> errors = new ArrayList<>();
     private final EventHandler<TestRunStarted> testRunStartedHandler = new EventHandler<TestRunStarted>() {
         @Override
         public void receive(TestRunStarted event) {

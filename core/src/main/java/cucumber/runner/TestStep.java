@@ -34,10 +34,10 @@ abstract class TestStep implements cucumber.api.TestStep {
     /**
      * Runs a test step.
      *
-     * @param testCase
-     * @param bus
-     * @param scenario
-     * @param skipSteps
+     * @param testCase the test case.
+     * @param bus the event bus.
+     * @param scenario the cucumber scenario.
+     * @param skipSteps skip steps switch.
      * @return true iff subsequent skippable steps should be skipped
      */
     boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {

@@ -355,7 +355,7 @@ final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
     }
 
     private String createPaddingToLocation(String indent, String text) {
-        StringBuffer padding = new StringBuffer();
+        final StringBuilder padding = new StringBuilder();
         for (int i = indent.length() + text.length(); i < locationIndentation; ++i) {
             padding.append(' ');
         }

@@ -18,7 +18,7 @@ public class SanityChecker implements TestListener {
     private static final String INDENT = "  ";
     private static final String INSANITY = "INSANITY";
 
-    private List<Test> tests = new ArrayList<Test>();
+    private List<Test> tests = new ArrayList<>();
     private final StringWriter out = new StringWriter();
 
     public static void run(Class<?> testClass) {

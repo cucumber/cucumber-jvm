@@ -10,8 +10,6 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class AmbiguousStepDefinitionMatchsTest {

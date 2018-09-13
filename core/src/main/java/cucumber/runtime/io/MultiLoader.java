@@ -24,7 +24,7 @@ public class MultiLoader implements ResourceLoader {
     }
 
     public static List<String> packageName(List<String> glue) {
-        List<String> packageNames = new ArrayList<String>(glue.size());
+        List<String> packageNames = new ArrayList<>(glue.size());
         for (String gluePath : glue) {
             packageNames.add(packageName(gluePath));
         }

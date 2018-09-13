@@ -193,9 +193,8 @@ class TestNGFormatter implements EventListener, StrictAware {
             try {
                 String duration = testCaseNodes.item(i).getAttributes().getNamedItem("duration-ms").getNodeValue();
                 totalDuration += Long.parseLong(duration);
-            } catch (NumberFormatException e) {
-                throw new CucumberException(e);
-            } catch (NullPointerException e) {
+            } catch (NumberFormatException
+                    | NullPointerException e) {
                 throw new CucumberException(e);
             }
         }
@@ -209,9 +208,9 @@ class TestNGFormatter implements EventListener, StrictAware {
         static String previousTestCaseName;
         static int exampleNumber;
         static final TestSourcesModel testSources = new TestSourcesModel();
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
-        final List<Result> hooks = new ArrayList<Result>();
+        final List<PickleStepTestStep> steps = new ArrayList<>();
+        final List<Result> results = new ArrayList<>();
+        final List<Result> hooks = new ArrayList<>();
         final TestCase scenario;
 
         private TestMethod(TestCase scenario) {
@@ -291,7 +290,8 @@ class TestNGFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
+                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()))
+                    .append(steps.get(i).getStepText());
                 do {
                     sb.append(".");
                 } while (sb.length() - length < 76);

@@ -3,7 +3,7 @@
 *.ipr
 *.iml
 .idea/
-.settings
+.settings/
 .project
 .classpath
 

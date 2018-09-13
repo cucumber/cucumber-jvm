@@ -20,7 +20,7 @@ import static java.lang.String.format;
  */
 public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
-    private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<>();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final CreateInstanceByDefaultConstructor createInstanceByDefaultConstructor = CreateInstanceByDefaultConstructor.INSTANCE;
     private final CollectInjectionProvidersFromStepsInstance collectInjectionProvidersFromStepsInstance = CollectInjectionProvidersFromStepsInstance.INSTANCE;

@@ -15,7 +15,7 @@ public final class DefinitionArgument implements Argument {
     }
 
     public static List<Argument> createArguments(List<io.cucumber.stepexpression.Argument> match) {
-        List<Argument> args = new ArrayList<Argument>();
+        List<Argument> args = new ArrayList<>();
         for (io.cucumber.stepexpression.Argument argument : match) {
             if (argument instanceof ExpressionArgument) {
                 args.add(new DefinitionArgument((ExpressionArgument) argument));

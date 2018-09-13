@@ -200,7 +200,7 @@ public class FeatureRunnerTest {
         FeatureRunner runner = createFeatureRunner(cucumberFeature);
         FeatureRunner rerunner = createFeatureRunner(cucumberFeature);
 
-        Set<Description> descriptions = new HashSet<Description>();
+        Set<Description> descriptions = new HashSet<>();
         assertDescriptionIsUnique(runner.getDescription(), descriptions);
         assertDescriptionIsPredictable(runner.getDescription(), descriptions);
         assertDescriptionIsPredictable(rerunner.getDescription(), descriptions);

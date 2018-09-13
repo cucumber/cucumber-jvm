@@ -53,7 +53,7 @@ public class RuntimeOptionsTest {
     public void strips_line_filters_from_feature_paths_and_put_them_among_line_filters() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        Map<String, List<Long>> expectedLineFilters = new HashMap<String, List<Long>>(Collections.singletonMap("somewhere_else", asList(3L)));
+        Map<String, List<Long>> expectedLineFilters = new HashMap<>(Collections.singletonMap("somewhere_else", asList(3L)));
         assertEquals(expectedLineFilters, options.getLineFilters());
     }
 
@@ -229,7 +229,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "path/file.feature:3");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
-        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getTagFilters());
+        assertEquals(Collections.emptyList(), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "@rerun.txt");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
-        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getTagFilters());
+        assertEquals(Collections.emptyList(), runtimeOptions.getTagFilters());
     }
 
     @Test

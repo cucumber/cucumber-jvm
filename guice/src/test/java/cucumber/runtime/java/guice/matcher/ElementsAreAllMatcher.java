@@ -24,7 +24,7 @@ abstract class ElementsAreAllMatcher<E> extends TypeSafeDiagnosingMatcher<Collec
     }
 
     int actualNumberOfUniqueElements(Collection<? extends E> item) {
-        return new HashSet<E>(item).size();
+        return new HashSet<>(item).size();
     }
 
     protected boolean fail(String reasonForFailure, Collection<? extends E> item, Description mismatchDescription) {

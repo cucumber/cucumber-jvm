@@ -50,7 +50,7 @@ public final class Plugins {
     }
 
     private List<Plugin> createPlugins() {
-        List<Plugin> plugins = new ArrayList<Plugin>();
+        List<Plugin> plugins = new ArrayList<>();
         if (!pluginNamesInstantiated) {
             for (String pluginName : runtimeOptions.getPluginFormatterNames()) {
                 Plugin plugin = pluginFactory.create(pluginName);

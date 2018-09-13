@@ -18,7 +18,7 @@ public class Filters {
         this.runtimeOptions = runtimeOptions;
         this.rerunFilters = rerunFilters;
 
-        filters = new ArrayList<PicklePredicate>();
+        filters = new ArrayList<>();
         List<String> tagFilters = this.runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
             this.filters.add(new TagPredicate(tagFilters));

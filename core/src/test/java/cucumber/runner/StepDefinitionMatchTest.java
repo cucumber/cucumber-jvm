@@ -137,7 +137,7 @@ public class StepDefinitionMatchTest {
 
     @Test
     public void throws_could_not_convert_exception_for_transfomer_and_capture_group_mismatch() throws Throwable {
-        typeRegistry.defineParameterType(new ParameterType<ItemQuantity>(
+        typeRegistry.defineParameterType(new ParameterType<>(
             "itemQuantity",
             "(few|some|lots of) (cukes|gherkins)",
             ItemQuantity.class,

@@ -15,7 +15,7 @@ public class CollectionUtilTest {
 
     @Before
     public void setUp() {
-        list = new ArrayList<String>();
+        list = new ArrayList<>();
     }
 
     @Test(expected = NullPointerException.class)

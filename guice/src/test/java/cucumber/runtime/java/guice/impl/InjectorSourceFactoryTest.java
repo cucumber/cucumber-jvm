@@ -3,15 +3,11 @@ package cucumber.runtime.java.guice.impl;
 import com.google.inject.Injector;
 import cucumber.runtime.Env;
 import cucumber.runtime.java.guice.InjectorSource;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -131,10 +127,9 @@ public class InjectorSourceFactoryTest {
    * of class LivesInChildClassLoader and the test will fail.
    * 
    * <p>See <a href="https://github.com/cucumber/cucumber-jvm/issues/1036">https://github.com/cucumber/cucumber-jvm/issues/1036</a>
-   * @throws Exception
    */
   @Test
-    public void instantiateClassInChildClassLoader() throws Exception {
+    public void instantiateClassInChildClassLoader() {
         ClassLoader childClassLoader = new MyChildClassLoader(this.getClass().getClassLoader());
         Thread.currentThread().setContextClassLoader( childClassLoader );
         

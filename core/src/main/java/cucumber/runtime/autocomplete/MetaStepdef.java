@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class MetaStepdef {
     private static final Gson GSON = new GsonBuilder().create();
 
-    public final SortedSet<MetaStep> steps = new TreeSet<MetaStep>();
+    public final SortedSet<MetaStep> steps = new TreeSet<>();
     public String source;
     public String flags;
     private transient Pattern pattern;
@@ -60,7 +60,7 @@ public class MetaStepdef {
 
     public static class MetaStep implements Comparable<MetaStep> {
         public String name;
-        public final List<MetaArgument> args = new ArrayList<MetaArgument>();
+        public final List<MetaArgument> args = new ArrayList<>();
 
         @Override
         public int compareTo(MetaStep other) {

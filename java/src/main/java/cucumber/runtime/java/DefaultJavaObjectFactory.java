@@ -4,7 +4,6 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * thereby colliding with other DI implementations.
  */
 class DefaultJavaObjectFactory implements ObjectFactory {
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> instances = new HashMap<>();
 
     public void start() {
         // No-op

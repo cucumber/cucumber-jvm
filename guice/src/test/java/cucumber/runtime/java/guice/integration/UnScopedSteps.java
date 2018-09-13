@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 
 public class UnScopedSteps {
 
-    private static final List<UnScopedObject> OBJECTS = new ArrayList<UnScopedObject>(3);
+    private static final List<UnScopedObject> OBJECTS = new ArrayList<>(3);
     private final Provider<UnScopedObject> unScopedObjectProvider;
 
     @Inject

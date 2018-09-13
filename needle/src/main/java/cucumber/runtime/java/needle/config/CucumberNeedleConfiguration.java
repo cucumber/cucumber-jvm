@@ -25,7 +25,7 @@ public class CucumberNeedleConfiguration {
     private final ReadInjectionProviderClassNames readInjectionProviderClassNames = ReadInjectionProviderClassNames.INSTANCE;
     private final CreateInstanceByDefaultConstructor createInstance = CreateInstanceByDefaultConstructor.INSTANCE;
 
-    private final Set<InjectionProvider<?>> injectionProviders = new HashSet<InjectionProvider<?>>();
+    private final Set<InjectionProvider<?>> injectionProviders = new HashSet<>();
 
     /**
      * Creates new instance from default resource {@link #RESOURCE_CUCUMBER_NEEDLE}.

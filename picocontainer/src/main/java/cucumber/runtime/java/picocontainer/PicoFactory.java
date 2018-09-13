@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
+    private final Set<Class<?>> classes = new HashSet<>();
 
     public void start() {
         pico = new PicoBuilder()

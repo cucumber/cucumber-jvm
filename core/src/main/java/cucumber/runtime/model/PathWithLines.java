@@ -9,7 +9,7 @@ public class PathWithLines {
     private static final Pattern FILE_COLON_LINE_PATTERN = Pattern.compile("^([\\w\\W]*?):([\\d:]+)$");
 
     public final String path;
-    public final List<Long> lines = new ArrayList<Long>();
+    public final List<Long> lines = new ArrayList<>();
 
     public static boolean hasLineFilters(String pathName) {
         return FILE_COLON_LINE_PATTERN.matcher(pathName).matches();
@@ -35,7 +35,7 @@ public class PathWithLines {
     }
 
     private static List<Long> toLongs(String[] strings) {
-        List<Long> result = new ArrayList<Long>();
+        List<Long> result = new ArrayList<>();
         for (String string : strings) {
             result.add(Long.parseLong(string));
         }

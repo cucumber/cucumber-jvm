@@ -45,12 +45,11 @@ public class ObjectFactoryLoader {
     }
 
     private static String getMultipleObjectFactoryLogMessage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("More than one Cucumber ObjectFactory was found in the classpath\n\n");
-        sb.append("You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n");
-        sb.append("your dependencies. When this happens, Cucumber falls back to instantiating the\n");
-        sb.append("DefaultJavaObjectFactory implementation which doesn't provide IoC.\n");
-        sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
-        return sb.toString();
+        return ""
+                + "More than one Cucumber ObjectFactory was found in the classpath\n\n"
+                + "You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n"
+                + "your dependencies. When this happens, Cucumber falls back to instantiating the\n"
+                + "DefaultJavaObjectFactory implementation which doesn't provide IoC.\n"
+                + "In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n";
     }
 }

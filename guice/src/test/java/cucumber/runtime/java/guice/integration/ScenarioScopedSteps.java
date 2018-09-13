@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 @ScenarioScoped
 public class ScenarioScopedSteps {
 
-    private static final List<ScenarioScopedObject> OBJECTS = new ArrayList<ScenarioScopedObject>(3);
+    private static final List<ScenarioScopedObject> OBJECTS = new ArrayList<>(3);
     private final Provider<ScenarioScopedObject> scenarioScopedObjectProvider;
 
     @Inject

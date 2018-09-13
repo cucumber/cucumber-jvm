@@ -83,7 +83,7 @@ public class TestNGCucumberRunner {
      */
     public Object[][] provideScenarios() {
         try {
-            List<Object[]> scenarios = new ArrayList<Object[]>();
+            List<Object[]> scenarios = new ArrayList<>();
             FeatureCompiler compiler = new FeatureCompiler();
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {

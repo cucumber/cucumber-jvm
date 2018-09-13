@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 @ScenarioScoped
 public class SingletonScopedSteps {
 
-    private static final List<SingletonObject> OBJECTS = new ArrayList<SingletonObject>(3);
+    private static final List<SingletonObject> OBJECTS = new ArrayList<>(3);
     private final Provider<SingletonObject> singletonObjectProvider;
 
     @Inject

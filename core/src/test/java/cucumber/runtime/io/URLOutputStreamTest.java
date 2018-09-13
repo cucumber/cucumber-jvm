@@ -46,8 +46,8 @@ public class URLOutputStreamTest {
     private WebServer webbit;
     private final int threadsCount = 100;
     private final long waitTimeoutMillis = 30000L;
-    private final List<File> tmpFiles = new ArrayList<File>();
-    private final List<String> threadErrors = new ArrayList<String>();
+    private final List<File> tmpFiles = new ArrayList<>();
+    private final List<String> threadErrors = new ArrayList<>();
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
@@ -87,7 +87,7 @@ public class URLOutputStreamTest {
 
     @Test
     public void can_http_put() throws IOException, ExecutionException, InterruptedException {
-        final BlockingQueue<String> data = new LinkedBlockingDeque<String>();
+        final BlockingQueue<String> data = new LinkedBlockingDeque<>();
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
             @Override
@@ -156,7 +156,7 @@ public class URLOutputStreamTest {
     }
 
     private List<Thread> getThreadsWithLatchForFile(final CountDownLatch countDownLatch, int threadsCount) {
-        List<Thread> result = new ArrayList<Thread>();
+        List<Thread> result = new ArrayList<>();
         String ballast = "" + System.currentTimeMillis();
         for (int i = 0; i < threadsCount; i++) {
             final int curThreadNo = i;

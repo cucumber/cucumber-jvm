@@ -12,7 +12,7 @@ public class Shellwords {
     }
 
     public static List<String> parse(String cmdline) {
-        List<String> matchList = new ArrayList<String>();
+        List<String> matchList = new ArrayList<>();
         Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
         while (shellwordsMatcher.find()) {
             if (shellwordsMatcher.group(1) != null) {

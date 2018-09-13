@@ -28,7 +28,7 @@ public class TableParser {
             "  Scenario:\n" +
             "    Given x\n" +
             source;
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         Compiler compiler = new Compiler();
         List<Pickle> pickles = compiler.compile(parser.parse(feature));
         PickleTable pickleTable = (PickleTable) pickles.get(0).getSteps().get(0).getArgument().get(0);

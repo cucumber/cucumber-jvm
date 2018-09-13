@@ -39,7 +39,7 @@ public final class FeatureLoader {
     }
 
     public List<CucumberFeature> load(List<String> featurePaths) {
-        final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
+        final List<CucumberFeature> cucumberFeatures = new ArrayList<>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         for (String featurePath : featurePaths) {
             if (featurePath.startsWith("@")) {
@@ -60,7 +60,7 @@ public final class FeatureLoader {
     }
 
     public List<PathWithLines> loadRerunFile(String rerunPath) {
-        List<PathWithLines> featurePaths = new ArrayList<PathWithLines>();
+        List<PathWithLines> featurePaths = new ArrayList<>();
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
         for (Resource resource : resources) {
             String source = read(resource);
