@@ -1,9 +1,11 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
 import gherkin.events.PickleEvent;
@@ -22,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -31,7 +34,7 @@ import static org.mockito.Mockito.when;
 public class HookOrderTest {
     private final static String ENGLISH = "en";
 
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+    private final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("pattern1", new TypeRegistry(Locale.ENGLISH));

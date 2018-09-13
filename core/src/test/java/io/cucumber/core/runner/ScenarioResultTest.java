@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Result;
-import cucumber.api.event.EmbedEvent;
-import cucumber.api.event.WriteEvent;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.EmbedEvent;
+import io.cucumber.core.api.event.WriteEvent;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.event.EventBus;
 import org.junit.Test;

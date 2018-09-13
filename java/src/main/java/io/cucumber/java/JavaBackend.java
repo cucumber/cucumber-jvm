@@ -1,30 +1,24 @@
 package io.cucumber.java;
 
-import static io.cucumber.core.io.MultiLoader.packageName;
-import static io.cucumber.java.ObjectFactoryLoader.loadObjectFactory;
-import static java.lang.Thread.currentThread;
-
-import cucumber.api.SnippetType;
-import io.cucumber.core.runtime.Invoker;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import cucumber.api.java.After;
-import cucumber.api.java.AfterStep;
-import cucumber.api.java.Before;
-import cucumber.api.java.BeforeStep;
-import cucumber.api.java.ObjectFactory;
-import cucumber.api.java8.GlueBase;
+import gherkin.pickles.PickleStep;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Backend;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.snippets.SnippetGenerator;
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.java.api.After;
+import io.cucumber.java.api.AfterStep;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.BeforeStep;
+import io.cucumber.java.api.ObjectFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -32,20 +26,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static io.cucumber.core.io.MultiLoader.packageName;
+import static io.cucumber.java.ObjectFactoryLoader.loadObjectFactory;
+import static java.lang.Thread.currentThread;
+
 public class JavaBackend implements Backend, LambdaGlueRegistry {
 
-    private final SnippetGenerator snippetGenerator;
     private final TypeRegistry typeRegistry;
-
-    private Snippet createSnippet() {
-        ClassLoader classLoader = currentThread().getContextClassLoader();
-        try {
-            classLoader.loadClass("cucumber.runtime.java8.LambdaGlueBase");
-            return new Java8Snippet();
-        } catch (ClassNotFoundException thatsOk) {
-            return new JavaSnippet();
-        }
-    }
+    private final SnippetGenerator annotationSnippetGenerator;
+    private final SnippetGenerator lambdaSnippetGenerator;
 
     private final ObjectFactory objectFactory;
     private final ClassFinder classFinder;
@@ -67,11 +56,12 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
-        this.snippetGenerator = new SnippetGenerator(createSnippet(), typeRegistry.parameterTypeRegistry());
+        this.annotationSnippetGenerator = new SnippetGenerator(new JavaSnippet(), typeRegistry.parameterTypeRegistry());
+        this.lambdaSnippetGenerator = new SnippetGenerator(new Java8Snippet(), typeRegistry.parameterTypeRegistry());
         this.typeRegistry = typeRegistry;
     }
 
@@ -132,7 +122,10 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     @Override
     public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
-        return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
+        List<String> snippets = new ArrayList<>();
+        snippets.addAll(annotationSnippetGenerator.getSnippet(step, keyword, functionNameGenerator));
+        snippets.addAll(lambdaSnippetGenerator.getSnippet(step, keyword, functionNameGenerator));
+        return snippets;
     }
 
     void addStepDefinition(Annotation annotation, Method method) {

@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;

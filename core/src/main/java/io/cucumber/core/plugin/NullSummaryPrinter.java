@@ -1,8 +1,8 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.SummaryPrinter;
+import io.cucumber.core.api.plugin.SummaryPrinter;
 
-final class NullSummaryPrinter implements SummaryPrinter {
+public final class NullSummaryPrinter implements SummaryPrinter {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public NullSummaryPrinter(){

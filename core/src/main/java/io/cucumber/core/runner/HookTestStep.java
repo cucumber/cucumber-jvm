@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.HookType;
+import io.cucumber.core.api.event.HookType;
 
-final class HookTestStep extends TestStep implements cucumber.api.HookTestStep {
+final class HookTestStep extends TestStep implements io.cucumber.core.api.event.HookTestStep {
     private final HookType hookType;
 
     HookTestStep(HookType hookType, HookDefinitionMatch definitionMatch) {

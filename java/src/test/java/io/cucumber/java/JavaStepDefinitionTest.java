@@ -1,10 +1,11 @@
 package io.cucumber.java;
 
-import cucumber.api.Result;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.java.ObjectFactory;
-import cucumber.api.java.en.Given;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.Runner;
@@ -41,6 +42,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -76,7 +78,7 @@ public class JavaStepDefinitionTest {
         ObjectFactory factory = new SingletonFactory(defs);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
-        RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
         EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

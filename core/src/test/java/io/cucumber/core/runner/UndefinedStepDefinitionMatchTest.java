@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import gherkin.pickles.PickleStep;
 import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;

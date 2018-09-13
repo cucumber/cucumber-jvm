@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import cucumber.api.Scenario;
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.reflection.MethodFormat;
@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
-public class JavaHookDefinition implements HookDefinition {
+class JavaHookDefinition implements HookDefinition {
 
     private final Method method;
     private final long timeoutMillis;

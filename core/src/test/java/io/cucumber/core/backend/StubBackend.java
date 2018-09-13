@@ -1,6 +1,6 @@
 package io.cucumber.core.backend;
 
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.io.ResourceLoader;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.stepexpression.TypeRegistry;

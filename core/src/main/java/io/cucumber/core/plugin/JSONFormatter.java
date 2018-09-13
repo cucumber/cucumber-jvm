@@ -1,21 +1,21 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.HookTestStep;
-import cucumber.api.HookType;
-import cucumber.api.PickleStepTestStep;
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.TestStep;
-import cucumber.api.event.EmbedEvent;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseStarted;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestSourceRead;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.event.TestStepStarted;
-import cucumber.api.event.WriteEvent;
+import io.cucumber.core.api.event.HookTestStep;
+import io.cucumber.core.api.event.HookType;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestStep;
+import io.cucumber.core.api.event.EmbedEvent;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.api.event.WriteEvent;
 import gherkin.ast.Background;
 import gherkin.ast.DocString;
 import gherkin.ast.Feature;
@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class JSONFormatter implements EventListener {
+public final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> currentElementsList;
@@ -353,7 +353,7 @@ final class JSONFormatter implements EventListener {
             PickleStepTestStep testStep = (PickleStepTestStep) step;
             if (!testStep.getDefinitionArgument().isEmpty()) {
                 List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
-                for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
+                for (io.cucumber.core.api.event.Argument argument : testStep.getDefinitionArgument()) {
                     Map<String, Object> argumentMap = new HashMap<String, Object>();
                     if (argument.getValue() != null) {
                         argumentMap.put("val", argument.getValue());

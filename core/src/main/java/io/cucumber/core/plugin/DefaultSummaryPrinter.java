@@ -1,17 +1,17 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.SummaryPrinter;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.StrictAware;
+import io.cucumber.core.api.plugin.SummaryPrinter;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.plugin.ColorAware;
+import io.cucumber.core.api.plugin.StrictAware;
 
 import java.io.PrintStream;
 import java.util.List;
 
-final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
+public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, EventListener {
 
     private final Stats stats = new Stats();
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();

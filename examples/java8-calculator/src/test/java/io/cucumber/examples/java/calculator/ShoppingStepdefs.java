@@ -1,7 +1,7 @@
 package io.cucumber.examples.java.calculator;
 
 import io.cucumber.datatable.DataTable;
-import cucumber.api.java8.En;
+import io.cucumber.java.api.lambda.En;
 
 import java.util.List;
 

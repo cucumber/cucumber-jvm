@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Argument;
+import io.cucumber.core.api.event.Argument;
 
 import java.util.List;
 

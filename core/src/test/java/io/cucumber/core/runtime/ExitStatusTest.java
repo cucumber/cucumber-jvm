@@ -1,10 +1,12 @@
 package io.cucumber.core.runtime;
 
 
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.options.RuntimeOptions;
@@ -37,7 +39,7 @@ public class ExitStatusTest {
     }
 
     private void createExitStatus(String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList(runtimeArgs));
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         exitStatus = new Runtime.ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);

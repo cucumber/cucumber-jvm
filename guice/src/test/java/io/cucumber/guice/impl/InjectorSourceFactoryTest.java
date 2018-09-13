@@ -2,7 +2,7 @@ package io.cucumber.guice.impl;
 
 import com.google.inject.Injector;
 import io.cucumber.core.options.Env;
-import io.cucumber.guice.InjectorSource;
+import io.cucumber.guice.api.InjectorSource;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -149,7 +149,7 @@ public class InjectorSourceFactoryTest {
         @Override
         protected Class<?> loadClass( String name, boolean resolve ) throws ClassNotFoundException {
             if( name.equals( "io.cucumber.guice.impl.LivesInChildClassLoader" ) ) {
-                String filename = getClass().getClassLoader().getResource("io/cucumber/impl/LivesInChildClassLoader.class.bin").getFile();
+                String filename = getClass().getClassLoader().getResource("io/cucumber/guice/impl/LivesInChildClassLoader.class.bin").getFile();
                 File file = new File( filename );
                 try {
                     FileInputStream in = new FileInputStream( file );

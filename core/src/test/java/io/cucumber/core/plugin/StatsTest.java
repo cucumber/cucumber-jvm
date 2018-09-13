@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import cucumber.api.Result;
+import io.cucumber.core.api.event.Result;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

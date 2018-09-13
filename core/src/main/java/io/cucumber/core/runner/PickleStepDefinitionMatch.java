@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.StepDefinitionMatch;
 import io.cucumber.core.exception.CucumberException;

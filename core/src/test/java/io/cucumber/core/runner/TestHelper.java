@@ -1,11 +1,11 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.PendingException;
-import cucumber.api.Plugin;
-import cucumber.api.Result;
-import cucumber.api.Scenario;
-import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.event.EventListener;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.Event;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
@@ -44,11 +44,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.Result.Type.FAILED;
-import static cucumber.api.Result.Type.PASSED;
-import static cucumber.api.Result.Type.PENDING;
-import static cucumber.api.Result.Type.SKIPPED;
-import static cucumber.api.Result.Type.UNDEFINED;
+import static io.cucumber.core.api.event.Result.Type.FAILED;
+import static io.cucumber.core.api.event.Result.Type.PASSED;
+import static io.cucumber.core.api.event.Result.Type.PENDING;
+import static io.cucumber.core.api.event.Result.Type.SKIPPED;
+import static io.cucumber.core.api.event.Result.Type.UNDEFINED;
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,7 +73,7 @@ public class TestHelper {
     private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
     private long timeServiceIncrement = 0L;
     private Object formatterUnderTest = null;
-    private Iterable<String> runtimeArgs = Collections.emptyList();
+    private List<String> runtimeArgs = Collections.emptyList();
 
     private TestHelper() {
     }
@@ -159,7 +159,7 @@ public class TestHelper {
                     public void execute(Object[] args) throws Throwable {
                         super.execute(args);
                         if (stepResult.is(PENDING)) {
-                            throw new PendingException();
+                            throw new TestPendingException();
                         } else if (stepResult.is(FAILED)) {
                             throw stepResult.getError();
                         } else if (stepResult.is(SKIPPED) && (stepResult.getError() != null)) {
@@ -251,9 +251,9 @@ public class TestHelper {
                 doAnswer(action).when(hook).execute((Scenario) any());
             }
             if (hookEntry.getValue().is(FAILED)) {
-                doThrow(hookEntry.getValue().getError()).when(hook).execute((cucumber.api.Scenario) any());
+                doThrow(hookEntry.getValue().getError()).when(hook).execute((Scenario) any());
             } else if (hookEntry.getValue().is(PENDING)) {
-                doThrow(new PendingException()).when(hook).execute((cucumber.api.Scenario) any());
+                doThrow(new TestPendingException()).when(hook).execute((io.cucumber.core.api.Scenario) any());
             }
             if ("before".equals(hookEntry.getKey())) {
                 beforeHooks.add(hook);
@@ -271,11 +271,6 @@ public class TestHelper {
     }
 
     public void run() {
-
-        final StringBuilder args = new StringBuilder();
-        for (final String arg : runtimeArgs) {
-            args.append(" ").append(arg);
-        }
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
@@ -297,7 +292,7 @@ public class TestHelper {
             : new TestFeatureSupplier(bus, features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withArg(args.toString())
+            .withArgs(runtimeArgs)
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)
@@ -395,8 +390,8 @@ public class TestHelper {
          * Defaults to {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
          * <p>
          * Note: when running tests with multiple threads & not using {@link TimeServiceType#REAL_TIME}
-         * it can inadvertently affect the order of {@link cucumber.api.event.Event}s
-         * published to any {@link cucumber.api.event.ConcurrentEventListener}s used during the test run
+         * it can inadvertently affect the order of {@link Event}s
+         * published to any {@link ConcurrentEventListener}s used during the test run
          *
          * @return this instance
          */
@@ -453,7 +448,7 @@ public class TestHelper {
             case AMBIGUOUS:
                 return result(status, mockAmbiguousStepDefinitionException());
             case PENDING:
-                return result(status, new PendingException());
+                return result(status, new TestPendingException());
             default:
                 return result(status, null);
         }

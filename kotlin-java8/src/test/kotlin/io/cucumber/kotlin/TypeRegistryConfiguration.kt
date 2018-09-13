@@ -1,9 +1,10 @@
 package io.cucumber.runtime.kotlin.test
 
-import cucumber.api.TypeRegistryConfigurer
-import cucumber.api.TypeRegistry
+import io.cucumber.core.api.TypeRegistryConfigurer
+import io.cucumber.core.api.TypeRegistry
 import io.cucumber.datatable.DataTableType
 import io.cucumber.datatable.TableEntryTransformer
+import io.cucumber.kotlin.LambdaStepdefs
 import java.util.Locale
 import java.util.Locale.ENGLISH
 

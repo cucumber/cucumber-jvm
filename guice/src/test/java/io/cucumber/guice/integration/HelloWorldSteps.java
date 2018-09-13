@@ -1,7 +1,7 @@
 package io.cucumber.guice.integration;
 
-import cucumber.api.java.en.Given;
-import io.cucumber.guice.ScenarioScoped;
+import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.guice.api.ScenarioScoped;
 
 @ScenarioScoped
 public class HelloWorldSteps {

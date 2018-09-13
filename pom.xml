@@ -42,7 +42,7 @@
         <gherkin.version>5.1.0</gherkin.version>
         <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <spring.version>4.3.10.RELEASE</spring.version>
+        <spring.version>4.3.18.RELEASE</spring.version>
         <spring.data.version>1.11.6.RELEASE</spring.data.version>
         <hibernate.version>5.3.6.Final</hibernate.version>
         <hsqldb.version>2.4.1</hsqldb.version>
@@ -50,6 +50,8 @@
         <jsoup.version>1.11.3</jsoup.version>
         <testng.version>6.14.3</testng.version>
         <junit.version>4.12</junit.version>
+        <junit-jupiter.version>5.3.1</junit-jupiter.version>
+        <junit-platform.version>1.3.1</junit-platform.version>
         <hamcrest.version>1.3</hamcrest.version>
         <assertj.core.version>3.11.1</assertj.core.version>
         <mockito.version>2.21.0</mockito.version>
@@ -159,11 +161,6 @@
                 <groupId>org.picocontainer</groupId>
                 <artifactId>picocontainer</artifactId>
                 <version>${picocontainer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java8</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -317,17 +314,17 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
-                <version>5.3.1</version>
+                <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.3.1</version>
+                <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
-                <version>5.3.1</version>
+                <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>uk.co.datumedge</groupId>
@@ -517,7 +514,6 @@
     <modules>
         <module>core</module>
         <module>java</module>
-        <module>java8</module>
         <module>kotlin-java8</module>
         <module>testng</module>
         <module>picocontainer</module>
@@ -698,12 +694,12 @@
                         </links>
                         <groups>
                             <group>
-                                <title>Main API Packages</title>
-                                <packages>cucumber.api:cucumber.api.*</packages>
+                                <title>Core API Packages</title>
+                                <packages>io.cucumber.core.api.*:io.cucumber.junit.api.*:io.cucumber.testng.api.*</packages>
                             </group>
                             <group>
                                 <title>I18n - Java</title>
-                                <packages>cucumber.api.java.*</packages>
+                                <packages>io.cucumber.java.api.*</packages>
                             </group>
                         </groups>
                         <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->
@@ -766,17 +762,17 @@
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
                             <artifactId>junit-jupiter-engine</artifactId>
-                            <version>5.3.1</version>
+                            <version>${junit-jupiter.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>org.junit.platform</groupId>
                             <artifactId>junit-platform-engine</artifactId>
-                            <version>1.3.1</version>
+                            <version>${junit-platform.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>org.junit.vintage</groupId>
                             <artifactId>junit-vintage-engine</artifactId>
-                            <version>5.3.1</version>
+                            <version>${junit-jupiter.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

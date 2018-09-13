@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Result;
-import cucumber.api.event.EmbedEvent;
-import cucumber.api.event.WriteEvent;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.EmbedEvent;
+import io.cucumber.core.api.event.WriteEvent;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.event.EventBus;
 
@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static java.util.Collections.max;
 
-class Scenario implements cucumber.api.Scenario {
+class Scenario implements io.cucumber.core.api.Scenario {
 
     private final List<Result> stepResults = new ArrayList<Result>();
     private final EventBus bus;

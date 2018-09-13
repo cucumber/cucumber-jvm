@@ -1,8 +1,10 @@
 package io.cucumber.core.options;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.Plugin;
-import cucumber.api.SnippetType;
+import io.cucumber.core.api.options.CucumberOptions;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;

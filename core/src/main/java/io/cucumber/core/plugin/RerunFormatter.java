@@ -1,12 +1,12 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.TestCase;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.formatter.StrictAware;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.plugin.StrictAware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.Set;
  * Formatter for reporting all failed test cases and print their locations
  * Failed means: results that make the exit code non-zero.
  */
-final class RerunFormatter implements EventListener, StrictAware {
+public final class RerunFormatter implements EventListener, StrictAware {
     private final NiceAppendable out;
     private Map<String, ArrayList<Integer>> featureAndFailedLinesMapping = new HashMap<String, ArrayList<Integer>>();
     private boolean isStrict = false;

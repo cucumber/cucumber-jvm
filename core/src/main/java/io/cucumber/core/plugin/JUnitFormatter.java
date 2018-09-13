@@ -1,16 +1,16 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.PickleStepTestStep;
-import cucumber.api.Result;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestCaseStarted;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestSourceRead;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.StrictAware;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.plugin.StrictAware;
 import io.cucumber.core.exception.CucumberException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-final class JUnitFormatter implements EventListener, StrictAware {
+public final class JUnitFormatter implements EventListener, StrictAware {
     private final Writer out;
     private final Document doc;
     private final Element rootElement;
@@ -75,6 +75,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
         TestCase.treatConditionallySkippedAsFailure = false;
@@ -194,7 +195,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
             NUMBER_FORMAT.applyPattern("0.######");
         }
 
-        private TestCase(cucumber.api.TestCase testCase) {
+        private TestCase(io.cucumber.core.api.event.TestCase testCase) {
             this.testCase = testCase;
         }
 
@@ -204,7 +205,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
         static boolean treatConditionallySkippedAsFailure = false;
         final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
         final List<Result> results = new ArrayList<Result>();
-        private final cucumber.api.TestCase testCase;
+        private final io.cucumber.core.api.event.TestCase testCase;
 
         private Element createElement(Document doc) {
             return doc.createElement("testcase");
@@ -215,7 +216,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
-        private String calculateElementName(cucumber.api.TestCase testCase) {
+        private String calculateElementName(io.cucumber.core.api.event.TestCase testCase) {
             String testCaseName = testCase.getName();
             if (testCaseName.equals(previousTestCaseName)) {
                 return getUniqueTestNameForScenarioExample(testCaseName, ++exampleNumber);

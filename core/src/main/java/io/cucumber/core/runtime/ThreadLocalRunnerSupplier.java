@@ -1,7 +1,7 @@
 package io.cucumber.core.runtime;
 
-import cucumber.api.event.Event;
-import cucumber.api.event.EventHandler;
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.event.AbstractEventBus;

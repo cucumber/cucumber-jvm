@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import cucumber.api.StepDefinitionReporter;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.backend.StepDefinition;
 
 public class AnyStepDefinitionReporter implements StepDefinitionReporter {

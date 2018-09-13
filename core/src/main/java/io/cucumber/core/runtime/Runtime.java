@@ -1,21 +1,20 @@
 package io.cucumber.core.runtime;
 
-import cucumber.api.Plugin;
-import cucumber.api.Result;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestRunStarted;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.filter.RerunFilters;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.io.ClassFinder;
@@ -37,7 +36,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cucumber.api.Result.SEVERITY;
+import static io.cucumber.core.api.event.Result.SEVERITY;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
 
@@ -56,7 +56,7 @@ public final class Runtime {
     private final ExecutorService executor;
 
     private Runtime(final Plugins plugins,
-                    final RuntimeOptions runtimeOptions,
+                    final ExitStatus exitStatus,
                     final EventBus bus,
                     final Filters filters,
                     final RunnerSupplier runnerSupplier,
@@ -69,8 +69,7 @@ public final class Runtime {
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
-        this.exitStatus = new ExitStatus(runtimeOptions);
-        exitStatus.setEventPublisher(bus);
+        this.exitStatus = exitStatus;
     }
 
     public void run() {
@@ -116,19 +115,15 @@ public final class Runtime {
 
         private EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        private RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        private RuntimeOptions runtimeOptions;
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
         private ClassFinder classFinder;
         private FeatureSupplier featureSupplier;
-        private List<Plugin> additionalPlugins = Collections.emptyList();
+        private List<Plugin> additionalPlugins = emptyList();
+        private List<String> runtimeOptionsArgs = emptyList();
 
         private Builder() {
-        }
-
-        public Builder withArg(final String arg) {
-            this.runtimeOptions = new RuntimeOptions(arg);
-            return this;
         }
 
         public Builder withArgs(final String... args) {
@@ -136,7 +131,7 @@ public final class Runtime {
         }
 
         public Builder withArgs(final List<String> args) {
-            this.runtimeOptions = new RuntimeOptions(args);
+            this.runtimeOptionsArgs = args;
             return this;
         }
 
@@ -185,22 +180,28 @@ public final class Runtime {
                 ? this.resourceLoader
                 : new MultiLoader(this.classLoader);
 
+            final RuntimeOptions runtimeOptions = this.runtimeOptions != null
+                ? this.runtimeOptions
+                : new RuntimeOptions(resourceLoader, runtimeOptionsArgs);
+
             final ClassFinder classFinder = this.classFinder != null
                 ? this.classFinder
                 : new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendModuleBackendSupplier(resourceLoader, classFinder, this.runtimeOptions);
+                : new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
 
-            final Plugins plugins = new Plugins(new PluginFactory(), this.eventBus, this.runtimeOptions);
+            final Plugins plugins = new Plugins(new PluginFactory(), this.eventBus, runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
                 plugins.addPlugin(plugin);
             }
+            final ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+            plugins.addPlugin(exitStatus);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier)
-                : new SingletonRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier);
+                ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier)
+                : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads())
@@ -211,11 +212,11 @@ public final class Runtime {
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(featureLoader, this.runtimeOptions, this.eventBus);
+                : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, this.eventBus);
 
-            final RerunFilters rerunFilters = new RerunFilters(this.runtimeOptions, featureLoader);
-            final Filters filters = new Filters(this.runtimeOptions, rerunFilters);
-            return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
+            final Filters filters = new Filters(runtimeOptions);
+
+            return new Runtime(plugins, exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor);
         }
     }
 
@@ -252,7 +253,7 @@ public final class Runtime {
         }
     }
 
-    static final class ExitStatus implements EventListener {
+    static final class ExitStatus implements ConcurrentEventListener {
         private static final byte DEFAULT = 0x0;
         private static final byte ERRORS = 0x1;
 
@@ -276,7 +277,9 @@ public final class Runtime {
         }
 
         byte exitStatus() {
-            if (results.isEmpty()) { return DEFAULT; }
+            if (results.isEmpty()) {
+                return DEFAULT;
+            }
 
             if (runtimeOptions.isWip()) {
                 return min(results, SEVERITY).is(Result.Type.PASSED) ? ERRORS : DEFAULT;

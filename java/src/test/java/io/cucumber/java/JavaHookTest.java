@@ -1,10 +1,10 @@
 package io.cucumber.java;
 
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.AfterStep;
-import cucumber.api.java.Before;
-import cucumber.api.java.BeforeStep;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.java.api.After;
+import io.cucumber.java.api.AfterStep;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.BeforeStep;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -186,7 +186,7 @@ public class JavaHookTest {
         verify(glue).addAfterHook(javaHookDefinitionArgumentCaptor.capture());
 
         HookDefinition bad = javaHookDefinitionArgumentCaptor.getValue();
-        expectedException.expectMessage("When a hook declares an argument it must be of type cucumber.api.Scenario. public void io.cucumber.java.JavaHookTest$BadHook.after(java.lang.String)");
+        expectedException.expectMessage("When a hook declares an argument it must be of type io.cucumber.core.api.Scenario. public void io.cucumber.java.JavaHookTest$BadHook.after(java.lang.String)");
         bad.execute(mock(Scenario.class));
     }
 

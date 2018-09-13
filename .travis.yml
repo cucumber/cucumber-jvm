@@ -4,23 +4,21 @@ sudo: false
 cache:
   directories:
   - "$HOME/.m2"
-before_cache:
-- rm -rf $HOME/.m2/repository/io/cucumber
 
 jobs:
   include:
   - stage: test
     jdk: oraclejdk8
-    script: mvn -q verify -Pcheck-semantic-version -DskipTests=true
+    script: mvn verify -Pcheck-semantic-version -DskipTests=true
     env: CHECK_SEMANTIC_VERSION=true
   - jdk: oraclejdk8
-    script: mvn -q install
+    script: mvn -q verify
     after_success:
     - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
   - jdk: oraclejdk8
     env: JAVADOC=true
     script:
-    - mvn clean install -DskipTests=true
+    - mvn clean verify -DskipTests=true
     - mvn javadoc:aggregate
   - stage: deploy
     jdk: oraclejdk8

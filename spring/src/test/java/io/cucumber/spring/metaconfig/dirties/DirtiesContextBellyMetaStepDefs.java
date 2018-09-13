@@ -1,7 +1,7 @@
 package io.cucumber.spring.metaconfig.dirties;
 
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
+import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.java.api.annotation.en.Then;
 import io.cucumber.spring.beans.Belly;
 import io.cucumber.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;

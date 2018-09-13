@@ -6,6 +6,7 @@ import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class BackendModuleBackendSupplierTest {
     @Test
     public void should_create_a_backend() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions, singletonList("io.cucumber.core.backend"));
@@ -37,7 +38,7 @@ public class BackendModuleBackendSupplierTest {
     @Test
     public void should_throw_an_exception_when_no_backend_could_be_found() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions, singletonList("no.backend.here"));

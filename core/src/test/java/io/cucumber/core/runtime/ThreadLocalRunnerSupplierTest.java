@@ -1,9 +1,10 @@
 package io.cucumber.core.runtime;
 
 
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.TestCaseStarted;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -33,7 +34,7 @@ public class ThreadLocalRunnerSupplierTest {
     @Before
     public void before() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);

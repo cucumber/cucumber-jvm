@@ -1,6 +1,6 @@
 package io.cucumber.spring.hooks;
 
-import cucumber.api.spring.SpringTransactionHooks;
+import io.cucumber.spring.api.SpringTransactionHooks;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

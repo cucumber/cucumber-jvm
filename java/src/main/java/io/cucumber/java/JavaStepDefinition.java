@@ -2,7 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
@@ -11,8 +11,12 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import gherkin.pickles.PickleStep;
+import io.cucumber.java.api.Transpose;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 class JavaStepDefinition implements StepDefinition {
@@ -75,5 +79,48 @@ class JavaStepDefinition implements StepDefinition {
     @Override
     public boolean isScenarioScoped() {
         return false;
+    }
+
+    /**
+     * This class composes all interesting parameter information into one object.
+     */
+    static class ParameterInfo {
+        private final Type type;
+        private final boolean transposed;
+
+        static List<ParameterInfo> fromMethod(Method method) {
+            List<ParameterInfo> result = new ArrayList<ParameterInfo>();
+            Type[] genericParameterTypes = method.getGenericParameterTypes();
+            Annotation[][] annotations = method.getParameterAnnotations();
+            for (int i = 0; i < genericParameterTypes.length; i++) {
+                boolean transposed = false;
+                for (Annotation annotation : annotations[i]) {
+                    if (annotation instanceof Transpose) {
+                        transposed = ((Transpose) annotation).value();
+                    }
+                }
+                result.add(new ParameterInfo(genericParameterTypes[i], transposed));
+            }
+            return result;
+        }
+
+        private ParameterInfo(Type type, boolean transposed) {
+            this.type = type;
+            this.transposed = transposed;
+        }
+
+        Type getType() {
+            return type;
+        }
+
+        boolean isTransposed() {
+            return transposed;
+        }
+
+        @Override
+        public String toString() {
+            return type.toString();
+        }
+
     }
 }

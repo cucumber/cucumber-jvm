@@ -1,10 +1,6 @@
 package io.cucumber.spring;
 
-import static java.util.Arrays.asList;
-import static org.springframework.test.context.FixBootstrapUtils.createBootstrapContext;
-import static org.springframework.test.context.FixBootstrapUtils.resolveTestContextBootstrapper;
-
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.java.api.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,6 +22,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+
+import static io.cucumber.spring.FixBootstrapUtils.createBootstrapContext;
+import static io.cucumber.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
+import static java.util.Arrays.asList;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -182,9 +182,9 @@ public class SpringFactory implements ObjectFactory {
     private void registerStepClassBeanDefinition(ConfigurableListableBeanFactory beanFactory, Class<?> stepClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
         BeanDefinition beanDefinition = BeanDefinitionBuilder
-                .genericBeanDefinition(stepClass)
-                .setScope(GlueCodeScope.NAME)
-                .getBeanDefinition();
+            .genericBeanDefinition(stepClass)
+            .setScope(GlueCodeScope.NAME)
+            .getBeanDefinition();
         registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
     }
 
@@ -215,7 +215,7 @@ public class SpringFactory implements ObjectFactory {
 
     private static boolean dependsOnSpringContext(Class<?> type) {
         for (Annotation annotation : type.getAnnotations()) {
-            if(annotatedWithSupportedSpringRootTestAnnotations(annotation)){
+            if (annotatedWithSupportedSpringRootTestAnnotations(annotation)) {
                 return true;
             }
         }
@@ -228,29 +228,30 @@ public class SpringFactory implements ObjectFactory {
             ContextHierarchy.class,
             BootstrapWith.class));
     }
-}
 
-class CucumberTestContextManager extends TestContextManager {
 
-    CucumberTestContextManager(Class<?> testClass) {
-        // Does the same as TestContextManager(Class<?>) but creates a
-        // DefaultCacheAwareContextLoaderDelegate that uses a thread local contextCache.
-        super(resolveTestContextBootstrapper(createBootstrapContext(testClass)));
-        registerGlueCodeScope(getContext());
-    }
+    static class CucumberTestContextManager extends TestContextManager {
 
-    ConfigurableListableBeanFactory getBeanFactory() {
-        return getContext().getBeanFactory();
-    }
+        CucumberTestContextManager(Class<?> testClass) {
+            // Does the same as TestContextManager(Class<?>) but creates a
+            // DefaultCacheAwareContextLoaderDelegate that uses a thread local contextCache.
+            super(resolveTestContextBootstrapper(createBootstrapContext(testClass)));
+            registerGlueCodeScope(getContext());
+        }
 
-    private ConfigurableApplicationContext getContext() {
-        return (ConfigurableApplicationContext)getTestContext().getApplicationContext();
-    }
+        ConfigurableListableBeanFactory getBeanFactory() {
+            return getContext().getBeanFactory();
+        }
 
-    private void registerGlueCodeScope(ConfigurableApplicationContext context) {
-        do {
-            context.getBeanFactory().registerScope(GlueCodeScope.NAME, new GlueCodeScope());
-            context = (ConfigurableApplicationContext)context.getParent();
-        } while (context != null);
+        private ConfigurableApplicationContext getContext() {
+            return (ConfigurableApplicationContext) getTestContext().getApplicationContext();
+        }
+
+        private void registerGlueCodeScope(ConfigurableApplicationContext context) {
+            do {
+                context.getBeanFactory().registerScope(GlueCodeScope.NAME, new GlueCodeScope());
+                context = (ConfigurableApplicationContext) context.getParent();
+            } while (context != null);
+        }
     }
 }

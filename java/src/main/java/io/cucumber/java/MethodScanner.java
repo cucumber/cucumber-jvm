@@ -1,9 +1,9 @@
 package io.cucumber.java;
 
-import cucumber.api.java.After;
-import cucumber.api.java.AfterStep;
-import cucumber.api.java.Before;
-import cucumber.api.java.BeforeStep;
+import io.cucumber.java.api.After;
+import io.cucumber.java.api.AfterStep;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.BeforeStep;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.reflection.Reflections;
@@ -18,7 +18,7 @@ class MethodScanner {
 
     private final ClassFinder classFinder;
 
-    public MethodScanner(ClassFinder classFinder) {
+    MethodScanner(ClassFinder classFinder) {
         this.classFinder = classFinder;
     }
 
@@ -28,7 +28,7 @@ class MethodScanner {
      * @param javaBackend the backend where stepdefs and hooks will be registered
      * @param gluePaths   where to look
      */
-    public void scan(JavaBackend javaBackend, List<String> gluePaths) {
+    void scan(JavaBackend javaBackend, List<String> gluePaths) {
         for (String gluePath : gluePaths) {
             for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, packageName(gluePath))) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Reflections.isInstantiable(glueCodeClass)) {
@@ -54,7 +54,7 @@ class MethodScanner {
      * @param method        a candidate for being a stepdef or hook.
      * @param glueCodeClass the class where the method is declared.
      */
-    public void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
+    void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
         Annotation[] methodAnnotations = method.getAnnotations();
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation)) {

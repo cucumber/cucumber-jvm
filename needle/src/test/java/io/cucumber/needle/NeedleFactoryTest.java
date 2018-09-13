@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import io.cucumber.needle.config.CucumberNeedleConfiguration;
 import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 

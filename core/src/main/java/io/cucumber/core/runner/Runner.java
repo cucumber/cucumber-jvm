@@ -1,15 +1,14 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.HookType;
-import cucumber.api.StepDefinitionReporter;
-import cucumber.api.event.SnippetsSuggestedEvent;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.Backend;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.api.event.HookType;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.api.event.SnippetsSuggestedEvent;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,14 +18,14 @@ public final class Runner {
     private final CachingGlue glue = new CachingGlue();
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
-    private final RuntimeOptions runtimeOptions;
+    private final Options options;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, Options options) {
         this.bus = bus;
-        this.runtimeOptions = runtimeOptions;
+        this.options = options;
         this.backends = backends;
         for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.getGlue());
+            backend.loadGlue(glue, options.getGlue());
         }
 
     }
@@ -56,7 +55,7 @@ public final class Runner {
             addTestStepsForPickleSteps(testSteps, pickleEvent);
             addTestStepsForAfterHooks(afterHooks, pickleEvent.pickle.getTags());
         }
-        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runtimeOptions.isDryRun());
+        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, options.isDryRun());
     }
 
     private void addTestStepsForPickleSteps(List<PickleStepTestStep> testSteps, PickleEvent pickleEvent) {
@@ -67,7 +66,7 @@ public final class Runner {
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
                     for (Backend backend : backends) {
-                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runtimeOptions.getSnippetType().getFunctionNameGenerator());
+                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", options.getSnippetType().getFunctionNameGenerator());
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {

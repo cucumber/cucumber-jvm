@@ -1,7 +1,7 @@
 package io.cucumber.spring.commonglue;
 
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.annotation.en.Given;
 
 public class UnusedGlue {
     public UnusedGlue() {

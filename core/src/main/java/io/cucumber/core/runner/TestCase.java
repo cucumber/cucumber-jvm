@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import cucumber.api.Result;
-import cucumber.api.TestStep;
-import cucumber.api.event.TestCaseFinished;
-import cucumber.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestStep;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestCaseStarted;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
@@ -12,7 +12,7 @@ import io.cucumber.core.event.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-final class TestCase implements cucumber.api.TestCase {
+final class TestCase implements io.cucumber.core.api.event.TestCase {
     private final PickleEvent pickleEvent;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;

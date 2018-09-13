@@ -1,8 +1,8 @@
-package io.cucumber.runtime.kotlin.test;
+package io.cucumber.kotlin;
 
-import cucumber.api.Scenario
+import io.cucumber.core.api.Scenario
 import io.cucumber.datatable.DataTable
-import cucumber.api.java8.En
+import io.cucumber.java.api.lambda.En
 import org.junit.Assert.*
 
 var lastInstance : LambdaStepdefs? = null

@@ -1,7 +1,7 @@
 package io.cucumber.spring.metaconfig.dirties;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.core.api.options.CucumberOptions;
+import io.cucumber.junit.api.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)

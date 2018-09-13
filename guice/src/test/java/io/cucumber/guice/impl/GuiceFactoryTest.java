@@ -1,20 +1,21 @@
 package io.cucumber.guice.impl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
-import cucumber.api.guice.CucumberModules;
-import cucumber.api.guice.CucumberScopes;
-import cucumber.api.java.ObjectFactory;
-import io.cucumber.guice.ScenarioScoped;
+import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.guice.api.CucumberModules;
+import io.cucumber.guice.api.CucumberScopes;
+import io.cucumber.guice.api.ScenarioScoped;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.inject.Singleton;
 import java.util.Arrays;
@@ -23,9 +24,12 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.rules.ExpectedException.none;
 
 public class GuiceFactoryTest {
+
+    @Rule
+    public ExpectedException expectedException = none();
 
     private ObjectFactory factory;
     private List<?> instancesFromSameScenario;
@@ -38,7 +42,7 @@ public class GuiceFactoryTest {
     }
 
     @Test
-    public void factoryCanBeIntantiatedWithDefaultConstructor() throws Exception {
+    public void factoryCanBeIntantiatedWithDefaultConstructor() {
         factory = new GuiceFactory();
         assertThat(factory, notNullValue());
     }
@@ -52,16 +56,12 @@ public class GuiceFactoryTest {
     @Test
     public void factoryStartFailsIfScenarioScopeIsNotBound() {
         factory = new GuiceFactory(Guice.createInjector());
-        try {
-            factory.start();
-            fail();
-        } catch (ConfigurationException e) {
-            assertThat(e.getMessage(),
-                    containsString("No implementation for io.cucumber.guice.ScenarioScope was bound"));
-        }
+        expectedException.expectMessage(containsString("No implementation for io.cucumber.guice.api.ScenarioScope was bound"));
+        factory.start();
     }
 
-    static class UnscopedClass {}
+    static class UnscopedClass {
+    }
 
     @Test
     public void shouldGiveNewInstancesOfUnscopedClassWithinAScenario() {
@@ -78,7 +78,8 @@ public class GuiceFactoryTest {
     }
 
     @ScenarioScoped
-    static class AnnotatedScenarioScopedClass {}
+    static class AnnotatedScenarioScopedClass {
+    }
 
     @Test
     public void shouldGiveTheSameInstanceOfAnnotatedScenarioScopedClassWithinAScenario() {
@@ -94,7 +95,9 @@ public class GuiceFactoryTest {
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 
-    @Singleton static class AnnotatedSingletonClass {}
+    @Singleton
+    static class AnnotatedSingletonClass {
+    }
 
     @Test
     public void shouldGiveTheSameInstanceOfAnnotatedSingletonClassWithinAScenario() {
@@ -110,10 +113,12 @@ public class GuiceFactoryTest {
         assertThat(instancesFromDifferentScenarios, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
-    static class BoundScenarioScopedClass {}
+    static class BoundScenarioScopedClass {
+    }
 
     final AbstractModule boundScenarioScopedClassModule = new AbstractModule() {
-        @Override protected void configure() {
+        @Override
+        protected void configure() {
             bind(BoundScenarioScopedClass.class).in(CucumberScopes.SCENARIO);
         }
     };
@@ -132,10 +137,12 @@ public class GuiceFactoryTest {
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 
-    static class BoundSingletonClass {}
+    static class BoundSingletonClass {
+    }
 
     final AbstractModule boundSingletonClassModule = new AbstractModule() {
-        @Override protected void configure() {
+        @Override
+        protected void configure() {
             bind(BoundSingletonClass.class).in(Scopes.SINGLETON);
         }
     };
