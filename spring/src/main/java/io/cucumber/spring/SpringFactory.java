@@ -60,6 +60,7 @@ import static java.util.Arrays.asList;
  * </ul>
  */
 public class SpringFactory implements ObjectFactory {
+
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
 
