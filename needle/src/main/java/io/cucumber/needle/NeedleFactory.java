@@ -14,9 +14,7 @@ import static java.lang.String.format;
 /**
  * Needle factory for object resolution inside of cucumber tests.
  */
-public class NeedleFactory
-        extends NeedleTestcase
-        implements ObjectFactory {
+public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
     private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<Class<?>, Object>();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -98,5 +96,4 @@ public class NeedleFactory
     static InjectionProvider<?>[] setUpInjectionProviders(final String resourceName) {
         return new CucumberNeedleConfiguration(resourceName).getInjectionProviders();
     }
-
 }

@@ -9,9 +9,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PicoFactory
-        implements ObjectFactory {
-
+public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
@@ -49,5 +47,4 @@ public class PicoFactory
             }
         }
     }
-
 }

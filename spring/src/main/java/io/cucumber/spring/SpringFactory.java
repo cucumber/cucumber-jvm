@@ -59,9 +59,7 @@ import static java.util.Arrays.asList;
  * </li>
  * </ul>
  */
-public class SpringFactory
-        implements ObjectFactory {
-
+public class SpringFactory implements ObjectFactory {
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
 
@@ -255,5 +253,4 @@ public class SpringFactory
             } while (context != null);
         }
     }
-
 }

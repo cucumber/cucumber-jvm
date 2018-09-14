@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class OpenEJBObjectFactory
-        implements ObjectFactory {
-
+public class OpenEJBObjectFactory implements ObjectFactory {
     private final List<String> classes = new ArrayList<String>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
     private EJBContainer container;
@@ -62,5 +60,5 @@ public class OpenEJBObjectFactory
         instances.put(type, object);
         return object;
     }
-
 }
+
