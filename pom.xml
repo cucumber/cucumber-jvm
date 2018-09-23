@@ -519,12 +519,19 @@
         <module>weld</module>
         <module>openejb</module>
         <module>needle</module>
-        <module>examples</module>
-        <!--This should always be the last module -->
-        <module>continuous-deployment</module>
     </modules>
 
     <profiles>
+        <profile>
+            <id>examples</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>examples</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>sign-source-javadoc</id>
             <build>
