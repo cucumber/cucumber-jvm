@@ -3,14 +3,15 @@ package io.cucumber.java.lambda;
 import static org.junit.Assert.assertEquals;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.Function;
-import io.cucumber.java.GlueBase;
 import io.cucumber.java.Java8StepDefinition;
 import io.cucumber.java.JavaBackend;
+import io.cucumber.java.LambdaGlue;
 import io.cucumber.java.api.StepdefBody;
 import io.cucumber.core.backend.StepDefinition;
 
-public class AnonInnerClassStepdefs implements GlueBase {
+import java.util.function.Function;
+
+public class AnonInnerClassStepdefs implements LambdaGlue {
 
     public AnonInnerClassStepdefs() {
         JavaBackend.INSTANCE.get().addStepDefinition(new Function<TypeRegistry, StepDefinition>() {

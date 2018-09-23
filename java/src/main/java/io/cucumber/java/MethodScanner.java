@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.core.runtime.Invoker;
 import io.cucumber.java.api.After;
 import io.cucumber.java.api.AfterStep;
 import io.cucumber.java.api.Before;
@@ -55,7 +56,10 @@ class MethodScanner {
      * @param glueCodeClass the class where the method is declared.
      */
     void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
-        Annotation[] methodAnnotations = method.getAnnotations();
+        scan(javaBackend, method, glueCodeClass, method.getAnnotations());
+    }
+
+    private void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass, Annotation[] methodAnnotations) {
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation)) {
                 validateMethod(method, glueCodeClass);
@@ -63,6 +67,8 @@ class MethodScanner {
             } else if (isStepdefAnnotation(annotation)) {
                 validateMethod(method, glueCodeClass);
                 javaBackend.addStepDefinition(annotation, method);
+            } else if (isRepeatedStepdefAnnotation(annotation)) {
+                scan(javaBackend, method, glueCodeClass, repeatedAnnotations(annotation));
             }
         }
     }
@@ -85,4 +91,20 @@ class MethodScanner {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.getAnnotation(StepDefAnnotation.class) != null;
     }
+
+
+    private boolean isRepeatedStepdefAnnotation(Annotation annotation) {
+        Class<? extends Annotation> annotationClass = annotation.annotationType();
+        return annotationClass.getAnnotation(StepDefAnnotations.class) != null;
+    }
+
+    private Annotation[] repeatedAnnotations(Annotation annotation)   {
+        try {
+            Method expressionMethod = annotation.getClass().getMethod("value");
+            return ( Annotation[]) Invoker.invoke(annotation, expressionMethod, 0);
+        } catch (Throwable e) {
+            throw new CucumberException(e);
+        }
+    }
+
 }

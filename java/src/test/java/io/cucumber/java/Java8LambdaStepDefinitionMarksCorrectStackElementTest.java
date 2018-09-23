@@ -9,6 +9,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.function.Function;
+
 import static java.util.Locale.ENGLISH;
 
 public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
