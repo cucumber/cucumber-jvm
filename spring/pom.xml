@@ -68,4 +68,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
+    </properties>
 </project>
