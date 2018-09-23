@@ -131,15 +131,14 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     void addStepDefinition(Annotation annotation, Method method) {
         try {
-            if (objectFactory.addClass(method.getDeclaringClass())) {
-                glue.addStepDefinition(
-                    new JavaStepDefinition(
-                        method,
-                        expression(annotation),
-                        timeoutMillis(annotation),
-                        objectFactory,
-                        typeRegistry));
-            }
+            objectFactory.addClass(method.getDeclaringClass());
+            glue.addStepDefinition(
+                new JavaStepDefinition(
+                    method,
+                    expression(annotation),
+                    timeoutMillis(annotation),
+                    objectFactory,
+                    typeRegistry));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable e) {
