@@ -409,7 +409,7 @@ public class PrettyFormatterTest {
 
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
-        StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not yet )?confirmed)?");
+        StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not yet )?confirmed)?$");
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "the order is placed and not yet confirmed";
@@ -427,7 +427,7 @@ public class PrettyFormatterTest {
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
-        StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not( yet)? )?confirmed)?");
+        StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not( yet)? )?confirmed)?$");
         String stepText = "the order is placed and not yet confirmed";
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), DefinitionArgument.createArguments(expression.match(stepText)));
 
