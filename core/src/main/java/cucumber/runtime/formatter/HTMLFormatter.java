@@ -381,7 +381,7 @@ final class HTMLFormatter implements EventListener {
         return false;
     }
 
-    private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
+    Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         if (!testStep.getStepArgument().isEmpty()) {
@@ -396,6 +396,9 @@ final class HTMLFormatter implements EventListener {
         if (astNode != null) {
             Step step = (Step) astNode.node;
             stepMap.put("keyword", step.getKeyword());
+        }
+        if (!testStep.getDefinitionArgument().isEmpty()) {
+            stepMap.put("arguments", createArgumentsMap(testStep.getDefinitionArgument()));
         }
 
         return stepMap;
@@ -413,6 +416,18 @@ final class HTMLFormatter implements EventListener {
             rowList.add(createRowMap(row));
         }
         return rowList;
+    }
+
+    private List<Map<String, Object>> createArgumentsMap(List<cucumber.api.Argument> arguments) {
+        List<Map<String, Object>> argList = new ArrayList<Map<String, Object>>();
+        for (cucumber.api.Argument argument : arguments) {
+            Map<String, Object> argMap = new HashMap<String, Object>();
+            argMap.put("value", argument.getValue());
+            argMap.put("start", argument.getStart());
+            argMap.put("end", argument.getEnd());
+            argList.add(argMap);
+        }
+        return argList;
     }
 
     private Map<String, Object> createRowMap(PickleRow row) {
