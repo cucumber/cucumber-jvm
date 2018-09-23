@@ -1,12 +1,14 @@
 package io.cucumber.java.api.annotation.${lang};
 
 import io.cucumber.java.StepDefAnnotation;
+import io.cucumber.java.StepDefAnnotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.Documented;
 
 /**
  * To execute steps in a feature file the steps must be
@@ -29,6 +31,7 @@ import java.lang.annotation.Documented;
 @Target(ElementType.METHOD)
 @StepDefAnnotation
 @Documented
+@Repeatable(${kw}.${kw}s.class)
 public @interface ${kw} {
     /**
      * @return a cucumber or regular expression
@@ -40,5 +43,15 @@ public @interface ${kw} {
      */
     long timeout() default 0;
 
+    /**
+     * Allows the use of multiple '${kw}'s on a single method.
+     */
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @StepDefAnnotations
+    @Documented
+    @interface ${kw}s {
+        ${kw}[] value();
+    }
 }
 
