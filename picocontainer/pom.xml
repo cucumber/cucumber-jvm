@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>4.0.1-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-picocontainer</artifactId>
@@ -53,12 +53,12 @@
                         <configuration>
                             <target>
                                 <echo message="Running CLI test for picocontainer" />
-                                <java classname="cucumber.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
+                                <java classname="io.cucumber.core.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
                                     <arg value="--plugin" />
                                     <arg value="progress" />
                                     <arg value="--glue" />
                                     <arg value="cucumber.runtime.java.picocontainer" />
-                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
+                                    <arg value="${basedir}/src/test/resources/io/cucumber/picocontainer" />
                                 </java>
                             </target>
                         </configuration>
