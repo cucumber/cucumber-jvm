@@ -3,7 +3,7 @@ package io.cucumber.java;
 import io.cucumber.java.api.HookBody;
 import io.cucumber.java.api.HookNoArgsBody;
 
-public interface LambdaGlueBase extends GlueBase {
+public interface LambdaGlue {
 
     String[] EMPTY_TAG_EXPRESSIONS = new String[0];
     long NO_TIMEOUT = 0;
