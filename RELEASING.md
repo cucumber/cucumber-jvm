@@ -23,7 +23,6 @@ mvn versions:display-dependency-updates
 
 Replace version numbers in:
 
-* `examples/java-gradle/build.gradle`
 * `CHANGELOG.md`
 
 Then run (replace X.Y.Z below with the next release number): 
@@ -37,7 +36,7 @@ git commit -am "Prepare for release X.Y.Z"
 Now release everything:
 
 ```
-mvn release:clean release:prepare -Pandroid-examples -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
+mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
 ```
 
 Travis will now deploy everything. Once travis is done go into [Nexus](https://oss.sonatype.org/) and inspect, 
