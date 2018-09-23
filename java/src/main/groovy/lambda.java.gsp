@@ -13,7 +13,7 @@ import io.cucumber.java.api.StepdefBody.A9;
 
 import io.cucumber.java.LambdaGlueRegistry;
 import io.cucumber.java.Java8StepDefinition;
-import io.cucumber.java.LambdaGlueBase;
+import io.cucumber.java.LambdaGlue;
 
 /**
  * ${locale.getDisplayLanguage()}
@@ -34,7 +34,7 @@ import io.cucumber.java.LambdaGlueBase;
  * attempt to transform the data table or doc string to the the
  * type of last argument.
  */
-public interface ${className} extends LambdaGlueBase {
+public interface ${className} extends LambdaGlue {
 <% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
     /**
      * Creates a new step definition.

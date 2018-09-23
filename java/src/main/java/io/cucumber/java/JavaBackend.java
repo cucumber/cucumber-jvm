@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import static io.cucumber.core.io.MultiLoader.packageName;
 import static io.cucumber.java.ObjectFactoryLoader.loadObjectFactory;
@@ -41,7 +42,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     private final MethodScanner methodScanner;
     private Glue glue;
-    private List<Class<? extends GlueBase>> glueBaseClasses = new ArrayList<Class<? extends GlueBase>>();
+    private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
 
     /**
      * The constructor called by reflection by default.
@@ -73,14 +74,14 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
         // Scan for Java8 style glue (lambdas)
         for (final String gluePath : gluePaths) {
-            Collection<Class<? extends GlueBase>> glueDefinerClasses = classFinder.getDescendants(GlueBase.class, packageName(gluePath));
-            for (final Class<? extends GlueBase> glueClass : glueDefinerClasses) {
+            Collection<Class<? extends LambdaGlue>> glueDefinerClasses = classFinder.getDescendants(LambdaGlue.class, packageName(gluePath));
+            for (final Class<? extends LambdaGlue> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {
                     continue;
                 }
 
                 if (objectFactory.addClass(glueClass)) {
-                    glueBaseClasses.add(glueClass);
+                    lambdaGlueClasses.add(glueClass);
                 }
             }
         }
@@ -107,8 +108,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         // in the constructor.
         try {
             INSTANCE.set(this);
-            for (Class<? extends GlueBase> glueBaseClass : glueBaseClasses) {
-                objectFactory.getInstance(glueBaseClass);
+            for (Class<? extends LambdaGlue> lambdaGlueClass: lambdaGlueClasses) {
+                objectFactory.getInstance(lambdaGlueClass);
             }
         } finally {
             INSTANCE.remove();
