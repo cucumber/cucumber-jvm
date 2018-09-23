@@ -2,7 +2,19 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [4.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...master) (In Git)
+## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...master) (In Git)
+
+### Added
+
+### Changed
+
+### Deprecated
+   
+### Removed
+
+### Fixed
+
+## [4.0.0](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...v4.0.0) (In Git)
 
 ### Added
  * [Core] Added extraGlue option to `@CucumberOptions` ([#1439](https://github.com/cucumber/cucumber-jvm/pull/1439) Eduardo Kalinowski) 
@@ -20,7 +32,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Weld] Document the need for a beans.xml per source root ([#923](https://github.com/cucumber/cucumber-jvm/pull/923) Harald Albers)
  * [Core] Upgrade cucumber-expressions to [6.1.0](https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/CHANGELOG.md#610---2018-09-23) ([#1464](https://github.com/cucumber/cucumber-jvm/pull/1464) M.P. Korstanje)
     * ParameterType.fromEnum(MyEnumClass.class) to make it easier to register enums.
- 
+
 ### Changed
   * [Core] Upgrade datatable to 1.1.3 ([#1414](https://github.com/cucumber/cucumber-jvm/pull/1414) Łukasz Suski)
     * Allows the registration of default TableEntryByTypeTransformer and TableCellByTypeTransformer
