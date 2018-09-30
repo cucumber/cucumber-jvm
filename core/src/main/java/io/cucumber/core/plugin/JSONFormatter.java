@@ -17,7 +17,6 @@ import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.api.event.TestStepStarted;
 import io.cucumber.core.api.event.WriteEvent;
 import gherkin.ast.Background;
-import gherkin.ast.DocString;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
@@ -247,7 +246,7 @@ public final class JSONFormatter implements EventListener {
         if (!testStep.getStepArgument().isEmpty()) {
             Argument argument = testStep.getStepArgument().get(0);
             if (argument instanceof PickleString) {
-                stepMap.put("doc_string", createDocStringMap(argument, astNode));
+                stepMap.put("doc_string", createDocStringMap(argument));
             } else if (argument instanceof PickleTable) {
                 stepMap.put("rows", createDataTableList(argument));
             }
@@ -260,14 +259,12 @@ public final class JSONFormatter implements EventListener {
         return stepMap;
     }
 
-    private Map<String, Object> createDocStringMap(Argument argument, TestSourcesModel.AstNode astNode) {
+    private Map<String, Object> createDocStringMap(Argument argument) {
         Map<String, Object> docStringMap = new HashMap<String, Object>();
         PickleString docString = ((PickleString)argument);
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
-        if (astNode != null) {
-            docStringMap.put("content_type", ((DocString)((Step)astNode.node).getArgument()).getContentType());
-        }
+        docStringMap.put("content_type", docString.getContentType());
         return docStringMap;
     }
 
