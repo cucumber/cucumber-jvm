@@ -26,16 +26,25 @@ public final class Plugins {
 
     private final PluginFactory pluginFactory;
     private final EventPublisher eventPublisher;
-    private final EventPublisher orderedEventPublisher;
+    private EventPublisher orderedEventPublisher;
     private final RuntimeOptions runtimeOptions;
 
     public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventPublisher eventPublisher, RuntimeOptions runtimeOptions) {
         this.classLoader = classLoader;
         this.pluginFactory = pluginFactory;
         this.eventPublisher = eventPublisher;
-        this.orderedEventPublisher = createCanonicalOrderEventPublisher();
         this.runtimeOptions = runtimeOptions;
         this.plugins = createPlugins();
+    }
+
+
+    private EventPublisher getOrderedEventPublisher() {
+        // The ordered event publisher stores all events
+        // so don't create it unless we need it.
+        if(orderedEventPublisher == null){
+            orderedEventPublisher = createCanonicalOrderEventPublisher();
+        }
+        return orderedEventPublisher;
     }
 
     private EventPublisher createCanonicalOrderEventPublisher() {
@@ -108,9 +117,10 @@ public final class Plugins {
             formatter.setEventPublisher(eventPublisher);
         } else if (plugin instanceof EventListener) {
             EventListener formatter = (EventListener) plugin;
-            formatter.setEventPublisher(orderedEventPublisher);
+            formatter.setEventPublisher(getOrderedEventPublisher());
         }
     }
+
 
     /**
      * Creates a dynamic proxy that multiplexes method invocations to all plugins of the same type.
