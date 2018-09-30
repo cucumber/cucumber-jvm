@@ -1,14 +1,12 @@
 package io.cucumber.java;
 
-import static java.util.Arrays.asList;
-
+import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.java.api.HookBody;
-import io.cucumber.java.api.HookNoArgsBody;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.filter.TagPredicate;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.runtime.Invoker;
+import io.cucumber.java.api.HookBody;
+import io.cucumber.java.api.HookNoArgsBody;
 
 import java.util.Collection;
 
@@ -20,20 +18,20 @@ public class Java8HookDefinition implements HookDefinition {
     private final HookBody hookBody;
     private final StackTraceElement location;
 
-    private Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookBody hookBody, HookNoArgsBody hookNoArgsBody) {
+    private Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, HookBody hookBody, HookNoArgsBody hookNoArgsBody) {
         this.order = order;
         this.timeoutMillis = timeoutMillis;
-        this.tagPredicate = new TagPredicate(asList(tagExpressions));
+        this.tagPredicate = new TagPredicate(tagExpressions);
         this.hookBody = hookBody;
         this.hookNoArgsBody = hookNoArgsBody;
         this.location = new Exception().getStackTrace()[3];
     }
 
-    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookBody hookBody) {
+    Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, HookBody hookBody) {
         this(tagExpressions, order, timeoutMillis, hookBody, null);
     }
 
-    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
+    Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
         this(tagExpressions, order, timeoutMillis, null, hookNoArgsBody);
     }
 

@@ -13,9 +13,9 @@ public final class Filters {
 
     public Filters(Options options) {
         filters = new ArrayList<>();
-        List<String> tagFilters = options.getTagFilters();
-        if (!tagFilters.isEmpty()) {
-            this.filters.add(new TagPredicate(tagFilters));
+        List<String> tagExpressions = options.getTagExpressions();
+        if (!tagExpressions.isEmpty()) {
+            this.filters.add(new TagPredicate(tagExpressions));
         }
         List<Pattern> nameFilters = options.getNameFilters();
         if (!nameFilters.isEmpty()) {

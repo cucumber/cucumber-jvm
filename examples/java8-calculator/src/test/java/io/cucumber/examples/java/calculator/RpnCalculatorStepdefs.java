@@ -30,7 +30,7 @@ public class RpnCalculatorStepdefs implements En {
         Then("the result is {int}", (Integer expected) -> assertEquals(expected.doubleValue(), calc.value()));
 
 
-        Before(new String[]{"not @foo"}, (Scenario scenario) -> {
+        Before("not @foo", (Scenario scenario) -> {
             scenario.write("Runs before scenarios *not* tagged with @foo");
         });
 

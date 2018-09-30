@@ -27,13 +27,20 @@ public class TagPredicateTest {
     private static final String NOT_FOO_TAG_VALUE = "not @FOO";
     private static final String FOO_OR_BAR_TAG_VALUE = "@FOO or @BAR";
     private static final String FOO_AND_BAR_TAG_VALUE = "@FOO and @BAR";
-    private static final String OLD_STYLE_NOT_FOO_TAG_VALUE = "~@FOO";
-    private static final String OLD_STYLE_FOO_OR_BAR_TAG_VALUE = "@FOO,@BAR";
 
     @Test
     public void empty_tag_predicate_matches_pickle_with_any_tags() {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
-        TagPredicate predicate = new TagPredicate(null);
+        TagPredicate predicate = new TagPredicate("");
+
+        assertTrue(predicate.apply(pickleEvent));
+    }
+
+
+    @Test
+    public void list_of_empty_tag_predicates_matches_pickle_with_any_tags() {
+        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
+        TagPredicate predicate = new TagPredicate(asList("", ""));
 
         assertTrue(predicate.apply(pickleEvent));
     }
@@ -124,38 +131,6 @@ public class TagPredicateTest {
         TagPredicate predicate = new TagPredicate(asList(FOO_OR_BAR_TAG_VALUE));
 
         assertFalse(predicate.apply(pickleEvent));
-    }
-
-    @Test
-    public void old_style_not_tag_predicate_is_handled() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(OLD_STYLE_NOT_FOO_TAG_VALUE));
-
-        assertTrue(predicate.apply(pickleEvent));
-    }
-
-    @Test
-    public void old_style_or_tag_predicate_is_handled() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
-        TagPredicate predicate = new TagPredicate(asList(OLD_STYLE_FOO_OR_BAR_TAG_VALUE));
-
-        assertTrue(predicate.apply(pickleEvent));
-    }
-
-    @Test
-    public void multiple_tag_expressions_are_combined_with_and() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG, BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE, BAR_TAG_VALUE));
-
-        assertTrue(predicate.apply(pickleEvent));
-    }
-
-    @Test
-    public void old_and_new_style_tag_expressions_can_be_combined() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(BAR_TAG_VALUE, OLD_STYLE_NOT_FOO_TAG_VALUE));
-
-        assertTrue(predicate.apply(pickleEvent));
     }
 
     private PickleEvent createPickleWithTags(List<PickleTag> tags) {

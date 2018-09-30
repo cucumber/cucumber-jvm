@@ -9,24 +9,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 
 public final class TagPredicate implements PicklePredicate {
-    private final List<Expression> expressions = new ArrayList<Expression>();
-    private final List<TagExpressionOld> oldStyleExpressions = new ArrayList<TagExpressionOld>();
+    private final List<Expression> expressions = new ArrayList<>();
 
-    public TagPredicate(List<String> tagExpressions) {
+    public TagPredicate(String tagExpression) {
+        this(tagExpression.isEmpty() ? emptyList() : singletonList(tagExpression));
+    }
+
+    TagPredicate(List<String> tagExpressions) {
         if (tagExpressions == null) {
             return;
         }
         TagExpressionParser parser = new TagExpressionParser();
         for (String tagExpression : tagExpressions) {
-            if (TagExpressionOld.isOldTagExpression(tagExpression)) {
-                oldStyleExpressions.add(new TagExpressionOld(asList(tagExpression)));
-            } else {
-                expressions.add(parser.parse(tagExpression));
-            }
+            expressions.add(parser.parse(tagExpression));
         }
     }
 
@@ -36,12 +36,11 @@ public final class TagPredicate implements PicklePredicate {
     }
 
     public boolean apply(Collection<PickleTag> pickleTags) {
-        for (TagExpressionOld oldStyleExpression : oldStyleExpressions) {
-            if (!oldStyleExpression.evaluate(pickleTags)) {
-                return false;
-            }
+        if (expressions.isEmpty()) {
+            return true;
         }
-        List<String> tags = new ArrayList<String>();
+
+        List<String> tags = new ArrayList<>();
         for (PickleTag pickleTag : pickleTags) {
             tags.add(pickleTag.getName());
         }

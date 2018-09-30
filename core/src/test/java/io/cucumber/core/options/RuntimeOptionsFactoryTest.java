@@ -8,8 +8,6 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -76,7 +74,7 @@ public class RuntimeOptionsFactoryTest {
     public void create_with_no_name() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NoName.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertTrue(runtimeOptions.getTagFilters().isEmpty());
+        assertTrue(runtimeOptions.getTagExpressions().isEmpty());
         assertTrue(runtimeOptions.getNameFilters().isEmpty());
         assertTrue(runtimeOptions.getLineFilters().isEmpty());
     }
