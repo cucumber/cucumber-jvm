@@ -1,29 +1,27 @@
-package cucumber.runtime.formatter;
+package io.cucumber.core.plugin;
 
-import cucumber.api.event.ConcurrentEventListener;
-import cucumber.api.event.Event;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.StrictAware;
-import cucumber.runner.CanonicalOrderEventPublisher;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.plugin.ColorAware;
+import io.cucumber.core.api.plugin.StrictAware;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import java.util.Collections;
-
-import static java.lang.ClassLoader.getSystemClassLoader;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.quality.Strictness.STRICT_STUBS;
@@ -32,62 +30,60 @@ public class PluginsTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule().strictness(STRICT_STUBS);
+
     @Mock
     private EventPublisher rootEventPublisher;
-
-    private PluginFactory pluginFactory = new PluginFactory();
-
+    @Mock
+    private ResourceLoader resourceLoader;
     @Captor
     private ArgumentCaptor<EventPublisher> eventPublisher;
 
+    private PluginFactory pluginFactory = new PluginFactory();
+
     @Test
     public void shouldSetStrictOnPlugin() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--strict");
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
-        StrictAware plugin = Mockito.mock(StrictAware.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("--strict"));
+        Plugins plugins = new Plugins(pluginFactory, rootEventPublisher, runtimeOptions);
+        StrictAware plugin = mock(StrictAware.class);
         plugins.addPlugin(plugin);
         verify(plugin).setStrict(true);
     }
 
-
     @Test
     public void shouldSetMonochromeOnPlugin() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--monochrome");
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
-        ColorAware plugin = Mockito.mock(ColorAware.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("--monochrome"));
+        Plugins plugins = new Plugins(pluginFactory, rootEventPublisher, runtimeOptions);
+        ColorAware plugin = mock(ColorAware.class);
         plugins.addPlugin(plugin);
         verify(plugin).setMonochrome(true);
     }
 
-
     @Test
     public void shouldSetConcurrentEventListener() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
-        ConcurrentEventListener plugin = Mockito.mock(ConcurrentEventListener.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, emptyList());
+        Plugins plugins = new Plugins(pluginFactory, rootEventPublisher, runtimeOptions);
+        ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
         verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
     }
 
-
     @Test
     public void shouldSetNonConcurrentEventListener() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
-        EventListener plugin = Mockito.mock(EventListener.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, emptyList());
+        Plugins plugins = new Plugins(pluginFactory, rootEventPublisher, runtimeOptions);
+        EventListener plugin = mock(EventListener.class);
         plugins.addPlugin(plugin);
         verify(plugin, times(1)).setEventPublisher(eventPublisher.capture());
         assertEquals(CanonicalOrderEventPublisher.class, eventPublisher.getValue().getClass());
     }
 
-
     @Test
     public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
-        EventListener plugin = Mockito.mock(EventListener.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, emptyList());
+        Plugins plugins = new Plugins(pluginFactory, rootEventPublisher, runtimeOptions);
+        EventListener plugin = mock(EventListener.class);
         plugins.addPlugin(plugin);
-        verify(rootEventPublisher, times(1)).registerHandlerFor(eq(Event.class), ArgumentMatchers.<EventHandler<Event>>any());
+        verify(rootEventPublisher, times(1)).registerHandlerFor(eq(Event.class), ArgumentMatchers.any());
     }
 
 }

@@ -20,15 +20,24 @@ public final class Plugins {
 
     private final PluginFactory pluginFactory;
     private final EventPublisher eventPublisher;
-    private final EventPublisher orderedEventPublisher;
+    private EventPublisher orderedEventPublisher;
     private final Options options;
 
     public Plugins(PluginFactory pluginFactory, EventPublisher eventPublisher, Options options) {
         this.pluginFactory = pluginFactory;
         this.eventPublisher = eventPublisher;
-        this.orderedEventPublisher = createCanonicalOrderEventPublisher();
         this.options = options;
         this.plugins = createPlugins();
+    }
+
+
+    private EventPublisher getOrderedEventPublisher() {
+        // The ordered event publisher stores all events
+        // so don't create it unless we need it.
+        if(orderedEventPublisher == null){
+            orderedEventPublisher = createCanonicalOrderEventPublisher();
+        }
+        return orderedEventPublisher;
     }
 
     private EventPublisher createCanonicalOrderEventPublisher() {
@@ -103,7 +112,7 @@ public final class Plugins {
             formatter.setEventPublisher(eventPublisher);
         } else if (plugin instanceof EventListener) {
             EventListener formatter = (EventListener) plugin;
-            formatter.setEventPublisher(orderedEventPublisher);
+            formatter.setEventPublisher(getOrderedEventPublisher());
         }
     }
 
