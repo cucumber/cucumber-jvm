@@ -5,8 +5,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...master) (In Git)
 
 ### Added
+ * [Core] Reduce plugin memory usage ([#1469](https://github.com/cucumber/cucumber-jvm/pull/1469) M.P. Korstanje) 
 
 ### Changed
+ * [Core] Use the docstring content type from pickle in the json formatter ([#1265](https://github.com/cucumber/cucumber-jvm/pull/1265) Robert Wittams, M.P. Korstanje) 
 
 ### Deprecated
    
