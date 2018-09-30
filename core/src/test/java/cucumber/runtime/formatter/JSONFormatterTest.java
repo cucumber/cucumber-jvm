@@ -1220,7 +1220,7 @@ public class JSONFormatterTest {
             .withTimeServiceIncrement(stepDuration)
             .build()
             .run();
-        
+
         return report.toString();
     }
 
