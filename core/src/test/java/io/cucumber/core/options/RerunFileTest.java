@@ -6,13 +6,11 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import static io.cucumber.core.options.Env.INSTANCE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -185,7 +183,7 @@ public class RerunFileTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, env,
             asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
 
-        assertEquals(Collections.emptyList(), runtimeOptions.getTagFilters());
+        assertEquals(Collections.emptyList(), runtimeOptions.getTagExpressions());
     }
 
     private ResourceLoader mockFileResource(String path, String contents) throws IOException {

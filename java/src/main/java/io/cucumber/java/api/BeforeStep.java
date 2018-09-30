@@ -11,7 +11,7 @@ public @interface BeforeStep {
     /**
      * @return a tag expression
      */
-    String[] value() default {};
+    String value() default "";
 
     /**
      * @return max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.

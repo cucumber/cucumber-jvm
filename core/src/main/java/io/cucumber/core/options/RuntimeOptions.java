@@ -54,7 +54,7 @@ public final class RuntimeOptions
     };
 
     private final List<String> glue = new ArrayList<String>();
-    private final List<String> tagFilters = new ArrayList<String>();
+    private final List<String> tagExpressions = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
     private final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
     private final List<String> featurePaths = new ArrayList<String>();
@@ -121,7 +121,7 @@ public final class RuntimeOptions
     }
 
     private void parse(List<String> args) {
-        List<String> parsedTagFilters = new ArrayList<String>();
+        List<String> parsedTagExpressions = new ArrayList<String>();
         List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
         Map<String, List<Long>> parsedLineFilters = new HashMap<String, List<Long>>();
         List<String> parsedFeaturePaths = new ArrayList<String>();
@@ -151,7 +151,7 @@ public final class RuntimeOptions
                 String gluePath = args.remove(0);
                 parsedGlue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-                parsedTagFilters.add(args.remove(0));
+                parsedTagExpressions.add(args.remove(0));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
                 parsedPluginData.addPluginName(args.remove(0), arg.equals("--add-plugin"));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
@@ -180,9 +180,9 @@ public final class RuntimeOptions
                 processPathWithLines(parsedLineFilters, parsedFeaturePaths, new PathWithLines(arg));
             }
         }
-        if (!parsedTagFilters.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
-            tagFilters.clear();
-            tagFilters.addAll(parsedTagFilters);
+        if (!parsedTagExpressions.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
+            tagExpressions.clear();
+            tagExpressions.addAll(parsedTagExpressions);
             nameFilters.clear();
             nameFilters.addAll(parsedNameFilters);
             lineFilters.clear();
@@ -355,8 +355,8 @@ public final class RuntimeOptions
         return nameFilters;
     }
 
-    public List<String> getTagFilters() {
-        return tagFilters;
+    public List<String> getTagExpressions() {
+        return tagExpressions;
     }
 
     public Map<String, List<Long>> getLineFilters() {

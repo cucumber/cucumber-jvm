@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public interface Options {
-    List<String> getTagFilters();
+    List<String> getTagExpressions();
 
     List<Pattern> getNameFilters();
 

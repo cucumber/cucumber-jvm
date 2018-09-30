@@ -22,10 +22,10 @@ class JavaHookDefinition implements HookDefinition {
     private final int order;
     private final ObjectFactory objectFactory;
 
-    JavaHookDefinition(Method method, String[] tagExpressions, int order, long timeoutMillis, ObjectFactory objectFactory) {
+    JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
-        this.tagPredicate = new TagPredicate(asList(tagExpressions));
+        this.tagPredicate = new TagPredicate(tagExpression);
         this.order = order;
         this.objectFactory = objectFactory;
     }

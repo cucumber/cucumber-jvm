@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface AfterStep {
     /**
-     * @return a tag expression
+     * @return a tag expression, if the expression applies to the current scenario this hook will be executed.
      */
-    String[] value() default {};
+    String value() default "";
 
     /**
      * @return max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.

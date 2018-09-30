@@ -67,7 +67,7 @@ public class RuntimeOptionsTest {
     public void assigns_filters_from_tags() {
         RuntimeOptions options = createRuntimeOptions("--tags", "@keep_this", "somewhere_else");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(asList("@keep_this"), options.getTagFilters());
+        assertEquals(asList("@keep_this"), options.getTagExpressions());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--tags @clobber_with_this");
         RuntimeOptions runtimeOptions = createRuntimeOptions(properties, "--tags", "@should_be_clobbered");
-        assertEquals(asList("@clobber_with_this"), runtimeOptions.getTagFilters());
+        assertEquals(asList("@clobber_with_this"), runtimeOptions.getTagExpressions());
     }
 
     @Test
@@ -235,7 +235,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "path/file.feature:3");
         RuntimeOptions runtimeOptions = createRuntimeOptions(properties, "--tags", "@should_be_clobbered", "--name", "should_be_clobbered");
-        assertEquals(Collections.emptyList(), runtimeOptions.getTagFilters());
+        assertEquals(Collections.emptyList(), runtimeOptions.getTagExpressions());
     }
 
 
@@ -244,7 +244,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--strict");
         RuntimeOptions runtimeOptions = createRuntimeOptions(properties, "--tags", "@keep_this");
-        assertEquals(asList("@keep_this"), runtimeOptions.getTagFilters());
+        assertEquals(asList("@keep_this"), runtimeOptions.getTagExpressions());
     }
 
     @Test
@@ -277,7 +277,7 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "new newer");
         RuntimeOptions runtimeOptions = createRuntimeOptions(properties, "--tags", "@keep_this", "path/file1.feature:1");
         assertEquals(asList("new", "newer"), runtimeOptions.getFeaturePaths());
-        assertEquals(asList("@keep_this"), runtimeOptions.getTagFilters());
+        assertEquals(asList("@keep_this"), runtimeOptions.getTagExpressions());
     }
 
     @Test

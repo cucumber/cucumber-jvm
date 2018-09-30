@@ -22,13 +22,13 @@ public class TransactionStepDefs {
             TransactionSynchronizationManager.isActualTransactionActive());
     }
 
-    @Before(value = {"@txn"}, order = 99)
+    @Before(value = "@txn", order = 99)
     public void before_transaction_scenario() {
         assertFalse("A transaction is active",
                 TransactionSynchronizationManager.isActualTransactionActive());
     }
 
-    @After(value = {"@txn"}, order = 99)
+    @After(value = "@txn", order = 99)
     public void after_transaction_scenario() {
         assertFalse("A transaction is active",
                 TransactionSynchronizationManager.isActualTransactionActive());

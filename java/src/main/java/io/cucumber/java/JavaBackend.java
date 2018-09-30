@@ -154,21 +154,21 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     void addHook(Annotation annotation, Method method) {
         if (objectFactory.addClass(method.getDeclaringClass())) {
             if (annotation.annotationType().equals(Before.class)) {
-                String[] tagExpressions = ((Before) annotation).value();
+                String tagExpression = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
-                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpression, ((Before) annotation).order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(After.class)) {
-                String[] tagExpressions = ((After) annotation).value();
+                String tagExpression = ((After) annotation).value();
                 long timeout = ((After) annotation).timeout();
-                addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+                addAfterHookDefinition(new JavaHookDefinition(method, tagExpression, ((After) annotation).order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(BeforeStep.class)) {
-                String[] tagExpressions = ((BeforeStep) annotation).value();
+                String tagExpression = ((BeforeStep) annotation).value();
                 long timeout = ((BeforeStep) annotation).timeout();
-                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((BeforeStep) annotation).order(), timeout, objectFactory));
+                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpression, ((BeforeStep) annotation).order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(AfterStep.class)) {
-                String[] tagExpressions = ((AfterStep) annotation).value();
+                String tagExpression = ((AfterStep) annotation).value();
                 long timeout = ((AfterStep) annotation).timeout();
-                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((AfterStep) annotation).order(), timeout, objectFactory));
+                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpression, ((AfterStep) annotation).order(), timeout, objectFactory));
             }
         }
     }
@@ -193,7 +193,6 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         glue.addBeforeStepHook(beforeStepHook);
 
     }
-
 
     private String expression(Annotation annotation) throws Throwable {
         Method expressionMethod = annotation.getClass().getMethod("value");
