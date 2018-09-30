@@ -67,4 +67,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.picocontainer</project.Automatic-Module-Name>
+    </properties>
 </project>

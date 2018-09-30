@@ -46,4 +46,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
+    </properties>
 </project>

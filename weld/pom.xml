@@ -51,4 +51,8 @@
         </dependency>
 
     </dependencies>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.weld</project.Automatic-Module-Name>
+    </properties>
 </project>

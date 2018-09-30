@@ -120,4 +120,8 @@
 
         </plugins>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
+    </properties>
 </project>

@@ -38,4 +38,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.junit</project.Automatic-Module-Name>
+    </properties>
 </project>
