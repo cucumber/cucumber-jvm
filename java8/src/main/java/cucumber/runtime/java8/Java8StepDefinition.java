@@ -16,6 +16,7 @@ import io.cucumber.stepexpression.StepExpressionFactory;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.TypeResolver;
+import net.jodah.typetools.TypeResolver.Unknown;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -133,7 +134,12 @@ public class Java8StepDefinition implements StepDefinition {
 
         @Override
         public Type resolve() {
-            return requireNonMapOrListType(parameterInfo.getType());
+            Type type = parameterInfo.getType();
+            if (Object.class.equals(type) || Unknown.class.equals(type)) {
+                return null;
+            }
+
+            return requireNonMapOrListType(type);
         }
 
         private Type requireNonMapOrListType(Type argumentType) {

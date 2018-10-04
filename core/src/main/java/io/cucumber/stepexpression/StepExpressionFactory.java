@@ -68,16 +68,22 @@ public final class StepExpressionFactory {
         RawTableTransformer<?> tableTransform = new RawTableTransformer<Object>() {
             @Override
             public Object transform(List<List<String>> raw) {
-                return DataTable.create(raw, StepExpressionFactory.this.tableConverter)
-                    .convert(tableOrDocStringType.resolve(), transpose);
+                DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
+                Type targetType = tableOrDocStringType.resolve();
+                return dataTable.convert(targetType == null ? DataTable.class : targetType, transpose);
             }
         };
 
         DocStringTransformer<?> docStringTransform = new DocStringTransformer<Object>() {
             @Override
             public Object transform(String docString) {
-                return DataTable.create(singletonList(singletonList(docString)), StepExpressionFactory.this.tableConverter)
-                    .convert(tableOrDocStringType.resolve(), transpose);
+                Type targetType = tableOrDocStringType.resolve();
+                if (targetType == null) {
+                    return docString;
+                }
+
+                List<List<String>> raw = singletonList(singletonList(docString));
+                return DataTable.create(raw, StepExpressionFactory.this.tableConverter).convert(targetType, transpose);
             }
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
