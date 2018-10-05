@@ -14,8 +14,17 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class StepExpressionFactoryTest {
+
+    private static final TypeResolver UNKNOWN_TYPE = new TypeResolver() {
+        @Override
+        public Type resolve() {
+            return null;
+        }
+    };
+
     static class Ingredient {
         String name;
         Integer amount;
@@ -93,6 +102,22 @@ public class StepExpressionFactoryTest {
         Ingredient ingredient = ingredients.get(0);
         assertEquals(ingredient.name, "chocolate");
     }
+
+    @Test
+    public void unknown_target_type_does_no_transform_data_table() {
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
+        List<Argument> match = expression.match("Given some stuff:", table);
+        assertEquals(DataTable.create(table), match.get(0).getValue());
+    }
+
+    @Test
+    public void unknown_target_type_does_no_transform_doc_string() {
+        String docString = "A rather long and boring string of documentation";
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
+        List<Argument> match = expression.match("Given some stuff:", docString);
+        assertEquals(docString, match.get(0).getValue());
+    }
+
 
     private Type getTypeFromStepDefinition() {
         for (Method method : this.getClass().getMethods()) {

@@ -1,28 +1,28 @@
 package io.cucumber.java;
 
-import static io.cucumber.java.Java8StepDefinition.ParameterInfo.fromTypes;
-import static java.lang.String.format;
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
-
+import gherkin.pickles.PickleStep;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.api.StepdefBody;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
-import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.stepexpression.TypeResolver;
+import io.cucumber.java.api.StepdefBody;
+import net.jodah.typetools.TypeResolver.Unknown;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static io.cucumber.java.Java8StepDefinition.ParameterInfo.fromTypes;
+import static java.lang.String.format;
+import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 public class Java8StepDefinition implements StepDefinition {
 
@@ -134,7 +134,12 @@ public class Java8StepDefinition implements StepDefinition {
 
         @Override
         public Type resolve() {
-            return requireNonMapOrListType(parameterInfo.getType());
+            Type type = parameterInfo.getType();
+            if (Object.class.equals(type) || Unknown.class.equals(type)) {
+                return null;
+            }
+
+            return requireNonMapOrListType(type);
         }
 
         private Type requireNonMapOrListType(Type argumentType) {
@@ -159,11 +164,6 @@ public class Java8StepDefinition implements StepDefinition {
         static List<ParameterInfo> fromTypes(Type[] genericParameterTypes) {
             List<ParameterInfo> result = new ArrayList<>();
             for (Type genericParameterType : genericParameterTypes) {
-                for (Annotation annotation : genericParameterType.getClass().getAnnotations()) {
-                    System.out.println(annotation.toString());
-                }
-
-
                 result.add(new ParameterInfo(genericParameterType));
             }
             return result;
