@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>cucumber-java8</artifactId>
+    <version>4.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Java8</name>
 
