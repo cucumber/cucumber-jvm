@@ -1,6 +1,7 @@
 package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
+import cucumber.api.CucumberOptionsProvider;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
