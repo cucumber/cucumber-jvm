@@ -21,7 +21,7 @@ public class StepExpressionFactoryTest {
     private static final TypeResolver UNKNOWN_TYPE = new TypeResolver() {
         @Override
         public Type resolve() {
-            return null;
+            return Object.class;
         }
     };
 

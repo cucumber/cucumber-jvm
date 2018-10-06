@@ -135,8 +135,8 @@ public class Java8StepDefinition implements StepDefinition {
         @Override
         public Type resolve() {
             Type type = parameterInfo.getType();
-            if (Object.class.equals(type) || Unknown.class.equals(type)) {
-                return null;
+            if (Unknown.class.equals(type)) {
+                return Object.class;
             }
 
             return requireNonMapOrListType(type);
