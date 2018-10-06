@@ -61,6 +61,7 @@ Fail * </pre></blockquote>
  * Cucumber-Eclipse. Instead it is recommended to use Cucumbers `Before` and `After` hooks.
  *
  * @see CucumberOptions
+ * @see CucumberOptionsProvider
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
