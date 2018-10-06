@@ -83,6 +83,7 @@
         <typetools.version>0.5.0</typetools.version>
         <cucumber-expressions.version>6.1.0</cucumber-expressions.version>
         <datatable.version>1.1.3</datatable.version>
+        <geantyref.version>1.3.4</geantyref.version>
     </properties>
     <licenses>
         <license>
@@ -479,6 +480,11 @@
                 <groupId>net.jodah</groupId>
                 <artifactId>typetools</artifactId>
                 <version>${typetools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.leangen.geantyref</groupId>
+                <artifactId>geantyref</artifactId>
+                <version>${geantyref.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,13 +1,14 @@
 package cucumber.runtime;
 
+import static java.util.Arrays.asList;
 import cucumber.api.CucumberOptions;
+import cucumber.api.CucumberOptionsProvider;
 import cucumber.runtime.io.MultiLoader;
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 public class RuntimeOptionsFactory {
     private final Class clazz;
@@ -28,6 +29,11 @@ public class RuntimeOptionsFactory {
 
         for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = getOptions(classWithOptions);
+            AbstractCucumberOptionsProvider optionsProvider = getOptionsProvider(classWithOptions);
+            if (optionsProvider != null)
+            {
+              contributeOptions(optionsProvider.getOptions(), args);
+            }
             if (options != null) {
                 addDryRun(options, args);
                 addMonochrome(options, args);
@@ -45,6 +51,37 @@ public class RuntimeOptionsFactory {
         addDefaultGlueIfNoOverridingGlueIsSpecified(args, clazz);
         return args;
     }
+
+  private AbstractCucumberOptionsProvider getOptionsProvider(Class<?> clazz) {
+    CucumberOptionsProvider optionsProvider = clazz.getAnnotation(CucumberOptionsProvider.class);
+    if (optionsProvider == null || Modifier.isAbstract(optionsProvider.value().getModifiers())) {
+      return null;
+    }
+    try {
+      return optionsProvider.value().getDeclaredConstructor().newInstance();
+    } catch (InstantiationException
+        | IllegalAccessException
+        | IllegalArgumentException
+        | InvocationTargetException
+        | NoSuchMethodException
+        | SecurityException e) {
+      throw new CucumberException(
+          String.format("Error instantiating options provider %s", optionsProvider.value()), e);
+    }
+  }
+
+  private void contributeOptions(CucumberOptions options, List<String> args) {
+    addName(options, args);
+    addSnippets(options, args);
+    addDryRun(options, args);
+    addMonochrome(options, args);
+    addTags(options, args);
+    addPlugins(options, args);
+    addFeatures(options, args);
+    addGlue(options, args);
+    addStrict(options, args);
+    addJunitOptions(options, args);
+  }
 
     private void addName(CucumberOptions options, List<String> args) {
         for (String name : options.name()) {

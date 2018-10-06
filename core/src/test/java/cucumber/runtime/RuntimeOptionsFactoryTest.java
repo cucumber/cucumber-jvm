@@ -1,14 +1,18 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
+import cucumber.api.CucumberOptionsProvider;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
+import cucumber.runtime.optionsprovider.CucumberOptionsProviderExtraGlue;
+import cucumber.runtime.optionsprovider.CucumberOptionsProviderGlue;
+import cucumber.runtime.optionsprovider.CucumberOptionsProviderNonStrict;
+import cucumber.runtime.optionsprovider.CucumberOptionsProviderStrict;
 import org.junit.Test;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -187,6 +191,34 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlueAndExtraGlue.class);
         runtimeOptionsFactory.create();
     }
+    
+    @Test
+    public void createOptionsProviderStrict() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithCucumberOptionsProviderStrict.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertTrue(runtimeOptions.isStrict());
+    }
+    
+    @Test
+    public void createOptionsProviderNonStrict() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithCucumberOptionsProviderNonStrict.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertFalse(runtimeOptions.isStrict());
+    }
+    
+    @Test
+    public void createOptionsProviderWithGlue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithCucumberOptionsProviderGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(asList("app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+    }
+
+    @Test
+    public void createOptionsProviderWithExtraGlue() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithCucumberOptionsProviderExtraGlue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(asList("app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+    }
 
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
@@ -280,5 +312,26 @@ public class RuntimeOptionsFactoryTest {
     private static class ClassWithGlueAndExtraGlue {
         // empty
     }
+    
+    @CucumberOptionsProvider(CucumberOptionsProviderStrict.class)
+    private static class ClassWithCucumberOptionsProviderStrict{
+        // empty
+    }
+    
+    @CucumberOptionsProvider(CucumberOptionsProviderNonStrict.class)
+    private static class ClassWithCucumberOptionsProviderNonStrict{
+        // empty
+    }
+    
+    @CucumberOptionsProvider(CucumberOptionsProviderGlue.class)
+    private static class ClassWithCucumberOptionsProviderGlue{
+        // empty
+    }
+    
+    @CucumberOptionsProvider(CucumberOptionsProviderExtraGlue.class)
+    private static class ClassWithCucumberOptionsProviderExtraGlue{
+        // empty
+    }
+    
 
 }
