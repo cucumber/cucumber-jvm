@@ -1,8 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-
-## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...master) (In Git)
+## [4.0.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.3...master) (In Git)
 
 ### Added
 
@@ -13,11 +12,15 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.0.2](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...v4.0.3) 
+
+### Fixed
  * [Core] Fix concurrent execution problems in pretty formatter ([#1480](https://github.com/cucumber/cucumber-jvm/issues/1480) M.P. Korstanje) 
  * [Core] Upgrade `cucumber-expressions` 6.1.1.  ([cucumber/#494](https://github.com/cucumber/cucumber/issues/494) Łukasz Suski) 
  * [Java8] Apply identity transform to argument when target type is object ([#1477](https://github.com/cucumber/cucumber-jvm/pull/1477) M.P. Korstanje) 
 
-## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...v4.0.2) 
+## [4.0.1](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...v4.0.2) 
 
 ### Added
  * [Core] Reduce plugin memory usage ([#1469](https://github.com/cucumber/cucumber-jvm/pull/1469) M.P. Korstanje) 
