@@ -13,6 +13,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+ * [Core] Fix concurrent execution problems in pretty formatter ([#1480](https://github.com/cucumber/cucumber-jvm/issues/1480) M.P. Korstanje) 
+ * [Core] Upgrade `cucumber-expressions` 6.1.1.  ([cucumber/#494](https://github.com/cucumber/cucumber/issues/494) Łukasz Suski) 
  * [Java8] Apply identity transform to argument when target type is object ([#1477](https://github.com/cucumber/cucumber-jvm/pull/1477) M.P. Korstanje) 
 
 ## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...v4.0.2) 
