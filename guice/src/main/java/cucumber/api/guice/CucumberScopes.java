@@ -8,5 +8,13 @@ import cucumber.runtime.java.guice.impl.SequentialScenarioScope;
  * in implementations of <code>com.google.inject.Module</code>.
  */
 public class CucumberScopes {
+    /**
+     * @deprecated please use {@link #createScenario()} instead
+     */
     public static final ScenarioScope SCENARIO = new SequentialScenarioScope();
+
+    public static ScenarioScope createScenario() {
+        return new SequentialScenarioScope();
+    }
+
 }
