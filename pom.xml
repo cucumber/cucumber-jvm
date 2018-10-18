@@ -41,8 +41,8 @@
         <gherkin.version>5.1.0</gherkin.version>
         <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <spring.version>4.3.10.RELEASE</spring.version>
-        <spring.data.version>1.11.6.RELEASE</spring.data.version>
+        <spring.version>4.3.20.RELEASE</spring.version>
+        <spring.data.version>1.11.16.RELEASE</spring.data.version>
         <!-- 5.2.2.Final or above does not appear to work on Java 7 -->
         <hibernate.version>5.1.1.Final</hibernate.version>
         <!-- version 2.4.0 does not work on Java 7 -->
