@@ -12,6 +12,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+  * [Core] Use Locale.ROOT when transforming case of identifiers ([#1484](https://github.com/cucumber/cucumber-jvm/issues/1484) M.P. Korstanje) 
 
 ## [4.0.2](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...v4.0.3) 
 
