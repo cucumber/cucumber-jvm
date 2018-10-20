@@ -38,12 +38,6 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void has_usage() {
-        RuntimeOptions.loadUsageTextIfNeeded();
-        assertTrue(RuntimeOptions.usageText.startsWith("Usage"));
-    }
-
-    @Test
     public void assigns_feature_paths() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());

@@ -1,7 +1,6 @@
 package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
-import cucumber.api.CucumberOptionsProvider;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
@@ -62,7 +61,6 @@ Fail * </pre></blockquote>
  * Cucumber-Eclipse. Instead it is recommended to use Cucumbers `Before` and `After` hooks.
  *
  * @see CucumberOptions
- * @see CucumberOptionsProvider
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
