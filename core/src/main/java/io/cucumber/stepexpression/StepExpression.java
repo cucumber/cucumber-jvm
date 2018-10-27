@@ -2,6 +2,7 @@ package io.cucumber.stepexpression;
 
 import io.cucumber.cucumberexpressions.Expression;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +18,8 @@ public final class StepExpression {
         this.tableType = tableType;
     }
 
-    public List<Argument> match(String text) {
-        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text);
+    public List<Argument> match(String text, Type... types) {
+        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
         if (match == null) {
             return null;
         }
@@ -29,8 +30,8 @@ public final class StepExpression {
         return expression.getSource();
     }
 
-    public List<Argument> match(String text, List<List<String>> tableArgument) {
-        List<Argument> list = match(text);
+    public List<Argument> match(String text, List<List<String>> tableArgument, Type... types) {
+        List<Argument> list = match(text, types);
 
         if (list == null) {
             return null;
@@ -42,8 +43,8 @@ public final class StepExpression {
 
     }
 
-    public List<Argument> match(String text, String docStringArgument) {
-        List<Argument> list = match(text);
+    public List<Argument> match(String text, String docStringArgument, Type... types) {
+        List<Argument> list = match(text, types);
         if (list == null) {
             return null;
         }

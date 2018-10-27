@@ -13,6 +13,7 @@ import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 
 class JavaStepDefinition implements StepDefinition {
@@ -50,7 +51,11 @@ class JavaStepDefinition implements StepDefinition {
 
     public List<Argument> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
-        return argumentMatcher.argumentsFrom(step);
+        Type[] types = new Type[parameterInfos.size()];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = parameterInfos.get(i).getType();
+        }
+        return argumentMatcher.argumentsFrom(step, types);
     }
 
     public String getLocation(boolean detail) {

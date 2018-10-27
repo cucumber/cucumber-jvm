@@ -111,6 +111,82 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <configuration>
+                    <analysisConfiguration>
+                        <revapi.ignore>
+                            <item>
+                                <code>java.method.addedToInterface</code>
+                                <new>method void cucumber.api.TypeRegistry::setDefaultParameterTransformer(io.cucumber.cucumberexpressions.ParameterByTypeTransformer)</new>
+                                <package>cucumber.api</package>
+                                <classQualifiedName>cucumber.api.TypeRegistry</classQualifiedName>
+                                <classSimpleName>TypeRegistry</classSimpleName>
+                                <methodName>setDefaultParameterTransformer</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This interface can be used by users of Cucumber but should not be implemented.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.ArgumentMatcher</classQualifiedName>
+                                <classSimpleName>ArgumentMatcher</classSimpleName>
+                                <methodName>argumentsFrom</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument. </justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ExpressionArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ExpressionArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.ExpressionArgumentMatcher</classQualifiedName>
+                                <classSimpleName>ExpressionArgumentMatcher</classSimpleName>
+                                <methodName>argumentsFrom</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.StepExpression</classQualifiedName>
+                                <classSimpleName>StepExpression</classSimpleName>
+                                <methodName>match</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.lang.String)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.lang.String, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.StepExpression</classQualifiedName>
+                                <classSimpleName>StepExpression</classSimpleName>
+                                <methodName>match</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.util.List&lt;java.util.List&lt;java.lang.String&gt;&gt;)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.util.List&lt;java.util.List&lt;java.lang.String&gt;&gt;, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.StepExpression</classQualifiedName>
+                                <classSimpleName>StepExpression</classSimpleName>
+                                <methodName>match</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
+                            </item>
+                        </revapi.ignore>
+                    </analysisConfiguration>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>

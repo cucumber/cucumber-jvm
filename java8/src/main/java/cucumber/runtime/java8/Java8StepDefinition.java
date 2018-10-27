@@ -90,7 +90,11 @@ public class Java8StepDefinition implements StepDefinition {
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
-        return argumentMatcher.argumentsFrom(step);
+        Type[] types = new Type[parameterInfos.size()];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = parameterInfos.get(i).getType();
+        }
+        return argumentMatcher.argumentsFrom(step, types);
     }
 
     @Override
