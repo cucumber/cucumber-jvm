@@ -81,7 +81,7 @@
         <xmlunit.version>1.6</xmlunit.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
-        <cucumber-expressions.version>6.1.1</cucumber-expressions.version>
+        <cucumber-expressions.version>6.2.0</cucumber-expressions.version>
         <datatable.version>1.1.7</datatable.version>
     </properties>
     <licenses>

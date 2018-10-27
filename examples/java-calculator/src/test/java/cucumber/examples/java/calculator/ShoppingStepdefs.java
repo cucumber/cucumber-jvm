@@ -19,13 +19,13 @@ public class ShoppingStepdefs {
         }
     }
 
-    @When("I pay {int}")
+    @When("I pay {}")
     public void i_pay(int amount) {
         calc.push(amount);
         calc.push("-");
     }
 
-    @Then("my change should be {int}")
+    @Then("my change should be {}")
     public void my_change_should_be_(int change) {
         assertEquals(-calc.value().intValue(), change);
     }
@@ -34,10 +34,22 @@ public class ShoppingStepdefs {
         private String name;
         private Price price;
 
-        Grocery(String name, Price price) {
-            this.name = name;
+        public void setPrice(Price price) {
             this.price = price;
         }
+
+        public Price getPrice() {
+            return price;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
 
     static final class Price {

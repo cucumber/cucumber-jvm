@@ -1,5 +1,6 @@
 package io.cucumber.stepexpression;
 
+import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.datatable.DataTableType;
@@ -29,12 +30,19 @@ public final class TypeRegistry implements cucumber.api.TypeRegistry {
         return dataTableTypeRegistry;
     }
 
+    @Override
     public void defineParameterType(ParameterType<?> parameterType) {
         parameterTypeRegistry.defineParameterType(parameterType);
     }
 
+    @Override
     public void defineDataTableType(DataTableType tableType) {
         dataTableTypeRegistry.defineDataTableType(tableType);
+    }
+
+    @Override
+    public void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer){
+        parameterTypeRegistry.setDefaultParameterTransformer(defaultParameterByTypeTransformer);
     }
 
     @Override

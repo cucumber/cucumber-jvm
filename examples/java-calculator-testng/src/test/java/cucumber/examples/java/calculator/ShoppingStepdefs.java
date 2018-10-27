@@ -19,13 +19,13 @@ public class ShoppingStepdefs {
         }
     }
 
-    @When("I pay {int}")
+    @When("I pay {}")
     public void i_pay(int amount) {
         calc.push(amount);
         calc.push("-");
     }
 
-    @Then("my change should be {int}")
+    @Then("my change should be {}")
     public void my_change_should_be_(int change) {
         assertEquals(-calc.value().intValue(), change);
     }
