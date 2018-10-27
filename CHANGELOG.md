@@ -1,7 +1,8 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.0.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.1.0...master) (In Git)
+
+## [4.1.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...master) (In Git)
 
 ### Added
 
@@ -12,6 +13,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.1.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.1.0...v4.1.1)
+
+### Fixed
+ * [Core] Upgrade datatables to 1.1.7 ([#1489](https://github.com/cucumber/cucumber-jvm/issues/1489), [#1490](https://github.com/cucumber/cucumber-jvm/issues/1490) M.P. Korstanje)
+    * Fix priority of default converters
 
 ## [4.1.0](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...v4.1.0) 
 
