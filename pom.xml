@@ -38,11 +38,6 @@
 
 
     <properties>
-        <!-- Note: inherited from cucumber-parent pom; remove here -->
-        <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
-        <!--<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
-        <!--<minimum.maven.version>3.3</minimum.maven.version>-->
-        <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
         <gherkin.version>5.1.0</gherkin.version>
         <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
@@ -89,14 +84,6 @@
         <cucumber-expressions.version>6.1.1</cucumber-expressions.version>
         <datatable.version>1.1.7</datatable.version>
     </properties>
-    <!-- Question: explicitly keep licence? (is also inherited from cucumber-parent pom) -->
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
@@ -489,29 +476,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <!--
-     this adds a repository that the plugins will use for dependency resolution
-     Any items that we use in a plugin's <dependency> phase can be resolved from here, as well as central
-    -->
-    <!-- Note: inherited from cucumber-parent pom; remove here? -->
-    <!--<pluginRepositories>-->
-        <!--<pluginRepository>-->
-            <!--<id>sonatype.org</id>-->
-            <!--<url>https://oss.sonatype.org/content/repositories/releases</url>-->
-        <!--</pluginRepository>-->
-    <!--</pluginRepositories>-->
-
-    <!--<distributionManagement>-->
-        <!--<snapshotRepository>-->
-            <!--<id>ossrh</id>-->
-            <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-        <!--</snapshotRepository>-->
-        <!--<repository>-->
-            <!--<id>ossrh</id>-->
-            <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-        <!--</repository>-->
-    <!--</distributionManagement>-->
-
     <modules>
         <module>core</module>
         <module>java</module>
@@ -666,41 +630,9 @@
                     </dependencies>
                 </plugin>
 
-                <!-- NOTE: parent uses version 3.1.0 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-clean-plugin</artifactId>-->
-                    <!--<version>3.0.0</version>-->
-                <!--</plugin>-->
-
-                <!-- NOTE: parent uses version 3.8.0 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                    <!--<version>3.6.2</version>-->
-                    <!--<configuration>-->
-                        <!--<encoding>UTF-8</encoding>-->
-                        <!--<source>1.7</source>-->
-                        <!--<target>1.7</target>-->
-                        <!--<compilerArgument>-Werror</compilerArgument>-->
-                    <!--</configuration>-->
-                <!--</plugin>-->
-
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-gpg-plugin</artifactId>-->
-                    <!--<version>1.6</version>-->
-                <!--</plugin>-->
-
-                <!-- NOTE: also in cucumber-parent, but this config is different:
-                1. uses version 3.0.0-M1 instead of 3.0.1; can be fixed by removing version here
-                2. uses <link>http://docs.oracle.com/javase/7/docs/api/</link> instead of javase/8 => which should it be?
-                3. adds <excludePackageNames>,  link to sourceforge, and <groups>
-                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <!--<version>3.0.0-M1</version>-->
                     <configuration>
                         <use>false</use>
                         <excludePackageNames>cucumber.runtime,cucumber.runtime.*,org.springframework
@@ -725,12 +657,8 @@
                     </configuration>
                 </plugin>
 
-                <!-- NOTE: parent uses version 3.1.0 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-jar-plugin</artifactId>-->
-                    <!--<version>3.0.2</version>-->
-                <!-- NOTE: parent adds additional configuration: -->
+                <!-- NOTE: parent adds additional configuration:
+                 Please ensure that all projects or any sub-modules that use jar packaging have project.Automatic-Module-Name set.-->
                     <!--<configuration>-->
                         <!--<archive>-->
                             <!--<manifestEntries>-->
@@ -740,35 +668,11 @@
                     <!--</configuration>-->
                 <!--</plugin>-->
 
-                <!-- NOTE: parent uses version 3.0.0 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-project-info-reports-plugin</artifactId>-->
-                    <!--<version>2.9</version>-->
-                <!--</plugin>-->
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.6</version>
                 </plugin>
-
-                <!-- NOTE: parent uses version 3.1.0 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-resources-plugin</artifactId>-->
-                    <!--<version>3.0.2</version>-->
-                <!--</plugin>-->
-
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-source-plugin</artifactId>-->
-                    <!--<version>3.0.1</version>-->
-                <!--</plugin>-->
-
-                <!-- NOTE: also in parent, but not the same config:
-                 1. uses version 2.20 instead of 2.22.0; can be fixed by removing version here
-                 2. parent adds <argLine>${surefireArgLine}</argLine> -->
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -781,19 +685,6 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.0.0</version>
                 </plugin>
-
-                <!-- NOTE: parent uses version 3.0.0-M1 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-deploy-plugin</artifactId>-->
-                    <!--<version>2.8.2</version>-->
-                <!--</plugin>-->
-                <!-- NOTE: parent uses version 3.0.0-M1 -->
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-install-plugin</artifactId>-->
-                    <!--<version>2.5.2</version>-->
-                <!--</plugin>-->
 
                 <!-- NOTE: also in parent, but not the same config -->
                 <plugin>
@@ -851,18 +742,17 @@
                     </configuration>
                 </plugin>
 
-                <!-- NOTE: also in parent, but not the same config and version 1.6.8-->
+                <!-- NOTE: also in parent, but not the same config -->
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
-        <!-- NOTE: also in parent with the same config except using java version 1.7
-        Note that effective pom has java 1.8 (this pom overrides cucumber-parent
-        Question: should cucumber-parent use 1.8? in which case below can be removed -->
+        <!-- NOTE: also in parent with the same config except parent uses Java version 1.7
+        Currently still on Java 7.
+        Once we can move to 1.8, and parent has moved below can be removed? -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -902,32 +792,6 @@
                 </executions>
             </plugin>
 
-            <!-- NOTE: differences: parent consolidates the following and updates version -->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-release-plugin</artifactId>-->
-                <!--<version>2.5.3</version>-->
-                <!--<configuration>-->
-                    <!--<tagNameFormat>v@{project.version}</tagNameFormat>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-release-plugin</artifactId>-->
-                <!--<version>2.5.3</version>-->
-            <!---->
-                <!--<configuration>-->
-                    <!--<tagNameFormat>v@{project.version}</tagNameFormat>-->
-                    <!--<autoVersionSubmodules>true</autoVersionSubmodules>-->
-                    <!--<useReleaseProfile>false</useReleaseProfile>-->
-                    <!--<releaseProfiles>release</releaseProfiles>-->
-                    <!--<goals>deploy</goals>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-
-            <!-- NOTE: also in parent, but not the same config
-             this pom adds <autoDropAfterRelease>
-             if that can be moved to cucumber-parent, below can be removed?-->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -936,7 +800,6 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <autoDropAfterRelease>true</autoDropAfterRelease>
                 </configuration>
             </plugin>
         </plugins>
