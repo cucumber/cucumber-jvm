@@ -2,7 +2,7 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [4.1.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...master) (In Git)
+## [4.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...master) (In Git)
 
 ### Added
 
@@ -14,7 +14,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Fixed
 
-## [4.1.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.1.0...v4.1.1)
+## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0)
+
+### Added
+ * [Core] Add anonymous parameter types ([#1478](https://github.com/cucumber/cucumber-jvm/issues/1478), [#1492](https://github.com/cucumber/cucumber-jvm/pull/1492) M.P. Korstanje)
+
+## [4.1.1](https://github.com/cucumber/cucumber-jvm/compare/v4.1.0...v4.1.1)
 
 ### Fixed
  * [Core] Upgrade datatables to 1.1.7 ([#1489](https://github.com/cucumber/cucumber-jvm/issues/1489), [#1490](https://github.com/cucumber/cucumber-jvm/issues/1490) M.P. Korstanje)
