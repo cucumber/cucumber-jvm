@@ -657,16 +657,13 @@
                     </configuration>
                 </plugin>
 
-                <!-- NOTE: parent adds additional configuration:
-                 Please ensure that all projects or any sub-modules that use jar packaging have project.Automatic-Module-Name set.-->
-                    <!--<configuration>-->
-                        <!--<archive>-->
-                            <!--<manifestEntries>-->
-                                <!--<Automatic-Module-Name>${project.Automatic-Module-Name}</Automatic-Module-Name>-->
-                            <!--</manifestEntries>-->
-                        <!--</archive>-->
-                    <!--</configuration>-->
-                <!--</plugin>-->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                    <configuration combine.self="override"/>
+                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
