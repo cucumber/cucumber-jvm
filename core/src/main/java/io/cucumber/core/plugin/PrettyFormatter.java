@@ -1,11 +1,11 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.api.event.Argument;
+import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.PickleStepTestStep;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestStep;
-import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestCaseStarted;
@@ -28,7 +28,7 @@ import gherkin.pickles.PickleTag;
 
 import java.util.List;
 
-public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
+final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";

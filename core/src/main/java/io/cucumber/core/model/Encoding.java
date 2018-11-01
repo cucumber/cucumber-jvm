@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Locale.ROOT;
+
 /**
  * Utilities for reading the encoding of a file.
  */
@@ -37,6 +39,6 @@ final class Encoding {
                 break;
             }
         }
-        return encoding.toUpperCase();
+        return encoding.toUpperCase(ROOT);
     }
 }

@@ -3,10 +3,27 @@ package io.cucumber.guice.api;
 import com.google.inject.Module;
 
 /**
- * Provides a convenient <code>com.google.inject.Module</code> instance that contains bindings for
- * <code>ScenarioScoped</code> annotation and for
- * <code>ScenarioScope</code>.
+ * Provides a convenient {@link Module} instance that contains bindings for
+ * {@link ScenarioScoped} annotation and for {@link ScenarioScope}.
  */
 public class CucumberModules {
-    public static final Module SCENARIO = new ScenarioModule(CucumberScopes.SCENARIO);
+    /**
+     * A convenient instance of {@link Module}. Should only be used
+     * in combination with {@link CucumberScopes#SCENARIO}.
+     * <p>
+     * Note that using this in combination with parallel execution results in
+     * undefined behaviour.
+     *
+     * @deprecated please use {@link #createScenarioModule()} instead
+     */
+    @Deprecated
+    public static final Module SCENARIO = createScenarioModule();
+
+    public static Module createScenarioModule() {
+        return new ScenarioModule(CucumberScopes.createScenarioScope());
+    }
+
+    public static Module createScenarioModule(ScenarioScope scenarioScope) {
+        return new ScenarioModule(scenarioScope);
+    }
 }

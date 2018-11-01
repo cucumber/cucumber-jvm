@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.Comparator;
 import java.util.Objects;
 
+import static java.util.Locale.ROOT;
 import static java.util.Objects.requireNonNull;
 
 public final class Result {
@@ -30,15 +31,15 @@ public final class Result {
         FAILED;
 
         public static Type fromLowerCaseName(String lowerCaseName) {
-            return valueOf(lowerCaseName.toUpperCase());
+            return valueOf(lowerCaseName.toUpperCase(ROOT));
         }
 
         public String lowerCaseName() {
-            return name().toLowerCase();
+            return name().toLowerCase(ROOT);
         }
 
         public String firstLetterCapitalizedName() {
-            return name().substring(0, 1) + name().substring(1).toLowerCase();
+            return name().substring(0, 1) + name().substring(1).toLowerCase(ROOT);
         }
 
 

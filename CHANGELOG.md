@@ -2,7 +2,7 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...master) (In Git)
+## [4.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...master) (In Git)
 
 ### Added
 
@@ -14,7 +14,33 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Fixed
 
-## [4.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...v4.0.2) 
+## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0)
+
+### Added
+ * [Core] Add anonymous parameter types ([#1478](https://github.com/cucumber/cucumber-jvm/issues/1478), [#1492](https://github.com/cucumber/cucumber-jvm/pull/1492) M.P. Korstanje)
+
+## [4.1.1](https://github.com/cucumber/cucumber-jvm/compare/v4.1.0...v4.1.1)
+
+### Fixed
+ * [Core] Upgrade datatables to 1.1.7 ([#1489](https://github.com/cucumber/cucumber-jvm/issues/1489), [#1490](https://github.com/cucumber/cucumber-jvm/issues/1490) M.P. Korstanje)
+    * Fix priority of default converters
+
+## [4.1.0](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...v4.1.0) 
+
+### Deprecated
+  * [Guice] Replace CucumberModules.SCENARIO with thread safe factory method ([#1486](https://github.com/cucumber/cucumber-jvm/issues/1486) James Bennett)
+
+### Fixed
+  * [Core] Use Locale.ROOT when transforming case of identifiers ([#1484](https://github.com/cucumber/cucumber-jvm/issues/1484) M.P. Korstanje) 
+
+## [4.0.2](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...v4.0.2) 
+
+### Fixed
+ * [Core] Fix concurrent execution problems in pretty formatter ([#1480](https://github.com/cucumber/cucumber-jvm/issues/1480) M.P. Korstanje) 
+ * [Core] Upgrade `cucumber-expressions` 6.1.1.  ([cucumber/#494](https://github.com/cucumber/cucumber/issues/494) Łukasz Suski) 
+ * [Java8] Apply identity transform to argument when target type is object ([#1477](https://github.com/cucumber/cucumber-jvm/pull/1477) M.P. Korstanje) 
+
+## [4.0.1](https://github.com/cucumber/cucumber-jvm/compare/v4.0.0...v4.0.1) 
 
 ### Added
  * [Core] Reduce plugin memory usage ([#1469](https://github.com/cucumber/cucumber-jvm/pull/1469) M.P. Korstanje) 

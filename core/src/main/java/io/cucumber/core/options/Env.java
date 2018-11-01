@@ -6,6 +6,8 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import static java.util.Locale.ROOT;
+
 /**
  * Looks up values in the following order:
  * <ol>
@@ -56,8 +58,8 @@ public final class Env {
     private void put(String key, String string) {
         map.put(key, string);
         // Support old skool
-        map.put(key.replace('.', '_').toUpperCase(), string);
-        map.put(key.replace('_', '.').toLowerCase(), string);
+        map.put(key.replace('.', '_').toUpperCase(ROOT), string);
+        map.put(key.replace('_', '.').toLowerCase(ROOT), string);
     }
 
     public String get(String key) {

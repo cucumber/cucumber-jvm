@@ -70,7 +70,7 @@ public final class StepExpressionFactory {
             public Object transform(List<List<String>> raw) {
                 DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
                 Type targetType = tableOrDocStringType.resolve();
-                return dataTable.convert(targetType == null ? DataTable.class : targetType, transpose);
+                return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
             }
         };
 
@@ -78,7 +78,7 @@ public final class StepExpressionFactory {
             @Override
             public Object transform(String docString) {
                 Type targetType = tableOrDocStringType.resolve();
-                if (targetType == null) {
+                if (Object.class.equals(targetType)) {
                     return docString;
                 }
 

@@ -22,12 +22,12 @@ public class ShoppingStepdefs implements En {
             }
         });
 
-        When("I pay {int}", (Integer amount) -> {
+        When("I pay {}", (Integer amount) -> {
             calc.push(amount);
             calc.push("-");
         });
 
-        Then("my change should be {int}", (Integer change) -> {
+        Then("my change should be {}", (Integer change) -> {
             assertEquals(-calc.value().intValue(), change.intValue());
         });
     }

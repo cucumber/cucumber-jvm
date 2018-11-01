@@ -10,6 +10,6 @@ public class YourInjectorSource implements InjectorSource {
 
     @Override
     public Injector getInjector() {
-        return Guice.createInjector(Stage.PRODUCTION, CucumberModules.SCENARIO, new YourModule());
+        return Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule(), new YourModule());
     }
 }
