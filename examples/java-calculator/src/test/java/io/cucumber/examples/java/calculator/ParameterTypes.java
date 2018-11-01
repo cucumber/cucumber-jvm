@@ -1,11 +1,11 @@
 package io.cucumber.examples.java.calculator;
 
-import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.api.TypeRegistry;
-import io.cucumber.datatable.DataTableType;
-import io.cucumber.examples.java.calculator.RpnCalculatorStepdefs.Entry;
-import io.cucumber.examples.java.calculator.ShoppingStepdefs.Grocery;
-import io.cucumber.cucumberexpressions.ParameterType;
+import io.cucumber.core.api.TypeRegistryConfigurer;
+import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import io.cucumber.datatable.TableCellByTypeTransformer;
+import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Type;
 import java.util.Locale;

@@ -122,7 +122,7 @@
  * Guice injector and it's Guice modules. The injector must provide a binding for
  * <code>io.cucumber.guice.api.ScenarioScope</code>. It should also provide a binding for the
  * <code>io.cucumber.guice.api.ScenarioScoped</code> annotation if your classes are using the annotation. The
- * easiest way to do this it to use <code>CucumberModules.SCENARIO</code>. For example:
+ * easiest way to do this it to use <code>CucumberModules.createScenarioModule()</code>. For example:
  * </p>
  * <pre>
  * import com.google.inject.Guice;
@@ -135,7 +135,7 @@
  *
  * {@literal @}Override
  * public Injector getInjector() {
- * return Guice.createInjector(Stage.PRODUCTION, CucumberModules.SCENARIO, new YourModule());
+ * return Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule(), new YourModule());
  * }
  * }
  * </pre>

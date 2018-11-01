@@ -1,5 +1,7 @@
 package io.cucumber.junit.api;
 
+import static java.util.Locale.ROOT;
+
 class SkippedThrowable extends Throwable {
     private static final long serialVersionUID = 1L;
 
@@ -12,7 +14,7 @@ class SkippedThrowable extends Throwable {
         STEP;
 
         String lowerCaseName() {
-            return name().toLowerCase();
+            return name().toLowerCase(ROOT);
         }
     }
 }
