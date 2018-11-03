@@ -334,14 +334,12 @@ public class JUnitReporterTest {
         jUnitReporter.handleTestCaseResult(result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier, times(1)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
         assertEquals(description, failures.get(0).getDescription());
         assertEquals(exception1, failures.get(0).getException());
-        assertEquals(description, failures.get(1).getDescription());
-        assertEquals(exception2, failures.get(1).getException());
     }
 
     @Test
@@ -357,14 +355,12 @@ public class JUnitReporterTest {
         jUnitReporter.handleTestCaseResult(result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier, times(1)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
         assertEquals(description, failures.get(0).getDescription());
         assertEquals(exception1, failures.get(0).getException());
-        assertEquals(description, failures.get(1).getDescription());
-        assertEquals(exception2, failures.get(1).getException());
     }
 
     @Test
@@ -380,14 +376,12 @@ public class JUnitReporterTest {
         jUnitReporter.handleTestCaseResult(result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier, times(1)).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
         assertEquals(description, failures.get(0).getDescription());
         assertEquals(exception1, failures.get(0).getException());
-        assertEquals(description, failures.get(1).getDescription());
-        assertEquals(exception2, failures.get(1).getException());
     }
 
     @Test
@@ -403,14 +397,12 @@ public class JUnitReporterTest {
         jUnitReporter.handleTestCaseResult(result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier, times(1)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
         assertEquals(description, failures.get(0).getDescription());
         assertEquals(exception1, failures.get(0).getException());
-        assertEquals(description, failures.get(1).getDescription());
-        assertEquals(exception2, failures.get(1).getException());
     }
 
     @Test
@@ -426,14 +418,12 @@ public class JUnitReporterTest {
         jUnitReporter.handleTestCaseResult(result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier, times(1)).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
         assertEquals(description, failures.get(0).getDescription());
         assertEquals(exception1, failures.get(0).getException());
-        assertEquals(description, failures.get(1).getDescription());
-        assertEquals(exception2, failures.get(1).getException());
     }
 
     @Test

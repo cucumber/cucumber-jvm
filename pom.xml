@@ -636,6 +636,35 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>-Duser.language=en</argLine>
+                        <argLine>-Xmx1024m</argLine>
+                        <argLine>-XX:MaxPermSize=256m</argLine>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                        <useFile>false</useFile>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${junit-jupiter.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-engine</artifactId>
+                            <version>${junit-platform.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.junit.vintage</groupId>
+                            <artifactId>junit-vintage-engine</artifactId>
+                            <version>${junit-jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.0</version>
                 </plugin>

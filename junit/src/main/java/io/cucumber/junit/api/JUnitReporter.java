@@ -160,15 +160,15 @@ class JUnitReporter {
             if (stepErrors.isEmpty()) {
                 stepErrors.add(new SkippedThrowable(SCENARIO));
             }
-            for (Throwable error : stepErrors) {
-                pickleRunnerNotifier.addFailedAssumption(error);
-            }
+            stepErrors.stream()
+                .findFirst()
+                .ifPresent(error -> pickleRunnerNotifier.addFailedAssumption(error));
             break;
         case PENDING:
         case UNDEFINED:
-            for (Throwable error : stepErrors) {
-                addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error);
-            }
+            stepErrors.stream()
+                .findFirst()
+                .ifPresent(error -> addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error));
             break;
         case AMBIGUOUS:
         case FAILED:

@@ -108,13 +108,13 @@ public class FeatureRunnerTest {
         InOrder order = inOrder(notifier);
 
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
+        order.verify(notifier, times(1)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
+        order.verify(notifier, times(1)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
+        order.verify(notifier, times(1)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario outline name(feature name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name(feature name)")));
     }
 
@@ -135,10 +135,10 @@ public class FeatureRunnerTest {
         InOrder order = inOrder(notifier);
 
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier, times(3)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_1 name(feature name)")));
+        order.verify(notifier, times(1)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_1 name(feature name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name(feature name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
-        order.verify(notifier, times(2)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_2 name(feature name)")));
+        order.verify(notifier, times(1)).fireTestAssumptionFailed(argThat(new FailureMatcher("scenario_2 name(feature name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
     }
 

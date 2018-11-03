@@ -57,7 +57,7 @@
                                     <arg value="--plugin" />
                                     <arg value="progress" />
                                     <arg value="--glue" />
-                                    <arg value="cucumber.runtime.java.picocontainer" />
+                                    <arg value="io.cucumber.picocontainer" />
                                     <arg value="${basedir}/src/test/resources/io/cucumber/picocontainer" />
                                 </java>
                             </target>
