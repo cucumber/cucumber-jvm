@@ -1,6 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.cucumber</groupId>
+    <parent>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-parent</artifactId>
+        <version>1.0.2</version>
+    </parent>
     <artifactId>cucumber-jvm</artifactId>
     <version>5.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -34,10 +38,6 @@
 
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <minimum.maven.version>3.3</minimum.maven.version>
-        <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>5.1.0</gherkin.version>
         <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
@@ -80,13 +80,6 @@
         <datatable.version>1.1.7</datatable.version>
         <project.Automatic-Module-Name></project.Automatic-Module-Name>
     </properties>
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
@@ -215,7 +208,7 @@
                 <artifactId>spring-data-jpa</artifactId>
                 <version>${spring.data.version}</version>
                 <exclusions>
-                    <!-- Exclude the dependency on junit, which is older and clashes with our 4.11 junit dep -->
+                    <!-- Exclude the dependency on junit, which is older and clashes with our 4.12 junit dep -->
                     <exclusion>
                         <groupId>junit</groupId>
                         <artifactId>junit-dep</artifactId>
@@ -489,28 +482,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <!--
-     this adds a repository that the plugins will use for dependency resolution
-     Any items that we use in a plugin's <dependency> phase can be resolved from here, as well as central
-    -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>sonatype.org</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <modules>
         <module>core</module>
         <module>java</module>
@@ -534,50 +505,6 @@
             <modules>
                 <module>examples</module>
             </modules>
-        </profile>
-
-        <profile>
-            <id>sign-source-javadoc</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <profile>
@@ -645,7 +572,6 @@
         <pluginManagement>
             <plugins>
                 <!-- Standard plugins - alphabetically -->
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
@@ -666,12 +592,6 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.2</version>
                     <configuration>
@@ -684,14 +604,7 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.0-M1</version>
                     <configuration>
                         <use>false</use>
                         <excludePackageNames>io.cucumber.examples*,org.springframework</excludePackageNames>
@@ -716,87 +629,9 @@
                                     io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb
                                 </packages>
                             </group>
-
                         </groups>
-                        <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->
                         <stylesheet>java</stylesheet>
                     </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Automatic-Module-Name>${project.Automatic-Module-Name}</Automatic-Module-Name>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.9</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
-                    <configuration>
-                        <tagNameFormat>v@{project.version}</tagNameFormat>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.6</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20</version>
-                    <configuration>
-                        <argLine>-Duser.language=en</argLine>
-                        <argLine>-Xmx1024m</argLine>
-                        <argLine>-XX:MaxPermSize=256m</argLine>
-                        <argLine>-Dfile.encoding=UTF-8</argLine>
-                        <useFile>false</useFile>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.junit.jupiter</groupId>
-                            <artifactId>junit-jupiter-engine</artifactId>
-                            <version>${junit-jupiter.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.platform</groupId>
-                            <artifactId>junit-platform-engine</artifactId>
-                            <version>${junit-platform.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.vintage</groupId>
-                            <artifactId>junit-vintage-engine</artifactId>
-                            <version>${junit-jupiter.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -811,21 +646,6 @@
                     <version>3.0.0</version>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                </plugin>
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
@@ -862,11 +682,7 @@
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
-                </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -877,57 +693,11 @@
                 <executions>
                     <execution>
                         <id>enforce</id>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[1.8,)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[${minimum.maven.version},)</version>
-                                </requireMavenVersion>
-                                <requirePluginVersions>
-                                    <message>Best Practice is to always define plugin versions!</message>
-                                    <banLatest>true</banLatest>
-                                    <banRelease>true</banRelease>
-                                    <banSnapshots>true</banSnapshots>
-                                    <phases>clean,deploy,site</phases>
-                                </requirePluginVersions>
-                                <bannedDependencies>
-                                    <excludes>
-                                        <exclude>commons-logging</exclude>
-                                        <!-- use slf4j -->
-                                        <exclude>log4j</exclude>
-                                        <!-- use slf4j -->
-                                    </excludes>
-                                </bannedDependencies>
-                            </rules>
-                        </configuration>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <goals>deploy</goals>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <autoDropAfterRelease>true</autoDropAfterRelease>
-                </configuration>
             </plugin>
         </plugins>
 
