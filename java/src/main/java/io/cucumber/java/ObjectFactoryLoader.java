@@ -1,56 +1,72 @@
 package io.cucumber.java;
 
-import io.cucumber.java.api.ObjectFactory;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.NoInstancesException;
-import io.cucumber.core.reflection.Reflections;
-import io.cucumber.core.reflection.TooManyInstancesException;
+import io.cucumber.java.api.ObjectFactory;
 
-import static java.util.Arrays.asList;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 class ObjectFactoryLoader {
     private ObjectFactoryLoader() {
     }
 
     /**
-     * Loads an instance of {@link ObjectFactory}. The class name can be explicit, or it can be null.
-     * When it's null, the implementation is searched for in the <pre>cucumber.runtime</pre> packahe.
+     * Loads an instance of {@link ObjectFactory} using the {@link ServiceLoader}.
+     * When <code>objectFactoryClassName</code> is provided that object factory
+     * will be used if present.
+     * <p>
+     * If <code>objectFactoryClassName</code> is not provided and there exactly one
+     * instance present that instance will be used.
+     * <p>
+     * Otherwise a default object factory with no Dependency Injection capabilities
+     * will be used.
      *
-     * @param classFinder where to load classes from
-     * @param objectFactoryClassName specific class name of {@link ObjectFactory} implementation. May be null.
+     * @param objectFactoryClassName optional object factory to use
      * @return an instance of {@link ObjectFactory}
      */
-    static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName) {
-        ObjectFactory objectFactory;
-        try {
-            Reflections reflections = new Reflections(classFinder);
+    static ObjectFactory loadObjectFactory(String objectFactoryClassName) {
+        final ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class);
+        if (objectFactoryClassName == null) {
+            return loadSingleObjectFactoryOrDefault(loader);
 
-            if(objectFactoryClassName != null) {
-                Class<ObjectFactory> objectFactoryClass = (Class<ObjectFactory>) classFinder.loadClass(objectFactoryClassName);
-                objectFactory = reflections.newInstance(new Class[0], new Object[0], objectFactoryClass);
-            } else {
-                objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, asList("io.cucumber"), new Class[0], new Object[0], null);
+        }
+
+        return loadSelectedObjectFactory(loader, objectFactoryClassName);
+    }
+
+    private static ObjectFactory loadSelectedObjectFactory(ServiceLoader<ObjectFactory> loader, String objectFactoryClassName) {
+        for (ObjectFactory objectFactory : loader) {
+            if (objectFactoryClassName.equals(objectFactory.getClass().getName())) {
+                return objectFactory;
             }
-        } catch (TooManyInstancesException e) {
-            System.out.println(e.getMessage());
+        }
+
+        throw new CucumberException("Could not find object factory " + objectFactoryClassName);
+    }
+
+    private static ObjectFactory loadSingleObjectFactoryOrDefault(ServiceLoader<ObjectFactory> loader) {
+        final Iterator<ObjectFactory> objectFactories = loader.iterator();
+
+        ObjectFactory objectFactory;
+        if (objectFactories.hasNext()) {
+            objectFactory = objectFactories.next();
+        } else {
+            objectFactory = new DefaultJavaObjectFactory();
+        }
+
+        if (objectFactories.hasNext()) {
             System.out.println(getMultipleObjectFactoryLogMessage());
             objectFactory = new DefaultJavaObjectFactory();
-        } catch (NoInstancesException e) {
-            objectFactory = new DefaultJavaObjectFactory();
-        } catch (ClassNotFoundException e) {
-            throw new CucumberException("Couldn't instantiate custom ObjectFactory", e);
         }
         return objectFactory;
     }
 
     private static String getMultipleObjectFactoryLogMessage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("More than one Cucumber ObjectFactory was found in the classpath\n\n");
-        sb.append("You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n");
-        sb.append("your dependencies. When this happens, Cucumber falls back to instantiating the\n");
-        sb.append("DefaultJavaObjectFactory implementation which doesn't provide IoC.\n");
-        sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
-        return sb.toString();
+        return "More than one Cucumber ObjectFactory was found in the classpath\n" +
+            "\n" +
+            "You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n" +
+            "your dependencies. When this happens, Cucumber falls back to instantiating the\n" +
+            "DefaultJavaObjectFactory implementation which doesn't provide IoC.\n" +
+            "In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n";
     }
 }

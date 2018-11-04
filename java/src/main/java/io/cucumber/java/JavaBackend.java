@@ -54,7 +54,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
-        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
+        this(loadObjectFactory(Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
     }
 
     public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {
