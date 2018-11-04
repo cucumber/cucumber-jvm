@@ -14,13 +14,12 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Collections;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class BackendModuleBackendSupplierTest {
-
+public class BackendServiceLoaderTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -28,23 +27,23 @@ public class BackendModuleBackendSupplierTest {
     @Test
     public void should_create_a_backend() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions, singletonList("io.cucumber.core.backend"));
+        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
 
     @Test
     public void should_throw_an_exception_when_no_backend_could_be_found() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions, singletonList("no.backend.here"));
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
 
         expectedException.expect(CucumberException.class);
-        assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
+        backendSupplier.get(emptyList()).iterator().next();
     }
 
 }

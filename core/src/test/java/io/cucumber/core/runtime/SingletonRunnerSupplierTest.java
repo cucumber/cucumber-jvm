@@ -2,7 +2,6 @@ package io.cucumber.core.runtime;
 
 
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.io.ClassFinder;
@@ -12,8 +11,6 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Collections;
 
 import static io.cucumber.core.options.Env.INSTANCE;
 import static java.util.Collections.emptyList;
@@ -33,7 +30,7 @@ public class SingletonRunnerSupplierTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, INSTANCE, emptyList());
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
         EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
         runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier);
     }

@@ -6,7 +6,7 @@ import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runtime.BackendModuleBackendSupplier;
+import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.model.FeatureCompiler;
@@ -50,7 +50,7 @@ public class TestNGCucumberRunner {
         runtimeOptions = runtimeOptionsFactory.create();
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
         bus = new TimeServiceEventBus(TimeService.SYSTEM);
         new Plugins(new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);

@@ -190,7 +190,7 @@ public final class Runtime {
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
+                : new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
 
             final Plugins plugins = new Plugins(new PluginFactory(), this.eventBus, runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {

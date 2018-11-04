@@ -6,7 +6,7 @@ import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runtime.BackendModuleBackendSupplier;
+import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.io.ClassFinder;
@@ -86,7 +86,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, bus);
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         this.filters = new Filters(runtimeOptions);

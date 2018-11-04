@@ -44,12 +44,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     private Glue glue;
     private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
 
-    /**
-     * The constructor called by reflection by default.
-     *
-     * @param resourceLoader
-     */
-    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
         this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
     }
 
@@ -57,7 +52,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         this(loadObjectFactory(Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {
+    JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
