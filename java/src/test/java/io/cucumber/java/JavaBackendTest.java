@@ -5,9 +5,8 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java.stepdefs.Stepdefs;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,7 +27,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,33 +40,33 @@ public class JavaBackendTest {
     public ArgumentCaptor<StepDefinition> stepDefinition;
 
     @Mock
-    public Glue glue;
+    private Glue glue;
 
+    @Mock
     private ObjectFactory factory;
+
     private JavaBackend backend;
 
     @Before
     public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        this.factory = new DefaultJavaObjectFactory();
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
+        this.backend = new JavaBackend(factory, resourceLoader, typeRegistry);
     }
 
     @Test
     public void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
+        backend.loadGlue(glue, asList("classpath:io/cucumber/java/stepdefs"));
         backend.buildWorld();
-        assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
+        verify(factory).addClass(Stepdefs.class);
     }
 
     @Test
     public void finds_step_definitions_by_package_name() {
         backend.loadGlue(glue, asList("io.cucumber.java.stepdefs"));
         backend.buildWorld();
-        assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
+        verify(factory).addClass(Stepdefs.class);
     }
 
     @Test

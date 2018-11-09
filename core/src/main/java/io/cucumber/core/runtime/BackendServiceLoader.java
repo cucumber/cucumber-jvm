@@ -4,12 +4,14 @@ import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.io.ClassFinder;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.Reflections;
-import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.reflection.Reflections;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
+
+import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 
 /**
  * Supplies instances of {@link Backend} created by using a {@link ServiceLoader}
@@ -49,10 +53,10 @@ public final class BackendServiceLoader implements BackendSupplier {
 
     private Collection<? extends Backend> loadBackends(Iterable<BackendProviderService> serviceLoader) {
         final TypeRegistry typeRegistry = createTypeRegistry();
-
         List<Backend> backends = new ArrayList<>();
         for (BackendProviderService backendProviderService : serviceLoader) {
-            backends.add(backendProviderService.create(resourceLoader, typeRegistry));
+            ObjectFactory objectFactory = loadObjectFactory(Env.INSTANCE.get(ObjectFactory.class.getName()));
+            backends.add(backendProviderService.create(objectFactory, resourceLoader, typeRegistry));
         }
         return backends;
     }

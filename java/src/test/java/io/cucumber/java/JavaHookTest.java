@@ -67,12 +67,10 @@ public class JavaHookTest {
 
     private JavaBackend backend;
 
-    private SingletonFactory objectFactory;
+    private SingletonFactory objectFactory = new SingletonFactory();
 
     @org.junit.Before
     public void createBackendAndLoadNoGlue() {
-        this.objectFactory = new SingletonFactory();
-
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);

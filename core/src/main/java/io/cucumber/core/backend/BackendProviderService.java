@@ -5,6 +5,6 @@ import io.cucumber.core.stepexpression.TypeRegistry;
 
 public interface BackendProviderService {
 
-    Backend create(ResourceLoader resourceLoader, TypeRegistry typeRegistry);
+    Backend create(ObjectFactory objectFactory, ResourceLoader resourceLoader, TypeRegistry typeRegistry);
 
 }

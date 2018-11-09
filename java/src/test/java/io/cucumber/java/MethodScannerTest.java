@@ -1,15 +1,19 @@
 package io.cucumber.java;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -21,8 +25,13 @@ import static org.mockito.Mockito.*;
 
 public class MethodScannerTest {
 
-    private ResourceLoaderClassFinder classFinder;
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @Mock
     private ObjectFactory factory;
+
+    private ResourceLoaderClassFinder classFinder;
     private JavaBackend backend;
 
     @Before
@@ -30,7 +39,6 @@ public class MethodScannerTest {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        this.factory = Mockito.mock(ObjectFactory.class);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
     }

@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 
 class SingletonFactory implements ObjectFactory {
     private Object singleton;

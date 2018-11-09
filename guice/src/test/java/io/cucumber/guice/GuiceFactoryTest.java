@@ -10,7 +10,7 @@ import io.cucumber.guice.api.CucumberModules;
 import io.cucumber.guice.api.ScenarioScoped;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;

@@ -2,7 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
@@ -17,7 +17,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.lang.reflect.Type;
 import java.util.List;
 
 class JavaStepDefinition implements StepDefinition {

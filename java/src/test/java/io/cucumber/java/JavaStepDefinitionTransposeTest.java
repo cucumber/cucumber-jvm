@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
 import io.cucumber.java.api.Transpose;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;

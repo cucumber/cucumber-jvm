@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.reflection.MethodFormat;
@@ -11,8 +11,6 @@ import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-
-import static java.util.Arrays.asList;
 
 class JavaHookDefinition implements HookDefinition {
 

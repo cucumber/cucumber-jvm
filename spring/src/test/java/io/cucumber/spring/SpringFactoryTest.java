@@ -1,7 +1,7 @@
 package io.cucumber.spring;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.spring.beans.BellyBean;
 import io.cucumber.spring.commonglue.AutowiresPlatformTransactionManager;
 import io.cucumber.spring.commonglue.AutowiresThirdStepDef;

@@ -5,12 +5,12 @@ import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.TypeRegistry;
@@ -18,7 +18,6 @@ import io.cucumber.java.api.After;
 import io.cucumber.java.api.AfterStep;
 import io.cucumber.java.api.Before;
 import io.cucumber.java.api.BeforeStep;
-import io.cucumber.java.api.ObjectFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import static io.cucumber.core.io.MultiLoader.packageName;
-import static io.cucumber.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
 public class JavaBackend implements Backend, LambdaGlueRegistry {
@@ -44,12 +42,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     private Glue glue;
     private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
 
-    JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
-        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
-    }
-
-    private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
-        this(loadObjectFactory(Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
+    JavaBackend(ObjectFactory objectFactory, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+        this(objectFactory, new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
     }
 
     JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {

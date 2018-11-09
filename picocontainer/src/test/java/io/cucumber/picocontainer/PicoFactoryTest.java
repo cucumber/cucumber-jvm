@@ -1,6 +1,6 @@
 package io.cucumber.picocontainer;
 
-import io.cucumber.java.api.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
