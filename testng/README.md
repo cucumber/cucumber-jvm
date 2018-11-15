@@ -73,12 +73,10 @@ public class RunCukesTest extends AbstractTestNGCucumberTests {
       <artifactId>maven-surefire-plugin</artifactId>
       <version>3.0.0-M1</version>
       <configuration>
-         <encoding>${project.reporting.outputEncoding}</encoding>
-         <argLine>-Dfile.encoding=UTF-8</argLine>
          <properties>
             <property>
                <name>dataproviderthreadcount</name>
-               <value>${threads}</value>
+               <value>${threadcount}</value>
             </property>
          </properties>
          <testFailureIgnore>true</testFailureIgnore>
