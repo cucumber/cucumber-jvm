@@ -71,7 +71,6 @@ public class RunCukesTest extends AbstractTestNGCucumberTests {
    <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-surefire-plugin</artifactId>
-      <version>3.0.0-M1</version>
       <configuration>
          <properties>
             <property>
@@ -79,10 +78,6 @@ public class RunCukesTest extends AbstractTestNGCucumberTests {
                <value>${threadcount}</value>
             </property>
          </properties>
-         <testFailureIgnore>true</testFailureIgnore>
-         <includes>
-            <include>TestRunner.java</include>
-         </includes>
       </configuration>
    </plugin>
 </plugins>
