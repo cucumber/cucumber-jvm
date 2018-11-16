@@ -63,3 +63,23 @@ public class RunCukesTest extends AbstractTestNGCucumberTests {
     }
 }
 ```
+
+#### Maven Surefire plugin configuation for parallel execution ####
+
+```xml
+<plugins>
+   <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+         <properties>
+            <property>
+               <name>dataproviderthreadcount</name>
+               <value>${threadcount}</value>
+            </property>
+         </properties>
+      </configuration>
+   </plugin>
+</plugins>
+```
+Where **dataproviderthreadcount** is the default number of threads to use for data providers when running tests in parallel.
