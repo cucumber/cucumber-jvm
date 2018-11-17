@@ -3,6 +3,9 @@ package cucumber.api.event;
 import cucumber.api.Plugin;
 
 /**
+ * Listens to pickle execution events. Can be used to
+ * implement reporters.
+ * <p>
  * When cucumber executes test in parallel or in a framework
  * that supports parallel execution (e.g. JUnit or TestNG)
  * {@link cucumber.api.TestCase} events from different
@@ -12,18 +15,17 @@ import cucumber.api.Plugin;
  * understanding interleaved pickle events.
  * <p>
  * While running tests in parallel cucumber makes the
- * following guarantees.
- * <p>
- * 1. The event publisher is synchronized. Events are not
- * handled concurrently.
- * <p>
- * 2. For test cases executed on different threads the callbacks
+ * following guarantees:
+ * <ol>
+ * <li>The event publisher is synchronized. Events are not
+ * published concurrently.</li>
+ * <li>For test cases executed on different threads a callback
  * registered on the event publisher will be called by
- * different threads. I.e.  Thread.currentThread()
- * will return different a different thread for two test cases
+ * different threads. I.e. {@code Thread.currentThread()}
+ * will return a different thread for two test cases
  * executed on a different thread (but not necessarily the
- * executing thread).
- * <p>
+ * executing thread).</li>
+ * </ol>
  *
  * @see Event
  */

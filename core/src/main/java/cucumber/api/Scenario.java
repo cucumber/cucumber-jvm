@@ -59,7 +59,7 @@ public interface Scenario {
     String getId();
 
     /**
-     * @return the uri of the feature file of the Scenario.
+     * @return the uri of the Scenario.
      */
     String getUri();
 
