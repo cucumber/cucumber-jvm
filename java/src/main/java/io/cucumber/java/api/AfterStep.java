@@ -9,12 +9,22 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface AfterStep {
     /**
-     * @return a tag expression, if the expression applies to the current scenario this hook will be executed.
+     * Tag expression. If the expression applies to the current
+     * scenario this hook will be executed.
+     *
+     * @return a tag expression
      */
     String value() default "";
 
     /**
-     * @return max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.
+     * Duration in milliseconds this hook is allowed to run. Cucumber
+     * will mark the hook as failed when exceeded.
+     *
+     * When the maximum  duration is exceeded the thread will
+     * receive an in interrupt. Note: if the interrupt is ignored
+     * cucumber will wait for the this hook to finish.
+     *
+     * @return timeout in milliseconds. 0 (default) means no restriction.
      */
     long timeout() default 0;
 

@@ -34,12 +34,21 @@ import java.lang.annotation.Target;
 @Repeatable(${kw}.${kw}s.class)
 public @interface ${kw} {
     /**
+     * A cucumber or regular expression.
+     *
      * @return a cucumber or regular expression
      */
     String value();
 
     /**
-     * @return max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.
+     * Duration in milliseconds this step is allowed to run. Cucumber
+     * will mark the step as failed when exceeded.
+     *
+     * When the maximum  duration is exceeded the thread will
+     * receive an in interrupt. Note: if the interrupt is ignored
+     * cucumber will wait for the this hook to finish.
+     *
+     * @return timeout in milliseconds. 0 (default) means no restriction.
      */
     long timeout() default 0;
 
@@ -54,4 +63,3 @@ public @interface ${kw} {
         ${kw}[] value();
     }
 }
-
