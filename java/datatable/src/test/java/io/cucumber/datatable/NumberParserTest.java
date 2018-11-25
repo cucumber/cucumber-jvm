@@ -3,19 +3,23 @@ package io.cucumber.datatable;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class NumberParserTest {
 
-    private final NumberParser english = new NumberParser(Locale.ENGLISH);
+    private final NumberParser english = new NumberParser(Locale.forLanguageTag("fy"));
     private final NumberParser german = new NumberParser(Locale.GERMAN);
 
     @Test
     public void can_parse_float() {
         assertEquals(1042.2f, english.parseFloat("1,042.2"), 0);
         assertEquals(1042.2f, german.parseFloat( "1.042,2"), 0);
+
+        System.out.println(Arrays.toString(NumberFormat.getAvailableLocales()));
     }
 
     @Test
