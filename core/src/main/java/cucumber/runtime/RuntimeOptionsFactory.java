@@ -10,6 +10,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class RuntimeOptionsFactory {
+    private static final String FEATURE_SUFFIX = "feature";
     private final Class clazz;
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
@@ -78,8 +79,7 @@ public class RuntimeOptionsFactory {
     }
 
     private void addPlugins(CucumberOptions options, List<String> args) {
-        List<String> plugins = new ArrayList<>();
-        plugins.addAll(asList(options.plugin()));
+        List<String> plugins = new ArrayList<>(asList(options.plugin()));
         for (String plugin : plugins) {
             args.add("--plugin");
             args.add(plugin);
@@ -95,8 +95,18 @@ public class RuntimeOptionsFactory {
 
     private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(List<String> args, Class clazz) {
         if (!featuresSpecified) {
-            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
+            final String path = MultiLoader.CLASSPATH_SCHEME + packagePath(clazz);
+            if (containsFeatures(path)) {
+                args.add(path);
+            } else {
+                args.add("src/test/resources/features/");
+            }
         }
+    }
+
+    private boolean containsFeatures(String path) {
+        MultiLoader loader = new MultiLoader(this.getClass().getClassLoader());
+        return loader.resources(path, FEATURE_SUFFIX).iterator().hasNext();
     }
 
     private void addGlue(CucumberOptions options, List<String> args) {

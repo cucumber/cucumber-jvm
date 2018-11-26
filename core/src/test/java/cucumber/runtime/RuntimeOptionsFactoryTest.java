@@ -188,6 +188,24 @@ public class RuntimeOptionsFactoryTest {
         runtimeOptionsFactory.create();
     }
 
+    @Test
+    public void with_defined_features_path() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithFeatures.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertFalse(runtimeOptions.getFeaturePaths().isEmpty());
+        assertEquals(runtimeOptions.getFeaturePaths().size(),1);
+        assertEquals(runtimeOptions.getFeaturePaths().get(0),"/path/to/features/");
+    }
+
+    @Test
+    public void without_defined_features_path() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(String.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertFalse(runtimeOptions.getFeaturePaths().isEmpty());
+        assertEquals(runtimeOptions.getFeaturePaths().size(),1);
+        assertEquals(runtimeOptions.getFeaturePaths().get(0),"src/test/resources/features/");
+    }
+
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
     private static class Snippets {
@@ -279,6 +297,16 @@ public class RuntimeOptionsFactoryTest {
     @CucumberOptions(extraGlue = {"app.features.hooks"}, glue = {"app.features.user.registration"})
     private static class ClassWithGlueAndExtraGlue {
         // empty
+    }
+
+    @CucumberOptions(features = "/path/to/features/")
+    private static class ClassWithFeatures {
+        //empty
+    }
+
+    @CucumberOptions
+    private static class ClassWithOutFeatures {
+        //empty
     }
 
 }

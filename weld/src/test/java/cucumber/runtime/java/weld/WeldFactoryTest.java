@@ -91,8 +91,9 @@ public class WeldFactoryTest {
             "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
             "this message, it means your weld container didn't shut down properly. It's a Weld bug\n" +
             "and we can't do much to fix it in Cucumber-JVM.\n" +
-            "\n" +
-            "java.lang.NullPointerException\n" +
+            System.lineSeparator() +
+            "java.lang.NullPointerException" +
+            System.lineSeparator()+
             "\tat cucumber.runtime.java.weld.WeldFactory.stop";
 
         assertThat(this.errContent.toString(), is(startsWith(expectedErrOutput)));

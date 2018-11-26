@@ -6,6 +6,7 @@ import java.util.Set;
 
 import cucumber.runtime.testng.RunFeatureWithThreeScenariosTest;
 import org.testng.Assert;
+import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,14 +19,14 @@ public final class AbstractTestNGCucumberTestsTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUp() {
-        InvokedMethodListener icml = new InvokedMethodListener();
+        ITestNGListener testNGListener = new InvokedMethodListener();
         TestNG testNG = new TestNG();
-        testNG.addListener(icml);
+        testNG.addListener(testNGListener);
         testNG.setGroups("cucumber");
         testNG.setTestClasses(new Class[]{RunFeatureWithThreeScenariosTest.class});
         testNG.run();
-        invokedConfigurationMethodNames = icml.getInvokedConfigurationMethodNames();
-        invokedTestMethodNames = icml.getInvokedTestMethodNames();
+        invokedConfigurationMethodNames = ((InvokedMethodListener) testNGListener).getInvokedConfigurationMethodNames();
+        invokedTestMethodNames = ((InvokedMethodListener) testNGListener).getInvokedTestMethodNames();
     }
     
     @Test
