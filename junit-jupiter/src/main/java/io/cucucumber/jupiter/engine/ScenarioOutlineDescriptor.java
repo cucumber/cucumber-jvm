@@ -20,7 +20,7 @@ class ScenarioOutlineDescriptor extends AbstractTestDescriptor {
     void addExamples(CucumberFeature feature, List<PickleEvent> pickleEvents) {
         int index = 1;
         for (PickleEvent pickleEvent : pickleEvents) {
-            UniqueId scenarioId = getUniqueId().append("example", DiscoverySelectorResolver.pickleId(pickleEvent));
+            UniqueId scenarioId = getUniqueId().append("example", PickleDescriptor.pickleId(pickleEvent));
             TestDescriptor scenarioDescriptor = new PickleDescriptor(scenarioId, "Example #" + index++, fromPickle(feature, pickleEvent), pickleEvent);
             addChild(scenarioDescriptor);
         }

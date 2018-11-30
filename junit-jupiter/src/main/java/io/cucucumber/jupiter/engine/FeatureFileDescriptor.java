@@ -2,7 +2,6 @@ package io.cucucumber.jupiter.engine;
 
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
@@ -24,7 +23,7 @@ class FeatureFileDescriptor extends AbstractTestDescriptor implements Node<Cucum
     }
 
     void addScenario(CucumberFeature feature, PickleEvent pickle) {
-        UniqueId scenarioId = getUniqueId().append("scenario", DiscoverySelectorResolver.pickleId(pickle));
+        UniqueId scenarioId = getUniqueId().append("scenario", PickleDescriptor.pickleId(pickle));
         TestDescriptor scenarioDescriptor = new PickleDescriptor(scenarioId, fromPickle(feature, pickle), pickle);
         addChild(scenarioDescriptor);
     }

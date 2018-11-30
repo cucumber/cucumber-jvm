@@ -19,6 +19,10 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         this(scenarioId, pickle.pickle.getName(), pickleSource, pickle);
     }
 
+    static String pickleId(PickleEvent pickle) {
+        return String.valueOf(pickle.pickle.getLocations().get(0).getLine());
+    }
+
     @Override
     public Type getType() {
         return Type.TEST;
