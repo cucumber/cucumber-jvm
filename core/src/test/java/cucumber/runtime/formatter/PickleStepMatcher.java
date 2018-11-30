@@ -4,7 +4,7 @@ import gherkin.pickles.PickleStep;
 
 import org.mockito.ArgumentMatcher;
 
-public class PickleStepMatcher extends ArgumentMatcher<PickleStep> {
+public class PickleStepMatcher implements ArgumentMatcher<PickleStep> {
     private final String textToMatch;
 
     public PickleStepMatcher(String text) {
@@ -12,7 +12,7 @@ public class PickleStepMatcher extends ArgumentMatcher<PickleStep> {
     }
 
     @Override
-    public boolean matches(Object argument) {
-        return argument instanceof PickleStep && (((PickleStep)argument).getText().contains(textToMatch));
+    public boolean matches(PickleStep argument) {
+        return argument != null && (argument.getText().contains(textToMatch));
     }
 }

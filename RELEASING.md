@@ -9,6 +9,10 @@ and will be executed whenever a non-snapshot version is committed.
 
 Is the build passing?
 
+```
+git checkout master
+```
+
 Also check if you can upgrade any dependencies:
 
 ```
@@ -19,8 +23,6 @@ mvn versions:display-dependency-updates
 
 Replace version numbers in:
 
-* `examples/java-gradle/build.gradle`
-* `examples/android/android-studio/Cukeulator/app/build.gradle`
 * `CHANGELOG.md`
 
 Then run (replace X.Y.Z below with the next release number): 
@@ -34,7 +36,7 @@ git commit -am "Prepare for release X.Y.Z"
 Now release everything:
 
 ```
-mvn release:clean release:prepare -Pandroid-examples -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
+mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
 ```
 
 Travis will now deploy everything. Once travis is done go into [Nexus](https://oss.sonatype.org/) and inspect, 

@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>4.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-examples</artifactId>
@@ -16,19 +16,10 @@
         <module>java-calculator</module>
         <module>java8-calculator</module>
         <module>java-calculator-testng</module>
-        <module>pax-exam</module>
         <module>java-wicket</module>
-        <module>java-webbit-websockets-selenium</module>
     </modules>
 
     <profiles>
-        <profile>
-            <id>android-examples</id>
-            <modules>
-                <module>android</module>
-            </modules>
-        </profile>
-
         <profile>
             <id>coveralls.io</id>
             <build>

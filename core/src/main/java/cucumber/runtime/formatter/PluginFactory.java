@@ -3,10 +3,9 @@ package cucumber.runtime.formatter;
 import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
-import cucumber.api.formatter.Formatter;
+import cucumber.api.event.ConcurrentEventListener;
+import cucumber.api.event.EventListener;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.DefaultSummaryPrinter;
-import cucumber.runtime.NullSummaryPrinter;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 
@@ -38,7 +37,6 @@ public final class PluginFactory {
     private final Class[] CTOR_PARAMETERS = new Class[]{String.class, Appendable.class, URI.class, URL.class, File.class};
 
     private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
-        put("null", NullFormatter.class);
         put("junit", JUnitFormatter.class);
         put("testng", TestNGFormatter.class);
         put("html", HTMLFormatter.class);
@@ -49,6 +47,7 @@ public final class PluginFactory {
         put("rerun", RerunFormatter.class);
         put("default_summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
+        put("timeline", TimelineFormatter.class);
     }};
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private String defaultOutFormatter = null;
@@ -199,7 +198,7 @@ public final class PluginFactory {
 
     public static boolean isFormatterName(String name) {
         Class pluginClass = getPluginClass(name);
-        return Formatter.class.isAssignableFrom(pluginClass);
+        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isStepDefinitionReporterName(String name) {

@@ -1,15 +1,15 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import cucumber.api.formatter.Formatter;
 
-public class FormatterSpy implements Formatter{
+public class FormatterSpy implements EventListener {
     StringBuilder calls = new StringBuilder();
     private final EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override

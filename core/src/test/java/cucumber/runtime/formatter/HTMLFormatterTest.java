@@ -2,7 +2,7 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.util.FixJava;
@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,10 +25,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cucumber.runtime.TestHelper.createEmbedHookAction;
-import static cucumber.runtime.TestHelper.createWriteHookAction;
-import static cucumber.runtime.TestHelper.feature;
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.createEmbedHookAction;
+import static cucumber.runner.TestHelper.createWriteHookAction;
+import static cucumber.runner.TestHelper.feature;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,6 +37,14 @@ import static org.junit.Assert.fail;
 public class HTMLFormatterTest {
     private final static String jsFunctionCallRegexString = "formatter.(\\w*)\\(([^)]*)\\);";
     private final static Pattern jsFunctionCallRegex = Pattern.compile(jsFunctionCallRegexString);
+
+    private final List<CucumberFeature> features = new ArrayList<>();
+    private final Map<String, Result> stepsToResult = new HashMap<>();
+    private final Map<String, String> stepsToLocation = new HashMap<>();
+    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
+    private final List<String> hookLocations = new ArrayList<>();
+    private final List<Answer<Object>> hookActions = new ArrayList<>();
+    private Long stepDuration = null;
 
     private URL outputDir;
 
@@ -114,15 +121,14 @@ public class HTMLFormatterTest {
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
                 "    Then second step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.uri(\"path/test.feature\");\n", "" +
@@ -169,17 +175,16 @@ public class HTMLFormatterTest {
                 "    Then second step\n" +
                 "  Scenario: scenario 2\n" +
                 "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.background({\n" +
@@ -256,17 +261,16 @@ public class HTMLFormatterTest {
                 "      |  arg   |\n" +
                 "      | second |\n" +
                 "      | third  |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.uri(\"path/test.feature\");\n", "" +
@@ -369,15 +373,13 @@ public class HTMLFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("passed")));
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, hooks, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.scenario({\n" +
@@ -407,15 +409,13 @@ public class HTMLFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, hooks, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.scenario({\n" +
@@ -440,22 +440,78 @@ public class HTMLFormatterTest {
     }
 
     @Test
+    public void should_handle_after_step_hooks() throws Throwable {
+        CucumberFeature feature = feature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n");
+        features.add(feature);
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("second step", "path/step_definitions.java:4");
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        stepDuration = 1L;
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        assertJsFunctionCallSequence(asList("" +
+                "formatter.scenario({\n" +
+                "  \"description\": \"\",\n" +
+                "  \"keyword\": \"Scenario\",\n" +
+                "  \"name\": \"scenario name\"\n" +
+                "});\n", "" +
+                "formatter.step({\n" +
+                "  \"keyword\": \"Given \",\n" +
+                "  \"name\": \"first step\"\n" +
+                "});\n", "" +
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:3\"\n" +
+                "});\n", "" +
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.step({\n" +
+                "  \"keyword\": \"When \",\n" +
+                "  \"name\": \"second step\"\n" +
+                "});\n", "" +
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:4\"\n" +
+                "});\n", "" +
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n"),
+            formatterOutput);
+    }
+
+    @Test
     public void should_handle_output_from_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createWriteHookAction("printed from hook"));
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, hooks, hookActions, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.scenario({\n" +
@@ -486,17 +542,14 @@ public class HTMLFormatterTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createWriteHookAction("printed from hook"));
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, hooks, hookActions, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.scenario({\n" +
@@ -522,22 +575,74 @@ public class HTMLFormatterTest {
     }
 
     @Test
+    public void should_handle_output_from_after_step_hooks() throws Throwable {
+        CucumberFeature feature = feature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n");
+        features.add(feature);
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("second step", "path/step_definitions.java:4");
+        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hookActions.add(createWriteHookAction("printed from hook"));
+        stepDuration = 1L;
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        assertJsFunctionCallSequence(asList("" +
+                "formatter.scenario({\n" +
+                "  \"description\": \"\",\n" +
+                "  \"keyword\": \"Scenario\",\n" +
+                "  \"name\": \"scenario name\"\n" +
+                "});\n", "" +
+                "formatter.step({\n" +
+                "  \"keyword\": \"Given \",\n" +
+                "  \"name\": \"first step\"\n" +
+                "});\n", "" +
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:3\"\n" +
+                "});\n", "" +
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.write(\"printed from hook\");\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.step({\n" +
+                "  \"keyword\": \"When \",\n" +
+                "  \"name\": \"second step\"\n" +
+                "});\n", "" +
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:4\"\n" +
+                "});\n", "" +
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n", "" +
+                "formatter.write(\"printed from hook\");\n", "" +
+                "formatter.afterstep({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n"),
+            formatterOutput);
+    }
+
+    @Test
     public void should_handle_text_embeddings_from_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createEmbedHookAction("embedded from hook".getBytes("US-ASCII"), "text/ascii"));
-        long stepDuration = 1;
+        stepDuration = 1L;
 
-        String formatterOutput = runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, hooks, hookActions, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
                 "formatter.scenario({\n" +
@@ -616,7 +721,7 @@ public class HTMLFormatterTest {
     }
 
     private void assertContains(String substring, String string) {
-        if (string.indexOf(substring) == -1) {
+        if (!string.contains(substring)) {
             fail(String.format("[%s] not contained in [%s]", substring, string));
         }
     }
@@ -627,33 +732,36 @@ public class HTMLFormatterTest {
                 "Feature:\n" +
                 "  Scenario: some cukes\n" +
                 "    Given first step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
-        Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        List<Answer<Object>> hookActions = new ArrayList<Answer<Object>>();
         hookActions.add(createEmbedHookAction("fakedata".getBytes("US-ASCII"), "image/png"));
         hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes("US-ASCII"), "text/plain"));
-        long stepHookDuration = 1;
+        stepDuration = 1L;
 
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), hookActions, stepHookDuration, f);
+        runFeaturesWithFormatter(f);
     }
 
-    private String runFeatureWithHTMLFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation, final long stepHookDuration) throws Throwable {
-        return runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, Collections.<SimpleEntry<String, Result>>emptyList(), stepHookDuration);
+    private String runFeaturesWithFormatter() {
+        final StringBuilder report = new StringBuilder();
+        final HTMLFormatter formatter = new HTMLFormatter(null, new NiceAppendable(report));
+        runFeaturesWithFormatter(formatter);
+        return report.toString();
     }
 
-    private String runFeatureWithHTMLFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation, final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration) throws Throwable {
-        return runFeatureWithHTMLFormatter(feature, stepsToResult, stepsToLocation, hooks, Collections.<Answer<Object>>emptyList(), stepHookDuration);
-    }
-
-    private String runFeatureWithHTMLFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation, final List<SimpleEntry<String, Result>> hooks, final List<Answer<Object>> hookActions, final long stepHookDuration) throws Throwable {
-        final StringBuilder out = new StringBuilder();
-        final HTMLFormatter htmlFormatter = new HTMLFormatter(null, new NiceAppendable(out));
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, stepsToLocation, hooks, Collections.<String>emptyList(), hookActions, stepHookDuration, htmlFormatter);
-        return out.toString();
+    private void runFeaturesWithFormatter(HTMLFormatter formatter) {
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceIncrement(stepDuration)
+            .build()
+            .run();
     }
 }

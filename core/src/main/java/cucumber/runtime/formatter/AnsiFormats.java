@@ -5,7 +5,7 @@ import cucumber.api.formatter.AnsiEscapes;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class AnsiFormats implements Formats {
+final class AnsiFormats implements Formats {
     private static final Map<String, Format> formats = new HashMap<String, Format>() {{
         put("undefined", new ColorFormat(AnsiEscapes.YELLOW));
         put("undefined_arg", new ColorFormat(AnsiEscapes.YELLOW, AnsiEscapes.INTENSITY_BOLD)); // Never used, but avoids NPE in formatters.

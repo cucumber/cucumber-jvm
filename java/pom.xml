@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>4.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-java</artifactId>
@@ -136,26 +136,6 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Description />
-                        <Export-Package>cucumber.*</Export-Package>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
     </build>

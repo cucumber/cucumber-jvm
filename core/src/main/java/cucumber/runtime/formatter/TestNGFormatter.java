@@ -1,16 +1,16 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
@@ -29,7 +29,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class TestNGFormatter implements Formatter, StrictAware {
+class TestNGFormatter implements EventListener, StrictAware {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private final Writer writer;
@@ -136,8 +135,8 @@ class TestNGFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            testMethod.steps.add(event.testStep);
+        if (event.testStep instanceof PickleStepTestStep) {
+            testMethod.steps.add((PickleStepTestStep) event.testStep);
             testMethod.results.add(event.result);
         } else {
             testMethod.hooks.add(event.result);
@@ -210,7 +209,7 @@ class TestNGFormatter implements Formatter, StrictAware {
         static String previousTestCaseName;
         static int exampleNumber;
         static final TestSourcesModel testSources = new TestSourcesModel();
-        final List<TestStep> steps = new ArrayList<TestStep>();
+        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
         final TestCase scenario;

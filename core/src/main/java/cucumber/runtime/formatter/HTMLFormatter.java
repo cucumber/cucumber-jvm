@@ -1,10 +1,12 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.HookTestStep;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
@@ -12,7 +14,6 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
@@ -49,7 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class HTMLFormatter implements Formatter {
+final class HTMLFormatter implements EventListener {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
@@ -161,21 +162,25 @@ final class HTMLFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (!event.testStep.isHook()) {
-            if (isFirstStepAfterBackground(event.testStep)) {
+        if (event.testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+            if (isFirstStepAfterBackground(testStep)) {
                 jsFunctionCall("scenario", currentTestCaseMap);
                 currentTestCaseMap = null;
             }
-            jsFunctionCall("step", createTestStep(event.testStep));
+            jsFunctionCall("step", createTestStep(testStep));
+            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.testStep));
         }
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            jsFunctionCall("match", createMatchMap(event.testStep, event.result));
+        if (event.testStep instanceof PickleStepTestStep) {
             jsFunctionCall("result", createResultMap(event.result));
+        } else if(event.testStep instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) event.testStep;
+            jsFunctionCall(hookTestStep.getHookType().toString(), createResultMap(event.result));
         } else {
-            jsFunctionCall(event.testStep.getHookType().toString(), createResultMap(event.result));
+            throw new IllegalStateException();
         }
     }
 
@@ -366,7 +371,7 @@ final class HTMLFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(TestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             if (currentTestCaseMap != null && !TestSourcesModel.isBackgroundStep(astNode)) {
@@ -376,7 +381,7 @@ final class HTMLFormatter implements Formatter {
         return false;
     }
 
-    private Map<String, Object> createTestStep(TestStep testStep) {
+    private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         if (!testStep.getStepArgument().isEmpty()) {
@@ -424,10 +429,11 @@ final class HTMLFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createMatchMap(TestStep testStep, Result result) {
+    private Map<String, Object> createMatchMap(PickleStepTestStep testStep) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if (!result.is(Result.Type.UNDEFINED)) {
-            matchMap.put("location", testStep.getCodeLocation());
+        String location = testStep.getCodeLocation();
+        if (location != null) {
+            matchMap.put("location", location);
         }
         return matchMap;
     }

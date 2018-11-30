@@ -1,7 +1,6 @@
 JUnit Options:
 
   -h, --help                             You're looking at it.
-  --[no-]allow-started-ignored           Deprecated, has no effect.
   --[no-]filename-compatible-names       Make sure that the names of the test cases
                                          only is made up of [A-Za-Z0-9_] so that the
                                          names for certain can be used as file names.

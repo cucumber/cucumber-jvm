@@ -1,8 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.cucumber</groupId>
+    <parent>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-parent</artifactId>
+        <version>1.0.2</version>
+    </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>4.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -34,34 +38,30 @@
 
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <minimum.maven.version>3.3</minimum.maven.version>
-        <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>5.0.0</gherkin.version>
-        <groovy.version>2.4.12</groovy.version>
+        <gherkin.version>5.1.0</gherkin.version>
+        <groovy.version>2.4.15</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <spring.version>4.3.10.RELEASE</spring.version>
-        <spring.data.version>1.11.6.RELEASE</spring.data.version>
+        <spring.version>4.3.20.RELEASE</spring.version>
+        <spring.data.version>1.11.16.RELEASE</spring.data.version>
         <!-- 5.2.2.Final or above does not appear to work on Java 7 -->
         <hibernate.version>5.1.1.Final</hibernate.version>
         <!-- version 2.4.0 does not work on Java 7 -->
-        <hsqldb.version>2.3.5</hsqldb.version>
-        <guice.version>4.0</guice.version>
-        <jsoup.version>1.10.3</jsoup.version>
-        <!-- TestNG 6.11 makes the tests of the testng module to fail -->
-        <testng.version>6.10</testng.version>
+        <hsqldb.version>2.4.1</hsqldb.version>
+        <guice.version>4.2.0</guice.version>
+        <jsoup.version>1.11.3</jsoup.version>
+        <testng.version>6.14.3</testng.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito.version>1.10.19</mockito.version>
-        <selenium.version>3.5.2</selenium.version>
-        <driver-binary-downloader-maven-plugin.version>1.0.17</driver-binary-downloader-maven-plugin.version>
+        <assertj.core.version>3.11.0</assertj.core.version>
+        <mockito.version>2.21.0</mockito.version>
+        <selenium.version>3.12.0</selenium.version>
+        <htmlunit.version>2.30.1</htmlunit.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <weld-se.version>2.4.4.Final</weld-se.version>
         <!-- version 2.0 does not work on Java 7 -->
         <cdi-api.version>1.2</cdi-api.version>
-        <openejb-core.version>4.7.4</openejb-core.version>
+        <openejb-core.version>4.7.5</openejb-core.version>
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
@@ -70,33 +70,20 @@
         <dbunit.version>2.5.4</dbunit.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.28</freemarker.version>
         <!-- version 4.0.0 does not work on Java 7 -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <android-maven-plugin.version>4.4.3</android-maven-plugin.version>
-        <android.version>4.1.1.4</android.version>
         <!-- Apparently Wicket 8.x requires Java 8.
         Stay on 7.0 as long as we support Java 7. -->
         <wicket.version>7.0.0</wicket.version>
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <joda-time.version>2.9.9</joda-time.version>
-        <osgi.version>6.0.0</osgi.version>
-        <!-- At some version above this (not sure which one), pax-exam and/or pax-url stops working on Java 7. -->
-        <pax-exam.version>4.3.0</pax-exam.version>
-        <pax-url.version>2.2.0</pax-url.version>
-        <felix.version>5.6.6</felix.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
+        <cucumber-expressions.version>6.2.0</cucumber-expressions.version>
+        <datatable.version>1.1.7</datatable.version>
     </properties>
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
@@ -106,21 +93,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.6</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.thoughtworks.xstream</groupId>
-                        <artifactId>xstream</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.googlecode.java-diff-utils</groupId>
-                        <artifactId>diffutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
@@ -139,6 +111,16 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-expressions</artifactId>
+                <version>${cucumber-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>datatable</artifactId>
+                <version>${datatable.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -150,11 +132,6 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-osgi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -173,24 +150,14 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-html</artifactId>
-                <version>0.2.6</version>
+                <version>0.2.7</version>
             </dependency>
             <dependency>
                 <groupId>org.picocontainer</groupId>
                 <artifactId>picocontainer</artifactId>
                 <version>${picocontainer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-android</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>android-examples</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -250,7 +217,7 @@
                 <artifactId>spring-data-jpa</artifactId>
                 <version>${spring.data.version}</version>
                 <exclusions>
-                    <!-- Exclude the dependency on junit, which is older and clashes with our 4.11 junit dep -->
+                    <!-- Exclude the dependency on junit, which is older and clashes with our 4.12 junit dep -->
                     <exclusion>
                         <groupId>junit</groupId>
                         <artifactId>junit-dep</artifactId>
@@ -342,9 +309,35 @@
                 <version>${hamcrest.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>uk.co.datumedge</groupId>
+                <artifactId>hamcrest-json</artifactId>
+                <version>0.2</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.core.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -397,6 +390,18 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>htmlunit-driver</artifactId>
+                <version>${htmlunit.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
                 <version>${webbit.version}</version>
@@ -426,26 +431,6 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android</artifactId>
-                <version>${android.version}</version>
-                <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android-test</artifactId>
-                <version>${android.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -484,75 +469,12 @@
                 <version>${xmlunit.version}</version>
             </dependency>
             <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>${osgi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-container-native</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-junit4</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-link-mvn</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.url</groupId>
-                <artifactId>pax-url-aether</artifactId>
-                <version>${pax-url.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.framework</artifactId>
-                <version>${felix.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>net.jodah</groupId>
                 <artifactId>typetools</artifactId>
                 <version>${typetools.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!--
-     this adds a repository that the plugins will use for dependency resolution
-     Any items that we use in a plugin's <dependency> phase can be resolved from here, as well as central
-    -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>sonatype.org</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <modules>
         <module>core</module>
@@ -564,60 +486,21 @@
         <module>junit</module>
         <module>junit-jupiter</module>
         <module>spring</module>
-        <module>osgi</module>
         <module>guice</module>
         <module>weld</module>
         <module>openejb</module>
         <module>needle</module>
-        <module>android</module>
-        <module>examples</module>
-        <!--This should always be the last module -->
-        <module>continuous-deployment</module>
     </modules>
 
     <profiles>
         <profile>
-            <id>sign-source-javadoc</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+            <id>examples</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>examples</module>
+            </modules>
         </profile>
 
         <profile>
@@ -658,13 +541,33 @@
                 </pluginManagement>
             </build>
         </profile>
+
+        <profile>
+            <id>check-semantic-version</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.revapi</groupId>
+                        <artifactId>revapi-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>check</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
         <pluginManagement>
             <plugins>
                 <!-- Standard plugins - alphabetically -->
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
@@ -685,42 +588,7 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.0.0</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>.</directory>
-                                <includes>
-                                    <include>**/*.ser</include>
-                                </includes>
-                            </fileset>
-                        </filesets>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.2</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                        <compilerArgument>-Werror</compilerArgument>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.0-M1</version>
                     <configuration>
                         <use>false</use>
                         <excludePackageNames>cucumber.runtime,cucumber.runtime.*,org.springframework
@@ -739,91 +607,22 @@
                                 <packages>cucumber.api.java.*</packages>
                             </group>
                         </groups>
-                        <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->
-                        <!--<stylesheetfile>${basedir}/doc/javadoc.css</stylesheetfile>-->
                         <stylesheet>java</stylesheet>
                     </configuration>
                 </plugin>
+
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.0.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.9</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
-                    <configuration>
-                        <tagNameFormat>v@{project.version}</tagNameFormat>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.0.0</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <shadedArtifactAttached>true</shadedArtifactAttached>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.6</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20.1</version>
-                    <configuration>
-                        <argLine>-Duser.language=en</argLine>
-                        <argLine>-Xmx1024m</argLine>
-                        <argLine>-XX:MaxPermSize=256m</argLine>
-                        <argLine>-Dfile.encoding=UTF-8</argLine>
-                        <useFile>false</useFile>
-                    </configuration>
+                    <configuration combine.self="override"/>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.0</version>
-                </plugin>
-                <!-- Non-standard plugins -->
-                <plugin>
-                    <groupId>com.lazerycode.selenium</groupId>
-                    <artifactId>driver-binary-downloader-maven-plugin</artifactId>
-                    <version>${driver-binary-downloader-maven-plugin.version}</version>
                 </plugin>
 
                 <plugin>
@@ -833,44 +632,14 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.3.0</version>
-                    <extensions>true</extensions>
-                    <executions>
-                        <execution>
-                            <id>bundle-manifest</id>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.10.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.15.1</version>
+                            <version>0.17.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -885,6 +654,16 @@
                             </revapi.semver.ignore>
                             <revapi.java>
                                 <filter>
+                                    <classes>
+                                        <regex>true</regex>
+                                        <exclude>
+                                            <item>cucumber\.runner\..*</item>
+                                            <item>cucumber\.runtime\..*</item>
+                                            <item>cucumber\.util\..*</item>
+                                            <!--Spring doesn't follow semver that strictly. -->
+                                            <item>org\.springframework\.core\..*</item>
+                                        </exclude>
+                                    </classes>
                                     <packages>
                                         <regex>true</regex>
                                         <exclude>
@@ -901,93 +680,24 @@
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
-                </plugin>
+
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.revapi</groupId>
-                <artifactId>revapi-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>enforce</id>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[1.8,)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[${minimum.maven.version},)</version>
-                                </requireMavenVersion>
-                                <requirePluginVersions>
-                                    <message>Best Practice is to always define plugin versions!</message>
-                                    <banLatest>true</banLatest>
-                                    <banRelease>true</banRelease>
-                                    <banSnapshots>true</banSnapshots>
-                                    <phases>clean,deploy,site</phases>
-                                </requirePluginVersions>
-                                <bannedDependencies>
-                                    <excludes>
-                                        <exclude>commons-logging</exclude>
-                                        <!-- use slf4j -->
-                                        <exclude>log4j</exclude>
-                                        <!-- use slf4j -->
-                                    </excludes>
-                                </bannedDependencies>
-                            </rules>
-                        </configuration>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <goals>deploy</goals>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <!--Manually review the non-snapshot artifacts for a while before automating the release -->
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.10</version>
-            </extension>
-        </extensions>
     </build>
 </project>

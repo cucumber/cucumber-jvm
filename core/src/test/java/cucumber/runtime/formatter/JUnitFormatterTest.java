@@ -1,13 +1,9 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.TestHelper;
+import cucumber.runner.TestHelper;
 import cucumber.runtime.Utils;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
@@ -15,9 +11,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
+import org.mockito.stubbing.Answer;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,21 +23,28 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static cucumber.runtime.TestHelper.result;
+import static cucumber.runner.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class JUnitFormatterTest {
+
+    private final List<CucumberFeature> features = new ArrayList<>();
+    private final Map<String, Result> stepsToResult = new HashMap<>();
+    private final Map<String, String> stepsToLocation = new HashMap<>();
+    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
+    private final List<String> hookLocations = new ArrayList<>();
+    private final List<Answer<Object>> hookActions = new ArrayList<>();
+    private Long stepDuration = null;
 
     @Test
     public void featureSimpleTest() throws Exception {
@@ -77,13 +79,13 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
@@ -106,14 +108,14 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         Throwable exception = new AssumptionViolatedException("message");
         stepsToResult.put("first step", result("skipped", exception));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String stackTrace = getStackTrace(exception);
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
@@ -140,13 +142,13 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("pending"));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("undefined"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.003\">\n" +
@@ -169,13 +171,13 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
@@ -201,15 +203,14 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        long stepHookDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
@@ -235,15 +236,14 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("skipped"));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("pending")));
-        long stepHookDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.004\">\n" +
@@ -267,15 +267,14 @@ public class JUnitFormatterTest {
                         "  Scenario: scenario name\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        long stepHookDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
@@ -301,15 +300,14 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("after", result("failed")));
-        long stepHookDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
@@ -334,15 +332,14 @@ public class JUnitFormatterTest {
                         "  Scenario: scenario name\n" +
                         "    * first step\n" +
                         "    * second step\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
-        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        long stepHookDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
@@ -368,14 +365,14 @@ public class JUnitFormatterTest {
                         "    | arg |\n" +
                         "    |  a  |\n" +
                         "    |  b  |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step \"a\"", result("passed"));
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
@@ -413,16 +410,16 @@ public class JUnitFormatterTest {
                         "    | arg |\n" +
                         "    |  c  |\n" +
                         "    |  d  |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step \"a\"", result("passed"));
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("first step \"c\"", result("passed"));
         stepsToResult.put("first step \"d\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"4\" time=\"0.012\">\n" +
@@ -470,14 +467,14 @@ public class JUnitFormatterTest {
                         "    | arg |\n" +
                         "    |  a  |\n" +
                         "    |  b  |\n");
-        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        features.add(feature);
         stepsToResult.put("first step \"a\"", result("passed"));
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        long stepDuration = milliSeconds(1);
+        stepDuration = milliSeconds(1);
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+        String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
@@ -505,8 +502,6 @@ public class JUnitFormatterTest {
 
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
         List<String> args = new ArrayList<String>();
         if (strict) {
@@ -516,35 +511,45 @@ public class JUnitFormatterTest {
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(0L), null);
-        runtime.run();
+        TestHelper.builder()
+            .withRuntimeArgs(args)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceType(TestHelper.TimeServiceType.FIXED_INCREMENT)
+            .withTimeServiceIncrement(0L)
+            .build()
+            .run();
+
         return report;
     }
 
-    private String runFeatureWithJUnitFormatter(final CucumberFeature feature) throws Throwable {
-        return runFeatureWithJUnitFormatter(feature, new HashMap<String, Result>(), 0L);
-    }
-
-    private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final long stepHookDuration)
-            throws Throwable {
-        return runFeatureWithJUnitFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepHookDuration);
-    }
-
-    private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult,
-            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration) throws Throwable {
+    private String runFeaturesWithFormatter() throws IOException {
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
-        final JUnitFormatter junitFormatter = createJUnitFormatter(report);
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, hooks, stepHookDuration, junitFormatter);
+        final JUnitFormatter formatter = createJUnitFormatter(report);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceIncrement(stepDuration)
+            .build()
+            .run();
+
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
         String formatterOutput = scanner.useDelimiter("\\A").next();
         scanner.close();
         return formatterOutput;
     }
 
-    private void assertXmlEqual(String expectedPath, File actual) throws IOException, ParserConfigurationException, SAXException {
+    private void assertXmlEqual(String expectedPath, File actual) throws IOException, SAXException {
         XMLUnit.setIgnoreWhitespace(true);
         InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
         Diff diff = new Diff(control, new FileReader(actual));

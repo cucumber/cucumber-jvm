@@ -1,13 +1,15 @@
 package cucumber.api.formatter;
 
+import cucumber.api.Plugin;
+
 /**
- * Interface for Formatters that need to know if the Runtime is strict.
+ * Interface for Plugins that need to know if the Runtime is strict.
  */
-public interface StrictAware extends Formatter {
+public interface StrictAware extends Plugin {
     /**
-     * When set to strict the formatter should indicate failure for undefined and pending steps
+     * When set to strict the plugin should indicate failure for undefined and pending steps
      *
-     * @param strict true iff the runtime is in strict mode
+     * @param strict true if the runtime is in strict mode
      */
     void setStrict(boolean strict);
 }

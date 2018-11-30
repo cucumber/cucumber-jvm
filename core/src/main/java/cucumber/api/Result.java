@@ -2,15 +2,26 @@ package cucumber.api;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Comparator;
+import java.util.Objects;
 
-public class Result {
-    private static final long serialVersionUID = 1L;
+import static java.util.Locale.ROOT;
+import static java.util.Objects.requireNonNull;
 
-    private final Result.Type status;
+public final class Result {
+
+    public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
+
+        @Override
+        public int compare(Result a, Result b) {
+            return a.status == b.status ? 0 : a.status.ordinal() > b.status.ordinal() ? 1 : -1;
+        }
+    };
+
+    private final Type status;
     private final Long duration;
     private final Throwable error;
-    public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
-    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, null, null);
+    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, 0L, null);
     public enum Type {
         PASSED,
         SKIPPED,
@@ -20,15 +31,15 @@ public class Result {
         FAILED;
 
         public static Type fromLowerCaseName(String lowerCaseName) {
-            return valueOf(lowerCaseName.toUpperCase());
+            return valueOf(lowerCaseName.toUpperCase(ROOT));
         }
 
         public String lowerCaseName() {
-            return name().toLowerCase();
+            return name().toLowerCase(ROOT);
         }
 
         public String firstLetterCapitalizedName() {
-            return name().substring(0, 1) + name().substring(1).toLowerCase();
+            return name().substring(0, 1) + name().substring(1).toLowerCase(ROOT);
         }
 
 
@@ -42,8 +53,8 @@ public class Result {
      * @param error the error that caused the failure if any
      */
     public Result(Result.Type status, Long duration, Throwable error) {
-        this.status = status;
-        this.duration = duration;
+        this.status = requireNonNull(status);
+        this.duration = requireNonNull(duration);
         this.error = error;
     }
 
@@ -84,5 +95,29 @@ public class Result {
         PrintWriter printWriter = new PrintWriter(stringWriter);
         error.printStackTrace(printWriter);
         return stringWriter.getBuffer().toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+            "status=" + status +
+            ", duration=" + duration +
+            ", error=" + error +
+            '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Result result = (Result) o;
+        return status == result.status &&
+            Objects.equals(duration, result.duration) &&
+            Objects.equals(error, result.error);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, duration, error);
     }
 }

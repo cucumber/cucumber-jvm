@@ -1,13 +1,24 @@
 package cucumber.api.event;
 
+import cucumber.api.Plugin;
+
 /**
- * This is the interface you should implement if you want your own custom
- * formatter.
+ * Listens to pickle execution events. Can be used to
+ * implement reporters.
+ * <p>
+ * When cucumber executes test in parallel or in a framework
+ * that supports parallel execution (e.g. JUnit or TestNG)
+ * {@link cucumber.api.event.Event}s are stored and published
+ * in @{@link Event#CANONICAL_ORDER} after the test run has
+ * completed.
+ *
+ * @see Event
+ * @see ConcurrentEventListener
  */
-public interface EventListener {
+public interface EventListener extends Plugin {
 
     /**
-     * Set the event publisher. The formatter can register event listeners with the publisher.
+     * Set the event publisher. The plugin can register event listeners with the publisher.
      *
      * @param publisher the event publisher
      */

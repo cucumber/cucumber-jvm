@@ -4,43 +4,22 @@ sudo: false
 cache:
   directories:
   - "$HOME/.m2"
-before_cache:
-- rm -rf $HOME/.m2/repository/io/cucumber
 
 jobs:
   include:
   - stage: test
     jdk: oraclejdk8
-    script: mvn -q install
+    script: mvn verify -Pcheck-semantic-version -DskipTests=true
+    env: CHECK_SEMANTIC_VERSION=true
+  - jdk: oraclejdk8
+    script: mvn -q verify
     after_success:
     - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
   - jdk: oraclejdk8
     env: JAVADOC=true
     script:
-    - mvn clean install -DskipTests=true
+    - mvn clean verify -DskipTests=true
     - mvn javadoc:aggregate
-  - jdk: oraclejdk8
-    env: ANDROID_EXAMPLES=true
-    language: android
-    android:
-      components:
-      - tools
-      - platform-tools
-      - tools
-      - build-tools-26.0.0
-      - android-21
-      - sys-img-armeabi-v7a-android-21
-    before_install:
-    - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-    - emulator -avd test -no-skin -no-audio -no-window &
-    install:
-    - mvn -q install --also-make --projects android,picocontainer -DskipTests=true
-      -Dmaven.javadoc.skip=true
-    before_script:
-    - android-wait-for-emulator
-    script:
-    - mvn install --activate-profiles android-examples --projects examples/android
-      --also-make-dependents -Dandroid.device=test
   - stage: deploy
     jdk: oraclejdk8
     script:

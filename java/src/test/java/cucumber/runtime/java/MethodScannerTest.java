@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -9,7 +10,9 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
+
+import java.util.Collections;
+import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static org.junit.Assert.assertEquals;
@@ -28,14 +31,15 @@ public class MethodScannerTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         this.factory = Mockito.mock(ObjectFactory.class);
-        this.backend = new JavaBackend(factory, classFinder);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
     }
 
     @Test
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
         MethodScanner methodScanner = new MethodScanner(classFinder);
         Glue world = Mockito.mock(Glue.class);
-        Whitebox.setInternalState(backend, "glue", world);
+        backend.loadGlue(world,Collections.<String>emptyList());
 
         // this delegates to methodScanner.scan which we test
         methodScanner.scan(backend, BaseStepDefs.class.getMethod("m"), BaseStepDefs.class);

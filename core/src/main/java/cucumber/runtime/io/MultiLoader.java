@@ -1,5 +1,8 @@
 package cucumber.runtime.io;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiLoader implements ResourceLoader {
     public static final String CLASSPATH_SCHEME = "classpath:";
 
@@ -18,6 +21,14 @@ public class MultiLoader implements ResourceLoader {
         } else {
             return fs.resources(path, suffix);
         }
+    }
+
+    public static List<String> packageName(List<String> glue) {
+        List<String> packageNames = new ArrayList<String>(glue.size());
+        for (String gluePath : glue) {
+            packageNames.add(packageName(gluePath));
+        }
+        return packageNames;
     }
 
     public static String packageName(String gluePath) {

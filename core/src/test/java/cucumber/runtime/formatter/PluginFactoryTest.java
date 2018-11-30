@@ -1,9 +1,11 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
-import cucumber.api.TestStep;
+import cucumber.api.TestCase;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
@@ -29,12 +31,6 @@ import static org.mockito.Mockito.mock;
 
 public class PluginFactoryTest {
     private PluginFactory fc = new PluginFactory();
-
-    @Test
-    public void instantiates_null_plugin() {
-        Object plugin = fc.create("null");
-        assertEquals(NullFormatter.class, plugin.getClass());
-    }
 
     @Test
     public void instantiates_junit_plugin_with_file_arg() throws IOException {
@@ -94,10 +90,10 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
-            EventBus bus = new EventBus(new TimeServiceStub(0));
+            EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
-            Result result = new Result(Result.Type.PASSED, null, null);
-            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestStep.class), result);
+            Result result = new Result(Result.Type.PASSED, 0L, null);
+            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));
@@ -169,6 +165,12 @@ public class PluginFactoryTest {
     public void instantiates_plugin_using_arg_constructor_when_specified() throws IOException {
         WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsStringOrDefault:hello");
         assertEquals("hello", plugin.arg);
+    }
+
+    @Test
+    public void instantiates_timeline_plugin_with_dir_arg() throws IOException {
+        Object plugin = fc.create("timeline:" + TempDir.createTempDirectory().getAbsolutePath());
+        assertEquals(TimelineFormatter.class, plugin.getClass());
     }
 
     public static class WantsAppendable extends StubFormatter {

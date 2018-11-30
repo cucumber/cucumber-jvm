@@ -1,173 +1,248 @@
 package cucumber.runtime;
 
+import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
-import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
-import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.RunnerSupplier;
+import cucumber.runner.SingletonRunnerSupplier;
+import cucumber.runner.ThreadLocalRunnerSupplier;
+import cucumber.runtime.filter.Filters;
+import cucumber.runtime.filter.RerunFilters;
+import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.formatter.Plugins;
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
- * This is the main entry point for running Cucumber features.
+ * This is the main entry point for running Cucumber features from the CLI.
  */
 public class Runtime {
 
-    final Stats stats; // package private to be available for tests.
-    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    private final ExitStatus exitStatus;
 
     private final RuntimeOptions runtimeOptions;
 
-    private final ResourceLoader resourceLoader;
-    private final ClassLoader classLoader;
-    private final Runner runner;
-    private final List<PicklePredicate> filters;
+    private final RunnerSupplier runnerSupplier;
+    private final Filters filters;
     private final EventBus bus;
-    private final Compiler compiler = new Compiler();
-    public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
-    }
+    private final FeatureSupplier featureSupplier;
+    private final Plugins plugins;
+    private final ExecutorService executor;
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, null);
-    }
+    public Runtime(final Plugins plugins,
+                   final RuntimeOptions runtimeOptions,
+                   final EventBus bus,
+                   final Filters filters,
+                   final RunnerSupplier runnerSupplier,
+                   final FeatureSupplier featureSupplier,
+                   final ExecutorService executor) {
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
-                   RuntimeOptions runtimeOptions, Glue optionalGlue) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, optionalGlue);
-    }
-
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
-                   RuntimeOptions runtimeOptions, TimeService stopWatch, Glue optionalGlue) {
-        if (backends.isEmpty()) {
-            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
-        }
-        this.resourceLoader = resourceLoader;
-        this.classLoader = classLoader;
+        this.plugins = plugins;
         this.runtimeOptions = runtimeOptions;
-        final Glue glue;
-        glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
-        this.stats = new Stats(runtimeOptions.isMonochrome());
-        this.bus = new EventBus(stopWatch);
-        this.runner = new Runner(glue, bus, backends, runtimeOptions);
-        this.filters = new ArrayList<PicklePredicate>();
-        List<String> tagFilters = runtimeOptions.getTagFilters();
-        if (!tagFilters.isEmpty()) {
-            this.filters.add(new TagPredicate(tagFilters));
-        }
-        List<Pattern> nameFilters = runtimeOptions.getNameFilters();
-        if (!nameFilters.isEmpty()) {
-            this.filters.add(new NamePredicate(nameFilters));
-        }
-        Map<String, List<Long>> lineFilters = runtimeOptions.getLineFilters(resourceLoader);
-        if (!lineFilters.isEmpty()) {
-            this.filters.add(new LinePredicate(lineFilters));
-        }
-
-        stats.setEventPublisher(bus);
-        undefinedStepsTracker.setEventPublisher(bus);
-        runtimeOptions.setEventBus(bus);
+        this.filters = filters;
+        this.bus = bus;
+        this.runnerSupplier = runnerSupplier;
+        this.featureSupplier = featureSupplier;
+        this.executor = executor;
+        this.exitStatus = new ExitStatus(runtimeOptions);
+        exitStatus.setEventPublisher(bus);
     }
 
-    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
-        Reflections reflections = new Reflections(classFinder);
-        return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
-    }
+    public void run() {
+        final List<CucumberFeature> features = featureSupplier.get();
+        bus.send(new TestRunStarted(bus.getTime()));
+        for (CucumberFeature feature : features) {
+            feature.sendTestSourceRead(bus);
+        }
 
-    /**
-     * This is the main entry point. Used from CLI, but not from JUnit.
-     */
-    public void run() throws IOException {
-        // Make sure all features parse before initialising any reporters/formatters
-        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
+        final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
+        runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
-
-        StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
-
-        reportStepDefinitions(stepDefinitionReporter);
-
-        for (CucumberFeature cucumberFeature : features) {
-            runFeature(cucumberFeature);
+        final FeatureCompiler compiler = new FeatureCompiler();
+        for (CucumberFeature feature : features) {
+            for (final PickleEvent pickleEvent : compiler.compileFeature(feature)) {
+                if (filters.matchesFilters(pickleEvent)) {
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            runnerSupplier.get().runPickle(pickleEvent);
+                        }
+                    });
+                }
+            }
+        }
+        executor.shutdown();
+        try {
+            //noinspection StatementWithEmptyBody we wait, nothing else
+            while (!executor.awaitTermination(1, TimeUnit.DAYS)) ;
+        } catch (InterruptedException e) {
+            throw new CucumberException(e);
         }
 
         bus.send(new TestRunFinished(bus.getTime()));
-        printSummary();
-    }
-
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        runner.reportStepDefinitions(stepDefinitionReporter);
-    }
-
-    public void runFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = compileFeature(feature);
-        for (PickleEvent pickleEvent : pickleEvents) {
-            if (matchesFilters(pickleEvent)) {
-                runner.runPickle(pickleEvent);
-            }
-        }
-    }
-
-    public List<PickleEvent> compileFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
-        }
-        return pickleEvents;
-    }
-
-    public boolean matchesFilters(PickleEvent pickleEvent) {
-        for (PicklePredicate filter : filters) {
-            if (!filter.apply(pickleEvent)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void printSummary() {
-        SummaryPrinter summaryPrinter = runtimeOptions.summaryPrinter(classLoader);
-        summaryPrinter.print(this);
-    }
-
-    void printStats(PrintStream out) {
-        stats.printStats(out, runtimeOptions.isStrict());
-    }
-
-    public List<Throwable> getErrors() {
-        return stats.getErrors();
     }
 
     public byte exitStatus() {
-        return stats.exitStatus(runtimeOptions.isStrict());
+        return exitStatus.exitStatus();
     }
 
-    public List<String> getSnippets() {
-        return undefinedStepsTracker.getSnippets();
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public Glue getGlue() {
-        return runner.getGlue();
+    public static class Builder {
+
+        private EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
+        private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        private RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        private BackendSupplier backendSupplier;
+        private ResourceLoader resourceLoader;
+        private ClassFinder classFinder;
+        private FeatureSupplier featureSupplier;
+        private List<Plugin> additionalPlugins = Collections.emptyList();
+
+        private Builder() {
+        }
+
+        public Builder withArg(final String arg) {
+            this.runtimeOptions = new RuntimeOptions(arg);
+            return this;
+        }
+
+        public Builder withArgs(final String... args) {
+            return withArgs(Arrays.asList(args));
+        }
+
+        public Builder withArgs(final List<String> args) {
+            this.runtimeOptions = new RuntimeOptions(args);
+            return this;
+        }
+
+        public Builder withRuntimeOptions(final RuntimeOptions runtimeOptions) {
+            this.runtimeOptions = runtimeOptions;
+            return this;
+        }
+
+        public Builder withClassLoader(final ClassLoader classLoader) {
+            this.classLoader = classLoader;
+            return this;
+        }
+
+        public Builder withResourceLoader(final ResourceLoader resourceLoader) {
+            this.resourceLoader = resourceLoader;
+            return this;
+        }
+
+        public Builder withClassFinder(final ClassFinder classFinder) {
+            this.classFinder = classFinder;
+            return this;
+        }
+
+        public Builder withBackendSupplier(final BackendSupplier backendSupplier) {
+            this.backendSupplier = backendSupplier;
+            return this;
+        }
+
+        public Builder withFeatureSupplier(final FeatureSupplier featureSupplier) {
+            this.featureSupplier = featureSupplier;
+            return this;
+        }
+
+        public Builder withAdditionalPlugins(final Plugin... plugins) {
+            this.additionalPlugins = Arrays.asList(plugins);
+            return this;
+        }
+
+        public Builder withEventBus(final EventBus eventBus) {
+            this.eventBus = eventBus;
+            return this;
+        }
+
+        public Runtime build() {
+            final ResourceLoader resourceLoader = this.resourceLoader != null
+                ? this.resourceLoader
+                : new MultiLoader(this.classLoader);
+
+            final ClassFinder classFinder = this.classFinder != null
+                ? this.classFinder
+                : new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
+
+            final BackendSupplier backendSupplier = this.backendSupplier != null
+                ? this.backendSupplier
+                : new BackendModuleBackendSupplier(resourceLoader, classFinder, this.runtimeOptions);
+
+            final Plugins plugins = new Plugins(this.classLoader, new PluginFactory(), this.eventBus, this.runtimeOptions);
+            for (final Plugin plugin : additionalPlugins) {
+                plugins.addPlugin(plugin);
+            }
+
+            final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
+                ? new ThreadLocalRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier)
+                : new SingletonRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier);
+
+            final ExecutorService executor = runtimeOptions.isMultiThreaded()
+                ? Executors.newFixedThreadPool(runtimeOptions.getThreads())
+                : new SameThreadExecutorService();
+
+
+            final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+
+            final FeatureSupplier featureSupplier = this.featureSupplier != null
+                ? this.featureSupplier
+                : new FeaturePathFeatureSupplier(featureLoader, this.runtimeOptions);
+
+            final RerunFilters rerunFilters = new RerunFilters(this.runtimeOptions, featureLoader);
+            final Filters filters = new Filters(this.runtimeOptions, rerunFilters);
+            return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
+        }
     }
 
-    public EventBus getEventBus() {
-        return bus;
-    }
+    private static final class SameThreadExecutorService extends AbstractExecutorService {
 
-    public Runner getRunner() {
-        return runner;
+        @Override
+        public void execute(Runnable command) {
+            command.run();
+        }
+
+        @Override
+        public void shutdown() {
+            //no-op
+        }
+
+        @Override
+        public List<Runnable> shutdownNow() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean isShutdown() {
+            return true;
+        }
+
+        @Override
+        public boolean isTerminated() {
+            return true;
+        }
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) {
+            return true;
+        }
     }
 }

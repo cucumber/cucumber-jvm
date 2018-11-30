@@ -1,6 +1,16 @@
-<!-- These sections are meant as guidance for you, to help you give the kind of information we'll need to help with your issue. If a section  doesn't seem to fit, just skip it.
+<!-- Please use the [support](https://cucumber.io/support) forums for questions 
+and discussions which are not related to bug reports or feature requests -->
 
-In general: Please provide as much information as you can to help us solving your problem -->
+<!-- Please search for related issues and check the [documentation](https://docs.cucumber.io/support)
+before opening a new issue -->
+
+<!-- If your issue is related to other tools (Serenity, Selenium, etc),
+please open an issue on the related tool. Only open an issue here once
+you have confirmed the issue is with Cucumber -->
+
+<!-- If you are reporting a bug, please provide as much information as you can to help us solving your problem.
+The sections below are meant as guidance, to help you give the kind of information we'll need to help with your issue. 
+If a section  doesn't seem to fit, just skip it.-->
 
 ## Summary
 

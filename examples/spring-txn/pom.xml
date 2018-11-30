@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>4.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>spring-txn</artifactId>
@@ -82,11 +82,6 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>

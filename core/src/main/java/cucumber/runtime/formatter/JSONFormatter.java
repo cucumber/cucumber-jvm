@@ -1,11 +1,14 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.HookTestStep;
 import cucumber.api.HookType;
+import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
@@ -13,10 +16,8 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import gherkin.ast.Background;
-import gherkin.ast.DocString;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
@@ -35,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class JSONFormatter implements Formatter {
+final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> currentElementsList;
@@ -43,6 +44,7 @@ final class JSONFormatter implements Formatter {
     private Map<String, Object> currentTestCaseMap;
     private List<Map<String, Object>> currentStepsList;
     private Map<String, Object> currentStepOrHookMap;
+    private Map<String, Object> currentBeforeStepHookList = new HashMap<String, Object>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
@@ -53,7 +55,7 @@ final class JSONFormatter implements Formatter {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -129,16 +131,25 @@ final class JSONFormatter implements Formatter {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (!event.testStep.isHook()) {
-            if (isFirstStepAfterBackground(event.testStep)) {
+        if (event.testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+            if (isFirstStepAfterBackground(testStep)) {
                 currentElementMap = currentTestCaseMap;
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
             }
-            currentStepOrHookMap = createTestStep(event.testStep);
+            currentStepOrHookMap = createTestStep(testStep);
+            //add beforeSteps list to current step
+            if (currentBeforeStepHookList.containsKey(HookType.Before.toString())) {
+                currentStepOrHookMap.put(HookType.Before.toString(), currentBeforeStepHookList.get(HookType.Before.toString()));
+                currentBeforeStepHookList.clear();
+            }
             currentStepsList.add(currentStepOrHookMap);
+        } else if(event.testStep instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) event.testStep;
+            currentStepOrHookMap = createHookStep(hookTestStep);
+            addHookStepToTestCaseMap(currentStepOrHookMap, hookTestStep.getHookType());
         } else {
-            currentStepOrHookMap = createHookStep(event.testStep);
-            addHookStepToTestCaseMap(currentStepOrHookMap, event.testStep.getHookType());
+            throw new IllegalStateException();
         }
     }
 
@@ -218,7 +229,7 @@ final class JSONFormatter implements Formatter {
         return null;
     }
 
-    private boolean isFirstStepAfterBackground(TestStep testStep) {
+    private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
             if (currentElementMap != currentTestCaseMap && !TestSourcesModel.isBackgroundStep(astNode)) {
@@ -228,7 +239,7 @@ final class JSONFormatter implements Formatter {
         return false;
     }
 
-    private Map<String, Object> createTestStep(TestStep testStep) {
+    private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<String, Object>();
         stepMap.put("name", testStep.getStepText());
         stepMap.put("line", testStep.getStepLine());
@@ -236,7 +247,7 @@ final class JSONFormatter implements Formatter {
         if (!testStep.getStepArgument().isEmpty()) {
             Argument argument = testStep.getStepArgument().get(0);
             if (argument instanceof PickleString) {
-                stepMap.put("doc_string", createDocStringMap(argument, astNode));
+                stepMap.put("doc_string", createDocStringMap(argument));
             } else if (argument instanceof PickleTable) {
                 stepMap.put("rows", createDataTableList(argument));
             }
@@ -249,14 +260,12 @@ final class JSONFormatter implements Formatter {
         return stepMap;
     }
 
-    private Map<String, Object> createDocStringMap(Argument argument, TestSourcesModel.AstNode astNode) {
+    private Map<String, Object> createDocStringMap(Argument argument) {
         Map<String, Object> docStringMap = new HashMap<String, Object>();
         PickleString docString = ((PickleString)argument);
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
-        if (astNode != null) {
-            docStringMap.put("content_type", ((DocString)((Step)astNode.node).getArgument()).getContentType());
-        }
+        docStringMap.put("content_type", docString.getContentType());
         return docStringMap;
     }
 
@@ -278,15 +287,40 @@ final class JSONFormatter implements Formatter {
         return cells;
     }
 
-    private Map<String, Object> createHookStep(TestStep testStep) {
+    private Map<String, Object> createHookStep(HookTestStep hookTestStep) {
         return new HashMap<String, Object>();
     }
 
     private void addHookStepToTestCaseMap(Map<String, Object> currentStepOrHookMap, HookType hookType) {
-        if (!currentTestCaseMap.containsKey(hookType.toString())) {
-            currentTestCaseMap.put(hookType.toString(), new ArrayList<Map<String, Object>>());
+        String hookName;
+        if (hookType.toString().contains("after"))
+            hookName = "after";
+        else
+            hookName = "before";
+
+
+        Map<String, Object> mapToAddTo;
+        switch (hookType) {
+            case Before:
+                mapToAddTo = currentTestCaseMap;
+                break;
+            case After:
+                mapToAddTo = currentTestCaseMap;
+                break;
+            case BeforeStep:
+                mapToAddTo = currentBeforeStepHookList;
+                break;
+            case AfterStep:
+                mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
+                break;
+             default:
+                 mapToAddTo = currentTestCaseMap;
         }
-        ((List<Map<String, Object>>)currentTestCaseMap.get(hookType.toString())).add(currentStepOrHookMap);
+
+        if (!mapToAddTo.containsKey(hookName)) {
+            mapToAddTo.put(hookName, new ArrayList<Map<String, Object>>());
+        }
+        ((List<Map<String, Object>>)mapToAddTo.get(hookName)).add(currentStepOrHookMap);
     }
 
     private void addOutputToHookMap(String text) {
@@ -311,20 +345,25 @@ final class JSONFormatter implements Formatter {
         return embedMap;
     }
 
-    private Map<String, Object> createMatchMap(TestStep testStep, Result result) {
+    private Map<String, Object> createMatchMap(TestStep step, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if (!testStep.getDefinitionArgument().isEmpty()) {
-            List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
-            for (cucumber.runtime.Argument argument : testStep.getDefinitionArgument()) {
-                Map<String, Object> argumentMap = new HashMap<String, Object>();
-                argumentMap.put("val", argument.getVal());
-                argumentMap.put("offset", argument.getOffset());
-                argumentList.add(argumentMap);
+        if(step instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) step;
+            if (!testStep.getDefinitionArgument().isEmpty()) {
+                List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
+                for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
+                    Map<String, Object> argumentMap = new HashMap<String, Object>();
+                    if (argument.getValue() != null) {
+                        argumentMap.put("val", argument.getValue());
+                        argumentMap.put("offset", argument.getStart());
+                    }
+                    argumentList.add(argumentMap);
+                }
+                matchMap.put("arguments", argumentList);
             }
-            matchMap.put("arguments", argumentList);
         }
         if (!result.is(Result.Type.UNDEFINED)) {
-            matchMap.put("location", testStep.getCodeLocation());
+            matchMap.put("location", step.getCodeLocation());
         }
         return matchMap;
     }

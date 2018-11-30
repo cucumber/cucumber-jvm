@@ -10,7 +10,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * An example of using TestNG when the test class does not inherit from 
+ * An example of using TestNG when the test class does not inherit from
  * AbstractTestNGCucumberTests but still executes each scenario as a separate
  * TestNG test.
  */
@@ -23,7 +23,7 @@ public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
-    @Test(groups = "cucumber", description = "Runs Cucumber Feature", dataProvider = "scenarios")
+    @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
     public void scenario(PickleEventWrapper pickleEvent, CucumberFeatureWrapper cucumberFeature) throws Throwable {
         testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent());
     }

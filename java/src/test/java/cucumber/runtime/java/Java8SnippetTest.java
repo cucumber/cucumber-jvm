@@ -4,9 +4,12 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,9 +19,9 @@ public class Java8SnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\", (Integer arg1, String arg2) -> {\n" +
+                "Given(\"I have {int} cukes in my {string} belly\", (Integer int1, String string) -> {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
-                "    throw new PendingException();\n" +
+                "    throw new cucumber.api.PendingException();\n" +
                 "});\n";
         System.out.println(expected);
         assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
@@ -26,6 +29,7 @@ public class Java8SnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new Java8Snippet()).getSnippet(step, GIVEN_KEYWORD, null);
+        List<String> snippet = new SnippetGenerator(new Java8Snippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, null);
+        return StringJoiner.join("\n", snippet);
     }
 }

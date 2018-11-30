@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>4.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -13,12 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-html</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
+            <artifactId>cucumber-html</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -28,7 +24,14 @@
             <groupId>io.cucumber</groupId>
             <artifactId>tag-expressions</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-expressions</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>datatable</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -49,11 +52,7 @@
             <artifactId>jsoup</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit</artifactId>
@@ -64,6 +63,24 @@
             <artifactId>webbit-rest</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>uk.co.datumedge</groupId>
+            <artifactId>hamcrest-json</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -79,7 +96,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifest>
                             <mainClass>cucumber.api.cli.Main</mainClass>
                         </manifest>
@@ -96,14 +112,78 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Bundle-Description />
-                        <Export-Package>cucumber.*</Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                    </instructions>
+                    <analysisConfiguration>
+                        <revapi.ignore>
+                            <item>
+                                <code>java.method.addedToInterface</code>
+                                <new>method void cucumber.api.TypeRegistry::setDefaultParameterTransformer(io.cucumber.cucumberexpressions.ParameterByTypeTransformer)</new>
+                                <package>cucumber.api</package>
+                                <classQualifiedName>cucumber.api.TypeRegistry</classQualifiedName>
+                                <classSimpleName>TypeRegistry</classSimpleName>
+                                <methodName>setDefaultParameterTransformer</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This interface can be used by users of Cucumber but should not be implemented.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.ArgumentMatcher</classQualifiedName>
+                                <classSimpleName>ArgumentMatcher</classSimpleName>
+                                <methodName>argumentsFrom</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument. </justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ExpressionArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.ExpressionArgumentMatcher::argumentsFrom(gherkin.pickles.PickleStep, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.ExpressionArgumentMatcher</classQualifiedName>
+                                <classSimpleName>ExpressionArgumentMatcher</classSimpleName>
+                                <methodName>argumentsFrom</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.StepExpression</classQualifiedName>
+                                <classSimpleName>StepExpression</classSimpleName>
+                                <methodName>match</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.lang.String)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.lang.String, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.StepExpression</classQualifiedName>
+                                <classSimpleName>StepExpression</classSimpleName>
+                                <methodName>match</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
+                            </item>
+                            <item>
+                                <code>java.method.numberOfParametersChanged</code>
+                                <old>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.util.List&lt;java.util.List&lt;java.lang.String&gt;&gt;)</old>
+                                <new>method java.util.List&lt;io.cucumber.stepexpression.Argument&gt; io.cucumber.stepexpression.StepExpression::match(java.lang.String, java.util.List&lt;java.util.List&lt;java.lang.String&gt;&gt;, java.lang.reflect.Type[])</new>
+                                <package>io.cucumber.stepexpression</package>
+                                <classQualifiedName>io.cucumber.stepexpression.StepExpression</classQualifiedName>
+                                <classSimpleName>StepExpression</classSimpleName>
+                                <methodName>match</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
+                            </item>
+                        </revapi.ignore>
+                    </analysisConfiguration>
                 </configuration>
             </plugin>
 

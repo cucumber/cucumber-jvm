@@ -1,22 +1,19 @@
 package cucumber.runtime.java;
 
-import cucumber.api.StepDefinitionReporter;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.java.stepdefs.Stepdefs;
-import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -28,12 +25,13 @@ public class JavaBackendTest {
     private JavaBackend backend;
 
     @Before
-    public void createBackend(){
+    public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         this.factory = new DefaultJavaObjectFactory();
-        this.backend = new JavaBackend(factory, classFinder);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
     }
 
     @Test
@@ -59,11 +57,15 @@ public class JavaBackendTest {
     }
 
     private class GlueStub implements Glue {
-        public final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
-            stepDefinitions.add(stepDefinition);
+            //no-op
+        }
+
+        @Override
+        public void addBeforeStepHook(HookDefinition beforeStepHook) {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -72,27 +74,12 @@ public class JavaBackendTest {
         }
 
         @Override
+        public void addAfterStepHook(HookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void addAfterHook(HookDefinition hookDefinition) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<HookDefinition> getBeforeHooks() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<HookDefinition> getAfterHooks() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
             throw new UnsupportedOperationException();
         }
 
