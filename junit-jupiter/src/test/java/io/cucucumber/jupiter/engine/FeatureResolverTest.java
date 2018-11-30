@@ -15,6 +15,8 @@ import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
+import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 import static org.junit.platform.engine.support.descriptor.FileSource.from;
 
@@ -43,7 +45,7 @@ class FeatureResolverTest {
         assertEquals("A feature with scenario outlines", feature.getDisplayName());
         assertEquals(emptySet(), feature.getTags());
         assertEquals(of(from(featureFile)), feature.getSource());
-        assertEquals(TestDescriptor.Type.CONTAINER, feature.getType());
+        assertEquals(CONTAINER, feature.getType());
         assertEquals(
             id.append("feature", featurePath),
             feature.getUniqueId()
@@ -56,7 +58,7 @@ class FeatureResolverTest {
         assertEquals("A scenario", scenario.getDisplayName());
         assertEquals(emptySet(), scenario.getTags());
         assertEquals(of(from(featureFile, from(3, 3))), scenario.getSource());
-        assertEquals(TestDescriptor.Type.TEST, scenario.getType());
+        assertEquals(TEST, scenario.getType());
         assertEquals(
             id.append("feature", featurePath).append("scenario", "3"),
             scenario.getUniqueId()
@@ -69,7 +71,7 @@ class FeatureResolverTest {
         assertEquals("A scenario outline", outline.getDisplayName());
         assertEquals(emptySet(), outline.getTags());
         assertEquals(of(from(featureFile, from(8, 3))), outline.getSource());
-        assertEquals(TestDescriptor.Type.CONTAINER, outline.getType());
+        assertEquals(CONTAINER, outline.getType());
         assertEquals(id.append(
             "feature", featurePath).append("outline", "8"),
             outline.getUniqueId()
@@ -82,7 +84,7 @@ class FeatureResolverTest {
         assertEquals("Example #1", example.getDisplayName());
         assertEquals(emptySet(), example.getTags());
         assertEquals(of(from(featureFile, from(15, 8))), example.getSource());
-        assertEquals(TestDescriptor.Type.TEST, example.getType());
+        assertEquals(TEST, example.getType());
 
         assertEquals(
             id.append("feature", featurePath).append("outline", "8").append("example", "15"),

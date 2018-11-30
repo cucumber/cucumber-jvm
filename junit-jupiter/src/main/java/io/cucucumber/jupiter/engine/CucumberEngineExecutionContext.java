@@ -43,7 +43,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
-        logger.info(() -> "Parsing options");
+        logger.debug(() -> "Parsing options");
         RuntimeOptions runtimeOptions = new RuntimeOptions("--plugin pretty");
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
@@ -60,26 +60,26 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     }
 
     void startTestRun() {
-        logger.info(() -> "Sending run test started event");
+        logger.debug(() -> "Sending run test started event");
         bus.send(new TestRunStarted(bus.getTime()));
-        logger.info(() -> "Reporting step definitions");
+        logger.debug(() -> "Reporting step definitions");
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
     }
 
     void beforeFeature(CucumberFeature feature) {
-        logger.info(() -> "Sending test source read event for " + feature.getUri());
+        logger.debug(() -> "Sending test source read event for " + feature.getUri());
         feature.sendTestSourceRead(bus);
     }
 
     void runPickle(PickleEvent pickleEvent) {
-        logger.info(() -> "Executing pickle " + pickleEvent.pickle.getName());
+        logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
         runnerSupplier.get().runPickle(pickleEvent);
     }
 
     void finishTestRun() {
-        logger.info(() -> "Sending test run finished event");
+        logger.debug(() -> "Sending test run finished event");
         bus.send(new TestRunFinished(bus.getTime()));
     }
 }

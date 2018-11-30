@@ -70,7 +70,7 @@ class DiscoverySelectorResolverTest {
 
         private final DiscoverySelector resource;
 
-        public SingleSelectorRequest(DiscoverySelector resource) {
+        SingleSelectorRequest(DiscoverySelector resource) {
             this.resource = resource;
         }
 
