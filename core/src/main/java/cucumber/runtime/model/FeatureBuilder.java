@@ -59,7 +59,7 @@ public class FeatureBuilder {
         } catch (ParserException e) {
             throw new CucumberException(e);
         }
-     }
+    }
 
     private String convertFileSeparatorToForwardSlash(String path) {
         return path.replace(fileSeparatorChar, '/');
