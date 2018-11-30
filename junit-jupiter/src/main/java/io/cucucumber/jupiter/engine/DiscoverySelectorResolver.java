@@ -1,10 +1,9 @@
-
-
 package io.cucucumber.jupiter.engine;
 
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
@@ -21,19 +20,20 @@ import org.junit.platform.engine.discovery.ModuleSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
-import org.junit.platform.engine.support.descriptor.FilePosition;
 import org.junit.platform.engine.support.descriptor.FileSource;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.cucucumber.jupiter.engine.Classloaders.getDefaultClassLoader;
 import static java.util.Collections.singletonList;
 
-public class DiscoverySelectorResolver {
+class DiscoverySelectorResolver {
 
-    public void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
+    void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
         resolve(request, engineDescriptor);
         filter(engineDescriptor);
         pruneTree(engineDescriptor);
@@ -47,12 +47,15 @@ public class DiscoverySelectorResolver {
         });
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
             //TODO:
+
         });
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(selector -> {
             featureResolver.resolveClassPathResource(selector.getClasspathResourceName());
         });
         request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
-            featureResolver.resolveClassPathResource(selector.getPackageName());
+            String packageName = selector.getPackageName();
+            String packagePath = packageName.replace('.', '/');
+            featureResolver.resolveClassPathResource(packagePath);
         });
 
         request.getSelectorsByType(FileSelector.class).forEach(selector -> {
@@ -63,6 +66,8 @@ public class DiscoverySelectorResolver {
             featureResolver.resolveFileResource(selector.getRawPath());
         });
         request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
+
+
             //TODO: Find by unique id
         });
         request.getSelectorsByType(UriSelector.class).forEach(selector -> {
@@ -94,43 +99,51 @@ public class DiscoverySelectorResolver {
         }
 
         void resolveFileResource(String featurePath) {
-            CucumberFeature
-                .load(new FileResourceLoader(), singletonList(featurePath))
+            new FeatureLoader(new FileResourceLoader())
+                .load(singletonList(featurePath))
                 .forEach(this::resolveFeature);
         }
 
         void resolveClassPathResource(String packageName) {
-            CucumberFeature
-                .load(new ClasspathResourceLoader(getDefaultClassLoader()), singletonList(packageName))
+            new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
+                .load(singletonList(packageName))
                 .forEach(this::resolveFeature);
         }
 
         private void resolveFeature(CucumberFeature feature) {
             UniqueId featureId = engineDescriptor.getUniqueId().append("feature", feature.getUri());
             TestSource source = FileSource.from(new File(feature.getUri()));
-            TestDescriptor featureFileDescriptor = new FeatureFileDescriptor(featureId, feature, source);
+            FeatureFileDescriptor featureFileDescriptor = new FeatureFileDescriptor(featureId, feature, source);
             engineDescriptor.addChild(featureFileDescriptor);
 
-            compileFeature(feature).forEach(pickleEvent -> {
-                PickleLocation location = pickleEvent.pickle.getLocations().get(0);
-                UniqueId scenarioId = featureFileDescriptor.getUniqueId().append("scenario", String.valueOf(location.getLine()));
-                TestSource scenarioSource = FileSource.from(new File(feature.getUri()), FilePosition.from(location.getLine(), location.getColumn()));
-                TestDescriptor scenarioDescriptor = new ScenarioDescriptor(scenarioId, pickleEvent, scenarioSource);
-                featureFileDescriptor.addChild(scenarioDescriptor);
-
+            compileFeature(feature).forEach((scenarioLine, pickleEvents) -> {
+                if (pickleEvents.size() == 1) {
+                    featureFileDescriptor.addScenario(feature, pickleEvents.get(0));
+                } else {
+                    featureFileDescriptor.addScenarioOutline(feature, pickleEvents);
+                }
             });
         }
 
-        List<PickleEvent> compileFeature(CucumberFeature feature) {
+
+        Map<Integer, List<PickleEvent>> compileFeature(CucumberFeature feature) {
             Compiler compiler = new Compiler();
-            List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+            Map<Integer, List<PickleEvent>> pickleEvents = new LinkedHashMap<>();
             for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-                pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
+                List<PickleLocation> locations = pickle.getLocations();
+                int scenarioLocation = locations.get(locations.size() - 1).getLine();
+                pickleEvents.putIfAbsent(scenarioLocation, new ArrayList<>());
+                pickleEvents.get(scenarioLocation).add(new PickleEvent(feature.getUri(), pickle));
             }
+
             return pickleEvents;
         }
 
 
+    }
+
+    static String pickleId(PickleEvent pickle) {
+        return String.valueOf(pickle.pickle.getLocations().get(0).getLine());
     }
 
 }

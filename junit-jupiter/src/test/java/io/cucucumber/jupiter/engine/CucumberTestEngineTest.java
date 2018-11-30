@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CucucumberTestEngineTest {
+public class CucumberTestEngineTest {
 
-    private final CucucumberTestEngine engine = new CucucumberTestEngine();
+    private final CucumberTestEngine engine = new CucumberTestEngine();
 
     @Test
     void id() {

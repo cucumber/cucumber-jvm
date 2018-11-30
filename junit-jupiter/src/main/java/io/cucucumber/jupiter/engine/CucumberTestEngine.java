@@ -8,13 +8,11 @@ import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 
 import java.util.Optional;
 
-public final class CucucumberTestEngine extends HierarchicalTestEngine<CucumberEngineExecutionContext> {
+public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEngineExecutionContext> {
 
-	public static final String ENGINE_ID = "cucumber";
-
-	@Override
+    @Override
 	public String getId() {
-		return ENGINE_ID;
+		return "cucumber";
 	}
 
 	@Override
@@ -30,7 +28,6 @@ public final class CucucumberTestEngine extends HierarchicalTestEngine<CucumberE
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-
 		CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId);
 		new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
@@ -43,5 +40,4 @@ public final class CucucumberTestEngine extends HierarchicalTestEngine<CucumberE
 			request.getConfigurationParameters()
         );
 	}
-
 }

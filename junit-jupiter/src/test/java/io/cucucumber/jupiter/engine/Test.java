@@ -25,15 +25,12 @@ public class Test {
 
     @org.junit.jupiter.api.Test
     public void main() throws URISyntaxException {
-
-
-
-        CucucumberTestEngine cucucumberTestEngine = new CucucumberTestEngine();
+        CucumberTestEngine cucumberTestEngine = new CucumberTestEngine();
         EngineDiscoveryRequest discovery = new EngineDiscoveryRequest() {
 
             private Map<Class<?>, List<DiscoverySelector>> selectors = new HashMap<>();
             {
-                selectors.put(ClasspathResourceSelector.class, Collections.singletonList(DiscoverySelectors.selectClasspathResource("cucumber.runtime.junit")));
+                selectors.put(ClasspathResourceSelector.class, Collections.singletonList(DiscoverySelectors.selectClasspathResource("io/cucumber/jupiter/engine")));
             }
 
             @Override
@@ -51,8 +48,8 @@ public class Test {
                 return null;
             }
         };
-        UniqueId id = UniqueId.forEngine(cucucumberTestEngine.getId());
-        TestDescriptor discover = cucucumberTestEngine.discover(discovery, id);
+        UniqueId id = UniqueId.forEngine(cucumberTestEngine.getId());
+        TestDescriptor discover = cucumberTestEngine.discover(discovery, id);
 
         EngineExecutionListener listenr = new EngineExecutionListener() {
             @Override
@@ -99,7 +96,7 @@ public class Test {
             }
         };
         ExecutionRequest execution = new ExecutionRequest(discover, listenr, conifg);
-        cucucumberTestEngine.execute(execution);
+        cucumberTestEngine.execute(execution);
 
 
     }

@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -15,14 +16,15 @@ public class FeatureBuilderTest {
 
     @Test
     public void ignores_duplicate_features() throws IOException {
-        FeatureBuilder builder = new FeatureBuilder();
+        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        FeatureBuilder builder = new FeatureBuilder(features);
         String featurePath = "foo.feature";
         Resource resource1 = createResourceMock(featurePath);
         Resource resource2 = createResourceMock(featurePath);
 
         builder.parse(resource1);
         builder.parse(resource2);
-        List<CucumberFeature> features = builder.build();
+
         assertEquals(1, features.size());
     }
 
@@ -31,9 +33,10 @@ public class FeatureBuilderTest {
         char fileSeparatorChar = '/';
         String featurePath = "path" + fileSeparatorChar + "foo.feature";
         Resource resource = createResourceMock(featurePath);
-        FeatureBuilder builder = new FeatureBuilder(fileSeparatorChar);
+        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        FeatureBuilder builder = new FeatureBuilder(features, fileSeparatorChar);
+
         builder.parse(resource);
-        List<CucumberFeature> features = builder.build();
 
         assertEquals(1, features.size());
         assertEquals(featurePath, features.get(0).getUri());
@@ -44,9 +47,10 @@ public class FeatureBuilderTest {
         char fileSeparatorChar = '\\';
         String featurePath = "path" + fileSeparatorChar + "foo.feature";
         Resource resource = createResourceMock(featurePath);
-        FeatureBuilder builder = new FeatureBuilder(fileSeparatorChar);
+        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        FeatureBuilder builder = new FeatureBuilder(features, fileSeparatorChar);
+
         builder.parse(resource);
-        List<CucumberFeature> features = builder.build();
 
         assertEquals(1, features.size());
         assertEquals("path/foo.feature", features.get(0).getUri());
