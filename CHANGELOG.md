@@ -5,6 +5,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...master) (In Git)
 
 ### Added
+ * [TestNG] Update documentation for parallel execution ([#1501](https://github.com/cucumber/cucumber-jvm/issues/1486) Abhishek Singh)
 
 ### Changed
 
