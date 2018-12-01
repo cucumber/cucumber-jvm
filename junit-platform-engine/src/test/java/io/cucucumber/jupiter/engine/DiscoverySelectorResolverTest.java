@@ -9,11 +9,13 @@ import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
@@ -40,6 +42,15 @@ class DiscoverySelectorResolverTest {
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(1, testDescriptor.getChildren().size());
     }
+
+    @Test
+    void resolveRequestWithClasspathRootResourceSelector() {
+        DiscoverySelector resource = selectClasspathRoots(Collections.singleton(new File("src/test/resources/").toPath())).get(0);
+        EngineDiscoveryRequest discoveryRequest = new SingleSelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(2, testDescriptor.getChildren().size());
+    }
+
 
     @Test
     void resolveRequestWithFileSelector() {
@@ -77,7 +88,7 @@ class DiscoverySelectorResolverTest {
         @Override
         public <T extends DiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
             if (selectorType.isInstance(resource)) {
-                return Collections.singletonList((T)resource);
+                return Collections.singletonList((T) resource);
             }
 
             return Collections.emptyList();

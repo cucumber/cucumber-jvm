@@ -14,6 +14,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.FileSource;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,6 +51,13 @@ final class FeatureResolver {
             .forEach(this::resolveFeature);
     }
 
+    void resolveClassPathRoot(URI classpathRoot) {
+        new FeatureLoader(new FileResourceLoader())
+            .load(singletonList(classpathRoot.getPath()))
+            .forEach(this::resolveFeature);
+
+    }
+
     private void resolveFeature(CucumberFeature feature) {
         UniqueId featureId = engineDescriptor.getUniqueId().append("feature", feature.getUri());
         TestSource source = FileSource.from(new File(feature.getUri()));
@@ -79,4 +87,5 @@ final class FeatureResolver {
 
         return picklesPerScenario;
     }
+
 }

@@ -28,7 +28,7 @@ class DiscoverySelectorResolver {
             //TODO: Find all features in a module
         });
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
-            //TODO: find by class path root
+            featureResolver.resolveClassPathRoot(selector.getClasspathRoot());
         });
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(selector -> {
             featureResolver.resolveClassPathResource(selector.getClasspathResourceName());
