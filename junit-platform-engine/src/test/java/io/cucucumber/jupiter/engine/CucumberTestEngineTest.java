@@ -8,6 +8,8 @@ import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -22,17 +24,17 @@ class CucumberTestEngineTest {
 
     @Test
     void groupId() {
-        assertEquals("io.cucucumber", engine.getGroupId().get());
+        assertEquals(Optional.of("io.cucucumber"), engine.getGroupId());
     }
 
     @Test
     void artifactId() {
-        assertEquals("cucucumber-junit-jupiter", engine.getArtifactId().get());
+        assertEquals(Optional.of("cucucumber-junit-jupiter"), engine.getArtifactId());
     }
 
     @Test
     void version() {
-        assertEquals("DEVELOPMENT", engine.getVersion().get());
+        assertEquals(Optional.of("DEVELOPMENT"), engine.getVersion());
     }
 
 
