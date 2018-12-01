@@ -19,6 +19,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 
 class DiscoverySelectorResolverTest {
 
@@ -44,13 +45,20 @@ class DiscoverySelectorResolverTest {
     }
 
     @Test
-    void resolveRequestWithClasspathRootResourceSelector() {
+    void resolveRequestWithClasspathRootSelector() {
         DiscoverySelector resource = selectClasspathRoots(Collections.singleton(new File("src/test/resources/").toPath())).get(0);
         EngineDiscoveryRequest discoveryRequest = new SingleSelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(2, testDescriptor.getChildren().size());
     }
 
+    @Test
+    void resolveRequestWithUriSelector() {
+        DiscoverySelector resource = selectUri(new File("src/test/resources/").toURI());
+        EngineDiscoveryRequest discoveryRequest = new SingleSelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(2, testDescriptor.getChildren().size());
+    }
 
     @Test
     void resolveRequestWithFileSelector() {

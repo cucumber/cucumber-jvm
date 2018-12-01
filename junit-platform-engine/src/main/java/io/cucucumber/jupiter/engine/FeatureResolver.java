@@ -11,10 +11,15 @@ import gherkin.pickles.PickleLocation;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.ClasspathResourceSelector;
+import org.junit.platform.engine.discovery.ClasspathRootSelector;
+import org.junit.platform.engine.discovery.DirectorySelector;
+import org.junit.platform.engine.discovery.FileSelector;
+import org.junit.platform.engine.discovery.PackageSelector;
+import org.junit.platform.engine.discovery.UriSelector;
 import org.junit.platform.engine.support.descriptor.FileSource;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,27 +40,40 @@ final class FeatureResolver {
         this.engineDescriptor = engineDescriptor;
     }
 
-    void resolveFileResource(String featurePath) {
+    void resolveFile(DirectorySelector selector) {
         new FeatureLoader(new FileResourceLoader())
-            .load(singletonList(featurePath))
+            .load(singletonList(selector.getRawPath()))
             .forEach(this::resolveFeature);
     }
 
-    void resolvePackageResource(String packageName) {
-        resolveClassPathResource(packageName.replace('.', '/'));
+    void resolveFile(FileSelector selector) {
+        new FeatureLoader(new FileResourceLoader())
+            .load(singletonList(selector.getRawPath()))
+            .forEach(this::resolveFeature);
     }
 
-    void resolveClassPathResource(String classpathResourceName) {
+    void resolvePackageResource(PackageSelector selector) {
         new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
-            .load(singletonList(classpathResourceName))
+            .load(singletonList(selector.getPackageName().replace('.', '/')))
             .forEach(this::resolveFeature);
     }
 
-    void resolveClassPathRoot(URI classpathRoot) {
-        new FeatureLoader(new FileResourceLoader())
-            .load(singletonList(classpathRoot.getPath()))
+    void resolveClassPathResource(ClasspathResourceSelector selector) {
+        new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
+            .load(singletonList(selector.getClasspathResourceName()))
             .forEach(this::resolveFeature);
+    }
 
+    void resolveClassPathRoot(ClasspathRootSelector selector) {
+        new FeatureLoader(new FileResourceLoader())
+            .load(singletonList(selector.getClasspathRoot().getPath()))
+            .forEach(this::resolveFeature);
+    }
+
+    void resolveUri(UriSelector uriSelector) {
+        new FeatureLoader(new FileResourceLoader())
+            .load(singletonList(uriSelector.getUri().getPath()))
+            .forEach(this::resolveFeature);
     }
 
     private void resolveFeature(CucumberFeature feature) {

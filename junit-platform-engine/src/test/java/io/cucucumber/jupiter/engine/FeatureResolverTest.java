@@ -6,6 +6,7 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 
 import java.io.File;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 import static org.junit.platform.engine.support.descriptor.FileSource.from;
 
@@ -36,7 +38,7 @@ class FeatureResolverTest {
         id = UniqueId.forEngine(engine.getId());
         testDescriptor = engine.discover(discoveryRequest, id);
         FeatureResolver featureResolver = createFeatureResolver(testDescriptor);
-        featureResolver.resolveClassPathResource(featurePath);
+        featureResolver.resolveClassPathResource(selectClasspathResource(featurePath));
     }
 
     @Test

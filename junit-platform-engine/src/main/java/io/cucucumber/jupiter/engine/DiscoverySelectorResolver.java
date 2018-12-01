@@ -27,29 +27,15 @@ class DiscoverySelectorResolver {
         request.getSelectorsByType(ModuleSelector.class).forEach(selector -> {
             //TODO: Find all features in a module
         });
-        request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
-            featureResolver.resolveClassPathRoot(selector.getClasspathRoot());
-        });
-        request.getSelectorsByType(ClasspathResourceSelector.class).forEach(selector -> {
-            featureResolver.resolveClassPathResource(selector.getClasspathResourceName());
-        });
-        request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
-            featureResolver.resolvePackageResource(selector.getPackageName());
-        });
-
-        request.getSelectorsByType(FileSelector.class).forEach(selector -> {
-            featureResolver.resolveFileResource(selector.getRawPath());
-        });
-
-        request.getSelectorsByType(DirectorySelector.class).forEach(selector -> {
-            featureResolver.resolveFileResource(selector.getRawPath());
-        });
+        request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClassPathRoot);
+        request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClassPathResource);
+        request.getSelectorsByType(PackageSelector.class).forEach(featureResolver::resolvePackageResource);
+        request.getSelectorsByType(FileSelector.class).forEach(featureResolver::resolveFile);
+        request.getSelectorsByType(DirectorySelector.class).forEach(featureResolver::resolveFile);
         request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
             //TODO: Find by unique id
         });
-        request.getSelectorsByType(UriSelector.class).forEach(selector -> {
-            //TODO: Find by uri
-        });
+        request.getSelectorsByType(UriSelector.class).forEach(featureResolver::resolveUri);
     }
 
     private void filter(TestDescriptor engineDescriptor) {
