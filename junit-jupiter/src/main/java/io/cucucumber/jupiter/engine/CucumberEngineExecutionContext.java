@@ -54,7 +54,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         logger.debug(() -> "Parsing options");
-        runtimeOptions = new RuntimeOptions("--plugin pretty --no-strict");
+        runtimeOptions = new RuntimeOptions("--plugin null_summary");
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);

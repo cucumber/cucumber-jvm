@@ -2,7 +2,7 @@ package io.cucucumber.jupiter.engine;
 
 import org.junit.platform.console.ConsoleLauncher;
 
-public class IntegrationTest {
+public class ConsoleLauncherDemonstration {
 
     public static void main(String... args) {
         ConsoleLauncher.main(
