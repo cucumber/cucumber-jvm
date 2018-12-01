@@ -484,7 +484,7 @@
         <module>testng</module>
         <module>picocontainer</module>
         <module>junit</module>
-        <module>junit-jupiter</module>
+        <module>junit-platform-engine</module>
         <module>spring</module>
         <module>guice</module>
         <module>weld</module>
@@ -605,6 +605,7 @@
                         <groups>
                             <group>
                                 <title>Main API Packages</title>
+
                                 <packages>cucumber.api:cucumber.api.*</packages>
                             </group>
                             <group>
