@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -11,10 +11,6 @@ import cucumber.api.event.TestRunStarted;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
-import cucumber.runtime.formatter.AnsiFormats;
-import cucumber.runtime.formatter.Format;
-import cucumber.runtime.formatter.Formats;
-import cucumber.runtime.formatter.MonochromeFormats;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -22,6 +18,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static cucumber.api.Result.Type.UNDEFINED;
 
 public class Stats implements EventListener, ColorAware, StrictAware {
     static final long ONE_SECOND = 1000000000;
@@ -47,7 +45,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
         @Override
         public void receive(TestStepFinished event) {
             Result result = event.result;
-            if (result.getError() != null) {
+            if (!result.is(UNDEFINED) && result.getError() != null) {
                 addError(result.getError());
             }
             if (event.testStep instanceof PickleStepTestStep) {

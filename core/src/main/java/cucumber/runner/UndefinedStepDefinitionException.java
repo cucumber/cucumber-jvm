@@ -1,10 +1,8 @@
 package cucumber.runner;
 
-import cucumber.runtime.CucumberException;
+final class UndefinedStepDefinitionException extends RuntimeException {
 
-final class UndefinedStepDefinitionException extends CucumberException {
-
-    UndefinedStepDefinitionException() {
-        super("No step definitions found");
+    UndefinedStepDefinitionException(String stepText) {
+        super("Step not defined: '" + stepText + "'", null, false, false);
     }
 }

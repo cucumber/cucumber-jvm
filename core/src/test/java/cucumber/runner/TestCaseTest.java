@@ -57,7 +57,7 @@ public class TestCaseTest {
 
     @Test
     public void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException("step text")).when(definitionMatch1).runStep(isA(Scenario.class));
 
         createTestCase(testStep1).run(bus);
 
@@ -79,7 +79,7 @@ public class TestCaseTest {
 
     @Test
     public void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException("step text")).when(definitionMatch1).runStep(isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
@@ -93,7 +93,7 @@ public class TestCaseTest {
 
     @Test
     public void skip_hooks_of_step_after_skipped_step() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException("step text")).when(definitionMatch1).runStep(isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
@@ -106,7 +106,7 @@ public class TestCaseTest {
 
     @Test
     public void skip_steps_at_first_gherkin_step_after_non_passed_result() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException("step text")).when(definitionMatch1).runStep(isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);

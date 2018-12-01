@@ -13,7 +13,8 @@ abstract class TestStep implements cucumber.api.TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
         "org.junit.AssumptionViolatedException",
         "org.junit.internal.AssumptionViolatedException",
-        "org.testng.SkipException"
+        "org.testng.SkipException",
+        "org.opentest4j.TestAbortedException"
     };
 
     static {
@@ -85,9 +86,6 @@ abstract class TestStep implements cucumber.api.TestStep {
     }
 
     private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
-        if (status == Result.Type.UNDEFINED) {
-            return Result.UNDEFINED;
-        }
         return new Result(status, duration, error);
     }
 }

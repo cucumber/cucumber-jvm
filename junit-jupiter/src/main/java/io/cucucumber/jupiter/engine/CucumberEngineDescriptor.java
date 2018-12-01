@@ -7,7 +7,7 @@ import org.junit.platform.engine.support.hierarchical.Node;
 class CucumberEngineDescriptor extends EngineDescriptor implements Node<CucumberEngineExecutionContext> {
 
     CucumberEngineDescriptor(UniqueId uniqueId) {
-        super(uniqueId, "Cucumber Jupiter");
+        super(uniqueId, "Cucumber");
     }
 
     @Override

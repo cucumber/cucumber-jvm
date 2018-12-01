@@ -1,10 +1,15 @@
 
 package io.cucucumber.jupiter.engine;
 
+import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
@@ -21,9 +26,13 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
+import org.junit.platform.commons.util.ExceptionUtils;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
+import org.opentest4j.TestAbortedException;
+
+import static cucumber.api.Result.Type.PASSED;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
@@ -33,6 +42,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final EventBus bus;
     private final Plugins plugins;
+    private final RuntimeOptions runtimeOptions;
 
     CucumberEngineExecutionContext(EngineExecutionListener executionListener,
                                    ConfigurationParameters configurationParameters) {
@@ -44,7 +54,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         logger.debug(() -> "Parsing options");
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--plugin pretty");
+        runtimeOptions = new RuntimeOptions("--plugin pretty --no-strict");
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
@@ -65,7 +75,6 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         logger.debug(() -> "Reporting step definitions");
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
-
     }
 
     void beforeFeature(CucumberFeature feature) {
@@ -74,12 +83,59 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     }
 
     void runPickle(PickleEvent pickleEvent) {
-        logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
-        runnerSupplier.get().runPickle(pickleEvent);
+        Runner runner = runnerSupplier.get();
+        try (TestCaseResultObserver observer = observe(runner.getBus())) {
+            logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
+            runner.runPickle(pickleEvent);
+            logger.debug(() -> "Finished executing pickle " + pickleEvent.pickle.getName());
+            observer.assertTestCasePassed();
+        }
     }
 
     void finishTestRun() {
         logger.debug(() -> "Sending test run finished event");
         bus.send(new TestRunFinished(bus.getTime()));
+    }
+
+    private TestCaseResultObserver observe(EventPublisher bus) {
+        return new TestCaseResultObserver(bus);
+    }
+
+    private class TestCaseResultObserver implements AutoCloseable {
+
+        private final EventHandler<TestCaseFinished> testCaseFinished = new EventHandler<TestCaseFinished>() {
+            @Override
+            public void receive(TestCaseFinished event) {
+                result = event.result;
+            }
+        };
+
+        private final EventPublisher bus;
+        private Result result;
+
+        TestCaseResultObserver(EventPublisher bus) {
+            this.bus = bus;
+            bus.registerHandlerFor(TestCaseFinished.class, testCaseFinished);
+        }
+
+        @Override
+        public void close() {
+            bus.removeHandlerFor(TestCaseFinished.class, testCaseFinished);
+        }
+
+        void assertTestCasePassed() {
+            if (result.is(PASSED)) {
+                return;
+            }
+            Throwable error = result.getError();
+            if (result.isOk(runtimeOptions.isStrict())) {
+                if (error == null) {
+                    throw new TestAbortedException();
+                }
+                throw new TestAbortedException(error.getMessage(), error);
+            } else {
+                ExceptionUtils.throwAsUncheckedException(error);
+            }
+        }
     }
 }

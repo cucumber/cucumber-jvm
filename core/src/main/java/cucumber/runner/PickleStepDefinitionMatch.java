@@ -15,10 +15,8 @@ import java.util.List;
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
-    private final transient String featurePath;
-    // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
-    // to prevent it from ending up in the JSON.
-    private final transient PickleStep step;
+    private final String featurePath;
+    private final PickleStep step;
 
     public PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
         super(arguments, stepDefinition.getLocation(false));
@@ -146,6 +144,10 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     StepDefinition getStepDefinition() {
         return stepDefinition;
+    }
+
+    PickleStep getStep() {
+        return step;
     }
 
     @Override

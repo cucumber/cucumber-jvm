@@ -5,7 +5,6 @@ import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
-import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -29,6 +28,8 @@ import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
 
 import java.util.List;
+
+import static cucumber.api.Result.Type.UNDEFINED;
 
 final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
@@ -169,13 +170,13 @@ final class PrettyFormatter implements EventListener, ColorAware {
     private void handleScenarioOutline(TestCaseStarted event) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.testCase.getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
+            ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
                 currentScenarioOutline = scenarioOutline;
                 printScenarioOutline(currentScenarioOutline);
             }
             if (currentExamples == null || !currentExamples.equals(astNode.parent.node)) {
-                currentExamples = (Examples)astNode.parent.node;
+                currentExamples = (Examples) astNode.parent.node;
                 printExamples(currentExamples);
             }
         } else {
@@ -287,6 +288,7 @@ final class PrettyFormatter implements EventListener, ColorAware {
     private void printTags(List<Tag> tags) {
         printTags(tags, "");
     }
+
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
             out.println(indent + FixJava.join(FixJava.map(tags, tagNameMapper), " "));
@@ -331,6 +333,10 @@ final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private void printError(Result result) {
+        if (result.is(UNDEFINED)) {
+            return;
+        }
+
         if (result.getError() != null) {
             out.println("      " + formats.get(result.getStatus().lowerCaseName()).text(result.getErrorMessage()));
         }

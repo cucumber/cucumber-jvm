@@ -144,7 +144,7 @@ final class JSONFormatter implements EventListener {
                 currentBeforeStepHookList.clear();
             }
             currentStepsList.add(currentStepOrHookMap);
-        } else if(event.testStep instanceof HookTestStep) {
+        } else if (event.testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) event.testStep;
             currentStepOrHookMap = createHookStep(hookTestStep);
             addHookStepToTestCaseMap(currentStepOrHookMap, hookTestStep.getHookType());
@@ -262,7 +262,7 @@ final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createDocStringMap(Argument argument) {
         Map<String, Object> docStringMap = new HashMap<String, Object>();
-        PickleString docString = ((PickleString)argument);
+        PickleString docString = ((PickleString) argument);
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
         docStringMap.put("content_type", docString.getContentType());
@@ -271,7 +271,7 @@ final class JSONFormatter implements EventListener {
 
     private List<Map<String, Object>> createDataTableList(Argument argument) {
         List<Map<String, Object>> rowList = new ArrayList<Map<String, Object>>();
-        for (PickleRow row : ((PickleTable)argument).getRows()) {
+        for (PickleRow row : ((PickleTable) argument).getRows()) {
             Map<String, Object> rowMap = new HashMap<String, Object>();
             rowMap.put("cells", createCellList(row));
             rowList.add(rowMap);
@@ -313,21 +313,21 @@ final class JSONFormatter implements EventListener {
             case AfterStep:
                 mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
                 break;
-             default:
-                 mapToAddTo = currentTestCaseMap;
+            default:
+                mapToAddTo = currentTestCaseMap;
         }
 
         if (!mapToAddTo.containsKey(hookName)) {
             mapToAddTo.put(hookName, new ArrayList<Map<String, Object>>());
         }
-        ((List<Map<String, Object>>)mapToAddTo.get(hookName)).add(currentStepOrHookMap);
+        ((List<Map<String, Object>>) mapToAddTo.get(hookName)).add(currentStepOrHookMap);
     }
 
     private void addOutputToHookMap(String text) {
         if (!currentStepOrHookMap.containsKey("output")) {
             currentStepOrHookMap.put("output", new ArrayList<String>());
         }
-        ((List<String>)currentStepOrHookMap.get("output")).add(text);
+        ((List<String>) currentStepOrHookMap.get("output")).add(text);
     }
 
     private void addEmbeddingToHookMap(byte[] data, String mimeType) {
@@ -335,7 +335,7 @@ final class JSONFormatter implements EventListener {
             currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
         }
         Map<String, Object> embedMap = createEmbeddingMap(data, mimeType);
-        ((List<Map<String, Object>>)currentStepOrHookMap.get("embeddings")).add(embedMap);
+        ((List<Map<String, Object>>) currentStepOrHookMap.get("embeddings")).add(embedMap);
     }
 
     private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType) {
@@ -347,7 +347,7 @@ final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createMatchMap(TestStep step, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if(step instanceof PickleStepTestStep) {
+        if (step instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) step;
             if (!testStep.getDefinitionArgument().isEmpty()) {
                 List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
@@ -371,11 +371,13 @@ final class JSONFormatter implements EventListener {
     private Map<String, Object> createResultMap(Result result) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("status", result.getStatus().lowerCaseName());
-        if (result.getErrorMessage() != null) {
-            resultMap.put("error_message", result.getErrorMessage());
-        }
-        if (result.getDuration() != null && result.getDuration() != 0) {
-            resultMap.put("duration", result.getDuration());
+        if (!result.is(Result.Type.UNDEFINED)) {
+            if (result.getErrorMessage() != null) {
+                resultMap.put("error_message", result.getErrorMessage());
+            }
+            if (result.getDuration() != null && result.getDuration() != 0) {
+                resultMap.put("duration", result.getDuration());
+            }
         }
         return resultMap;
     }
