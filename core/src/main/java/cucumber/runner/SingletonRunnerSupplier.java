@@ -1,7 +1,7 @@
 package cucumber.runner;
 
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RunnerOptions;
 
 /**
  * Returns a single unique runner.
@@ -11,18 +11,18 @@ import cucumber.runtime.RuntimeOptions;
 public class SingletonRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
-    private final RuntimeOptions runtimeOptions;
+    private final RunnerOptions runnerOptions;
     private final EventBus eventBus;
     private Runner runner;
 
 
     public SingletonRunnerSupplier(
-        RuntimeOptions runtimeOptions,
+        RunnerOptions runnerOptions,
         EventBus eventBus,
         BackendSupplier backendSupplier
     ) {
         this.backendSupplier = backendSupplier;
-        this.runtimeOptions = runtimeOptions;
+        this.runnerOptions = runnerOptions;
         this.eventBus = eventBus;
     }
 
@@ -35,7 +35,7 @@ public class SingletonRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(eventBus, backendSupplier.get(), runtimeOptions);
+        return new Runner(eventBus, backendSupplier.get(), runnerOptions);
     }
 
 }

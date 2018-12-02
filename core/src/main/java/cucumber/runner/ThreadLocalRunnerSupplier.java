@@ -2,10 +2,8 @@ package cucumber.runner;
 
 import cucumber.api.event.Event;
 import cucumber.api.event.EventHandler;
-import cucumber.runner.AbstractEventBus;
-import cucumber.runner.EventBus;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RunnerOptions;
 
 /**
  * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.
@@ -15,7 +13,7 @@ import cucumber.runtime.RuntimeOptions;
 public class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
-    private final RuntimeOptions runtimeOptions;
+    private final RunnerOptions runnerOptions;
     private final SynchronizedEventBus sharedEventBus;
 
     private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>() {
@@ -26,11 +24,11 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     };
 
     public ThreadLocalRunnerSupplier(
-        RuntimeOptions runtimeOptions,
+        RunnerOptions runnerOptions,
         EventBus sharedEventBus,
         BackendSupplier backendSupplier
     ) {
-        this.runtimeOptions = runtimeOptions;
+        this.runnerOptions = runnerOptions;
         this.sharedEventBus = SynchronizedEventBus.synchronize(sharedEventBus);
         this.backendSupplier = backendSupplier;
     }
@@ -41,7 +39,7 @@ public class ThreadLocalRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(new LocalEventBus(sharedEventBus), backendSupplier.get(), runtimeOptions);
+        return new Runner(new LocalEventBus(sharedEventBus), backendSupplier.get(), runnerOptions);
     }
 
     private static final class LocalEventBus extends AbstractEventBus {

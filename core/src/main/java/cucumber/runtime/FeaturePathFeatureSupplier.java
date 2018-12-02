@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import io.cucumber.core.options.FeatureOptions;
 
 import java.util.List;
 
@@ -10,15 +11,15 @@ import java.util.List;
  */
 public class FeaturePathFeatureSupplier implements FeatureSupplier {
     private final FeatureLoader featureLoader;
-    private final RuntimeOptions runtimeOptions;
+    private final FeatureOptions featureOptions;
 
-    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, RuntimeOptions runtimeOptions) {
+    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, FeatureOptions featureOptions) {
         this.featureLoader = featureLoader;
-        this.runtimeOptions = runtimeOptions;
+        this.featureOptions = featureOptions;
     }
 
     @Override
     public List<CucumberFeature> get() {
-        return featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
+        return featureLoader.load(featureOptions.getFeaturePaths(), System.out);
     }
 }

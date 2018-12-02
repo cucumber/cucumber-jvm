@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.TypeRegistryConfigurer;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
+import io.cucumber.core.options.RunnerOptions;
 import io.cucumber.stepexpression.TypeRegistry;
 
 import java.util.Collection;
@@ -18,17 +19,17 @@ public final class BackendModuleBackendSupplier implements BackendSupplier {
 
     private final ResourceLoader resourceLoader;
     private final ClassFinder classFinder;
-    private final RuntimeOptions runtimeOptions;
+    private final RunnerOptions runnerOptions;
     private final List<String> packages;
 
-    public BackendModuleBackendSupplier(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classFinder, runtimeOptions, singletonList("cucumber.runtime"));
+    public BackendModuleBackendSupplier(ResourceLoader resourceLoader, ClassFinder classFinder, RunnerOptions runnerOptions) {
+        this(resourceLoader, classFinder, runnerOptions, singletonList("cucumber.runtime"));
     }
 
-    BackendModuleBackendSupplier(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions, List<String> packages) {
+    BackendModuleBackendSupplier(ResourceLoader resourceLoader, ClassFinder classFinder, RunnerOptions runnerOptions, List<String> packages) {
         this.resourceLoader = resourceLoader;
         this.classFinder = classFinder;
-        this.runtimeOptions = runtimeOptions;
+        this.runnerOptions = runnerOptions;
         this.packages = packages;
     }
 
@@ -43,7 +44,7 @@ public final class BackendModuleBackendSupplier implements BackendSupplier {
 
     private Collection<? extends Backend> loadBackends() {
         Reflections reflections = new Reflections(classFinder);
-        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runnerOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
         TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
         typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
 

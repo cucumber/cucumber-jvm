@@ -5,7 +5,7 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.SnippetsSuggestedEvent;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RunnerOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
@@ -18,14 +18,14 @@ public final class Runner {
     private final Glue glue = new Glue();
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
-    private final RuntimeOptions runtimeOptions;
+    private final RunnerOptions runnerOptions;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, RunnerOptions runnerOptions) {
         this.bus = bus;
-        this.runtimeOptions = runtimeOptions;
+        this.runnerOptions = runnerOptions;
         this.backends = backends;
         for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.getGlue());
+            backend.loadGlue(glue, runnerOptions.getGlue());
         }
 
     }
@@ -54,7 +54,7 @@ public final class Runner {
             addTestStepsForPickleSteps(testSteps, pickleEvent);
             addTestStepsForAfterHooks(afterHooks, pickleEvent.pickle.getTags());
         }
-        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runtimeOptions.isDryRun());
+        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runnerOptions.isDryRun());
     }
 
     private void addTestStepsForPickleSteps(List<PickleStepTestStep> testSteps, PickleEvent pickleEvent) {
@@ -65,7 +65,7 @@ public final class Runner {
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
                     for (Backend backend : backends) {
-                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runtimeOptions.getSnippetType().getFunctionNameGenerator());
+                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType().getFunctionNameGenerator());
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {

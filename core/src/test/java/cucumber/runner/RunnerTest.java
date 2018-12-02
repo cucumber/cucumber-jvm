@@ -2,9 +2,9 @@ package cucumber.runner;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.events.PickleEvent;
@@ -26,7 +26,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
