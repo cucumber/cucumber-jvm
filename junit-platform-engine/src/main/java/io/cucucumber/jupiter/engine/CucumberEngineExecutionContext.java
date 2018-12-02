@@ -16,7 +16,6 @@ import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
-import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.MultiLoader;
@@ -42,7 +41,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final EventBus bus;
     private final Plugins plugins;
-    private final RuntimeOptions runtimeOptions;
+    private final CucumberEngineOptions options;
 
     CucumberEngineExecutionContext(EngineExecutionListener executionListener,
                                    ConfigurationParameters configurationParameters) {
@@ -54,11 +53,11 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         logger.debug(() -> "Parsing options");
-        runtimeOptions = new RuntimeOptions("--plugin null_summary --strict --glue classpath:");
-        BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
+        this.options = new CucumberEngineOptions(configurationParameters);
+        BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, options);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
+        this.plugins = new Plugins(classLoader, new PluginFactory(), bus, options);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier);
     }
 
     public ConfigurationParameters getConfigurationParameters() {
@@ -128,7 +127,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
                 return;
             }
             Throwable error = result.getError();
-            if (result.isOk(runtimeOptions.isStrict())) {
+            if (result.isOk(options.isStrict())) {
                 if (error == null) {
                     throw new TestAbortedException();
                 }

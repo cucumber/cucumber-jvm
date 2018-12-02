@@ -7,7 +7,8 @@ public class ConsoleLauncherDemonstration {
     public static void main(String... args) {
         ConsoleLauncher.main(
             "--exclude-engine=junit-jupiter",
-            "--select-directory", "junit-jupiter/src/test/resources/io/cucumber/jupiter/engine/"
+            "--config=cucumber.execution.strict=false",
+            "--select-directory", "junit-platform-engine/src/test/resources/io/cucumber/jupiter/engine/"
         );
     }
 
