@@ -54,7 +54,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         logger.debug(() -> "Parsing options");
-        runtimeOptions = new RuntimeOptions("--plugin null_summary --strict");
+        runtimeOptions = new RuntimeOptions("--plugin null_summary --strict --glue classpath:");
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
@@ -74,7 +74,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         bus.send(new TestRunStarted(bus.getTime()));
         logger.debug(() -> "Reporting step definitions");
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
-        runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
+        getRunner().reportStepDefinitions(stepDefinitionReporter);
     }
 
     void beforeFeature(CucumberFeature feature) {
@@ -83,7 +83,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     }
 
     void runPickle(PickleEvent pickleEvent) {
-        Runner runner = runnerSupplier.get();
+        Runner runner = getRunner();
         try (TestCaseResultObserver observer = observe(runner.getBus())) {
             logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
             runner.runPickle(pickleEvent);
@@ -136,6 +136,15 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             } else {
                 ExceptionUtils.throwAsUncheckedException(error);
             }
+        }
+    }
+
+    private Runner getRunner() {
+        try {
+            return runnerSupplier.get();
+        } catch (Throwable e) {
+            logger.error(e, () -> "Unable to start Cucumber");
+            throw e;
         }
     }
 }
