@@ -2,9 +2,9 @@ package cucumber.runner;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;

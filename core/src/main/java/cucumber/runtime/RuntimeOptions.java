@@ -1,6 +1,10 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
+import io.cucumber.core.options.FeatureOptions;
+import io.cucumber.core.options.FilterOptions;
+import io.cucumber.core.options.PluginOptions;
+import io.cucumber.core.options.RunnerOptions;
 import io.cucumber.datatable.DataTable;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.PathWithLines;
@@ -9,7 +13,6 @@ import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
-import io.cucumber.datatable.DataTable;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -25,7 +28,7 @@ import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
-public class RuntimeOptions {
+public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
 
@@ -109,18 +112,6 @@ public class RuntimeOptions {
     public RuntimeOptions noSummaryPrinter() {
         pluginSummaryPrinterNames.clear();
         return this;
-    }
-
-    public List<String> getPluginFormatterNames() {
-        return pluginFormatterNames;
-    }
-
-    public List<String> getPluginSummaryPrinterNames() {
-        return pluginSummaryPrinterNames;
-    }
-
-    public List<String> getPluginStepDefinitionReporterNames() {
-        return pluginStepDefinitionReporterNames;
     }
 
     private void parse(List<String> args) {
@@ -300,14 +291,26 @@ public class RuntimeOptions {
         table.add(cells);
     }
 
+    @Override
+    public List<String> getPluginNames() {
+        List<String> pluginNames = new ArrayList<>();
+        pluginNames.addAll(pluginFormatterNames);
+        pluginNames.addAll(pluginStepDefinitionReporterNames);
+        pluginNames.addAll(pluginSummaryPrinterNames);
+        return pluginNames;
+    }
+
+    @Override
     public List<String> getGlue() {
         return glue;
     }
 
+    @Override
     public boolean isStrict() {
         return strict;
     }
 
+    @Override
     public boolean isDryRun() {
         return dryRun;
     }
@@ -316,26 +319,32 @@ public class RuntimeOptions {
         return wip;
     }
 
+    @Override
     public List<String> getFeaturePaths() {
         return featurePaths;
     }
 
+    @Override
     public List<Pattern> getNameFilters() {
         return nameFilters;
     }
 
+    @Override
     public List<String> getTagFilters() {
         return tagFilters;
     }
 
+    @Override
     public Map<String, List<Long>> getLineFilters() {
         return lineFilters;
     }
 
+    @Override
     public boolean isMonochrome() {
         return monochrome;
     }
 
+    @Override
     public SnippetType getSnippetType() {
         return snippetType;
     }
