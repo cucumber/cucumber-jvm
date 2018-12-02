@@ -13,15 +13,18 @@ import static io.cucucumber.jupiter.engine.FeatureSource.fromPickle;
 
 class ScenarioOutlineDescriptor extends AbstractTestDescriptor {
 
-    ScenarioOutlineDescriptor(UniqueId uniqueId, String name, TestSource source) {
+    private final boolean inPackage;
+
+    ScenarioOutlineDescriptor(UniqueId uniqueId, String name, TestSource source, boolean inPackage) {
         super(uniqueId, name, source);
+        this.inPackage = inPackage;
     }
 
     void addExamples(CucumberFeature feature, List<PickleEvent> pickleEvents) {
         int index = 1;
         for (PickleEvent pickleEvent : pickleEvents) {
             UniqueId scenarioId = getUniqueId().append("example", PickleDescriptor.pickleId(pickleEvent));
-            TestDescriptor scenarioDescriptor = new PickleDescriptor(scenarioId, "Example #" + index++, fromPickle(feature, pickleEvent), pickleEvent);
+            TestDescriptor scenarioDescriptor = new PickleDescriptor(scenarioId, "Example #" + index++, fromPickle(feature, pickleEvent), pickleEvent, inPackage);
             addChild(scenarioDescriptor);
         }
     }

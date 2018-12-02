@@ -1,5 +1,6 @@
 package io.cucucumber.jupiter.engine;
 
+import org.junit.platform.commons.util.ClassFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
@@ -11,13 +12,15 @@ import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
 
+import static io.cucucumber.jupiter.engine.ClasspathScanningSupport.buildPackageFilter;
 import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
 
 class DiscoverySelectorResolver {
 
     void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
+        ClassFilter packageFilter = buildPackageFilter(request, clazz -> false);
         resolve(request, engineDescriptor);
-        filter(engineDescriptor);
+        filter(engineDescriptor, packageFilter);
         pruneTree(engineDescriptor);
     }
 
@@ -38,8 +41,8 @@ class DiscoverySelectorResolver {
         request.getSelectorsByType(UriSelector.class).forEach(featureResolver::resolveUri);
     }
 
-    private void filter(TestDescriptor engineDescriptor) {
-
+    private void filter(TestDescriptor engineDescriptor, ClassFilter classFilter) {
+        new DiscoveryFilterApplier().applyClassNamePredicate(classFilter::match, engineDescriptor);
     }
 
     private void pruneTree(TestDescriptor rootDescriptor) {

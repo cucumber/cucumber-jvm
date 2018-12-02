@@ -73,6 +73,9 @@ class FeatureResolverTest {
             id.append("feature", featurePath).append("scenario", "5"),
             scenario.getUniqueId()
         );
+
+        PickleDescriptor pickleDescriptor = (PickleDescriptor) scenario;
+        assertEquals("io.cucumber.jupiter.engine", pickleDescriptor.getPackage());
     }
 
     @Test
@@ -106,6 +109,9 @@ class FeatureResolverTest {
             id.append("feature", featurePath).append("outline", "11").append("example", "19"),
             example.getUniqueId()
         );
+
+        PickleDescriptor pickleDescriptor = (PickleDescriptor) example;
+        assertEquals("io.cucumber.jupiter.engine", pickleDescriptor.getPackage());
     }
 
     private Set<TestTag> asSet(TestTag... tags) {

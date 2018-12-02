@@ -14,14 +14,16 @@ import java.util.stream.Collectors;
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final PickleEvent pickleEvent;
+    private final boolean inPackage;
 
-    PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent) {
+    PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent, boolean inPackage) {
         super(uniqueId, name, source);
         this.pickleEvent = pickleEvent;
+        this.inPackage = inPackage;
     }
 
-    PickleDescriptor(UniqueId scenarioId, TestSource pickleSource, PickleEvent pickle) {
-        this(scenarioId, pickle.pickle.getName(), pickleSource, pickle);
+    PickleDescriptor(UniqueId scenarioId, TestSource pickleSource, PickleEvent pickle, boolean inPackage) {
+        this(scenarioId, pickle.pickle.getName(), pickleSource, pickle, inPackage);
     }
 
     static String pickleId(PickleEvent pickle) {
@@ -46,5 +48,17 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
             .filter(TestTag::isValid)
             .map(TestTag::create)
             .collect(Collectors.toSet());
+    }
+
+    public String getPackage() {
+        if (!inPackage) {
+            return null;
+        }
+        String uri = pickleEvent.uri;
+        int lastPathSeparator = uri.lastIndexOf('/');
+        if (lastPathSeparator < 0) {
+            return uri;
+        }
+        return uri.substring(0, lastPathSeparator).replaceAll("/", ".");
     }
 }

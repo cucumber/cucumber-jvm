@@ -22,19 +22,19 @@ class FeatureFileDescriptor extends AbstractTestDescriptor implements Node<Cucum
         this.feature = feature;
     }
 
-    void addScenario(CucumberFeature feature, PickleEvent pickle) {
+    void addScenario(CucumberFeature feature, PickleEvent pickle, boolean inPackage) {
         UniqueId scenarioId = getUniqueId().append("scenario", PickleDescriptor.pickleId(pickle));
-        TestDescriptor scenarioDescriptor = new PickleDescriptor(scenarioId, fromPickle(feature, pickle), pickle);
+        TestDescriptor scenarioDescriptor = new PickleDescriptor(scenarioId, fromPickle(feature, pickle), pickle, inPackage);
         addChild(scenarioDescriptor);
     }
 
-    void addScenarioOutline(CucumberFeature feature, List<PickleEvent> pickleEvents) {
+    void addScenarioOutline(CucumberFeature feature, List<PickleEvent> pickleEvents, boolean inPackage) {
         PickleEvent pickle = pickleEvents.get(0);
         List<PickleLocation> locations = pickle.pickle.getLocations();
         PickleLocation scenarioLocation = locations.get(locations.size() - 1);
         UniqueId scenarioOutlineId = getUniqueId().append("outline", String.valueOf(scenarioLocation.getLine()));
         String scenarioName = pickle.pickle.getName();
-        ScenarioOutlineDescriptor scenarioOutlineDescriptor = new ScenarioOutlineDescriptor(scenarioOutlineId, scenarioName, fromOutline(feature, pickle));
+        ScenarioOutlineDescriptor scenarioOutlineDescriptor = new ScenarioOutlineDescriptor(scenarioOutlineId, scenarioName, fromOutline(feature, pickle), inPackage);
         scenarioOutlineDescriptor.addExamples(feature, pickleEvents);
         addChild(scenarioOutlineDescriptor);
     }

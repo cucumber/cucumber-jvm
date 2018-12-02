@@ -32,23 +32,23 @@ For supported values see: [Constants](src/main/java/io/cucucumber/jupiter/engine
 
 ## Supported Discovery Selectors and Filters ## 
 
-Supported `DiscoverySelector`s:
+Supported `DiscoverySelector`s are:
 
-* ClasspathRootSelector
-* ClasspathRootSelector
-* ClasspathResourceSelector
-* PackageSelector
-* FileSelector
-* DirectorySelector
-* UniqueIdSelector
+* `ClasspathRootSelector`
+* `ClasspathRootSelector`
+* `ClasspathResourceSelector`
+* `PackageSelector`
+* `FileSelector`
+* `DirectorySelector`
+* `UniqueIdSelector`
     - `[cucumber]`
     - `[cucumber]/[feature:uri/of/cucumber.feature]`
     - `[cucumber]/[feature:uri/of/cucumber.feature]/[scenario:#line]`
     - `[cucumber]/[feature:uri/of/cucumber.feature]/[scenario-outline:#line]`
     - `[cucumber]/[feature:uri/of/cucumber.feature]/[scenario-outline:#line]/[example:#line]`
 
-Supported `DiscoveryFilter`s:
-* 
+Supported `DiscoveryFilter`s are:
+* `PackageNameFilter`
 
 ## Tags
 

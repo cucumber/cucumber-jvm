@@ -55,19 +55,19 @@ final class FeatureResolver {
     void resolvePackageResource(PackageSelector selector) {
         new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
             .load(singletonList(selector.getPackageName().replace('.', '/')))
-            .forEach(this::resolveFeature);
+            .forEach(this::resolveFeatureFromPackage);
     }
 
     void resolveClassPathResource(ClasspathResourceSelector selector) {
         new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
             .load(singletonList(selector.getClasspathResourceName()))
-            .forEach(this::resolveFeature);
+            .forEach(this::resolveFeatureFromPackage);
     }
 
     void resolveClassPathRoot(ClasspathRootSelector selector) {
         new FeatureLoader(new FileResourceLoader())
             .load(singletonList(selector.getClasspathRoot().getPath()))
-            .forEach(this::resolveFeature);
+            .forEach(this::resolveFeatureFromPackage);
     }
 
     void resolveUri(UriSelector uriSelector) {
@@ -77,6 +77,14 @@ final class FeatureResolver {
     }
 
     private void resolveFeature(CucumberFeature feature) {
+        resolveFeature2(feature, false);
+    }
+
+    private void resolveFeatureFromPackage(CucumberFeature cucumberFeature) {
+        resolveFeature2(cucumberFeature, true);
+    }
+
+    private void resolveFeature2(CucumberFeature feature, boolean inPackage) {
         UniqueId featureId = engineDescriptor.getUniqueId().append("feature", feature.getUri());
         TestSource source = FileSource.from(new File(feature.getUri()));
         FeatureFileDescriptor featureFileDescriptor = new FeatureFileDescriptor(featureId, feature, source);
@@ -84,9 +92,9 @@ final class FeatureResolver {
 
         compileFeature(feature).forEach((scenarioLine, pickleEvents) -> {
             if (pickleEvents.size() == 1) {
-                featureFileDescriptor.addScenario(feature, pickleEvents.get(0));
+                featureFileDescriptor.addScenario(feature, pickleEvents.get(0), inPackage);
             } else {
-                featureFileDescriptor.addScenarioOutline(feature, pickleEvents);
+                featureFileDescriptor.addScenarioOutline(feature, pickleEvents, inPackage);
             }
         });
     }
