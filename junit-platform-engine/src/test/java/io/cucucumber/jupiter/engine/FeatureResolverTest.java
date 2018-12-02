@@ -5,19 +5,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
+import static org.junit.platform.engine.TestTag.create;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 import static org.junit.platform.engine.support.descriptor.FileSource.from;
@@ -58,11 +63,14 @@ class FeatureResolverTest {
     void scenario() {
         TestDescriptor scenario = getScenario();
         assertEquals("A scenario", scenario.getDisplayName());
-        assertEquals(emptySet(), scenario.getTags());
-        assertEquals(of(from(featureFile, from(3, 3))), scenario.getSource());
+        assertEquals(
+            asSet(create("@FeatureTag"), create("@ScenarioTag")),
+            scenario.getTags()
+        );
+        assertEquals(of(from(featureFile, from(5, 3))), scenario.getSource());
         assertEquals(TEST, scenario.getType());
         assertEquals(
-            id.append("feature", featurePath).append("scenario", "3"),
+            id.append("feature", featurePath).append("scenario", "5"),
             scenario.getUniqueId()
         );
     }
@@ -71,11 +79,14 @@ class FeatureResolverTest {
     void outline() {
         TestDescriptor outline = getOutline();
         assertEquals("A scenario outline", outline.getDisplayName());
-        assertEquals(emptySet(), outline.getTags());
-        assertEquals(of(from(featureFile, from(8, 3))), outline.getSource());
+        assertEquals(
+            emptySet(),
+            outline.getTags()
+        );
+        assertEquals(of(from(featureFile, from(11, 3))), outline.getSource());
         assertEquals(CONTAINER, outline.getType());
         assertEquals(id.append(
-            "feature", featurePath).append("outline", "8"),
+            "feature", featurePath).append("outline", "11"),
             outline.getUniqueId()
         );
     }
@@ -84,14 +95,21 @@ class FeatureResolverTest {
     void example() {
         TestDescriptor example = getExample();
         assertEquals("Example #1", example.getDisplayName());
-        assertEquals(emptySet(), example.getTags());
-        assertEquals(of(from(featureFile, from(15, 8))), example.getSource());
+        assertEquals(
+            asSet(create("@FeatureTag"), create("@Example1Tag"), create("@ScenarioOutlineTag")),
+            example.getTags()
+        );
+        assertEquals(of(from(featureFile, from(19, 8))), example.getSource());
         assertEquals(TEST, example.getType());
 
         assertEquals(
-            id.append("feature", featurePath).append("outline", "8").append("example", "15"),
+            id.append("feature", featurePath).append("outline", "11").append("example", "19"),
             example.getUniqueId()
         );
+    }
+
+    private Set<TestTag> asSet(TestTag... tags) {
+        return new HashSet<>(asList(tags));
     }
 
     private TestDescriptor getFeature() {
