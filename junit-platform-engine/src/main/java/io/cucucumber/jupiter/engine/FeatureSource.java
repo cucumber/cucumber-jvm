@@ -24,5 +24,7 @@ class FeatureSource {
         return FileSource.from(new File(feature.getUri()), FilePosition.from(scenarioLocation.getLine(), scenarioLocation.getColumn()));
     }
 
-
+    static TestSource fromFeature(CucumberFeature feature) {
+        return FileSource.from(new File(feature.getUri()));
+    }
 }
