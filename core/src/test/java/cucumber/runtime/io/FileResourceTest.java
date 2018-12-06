@@ -15,8 +15,8 @@ public class FileResourceTest {
         FileResource toTest2 = FileResource.createClasspathFileResource(new File("testPath"), new File("testPath/test1/test.feature"));
 
         // test
-        assertEquals("test1" + File.separator + "test.feature", toTest1.getPath());
-        assertEquals("test1" + File.separator + "test.feature", toTest2.getPath());
+        assertEquals("test1/test.feature", toTest1.getPath());
+        assertEquals("test1/test.feature", toTest2.getPath());
     }
 
     @Test
@@ -26,7 +26,7 @@ public class FileResourceTest {
         FileResource toTest2 = FileResource.createFileResource(new File("test1/test.feature"), new File("test1/test.feature"));
 
         // test
-        assertEquals("test1" + File.separator + "test.feature", toTest1.getPath());
-        assertEquals("test1" + File.separator + "test.feature", toTest2.getPath());
+        assertEquals("test1/test.feature", toTest1.getPath());
+        assertEquals("test1/test.feature", toTest2.getPath());
     }
 }

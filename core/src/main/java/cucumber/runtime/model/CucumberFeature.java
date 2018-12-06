@@ -3,21 +3,31 @@ package cucumber.runtime.model;
 import cucumber.api.event.TestSourceRead;
 import cucumber.runner.EventBus;
 import gherkin.ast.GherkinDocument;
+import gherkin.events.PickleEvent;
 
-import java.io.Serializable;
 import java.util.Comparator;
+import java.util.List;
 
-public class CucumberFeature implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class CucumberFeature {
     private final String uri;
+    private final List<PickleEvent> pickles;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
 
 
-    public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource) {
+    public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource, List<PickleEvent> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
+        this.pickles = pickles;
+    }
+
+    public List<PickleEvent> getPickles() {
+        return pickles;
+    }
+
+    public String getName() {
+        return gherkinDocument.getFeature().getName();
     }
 
     public GherkinDocument getGherkinFeature() {
@@ -29,7 +39,11 @@ public class CucumberFeature implements Serializable {
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), uri, gherkinSource));
+        bus.send(new TestSourceRead(bus.getTime(), getUri(), gherkinSource));
+    }
+
+    String getSource() {
+        return gherkinSource;
     }
 
     public static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {

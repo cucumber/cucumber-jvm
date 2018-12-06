@@ -2,28 +2,39 @@ package io.cucucumber.jupiter.engine;
 
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleTag;
+import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
+import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.hierarchical.Node;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    private final PickleEvent pickleEvent;
-    private final boolean inPackage;
-
-    PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent, boolean inPackage) {
-        super(uniqueId, name, source);
-        this.pickleEvent = pickleEvent;
-        this.inPackage = inPackage;
+    static PickleDescriptor createExample(PickleEvent pickleEvent, int index, FeatureSource source, TestDescriptor parent) {
+        UniqueId uniqueId = source.exampleSegment(parent.getUniqueId(), pickleEvent);
+        TestSource testSource = source.exampleSource(pickleEvent);
+        return new PickleDescriptor(uniqueId, "Example #" + index, testSource, pickleEvent);
     }
 
-    PickleDescriptor(UniqueId scenarioId, TestSource pickleSource, PickleEvent pickle, boolean inPackage) {
-        this(scenarioId, pickle.pickle.getName(), pickleSource, pickle, inPackage);
+    static PickleDescriptor createScenario(PickleEvent pickle, FeatureSource source, TestDescriptor parent) {
+        UniqueId uniqueId = source.scenarioSegment(parent.getUniqueId(), pickle);
+        TestSource testSource = source.scenarioSource(pickle);
+        return new PickleDescriptor(uniqueId, pickle.pickle.getName(), testSource, pickle);
+    }
+
+
+    private final PickleEvent pickleEvent;
+
+    private PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent) {
+        super(uniqueId, name, source);
+        this.pickleEvent = pickleEvent;
     }
 
     @Override
@@ -47,14 +58,14 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
     }
 
     public String getPackage() {
-        if (!inPackage) {
-            return null;
-        }
-        String uri = pickleEvent.uri;
-        int lastPathSeparator = uri.lastIndexOf('/');
-        if (lastPathSeparator < 0) {
-            return uri;
-        }
-        return uri.substring(0, lastPathSeparator).replaceAll("/", ".");
+        return getSource()
+            .filter(ClasspathResourceSource.class::isInstance)
+            .map(ClasspathResourceSource.class::cast)
+            .map(ClasspathResourceSource::getClasspathResourceName)
+            .map(Paths::get)
+            .map(Path::getParent)
+            .map(Path::toString)
+            .map(path -> path.replaceAll("/", "."))
+            .orElse(null);
     }
 }

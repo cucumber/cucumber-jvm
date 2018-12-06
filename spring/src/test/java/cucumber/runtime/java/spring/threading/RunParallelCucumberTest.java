@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 
-public class RunParallelCukesTest {
+public class RunParallelCucumberTest {
 
     private final Callable<Byte> runCuke = new Callable<Byte>() {
         @Override

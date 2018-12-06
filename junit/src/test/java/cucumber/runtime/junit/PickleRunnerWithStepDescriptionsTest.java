@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runtime.FeatureCompiler;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.junit.PickleRunners.WithStepDescriptions;
@@ -38,7 +37,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(features.getUri(), pickle));
         };
@@ -75,15 +74,9 @@ public class PickleRunnerWithStepDescriptionsTest {
             "    |   a1   |   r1   |\n"
         );
 
-        Compiler compiler = new Compiler();
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
-        };
-
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
                 mock(ThreadLocalRunnerSupplier.class),
-                pickleEvents.get(0),
+                features.getPickles().get(0),
                 createJUnitOptions()
         );
 
@@ -107,11 +100,9 @@ public class PickleRunnerWithStepDescriptionsTest {
             "    Then another step\n"
         );
 
-        FeatureCompiler compiler = new FeatureCompiler();
-        List<PickleEvent> pickleEvents = compiler.compileFeature(features);
         PickleRunner runner = PickleRunners.withStepDescriptions(
                 mock(ThreadLocalRunnerSupplier.class),
-                pickleEvents.get(0),
+                features.getPickles().get(0),
                 createJUnitOptions()
         );
 

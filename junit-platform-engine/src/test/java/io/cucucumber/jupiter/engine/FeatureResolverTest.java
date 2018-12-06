@@ -7,10 +7,8 @@ import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.discovery.DiscoverySelectors;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,12 +22,11 @@ import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.TestTag.create;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
+import static org.junit.platform.engine.support.descriptor.ClasspathResourceSource.from;
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
-import static org.junit.platform.engine.support.descriptor.FileSource.from;
 
 class FeatureResolverTest {
     private final String featurePath = "io/cucumber/jupiter/engine/feature-with-outline.feature";
-    private final File featureFile = new File(featurePath);
 
     private TestDescriptor testDescriptor;
     private UniqueId id;
@@ -51,7 +48,7 @@ class FeatureResolverTest {
         TestDescriptor feature = getFeature();
         assertEquals("A feature with scenario outlines", feature.getDisplayName());
         assertEquals(emptySet(), feature.getTags());
-        assertEquals(of(from(featureFile)), feature.getSource());
+        assertEquals(of(from(featurePath)), feature.getSource());
         assertEquals(CONTAINER, feature.getType());
         assertEquals(
             id.append("feature", featurePath),
@@ -67,7 +64,7 @@ class FeatureResolverTest {
             asSet(create("@FeatureTag"), create("@ScenarioTag")),
             scenario.getTags()
         );
-        assertEquals(of(from(featureFile, from(5, 3))), scenario.getSource());
+        assertEquals(of(from(featurePath, from(5, 3))), scenario.getSource());
         assertEquals(TEST, scenario.getType());
         assertEquals(
             id.append("feature", featurePath).append("scenario", "5"),
@@ -86,7 +83,7 @@ class FeatureResolverTest {
             emptySet(),
             outline.getTags()
         );
-        assertEquals(of(from(featureFile, from(11, 3))), outline.getSource());
+        assertEquals(of(from(featurePath, from(11, 3))), outline.getSource());
         assertEquals(CONTAINER, outline.getType());
         assertEquals(id.append(
             "feature", featurePath).append("outline", "11"),
@@ -102,7 +99,7 @@ class FeatureResolverTest {
             asSet(create("@FeatureTag"), create("@Example1Tag"), create("@ScenarioOutlineTag")),
             example.getTags()
         );
-        assertEquals(of(from(featureFile, from(19, 8))), example.getSource());
+        assertEquals(of(from(featurePath, from(19, 8))), example.getSource());
         assertEquals(TEST, example.getType());
 
         assertEquals(
