@@ -6,6 +6,8 @@ import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import org.junit.platform.commons.logging.Logger;
+import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
@@ -20,12 +22,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static io.cucucumber.jupiter.engine.Classloaders.getDefaultClassLoader;
+import static io.cucucumber.jupiter.engine.ClassLoaders.getDefaultClassLoader;
 import static io.cucucumber.jupiter.engine.FeatureOrigin.fromClassPathResource;
 import static io.cucucumber.jupiter.engine.FeatureOrigin.fromFileResource;
+import static java.lang.String.format;
 import static java.util.Collections.singletonList;
+import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
 final class FeatureResolver {
+
+    private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
 
     private final TestDescriptor engineDescriptor;
 
@@ -38,33 +44,58 @@ final class FeatureResolver {
     }
 
     void resolveFile(DirectorySelector selector) {
-        new FeatureLoader(new FileResourceLoader())
-            .load(singletonList(selector.getRawPath()))
-            .forEach(feature -> resolveFeature(feature, fromFileResource()));
+        try {
+            new FeatureLoader(new FileResourceLoader())
+                .load(singletonList(selector.getRawPath()))
+                .forEach(feature -> resolveFeature(feature, fromFileResource()));
+        } catch (Throwable e) {
+            rethrowIfBlacklisted(e);
+            logger.debug(e, () -> format("Failed to resolve features in directory '%s'.", selector.getRawPath()));
+        }
     }
 
     void resolveFile(FileSelector selector) {
-        new FeatureLoader(new FileResourceLoader())
-            .load(singletonList(selector.getRawPath()))
-            .forEach(feature -> resolveFeature(feature, fromFileResource()));
+        try {
+            new FeatureLoader(new FileResourceLoader())
+                .load(singletonList(selector.getRawPath()))
+                .forEach(feature -> resolveFeature(feature, fromFileResource()));
+        } catch (Throwable e) {
+            rethrowIfBlacklisted(e);
+            logger.debug(e, () -> format("Failed to resolve features in file '%s'.", selector.getRawPath()));
+        }
     }
 
     void resolvePackageResource(PackageSelector selector) {
-        new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
-            .load(singletonList(selector.getPackageName().replace('.', '/')))
-            .forEach(feature -> resolveFeature(feature, fromClassPathResource()));
+        try {
+            new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
+                .load(singletonList(selector.getPackageName().replace('.', '/')))
+                .forEach(feature -> resolveFeature(feature, fromClassPathResource()));
+        } catch (Throwable e) {
+            rethrowIfBlacklisted(e);
+            logger.debug(e, () -> format("Failed to resolve features in package '%s'.", selector.getPackageName()));
+        }
     }
 
     void resolveClassPathResource(ClasspathResourceSelector selector) {
-        new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
-            .load(singletonList(selector.getClasspathResourceName()))
-            .forEach(feature -> resolveFeature(feature, fromClassPathResource()));
+        try {
+            new FeatureLoader(new ClasspathResourceLoader(getDefaultClassLoader()))
+                .load(singletonList(selector.getClasspathResourceName()))
+                .forEach(feature -> resolveFeature(feature, fromClassPathResource()));
+        } catch (Throwable e) {
+            rethrowIfBlacklisted(e);
+            logger.debug(e, () -> format("Failed to resolve features in classpath '%s'.", selector.getClasspathResourceName()));
+        }
     }
 
     void resolveClassPathRoot(ClasspathRootSelector selector) {
-        new FeatureLoader(new ClasspathRootResourceLoader(selector.getClasspathRoot()))
-            .load(singletonList(""))
-            .forEach(feature -> resolveFeature(feature, fromClassPathResource()));
+        try {
+            new FeatureLoader(new ClasspathRootResourceLoader(selector.getClasspathRoot()))
+                .load(singletonList(""))
+                .forEach(feature -> resolveFeature(feature, fromClassPathResource()));
+        } catch (Throwable e) {
+            rethrowIfBlacklisted(e);
+            logger.debug(e, () -> format("Failed to resolve features in classpath root '%s'.", selector.getClasspathRoot()));
+        }
     }
 
     void resolveUniqueId(UniqueIdSelector uniqueIdSelector) {
@@ -74,15 +105,20 @@ final class FeatureResolver {
             return;
         }
 
-        uniqueId.getSegments()
-            .stream()
-            .filter(segment -> "feature".equals(segment.getType()))
-            .findFirst()
-            .ifPresent(
-                segment -> resolveFromSegment(segment)
-                    .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
-                    .forEach(descriptor -> recursivelyMerge(descriptor, engineDescriptor))
-            );
+        try {
+            uniqueId.getSegments()
+                .stream()
+                .filter(segment -> "feature".equals(segment.getType()))
+                .findFirst()
+                .ifPresent(
+                    segment -> resolveFromSegment(segment)
+                        .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
+                        .forEach(descriptor -> recursivelyMerge(descriptor, engineDescriptor))
+                );
+        } catch (Throwable e) {
+            rethrowIfBlacklisted(e);
+            logger.debug(e, () -> format("Failed to resolve features for '%s'.", uniqueIdSelector.getUniqueId()));
+        }
     }
 
     private TestDescriptor pruneDescription(TestDescriptor descriptor, UniqueId toKeep) {

@@ -1,6 +1,10 @@
 package io.cucucumber.jupiter.engine;
 
-class Classloaders {
+class ClassLoaders {
+
+    private ClassLoaders(){
+
+    }
 
     static ClassLoader getDefaultClassLoader() {
         try {

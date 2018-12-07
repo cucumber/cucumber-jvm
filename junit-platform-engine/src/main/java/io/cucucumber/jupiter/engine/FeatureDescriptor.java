@@ -25,13 +25,6 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         return featureDescriptor;
     }
 
-    private final CucumberFeature feature;
-
-    private FeatureDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberFeature feature) {
-        super(uniqueId, name, source);
-        this.feature = feature;
-    }
-
     private static void addFeatureElements(Collection<List<PickleEvent>> picklesPerScenario, FeatureOrigin source, TestDescriptor featureDescriptor) {
         picklesPerScenario.spliterator().forEachRemaining(pickleEvents -> {
             if (isScenario(pickleEvents)) {
@@ -41,6 +34,13 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
                 featureDescriptor.addChild(ScenarioOutlineDescriptor.create(pickleEvents, source, featureDescriptor));
             }
         });
+    }
+
+    private final CucumberFeature feature;
+
+    private FeatureDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberFeature feature) {
+        super(uniqueId, name, source);
+        this.feature = feature;
     }
 
     @Override
@@ -72,6 +72,4 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
     private static boolean isScenario(List<PickleEvent> pickleEvents) {
         return pickleEvents.size() == 1;
     }
-
-
 }

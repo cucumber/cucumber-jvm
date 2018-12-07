@@ -7,10 +7,8 @@ import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
-import org.junit.platform.engine.discovery.ModuleSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
-import org.junit.platform.engine.discovery.UriSelector;
 
 import static io.cucucumber.jupiter.engine.ClasspathScanningSupport.buildPackageFilter;
 import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
@@ -27,9 +25,6 @@ class DiscoverySelectorResolver {
     private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
         FeatureResolver featureResolver = createFeatureResolver(engineDescriptor);
 
-        request.getSelectorsByType(ModuleSelector.class).forEach(selector -> {
-            //TODO: Find all features in a module. Send a PR.
-        });
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClassPathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClassPathResource);
         request.getSelectorsByType(PackageSelector.class).forEach(featureResolver::resolvePackageResource);

@@ -48,7 +48,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         this.executionListener = executionListener;
         this.configurationParameters = configurationParameters;
 
-        ClassLoader classLoader = Classloaders.getDefaultClassLoader();
+        ClassLoader classLoader = ClassLoaders.getDefaultClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
@@ -87,7 +87,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
             runner.runPickle(pickleEvent);
             logger.debug(() -> "Finished executing pickle " + pickleEvent.pickle.getName());
-//            observer.assertTestCasePassed();
+            observer.assertTestCasePassed();
         }
     }
 
