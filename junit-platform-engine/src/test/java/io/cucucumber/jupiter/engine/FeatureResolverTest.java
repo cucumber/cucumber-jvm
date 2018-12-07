@@ -8,9 +8,9 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
@@ -27,7 +27,7 @@ import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
 class FeatureResolverTest {
     private final String featurePath = "io/cucumber/jupiter/engine/feature-with-outline.feature";
-
+    private final String featureSegmentValue = "classpath:" + featurePath;
     private TestDescriptor testDescriptor;
     private UniqueId id;
 
@@ -51,7 +51,7 @@ class FeatureResolverTest {
         assertEquals(of(from(featurePath)), feature.getSource());
         assertEquals(CONTAINER, feature.getType());
         assertEquals(
-            id.append("feature", featurePath),
+            id.append("feature", featureSegmentValue),
             feature.getUniqueId()
         );
     }
@@ -67,12 +67,13 @@ class FeatureResolverTest {
         assertEquals(of(from(featurePath, from(5, 3))), scenario.getSource());
         assertEquals(TEST, scenario.getType());
         assertEquals(
-            id.append("feature", featurePath).append("scenario", "5"),
+            id.append("feature", featureSegmentValue)
+                .append("scenario", "5"),
             scenario.getUniqueId()
         );
 
         PickleDescriptor pickleDescriptor = (PickleDescriptor) scenario;
-        assertEquals("io.cucumber.jupiter.engine", pickleDescriptor.getPackage());
+        assertEquals(Optional.of("io.cucumber.jupiter.engine"), pickleDescriptor.getPackage());
     }
 
     @Test
@@ -85,8 +86,9 @@ class FeatureResolverTest {
         );
         assertEquals(of(from(featurePath, from(11, 3))), outline.getSource());
         assertEquals(CONTAINER, outline.getType());
-        assertEquals(id.append(
-            "feature", featurePath).append("outline", "11"),
+        assertEquals(
+            id.append("feature", featureSegmentValue)
+                .append("outline", "11"),
             outline.getUniqueId()
         );
     }
@@ -103,12 +105,14 @@ class FeatureResolverTest {
         assertEquals(TEST, example.getType());
 
         assertEquals(
-            id.append("feature", featurePath).append("outline", "11").append("example", "19"),
+            id.append("feature", featureSegmentValue)
+                .append("outline", "11")
+                .append("example", "19"),
             example.getUniqueId()
         );
 
         PickleDescriptor pickleDescriptor = (PickleDescriptor) example;
-        assertEquals("io.cucumber.jupiter.engine", pickleDescriptor.getPackage());
+        assertEquals(Optional.of("io.cucumber.jupiter.engine"), pickleDescriptor.getPackage());
     }
 
     private Set<TestTag> asSet(TestTag... tags) {

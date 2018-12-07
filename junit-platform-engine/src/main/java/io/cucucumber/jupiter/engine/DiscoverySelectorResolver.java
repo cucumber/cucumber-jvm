@@ -28,21 +28,18 @@ class DiscoverySelectorResolver {
         FeatureResolver featureResolver = createFeatureResolver(engineDescriptor);
 
         request.getSelectorsByType(ModuleSelector.class).forEach(selector -> {
-            //TODO: Find all features in a module
+            //TODO: Find all features in a module. Send a PR.
         });
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClassPathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClassPathResource);
         request.getSelectorsByType(PackageSelector.class).forEach(featureResolver::resolvePackageResource);
         request.getSelectorsByType(FileSelector.class).forEach(featureResolver::resolveFile);
         request.getSelectorsByType(DirectorySelector.class).forEach(featureResolver::resolveFile);
-        request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
-            //TODO: Find by unique id
-        });
-        request.getSelectorsByType(UriSelector.class).forEach(featureResolver::resolveUri);
+        request.getSelectorsByType(UniqueIdSelector.class).forEach(featureResolver::resolveUniqueId);
     }
 
     private void filter(TestDescriptor engineDescriptor, ClassFilter classFilter) {
-        new DiscoveryFilterApplier().applyClassNamePredicate(classFilter::match, engineDescriptor);
+        new DiscoveryFilterApplier().applyPackagePredicate(classFilter::match, engineDescriptor);
     }
 
     private void pruneTree(TestDescriptor rootDescriptor) {

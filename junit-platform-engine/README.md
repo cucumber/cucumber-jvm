@@ -35,21 +35,22 @@ For supported values see: [Constants](src/main/java/io/cucucumber/jupiter/engine
 Supported `DiscoverySelector`s are:
 
 * `ClasspathRootSelector`
-* `ClasspathRootSelector`
 * `ClasspathResourceSelector`
 * `PackageSelector`
 * `FileSelector`
 * `DirectorySelector`
 * `UniqueIdSelector`
     - `[cucumber]`
-    - `[cucumber]/[feature:uri/of/cucumber.feature]`
-    - `[cucumber]/[feature:uri/of/cucumber.feature]/[scenario:#line]`
-    - `[cucumber]/[feature:uri/of/cucumber.feature]/[scenario-outline:#line]`
-    - `[cucumber]/[feature:uri/of/cucumber.feature]/[scenario-outline:#line]/[example:#line]`
+    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]`
+    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]/[scenario:#line]`
+    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]/[scenario-outline:#line]`
+    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]/[scenario-outline:#line]/[example:#line]`
 
 Supported `DiscoveryFilter`s are:
-* `PackageNameFilter`
-
+* `PackageNameFilter` for resources selected by:
+    * `ClasspathRootSelector`
+    * `ClasspathResourceSelector`
+    * `PackageSelector`
 ## Tags
 
 Cucumber tags are mapped to JUnit tags. See the relevant documentation on how to select tags:

@@ -8,17 +8,22 @@ import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.UniqueIdSelector;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 
 class DiscoverySelectorResolverTest {
@@ -53,14 +58,6 @@ class DiscoverySelectorResolverTest {
     }
 
     @Test
-    void resolveRequestWithUriSelector() {
-        DiscoverySelector resource = selectUri(new File("src/test/resources/").toURI());
-        EngineDiscoveryRequest discoveryRequest = new SingleSelectorRequest(resource);
-        resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(2, testDescriptor.getChildren().size());
-    }
-
-    @Test
     void resolveRequestWithFileSelector() {
         DiscoverySelector resource = selectFile("src/test/resources/io/cucumber/jupiter/engine/single.feature");
         EngineDiscoveryRequest discoveryRequest = new SingleSelectorRequest(resource);
@@ -84,6 +81,35 @@ class DiscoverySelectorResolverTest {
         assertEquals(2, testDescriptor.getChildren().size());
     }
 
+    @Test
+    void resolveRequestWithUniqueIdSelector() {
+        DiscoverySelector resource = selectPackage("io.cucumber.jupiter.engine");
+        EngineDiscoveryRequest discoveryRequest = new SingleSelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+
+        Set<? extends TestDescriptor> descendants = new HashSet<>(testDescriptor.getDescendants());
+        resetTestDescriptor();
+
+        descendants.forEach(targetDescriptor -> resolveRequestWithUniqueIdSelector(targetDescriptor.getUniqueId()));
+    }
+
+    private void resolveRequestWithUniqueIdSelector(UniqueId targetId) {
+        resetTestDescriptor();
+
+        UniqueIdSelector uniqueIdSelector = selectUniqueId(targetId);
+        EngineDiscoveryRequest descendantRequest = new SingleSelectorRequest(uniqueIdSelector);
+        resolver.resolveSelectors(descendantRequest, testDescriptor);
+        testDescriptor.getDescendants()
+            .stream()
+            .filter(TestDescriptor::isTest)
+            .map(TestDescriptor::getUniqueId)
+            .forEach(selectedId -> assertTrue(selectedId.hasPrefix(targetId), selectedId + " has prefix " + targetId));
+    }
+
+    private void resetTestDescriptor() {
+        Set<? extends TestDescriptor> descendants = new HashSet<>(testDescriptor.getDescendants());
+        descendants.forEach(o -> testDescriptor.removeChild(o));
+    }
 
     private static class SingleSelectorRequest implements EngineDiscoveryRequest {
 

@@ -17,7 +17,7 @@ import java.util.Map;
 
 class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    static TestDescriptor create(CucumberFeature feature, FeatureSource source, TestDescriptor parent) {
+    static TestDescriptor create(CucumberFeature feature, FeatureOrigin source, TestDescriptor parent) {
         UniqueId uniqueId = source.featureSegment(parent.getUniqueId(), feature);
         TestSource testSource = source.featureSource(feature);
         TestDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, feature.getName(), testSource, feature);
@@ -32,7 +32,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         this.feature = feature;
     }
 
-    private static void addFeatureElements(Collection<List<PickleEvent>> picklesPerScenario, FeatureSource source, TestDescriptor featureDescriptor) {
+    private static void addFeatureElements(Collection<List<PickleEvent>> picklesPerScenario, FeatureOrigin source, TestDescriptor featureDescriptor) {
         picklesPerScenario.spliterator().forEachRemaining(pickleEvents -> {
             if (isScenario(pickleEvents)) {
                 PickleEvent pickle = pickleEvents.get(0);

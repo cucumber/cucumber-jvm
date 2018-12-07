@@ -509,7 +509,7 @@ public class RuntimeOptionsTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
 
         assertEquals(singletonList(featurePath), runtimeOptions.getFeaturePaths());
-        assertEquals(singletonMap(featurePath, singletonList(2L)), runtimeOptions.getLineFilters());
+        assertEquals(singletonMap("path/bar.feature", singletonList(2L)), runtimeOptions.getLineFilters());
     }
 
     @Test

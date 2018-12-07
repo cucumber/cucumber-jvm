@@ -71,7 +71,7 @@ public final class Runner {
                     if (!snippets.isEmpty()) {
                         bus.send(new SnippetsSuggestedEvent(bus.getTime(), pickleEvent.uri, step.getLocations(), snippets));
                     }
-                    match = new UndefinedPickleStepDefinitionMatch(step);
+                    match = new UndefinedPickleStepDefinitionMatch(pickleEvent.uri, step);
                 }
             } catch (AmbiguousStepDefinitionsException e) {
                 match = new AmbiguousPickleStepDefinitionsMatch(pickleEvent.uri, step, e);

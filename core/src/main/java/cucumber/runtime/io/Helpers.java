@@ -3,10 +3,11 @@ package cucumber.runtime.io;
 import cucumber.runtime.CucumberException;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class Helpers {
+class Helpers {
     private Helpers() {
     }
 
@@ -23,6 +24,14 @@ public class Helpers {
         } catch (URISyntaxException e) {
             throw new CucumberException(e);
         }
+    }
+
+    static String filePath(URI fileUri) {
+        if (!"file".equals(fileUri.getScheme())) {
+            throw new CucumberException("Expected a file URI:" + fileUri.toString());
+        }
+
+        return fileUri.getSchemeSpecificPart();
     }
 
     static String jarFilePath(URL jarUrl) {

@@ -12,23 +12,23 @@ import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    static PickleDescriptor createExample(PickleEvent pickleEvent, int index, FeatureSource source, TestDescriptor parent) {
+    static PickleDescriptor createExample(PickleEvent pickleEvent, int index, FeatureOrigin source, TestDescriptor parent) {
         UniqueId uniqueId = source.exampleSegment(parent.getUniqueId(), pickleEvent);
         TestSource testSource = source.exampleSource(pickleEvent);
         return new PickleDescriptor(uniqueId, "Example #" + index, testSource, pickleEvent);
     }
 
-    static PickleDescriptor createScenario(PickleEvent pickle, FeatureSource source, TestDescriptor parent) {
+    static PickleDescriptor createScenario(PickleEvent pickle, FeatureOrigin source, TestDescriptor parent) {
         UniqueId uniqueId = source.scenarioSegment(parent.getUniqueId(), pickle);
         TestSource testSource = source.scenarioSource(pickle);
         return new PickleDescriptor(uniqueId, pickle.pickle.getName(), testSource, pickle);
     }
-
 
     private final PickleEvent pickleEvent;
 
@@ -57,7 +57,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
             .collect(Collectors.toSet());
     }
 
-    public String getPackage() {
+    public Optional<String> getPackage() {
         return getSource()
             .filter(ClasspathResourceSource.class::isInstance)
             .map(ClasspathResourceSource.class::cast)
@@ -65,7 +65,6 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
             .map(Paths::get)
             .map(Path::getParent)
             .map(Path::toString)
-            .map(path -> path.replaceAll("/", "."))
-            .orElse(null);
+            .map(path -> path.replaceAll("/", "."));
     }
 }

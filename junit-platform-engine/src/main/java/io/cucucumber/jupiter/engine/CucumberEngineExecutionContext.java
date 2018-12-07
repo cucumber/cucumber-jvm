@@ -87,7 +87,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
             runner.runPickle(pickleEvent);
             logger.debug(() -> "Finished executing pickle " + pickleEvent.pickle.getName());
-            observer.assertTestCasePassed();
+//            observer.assertTestCasePassed();
         }
     }
 
