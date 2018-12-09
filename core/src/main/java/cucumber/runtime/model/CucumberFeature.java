@@ -7,6 +7,7 @@ import gherkin.events.PickleEvent;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class CucumberFeature {
     private final String uri;
@@ -44,6 +45,19 @@ public class CucumberFeature {
 
     String getSource() {
         return gherkinSource;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CucumberFeature that = (CucumberFeature) o;
+        return uri.equals(that.uri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uri);
     }
 
     public static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
