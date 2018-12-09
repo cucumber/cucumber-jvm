@@ -26,6 +26,7 @@ public class FeatureParser {
 
     public static CucumberFeature parseResource(Resource resource) {
         requireNonNull(resource);
+        String path = resource.getPath();
         String source = read(resource);
 
         try {
@@ -33,7 +34,7 @@ public class FeatureParser {
             TokenMatcher matcher = new TokenMatcher();
             GherkinDocument gherkinDocument = parser.parse(source, matcher);
             List<PickleEvent> pickleEvents = compilePickles(gherkinDocument, resource);
-            return new CucumberFeature(gherkinDocument, resource.getPath(), source, pickleEvents);
+            return new CucumberFeature(gherkinDocument, path, source, pickleEvents);
         } catch (ParserException e) {
             throw new CucumberException(e);
         }
