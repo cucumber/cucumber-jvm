@@ -18,7 +18,7 @@ import static io.cucucumber.jupiter.engine.Constants.STRICT_ENABLED_PROPERTY_NAM
 import static java.util.Collections.emptyList;
 
 
-public class CucumberEngineOptions implements PluginOptions, RunnerOptions {
+class CucumberEngineOptions implements PluginOptions, RunnerOptions {
 
     private final ConfigurationParameters configurationParameters;
 

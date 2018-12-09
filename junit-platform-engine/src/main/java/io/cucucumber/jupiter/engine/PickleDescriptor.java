@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final PickleEvent pickleEvent;
 

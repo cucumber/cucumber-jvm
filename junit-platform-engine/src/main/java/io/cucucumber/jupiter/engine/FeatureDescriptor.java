@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final CucumberFeature feature;
 

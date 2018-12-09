@@ -16,13 +16,13 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 
 class ClasspathSupport {
+    static final String DEFAULT_PACKAGE_NAME = "";
     private static final Logger logger = LoggerFactory.getLogger(PathScanner.ResourceFileVisitor.class);
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final char CLASSPATH_RESOURCE_PATH_SEPARATOR = '/';
     private static final String CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING = String.valueOf(CLASSPATH_RESOURCE_PATH_SEPARATOR);
     private static final char PACKAGE_SEPARATOR_CHAR = '.';
     private static final String PACKAGE_SEPARATOR_STRING = String.valueOf(PACKAGE_SEPARATOR_CHAR);
-    static final String DEFAULT_PACKAGE_NAME = "";
 
     private ClasspathSupport() {
 
@@ -93,7 +93,7 @@ class ClasspathSupport {
 
     static String packageNameOfResource(String classpathResourceName) {
         Path parent = Paths.get(classpathResourceName).getParent();
-        if(parent == null){
+        if (parent == null) {
             return DEFAULT_PACKAGE_NAME;
         }
 

@@ -22,7 +22,7 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
-public class ClasspathScanner {
+class ClasspathScanner {
 
     private static final Logger logger = LoggerFactory.getLogger(PathScanner.ResourceFileVisitor.class);
 
