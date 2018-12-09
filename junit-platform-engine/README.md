@@ -14,8 +14,7 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 </dependency>
 ```
 
-This will allow the IntelliJ IDEA, Eclipse, Maven Surefire, ect to discover, 
-select and execute Cucumber scenarios. 
+This will allow the IntelliJ IDEA, Eclipse, Maven Surefire, ect to discover, select and execute Cucumber scenarios. 
 
 ## Parallel execution ## 
 
@@ -27,13 +26,12 @@ execution, is available as an opt-in feature. To enable parallel execution, simp
 
 Cucumber receives its configuration from the JUnit platform. To see how these can be supplied see the JUnit documentation
 [4.5. Configuration Parameters](https://junit.org/junit5/docs/5.3.0-M1/user-guide/index.html#running-tests-config-params). 
-For supported values see: [Constants](src/main/java/io/cucucumber/jupiter/engine/Constants.java)
+For supported values see [Constants](src/main/java/io/cucucumber/jupiter/engine/Constants.java).
 
 
 ## Supported Discovery Selectors and Filters ## 
 
 Supported `DiscoverySelector`s are:
-
 * `ClasspathRootSelector`
 * `ClasspathResourceSelector`
 * `PackageSelector`
@@ -41,17 +39,9 @@ Supported `DiscoverySelector`s are:
 * `DirectorySelector`
 * `UriSelector`
 * `UniqueIdSelector`
-    - `[cucumber]`
-    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]`
-    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]/[scenario:#line]`
-    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]/[scenario-outline:#line]`
-    - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]/[scenario-outline:#line]/[example:#line]`
 
-Supported `DiscoveryFilter`s are:
-* `PackageNameFilter` for resources selected by:
-    * `ClasspathRootSelector`
-    * `ClasspathResourceSelector`
-    * `PackageSelector`
+The only supported `DiscoveryFilter` is the `PackageNameFilter` and only when features are selected from the classpath.
+
 ## Tags
 
 Cucumber tags are mapped to JUnit tags. See the relevant documentation on how to select tags:
