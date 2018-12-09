@@ -1,4 +1,4 @@
-package io.cucucumber.jupiter.engine;
+package io.cucucumber.jupiter.engine.resource;
 
 import cucumber.runtime.io.Resource;
 
@@ -6,30 +6,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.BiFunction;
 
-import static io.cucucumber.jupiter.engine.ClasspathSupport.determineFullyQualifiedResourceName;
+import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.determineFullyQualifiedResourceName;
 
-class Resources {
+public class Resources {
     private static final String CLASSPATH_SCHEME = "classpath:";
 
     private Resources() {
 
     }
 
-    static Resource createPackageResource(Path baseDir, String packageName, Path resource) {
-        return new PackageResource(baseDir, packageName, resource);
+    public static BiFunction<Path, Path, Resource> createPackageResource(String packageName) {
+        return (baseDir, resource) -> new PackageResource(baseDir, packageName, resource);
     }
 
-    static Resource createUriResource(Path resource) {
-        return new UriResource(resource);
+    public static BiFunction<Path, Path, Resource>  createUriResource() {
+        return (baseDir, resource) -> new UriResource(resource);
     }
 
-    static Resource createClasspathRootResource(Path baseDir, Path resource) {
-        return new ClasspathResource(baseDir, resource);
+    public static BiFunction<Path, Path, Resource> createClasspathRootResource() {
+        return ClasspathResource::new;
     }
 
-    static Resource createClasspathResource(String classpathResourceName, Path resource) {
-        return new ClasspathResource(classpathResourceName, resource);
+    public static BiFunction<Path, Path, Resource> createClasspathResource(String classpathResourceName) {
+        return (baseDir, resource) -> new ClasspathResource(classpathResourceName, resource);
     }
 
     private static class ClasspathResource implements Resource {

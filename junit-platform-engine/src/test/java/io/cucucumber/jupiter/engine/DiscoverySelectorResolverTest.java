@@ -138,6 +138,7 @@ class DiscoverySelectorResolverTest {
         descendants.forEach(targetDescriptor -> {
             resetTestDescriptor();
             resolveRequestWithUniqueIdSelector(targetDescriptor.getUniqueId());
+            assertEquals(1, testDescriptor.getChildren().size());
             assertThat(testDescriptor, allDescriptorsPrefixedBy(targetDescriptor.getUniqueId()));
         });
     }
@@ -153,6 +154,7 @@ class DiscoverySelectorResolverTest {
         descendants.forEach(targetDescriptor -> {
             resetTestDescriptor();
             resolveRequestWithUniqueIdSelector(targetDescriptor.getUniqueId());
+            assertEquals(1, testDescriptor.getChildren().size());
             assertThat(testDescriptor, allDescriptorsPrefixedBy(targetDescriptor.getUniqueId()));
         });
     }
@@ -223,7 +225,6 @@ class DiscoverySelectorResolverTest {
         UniqueIdSelector uniqueIdSelector = selectUniqueId(targetId);
         EngineDiscoveryRequest descendantRequest = new SelectorRequest(uniqueIdSelector);
         resolver.resolveSelectors(descendantRequest, testDescriptor);
-        ;
     }
 
     private void resetTestDescriptor() {

@@ -1,6 +1,8 @@
 package io.cucucumber.jupiter.engine;
 
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucucumber.jupiter.engine.resource.ResourceScanner;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.commons.util.ClassFilter;
@@ -16,18 +18,18 @@ import org.junit.platform.engine.discovery.UriSelector;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import static cucumber.runtime.model.FeatureParser.parseResource;
 import static io.cucucumber.jupiter.engine.FeatureOrigin.isClassPath;
-import static io.cucucumber.jupiter.engine.Resources.createClasspathResource;
-import static io.cucucumber.jupiter.engine.Resources.createClasspathRootResource;
-import static io.cucucumber.jupiter.engine.Resources.createPackageResource;
-import static io.cucucumber.jupiter.engine.Resources.createUriResource;
+import static io.cucucumber.jupiter.engine.resource.Resources.createClasspathResource;
+import static io.cucucumber.jupiter.engine.resource.Resources.createClasspathRootResource;
+import static io.cucucumber.jupiter.engine.resource.Resources.createPackageResource;
+import static io.cucucumber.jupiter.engine.resource.Resources.createUriResource;
 import static java.lang.String.format;
 import static java.util.Optional.of;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
@@ -37,16 +39,6 @@ final class FeatureResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
 
-    private final ResourceScanner<CucumberFeature> uriResourceScanner = new ResourceScanner<>(
-        ClassLoaders::getDefaultClassLoader,
-        this::isFeature,
-        (baseDir, resource) -> of(parseResource(createUriResource(resource)))
-    );
-    private final ResourceScanner<CucumberFeature> classpathFeatureScanner = new ResourceScanner<>(
-        ClassLoaders::getDefaultClassLoader,
-        this::isFeature,
-        (baseDir, resource) -> of(parseResource(createClasspathRootResource(baseDir, resource)))
-    );
     private final TestDescriptor engineDescriptor;
     private final ClassFilter filter;
 
@@ -72,38 +64,46 @@ final class FeatureResolver {
         );
     }
 
-    private boolean isFeature(Path path) {
+    private static ResourceScanner<CucumberFeature> scanner(BiFunction<Path, Path, Resource> createResource) {
+        return new ResourceScanner<>(
+            ClassLoaders::getDefaultClassLoader,
+            FeatureResolver::isFeature,
+            (baseDir, resource) -> {
+                Resource specificResource = createResource.apply(baseDir, resource);
+                CucumberFeature parsedFeatured = parseResource(specificResource);
+                return of(parsedFeatured);
+            }
+        );
+    }
+
+    private static boolean isFeature(Path path) {
         return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
     }
 
     void resolveDirectory(DirectorySelector selector) {
         try {
-            uriResourceScanner
-                .scanForResourcesPath(selector.getPath())
-                .stream()
-                .map(this::resolveFeature)
-                .forEach(this::merge);
+            resolvePath(selector.getPath());
         } catch (Throwable e) {
             rethrowIfBlacklisted(e);
             logger.debug(e, () -> format("Failed to resolve features in directory '%s'.", selector.getRawPath()));
         }
     }
 
-    private void merge(TestDescriptor featureDescriptor) {
-        mergeWithParent(featureDescriptor, engineDescriptor);
+    private void resolvePath(Path path) {
+        scanner(createUriResource())
+            .scanForResourcesPath(path)
+            .stream()
+            .map(this::resolveFeature)
+            .forEach(this::merge);
     }
 
-    private void mergeWithParent(TestDescriptor featureDescriptor, TestDescriptor engineDescriptor) {
+    private void merge(TestDescriptor featureDescriptor) {
         recursivelyMerge(featureDescriptor, engineDescriptor);
     }
 
     void resolveFile(FileSelector selector) {
         try {
-            uriResourceScanner
-                .scanForResourcesPath(selector.getPath())
-                .stream()
-                .map(this::resolveFeature)
-                .forEach(this::merge);
+            resolvePath(selector.getPath());
         } catch (Throwable e) {
             rethrowIfBlacklisted(e);
             logger.debug(e, () -> format("Failed to resolve features in file '%s'.", selector.getRawPath()));
@@ -111,46 +111,36 @@ final class FeatureResolver {
     }
 
     void resolvePackageResource(PackageSelector selector) {
+        String packageName = selector.getPackageName();
         try {
-            final ResourceScanner<CucumberFeature> packageScanner = new ResourceScanner<>(
-                ClassLoaders::getDefaultClassLoader,
-                this::isFeature,
-                (baseDir, resource) -> of(parseResource(createPackageResource(baseDir, selector.getPackageName(), resource)))
-            );
-
-            packageScanner
-                .scanForResourcesInPackage(selector.getPackageName(), filter::match)
+            scanner(createPackageResource(packageName))
+                .scanForResourcesInPackage(packageName, filter::match)
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
         } catch (Throwable e) {
             rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features in package '%s'.", selector.getPackageName()));
+            logger.debug(e, () -> format("Failed to resolve features in package '%s'.", packageName));
         }
     }
 
     void resolveClasspathResource(ClasspathResourceSelector selector) {
+        String classpathResourceName = selector.getClasspathResourceName();
         try {
-            final ResourceScanner<CucumberFeature> packageScanner = new ResourceScanner<>(
-                ClassLoaders::getDefaultClassLoader,
-                this::isFeature,
-                (baseDir, resource) -> of(parseResource(createClasspathResource(selector.getClasspathResourceName(), resource)))
-            );
-
-            packageScanner
-                .scanForClasspathResource(selector.getClasspathResourceName(), filter::match)
+            scanner(createClasspathResource(classpathResourceName))
+                .scanForClasspathResource(classpathResourceName, filter::match)
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
         } catch (Throwable e) {
             rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve feature '%s'.", selector.getClasspathResourceName()));
+            logger.debug(e, () -> format("Failed to resolve feature '%s'.", classpathResourceName));
         }
     }
 
     void resolveClasspathRoot(ClasspathRootSelector selector) {
         try {
-            classpathFeatureScanner
+            scanner(createClasspathRootResource())
                 .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), filter::match)
                 .stream()
                 .map(this::resolveFeature)
@@ -176,9 +166,12 @@ final class FeatureResolver {
     private Stream<TestDescriptor> resolveUri(URI uri) {
         List<CucumberFeature> testDescriptorStream;
         if (isClassPath(uri)) {
-            testDescriptorStream = uriResourceScanner.scanForResourcesPath(Paths.get(uri));
+            String resourcePath = uri.getSchemeSpecificPart();
+            testDescriptorStream = scanner(createClasspathResource(resourcePath))
+                .scanForClasspathResource(resourcePath, filter::match);
         } else {
-            testDescriptorStream = uriResourceScanner.scanForResourcesInClasspathRoot(uri, filter::match);
+            testDescriptorStream = scanner(createUriResource())
+                .scanForResourcesUri(uri);
         }
         return testDescriptorStream
             .stream()
@@ -200,7 +193,7 @@ final class FeatureResolver {
                 .map(URI::create)
                 .flatMap(this::resolveUri)
                 .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
-                .forEach(descriptor -> recursivelyMerge(descriptor, engineDescriptor));
+                .forEach(this::merge);
         } catch (Throwable e) {
             rethrowIfBlacklisted(e);
             logger.debug(e, () -> format("Failed to resolve features for '%s'.", uniqueIdSelector.getUniqueId()));

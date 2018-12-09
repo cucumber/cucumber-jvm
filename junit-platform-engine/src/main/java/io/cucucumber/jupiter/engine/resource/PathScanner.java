@@ -1,4 +1,4 @@
-package io.cucucumber.jupiter.engine;
+package io.cucucumber.jupiter.engine.resource;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;

@@ -2,6 +2,7 @@ package io.cucucumber.jupiter.engine;
 
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleTag;
+import io.cucucumber.jupiter.engine.resource.ClasspathSupport;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
@@ -42,7 +43,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
 
     @Override
     public CucumberEngineExecutionContext execute(CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor) {
-        context.runPickle(pickleEvent);
+        context.runTestCase(pickleEvent);
         return context;
     }
 

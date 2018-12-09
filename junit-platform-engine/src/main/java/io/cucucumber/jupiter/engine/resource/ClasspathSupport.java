@@ -1,4 +1,4 @@
-package io.cucucumber.jupiter.engine;
+package io.cucucumber.jupiter.engine.resource;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 
-class ClasspathSupport {
+public class ClasspathSupport {
     static final String DEFAULT_PACKAGE_NAME = "";
     private static final Logger logger = LoggerFactory.getLogger(PathScanner.ResourceFileVisitor.class);
     private static final String CLASS_FILE_SUFFIX = ".class";
@@ -64,10 +64,11 @@ class ClasspathSupport {
     static String determineFullyQualifiedResourceName(Path baseDir, String packagePath, Path resource) {
         return Stream.of(
             packagePath,
-            determineSubpackageName(baseDir, resource)
+            determineSubpackageName(baseDir, resource),
+            resource.getFileName().toString()
         )
             .filter(value -> !value.isEmpty()) // Handle default package appropriately.
-            .collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING)) + resource.getFileName().toString();
+            .collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING));
     }
 
     private static String determineSubpackageName(Path baseDir, Path classFile) {
@@ -91,13 +92,18 @@ class ClasspathSupport {
         return fileName.substring(0, fileName.length() - CLASS_FILE_SUFFIX.length());
     }
 
-    static String packageNameOfResource(String classpathResourceName) {
+    public static String packageNameOfResource(String classpathResourceName) {
         Path parent = Paths.get(classpathResourceName).getParent();
         if (parent == null) {
             return DEFAULT_PACKAGE_NAME;
         }
 
         String packagePath = parent.toString();
-        return packagePath.replace(CLASSPATH_RESOURCE_PATH_SEPARATOR, PACKAGE_SEPARATOR_CHAR);
+        return resourceName(packagePath);
+    }
+
+
+    public static String resourceName(String resourcePath) {
+        return resourcePath.replace(CLASSPATH_RESOURCE_PATH_SEPARATOR, PACKAGE_SEPARATOR_CHAR);
     }
 }

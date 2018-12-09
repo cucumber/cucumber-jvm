@@ -80,12 +80,12 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         feature.sendTestSourceRead(bus);
     }
 
-    void runPickle(PickleEvent pickleEvent) {
+    void runTestCase(PickleEvent pickleEvent) {
         Runner runner = getRunner();
         try (TestCaseResultObserver observer = observe(runner.getBus())) {
-            logger.debug(() -> "Executing pickle " + pickleEvent.pickle.getName());
+            logger.debug(() -> "Executing test case " + pickleEvent.pickle.getName());
             runner.runPickle(pickleEvent);
-            logger.debug(() -> "Finished executing pickle " + pickleEvent.pickle.getName());
+            logger.debug(() -> "Finished test case " + pickleEvent.pickle.getName());
             observer.assertTestCasePassed();
         }
     }

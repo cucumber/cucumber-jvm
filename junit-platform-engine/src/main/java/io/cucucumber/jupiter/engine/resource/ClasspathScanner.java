@@ -1,4 +1,4 @@
-package io.cucucumber.jupiter.engine;
+package io.cucucumber.jupiter.engine.resource;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -16,8 +16,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static io.cucucumber.jupiter.engine.ClasspathSupport.determineFullyQualifiedClassName;
-import static io.cucucumber.jupiter.engine.ClasspathSupport.getRootUrisForPackage;
+import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.determineFullyQualifiedClassName;
+import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.getRootUrisForPackage;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
