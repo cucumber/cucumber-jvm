@@ -9,6 +9,7 @@ import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
+import org.junit.platform.engine.discovery.UriSelector;
 
 import static io.cucucumber.jupiter.engine.ClasspathScanningSupport.buildPackageFilter;
 import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
@@ -17,20 +18,21 @@ class DiscoverySelectorResolver {
 
     void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
         ClassFilter packageFilter = buildPackageFilter(request, clazz -> false);
-        resolve(request, engineDescriptor);
+        resolve(request, engineDescriptor, packageFilter);
         filter(engineDescriptor, packageFilter);
         pruneTree(engineDescriptor);
     }
 
-    private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
-        FeatureResolver featureResolver = createFeatureResolver(engineDescriptor);
+    private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor, ClassFilter packageFilter) {
+        FeatureResolver featureResolver = createFeatureResolver(engineDescriptor, packageFilter);
 
-        request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClassPathRoot);
-        request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClassPathResource);
+        request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
+        request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClasspathResource);
         request.getSelectorsByType(PackageSelector.class).forEach(featureResolver::resolvePackageResource);
         request.getSelectorsByType(FileSelector.class).forEach(featureResolver::resolveFile);
-        request.getSelectorsByType(DirectorySelector.class).forEach(featureResolver::resolveFile);
+        request.getSelectorsByType(DirectorySelector.class).forEach(featureResolver::resolveDirectory);
         request.getSelectorsByType(UniqueIdSelector.class).forEach(featureResolver::resolveUniqueId);
+        request.getSelectorsByType(UriSelector.class).forEach(featureResolver::resolveUri);
     }
 
     private void filter(TestDescriptor engineDescriptor, ClassFilter classFilter) {
@@ -40,6 +42,5 @@ class DiscoverySelectorResolver {
     private void pruneTree(TestDescriptor rootDescriptor) {
         rootDescriptor.accept(TestDescriptor::prune);
     }
-
 
 }

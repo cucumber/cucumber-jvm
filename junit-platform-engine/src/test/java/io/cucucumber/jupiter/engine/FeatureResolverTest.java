@@ -2,6 +2,7 @@ package io.cucucumber.jupiter.engine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.ClassFilter;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -31,7 +32,6 @@ class FeatureResolverTest {
     private TestDescriptor testDescriptor;
     private UniqueId id;
 
-
     @BeforeEach
     void before() {
         CucumberTestEngine engine = new CucumberTestEngine();
@@ -39,8 +39,8 @@ class FeatureResolverTest {
         EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
         id = UniqueId.forEngine(engine.getId());
         testDescriptor = engine.discover(discoveryRequest, id);
-        FeatureResolver featureResolver = createFeatureResolver(testDescriptor);
-        featureResolver.resolveClassPathResource(selectClasspathResource(featurePath));
+        FeatureResolver featureResolver = createFeatureResolver(testDescriptor, ClassFilter.of(aClass -> true));
+        featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
     }
 
     @Test

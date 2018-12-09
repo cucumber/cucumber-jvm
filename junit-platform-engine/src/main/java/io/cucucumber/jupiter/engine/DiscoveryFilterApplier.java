@@ -20,4 +20,5 @@ class DiscoveryFilterApplier {
             .map(packagePredicate::test)
             .orElse(true);
     }
+
 }

@@ -11,6 +11,11 @@ import java.util.List;
 import static io.cucucumber.jupiter.engine.PickleDescriptor.createExample;
 
 class ScenarioOutlineDescriptor extends AbstractTestDescriptor {
+
+    private ScenarioOutlineDescriptor(UniqueId uniqueId, String name, TestSource source) {
+        super(uniqueId, name, source);
+    }
+
     static TestDescriptor create(List<PickleEvent> pickles, FeatureOrigin source, TestDescriptor parent) {
         PickleEvent outlinePickle = pickles.get(0);
         UniqueId uniqueId = source.outlineSegment(parent.getUniqueId(), pickles);
@@ -23,10 +28,6 @@ class ScenarioOutlineDescriptor extends AbstractTestDescriptor {
         }
 
         return descriptor;
-    }
-
-    private ScenarioOutlineDescriptor(UniqueId uniqueId, String name, TestSource source) {
-        super(uniqueId, name, source);
     }
 
     @Override

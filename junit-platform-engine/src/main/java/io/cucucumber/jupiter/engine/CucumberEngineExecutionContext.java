@@ -1,4 +1,3 @@
-
 package io.cucucumber.jupiter.engine;
 
 import cucumber.api.Result;
@@ -100,17 +99,25 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         return new TestCaseResultObserver(bus);
     }
 
+    private Runner getRunner() {
+        try {
+            return runnerSupplier.get();
+        } catch (Throwable e) {
+            logger.error(e, () -> "Unable to start Cucumber");
+            throw e;
+        }
+    }
+
     private class TestCaseResultObserver implements AutoCloseable {
 
+        private final EventPublisher bus;
+        private Result result;
         private final EventHandler<TestCaseFinished> testCaseFinished = new EventHandler<TestCaseFinished>() {
             @Override
             public void receive(TestCaseFinished event) {
                 result = event.result;
             }
         };
-
-        private final EventPublisher bus;
-        private Result result;
 
         TestCaseResultObserver(EventPublisher bus) {
             this.bus = bus;
@@ -135,15 +142,6 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             } else {
                 ExceptionUtils.throwAsUncheckedException(error);
             }
-        }
-    }
-
-    private Runner getRunner() {
-        try {
-            return runnerSupplier.get();
-        } catch (Throwable e) {
-            logger.error(e, () -> "Unable to start Cucumber");
-            throw e;
         }
     }
 }

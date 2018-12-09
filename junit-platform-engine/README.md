@@ -39,6 +39,7 @@ Supported `DiscoverySelector`s are:
 * `PackageSelector`
 * `FileSelector`
 * `DirectorySelector`
+* `UriSelector`
 * `UniqueIdSelector`
     - `[cucumber]`
     - `[cucumber]/[feature:classpath:uri/of/cucumber.feature]`

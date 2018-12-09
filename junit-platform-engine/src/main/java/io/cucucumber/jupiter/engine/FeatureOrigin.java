@@ -10,6 +10,7 @@ import org.junit.platform.engine.support.descriptor.FilePosition;
 import org.junit.platform.engine.support.descriptor.FileSource;
 
 import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 abstract class FeatureOrigin {
@@ -18,12 +19,10 @@ abstract class FeatureOrigin {
     private static final String SCENARIO_SEGMENT_TYPE = "scenario";
     private static final String OUTLINE_SEGMENT_TYPE = "outline";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
-    static final String CLASSPATH_PREFIX = "classpath:";
-    static final String FILE_PREFIX = "file:";
-    static final String URI_PREFIX = "uri:";
+    private static final String CLASSPATH_SCHEME = "classpath";
+    static final String CLASSPATH_PREFIX = CLASSPATH_SCHEME + ":";
 
-
-    static FeatureOrigin fromFileResource() {
+    private static FeatureOrigin fromFileResource() {
         return new FileFeatureOrigin();
     }
 
@@ -36,20 +35,27 @@ abstract class FeatureOrigin {
         return locations.get(locations.size() - 1);
     }
 
-    static FeatureOrigin fromClassPathResource() {
+    private static FeatureOrigin fromClassPathResource() {
         return new ClasspathFeatureOrigin();
     }
 
-    static FeatureOrigin fromSegment(UniqueId.Segment segment) {
-        if (segment.getValue().startsWith(CLASSPATH_PREFIX)) {
+    static FeatureOrigin fromUri(URI uri) {
+        if (CLASSPATH_SCHEME.equals(uri.getScheme())) {
             return fromClassPathResource();
         }
 
         return fromFileResource();
     }
 
-    abstract TestSource featureSource(CucumberFeature feature);
+    static boolean isClassPath(URI uri) {
+        return CLASSPATH_SCHEME.equals(uri.getScheme());
+    }
 
+    static boolean isFeatureSegment(UniqueId.Segment segment) {
+        return FEATURE_SEGMENT_TYPE.equals(segment.getType());
+    }
+
+    abstract TestSource featureSource(CucumberFeature feature);
 
     abstract TestSource scenarioSource(PickleEvent pickleEvent);
 
@@ -76,10 +82,7 @@ abstract class FeatureOrigin {
         return parent.append(EXAMPLE_SEGMENT_TYPE, String.valueOf(location.getLine()));
     }
 
-    abstract String toFeaturePath(UniqueId.Segment segment);
-
     private static class FileFeatureOrigin extends FeatureOrigin {
-
 
         @Override
         TestSource featureSource(CucumberFeature feature) {
@@ -107,49 +110,53 @@ abstract class FeatureOrigin {
 
         @Override
         UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
-            return parent.append(FEATURE_SEGMENT_TYPE, FILE_PREFIX + feature.getUri());
+            return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri());
         }
 
-        @Override
-        String toFeaturePath(UniqueId.Segment segment) {
-            return segment.getValue().substring(FILE_PREFIX.length());
-        }
     }
 
     private static class ClasspathFeatureOrigin extends FeatureOrigin {
 
         @Override
         TestSource featureSource(CucumberFeature feature) {
-            return ClasspathResourceSource.from(feature.getUri());
+            return ClasspathResourceSource.from(classPathUri(feature));
         }
 
         @Override
         TestSource scenarioSource(PickleEvent pickleEvent) {
             List<PickleLocation> locations = pickleEvent.pickle.getLocations();
-            return ClasspathResourceSource.from(pickleEvent.uri, getPickleLocation(locations.get(0)));
+            return ClasspathResourceSource.from(classpathUri(pickleEvent), getPickleLocation(locations.get(0)));
         }
 
         @Override
         TestSource outlineSource(List<PickleEvent> pickleEvents) {
             PickleEvent firstPickle = pickleEvents.get(0);
             PickleLocation location = getOutlineLocation(firstPickle);
-            return ClasspathResourceSource.from(firstPickle.uri, getPickleLocation(location));
+            return ClasspathResourceSource.from(classpathUri(firstPickle), getPickleLocation(location));
         }
 
         @Override
         TestSource exampleSource(PickleEvent pickleEvent) {
             List<PickleLocation> locations = pickleEvent.pickle.getLocations();
-            return ClasspathResourceSource.from(pickleEvent.uri, getPickleLocation(locations.get(0)));
+            return ClasspathResourceSource.from(classpathUri(pickleEvent), getPickleLocation(locations.get(0)));
+        }
+
+        private String classpathUri(PickleEvent pickleEvent) {
+            return classpathUri(pickleEvent.uri);
+        }
+
+        private String classpathUri(String uri) {
+            return uri.substring(CLASSPATH_PREFIX.length());
+        }
+
+        private String classPathUri(CucumberFeature feature) {
+            return classpathUri(feature.getUri());
         }
 
         @Override
         UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
-            return parent.append(FEATURE_SEGMENT_TYPE, CLASSPATH_PREFIX + feature.getUri());
-        }
-
-        @Override
-        String toFeaturePath(UniqueId.Segment segment) {
-            return segment.getValue();
+            return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri());
         }
     }
+
 }

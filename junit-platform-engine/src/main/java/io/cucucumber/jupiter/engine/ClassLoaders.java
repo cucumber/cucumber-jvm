@@ -2,7 +2,7 @@ package io.cucucumber.jupiter.engine;
 
 class ClassLoaders {
 
-    private ClassLoaders(){
+    private ClassLoaders() {
 
     }
 

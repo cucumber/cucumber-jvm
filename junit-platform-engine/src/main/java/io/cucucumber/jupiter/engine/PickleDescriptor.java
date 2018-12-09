@@ -10,13 +10,18 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.hierarchical.Node;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+public class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+
+    private final PickleEvent pickleEvent;
+
+    private PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent) {
+        super(uniqueId, name, source);
+        this.pickleEvent = pickleEvent;
+    }
 
     static PickleDescriptor createExample(PickleEvent pickleEvent, int index, FeatureOrigin source, TestDescriptor parent) {
         UniqueId uniqueId = source.exampleSegment(parent.getUniqueId(), pickleEvent);
@@ -28,13 +33,6 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         UniqueId uniqueId = source.scenarioSegment(parent.getUniqueId(), pickle);
         TestSource testSource = source.scenarioSource(pickle);
         return new PickleDescriptor(uniqueId, pickle.pickle.getName(), testSource, pickle);
-    }
-
-    private final PickleEvent pickleEvent;
-
-    private PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent) {
-        super(uniqueId, name, source);
-        this.pickleEvent = pickleEvent;
     }
 
     @Override
@@ -62,9 +60,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
             .filter(ClasspathResourceSource.class::isInstance)
             .map(ClasspathResourceSource.class::cast)
             .map(ClasspathResourceSource::getClasspathResourceName)
-            .map(Paths::get)
-            .map(Path::getParent)
-            .map(Path::toString)
-            .map(path -> path.replaceAll("/", "."));
+            .map(ClasspathSupport::packageNameOfResource);
     }
+
 }

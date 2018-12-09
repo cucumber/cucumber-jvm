@@ -1,4 +1,4 @@
-Feature: A feature with a single scenario
+Feature: A feature in classpath root
 
   Scenario: A single scenario
     Given a single scenario

@@ -9,15 +9,24 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+public class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    static TestDescriptor create(CucumberFeature feature, FeatureOrigin source, TestDescriptor parent) {
+    private final CucumberFeature feature;
+
+    private FeatureDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberFeature feature) {
+        super(uniqueId, name, source);
+        this.feature = feature;
+    }
+
+    static TestDescriptor create(CucumberFeature feature, TestDescriptor parent) {
+        FeatureOrigin source = FeatureOrigin.fromUri(URI.create(feature.getUri()));
         UniqueId uniqueId = source.featureSegment(parent.getUniqueId(), feature);
         TestSource testSource = source.featureSource(feature);
         TestDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, feature.getName(), testSource, feature);
@@ -36,25 +45,6 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         });
     }
 
-    private final CucumberFeature feature;
-
-    private FeatureDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberFeature feature) {
-        super(uniqueId, name, source);
-        this.feature = feature;
-    }
-
-    @Override
-    public CucumberEngineExecutionContext prepare(CucumberEngineExecutionContext context) {
-        context.beforeFeature(feature);
-        return context;
-    }
-
-    @Override
-    public Type getType() {
-        return Type.CONTAINER;
-    }
-
-
     private static Collection<List<PickleEvent>> compileFeature(CucumberFeature feature) {
         // A scenarioSource with examples compiles into multiple pickle
         // We group these pickle by their original location
@@ -71,5 +61,16 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
 
     private static boolean isScenario(List<PickleEvent> pickleEvents) {
         return pickleEvents.size() == 1;
+    }
+
+    @Override
+    public CucumberEngineExecutionContext prepare(CucumberEngineExecutionContext context) {
+        context.beforeFeature(feature);
+        return context;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.CONTAINER;
     }
 }

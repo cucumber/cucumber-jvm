@@ -61,4 +61,5 @@ public class CucumberEngineOptions implements PluginOptions, RunnerOptions {
             .get(SNIPPET_TYPE_PROPERTY_NAME, SnippetType::fromString)
             .orElse(SnippetType.UNDERSCORE);
     }
+
 }
