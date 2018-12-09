@@ -5,7 +5,7 @@ import cucumber.runtime.model.CucumberFeature;
 import io.cucucumber.jupiter.engine.resource.ResourceScanner;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
-import org.junit.platform.commons.util.ClassFilter;
+import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
@@ -40,15 +40,15 @@ final class FeatureResolver {
     private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
 
     private final TestDescriptor engineDescriptor;
-    private final ClassFilter filter;
+    private final Filter<String> packageFilter;
 
-    private FeatureResolver(TestDescriptor engineDescriptor, ClassFilter filter) {
+    private FeatureResolver(TestDescriptor engineDescriptor, Filter<String> packageFilter) {
         this.engineDescriptor = engineDescriptor;
-        this.filter = filter;
+        this.packageFilter = packageFilter;
     }
 
-    static FeatureResolver createFeatureResolver(TestDescriptor engineDescriptor, ClassFilter filter) {
-        return new FeatureResolver(engineDescriptor, filter);
+    static FeatureResolver createFeatureResolver(TestDescriptor engineDescriptor, Filter<String> packageFilter) {
+        return new FeatureResolver(engineDescriptor, packageFilter);
     }
 
     private static void recursivelyMerge(TestDescriptor descriptor, TestDescriptor parent) {
@@ -114,7 +114,7 @@ final class FeatureResolver {
         String packageName = selector.getPackageName();
         try {
             scanner(createPackageResource(packageName))
-                .scanForResourcesInPackage(packageName, filter::match)
+                .scanForResourcesInPackage(packageName, packageFilter.toPredicate())
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
@@ -128,7 +128,7 @@ final class FeatureResolver {
         String classpathResourceName = selector.getClasspathResourceName();
         try {
             scanner(createClasspathResource(classpathResourceName))
-                .scanForClasspathResource(classpathResourceName, filter::match)
+                .scanForClasspathResource(classpathResourceName, packageFilter.toPredicate())
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
@@ -141,7 +141,7 @@ final class FeatureResolver {
     void resolveClasspathRoot(ClasspathRootSelector selector) {
         try {
             scanner(createClasspathRootResource())
-                .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), filter::match)
+                .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter.toPredicate())
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
@@ -168,7 +168,7 @@ final class FeatureResolver {
         if (isClassPath(uri)) {
             String resourcePath = uri.getSchemeSpecificPart();
             testDescriptorStream = scanner(createClasspathResource(resourcePath))
-                .scanForClasspathResource(resourcePath, filter::match);
+                .scanForClasspathResource(resourcePath, packageFilter.toPredicate());
         } else {
             testDescriptorStream = scanner(createUriResource())
                 .scanForResourcesUri(uri);

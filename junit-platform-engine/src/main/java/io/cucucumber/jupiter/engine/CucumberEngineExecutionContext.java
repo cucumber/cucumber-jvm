@@ -26,7 +26,6 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.commons.util.ExceptionUtils;
 import org.junit.platform.engine.ConfigurationParameters;
-import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import org.opentest4j.TestAbortedException;
 
@@ -35,17 +34,12 @@ import static cucumber.api.Result.Type.PASSED;
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     private static final Logger logger = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
-    private final EngineExecutionListener executionListener;
-    private final ConfigurationParameters configurationParameters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final EventBus bus;
     private final Plugins plugins;
     private final CucumberEngineOptions options;
 
-    CucumberEngineExecutionContext(EngineExecutionListener executionListener,
-                                   ConfigurationParameters configurationParameters) {
-        this.executionListener = executionListener;
-        this.configurationParameters = configurationParameters;
+    CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
         ClassLoader classLoader = ClassLoaders.getDefaultClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
@@ -58,15 +52,6 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         this.plugins = new Plugins(classLoader, new PluginFactory(), bus, options);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier);
     }
-
-    public ConfigurationParameters getConfigurationParameters() {
-        return configurationParameters;
-    }
-
-    public EngineExecutionListener getExecutionListener() {
-        return executionListener;
-    }
-
     void startTestRun() {
         logger.debug(() -> "Sending run test started event");
         bus.send(new TestRunStarted(bus.getTime()));

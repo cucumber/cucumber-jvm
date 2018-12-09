@@ -42,10 +42,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
 	@Override
 	protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-		return new CucumberEngineExecutionContext(
-		    request.getEngineExecutionListener(),
-			request.getConfigurationParameters()
-        );
+		return new CucumberEngineExecutionContext(request.getConfigurationParameters());
 	}
 
     @Override

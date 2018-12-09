@@ -56,7 +56,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
             .collect(Collectors.toSet());
     }
 
-    public Optional<String> getPackage() {
+    Optional<String> getPackage() {
         return getSource()
             .filter(ClasspathResourceSource.class::isInstance)
             .map(ClasspathResourceSource.class::cast)

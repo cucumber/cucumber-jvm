@@ -1,7 +1,7 @@
 package io.cucucumber.jupiter.engine;
 
-import org.junit.platform.commons.util.ClassFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
@@ -17,13 +17,13 @@ import static io.cucucumber.jupiter.engine.FeatureResolver.createFeatureResolver
 class DiscoverySelectorResolver {
 
     void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
-        ClassFilter packageFilter = buildPackageFilter(request, clazz -> false);
+        Filter<String> packageFilter = buildPackageFilter(request);
         resolve(request, engineDescriptor, packageFilter);
         filter(engineDescriptor, packageFilter);
         pruneTree(engineDescriptor);
     }
 
-    private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor, ClassFilter packageFilter) {
+    private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor, Filter<String> packageFilter) {
         FeatureResolver featureResolver = createFeatureResolver(engineDescriptor, packageFilter);
 
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
@@ -35,8 +35,8 @@ class DiscoverySelectorResolver {
         request.getSelectorsByType(UriSelector.class).forEach(featureResolver::resolveUri);
     }
 
-    private void filter(TestDescriptor engineDescriptor, ClassFilter classFilter) {
-        new DiscoveryFilterApplier().applyPackagePredicate(classFilter::match, engineDescriptor);
+    private void filter(TestDescriptor engineDescriptor, Filter<String> packageFilter) {
+        new DiscoveryFilterApplier().applyPackagePredicate(packageFilter.toPredicate(), engineDescriptor);
     }
 
     private void pruneTree(TestDescriptor rootDescriptor) {
