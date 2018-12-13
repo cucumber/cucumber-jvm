@@ -1,5 +1,6 @@
 package io.cucucumber.jupiter.engine;
 
+import io.cucucumber.jupiter.engine.resource.ClassFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.discovery.PackageNameFilter;
@@ -11,8 +12,9 @@ final class ClasspathScanningSupport {
     private ClasspathScanningSupport() {
     }
 
-    static Filter<String> buildPackageFilter(EngineDiscoveryRequest request) {
-        return composeFilters(request.getFiltersByType(PackageNameFilter.class));
+    static ClassFilter buildPackageFilter(EngineDiscoveryRequest request) {
+        Filter<String> packageFilter = composeFilters(request.getFiltersByType(PackageNameFilter.class));
+        return ClassFilter.of(packageFilter.toPredicate(), aClass -> true);
     }
 
 }

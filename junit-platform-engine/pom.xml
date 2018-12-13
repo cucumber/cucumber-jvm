@@ -61,6 +61,31 @@
 
     <build>
         <plugins>
+
+            <!--Work around. Surefire does not use JUnits Test Engine discovery functionality -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>org.junit.platform.console.ConsoleLauncher</mainClass>
+                    <classpathScope>test</classpathScope>
+                    <arguments>
+                        <argument>--include-engine</argument>
+                        <argument>cucumber</argument>
+                        <argument>--scan-classpath</argument>
+                        <argument>${project.build.testOutputDirectory}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -96,7 +96,6 @@ public final class Constants {
      * <p>Value must be one of {@code dynamic}, {@code fixed}, or
      * {@code custom}.
      */
-
     public static final String PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME = PARALLEL_CONFIG_PREFIX
         + CONFIG_STRATEGY_PROPERTY_NAME;
 

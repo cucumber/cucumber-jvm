@@ -3,7 +3,6 @@ package io.cucucumber.jupiter.engine.resource;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.commons.util.PackageUtils;
-import org.junit.platform.commons.util.Preconditions;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -22,6 +21,7 @@ import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.determinePa
 import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.getRootUrisForPackage;
 import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.getUrisForResource;
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
@@ -49,27 +49,27 @@ public class ResourceScanner<R> {
     }
 
     public List<R> scanForResourcesInClasspathRoot(URI root, Predicate<String> packageFilter) {
-        Preconditions.notNull(root, "root must not be null");
-        Preconditions.notNull(packageFilter, "packageFilter must not be null");
+        requireNonNull(root, "root must not be null");
+        requireNonNull(packageFilter, "packageFilter must not be null");
         return findResourcesForUri(root, DEFAULT_PACKAGE_NAME, packageFilter);
     }
 
     public List<R> scanForResourcesInPackage(String basePackageName, Predicate<String> packageFilter) {
         PackageUtils.assertPackageNameIsValid(basePackageName);
-        Preconditions.notNull(packageFilter, "packageFilter must not be null");
+        requireNonNull(packageFilter, "packageFilter must not be null");
         basePackageName = basePackageName.trim();
         return findResourcesForUris(getRootUrisForPackage(getClassLoader(), basePackageName), basePackageName, packageFilter);
     }
 
     public List<R> scanForClasspathResource(String resourceName, Predicate<String> packageFilter) {
-        Preconditions.notNull(resourceName, "resourceName must not be null");
-        Preconditions.notNull(packageFilter, "packageFilter must not be null");
+        requireNonNull(resourceName, "resourceName must not be null");
+        requireNonNull(packageFilter, "packageFilter must not be null");
         resourceName = resourceName.trim();
         return findResourcesForUris(getUrisForResource(getClassLoader(), resourceName), DEFAULT_PACKAGE_NAME, packageFilter);
     }
 
     public List<R> scanForResourcesPath(Path resourcePath) {
-        Preconditions.notNull(resourcePath, "path must not be null");
+        requireNonNull(resourcePath, "path must not be null");
         List<R> classes = new ArrayList<>();
         pathScanner.findResourcesForPath(
             resourcePath,
@@ -80,7 +80,7 @@ public class ResourceScanner<R> {
     }
 
     public List<R> scanForResourcesUri(URI resourcePath) {
-        Preconditions.notNull(resourcePath, "path must not be null");
+        requireNonNull(resourcePath, "path must not be null");
         return findResourcesForUri(resourcePath, DEFAULT_PACKAGE_NAME, x -> true);
     }
 

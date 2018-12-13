@@ -102,8 +102,8 @@ public class ClasspathSupport {
         return resourceName(packagePath);
     }
 
-
     private static String resourceName(String resourcePath) {
         return resourcePath.replace(CLASSPATH_RESOURCE_PATH_SEPARATOR, PACKAGE_SEPARATOR_CHAR);
     }
+
 }

@@ -2,8 +2,6 @@ package io.cucucumber.jupiter.engine.resource;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
-import org.junit.platform.commons.util.PreconditionViolationException;
-import org.junit.platform.commons.util.Preconditions;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -32,7 +30,7 @@ class PathScanner {
         try (CloseablePath closeablePath = CloseablePath.create(baseUri)) {
             Path baseDir = closeablePath.getPath();
             findResourcesForPath(baseDir, filter, consumer);
-        } catch (PreconditionViolationException ex) {
+        } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (Exception ex) {
             logger.warn(ex, () -> "Error scanning files for URI " + baseUri);
@@ -40,7 +38,10 @@ class PathScanner {
     }
 
     void findResourcesForPath(Path baseDir, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
-        Preconditions.condition(Files.exists(baseDir), () -> "baseDir must exist: " + baseDir);
+        if (!Files.exists(baseDir)) {
+            throw new IllegalArgumentException("baseDir must exist: " + baseDir);
+        }
+
         try {
             Files.walkFileTree(baseDir, new ResourceFileVisitor(filter, consumer.apply(baseDir)));
         } catch (IOException ex) {

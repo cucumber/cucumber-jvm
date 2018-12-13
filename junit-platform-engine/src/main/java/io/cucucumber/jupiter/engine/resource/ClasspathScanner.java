@@ -2,9 +2,6 @@ package io.cucucumber.jupiter.engine.resource;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
-import org.junit.platform.commons.util.ClassFilter;
-import org.junit.platform.commons.util.PackageUtils;
-import org.junit.platform.commons.util.Preconditions;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -19,8 +16,10 @@ import java.util.function.Supplier;
 import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.determineFullyQualifiedClassName;
 import static io.cucucumber.jupiter.engine.resource.ClasspathSupport.getRootUrisForPackage;
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
+import static org.junit.platform.commons.util.PackageUtils.assertPackageNameIsValid;
 
 class ClasspathScanner {
 
@@ -56,10 +55,17 @@ class ClasspathScanner {
         return !path.endsWith(MODULE_INFO_FILE_NAME);
     }
 
-    List<Class<?>> scanForClassesInPackage(String basePackageName, ClassFilter classFilter) {
+    <T> List<Class<? extends T>> scanForSubClassesInPackage(String basePackageName, Class<T> parentClass) {
+        ClassFilter subclassOf = ClassFilter.of(aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass));
+        return scanForClassesInPackage(basePackageName, subclassOf)
+            .stream()
+            .map(aClass -> (Class<? extends T> ) aClass.asSubclass(parentClass))
+            .collect(toList());
+    }
 
-        PackageUtils.assertPackageNameIsValid(basePackageName);
-        Preconditions.notNull(classFilter, "classFilter must not be null");
+    List<Class<?>> scanForClassesInPackage(String basePackageName, ClassFilter classFilter) {
+        assertPackageNameIsValid(basePackageName);
+        requireNonNull(classFilter, "classFilter must not be null");
         basePackageName = basePackageName.trim();
 
         return findClassesForUris(getRootUrisForPackage(getClassLoader(), basePackageName), basePackageName, classFilter);
@@ -84,8 +90,8 @@ class ClasspathScanner {
     }
 
     List<Class<?>> scanForClassesInClasspathRoot(URI root, ClassFilter classFilter) {
-        Preconditions.notNull(root, "root must not be null");
-        Preconditions.notNull(classFilter, "classFilter must not be null");
+        requireNonNull(root, "root must not be null");
+        requireNonNull(classFilter, "classFilter must not be null");
 
         return findClassesForUri(root, DEFAULT_PACKAGE_NAME, classFilter);
     }

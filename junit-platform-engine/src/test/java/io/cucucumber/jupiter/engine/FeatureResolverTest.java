@@ -1,11 +1,10 @@
 package io.cucucumber.jupiter.engine;
 
+import io.cucucumber.jupiter.engine.resource.ClassFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.ClassFilter;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.FilterResult;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
@@ -20,7 +19,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.platform.engine.FilterResult.included;
 import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.TestTag.create;
@@ -41,7 +39,7 @@ class FeatureResolverTest {
         EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
         id = UniqueId.forEngine(engine.getId());
         testDescriptor = engine.discover(discoveryRequest, id);
-        FeatureResolver featureResolver = createFeatureResolver(testDescriptor, x -> included("include everything"));
+        FeatureResolver featureResolver = createFeatureResolver(testDescriptor, ClassFilter.of(aClass -> true, aClass -> true));
         featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
     }
 

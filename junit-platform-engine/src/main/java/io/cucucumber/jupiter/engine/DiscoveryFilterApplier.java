@@ -1,12 +1,11 @@
 package io.cucucumber.jupiter.engine;
 
+import io.cucucumber.jupiter.engine.resource.ClassFilter;
 import org.junit.platform.engine.TestDescriptor;
-
-import java.util.function.Predicate;
 
 class DiscoveryFilterApplier {
 
-    void applyPackagePredicate(Predicate<String> packagePredicate, TestDescriptor engineDescriptor) {
+    void applyPackagePredicate(ClassFilter packagePredicate, TestDescriptor engineDescriptor) {
         engineDescriptor.accept(descriptor -> {
             if (descriptor instanceof PickleDescriptor
                 && !includePickle((PickleDescriptor) descriptor, packagePredicate)) {
@@ -15,9 +14,9 @@ class DiscoveryFilterApplier {
         });
     }
 
-    private boolean includePickle(PickleDescriptor pickleDescriptor, Predicate<String> packagePredicate) {
+    private boolean includePickle(PickleDescriptor pickleDescriptor, ClassFilter packagePredicate) {
         return pickleDescriptor.getPackage()
-            .map(packagePredicate::test)
+            .map(packagePredicate::match)
             .orElse(true);
     }
 
