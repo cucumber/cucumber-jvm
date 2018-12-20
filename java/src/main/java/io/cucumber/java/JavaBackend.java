@@ -1,6 +1,17 @@
 package io.cucumber.java;
 
+import static io.cucumber.core.io.MultiLoader.packageName;
+import static java.lang.Thread.currentThread;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
@@ -19,19 +30,10 @@ import io.cucumber.java.api.AfterStep;
 import io.cucumber.java.api.Before;
 import io.cucumber.java.api.BeforeStep;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-
-import static io.cucumber.core.io.MultiLoader.packageName;
-import static java.lang.Thread.currentThread;
-
 public class JavaBackend implements Backend, LambdaGlueRegistry {
 
-    private final TypeRegistry typeRegistry;
+    private TypeRegistry typeRegistry;
+    private boolean registryConfigured;
     private final SnippetGenerator annotationSnippetGenerator;
     private final SnippetGenerator lambdaSnippetGenerator;
 
@@ -118,9 +120,28 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         return snippets;
     }
 
+    private void configureRegistryOnce(){
+        if(!registryConfigured){
+            objectFactory.start();
+            try {
+                TypeRegistryConfigurer typeRegistryConfigurer = objectFactory.getInstance(TypeRegistryConfigurer.class);
+                if (typeRegistryConfigurer != null) {
+                    this.typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+                    typeRegistryConfigurer.configureTypeRegistry(this.typeRegistry);
+                }
+            }
+            catch (Exception e){
+                //Singleton factory TypeRegistryConfigurer.class.cast(singleton); problems?
+            }
+            registryConfigured = true;
+        }
+    }
+
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             objectFactory.addClass(method.getDeclaringClass());
+            configureRegistryOnce();
+
             glue.addStepDefinition(
                 new JavaStepDefinition(
                     method,
@@ -142,6 +163,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     void addHook(Annotation annotation, Method method) {
         if (objectFactory.addClass(method.getDeclaringClass())) {
+            configureRegistryOnce();
             if (annotation.annotationType().equals(Before.class)) {
                 String tagExpression = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
