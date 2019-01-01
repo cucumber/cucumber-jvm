@@ -1,8 +1,8 @@
 package io.cucumber.guice.integration;
 
-import io.cucumber.java.api.annotation.en.Given;
-import io.cucumber.java.api.annotation.en.Then;
-import io.cucumber.java.api.annotation.en.When;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
+import io.cucumber.java.api.en.When;
 import io.cucumber.guice.api.ScenarioScoped;
 
 import javax.inject.Inject;

@@ -1,7 +1,7 @@
 package io.cucumber.guice.integration;
 
 import io.cucumber.java.api.Before;
-import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.java.api.en.Given;
 
 public class UnusedGlue {
     public UnusedGlue() {
