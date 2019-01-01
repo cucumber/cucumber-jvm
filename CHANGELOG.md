@@ -90,6 +90,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
   * [Core] Deprecate Formatter interface ([#1407](https://github.com/cucumber/cucumber-jvm/pull/1407) Marit van Dijk)
    
 ### Removed
+  * [Android] Remove Cucumber-Android and move to separate project (Aslak Hellesøy)
   * [TestNG] Remove TestNGReporter ([#1408](https://github.com/cucumber/cucumber-jvm/pull/1408) M.P. Korstanje)
   * [OSGi] Jars are no longer packaged as OSGi bundles. The `osgi` module and `pax-exam` examples have been removed as well.
     ([#1404](https://github.com/cucumber/cucumber-jvm/pull/1404)
