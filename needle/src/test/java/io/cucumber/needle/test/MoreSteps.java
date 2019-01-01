@@ -3,7 +3,7 @@ package io.cucumber.needle.test;
 import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.api.Before;
-import io.cucumber.java.api.annotation.en.Given;
+import io.cucumber.java.api.en.Given;
 import io.cucumber.needle.api.NeedleInjectionProvider;
 import io.cucumber.needle.DefaultInstanceInjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;

@@ -7,9 +7,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import io.cucumber.java.api.Before;
-import io.cucumber.java.api.annotation.en.Given;
-import io.cucumber.java.api.annotation.en.Then;
-import io.cucumber.java.api.annotation.en.When;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
+import io.cucumber.java.api.en.When;
 import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
 import io.cucumber.needle.api.NeedleInjectionProvider;
 import io.cucumber.needle.DefaultInstanceInjectionProvider;
