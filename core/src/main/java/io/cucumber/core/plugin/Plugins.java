@@ -55,8 +55,8 @@ public final class Plugins {
     private List<Plugin> createPlugins() {
         List<Plugin> plugins = new ArrayList<Plugin>();
         if (!pluginNamesInstantiated) {
-            for (String pluginName : pluginOptions.getPluginNames()) {
-                Plugin plugin = pluginFactory.create(pluginName);
+            for (Options.Plugin pluginOption : pluginOptions.plugins()) {
+                Plugin plugin = pluginFactory.create(pluginOption);
                 addPlugin(plugins, plugin);
             }
             pluginNamesInstantiated = true;
@@ -96,14 +96,14 @@ public final class Plugins {
     private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
         if (plugin instanceof ColorAware) {
             ColorAware colorAware = (ColorAware) plugin;
-            colorAware.setMonochrome(runtimeOptions.isMonochrome());
+            colorAware.setMonochrome(pluginOptions.isMonochrome());
         }
     }
 
     private void setStrictOnStrictAwarePlugins(Plugin plugin) {
         if (plugin instanceof StrictAware) {
             StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(runtimeOptions.isStrict());
+            strictAware.setStrict(pluginOptions.isStrict());
         }
     }
 

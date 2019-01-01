@@ -1,9 +1,8 @@
 package io.cucumber.core.options;
 
-import java.util.List;
+import io.cucumber.core.plugin.Options;
 
-public interface PluginOptions {
-    List<String> getPluginNames();
+public interface PluginOptions extends Options {
 
     boolean isStrict();
 

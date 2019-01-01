@@ -107,6 +107,15 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         return this;
     }
 
+    @Override
+    public List<Plugin> plugins() {
+        List<Plugin> plugins = new ArrayList<>();
+        plugins.addAll(formatters);
+        plugins.addAll(stepDefinitionReporters);
+        plugins.addAll(summaryPrinters);
+        return plugins;
+    }
+
     private void parse(List<String> args) {
         List<String> parsedTagExpressions = new ArrayList<String>();
         List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
@@ -319,15 +328,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
-    public List<String> getPluginNames() {
-        List<String> pluginNames = new ArrayList<>();
-        pluginNames.addAll(pluginFormatterNames);
-        pluginNames.addAll(pluginStepDefinitionReporterNames);
-        pluginNames.addAll(pluginSummaryPrinterNames);
-        return pluginNames;
-    }
-
-    @Override
     public List<String> getGlue() {
         return glue;
     }
@@ -352,13 +352,18 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
+    public List<String> getTagExpressions() {
+        return tagExpressions;
+    }
+
+    @Override
     public List<Pattern> getNameFilters() {
         return nameFilters;
     }
 
     @Override
     public List<String> getTagFilters() {
-        return tagFilters;
+        return tagExpressions;
     }
 
     @Override

@@ -3,10 +3,10 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.event.AbstractEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.options.RunnerOptions;
+import io.cucumber.core.runner.Runner;
 
 /**
  * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.

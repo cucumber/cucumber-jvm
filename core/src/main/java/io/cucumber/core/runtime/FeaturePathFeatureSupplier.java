@@ -1,10 +1,10 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.options.FeatureOptions;
 
 import java.util.List;
 
@@ -13,18 +13,18 @@ import java.util.List;
  */
 public final class FeaturePathFeatureSupplier implements FeatureSupplier {
     private final FeatureLoader featureLoader;
-    private final RuntimeOptions runtimeOptions;
+    private final FeatureOptions featureOptions;
     private final EventBus bus;
 
-    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, RuntimeOptions runtimeOptions, EventBus bus) {
+    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, FeatureOptions featureOptions, EventBus bus) {
         this.featureLoader = featureLoader;
-        this.runtimeOptions = runtimeOptions;
+        this.featureOptions = featureOptions;
         this.bus = bus;
     }
 
     @Override
     public List<CucumberFeature> get() {
-        List<CucumberFeature> features = featureLoader.load(runtimeOptions.getFeaturePaths(), System.out);
+        List<CucumberFeature> features = featureLoader.load(featureOptions.getFeaturePaths(), System.out);
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getTime(), feature.getUri(), feature.getGherkinSource()));
         }
