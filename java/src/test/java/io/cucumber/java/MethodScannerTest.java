@@ -58,8 +58,9 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_method_declaring_class() throws NoSuchMethodException {
+        MethodScanner methodScanner = new MethodScanner(classFinder);
         try {
-            backend.loadGlue(null, BaseStepDefs.class.getMethod("m"), Stepdefs2.class);
+            methodScanner.scan(backend, BaseStepDefs.class.getMethod("m"), Stepdefs2.class);
             fail();
         } catch (CucumberException e) {
             assertEquals("You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.MethodScannerTest$Stepdefs2 extends class io.cucumber.java.MethodScannerTest$BaseStepDefs", e.getMessage());
@@ -68,8 +69,9 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_subclass_of_declaring_class() throws NoSuchMethodException {
+        MethodScanner methodScanner = new MethodScanner(classFinder);
         try {
-            backend.loadGlue(null, BaseStepDefs.class.getMethod("m"), String.class);
+            methodScanner.scan(backend, BaseStepDefs.class.getMethod("m"), String.class);
             fail();
         } catch (CucumberException e) {
             assertEquals("class io.cucumber.java.MethodScannerTest$BaseStepDefs isn't assignable from class java.lang.String", e.getMessage());

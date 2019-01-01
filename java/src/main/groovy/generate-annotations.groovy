@@ -43,7 +43,7 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
             def normalized_kw = normalize(kw.replaceAll("[\\s',!\u00AD]", ""))
             def binding = ["lang": normalized_language, "kw": normalized_kw]
             def template = engine.createTemplate(templateSource).make(binding)
-            def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/annotation/${normalized_language}/${normalized_kw}.java")
+            def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/${normalized_language}/${normalized_kw}.java")
             if (!file.exists()) {
                 // Haitian has two translations that only differ by case - Sipozeke and SipozeKe
                 // Some file systems are unable to distiguish between them and overwrite the other one :-(
@@ -56,7 +56,7 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
         def locale = localeFor(dialect.language)
         def binding = [ "locale": locale, "normalized_language": normalized_language ]
         def html = engine.createTemplate(package_info_java).make(binding).toString()
-        def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/annotation/${normalized_language}/package-info.java")
+        def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/${normalized_language}/package-info.java")
         file.write(html, "UTF-8")
     }
 }
