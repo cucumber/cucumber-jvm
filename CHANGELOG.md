@@ -209,6 +209,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
  * [Spring] Deprecate Spring context configuration by more than one class ([#1259](https://github.com/cucumber/cucumber-jvm/pull/1259) Björn Rasmusson)
 
+### Removed
+ * [Scala, Groovy, Clojure, Jython, JRuby, Rhino, Gosu] Moved to own repositories (M.P. Korstanje)
+
 ### Fixed
  * [Java8] Fix Java8StepDefinition.isDefinedA ([#1254](https://github.com/cucumber/cucumber-jvm/pull/1254), [#1255](https://github.com/cucumber/cucumber-jvm/pull/1255) tts-ll, M.P. Korstanje)
  * [Core] Fix race condition in Timeout ([#1244](https://github.com/cucumber/cucumber-jvm/pull/1244) M.P. Korstanje)
