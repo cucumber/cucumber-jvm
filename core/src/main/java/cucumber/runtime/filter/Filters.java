@@ -1,7 +1,7 @@
 package cucumber.runtime.filter;
 
-import cucumber.runtime.RuntimeOptions;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.options.FilterOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
 public class Filters {
 
     private final List<PicklePredicate> filters;
-    private final RuntimeOptions runtimeOptions;
+    private final FilterOptions runtimeOptions;
     private final RerunFilters rerunFilters;
 
-    public Filters(RuntimeOptions runtimeOptions, RerunFilters rerunFilters) {
-        this.runtimeOptions = runtimeOptions;
+    public Filters(FilterOptions filterOPtions, RerunFilters rerunFilters) {
+        this.runtimeOptions = filterOPtions;
         this.rerunFilters = rerunFilters;
 
         filters = new ArrayList<PicklePredicate>();
@@ -23,11 +23,11 @@ public class Filters {
         if (!tagFilters.isEmpty()) {
             this.filters.add(new TagPredicate(tagFilters));
         }
-        List<Pattern> nameFilters = runtimeOptions.getNameFilters();
+        List<Pattern> nameFilters = filterOPtions.getNameFilters();
         if (!nameFilters.isEmpty()) {
             this.filters.add(new NamePredicate(nameFilters));
         }
-        Map<String, List<Long>> lineFilters = runtimeOptions.getLineFilters();
+        Map<String, List<Long>> lineFilters = filterOPtions.getLineFilters();
         Map<String, List<Long>> rerunlineFilters = rerunFilters.processRerunFiles();
         for (Map.Entry<String,List<Long>> line: rerunlineFilters.entrySet()) {
             addLineFilters(lineFilters, line.getKey(), line.getValue());

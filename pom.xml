@@ -638,12 +638,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.10.2</version>
+                    <version>0.10.5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.17.0</version>
+                            <version>0.18.2</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -661,6 +661,7 @@
                                     <classes>
                                         <regex>true</regex>
                                         <exclude>
+                                            <item>io\.cucumber\.core\.options\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
@@ -671,6 +672,7 @@
                                     <packages>
                                         <regex>true</regex>
                                         <exclude>
+                                            <item>io\.cucumber\.core\.options\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
