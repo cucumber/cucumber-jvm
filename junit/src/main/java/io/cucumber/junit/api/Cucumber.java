@@ -44,7 +44,7 @@ import java.util.List;
  * &#64;CucumberOptions(plugin = "pretty")
  * public class RunCukesTest {
  * }
- * Fail * </pre></blockquote>
+ * </pre></blockquote>
  * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).

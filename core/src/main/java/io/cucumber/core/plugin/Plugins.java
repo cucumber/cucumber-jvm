@@ -10,6 +10,7 @@ import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.plugin.ColorAware;
 import io.cucumber.core.api.plugin.StrictAware;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.options.PluginOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +22,12 @@ public final class Plugins {
     private final PluginFactory pluginFactory;
     private final EventPublisher eventPublisher;
     private EventPublisher orderedEventPublisher;
-    private final Options options;
+    private final PluginOptions pluginOptions;
 
-    public Plugins(PluginFactory pluginFactory, EventPublisher eventPublisher, Options options) {
+    public Plugins(PluginFactory pluginFactory, EventPublisher eventPublisher, PluginOptions pluginOptions) {
         this.pluginFactory = pluginFactory;
         this.eventPublisher = eventPublisher;
-        this.options = options;
+        this.pluginOptions = pluginOptions;
         this.plugins = createPlugins();
     }
 
@@ -54,8 +55,8 @@ public final class Plugins {
     private List<Plugin> createPlugins() {
         List<Plugin> plugins = new ArrayList<Plugin>();
         if (!pluginNamesInstantiated) {
-            for (Options.Plugin pluginOption : options.plugins()) {
-                Plugin plugin = pluginFactory.create(pluginOption);
+            for (String pluginName : pluginOptions.getPluginNames()) {
+                Plugin plugin = pluginFactory.create(pluginName);
                 addPlugin(plugins, plugin);
             }
             pluginNamesInstantiated = true;
@@ -95,14 +96,14 @@ public final class Plugins {
     private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
         if (plugin instanceof ColorAware) {
             ColorAware colorAware = (ColorAware) plugin;
-            colorAware.setMonochrome(options.isMonochrome());
+            colorAware.setMonochrome(runtimeOptions.isMonochrome());
         }
     }
 
     private void setStrictOnStrictAwarePlugins(Plugin plugin) {
         if (plugin instanceof StrictAware) {
             StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(options.isStrict());
+            strictAware.setStrict(runtimeOptions.isStrict());
         }
     }
 

@@ -14,18 +14,18 @@ import io.cucumber.core.runtime.RunnerSupplier;
 public final class SingletonRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
-    private final RuntimeOptions runtimeOptions;
+    private final RunnerOptions runnerOptions;
     private final EventBus eventBus;
     private Runner runner;
 
 
     public SingletonRunnerSupplier(
-        RuntimeOptions runtimeOptions,
+        RunnerOptions runnerOptions,
         EventBus eventBus,
         BackendSupplier backendSupplier
     ) {
         this.backendSupplier = backendSupplier;
-        this.runtimeOptions = runtimeOptions;
+        this.runnerOptions = runnerOptions;
         this.eventBus = eventBus;
     }
 
@@ -38,7 +38,7 @@ public final class SingletonRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(eventBus, backendSupplier.get(), runtimeOptions);
+        return new Runner(eventBus, backendSupplier.get(), runnerOptions);
     }
 
 }

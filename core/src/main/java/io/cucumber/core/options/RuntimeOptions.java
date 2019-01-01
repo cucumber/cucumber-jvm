@@ -28,11 +28,7 @@ import static io.cucumber.core.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
-public final class RuntimeOptions
-    implements
-    io.cucumber.core.plugin.Options,
-    io.cucumber.core.runner.Options,
-    io.cucumber.core.filter.Options {
+public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
 
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/io/cucumber/core/api/cli/USAGE.txt";
@@ -109,15 +105,6 @@ public final class RuntimeOptions
     public RuntimeOptions noSummaryPrinter() {
         summaryPrinters.clear();
         return this;
-    }
-
-    @Override
-    public List<Plugin> plugins() {
-        List<Plugin> plugins = new ArrayList<>();
-        plugins.addAll(formatters);
-        plugins.addAll(stepDefinitionReporters);
-        plugins.addAll(summaryPrinters);
-        return plugins;
     }
 
     private void parse(List<String> args) {
@@ -331,14 +318,26 @@ public final class RuntimeOptions
         table.add(cells);
     }
 
+    @Override
+    public List<String> getPluginNames() {
+        List<String> pluginNames = new ArrayList<>();
+        pluginNames.addAll(pluginFormatterNames);
+        pluginNames.addAll(pluginStepDefinitionReporterNames);
+        pluginNames.addAll(pluginSummaryPrinterNames);
+        return pluginNames;
+    }
+
+    @Override
     public List<String> getGlue() {
         return glue;
     }
 
+    @Override
     public boolean isStrict() {
         return strict;
     }
 
+    @Override
     public boolean isDryRun() {
         return dryRun;
     }
@@ -347,26 +346,32 @@ public final class RuntimeOptions
         return wip;
     }
 
+    @Override
     public List<String> getFeaturePaths() {
         return featurePaths;
     }
 
+    @Override
     public List<Pattern> getNameFilters() {
         return nameFilters;
     }
 
-    public List<String> getTagExpressions() {
-        return tagExpressions;
+    @Override
+    public List<String> getTagFilters() {
+        return tagFilters;
     }
 
+    @Override
     public Map<String, List<Long>> getLineFilters() {
         return lineFilters;
     }
 
+    @Override
     public boolean isMonochrome() {
         return monochrome;
     }
 
+    @Override
     public SnippetType getSnippetType() {
         return snippetType;
     }

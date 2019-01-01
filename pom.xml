@@ -683,12 +683,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.10.2</version>
+                    <version>0.10.5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.18.0</version>
+                            <version>0.18.2</version>
                         </dependency>
                     </dependencies>
                     <configuration>

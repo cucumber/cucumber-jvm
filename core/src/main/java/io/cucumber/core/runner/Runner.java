@@ -9,6 +9,7 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.options.RunnerOptions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,14 +19,14 @@ public final class Runner {
     private final CachingGlue glue = new CachingGlue();
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
-    private final Options options;
+    private final RunnerOptions runnerOptions;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, Options options) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, RunnerOptions runnerOptions) {
         this.bus = bus;
-        this.options = options;
+        this.runnerOptions = runnerOptions;
         this.backends = backends;
         for (Backend backend : backends) {
-            backend.loadGlue(glue, options.getGlue());
+            backend.loadGlue(glue, runnerOptions.getGlue());
         }
 
     }
@@ -55,7 +56,7 @@ public final class Runner {
             addTestStepsForPickleSteps(testSteps, pickleEvent);
             addTestStepsForAfterHooks(afterHooks, pickleEvent.pickle.getTags());
         }
-        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, options.isDryRun());
+        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runnerOptions.isDryRun());
     }
 
     private void addTestStepsForPickleSteps(List<PickleStepTestStep> testSteps, PickleEvent pickleEvent) {
@@ -66,7 +67,7 @@ public final class Runner {
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
                     for (Backend backend : backends) {
-                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", options.getSnippetType().getFunctionNameGenerator());
+                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType().getFunctionNameGenerator());
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {
