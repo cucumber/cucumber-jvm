@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
+            <artifactId>cucumber-java8</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
