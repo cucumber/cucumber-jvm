@@ -2,8 +2,8 @@ package io.cucumber.spring.commonglue;
 
 import io.cucumber.java.api.After;
 import io.cucumber.java.api.Before;
-import io.cucumber.java.api.annotation.en.Given;
-import io.cucumber.java.api.annotation.en.Then;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static org.junit.Assert.assertFalse;

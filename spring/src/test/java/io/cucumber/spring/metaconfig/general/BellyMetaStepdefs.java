@@ -1,6 +1,6 @@
 package io.cucumber.spring.metaconfig.general;
 
-import io.cucumber.java.api.annotation.en.Then;
+import io.cucumber.java.api.en.Then;
 import io.cucumber.spring.beans.Belly;
 import io.cucumber.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;

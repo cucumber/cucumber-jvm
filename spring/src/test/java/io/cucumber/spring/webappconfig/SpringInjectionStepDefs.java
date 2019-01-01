@@ -1,8 +1,8 @@
 package io.cucumber.spring.webappconfig;
 
-import io.cucumber.java.api.annotation.en.Given;
-import io.cucumber.java.api.annotation.en.Then;
-import io.cucumber.java.api.annotation.en.When;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
+import io.cucumber.java.api.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
