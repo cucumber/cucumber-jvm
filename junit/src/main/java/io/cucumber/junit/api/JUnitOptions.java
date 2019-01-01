@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class JUnitOptions {
-    private static final String OPTIONS_RESOURCE = "/io/cucumber/api/junit/OPTIONS.txt";
+    private static final String OPTIONS_RESOURCE = "/io/cucumber/junit/api/OPTIONS.txt";
     private static String optionsText;
     private final boolean strict;
 
