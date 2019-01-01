@@ -127,6 +127,11 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java8</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -485,6 +490,7 @@
     <modules>
         <module>core</module>
         <module>java</module>
+        <module>java8</module>
         <module>kotlin-java8</module>
         <module>testng</module>
         <module>picocontainer</module>
@@ -626,7 +632,7 @@
                             </group>
                             <group>
                                 <title>I18n</title>
-                                <packages>io.cucumber.java.api.lambda:io.cucumber.java.api.annotation.*</packages>
+                                <packages>io.cucumber.java8.api.lambda:io.cucumber.java8.api.annotation.*</packages>
                             </group>
                             <group>
                                 <title>Dependency Injection Providers</title>
