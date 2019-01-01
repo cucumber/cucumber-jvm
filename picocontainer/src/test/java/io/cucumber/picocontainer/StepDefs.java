@@ -4,8 +4,8 @@ import io.cucumber.java.api.PendingException;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.java.api.After;
 import io.cucumber.java.api.Before;
-import io.cucumber.java.api.annotation.en.Given;
-import io.cucumber.java.api.annotation.en.Then;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
 
 import java.util.Collections;
 import java.util.List;
