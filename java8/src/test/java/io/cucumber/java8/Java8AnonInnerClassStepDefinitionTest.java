@@ -1,10 +1,9 @@
-package io.cucumber.java;
+package io.cucumber.java8;
 
 import static org.junit.Assert.assertEquals;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.Java8StepDefinition;
-import io.cucumber.java.api.StepdefBody;
+import io.cucumber.java8.api.StepdefBody;
 import org.junit.Test;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package io.cucumber.java;
+package io.cucumber.java8;
 
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleRow;
@@ -9,7 +9,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.api.StepdefBody;
+import io.cucumber.java8.api.StepdefBody;
 import org.junit.Test;
 
 import java.util.List;

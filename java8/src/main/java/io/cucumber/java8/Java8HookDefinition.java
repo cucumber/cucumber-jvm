@@ -1,12 +1,12 @@
-package io.cucumber.java;
+package io.cucumber.java8;
 
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.filter.TagPredicate;
 import io.cucumber.core.runtime.Invoker;
-import io.cucumber.java.api.HookBody;
-import io.cucumber.java.api.HookNoArgsBody;
+import io.cucumber.java8.api.HookBody;
+import io.cucumber.java8.api.HookNoArgsBody;
 
 import java.util.Collection;
 

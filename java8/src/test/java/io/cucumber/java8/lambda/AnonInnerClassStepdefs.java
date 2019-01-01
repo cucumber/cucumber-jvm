@@ -1,12 +1,12 @@
-package io.cucumber.java.lambda;
+package io.cucumber.java8.lambda;
 
 import static org.junit.Assert.assertEquals;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.Java8StepDefinition;
-import io.cucumber.java.JavaBackend;
-import io.cucumber.java.LambdaGlue;
-import io.cucumber.java.api.StepdefBody;
+import io.cucumber.java8.Java8StepDefinition;
+import io.cucumber.java8.Java8Backend;
+import io.cucumber.java8.LambdaGlue;
+import io.cucumber.java8.api.StepdefBody;
 import io.cucumber.core.backend.StepDefinition;
 
 import java.util.function.Function;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class AnonInnerClassStepdefs implements LambdaGlue {
 
     public AnonInnerClassStepdefs() {
-        JavaBackend.INSTANCE.get().addStepDefinition(new Function<TypeRegistry, StepDefinition>() {
+        Java8Backend.INSTANCE.get().addStepDefinition(new Function<TypeRegistry, StepDefinition>() {
             @Override
             public StepDefinition apply(TypeRegistry typeRegistry) {
                 return Java8StepDefinition.create(

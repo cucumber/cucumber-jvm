@@ -1,4 +1,4 @@
-package io.cucumber.java.api;
+package io.cucumber.java8.api;
 
 @FunctionalInterface
 public interface HookNoArgsBody {

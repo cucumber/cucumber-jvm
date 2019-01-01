@@ -1,19 +1,19 @@
-package io.cucumber.java.api.lambda;
+package io.cucumber.java8.api;
 
-import io.cucumber.java.api.StepdefBody.A0;
-import io.cucumber.java.api.StepdefBody.A1;
-import io.cucumber.java.api.StepdefBody.A2;
-import io.cucumber.java.api.StepdefBody.A3;
-import io.cucumber.java.api.StepdefBody.A4;
-import io.cucumber.java.api.StepdefBody.A5;
-import io.cucumber.java.api.StepdefBody.A6;
-import io.cucumber.java.api.StepdefBody.A7;
-import io.cucumber.java.api.StepdefBody.A8;
-import io.cucumber.java.api.StepdefBody.A9;
+import io.cucumber.java8.api.StepdefBody.A0;
+import io.cucumber.java8.api.StepdefBody.A1;
+import io.cucumber.java8.api.StepdefBody.A2;
+import io.cucumber.java8.api.StepdefBody.A3;
+import io.cucumber.java8.api.StepdefBody.A4;
+import io.cucumber.java8.api.StepdefBody.A5;
+import io.cucumber.java8.api.StepdefBody.A6;
+import io.cucumber.java8.api.StepdefBody.A7;
+import io.cucumber.java8.api.StepdefBody.A8;
+import io.cucumber.java8.api.StepdefBody.A9;
 
-import io.cucumber.java.LambdaGlueRegistry;
-import io.cucumber.java.Java8StepDefinition;
-import io.cucumber.java.LambdaGlue;
+import io.cucumber.java8.LambdaGlueRegistry;
+import io.cucumber.java8.Java8StepDefinition;
+import io.cucumber.java8.LambdaGlue;
 
 /**
  * ${locale.getDisplayLanguage()}

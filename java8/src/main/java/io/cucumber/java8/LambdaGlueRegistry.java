@@ -1,4 +1,4 @@
-package io.cucumber.java;
+package io.cucumber.java8;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.backend.HookDefinition;

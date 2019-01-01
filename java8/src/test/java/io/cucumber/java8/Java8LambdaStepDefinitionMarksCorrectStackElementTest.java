@@ -1,9 +1,9 @@
-package io.cucumber.java;
+package io.cucumber.java8;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.java.api.lambda.En;
+import io.cucumber.java8.api.En;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;

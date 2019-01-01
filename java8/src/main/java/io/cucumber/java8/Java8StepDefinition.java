@@ -1,4 +1,4 @@
-package io.cucumber.java;
+package io.cucumber.java8;
 
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.StepDefinition;
@@ -11,7 +11,7 @@ import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.stepexpression.TypeResolver;
-import io.cucumber.java.api.StepdefBody;
+import io.cucumber.java8.api.StepdefBody;
 import net.jodah.typetools.TypeResolver.Unknown;
 
 import java.lang.reflect.Method;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.java.Java8StepDefinition.ParameterInfo.fromTypes;
+import static io.cucumber.java8.Java8StepDefinition.ParameterInfo.fromTypes;
 import static java.lang.String.format;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 

@@ -24,7 +24,7 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
         def locale = localeFor(dialect.language)
         def binding = [ "i18n":dialect, "className":className, "locale": locale ]
         def template = engine.createTemplate(templateSource).make(binding)
-        def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/api/lambda/${className}.java")
+        def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java8/api/${className}.java")
         file.parentFile.mkdirs()
         file.write(template.toString(), "UTF-8")
     }

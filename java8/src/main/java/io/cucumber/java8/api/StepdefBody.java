@@ -1,4 +1,4 @@
-package io.cucumber.java.api;
+package io.cucumber.java8.api;
 
 public interface StepdefBody {
     public static interface A0 extends StepdefBody {

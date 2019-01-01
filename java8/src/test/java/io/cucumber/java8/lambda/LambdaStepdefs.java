@@ -1,4 +1,4 @@
-package io.cucumber.java.lambda;
+package io.cucumber.java8.lambda;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -7,11 +7,10 @@ import static org.junit.Assert.assertTrue;
 
 import io.cucumber.core.api.Scenario;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.api.lambda.En;
 
 import java.util.List;
 
-public class LambdaStepdefs implements En {
+public class LambdaStepdefs implements io.cucumber.java8.api.En{
     private static LambdaStepdefs lastInstance;
 
     private final int outside = 41;
