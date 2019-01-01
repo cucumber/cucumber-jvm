@@ -1,7 +1,7 @@
 package io.cucumber.weld;
 
-import io.cucumber.java.api.annotation.en.Given;
-import io.cucumber.java.api.annotation.en.Then;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
