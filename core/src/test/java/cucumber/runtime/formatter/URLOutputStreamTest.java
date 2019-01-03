@@ -1,4 +1,4 @@
-package cucumber.runtime.io;
+package cucumber.runtime.formatter;
 
 import cucumber.runtime.Utils;
 import cucumber.util.FixJava;

@@ -13,8 +13,6 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
-import cucumber.runtime.io.URLOutputStream;
-import cucumber.runtime.io.UTF8OutputStreamWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -78,6 +76,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
         TestCase.treatConditionallySkippedAsFailure = false;

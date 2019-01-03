@@ -6,8 +6,6 @@ import cucumber.api.SummaryPrinter;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventListener;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.URLOutputStream;
-import cucumber.runtime.io.UTF8OutputStreamWriter;
 
 import java.io.File;
 import java.io.IOException;
