@@ -11,7 +11,6 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestSourceRead;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.URLOutputStream;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
