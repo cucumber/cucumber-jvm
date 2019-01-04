@@ -21,7 +21,8 @@ final class Glue implements cucumber.runtime.Glue {
     final List<HookDefinition> beforeStepHooks = new ArrayList<>();
     final List<HookDefinition> afterHooks = new ArrayList<>();
     final List<HookDefinition> afterStepHooks = new ArrayList<>();
-    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<>();
+    //step definitions by step text
+    final Map<String, StepDefinition> matchedStepDefinitionsCache = new HashMap<>();
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -74,9 +75,9 @@ final class Glue implements cucumber.runtime.Glue {
     PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
-        CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
+        StepDefinition cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new PickleStepDefinitionMatch(Collections.<Argument>emptyList(), cacheEntry.stepDefinition, featurePath, step);
+            return new PickleStepDefinitionMatch(cacheEntry.matchedArguments(step), cacheEntry, featurePath, step);
         }
 
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
@@ -89,11 +90,7 @@ final class Glue implements cucumber.runtime.Glue {
 
         PickleStepDefinitionMatch match = matches.get(0);
 
-        // We can only cache step definitions without arguments.
-        // DocString and TableArguments are not included in the stepText used as the cache key.
-        if(match.getArguments().isEmpty()) {
-            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition()));
-        }
+        matchedStepDefinitionsCache.put(stepText, match.getStepDefinition());
 
         return match;
     }
@@ -135,29 +132,17 @@ final class Glue implements cucumber.runtime.Glue {
     }
 
     private void removeScenarioScopedStepdefs() {
-        Iterator<Map.Entry<String, StepDefinition>> stepdefs = stepDefinitionsByPattern.entrySet().iterator();
-        while (stepdefs.hasNext()) {
-            StepDefinition stepDefinition = stepdefs.next().getValue();
-            if (stepDefinition.isScenarioScoped()) {
-                stepdefs.remove();
-            }
-        }
+        removeScenariosScopedStepdefs(stepDefinitionsByPattern);
+        removeScenariosScopedStepdefs(matchedStepDefinitionsCache);
+    }
 
-        Iterator<Map.Entry<String, CacheEntry>> cachedStepDefs = matchedStepDefinitionsCache.entrySet().iterator();
+    private void removeScenariosScopedStepdefs(Map<String, StepDefinition> matchedStepDefinitionsCache) {
+        Iterator<Map.Entry<String, StepDefinition>> cachedStepDefs = matchedStepDefinitionsCache.entrySet().iterator();
         while(cachedStepDefs.hasNext()){
-            StepDefinition stepDefinition = cachedStepDefs.next().getValue().stepDefinition;
+            StepDefinition stepDefinition = cachedStepDefs.next().getValue();
             if(stepDefinition.isScenarioScoped()){
                 cachedStepDefs.remove();
             }
-        }
-    }
-
-    static final class CacheEntry {
-
-        StepDefinition stepDefinition;
-
-        private CacheEntry(StepDefinition stepDefinition) {
-            this.stepDefinition = stepDefinition;
         }
     }
 }
