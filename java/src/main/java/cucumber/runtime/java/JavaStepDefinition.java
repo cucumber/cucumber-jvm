@@ -36,11 +36,11 @@ class JavaStepDefinition implements StepDefinition {
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
         List<ParameterInfo> parameterInfos = ParameterInfo.fromMethod(method);
-        parameterTypes = getTypes(parameterInfos);
+        this.parameterTypes = getTypes(parameterInfos);
         this.expression = createExpression(parameterInfos, expression, typeRegistry);
-        argumentMatcher = new ExpressionArgumentMatcher(this.expression);
-        shortFormat = MethodFormat.SHORT.format(method);
-        fullFormat = MethodFormat.FULL.format(method);
+        this.argumentMatcher = new ExpressionArgumentMatcher(this.expression);
+        this.shortFormat = MethodFormat.SHORT.format(method);
+        this.fullFormat = MethodFormat.FULL.format(method);
     }
 
     private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, TypeRegistry typeRegistry) {
