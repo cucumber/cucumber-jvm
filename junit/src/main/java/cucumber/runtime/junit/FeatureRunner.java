@@ -1,7 +1,6 @@
 package cucumber.runtime.junit;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureCompiler;
 import cucumber.runtime.filter.Filters;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.junit.PickleRunners.PickleRunner;
@@ -74,13 +73,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
-        Feature feature = cucumberFeature.getGherkinFeature().getFeature();
-        if (feature == null) {
-            return;
-        }
-        FeatureCompiler compiler = new FeatureCompiler();
-        List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
-        for (PickleEvent pickleEvent : pickleEvents) {
+        for (PickleEvent pickleEvent : cucumberFeature.getPickles()) {
             if (filters.matchesFilters(pickleEvent)) {
                 try {
                     if (jUnitOptions.stepNotifications()) {
@@ -89,7 +82,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
+                        picklePickleRunner = withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {
