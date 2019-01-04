@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,6 +12,15 @@
     <packaging>war</packaging>
     <name>Examples: Spring Transactions</name>
 
+    <properties>
+        <freemarker.version>2.3.28</freemarker.version>
+        <dbunit.version>2.5.4</dbunit.version>
+        <jaxb-api.version>2.3.0</jaxb-api.version>
+        <hsqldb.version>2.4.1</hsqldb.version>
+        <!-- 5.2.2.Final or above does not appear to work on Java 7 -->
+        <hibernate.version>5.1.1.Final</hibernate.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -20,13 +30,13 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
@@ -67,10 +77,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
         </dependency>
 
         <dependency>
@@ -106,6 +118,7 @@
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
             <scope>test</scope>
+            <version>${dbunit.version}</version>
         </dependency>
     </dependencies>
 </project>

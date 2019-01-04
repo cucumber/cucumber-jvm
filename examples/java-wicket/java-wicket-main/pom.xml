@@ -8,14 +8,30 @@
     <artifactId>java-wicket-main</artifactId>
     <name>Examples: Wicket application</name>
     <packaging>war</packaging>
+
     <build>
         <finalName>rentit</finalName>
     </build>
+
+    <properties>
+        <wicket.version>8.2.0</wicket.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <jetty.version>8.2.0.v20160908</jetty.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-core</artifactId>
+            <version>${wicket.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -32,6 +48,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

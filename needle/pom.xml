@@ -11,9 +11,11 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Needle</name>
 
-    <build>
-        <defaultGoal>clean install</defaultGoal>
-    </build>
+    <properties>
+        <needle.version>2.2</needle.version>
+        <javaee-api.version>7.0</javaee-api.version>
+        <javax.inject.version>1</javax.inject.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -38,6 +40,7 @@
         <dependency>
             <groupId>de.akquinet.jbosscc</groupId>
             <artifactId>jbosscc-needle</artifactId>
+            <version>${needle.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -48,11 +51,13 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
+            <version>${javaee-api.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
+            <version>${javax.inject.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

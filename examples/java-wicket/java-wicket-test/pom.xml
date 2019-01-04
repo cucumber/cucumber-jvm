@@ -7,6 +7,12 @@
     </parent>
     <artifactId>java-wicket-test</artifactId>
     <name>Examples: Wicket application tested with Selenium</name>
+
+
+    <properties>
+        <htmlunit.version>2.30.1</htmlunit.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -33,8 +39,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <!-- Newer versions makes the example project fail -->
-                <version>1.4.4</version>
+                <version>1.7.1</version>
                 <executions>
                     <execution>
                         <id>start-servlet-engine</id>
@@ -98,7 +103,14 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>htmlunit-driver</artifactId>
+            <version>${htmlunit.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
