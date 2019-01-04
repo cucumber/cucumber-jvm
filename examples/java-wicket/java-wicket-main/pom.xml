@@ -16,7 +16,9 @@
     <properties>
         <wicket.version>8.2.0</wicket.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <jetty.version>8.2.0.v20160908</jetty.version>
+        <jetty.version>9.4.14.v20181114</jetty.version>
+        <jcl-over-slf4.version>1.7.25</jcl-over-slf4.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
     </properties>
 
     <dependencies>
@@ -35,10 +37,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+            <version>${jcl-over-slf4.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
