@@ -1,26 +1,34 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
-import io.cucumber.core.options.FeatureOptions;
-import io.cucumber.core.options.FilterOptions;
-import io.cucumber.core.options.PluginOptions;
-import io.cucumber.core.options.RunnerOptions;
-import io.cucumber.datatable.DataTable;
 import cucumber.runtime.formatter.PluginFactory;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.PathWithLines;
+import cucumber.util.Encoding;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
+import io.cucumber.core.options.FeatureOptions;
+import io.cucumber.core.options.FilterOptions;
+import io.cucumber.core.options.PluginOptions;
+import io.cucumber.core.options.RunnerOptions;
+import io.cucumber.datatable.DataTable;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cucumber.util.FixJava.join;
@@ -46,7 +54,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             return keyword.replaceAll("[\\s',!]", "");
         }
     };
-
+    private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
     private final List<String> glue = new ArrayList<String>();
     private final List<String> tagFilters = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
@@ -54,6 +62,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<String> featurePaths = new ArrayList<String>();
 
     private final List<String> junitOptions = new ArrayList<String>();
+    private final ResourceLoader resourceLoader;
+    private final char fileSeparatorChar;
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -89,7 +99,17 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     public RuntimeOptions(Env env, List<String> argv) {
-        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        this(new MultiLoader(RuntimeOptions.class.getClassLoader()), env, argv);
+    }
+
+    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
+        this(File.separatorChar, resourceLoader, env, argv);
+    }
+
+    RuntimeOptions(char fileSeparatorChar, ResourceLoader resourceLoader, Env env, List<String> argv) {
+        this.fileSeparatorChar = fileSeparatorChar;
+        this.resourceLoader = resourceLoader;
+        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
@@ -143,7 +163,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 }
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
-                parsedGlue.add(gluePath);
+                parsedGlue.add(parseGlue(gluePath));
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedTagFilters.add(args.remove(0));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
@@ -169,11 +189,18 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else {
-                PathWithLines pathWithLines = new PathWithLines(arg);
-                parsedFeaturePaths.add(pathWithLines.path);
-                if (!pathWithLines.lines.isEmpty()) {
-                    String key = pathWithLines.path.replace("classpath:", "");
-                    addLineFilters(parsedLineFilters, key, pathWithLines.lines);
+                List<PathWithLines> paths;
+                if (arg.startsWith("@")) {
+                    paths = loadRerunFile(arg.substring(1));
+                } else {
+                    paths = parsePathWithLines(arg);
+                }
+                for (PathWithLines pathWithLines : paths) {
+                    parsedFeaturePaths.add(pathWithLines.path);
+                    if (!pathWithLines.lines.isEmpty()) {
+                        String key = pathWithLines.path.replace("classpath:", "");
+                        addLineFilters(parsedLineFilters, key, pathWithLines.lines);
+                    }
                 }
             }
         }
@@ -216,11 +243,44 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     private boolean haveLineFilters(List<String> parsedFeaturePaths) {
         for (String pathName : parsedFeaturePaths) {
-            if (pathName.startsWith("@") || PathWithLines.hasLineFilters(pathName)) {
+            if (PathWithLines.hasLineFilters(pathName)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private List<PathWithLines> loadRerunFile(String rerunPath) {
+        List<PathWithLines> featurePaths = new ArrayList<>();
+        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
+        for (Resource resource : resources) {
+            String source = read(resource);
+            if (!source.isEmpty()) {
+                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
+                while (matcher.find()) {
+                    featurePaths.addAll(parsePathWithLines(matcher.group(1)));
+                }
+            }
+        }
+        return featurePaths;
+    }
+
+    private List<PathWithLines> parsePathWithLines(String pathWithLineFilter) {
+        String normalizedPath = convertFileSeparatorToForwardSlash(pathWithLineFilter);
+        PathWithLines pathWithLines = new PathWithLines(normalizedPath);
+        return Collections.singletonList(pathWithLines);
+    }
+
+    private static String read(Resource resource) {
+        try {
+            return Encoding.readFile(resource);
+        } catch (IOException e) {
+            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
+        }
+    }
+
+    private String parseGlue(String gluePath) {
+        return convertFileSeparatorToForwardSlash(gluePath);
     }
 
     private void printUsage() {
@@ -406,6 +466,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 nameList.addAll(names);
             }
         }
+    }
+
+    private String convertFileSeparatorToForwardSlash(String path) {
+        return path.replace(fileSeparatorChar, '/');
     }
 
 }

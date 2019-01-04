@@ -11,7 +11,6 @@ import cucumber.runner.RunnerSupplier;
 import cucumber.runner.SingletonRunnerSupplier;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
-import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.MultiLoader;
@@ -74,9 +73,8 @@ public class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        final FeatureCompiler compiler = new FeatureCompiler();
         for (CucumberFeature feature : features) {
-            for (final PickleEvent pickleEvent : compiler.compileFeature(feature)) {
+            for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
                     executor.execute(new Runnable() {
                         @Override
@@ -207,8 +205,7 @@ public class Runtime {
                 ? this.featureSupplier
                 : new FeaturePathFeatureSupplier(featureLoader, this.runtimeOptions);
 
-            final RerunFilters rerunFilters = new RerunFilters(this.runtimeOptions, featureLoader);
-            final Filters filters = new Filters(this.runtimeOptions, rerunFilters);
+            final Filters filters = new Filters(this.runtimeOptions);
             return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
         }
     }

@@ -6,9 +6,6 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventListener;
-import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
-import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Glue;
@@ -17,11 +14,9 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StubStepDefinition;
 import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
+import cucumber.runtime.model.FeatureParser;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
@@ -35,6 +30,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.AbstractMap.SimpleEntry;
@@ -409,12 +406,28 @@ public class TestHelper {
         }
     }
 
-    public static CucumberFeature feature(final String path, final String source) {
-        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
+    public static CucumberFeature feature(final String uri, final String source) {
+        return FeatureParser.parseResource(new Resource() {
+            @Override
+            public String getPath() {
+                return uri;
+            }
 
-        GherkinDocument gherkinDocument = parser.parse(source, matcher);
-        return new CucumberFeature(gherkinDocument, path, source);
+            @Override
+            public InputStream getInputStream() {
+                return new ByteArrayInputStream(source.getBytes());
+            }
+
+            @Override
+            public String getAbsolutePath() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String getClassName(String extension) {
+                throw new UnsupportedOperationException();
+            }
+        });
     }
 
     public static Result result(String status) {

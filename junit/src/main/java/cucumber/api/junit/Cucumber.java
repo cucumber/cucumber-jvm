@@ -14,7 +14,6 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.Plugins;
-import cucumber.runtime.filter.RerunFilters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.model.FeatureLoader;
 import cucumber.runner.ThreadLocalRunnerSupplier;
@@ -94,8 +93,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        this.filters = new Filters(runtimeOptions, rerunFilters);
+        this.filters = new Filters(runtimeOptions);
         this.junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
 

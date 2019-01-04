@@ -8,10 +8,7 @@ import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
-import cucumber.runtime.filter.RerunFilters;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.FeatureLoader;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -153,8 +150,6 @@ public class FeatureRunnerTest {
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
         final TimeService timeServiceStub = new TimeService() {
             @Override
@@ -170,9 +165,7 @@ public class FeatureRunnerTest {
         };
 
         EventBus bus = new TimeServiceEventBus(timeServiceStub);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        RerunFilters rerunFilters = new RerunFilters(runtimeOptions, featureLoader);
-        Filters filters = new Filters(runtimeOptions, rerunFilters);
+        Filters filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
     }
