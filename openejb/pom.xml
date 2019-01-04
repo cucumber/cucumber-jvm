@@ -11,15 +11,26 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: OpenEJB</name>
 
+    <properties>
+        <openejb-core.version>7.1.0</openejb-core.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.openejb</groupId>
+            <groupId>org.apache.tomee</groupId>
             <artifactId>openejb-core</artifactId>
+            <version>${openejb-core.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
