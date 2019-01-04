@@ -81,9 +81,7 @@ final class Glue implements cucumber.runtime.Glue {
             // the step text. As such the step definition arguments can not be cached and
             // must be recreated each time.
             List<Argument> arguments = stepDefinition.matchedArguments(step);
-            if(arguments != null){
-                return new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step);
-            }
+            return new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step);
         }
 
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
