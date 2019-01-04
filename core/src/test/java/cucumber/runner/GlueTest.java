@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -132,13 +133,13 @@ public class GlueTest {
         verify(stepDefinition2).matchedArguments(pickleStep1);
 
         //check cache
-        Glue.CacheEntry entry = glue.matchedStepDefinitionsCache.get(stepText);
-        assertEquals(stepDefinition1,entry.stepDefinition);
+        StepDefinition entry = glue.matchedStepDefinitionsCache.get(stepText);
+        assertEquals(stepDefinition1,entry);
 
         PickleStep pickleStep2 = getPickleStep(stepText);
         assertEquals(stepDefinition1, glue.stepDefinitionMatch(featurePath, pickleStep2).getStepDefinition());
-        //verify that match wasn't called again
-        verify(stepDefinition1).matchedArguments(any(PickleStep.class));
+        //verify that only cached step definition has called matchedArguments again
+        verify(stepDefinition1,times(2)).matchedArguments(any(PickleStep.class));
         verify(stepDefinition2).matchedArguments(any(PickleStep.class));
 
     }
