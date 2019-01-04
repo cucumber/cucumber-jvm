@@ -1,16 +1,16 @@
 package cucumber.runtime.java;
 
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
+import cucumber.runtime.MethodFormat;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
+import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
-import cucumber.runtime.MethodFormat;
-import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.StepExpression;
 import io.cucumber.stepexpression.StepExpressionFactory;
-import cucumber.runtime.Utils;
-import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -22,7 +22,10 @@ class JavaStepDefinition implements StepDefinition {
     private final long timeoutMillis;
     private final ObjectFactory objectFactory;
 
-    private final List<ParameterInfo> parameterInfos;
+    private final ArgumentMatcher argumentMatcher;
+    private final Type[] parameterTypes;
+    private final String shortFormat;
+    private final String fullFormat;
 
     JavaStepDefinition(Method method,
                        String expression,
@@ -32,11 +35,15 @@ class JavaStepDefinition implements StepDefinition {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
-        this.parameterInfos = ParameterInfo.fromMethod(method);
-        this.expression = createExpression(expression, typeRegistry);
+        List<ParameterInfo> parameterInfos = ParameterInfo.fromMethod(method);
+        parameterTypes = getTypes(parameterInfos);
+        this.expression = createExpression(parameterInfos, expression, typeRegistry);
+        argumentMatcher = new ExpressionArgumentMatcher(this.expression);
+        shortFormat = MethodFormat.SHORT.format(method);
+        fullFormat = MethodFormat.FULL.format(method);
     }
 
-    private StepExpression createExpression(String expression, TypeRegistry typeRegistry) {
+    private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, TypeRegistry typeRegistry) {
         if (parameterInfos.isEmpty()) {
             return new StepExpressionFactory(typeRegistry).createExpression(expression);
         } else {
@@ -45,29 +52,35 @@ class JavaStepDefinition implements StepDefinition {
         }
     }
 
+    @Override
     public void execute(Object[] args) throws Throwable {
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
+    @Override
     public List<Argument> matchedArguments(PickleStep step) {
-        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+        return argumentMatcher.argumentsFrom(step, parameterTypes);
+    }
+
+    private static Type[] getTypes(List<ParameterInfo> parameterInfos) {
         Type[] types = new Type[parameterInfos.size()];
         for (int i = 0; i < types.length; i++) {
             types[i] = parameterInfos.get(i).getType();
         }
-        return argumentMatcher.argumentsFrom(step, types);
+        return types;
     }
 
+    @Override
     public String getLocation(boolean detail) {
-        MethodFormat format = detail ? MethodFormat.FULL : MethodFormat.SHORT;
-        return format.format(method);
+        return detail ? fullFormat : shortFormat;
     }
 
     @Override
     public Integer getParameterCount() {
-        return parameterInfos.size();
+        return parameterTypes.length;
     }
 
+    @Override
     public boolean isDefinedAt(StackTraceElement e) {
         return e.getClassName().equals(method.getDeclaringClass().getName()) && e.getMethodName().equals(method.getName());
     }
