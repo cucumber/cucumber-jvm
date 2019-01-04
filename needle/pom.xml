@@ -15,6 +15,7 @@
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
+        <logback.version>1.2.3</logback.version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
 
