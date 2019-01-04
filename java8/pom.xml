@@ -11,6 +11,10 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Java8</name>
 
+    <properties>
+        <typetools.version>0.5.0</typetools.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -19,6 +23,7 @@
         <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>typetools</artifactId>
+            <version>${typetools.version}</version>
         </dependency>
 
         <dependency>
