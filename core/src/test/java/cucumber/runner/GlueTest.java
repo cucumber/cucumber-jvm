@@ -99,11 +99,11 @@ public class GlueTest {
         PickleStep pickleStep1 = getPickleStep(stepText);
         assertEquals(sd, glue.stepDefinitionMatch(featurePath, pickleStep1).getStepDefinition());
 
-        assertEquals(1, glue.matchedStepDefinitionsCache.size());
+        assertEquals(1, glue.stepDefinitionsByStepText.size());
 
         glue.removeScenarioScopedGlue();
 
-        assertEquals(0, glue.matchedStepDefinitionsCache.size());
+        assertEquals(0, glue.stepDefinitionsByStepText.size());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class GlueTest {
         verify(stepDefinition2).matchedArguments(pickleStep1);
 
         //check cache
-        StepDefinition entry = glue.matchedStepDefinitionsCache.get(stepText);
+        StepDefinition entry = glue.stepDefinitionsByStepText.get(stepText);
         assertEquals(stepDefinition1,entry);
 
         PickleStep pickleStep2 = getPickleStep(stepText);
