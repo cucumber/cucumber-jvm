@@ -373,7 +373,7 @@
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
                                             <!--Spring doesn't follow semver that strictly. -->
-                                            <item>org\.springframework\.core\..*</item>
+                                            <item>org\.springframework\..*</item>
                                         </exclude>
                                     </classes>
                                     <packages>
@@ -385,7 +385,7 @@
                                             <item>cucumber\.util\..*</item>
                                             <!--The logging dependencies for Spring are provided. This causes them to
                                             be missing in the dependency hierarchy. A false positive. -->
-                                            <item>org\.springframework\.core\..*</item>
+                                            <item>org\.springframework\..*</item>
                                         </exclude>
                                     </packages>
                                 </filter>
