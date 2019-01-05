@@ -8,13 +8,19 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [TestNG] Update documentation for parallel execution ([#1501](https://github.com/cucumber/cucumber-jvm/issues/1486) Abhishek Singh)
 
 ### Changed
+ *  [Core] Parse rerun file in RuntimeOptions ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
 
 ### Deprecated
    
 ### Removed
 
 ### Fixed
-
+ * [Build] No longer fails to build on OpenJDK 9 and 10. ([#1311](https://github.com/cucumber/cucumber-jvm/issues/1311) M.P. Korstanje)
+ * [Core] Error when an explicitly provided feature file does not exist. ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje) 
+    * `path/to/exisitng.feature` will pass
+    * `path/to/non/exisitng.feature` will error
+    * `path/to/empty/direcory` will pass
+ 
 ## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0)
 
 ### Added
