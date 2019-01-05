@@ -13,6 +13,7 @@
 
     <properties>
         <openejb-core.version>7.1.0</openejb-core.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
     </properties>
 
     <dependencies>
@@ -26,7 +27,12 @@
             <version>${openejb-core.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>

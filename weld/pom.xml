@@ -39,6 +39,7 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>${jaxb-api.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
