@@ -53,7 +53,7 @@
         <mockito.version>2.21.0</mockito.version>
 
         <!--Maven plugins-->
-        <groovy.version>2.5.4</groovy.version>
+        <groovy.version>2.5.5</groovy.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
     </properties>
     <scm>
