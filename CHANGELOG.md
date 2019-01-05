@@ -20,7 +20,15 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     * `path/to/exisitng.feature` will pass
     * `path/to/non/exisitng.feature` will error
     * `path/to/empty/direcory` will pass
- 
+  * [Core] Upgrade shaded jackson-databind to 2.9.8 (M.P. Korstanje)
+      * Fixes CVE-2018-19360 
+      * Fixes CVE-2018-14719 
+      * Fixes CVE-2018-14718 
+      * Fixes CVE-2018-14721 
+      * Fixes CVE-2018-14720 
+      * Fixes CVE-2018-19361 
+      * Fixes CVE-2018-19362
+
 ## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0)
 
 ### Added
