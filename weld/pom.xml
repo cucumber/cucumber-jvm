@@ -13,6 +13,7 @@
     <name>Cucumber-JVM: Weld</name>
 
     <properties>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
         <cdi-api.version>2.0.SP1</cdi-api.version>
         <weld-se.version>2.4.4.Final</weld-se.version>
     </properties>
@@ -33,6 +34,11 @@
             <artifactId>weld-se</artifactId>
             <version>${weld-se.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
         </dependency>
 
         <dependency>
