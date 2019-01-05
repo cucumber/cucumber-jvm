@@ -16,7 +16,6 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.URLOutputStream;
 import gherkin.ast.Background;
 import gherkin.ast.DataTable;
 import gherkin.ast.DocString;
@@ -120,6 +119,7 @@ final class HTMLFormatter implements EventListener {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HTMLFormatter(URL htmlReportDir) {
         this(htmlReportDir, createJsOut(htmlReportDir));
     }

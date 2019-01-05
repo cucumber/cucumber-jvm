@@ -9,7 +9,6 @@ import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
-import cucumber.runtime.io.UTF8OutputStreamWriter;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
