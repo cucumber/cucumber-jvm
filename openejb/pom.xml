@@ -14,6 +14,7 @@
     <properties>
         <openejb-core.version>7.1.0</openejb-core.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
+        <activation.version>1.1</activation.version>
     </properties>
 
     <dependencies>
@@ -32,6 +33,16 @@
             <artifactId>jaxb-api</artifactId>
             <version>${jaxb-api.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${activation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-api.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
