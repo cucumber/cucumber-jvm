@@ -11,7 +11,7 @@ import java.util.ServiceLoader;
  * A {@link ResourceIteratorFactory} implementation which delegates to
  * factories found by the ServiceLoader class.
  */
-public class DelegatingResourceIteratorFactory implements ResourceIteratorFactory {
+class DelegatingResourceIteratorFactory implements ResourceIteratorFactory {
 
     private final Iterable<ResourceIteratorFactory> delegates = ServiceLoader.load(ResourceIteratorFactory.class);
 
@@ -24,7 +24,7 @@ public class DelegatingResourceIteratorFactory implements ResourceIteratorFactor
      * @param fallbackResourceIteratorFactory The factory to use when an
      *                                        appropriate one couldn't be found otherwise.
      */
-    public DelegatingResourceIteratorFactory(ResourceIteratorFactory fallbackResourceIteratorFactory) {
+    DelegatingResourceIteratorFactory(ResourceIteratorFactory fallbackResourceIteratorFactory) {
         this.fallbackResourceIteratorFactory = fallbackResourceIteratorFactory;
     }
 

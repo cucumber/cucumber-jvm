@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class Helpers {
+class Helpers {
     private Helpers() {
     }
 

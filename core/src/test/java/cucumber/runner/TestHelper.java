@@ -418,15 +418,6 @@ public class TestHelper {
                 return new ByteArrayInputStream(source.getBytes());
             }
 
-            @Override
-            public String getAbsolutePath() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public String getClassName(String extension) {
-                throw new UnsupportedOperationException();
-            }
         });
     }
 

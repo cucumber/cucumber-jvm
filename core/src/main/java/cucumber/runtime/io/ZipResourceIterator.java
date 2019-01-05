@@ -7,14 +7,14 @@ import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipResourceIterator implements Iterator<Resource> {
+class ZipResourceIterator implements Iterator<Resource> {
     private final String path;
     private final String suffix;
     private final ZipFile jarFile;
     private final Enumeration<? extends ZipEntry> entries;
     private Resource next;
 
-    public ZipResourceIterator(String zipPath, String path, String suffix) throws IOException {
+    ZipResourceIterator(String zipPath, String path, String suffix) throws IOException {
         this.path = path;
         this.suffix = suffix;
         jarFile = new ZipFile(zipPath);

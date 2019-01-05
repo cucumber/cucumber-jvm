@@ -37,18 +37,8 @@ class TestPickleBuilder {
             }
 
             @Override
-            public String getAbsolutePath() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
             public InputStream getInputStream() {
                 return new ByteArrayInputStream(source.getBytes());
-            }
-
-            @Override
-            public String getClassName(String extension) {
-                throw new UnsupportedOperationException();
             }
 
         });

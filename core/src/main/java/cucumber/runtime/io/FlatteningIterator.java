@@ -5,13 +5,13 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class FlatteningIterator<T> implements Iterator<T> {
+class FlatteningIterator<T> implements Iterator<T> {
     private final Deque<Iterator<?>> iterators = new ArrayDeque<Iterator<?>>();
 
     private T next;
     private boolean nextBlank = true;
 
-    public void push(Iterator<?> iterator) {
+    void push(Iterator<?> iterator) {
         iterators.addFirst(iterator);
     }
 

@@ -5,16 +5,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FileResource implements Resource {
+class FileResource implements Resource {
     private final File root;
     private final File file;
     private final boolean classpathFileResource;
 
-    public static FileResource createFileResource(File root, File file) {
+    static FileResource createFileResource(File root, File file) {
         return new FileResource(root, file, false);
     }
 
-    public static FileResource createClasspathFileResource(File root, File file) {
+    static FileResource createClasspathFileResource(File root, File file) {
         return new FileResource(root, file, true);
     }
 
@@ -37,22 +37,8 @@ public class FileResource implements Resource {
     }
 
     @Override
-    public String getAbsolutePath() {
-        return file.getAbsolutePath();
-    }
-
-    @Override
     public InputStream getInputStream() throws IOException {
         return new FileInputStream(file);
     }
 
-    @Override
-    public String getClassName(String extension) {
-        String path = getPath();
-        return path.substring(0, path.length() - extension.length()).replace(File.separatorChar, '.');
-    }
-
-    public File getFile() {
-        return file;
-    }
 }
