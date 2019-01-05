@@ -6,11 +6,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-    glue = {
-        "cucumber.runtime.java.spring.metaconfig.dirties"
-    },
-    features = {
-        "classpath:cucumber/runtime/java/spring/dirtyCukesWithMetaConfiguration.feature"
-    })
+    glue = {"cucumber.runtime.java.spring.metaconfig.dirties"},
+    features = {"classpath:cucumber/runtime/java/spring/dirtyCukesWithMetaConfiguration.feature"}
+)
 public class RunCucumberTest {
 }

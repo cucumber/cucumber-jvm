@@ -1,11 +1,11 @@
 package cucumber.examples.spring.txn;
 
 import cucumber.api.java.Before;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@WebAppConfiguration
-@ContextConfiguration("classpath:cucumber.xml")
+@SpringBootTest
+@AutoConfigureMockMvc
 public class CucumberContextConfiguration  {
 
     @Before

@@ -11,6 +11,15 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Core</name>
 
+    <properties>
+        <!-- version 2.4.0 does not work on Java 7 -->
+        <jsoup.version>1.11.3</jsoup.version>
+        <xmlunit.version>1.6</xmlunit.version>
+        <webbit.version>0.4.15</webbit.version>
+        <webbit-rest.version>0.3.0</webbit-rest.version>
+        <hamcrest-json.version>0.2</hamcrest-json.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -40,6 +49,7 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -50,23 +60,28 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit</artifactId>
+            <version>${webbit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit-rest</artifactId>
+            <version>${webbit-rest.version}</version>
             <scope>test</scope>
         </dependency>
+
+
 
         <dependency>
             <groupId>uk.co.datumedge</groupId>
             <artifactId>hamcrest-json</artifactId>
+            <version>${hamcrest-json.version}</version>
             <scope>test</scope>
         </dependency>
 
