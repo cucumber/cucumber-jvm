@@ -4,8 +4,13 @@ import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import gherkin.pickles.Argument;
+import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleString;
+import gherkin.pickles.PickleTable;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.stepexpression.StepExpression;
@@ -18,6 +23,7 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
 
+import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -142,6 +148,93 @@ public class GlueTest {
         verify(stepDefinition1,times(2)).matchedArguments(any(PickleStep.class));
         verify(stepDefinition2).matchedArguments(any(PickleStep.class));
 
+    }
+
+    @Test
+    public void returns_match_from_cache_for_step_with_table() {
+        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
+        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        glue.addStepDefinition(stepDefinition1);
+        glue.addStepDefinition(stepDefinition2);
+        String featurePath = "someFeature.feature";
+        String stepText = "pattern1";
+
+        PickleStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
+
+        PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+
+        assertEquals(stepDefinition1, match1.getStepDefinition());
+        //verify if all defs are checked
+        verify(stepDefinition1).matchedArguments(pickleStep1);
+        verify(stepDefinition2).matchedArguments(pickleStep1);
+
+        //check cache
+        StepDefinition entry = glue.stepDefinitionsByStepText.get(stepText);
+        assertEquals(stepDefinition1,entry);
+
+        //check arguments
+        assertEquals("cell 1", ((DataTable) match1.getArguments().get(0).getValue()).cell(0,0));
+
+        //check second match
+        PickleStep pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
+        PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
+
+        //verify that only cached step definition has called matchedArguments again
+        verify(stepDefinition1,times(2)).matchedArguments(any(PickleStep.class));
+        verify(stepDefinition2).matchedArguments(any(PickleStep.class));
+
+        //check arguments
+        assertEquals("cell 2",((DataTable) match2.getArguments().get(0).getValue()).cell(0,0));
+
+
+    }
+
+    @Test
+    public void returns_match_from_cache_for_ste_with_doc_string() {
+        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
+        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        glue.addStepDefinition(stepDefinition1);
+        glue.addStepDefinition(stepDefinition2);
+        String featurePath = "someFeature.feature";
+        String stepText = "pattern1";
+
+        PickleStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
+
+        PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+
+        assertEquals(stepDefinition1, match1.getStepDefinition());
+        //verify if all defs are checked
+        verify(stepDefinition1).matchedArguments(pickleStep1);
+        verify(stepDefinition2).matchedArguments(pickleStep1);
+
+        //check cache
+        StepDefinition entry = glue.stepDefinitionsByStepText.get(stepText);
+        assertEquals(stepDefinition1,entry);
+
+        //check arguments
+        assertEquals("doc string 1", match1.getArguments().get(0).getValue());
+
+        //check second match
+        PickleStep pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
+        PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
+
+        //verify that only cached step definition has called matchedArguments again
+        verify(stepDefinition1,times(2)).matchedArguments(any(PickleStep.class));
+        verify(stepDefinition2).matchedArguments(any(PickleStep.class));
+
+        //check arguments
+        assertEquals("doc string 2",match2.getArguments().get(0).getValue());
+
+
+    }
+
+
+    private static PickleStep getPickleStepWithSingleCellTable(String stepText, String cell) {
+        return new PickleStep(stepText, Collections.<Argument>singletonList(new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), cell)))))), Collections.<PickleLocation>emptyList());
+    }
+
+    private static PickleStep getPickleStepWithDocString(String stepText, String doc) {
+        return new PickleStep(stepText, Collections.<Argument>singletonList(new PickleString(mock(PickleLocation.class),doc)), Collections.<PickleLocation>emptyList());
     }
 
     @Test
