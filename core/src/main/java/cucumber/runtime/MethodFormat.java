@@ -11,8 +11,7 @@ import java.util.regex.Pattern;
  */
 public class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
-    private static final String PACKAGE_PATTERN = "[^,]*\\.";
-    private static final Pattern COMPILED_PACKAGE_PATTERN = Pattern.compile(PACKAGE_PATTERN);
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("[^,]*\\.");
     private final MessageFormat format;
 
     public static final MethodFormat SHORT = new MethodFormat("%c.%m(%a)");
@@ -82,7 +81,7 @@ public class MethodFormat {
     }
 
     private static String removePackage(String qc) {
-        return COMPILED_PACKAGE_PATTERN.matcher(qc).replaceAll("");
+        return PACKAGE_PATTERN.matcher(qc).replaceAll("");
     }
 
     private String getCodeSource(Method method) {
