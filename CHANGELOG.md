@@ -2,7 +2,20 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [4.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...master) (In Git)
+## [4.2.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...master) (In Git)
+
+### Added
+
+### Changed
+
+### Deprecated
+   
+### Removed
+
+### Fixed
+
+
+## [4.2.1](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...v4.2.1)
 
 ### Added
  * [TestNG] Update documentation for parallel execution ([#1501](https://github.com/cucumber/cucumber-jvm/issues/1486) Abhishek Singh)
