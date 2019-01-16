@@ -30,7 +30,8 @@ class FileResource implements Resource {
     @Override
     public String getPath() {
         if (classpathFileResource) {
-            return file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+            String relativePath = file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+            return relativePath.replace(File.separatorChar, '/');
         } else {
             return file.getPath();
         }
