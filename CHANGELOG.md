@@ -2,7 +2,7 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [4.2.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...master) (In Git)
+## [4.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...master) (In Git)
 
 ### Added
 
@@ -15,7 +15,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
 
 
-## [4.2.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
+## [4.2.](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
 
 ### Fixed
  * [Core] Fix class loading on Windows ([#1541](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
