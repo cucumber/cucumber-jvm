@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -139,7 +141,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
         Map<String, List<Long>> parsedLineFilters = new HashMap<String, List<Long>>();
         List<String> parsedFeaturePaths = new ArrayList<String>();
-        List<String> parsedGlue = new ArrayList<String>();
+        List<URI> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
 
@@ -279,8 +281,14 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         }
     }
 
-    private String parseGlue(String gluePath) {
-        return convertFileSeparatorToForwardSlash(gluePath);
+    private URI parseGlue(String gluePath) {
+        try {
+            return new URI(gluePath);
+        } catch (URISyntaxException e) {
+
+        }
+
+
     }
 
     private void printUsage() {

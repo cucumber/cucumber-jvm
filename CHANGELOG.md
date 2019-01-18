@@ -15,6 +15,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
 
 
+## [4.2.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
+
+### Fixed
+ * [Core] Fix class loading on Windows ([#1541](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
+   * Resolves inability to discover glue classes
+
 ## [4.2.1](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...v4.2.1)
 
 ### Added
