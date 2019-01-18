@@ -11,17 +11,40 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: OpenEJB</name>
 
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
+        <openejb-core.version>8.0.0-M1</openejb-core.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <activation.version>1.1</activation.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.openejb</groupId>
+            <groupId>org.apache.tomee</groupId>
             <artifactId>openejb-core</artifactId>
+            <version>${openejb-core.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${activation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
@@ -50,7 +73,4 @@
         </plugins>
     </build>
 
-    <properties>
-        <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
-    </properties>
 </project>

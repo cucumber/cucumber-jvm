@@ -11,7 +11,7 @@ final class FlatteningIterator<T> implements Iterator<T> {
     private T next;
     private boolean nextBlank = true;
 
-    public void push(Iterator<?> iterator) {
+    void push(Iterator<?> iterator) {
         iterators.addFirst(iterator);
     }
 

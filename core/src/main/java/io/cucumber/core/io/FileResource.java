@@ -30,15 +30,11 @@ final class FileResource implements Resource {
     @Override
     public String getPath() {
         if (classpathFileResource) {
-            return file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+            String relativePath = file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+            return relativePath.replace(File.separatorChar, '/');
         } else {
             return file.getPath();
         }
-    }
-
-    @Override
-    public String getAbsolutePath() {
-        return file.getAbsolutePath();
     }
 
     @Override
@@ -46,13 +42,4 @@ final class FileResource implements Resource {
         return new FileInputStream(file);
     }
 
-    @Override
-    public String getClassName(String extension) {
-        String path = getPath();
-        return path.substring(0, path.length() - extension.length()).replace(File.separatorChar, '.');
-    }
-
-    public File getFile() {
-        return file;
-    }
 }

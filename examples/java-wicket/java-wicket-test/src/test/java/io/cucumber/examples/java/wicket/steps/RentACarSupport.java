@@ -6,10 +6,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class RentACarSupport {
+    public static final String BASE_URL = "http://localhost:9878/java-wicket-main/";
+
     public void createCars(int availableCars) {
         WebDriver driver = new HtmlUnitDriver();
         try {
-            driver.get("http://localhost:9878/rentit/create");
+            driver.get(BASE_URL + "create");
 
             WebElement numberOfCarsToCreate = driver.findElement(By.id("numberOfCars"));
             numberOfCarsToCreate.clear();
@@ -25,7 +27,7 @@ public class RentACarSupport {
     public void rentACar() {
         WebDriver driver = new HtmlUnitDriver();
         try {
-            driver.get("http://localhost:9878/rentit/rent");
+            driver.get(BASE_URL + "rent");
 
             WebElement rentButton = driver.findElement(By.id("rentButton"));
             rentButton.click();
@@ -37,7 +39,7 @@ public class RentACarSupport {
     public int getAvailableNumberOfCars() {
         WebDriver driver = new HtmlUnitDriver();
         try {
-            driver.get("http://localhost:9878/rentit/available");
+            driver.get(BASE_URL + "available");
 
             WebElement availableCars = driver.findElement(By.id("availableCars"));
             String availableCarsString = availableCars.getText();

@@ -18,11 +18,11 @@ import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<>();
+    final Map<String, StepDefinition> stepDefinitionsByStepText = new HashMap<>();
     final List<HookDefinition> beforeHooks = new ArrayList<>();
     final List<HookDefinition> beforeStepHooks = new ArrayList<>();
     final List<HookDefinition> afterHooks = new ArrayList<>();
     final List<HookDefinition> afterStepHooks = new ArrayList<>();
-    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<>();
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -75,9 +75,14 @@ final class CachingGlue implements Glue {
     PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
-        CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
-        if (cacheEntry != null) {
-            return new PickleStepDefinitionMatch(Collections.<Argument>emptyList(), cacheEntry.stepDefinition, featurePath, step);
+        StepDefinition stepDefinition = stepDefinitionsByStepText.get(stepText);
+        if (stepDefinition != null) {
+            // Step definition arguments consists of parameters included in the step text and
+            // gherkin step arguments (doc string and data table) which are not included in
+            // the step text. As such the step definition arguments can not be cached and
+            // must be recreated each time.
+            List<Argument> arguments = stepDefinition.matchedArguments(step);
+            return new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step);
         }
 
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
@@ -90,11 +95,7 @@ final class CachingGlue implements Glue {
 
         PickleStepDefinitionMatch match = matches.get(0);
 
-        // We can only cache step definitions without arguments.
-        // DocString and TableArguments are not included in the stepText used as the cache key.
-        if(match.getArguments().isEmpty()) {
-            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition()));
-        }
+        stepDefinitionsByStepText.put(stepText, match.getStepDefinition());
 
         return match;
     }
@@ -121,11 +122,12 @@ final class CachingGlue implements Glue {
         removeScenarioScopedHooks(beforeStepHooks);
         removeScenarioScopedHooks(afterHooks);
         removeScenarioScopedHooks(afterStepHooks);
-        removeScenarioScopedStepdefs();
+        removeScenariosScopedStepDefinitions(stepDefinitionsByPattern);
+        removeScenariosScopedStepDefinitions(stepDefinitionsByStepText);
     }
 
-    private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks1) {
-        Iterator<HookDefinition> hookIterator = beforeHooks1.iterator();
+    private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks) {
+        Iterator<HookDefinition> hookIterator = beforeHooks.iterator();
         while (hookIterator.hasNext()) {
             HookDefinition hook = hookIterator.next();
             if (hook.isScenarioScoped()) {
@@ -134,30 +136,13 @@ final class CachingGlue implements Glue {
         }
     }
 
-    private void removeScenarioScopedStepdefs() {
-        Iterator<Map.Entry<String, StepDefinition>> stepdefs = stepDefinitionsByPattern.entrySet().iterator();
-        while (stepdefs.hasNext()) {
-            StepDefinition stepDefinition = stepdefs.next().getValue();
-            if (stepDefinition.isScenarioScoped()) {
-                stepdefs.remove();
-            }
-        }
-
-        Iterator<Map.Entry<String, CacheEntry>> cachedStepDefs = matchedStepDefinitionsCache.entrySet().iterator();
-        while(cachedStepDefs.hasNext()){
-            StepDefinition stepDefinition = cachedStepDefs.next().getValue().stepDefinition;
+    private void removeScenariosScopedStepDefinitions(Map<String, StepDefinition> stepDefinitions) {
+        Iterator<Map.Entry<String, StepDefinition>> stepDefinitionIterator = stepDefinitions.entrySet().iterator();
+        while(stepDefinitionIterator.hasNext()){
+            StepDefinition stepDefinition = stepDefinitionIterator.next().getValue();
             if(stepDefinition.isScenarioScoped()){
-                cachedStepDefs.remove();
+                stepDefinitionIterator.remove();
             }
-        }
-    }
-
-    static final class CacheEntry {
-
-        StepDefinition stepDefinition;
-
-        private CacheEntry(StepDefinition stepDefinition) {
-            this.stepDefinition = stepDefinition;
         }
     }
 }

@@ -16,10 +16,6 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.jodah</groupId>
-            <artifactId>typetools</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>

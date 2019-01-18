@@ -26,7 +26,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
     public List<CucumberFeature> get() {
         List<CucumberFeature> features = featureLoader.load(featureOptions.getFeaturePaths(), System.out);
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), feature.getUri(), feature.getGherkinSource()));
+            bus.send(new TestSourceRead(bus.getTime(), feature.getUri(), feature.getSource()));
         }
         return features;
     }

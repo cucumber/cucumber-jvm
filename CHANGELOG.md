@@ -2,10 +2,9 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 
-## [4.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...master) (In Git)
+## [4.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...master) (In Git)
 
 ### Added
- * [TestNG] Update documentation for parallel execution ([#1501](https://github.com/cucumber/cucumber-jvm/issues/1486) Abhishek Singh)
 
 ### Changed
 
@@ -14,6 +13,42 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+
+## [4.2.](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
+
+### Fixed
+ * [Core] Fix class loading on Windows ([#1541](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
+   * Resolves inability to discover glue classes
+
+## [4.2.1](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...v4.2.1)
+
+### Added
+ * [TestNG] Update documentation for parallel execution ([#1501](https://github.com/cucumber/cucumber-jvm/issues/1486) Abhishek Singh)
+
+### Changed
+ *  [Core] Parse rerun file in RuntimeOptions ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
+
+### Deprecated
+   
+### Removed
+
+### Fixed
+ * [Core] Cache all matched step definitions ([#1528](https://github.com/cucumber/cucumber-jvm/pull/1528) Łukasz Suski)
+   * Significant speed up in matching steps to glue on Android
+ * [Build] No longer fails to build on OpenJDK 9 and 10. ([#1311](https://github.com/cucumber/cucumber-jvm/issues/1311) M.P. Korstanje)
+ * [Core] Error when an explicitly provided feature file does not exist. ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje) 
+    * `path/to/exisitng.feature` will pass
+    * `path/to/non/exisitng.feature` will error
+    * `path/to/empty/direcory` will pass
+  * [Core] Upgrade shaded jackson-databind to 2.9.8 (M.P. Korstanje)
+      * Fixes CVE-2018-19360 
+      * Fixes CVE-2018-14719 
+      * Fixes CVE-2018-14718 
+      * Fixes CVE-2018-14721 
+      * Fixes CVE-2018-14720 
+      * Fixes CVE-2018-19361 
+      * Fixes CVE-2018-19362
 
 ## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0)
 

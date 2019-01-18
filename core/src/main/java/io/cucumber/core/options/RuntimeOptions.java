@@ -5,6 +5,7 @@ import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.model.PathWithLines;
@@ -12,10 +13,12 @@ import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import io.cucumber.datatable.DataTable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,12 +53,14 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     };
 
     private final List<String> glue = new ArrayList<String>();
-    private final List<String> tagExpressions = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
+    private final List<String> tagExpressions = new ArrayList<String>();
     private final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
     private final List<String> featurePaths = new ArrayList<String>();
 
     private final List<String> junitOptions = new ArrayList<String>();
+    private final ResourceLoader resourceLoader;
+    private final char fileSeparatorChar;
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -67,22 +72,33 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<Plugin> stepDefinitionReporters = new ArrayList<>();
     private final List<Plugin> summaryPrinters = new ArrayList<>();
 
-    private final ResourceLoader resourceLoader;
-
     /**
      * Create a new instance from a list of options, for example:
-     * <pre>{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
+     * <p/>
+     * <pre<{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
      *
-     * @param resourceLoader used to load rerun files
-     * @param argv           the arguments
+     * @param argv the arguments
      */
+    public RuntimeOptions(List<String> argv) {
+        this(Env.INSTANCE, argv);
+    }
+
+    public RuntimeOptions(Env env, List<String> argv) {
+        this(new MultiLoader(RuntimeOptions.class.getClassLoader()), env, argv);
+    }
+
+    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
+        this(File.separatorChar, resourceLoader, env, argv);
+    }
+
     public RuntimeOptions(ResourceLoader resourceLoader, List<String> argv) {
         this(resourceLoader, Env.INSTANCE, argv);
     }
 
-    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
+    RuntimeOptions(char fileSeparatorChar, ResourceLoader resourceLoader, Env env, List<String> argv) {
+        this.fileSeparatorChar = fileSeparatorChar;
         this.resourceLoader = resourceLoader;
-        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
@@ -145,7 +161,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 }
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
-                parsedGlue.add(gluePath);
+                parsedGlue.add(parseGlue(gluePath));
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedTagExpressions.add(args.remove(0));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
@@ -173,7 +189,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             } else if (arg.startsWith("@")) {
                 processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, arg.substring(1));
             } else {
-                processPathWithLines(parsedLineFilters, parsedFeaturePaths, new PathWithLines(arg));
+                processPathWithLines(parsedLineFilters, parsedFeaturePaths, parsePathWithLines(arg));
             }
         }
         if (!parsedTagExpressions.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
@@ -203,6 +219,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         parsedPluginData.updateFormatters(formatters);
         parsedPluginData.updateStepDefinitionReporters(stepDefinitionReporters);
         parsedPluginData.updateSummaryPrinters(summaryPrinters);
+    }
+
+    private PathWithLines parsePathWithLines(String pathWithLines) {
+        return new PathWithLines(convertFileSeparatorToForwardSlash(pathWithLines));
     }
 
     private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
@@ -235,7 +255,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             if (!source.isEmpty()) {
                 Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
                 while (matcher.find()) {
-                    featurePaths.add(new PathWithLines(matcher.group(1)));
+                    featurePaths.add(parsePathWithLines(matcher.group(1)));
                 }
             }
         }
@@ -257,6 +277,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             }
         }
         return false;
+    }
+
+    private String parseGlue(String gluePath) {
+        return convertFileSeparatorToForwardSlash(gluePath);
     }
 
     private void printUsage() {
@@ -440,4 +464,9 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             }
         }
     }
+
+    private String convertFileSeparatorToForwardSlash(String path) {
+        return path.replace(fileSeparatorChar, '/');
+    }
+
 }

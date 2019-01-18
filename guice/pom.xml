@@ -11,6 +11,11 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Guice</name>
 
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
+        <guice.version>4.2.0</guice.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -19,6 +24,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -47,7 +53,4 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
-    </properties>
 </project>

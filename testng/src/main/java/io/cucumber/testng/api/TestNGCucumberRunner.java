@@ -9,7 +9,6 @@ import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.model.FeatureCompiler;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.plugin.PluginFactory;
@@ -82,12 +81,9 @@ public class TestNGCucumberRunner {
     public Object[][] provideScenarios() {
         try {
             List<Object[]> scenarios = new ArrayList<Object[]>();
-            FeatureCompiler compiler = new FeatureCompiler();
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {
-                List<PickleEvent> pickles = compiler.compileFeature(feature);
-
-                for (PickleEvent pickle : pickles) {
+                for (PickleEvent pickle : feature.getPickles()) {
                     if (filters.matchesFilters(pickle)) {
                         scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
                             new CucumberFeatureWrapperImpl(feature)});

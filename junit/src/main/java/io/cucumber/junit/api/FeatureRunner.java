@@ -6,7 +6,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.junit.api.PickleRunners.PickleRunner;
 import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.core.model.FeatureCompiler;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -19,7 +18,6 @@ import java.util.List;
 
 import static io.cucumber.junit.api.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.api.PickleRunners.withStepDescriptions;
-
 
 class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children = new ArrayList<>();
@@ -75,13 +73,7 @@ class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
-        Feature feature = cucumberFeature.getGherkinFeature().getFeature();
-        if (feature == null) {
-            return;
-        }
-        FeatureCompiler compiler = new FeatureCompiler();
-        List<PickleEvent> pickleEvents = compiler.compileFeature(cucumberFeature);
-        for (PickleEvent pickleEvent : pickleEvents) {
+        for (PickleEvent pickleEvent : cucumberFeature.getPickles()) {
             if (filters.matchesFilters(pickleEvent)) {
                 try {
                     if (jUnitOptions.stepNotifications()) {
@@ -90,7 +82,7 @@ class FeatureRunner extends ParentRunner<PickleRunner> {
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
+                        picklePickleRunner = withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {

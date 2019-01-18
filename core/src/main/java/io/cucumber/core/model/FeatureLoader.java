@@ -1,15 +1,16 @@
 package io.cucumber.core.model;
 
-import io.cucumber.core.io.MultiLoader;
+
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public final class FeatureLoader {
 
+    private static final String FEATURE_SUFFIX = ".feature";
     private final ResourceLoader resourceLoader;
 
     public FeatureLoader(ResourceLoader resourceLoader) {
@@ -29,44 +30,23 @@ public final class FeatureLoader {
     }
 
     public List<CucumberFeature> load(List<String> featurePaths) {
-        final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
-        final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
+        final FeatureBuilder builder = new FeatureBuilder();
         for (String featurePath : featurePaths) {
-            loadFromFileSystemOrClasspath(builder, resourceLoader, featurePath);
+            loadFromFeaturePath(builder, featurePath);
         }
-        cucumberFeatures.sort(new CucumberFeature.CucumberFeatureUriComparator());
-        return cucumberFeatures;
+        return builder.build();
     }
 
-    private static void loadFromFileSystemOrClasspath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath) {
-        try {
-            loadFromFeaturePath(builder, resourceLoader, featurePath, false);
-        } catch (IllegalArgumentException originalException) {
-            if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME) &&
-                originalException.getMessage().contains("Not a file or directory")) {
-                try {
-                    loadFromFeaturePath(builder, resourceLoader, MultiLoader.CLASSPATH_SCHEME + featurePath, true);
-                } catch (IllegalArgumentException secondException) {
-                    if (secondException.getMessage().contains("No resource found for")) {
-                        throw new IllegalArgumentException("Neither found on file system or on classpath: " +
-                            originalException.getMessage() + ", " + secondException.getMessage());
-                    } else {
-                        throw secondException;
-                    }
-                }
-            } else {
-                throw originalException;
-            }
+    private void loadFromFeaturePath(FeatureBuilder builder, String featurePath) {
+        Iterable<Resource> resources = resourceLoader.resources(featurePath, FEATURE_SUFFIX);
+
+        Iterator<Resource> iterator = resources.iterator();
+        if (featurePath.endsWith(FEATURE_SUFFIX) && !iterator.hasNext()) {
+            throw new IllegalArgumentException("Feature not found: " + featurePath);
+        }
+        while (iterator.hasNext()) {
+            builder.parse(iterator.next());
         }
     }
 
-    private static void loadFromFeaturePath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, boolean failOnNoResource) {
-        Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
-        if (failOnNoResource && !resources.iterator().hasNext()) {
-            throw new IllegalArgumentException("No resource found for: " + featurePath);
-        }
-        for (Resource resource : resources) {
-            builder.parse(resource);
-        }
-    }
 }

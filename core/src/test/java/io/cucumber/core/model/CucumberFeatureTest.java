@@ -56,32 +56,13 @@ public class CucumberFeatureTest {
     }
 
     @Test
-    public void loads_features_specified_in_rerun_file_from_classpath_when_not_in_file_system() throws Exception {
-        String featurePath = "path/bar.feature";
-        String feature = "" +
-            "Feature: bar\n" +
-            "  Scenario: scenario bar\n" +
-            "    * step\n";
-        ResourceLoader resourceLoader = mockFeatureFileResource("classpath:" + featurePath, feature);
-        mockFeaturePathToNotExist(resourceLoader, featurePath);
-
-        List<CucumberFeature> features = new FeatureLoader(resourceLoader).load(singletonList(featurePath), printStream);
-
-        assertEquals(1, features.size());
-        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
-        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
-    }
-
-    @Test
     public void gives_error_message_if_path_from_rerun_file_does_not_exist() {
         String featurePath = "path/bar.feature";
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         mockFeaturePathToNotExist(resourceLoader, featurePath);
         mockFeaturePathToNotExist(resourceLoader, "classpath:" + featurePath);
 
-        expectedException.expectMessage(
-            "Neither found on file system or on classpath: " +
-                "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature");
+        expectedException.expectMessage("Not a file or directory: path/bar.feature");
         new FeatureLoader(resourceLoader).load(singletonList(featurePath), printStream);
     }
 

@@ -11,6 +11,11 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: PicoContainer</name>
 
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.picocontainer</project.Automatic-Module-Name>
+        <picocontainer.version>2.15</picocontainer.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -23,6 +28,7 @@
         <dependency>
             <groupId>org.picocontainer</groupId>
             <artifactId>picocontainer</artifactId>
+            <version>${picocontainer.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -68,7 +74,4 @@
         </plugins>
     </build>
 
-    <properties>
-        <project.Automatic-Module-Name>io.cucumber.picocontainer</project.Automatic-Module-Name>
-    </properties>
 </project>

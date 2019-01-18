@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
     <version>4.2.3-SNAPSHOT</version>
@@ -38,47 +38,24 @@
 
 
     <properties>
+        <!--Dependencies -->
         <gherkin.version>5.1.0</gherkin.version>
-        <groovy.version>2.5.4</groovy.version>
-        <picocontainer.version>2.15</picocontainer.version>
-        <spring.version>4.3.20.RELEASE</spring.version>
-        <spring.data.version>1.11.16.RELEASE</spring.data.version>
-        <hibernate.version>5.3.6.Final</hibernate.version>
-        <hsqldb.version>2.4.1</hsqldb.version>
-        <guice.version>4.2.0</guice.version>
-        <jsoup.version>1.11.3</jsoup.version>
-        <testng.version>6.14.3</testng.version>
+        <cucumber-expressions.version>6.2.0</cucumber-expressions.version>
+        <datatable.version>1.1.12</datatable.version>
+        <tag-expressions.version>1.1.1</tag-expressions.version>
+        <cucumber-html.version>0.2.7</cucumber-html.version>
+
+        <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
         <junit-jupiter.version>5.3.1</junit-jupiter.version>
         <junit-platform.version>1.3.1</junit-platform.version>
         <hamcrest.version>1.3</hamcrest.version>
         <assertj.core.version>3.11.1</assertj.core.version>
         <mockito.version>2.21.0</mockito.version>
-        <selenium.version>3.14.0</selenium.version>
-        <htmlunit.version>2.32.1</htmlunit.version>
-        <webbit.version>0.4.15</webbit.version>
-        <webbit-rest.version>0.3.0</webbit-rest.version>
-        <weld-se.version>2.4.4.Final</weld-se.version>
-        <cdi-api.version>2.0</cdi-api.version>
-        <openejb-core.version>4.7.5</openejb-core.version>
-        <needle.version>2.2</needle.version>
-        <javaee-api.version>8.0</javaee-api.version>
-        <javax.inject.version>1</javax.inject.version>
-        <jaxb-api.version>2.3.0</jaxb-api.version>
+
+        <!--Maven plugins-->
+        <groovy.version>2.5.5</groovy.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <dbunit.version>2.5.4</dbunit.version>
-        <logback.version>1.2.3</logback.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <freemarker.version>2.3.28</freemarker.version>
-        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
-        <wicket.version>8.0.0</wicket.version>
-        <jetty.version>9.4.12.v20180830</jetty.version>
-        <xmlunit.version>1.6</xmlunit.version>
-        <tag-expressions.version>1.1.1</tag-expressions.version>
-        <typetools.version>0.5.0</typetools.version>
-        <cucumber-expressions.version>6.2.0</cucumber-expressions.version>
-        <datatable.version>1.1.7</datatable.version>
-        <project.Automatic-Module-Name></project.Automatic-Module-Name>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -113,6 +90,11 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>datatable</artifactId>
+                <version>${datatable.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>datatable-matchers</artifactId>
                 <version>${datatable.version}</version>
             </dependency>
             <dependency>
@@ -153,12 +135,7 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-html</artifactId>
-                <version>0.2.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.picocontainer</groupId>
-                <artifactId>picocontainer</artifactId>
-                <version>${picocontainer.version}</version>
+                <version>${cucumber-html.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -166,134 +143,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Spring stuff -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>${spring.data.version}</version>
-                <exclusions>
-                    <!-- Exclude the dependency on junit, which is older and clashes with our 4.12 junit dep -->
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit-dep</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dbunit</groupId>
-                <artifactId>dbunit</artifactId>
-                <version>${dbunit.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>${hsqldb.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>${freemarker.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${javax.servlet-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -325,16 +174,6 @@
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
-                <groupId>uk.co.datumedge</groupId>
-                <artifactId>hamcrest-json</artifactId>
-                <version>0.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>${testng.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.core.version}</version>
@@ -362,128 +201,8 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-remote-driver</artifactId>
-                <version>${selenium.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-server</artifactId>
-                <version>${selenium.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-java</artifactId>
-                <version>${selenium.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>htmlunit-driver</artifactId>
-                <version>${htmlunit.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
-            <dependency>
-                <groupId>org.webbitserver</groupId>
-                <artifactId>webbit</artifactId>
-                <version>${webbit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.webbitserver</groupId>
-                <artifactId>webbit-rest</artifactId>
-                <version>${webbit-rest.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se</artifactId>
-                <version>${weld-se.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>${cdi-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.openejb</groupId>
-                <artifactId>openejb-core</artifactId>
-                <version>${openejb-core.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
-            <dependency>
-                <groupId>de.akquinet.jbosscc</groupId>
-                <artifactId>jbosscc-needle</artifactId>
-                <version>${needle.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>${javaee-api.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${javax.inject.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket-core</artifactId>
-                <version>${wicket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlet</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xmlunit</groupId>
-                <artifactId>xmlunit</artifactId>
-                <version>${xmlunit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.jodah</groupId>
-                <artifactId>typetools</artifactId>
-                <version>${typetools.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -714,7 +433,7 @@
                                         <exclude>
                                             <!--The logging dependencies for Spring are provided. This causes them to
                                             be missing in the dependency hierarchy. A false positive. -->
-                                            <item>org\.springframework\.core\..*</item>
+                                            <item>org\.springframework\..*</item>
                                         </exclude>
                                     </packages>
                                 </filter>
@@ -722,24 +441,7 @@
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
-
             </plugins>
         </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
     </build>
 </project>

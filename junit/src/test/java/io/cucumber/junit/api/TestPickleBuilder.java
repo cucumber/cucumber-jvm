@@ -1,18 +1,18 @@
 package io.cucumber.junit.api;
 
-import io.cucumber.core.model.CucumberFeature;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
+import io.cucumber.core.model.FeatureParser;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
+import io.cucumber.core.io.Resource;
+import io.cucumber.core.model.CucumberFeature;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestPickleBuilder {
+class TestPickleBuilder {
 
     private TestPickleBuilder() {
     }
@@ -24,16 +24,23 @@ public class TestPickleBuilder {
         CucumberFeature feature = parseFeature(path, source);
         for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
-        };
+        }
+
         return pickleEvents;
     }
 
     static CucumberFeature parseFeature(final String path, final String source) {
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
+        return FeatureParser.parseResource(new Resource() {
+            @Override
+            public String getPath() {
+                return path;
+            }
 
-        GherkinDocument gherkinDocument = parser.parse(source, matcher);
-        return new CucumberFeature(gherkinDocument, path, source);
+            @Override
+            public InputStream getInputStream() {
+                return new ByteArrayInputStream(source.getBytes());
+            }
+
+        });
     }
-
 }

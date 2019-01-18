@@ -12,6 +12,7 @@ import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.filter.Filters;
@@ -22,7 +23,6 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.core.model.FeatureCompiler;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.options.RuntimeOptions;
 import gherkin.events.PickleEvent;
@@ -79,9 +79,8 @@ public final class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        final FeatureCompiler compiler = new FeatureCompiler();
         for (CucumberFeature feature : features) {
-            for (final PickleEvent pickleEvent : compiler.compileFeature(feature)) {
+            for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
                     executor.execute(new Runnable() {
                         @Override
@@ -182,7 +181,7 @@ public final class Runtime {
 
             final RuntimeOptions runtimeOptions = this.runtimeOptions != null
                 ? this.runtimeOptions
-                : new RuntimeOptions(resourceLoader, runtimeOptionsArgs);
+                : new RuntimeOptions(resourceLoader, Env.INSTANCE, runtimeOptionsArgs);
 
             final ClassFinder classFinder = this.classFinder != null
                 ? this.classFinder

@@ -11,16 +11,14 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
+import io.cucumber.core.model.FeatureParser;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.model.CucumberFeature;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
@@ -35,6 +33,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.AbstractMap.SimpleEntry;
@@ -425,12 +425,19 @@ public class TestHelper {
         }
     }
 
-    public static CucumberFeature feature(final String path, final String source) {
-        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
+    public static CucumberFeature feature(final String uri, final String source) {
+        return FeatureParser.parseResource(new Resource() {
+            @Override
+            public String getPath() {
+                return uri;
+            }
 
-        GherkinDocument gherkinDocument = parser.parse(source, matcher);
-        return new CucumberFeature(gherkinDocument, path, source);
+            @Override
+            public InputStream getInputStream() {
+                return new ByteArrayInputStream(source.getBytes());
+            }
+
+        });
     }
 
     public static Result result(String status) {

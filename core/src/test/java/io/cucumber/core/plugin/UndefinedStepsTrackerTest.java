@@ -90,7 +90,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     private void sendTestSourceRead(EventBus bus, CucumberFeature feature) {
-        bus.send(new TestSourceRead(bus.getTime(), feature.getUri(), feature.getGherkinSource()));
+        bus.send(new TestSourceRead(bus.getTime(), feature.getUri(), feature.getSource()));
     }
 
     @Test

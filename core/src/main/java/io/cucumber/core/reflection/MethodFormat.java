@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public final class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
-    private static final String PACKAGE_PATTERN = "[^,]*\\.";
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("[^,]*\\.");
     private final MessageFormat format;
 
     public static final MethodFormat SHORT = new MethodFormat("%c.%m(%a)");
@@ -60,9 +60,9 @@ public final class MethodFormat {
             String m = matcher.group(4);
             String qa = matcher.group(5);
             String qe = matcher.group(6);
-            String c = qc.replaceAll(PACKAGE_PATTERN, "");
-            String a = qa.replaceAll(PACKAGE_PATTERN, "");
-            String e = qe.replaceAll(PACKAGE_PATTERN, "");
+            String c = removePackage(qc);
+            String a = removePackage(qa);
+            String e = removePackage(qe);
             String s = getCodeSource(method);
 
             return format.format(new Object[]{
@@ -80,6 +80,10 @@ public final class MethodFormat {
         } else {
             throw new CucumberException("Cucumber bug: Couldn't format " + signature);
         }
+    }
+
+    private static String removePackage(String qc) {
+        return PACKAGE_PATTERN.matcher(qc).replaceAll("");
     }
 
     private String getCodeSource(Method method) {

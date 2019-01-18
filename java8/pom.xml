@@ -13,6 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.java8</project.Automatic-Module-Name>
+        <typetools.version>0.5.0</typetools.version>
     </properties>
 
     <dependencies>
@@ -23,6 +24,7 @@
         <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>typetools</artifactId>
+            <version>${typetools.version}</version>
         </dependency>
 
         <dependency>
