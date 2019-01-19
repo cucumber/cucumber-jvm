@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -17,7 +18,7 @@ public class FeatureBuilderTest {
     @Test
     public void ignores_duplicate_features() throws IOException {
         FeatureBuilder builder = new FeatureBuilder();
-        String featurePath = "foo.feature";
+        URI featurePath = URI.create("foo.feature");
         Resource resource1 = createResourceMock(featurePath);
         Resource resource2 = createResourceMock(featurePath);
 
@@ -31,7 +32,7 @@ public class FeatureBuilderTest {
 
     @Test
     public void works_when_path_and_uri_are_the_same() throws IOException {
-        String featurePath = "path/foo.feature";
+        URI featurePath = URI.create("path/foo.feature");
         Resource resource = createResourceMock(featurePath);
         FeatureBuilder builder = new FeatureBuilder();
 
@@ -43,7 +44,7 @@ public class FeatureBuilderTest {
         assertEquals(featurePath, features.get(0).getUri());
     }
 
-    private Resource createResourceMock(String featurePath) throws IOException {
+    private Resource createResourceMock(URI featurePath) throws IOException {
         Resource resource = mock(Resource.class);
         when(resource.getPath()).thenReturn(featurePath);
         ByteArrayInputStream feature = new ByteArrayInputStream("Feature: foo".getBytes(UTF_8));

@@ -67,7 +67,7 @@ public class HTMLFormatterTest {
         writeReport();
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertJsFunctionCallSequence(asList("" +
-                "formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");\n",
+                "formatter.uri(\"file:some/path/some.feature\");\n",
                 "formatter.feature({\n" +
                 "  \"name\": \"\",\n" +
                 "  \"description\": \"\",\n" +
@@ -103,7 +103,7 @@ public class HTMLFormatterTest {
     public void includes_uri() throws Throwable {
         writeReport();
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
-        assertContains("formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");", reportJs);
+        assertContains("formatter.uri(\"file:some/path/some.feature\");", reportJs);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class HTMLFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
-                "formatter.uri(\"path/test.feature\");\n", "" +
+                "formatter.uri(\"file:path/test.feature\");\n", "" +
                 "formatter.feature({\n" +
                 "  \"description\": \"\",\n" +
                 "  \"name\": \"feature name\",\n" +
@@ -273,7 +273,7 @@ public class HTMLFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         assertJsFunctionCallSequence(asList("" +
-                "formatter.uri(\"path/test.feature\");\n", "" +
+                "formatter.uri(\"file:path/test.feature\");\n", "" +
                 "formatter.feature({\n" +
                 "  \"description\": \"\",\n" +
                 "  \"name\": \"feature name\",\n" +
@@ -728,7 +728,7 @@ public class HTMLFormatterTest {
 
     private void runFeaturesWithFormatter(URL outputDir) throws Throwable {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
-        CucumberFeature feature = feature("some\\windows\\path\\some.feature", "" +
+        CucumberFeature feature = feature("some/path/some.feature", "" +
                 "Feature:\n" +
                 "  Scenario: some cukes\n" +
                 "    Given first step\n");

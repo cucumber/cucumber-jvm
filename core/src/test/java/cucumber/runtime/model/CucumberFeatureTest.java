@@ -6,8 +6,10 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -16,21 +18,29 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CucumberFeatureTest {
+
+    private static final String DOES_NOT_EXIST = "does/not/exist";
+
     @Test
     public void succeeds_if_no_features_are_found() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
+        mockNonExistingResource(resourceLoader);
 
-        new FeatureLoader(resourceLoader).load(singletonList("does/not/exist"), new PrintStream(new ByteArrayOutputStream()));
+        PrintStream baos = new PrintStream(new ByteArrayOutputStream());
+        new FeatureLoader(resourceLoader).load(feature("does/not/exist"), baos);
+    }
+
+    private void mockNonExistingResource(ResourceLoader resourceLoader) {
+        when(resourceLoader.resources(URI.create(DOES_NOT_EXIST), ".feature")).thenReturn(Collections.<Resource>emptyList());
     }
 
     @Test
     public void logs_message_if_no_features_are_found() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
+        mockNonExistingResource(resourceLoader);
 
-        new FeatureLoader(resourceLoader).load(singletonList("does/not/exist"), new PrintStream(baos));
+        new FeatureLoader(resourceLoader).load(feature("does/not/exist"), new PrintStream(baos));
 
         assertEquals(String.format("No features found at [does/not/exist]%n"), baos.toString());
     }
@@ -40,7 +50,7 @@ public class CucumberFeatureTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
 
-        new FeatureLoader(resourceLoader).load(Collections.<String>emptyList(), new PrintStream(baos));
+        new FeatureLoader(resourceLoader).load(Collections.<URI>emptyList(), new PrintStream(baos));
 
         assertEquals(String.format("Got no path to feature directory or feature file%n"), baos.toString());
     }
@@ -50,18 +60,23 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         mockFeaturePathToNotExist(resourceLoader, "path/bar.feature");
         try {
-            new FeatureLoader(resourceLoader).load(singletonList("path/bar.feature"), new PrintStream(new ByteArrayOutputStream()));
+            new FeatureLoader(resourceLoader).load(feature("path/bar.feature"), new PrintStream(new ByteArrayOutputStream()));
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
             assertEquals("Not a file or directory: path/bar.feature", exception.getMessage());
         }
     }
+
+    public List<URI> feature(String s) {
+        return singletonList(URI.create(s));
+    }
+
     @Test
     public void gives_error_message_if_feature_on_class_path_does_not_exist() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         mockFeaturePathToNotExist(resourceLoader, "classpath:path/bar.feature");
         try {
-            new FeatureLoader(resourceLoader).load(singletonList("classpath:path/bar.feature"), new PrintStream(new ByteArrayOutputStream()));
+            new FeatureLoader(resourceLoader).load(feature("classpath:path/bar.feature"), new PrintStream(new ByteArrayOutputStream()));
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
             assertEquals("Feature not found: classpath:path/bar.feature", exception.getMessage());
@@ -70,9 +85,9 @@ public class CucumberFeatureTest {
 
     private void mockFeaturePathToNotExist(ResourceLoader resourceLoader, String featurePath) {
         if (featurePath.startsWith("classpath")) {
-            when(resourceLoader.resources(featurePath, ".feature")).thenReturn(new ArrayList<Resource>());
+            when(resourceLoader.resources(URI.create(featurePath), ".feature")).thenReturn(new ArrayList<Resource>());
         } else {
-            when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + featurePath));
+            when(resourceLoader.resources(URI.create(featurePath), ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + featurePath));
         }
     }
 

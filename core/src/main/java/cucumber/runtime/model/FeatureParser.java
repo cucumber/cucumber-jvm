@@ -13,6 +13,7 @@ import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,7 @@ public class FeatureParser {
 
     public static CucumberFeature parseResource(Resource resource) {
         requireNonNull(resource);
-        String path = resource.getPath();
+        URI path = resource.getPath();
         String source = read(resource);
 
         try {
@@ -55,7 +56,7 @@ public class FeatureParser {
         }
         List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : new Compiler().compile(gherkinDocument)) {
-            pickleEvents.add(new PickleEvent(resource.getPath(), pickle));
+            pickleEvents.add(new PickleEvent(resource.getPath().toString(), pickle));
         }
         return pickleEvents;
     }
