@@ -4,6 +4,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 
 import java.io.PrintStream;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public final class FeatureLoader {
         this.resourceLoader = resourceLoader;
     }
 
-    public List<CucumberFeature> load(List<String> featurePaths, PrintStream out) {
+    public List<CucumberFeature> load(List<URI> featurePaths, PrintStream out) {
         final List<CucumberFeature> cucumberFeatures = load(featurePaths);
         if (cucumberFeatures.isEmpty()) {
             if (featurePaths.isEmpty()) {
@@ -28,19 +29,19 @@ public final class FeatureLoader {
         return cucumberFeatures;
     }
 
-    public List<CucumberFeature> load(List<String> featurePaths) {
+    public List<CucumberFeature> load(List<URI> featurePaths) {
         final FeatureBuilder builder = new FeatureBuilder();
-        for (String featurePath : featurePaths) {
+        for (URI featurePath : featurePaths) {
             loadFromFeaturePath(builder, featurePath);
         }
         return builder.build();
     }
 
-    private void loadFromFeaturePath(FeatureBuilder builder, String featurePath) {
+    private void loadFromFeaturePath(FeatureBuilder builder, URI featurePath) {
         Iterable<Resource> resources = resourceLoader.resources(featurePath, FEATURE_SUFFIX);
 
         Iterator<Resource> iterator = resources.iterator();
-        if (featurePath.endsWith(FEATURE_SUFFIX) && !iterator.hasNext()) {
+        if (featurePath.getSchemeSpecificPart().endsWith(FEATURE_SUFFIX) && !iterator.hasNext()) {
             throw new IllegalArgumentException("Feature not found: " + featurePath);
         }
         while (iterator.hasNext()) {

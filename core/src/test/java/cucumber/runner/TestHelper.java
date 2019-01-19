@@ -23,6 +23,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.model.FeatureIdentifier;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.stepexpression.TypeRegistry;
 import junit.framework.AssertionFailedError;
@@ -34,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -407,9 +409,13 @@ public class TestHelper {
     }
 
     public static CucumberFeature feature(final String uri, final String source) {
+        return feature(FeatureIdentifier.parse(uri), source);
+    }
+
+    public static CucumberFeature feature(final URI uri, final String source) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public String getPath() {
+            public URI getPath() {
                 return uri;
             }
 

@@ -1,16 +1,14 @@
 package cucumber.runtime.io;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import java.util.Iterator;
-
-import static cucumber.runtime.io.Helpers.filePath;
 
 /**
  * Factory which creates {@link FileResourceIterator}s.
  * <p/>
  * <p>{@link FileResourceIterator}s should be created for any cases where a
- * URL's protocol isn't otherwise handled. Thus, {@link #isFactoryFor(URL)}
+ * URL's protocol isn't otherwise handled. Thus, {@link #isFactoryFor(URI)}
  * will always return <code>true</code>. Because of this behavior, the
  * <code>FileResourceIteratorFactory</code> should never be registered as a
  * service implementation for {@link ResourceIteratorFactory} as it could
@@ -19,13 +17,15 @@ import static cucumber.runtime.io.Helpers.filePath;
 class FileResourceIteratorFactory implements ResourceIteratorFactory {
 
     @Override
-    public boolean isFactoryFor(URL url) {
+    public boolean isFactoryFor(URI url) {
         return true;
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
-        File file = new File(filePath(url));
+    public Iterator<Resource> createIterator(URI url, String path, String suffix) {
+
+
+        File file = new File(url);
         File rootDir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - path.length()));
         return FileResourceIterator.createClasspathFileResourceIterator(rootDir, file, suffix);
     }

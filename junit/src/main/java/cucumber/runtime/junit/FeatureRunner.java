@@ -13,6 +13,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
 
     private static final class FeatureId implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String uri;
+        private final URI uri;
 
         FeatureId(CucumberFeature feature) {
             this.uri = feature.getUri();
@@ -116,7 +117,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
 
         @Override
         public String toString() {
-            return uri;
+            return uri.toString();
         }
     }
 

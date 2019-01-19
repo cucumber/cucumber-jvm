@@ -2,6 +2,7 @@ package cucumber.runtime.io;
 
 import cucumber.runtime.ClassFinder;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -22,8 +23,7 @@ public class ResourceLoaderClassFinder implements ClassFinder {
     public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packageName) {
         Collection<Class<? extends T>> result = new HashSet<>();
         for (Resource classResource : resourceLoader.resources(packagePath(packageName), CLASS_SUFFIX)) {
-            String className = getClassName(classResource.getPath());
-
+            String className = getClassName(classResource.getPath().getSchemeSpecificPart());
             try {
                 Class<?> clazz = loadClass(className);
                 if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
@@ -35,11 +35,14 @@ public class ResourceLoaderClassFinder implements ClassFinder {
         return result;
     }
 
-    private String packagePath(String packageName) {
-        return CLASSPATH_PREFIX + packageName.replace(DOT, PACKAGE_PATH_SEPARATOR);
+    private URI packagePath(String packageName) {
+        return URI.create(CLASSPATH_PREFIX + packageName.replace(DOT, PACKAGE_PATH_SEPARATOR));
     }
 
     private String getClassName(String path) {
+        if (path.charAt(0) == PACKAGE_PATH_SEPARATOR) {
+            path = path.substring(1);
+        }
         return path.substring(0, path.length() - CLASS_SUFFIX.length()).replace(PACKAGE_PATH_SEPARATOR, DOT);
     }
 

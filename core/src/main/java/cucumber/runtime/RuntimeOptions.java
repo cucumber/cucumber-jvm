@@ -5,8 +5,7 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.model.PathWithLines;
-import cucumber.util.Encoding;
+import io.cucumber.core.model.FeatureWithLines;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
@@ -22,12 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,8 +59,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<String> glue = new ArrayList<String>();
     private final List<String> tagFilters = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
-    private final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
-    private final List<String> featurePaths = new ArrayList<String>();
+    private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
+    private final List<URI> featurePaths = new ArrayList<>();
 
     private final List<String> junitOptions = new ArrayList<String>();
     private final ResourceLoader resourceLoader;
@@ -137,8 +138,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private void parse(List<String> args) {
         List<String> parsedTagFilters = new ArrayList<String>();
         List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
-        Map<String, List<Long>> parsedLineFilters = new HashMap<String, List<Long>>();
-        List<String> parsedFeaturePaths = new ArrayList<String>();
+        Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
+        List<URI> parsedFeaturePaths = new ArrayList<>();
         List<String> parsedGlue = new ArrayList<String>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
@@ -188,29 +189,21 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
-            } else {
-                List<PathWithLines> paths;
-                if (arg.startsWith("@")) {
-                    paths = loadRerunFile(arg.substring(1));
-                } else {
-                    paths = parsePathWithLines(arg);
-                }
-                for (PathWithLines pathWithLines : paths) {
-                    parsedFeaturePaths.add(pathWithLines.path);
-                    if (!pathWithLines.lines.isEmpty()) {
-                        String key = pathWithLines.path.replace("classpath:", "");
-                        addLineFilters(parsedLineFilters, key, pathWithLines.lines);
-                    }
-                }
+            } else if (arg.startsWith("@")) {
+                FeatureWithLines featureWithLines = parseFeatureWithLines(arg.substring(1));
+                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, featureWithLines.uri());
+            } else if (!arg.isEmpty()){
+                FeatureWithLines featureWithLines = parseFeatureWithLines(arg);
+                processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
             }
         }
-        if (!parsedTagFilters.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
+        if (!parsedTagFilters.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty()) {
             tagFilters.clear();
             tagFilters.addAll(parsedTagFilters);
             nameFilters.clear();
             nameFilters.addAll(parsedNameFilters);
             lineFilters.clear();
-            for (String path : parsedLineFilters.keySet()) {
+            for (URI path : parsedLineFilters.keySet()) {
                 lineFilters.put(path, parsedLineFilters.get(path));
             }
         }
@@ -233,47 +226,50 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
     }
 
-    private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
+    private FeatureWithLines parseFeatureWithLines(String pathWithLines) {
+        return FeatureWithLines.parse(pathWithLines);
+    }
+
+    private void addLineFilters(Map<URI, Set<Integer>> parsedLineFilters, URI key, Set<Integer> lines) {
+        if(lines.isEmpty()){
+            return;
+        }
         if (parsedLineFilters.containsKey(key)) {
             parsedLineFilters.get(key).addAll(lines);
         } else {
-            parsedLineFilters.put(key, lines);
+            parsedLineFilters.put(key, new TreeSet<>(lines));
         }
     }
 
-    private boolean haveLineFilters(List<String> parsedFeaturePaths) {
-        for (String pathName : parsedFeaturePaths) {
-            if (PathWithLines.hasLineFilters(pathName)) {
-                return true;
-            }
-        }
-        return false;
+    private void processFeatureWithLines(Map<URI, Set<Integer>> parsedLineFilters, List<URI> parsedFeaturePaths, FeatureWithLines featureWithLines) {
+        parsedFeaturePaths.add(featureWithLines.uri());
+        addLineFilters(parsedLineFilters, featureWithLines.uri(), featureWithLines.lines());
     }
 
-    private List<PathWithLines> loadRerunFile(String rerunPath) {
-        List<PathWithLines> featurePaths = new ArrayList<>();
+    private void processPathWitheLinesFromRerunFile(Map<URI, Set<Integer>> parsedLineFilters, List<URI> parsedFeaturePaths, URI rerunPath) {
+        for (FeatureWithLines featureWithLines : loadRerunFile(rerunPath)) {
+            processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
+        }
+    }
+
+    private List<FeatureWithLines> loadRerunFile(URI rerunPath) {
+        List<FeatureWithLines> featurePaths = new ArrayList<>();
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
         for (Resource resource : resources) {
             String source = read(resource);
             if (!source.isEmpty()) {
                 Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
                 while (matcher.find()) {
-                    featurePaths.addAll(parsePathWithLines(matcher.group(1)));
+                    featurePaths.add(parseFeatureWithLines(matcher.group(1)));
                 }
             }
         }
         return featurePaths;
     }
 
-    private List<PathWithLines> parsePathWithLines(String pathWithLineFilter) {
-        String normalizedPath = convertFileSeparatorToForwardSlash(pathWithLineFilter);
-        PathWithLines pathWithLines = new PathWithLines(normalizedPath);
-        return Collections.singletonList(pathWithLines);
-    }
-
     private static String read(Resource resource) {
         try {
-            return Encoding.readFile(resource);
+            return FixJava.readReader(new InputStreamReader(resource.getInputStream()));
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }
@@ -380,7 +376,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
-    public List<String> getFeaturePaths() {
+    public List<URI> getFeaturePaths() {
         return featurePaths;
     }
 
@@ -395,7 +391,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
-    public Map<String, List<Long>> getLineFilters() {
+    public Map<URI, Set<Integer>> getLineFilters() {
         return lineFilters;
     }
 

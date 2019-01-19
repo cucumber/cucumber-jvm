@@ -344,7 +344,7 @@
         "type": "scenario"
       }
     ],
-    "uri": "cucumber/runtime/formatter/JSONPrettyFormatterTest.feature",
+    "uri": "classpath:cucumber/runtime/formatter/JSONPrettyFormatterTest.feature",
     "tags": []
   }
 ]

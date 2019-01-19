@@ -1,5 +1,7 @@
 package cucumber.runtime.io;
 
+import java.net.URI;
+
 public interface ResourceLoader {
-    Iterable<Resource> resources(String path, String suffix);
+    Iterable<Resource> resources(URI path, String suffix);
 }
