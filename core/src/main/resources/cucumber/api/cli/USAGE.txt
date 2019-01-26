@@ -1,4 +1,4 @@
-Usage: java cucumber.api.cli.Main [options] [[[FILE|DIR][:LINE[:LINE]*] ]+ | @FILE ]
+Usage: java cucumber.api.cli.Main [options] [[[URI|FILE|DIR][:LINE[:LINE]*] ]+ | @[URI|FILE] ]
 
 Options:
 
@@ -41,6 +41,8 @@ Feature path examples:
                                          from the file system.
   classpath:<path>/<name>.feature        Load the feature file <path>/<name>.feature
                                          from the classpath.
+  file:<path>/<name>.feature             Load the feature file <path>/<name>.feature
+                                         from the file system.
   <path>/<name>.feature:3:9              Load the scenarios on line 3 and line 9 in
                                          the file <path>/<name>.feature.
   @<path>/<file>                         Parse <path>/<file> for feature paths generated
