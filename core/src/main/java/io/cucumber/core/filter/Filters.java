@@ -2,7 +2,9 @@ package io.cucumber.core.filter;
 
 import gherkin.events.PickleEvent;
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -21,7 +23,7 @@ public final class Filters {
         if (!nameFilters.isEmpty()) {
             this.filters.add(new NamePredicate(nameFilters));
         }
-        Map<String, List<Long>> lineFilters = options.getLineFilters();
+        Map<URI, ? extends Collection<Integer>> lineFilters = options.getLineFilters();
         if (!lineFilters.isEmpty()) {
             this.filters.add(new LinePredicate(lineFilters));
         }

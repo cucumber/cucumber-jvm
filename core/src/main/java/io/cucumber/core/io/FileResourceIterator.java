@@ -14,8 +14,8 @@ final class FileResourceIterator implements Iterator<Resource> {
         return new FileResourceIterator(root, file, suffix, false);
     }
 
-    static FileResourceIterator createClasspathFileResourceIterator(File root, File file, final String suffix) {
-        return new FileResourceIterator(root, file, suffix, true);
+    static FileResourceIterator createClasspathFileResourceIterator(File classpathRoot, File file, final String suffix) {
+        return new FileResourceIterator(classpathRoot, file, suffix, true);
     }
 
     private FileResourceIterator(File root, File file, final String suffix, boolean classpathFileResourceIterator) {

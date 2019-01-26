@@ -9,6 +9,7 @@ import io.cucumber.core.model.CucumberFeature;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,16 +24,20 @@ class TestPickleBuilder {
 
         CucumberFeature feature = parseFeature(path, source);
         for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
+            pickleEvents.add(new PickleEvent(feature.getUri().toString(), pickle));
         }
 
         return pickleEvents;
     }
 
     static CucumberFeature parseFeature(final String path, final String source) {
+        return parseFeature(URI.create(path), source);
+    }
+
+    static CucumberFeature parseFeature(final URI path, final String source) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public String getPath() {
+            public URI getPath() {
                 return path;
             }
 

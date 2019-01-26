@@ -3,23 +3,24 @@ package io.cucumber.core.filter;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 
-import java.util.List;
+import java.net.URI;
+import java.util.Collection;
 import java.util.Map;
 
-final class LinePredicate implements PicklePredicate {
-    private Map<String, List<Long>> lineFilters;
+class LinePredicate implements PicklePredicate {
+    private Map<URI, ? extends Collection<Integer>> lineFilters;
 
-    LinePredicate(Map<String, List<Long>> lineFilters) {
+    LinePredicate(Map<URI, ? extends Collection<Integer>> lineFilters) {
         this.lineFilters = lineFilters;
     }
 
     @Override
     public boolean apply(PickleEvent pickleEvent) {
-        String picklePath = pickleEvent.uri;
+        URI picklePath = URI.create(pickleEvent.uri);
         if (!lineFilters.containsKey(picklePath)) {
             return true;
         }
-        for (Long line : lineFilters.get(picklePath)) {
+        for (Integer line : lineFilters.get(picklePath)) {
             for (PickleLocation location : pickleEvent.pickle.getLocations()) {
                 if (line == location.getLine()) {
                     return true;

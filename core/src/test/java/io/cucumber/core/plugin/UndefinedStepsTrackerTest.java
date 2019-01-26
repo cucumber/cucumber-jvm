@@ -52,7 +52,7 @@ public class UndefinedStepsTrackerTest {
                 "    Given A\n" +
                 "    Then B\n");
         sendTestSourceRead(bus, feature);
-        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(4)), asList("**KEYWORD** ^B$"));
+        tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(4)), asList("**KEYWORD** ^B$"));
         assertEquals("[Then ^B$]", tracker.getSnippets().toString());
     }
 
@@ -68,7 +68,7 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    But C\n");
         sendTestSourceRead(bus, feature);
-        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
+        tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -85,12 +85,12 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    But C\n");
         sendTestSourceRead(bus, feature);
-        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
+        tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
     private void sendTestSourceRead(EventBus bus, CucumberFeature feature) {
-        bus.send(new TestSourceRead(bus.getTime(), feature.getUri(), feature.getSource()));
+        bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    * C\n");
         sendTestSourceRead(bus, feature);
-        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
+        tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -134,7 +134,7 @@ public class UndefinedStepsTrackerTest {
                 "  Сценарий: \n" +
                 "    * Б\n");
         sendTestSourceRead(bus, feature);
-        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(4)), asList("**KEYWORD** ^Б$"));
+        tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(4)), asList("**KEYWORD** ^Б$"));
         assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());
     }
 

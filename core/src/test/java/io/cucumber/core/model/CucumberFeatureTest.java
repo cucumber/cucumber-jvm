@@ -1,20 +1,15 @@
 package io.cucumber.core.model;
 
-import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -29,18 +24,16 @@ public class CucumberFeatureTest {
     @Test
     public void succeeds_if_no_features_are_found() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.emptyList());
-
-        new FeatureLoader(resourceLoader).load(singletonList("does/not/exist"), printStream);
+        when(resourceLoader.resources(URI.create("does/not/exist"), ".feature")).thenReturn(Collections.emptyList());
+        new FeatureLoader(resourceLoader).load(singletonList(URI.create("does/not/exist")), printStream);
     }
 
     @Test
     public void logs_message_if_no_features_are_found() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.emptyList());
-
-        new FeatureLoader(resourceLoader).load(singletonList("does/not/exist"), new PrintStream(baos));
+        when(resourceLoader.resources(URI.create("does/not/exist"), ".feature")).thenReturn(Collections.emptyList());
+        new FeatureLoader(resourceLoader).load(singletonList(URI.create("does/not/exist")), new PrintStream(baos));
 
         assertEquals(String.format("No features found at [does/not/exist]%n"), baos.toString());
     }
@@ -54,43 +47,4 @@ public class CucumberFeatureTest {
 
         assertEquals(String.format("Got no path to feature directory or feature file%n"), baos.toString());
     }
-
-    @Test
-    public void gives_error_message_if_path_from_rerun_file_does_not_exist() {
-        String featurePath = "path/bar.feature";
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        mockFeaturePathToNotExist(resourceLoader, featurePath);
-        mockFeaturePathToNotExist(resourceLoader, "classpath:" + featurePath);
-
-        expectedException.expectMessage("Not a file or directory: path/bar.feature");
-        new FeatureLoader(resourceLoader).load(singletonList(featurePath), printStream);
-    }
-
-
-    private ResourceLoader mockFeatureFileResource(String featurePath, String feature) throws IOException {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        mockFeatureFileResource(resourceLoader, featurePath, feature);
-        return resourceLoader;
-    }
-
-    private void mockFeatureFileResource(ResourceLoader resourceLoader, String featurePath, String feature)
-        throws IOException {
-        mockFileResource(resourceLoader, featurePath, feature);
-    }
-
-    private void mockFileResource(ResourceLoader resourceLoader, String path, String contents) throws IOException {
-        Resource resource = mock(Resource.class);
-        when(resource.getPath()).thenReturn(path);
-        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(contents.getBytes(UTF_8)));
-        when(resourceLoader.resources(path, ".feature")).thenReturn(singletonList(resource));
-    }
-
-    private void mockFeaturePathToNotExist(ResourceLoader resourceLoader, String featurePath) {
-        if (featurePath.startsWith("classpath")) {
-            when(resourceLoader.resources(featurePath, ".feature")).thenReturn(new ArrayList<>());
-        } else {
-            when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + featurePath));
-        }
-    }
-
 }

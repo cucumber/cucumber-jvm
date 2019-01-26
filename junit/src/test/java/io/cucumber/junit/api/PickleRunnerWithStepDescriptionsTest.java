@@ -39,7 +39,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         Compiler compiler = new Compiler();
         List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
+            pickleEvents.add(new PickleEvent(features.getUri().toString(), pickle));
         };
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(

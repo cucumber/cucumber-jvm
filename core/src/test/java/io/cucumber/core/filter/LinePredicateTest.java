@@ -7,6 +7,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class LinePredicateTest {
         // results in only line predicates only for another_path/file.feature,
         // but all pickles from path/file.feature shall also be executed.
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4)));
-        LinePredicate predicate = new LinePredicate(singletonMap("another_path/file.feature", asList(8L)));
+        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("another_path/file.feature"), asList(8)));
 
         assertTrue(predicate.apply(pickleEvent));
     }
@@ -35,7 +36,7 @@ public class LinePredicateTest {
     @Test
     public void matches_pickles_for_any_line_in_predicate() {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(8)));
-        LinePredicate predicate = new LinePredicate(singletonMap("path/file.feature", asList(4L, 8L)));
+        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(4, 8)));
 
         assertTrue(predicate.apply(pickleEvent));
     }
@@ -43,7 +44,7 @@ public class LinePredicateTest {
     @Test
     public void matches_pickles_on_any_location_of_the_pickle() {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4), pickleLocation(8)));
-        LinePredicate predicate = new LinePredicate(singletonMap("path/file.feature", asList(8L)));
+        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(8)));
 
         assertTrue(predicate.apply(pickleEvent));
     }
@@ -51,7 +52,7 @@ public class LinePredicateTest {
     @Test
     public void does_not_matches_pickles_not_on_any_line_of_the_predicate() {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4), pickleLocation(8)));
-        LinePredicate predicate = new LinePredicate(singletonMap("path/file.feature", asList(10L)));
+        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(10)));
 
         assertFalse(predicate.apply(pickleEvent));
     }

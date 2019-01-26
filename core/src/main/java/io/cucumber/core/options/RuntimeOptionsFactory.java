@@ -103,7 +103,7 @@ public final class RuntimeOptionsFactory {
 
     private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(List<String> args, Class clazz) {
         if (!featuresSpecified) {
-            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
+            args.add(MultiLoader.CLASSPATH_SCHEME_PREFIX + packagePath(clazz));
         }
     }
 
@@ -133,7 +133,7 @@ public final class RuntimeOptionsFactory {
     private void addDefaultGlueIfNoOverridingGlueIsSpecified(List<String> args, Class clazz) {
         if (!overridingGlueSpecified) {
             args.add("--glue");
-            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
+            args.add(MultiLoader.CLASSPATH_SCHEME_PREFIX + packagePath(clazz));
         }
     }
 

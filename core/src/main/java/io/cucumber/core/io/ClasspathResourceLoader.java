@@ -1,5 +1,7 @@
 package io.cucumber.core.io;
 
+import java.net.URI;
+
 final class ClasspathResourceLoader implements ResourceLoader {
     private final ClassLoader classLoader;
 
@@ -8,7 +10,7 @@ final class ClasspathResourceLoader implements ResourceLoader {
     }
 
     @Override
-    public Iterable<Resource> resources(String path, String suffix) {
+    public Iterable<Resource> resources(URI path, String suffix) {
         return new ClasspathResourceIterable(classLoader, path, suffix);
     }
 }

@@ -1,7 +1,9 @@
 package io.cucumber.core.filter;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public interface Options {
@@ -9,5 +11,5 @@ public interface Options {
 
     List<Pattern> getNameFilters();
 
-    Map<String, List<Long>> getLineFilters();
+    Map<URI, Set<Integer>> getLineFilters();
 }

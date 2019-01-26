@@ -8,7 +8,8 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.model.PathWithLines;
+import io.cucumber.core.model.FeatureWithLines;
+import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import io.cucumber.datatable.DataTable;
@@ -17,12 +18,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,12 +54,11 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             return keyword.replaceAll("[\\s',!]", "");
         }
     };
-
     private final List<String> glue = new ArrayList<String>();
-    private final List<Pattern> nameFilters = new ArrayList<Pattern>();
     private final List<String> tagExpressions = new ArrayList<String>();
-    private final Map<String, List<Long>> lineFilters = new HashMap<String, List<Long>>();
-    private final List<String> featurePaths = new ArrayList<String>();
+    private final List<Pattern> nameFilters = new ArrayList<Pattern>();
+    private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
+    private final List<URI> featurePaths = new ArrayList<>();
 
     private final List<String> junitOptions = new ArrayList<String>();
     private final ResourceLoader resourceLoader;
@@ -73,6 +75,17 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<Plugin> summaryPrinters = new ArrayList<>();
 
     /**
+     * Create a new instance from a string of options, for example:
+     * <p/>
+     * <pre<{@code "--name 'the fox' --plugin pretty --strict"}</pre>
+     *
+     * @param argv the arguments
+     */
+    public RuntimeOptions(String argv) {
+        this(ShellWords.parse(argv));
+    }
+
+    /**
      * Create a new instance from a list of options, for example:
      * <p/>
      * <pre<{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
@@ -87,12 +100,11 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         this(new MultiLoader(RuntimeOptions.class.getClassLoader()), env, argv);
     }
 
-    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
-        this(File.separatorChar, resourceLoader, env, argv);
-    }
-
     public RuntimeOptions(ResourceLoader resourceLoader, List<String> argv) {
         this(resourceLoader, Env.INSTANCE, argv);
+    }
+    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
+        this(File.separatorChar, resourceLoader, env, argv);
     }
 
     RuntimeOptions(char fileSeparatorChar, ResourceLoader resourceLoader, Env env, List<String> argv) {
@@ -135,8 +147,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private void parse(List<String> args) {
         List<String> parsedTagExpressions = new ArrayList<String>();
         List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
-        Map<String, List<Long>> parsedLineFilters = new HashMap<String, List<Long>>();
-        List<String> parsedFeaturePaths = new ArrayList<String>();
+        Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
+        List<URI> parsedFeaturePaths = new ArrayList<>();
         List<String> parsedGlue = new ArrayList<String>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
@@ -187,18 +199,20 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
-                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, arg.substring(1));
-            } else {
-                processPathWithLines(parsedLineFilters, parsedFeaturePaths, parsePathWithLines(arg));
+                FeatureWithLines featureWithLines = parseFeatureWithLines(arg.substring(1));
+                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, featureWithLines.uri());
+            } else if (!arg.isEmpty()){
+                FeatureWithLines featureWithLines = parseFeatureWithLines(arg);
+                processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
             }
         }
-        if (!parsedTagExpressions.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
+        if (!parsedTagExpressions.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty()) {
             tagExpressions.clear();
             tagExpressions.addAll(parsedTagExpressions);
             nameFilters.clear();
             nameFilters.addAll(parsedNameFilters);
             lineFilters.clear();
-            for (String path : parsedLineFilters.keySet()) {
+            for (URI path : parsedLineFilters.keySet()) {
                 lineFilters.put(path, parsedLineFilters.get(path));
             }
         }
@@ -221,41 +235,41 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         parsedPluginData.updateSummaryPrinters(summaryPrinters);
     }
 
-    private PathWithLines parsePathWithLines(String pathWithLines) {
-        return new PathWithLines(convertFileSeparatorToForwardSlash(pathWithLines));
+    private FeatureWithLines parseFeatureWithLines(String pathWithLines) {
+        return FeatureWithLines.parse(pathWithLines);
     }
 
-    private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
+    private void addLineFilters(Map<URI, Set<Integer>> parsedLineFilters, URI key, Set<Integer> lines) {
+        if(lines.isEmpty()){
+            return;
+        }
         if (parsedLineFilters.containsKey(key)) {
             parsedLineFilters.get(key).addAll(lines);
         } else {
-            parsedLineFilters.put(key, lines);
+            parsedLineFilters.put(key, new TreeSet<>(lines));
         }
     }
 
-    private void processPathWithLines(Map<String, List<Long>> parsedLineFilters, List<String> parsedFeaturePaths, PathWithLines pathWithLines) {
-        parsedFeaturePaths.add(pathWithLines.path);
-        if (!pathWithLines.lines.isEmpty()) {
-            String key = pathWithLines.path.replace("classpath:", "");
-            addLineFilters(parsedLineFilters, key, pathWithLines.lines);
+    private void processFeatureWithLines(Map<URI, Set<Integer>> parsedLineFilters, List<URI> parsedFeaturePaths, FeatureWithLines featureWithLines) {
+        parsedFeaturePaths.add(featureWithLines.uri());
+        addLineFilters(parsedLineFilters, featureWithLines.uri(), featureWithLines.lines());
+    }
+
+    private void processPathWitheLinesFromRerunFile(Map<URI, Set<Integer>> parsedLineFilters, List<URI> parsedFeaturePaths, URI rerunPath) {
+        for (FeatureWithLines featureWithLines : loadRerunFile(rerunPath)) {
+            processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
         }
     }
 
-    private void processPathWitheLinesFromRerunFile(Map<String, List<Long>> parsedLineFilters, List<String> parsedFeaturePaths, String rerunPath) {
-        for (PathWithLines pathWithLines : loadRerunFile(rerunPath)) {
-            processPathWithLines(parsedLineFilters, parsedFeaturePaths, pathWithLines);
-        }
-    }
-
-    private List<PathWithLines> loadRerunFile(String rerunPath) {
-        List<PathWithLines> featurePaths = new ArrayList<>();
+    private List<FeatureWithLines> loadRerunFile(URI rerunPath) {
+        List<FeatureWithLines> featurePaths = new ArrayList<>();
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
         for (Resource resource : resources) {
             String source = read(resource);
             if (!source.isEmpty()) {
                 Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
                 while (matcher.find()) {
-                    featurePaths.add(parsePathWithLines(matcher.group(1)));
+                    featurePaths.add(parseFeatureWithLines(matcher.group(1)));
                 }
             }
         }
@@ -268,15 +282,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }
-    }
-
-    private boolean haveLineFilters(List<String> parsedFeaturePaths) {
-        for (String pathName : parsedFeaturePaths) {
-            if (PathWithLines.hasLineFilters(pathName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private String parseGlue(String gluePath) {
@@ -371,7 +376,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
-    public List<String> getFeaturePaths() {
+    public List<URI> getFeaturePaths() {
         return featurePaths;
     }
 
@@ -391,7 +396,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
-    public Map<String, List<Long>> getLineFilters() {
+    public Map<URI, Set<Integer>> getLineFilters() {
         return lineFilters;
     }
 

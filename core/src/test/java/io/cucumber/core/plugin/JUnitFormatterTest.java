@@ -42,27 +42,27 @@ public class JUnitFormatterTest {
 
     @Test
     public void featureSimpleTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("io/cucumber/core/plugin/JUnitFormatterTest_1.feature"));
-        assertXmlEqual("io/cucumber/core/plugin/JUnitFormatterTest_1.report.xml", report);
+        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
+        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_1.report.xml", report);
     }
 
     @Test
     public void featureWithBackgroundTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("io/cucumber/core/plugin/JUnitFormatterTest_2.feature"));
-        assertXmlEqual("io/cucumber/core/plugin/JUnitFormatterTest_2.report.xml", report);
+        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_2.feature"));
+        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_2.report.xml", report);
     }
 
     @Test
     public void featureWithOutlineTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("io/cucumber/core/plugin/JUnitFormatterTest_3.feature"));
-        assertXmlEqual("io/cucumber/core/plugin/JUnitFormatterTest_3.report.xml", report);
+        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_3.feature"));
+        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_3.report.xml", report);
     }
 
     @Test
     public void featureSimpleStrictTest() throws Exception {
         boolean strict = true;
-        File report = runFeaturesWithJunitFormatter(asList("io/cucumber/core/plugin/JUnitFormatterTest_1.feature"), strict);
-        assertXmlEqual("io/cucumber/core/plugin/JUnitFormatterTest_1_strict.report.xml", report);
+        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"), strict);
+        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_1_strict.report.xml", report);
     }
 
     @Test

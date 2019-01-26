@@ -33,6 +33,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +47,7 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -135,7 +137,7 @@ public class RuntimeTest {
             "    \"description\": \"\",\n" +
             "    \"id\": \"feature-name\",\n" +
             "    \"keyword\": \"Feature\",\n" +
-            "    \"uri\": \"test.feature\",\n" +
+            "    \"uri\": \"file:test.feature\",\n" +
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
@@ -479,7 +481,7 @@ public class RuntimeTest {
 
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources(anyString(), eq(".feature"))).thenReturn(Collections.<Resource>emptyList());
+        when(resourceLoader.resources(any(URI.class), eq(".feature"))).thenReturn(Collections.<Resource>emptyList());
         return resourceLoader;
     }
 

@@ -44,7 +44,7 @@ public class TimelineFormatterTest {
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
-    private final CucumberFeature failingFeature = feature("some\\windows\\path\\failing.feature", "" +
+    private final CucumberFeature failingFeature = feature("some/path/failing.feature", "" +
         "Feature: Failing Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -60,7 +60,7 @@ public class TimelineFormatterTest {
         "    When step_02\n" +
         "    Then step_03");
 
-    private final CucumberFeature successfulFeature = feature("some\\windows\\path\\successful.feature", "" +
+    private final CucumberFeature successfulFeature = feature("some/path/successful.feature", "" +
         "Feature: Successful Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -72,7 +72,7 @@ public class TimelineFormatterTest {
         "    When step_20\n" +
         "    Then step_30");
 
-    private final CucumberFeature pendingFeature = feature("some\\windows\\path\\pending.feature", "" +
+    private final CucumberFeature pendingFeature = feature("some/path/pending.feature", "" +
         "Feature: Pending Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +

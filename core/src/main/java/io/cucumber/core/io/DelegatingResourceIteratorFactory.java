@@ -2,7 +2,7 @@ package io.cucumber.core.io;
 
 import io.cucumber.core.exception.CucumberException;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
@@ -29,7 +29,7 @@ final class DelegatingResourceIteratorFactory implements ResourceIteratorFactory
     }
 
     @Override
-    public boolean isFactoryFor(URL url) {
+    public boolean isFactoryFor(URI url) {
         for (ResourceIteratorFactory delegate : delegates) {
             if (delegate.isFactoryFor(url)) {
                 return true;
@@ -39,7 +39,7 @@ final class DelegatingResourceIteratorFactory implements ResourceIteratorFactory
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(URI url, String path, String suffix) {
         for (ResourceIteratorFactory delegate : delegates) {
             if (delegate.isFactoryFor(url)) {
                 return delegate.createIterator(url, path, suffix);

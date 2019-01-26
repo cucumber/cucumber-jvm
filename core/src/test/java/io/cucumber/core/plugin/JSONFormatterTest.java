@@ -50,7 +50,7 @@ public class JSONFormatterTest {
 
     @Test
     public void featureWithOutlineTest() {
-        String actual = runFeaturesWithFormatter(asList("io/cucumber/core/plugin/JSONPrettyFormatterTest.feature"));
+        String actual = runFeaturesWithFormatter(asList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
 
         assertThat(actual, sameJSONAs(expected));
@@ -59,7 +59,7 @@ public class JSONFormatterTest {
 
     @Test
     public void featureWithOutlineTestParallel() throws Exception {
-        String actual = runFeaturesWithFormatterInParallel(asList("io/cucumber/core/plugin/JSONPrettyFormatterTest.feature"));
+        String actual = runFeaturesWithFormatterInParallel(asList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
 
         assertThat(actual, sameJSONAs(expected));
@@ -81,7 +81,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -131,7 +131,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -184,7 +184,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -241,7 +241,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"fruit-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Fruit party\",\n" +
             "    \"line\": 1,\n" +
@@ -304,7 +304,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -461,7 +461,7 @@ public class JSONFormatterTest {
             "    \"description\": \"\",\n" +
             "    \"id\": \"banana-party\",\n" +
             "    \"keyword\": \"Feature\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"tags\": [\n" +
             "      {\n" +
             "        \"name\": \"@Party\",\n" +
@@ -507,7 +507,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -566,7 +566,7 @@ public class JSONFormatterTest {
 
     @Test
     public void should_add_step_hooks_to_step() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+        CucumberFeature feature = TestHelper.feature("file:path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -693,7 +693,7 @@ public class JSONFormatterTest {
             "    \"description\": \"\",\n" +
             "    \"id\": \"banana-party\",\n" +
             "    \"keyword\": \"Feature\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
@@ -721,7 +721,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -791,7 +791,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -864,7 +864,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -924,7 +924,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -984,7 +984,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test.feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -1035,7 +1035,7 @@ public class JSONFormatterTest {
 
     @Test
     public void should_handle_several_features() {
-        CucumberFeature feature1 = TestHelper.feature("path/test1.feature", "" +
+        CucumberFeature feature1 = TestHelper.feature("file:path/test1.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -1059,7 +1059,7 @@ public class JSONFormatterTest {
             "[\n" +
             "  {\n" +
             "    \"id\": \"banana-party\",\n" +
-            "    \"uri\": \"path/test1.feature\",\n" +
+            "    \"uri\": \"file:path/test1.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Banana party\",\n" +
             "    \"line\": 1,\n" +
@@ -1092,7 +1092,7 @@ public class JSONFormatterTest {
             "  },\n" +
             "  {\n" +
             "    \"id\": \"orange-party\",\n" +
-            "    \"uri\": \"path/test2.feature\",\n" +
+            "    \"uri\": \"file:path/test2.feature\",\n" +
             "    \"keyword\": \"Feature\",\n" +
             "    \"name\": \"Orange party\",\n" +
             "    \"line\": 1,\n" +

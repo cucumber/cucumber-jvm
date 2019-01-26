@@ -20,6 +20,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.InOrder;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -173,7 +174,7 @@ public class FeatureRunnerTest {
         EventBus bus = new TimeServiceEventBus(timeServiceStub);
         FeatureLoader featureLoader = new FeatureLoader(new ResourceLoader() {
             @Override
-            public Iterable<Resource> resources(String path, String suffix) {
+            public Iterable<Resource> resources(URI path, String suffix) {
                 return emptyList();
             }
         });

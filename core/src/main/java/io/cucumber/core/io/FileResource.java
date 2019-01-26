@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static io.cucumber.core.io.MultiLoader.CLASSPATH_SCHEME;
+import static io.cucumber.core.io.MultiLoader.FILE_SCHEME;
+
 
 final class FileResource implements Resource {
     private final File root;
@@ -14,8 +20,8 @@ final class FileResource implements Resource {
         return new FileResource(root, file, false);
     }
 
-    static FileResource createClasspathFileResource(File root, File file) {
-        return new FileResource(root, file, true);
+    static FileResource createClasspathFileResource(File classpathRoot, File file) {
+        return new FileResource(classpathRoot, file, true);
     }
 
     private FileResource(File root, File file, boolean classpathFileResource) {
@@ -28,13 +34,27 @@ final class FileResource implements Resource {
     }
 
     @Override
-    public String getPath() {
+    public URI getPath() {
         if (classpathFileResource) {
-            String relativePath = file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
-            return relativePath.replace(File.separatorChar, '/');
+            return createURI(CLASSPATH_SCHEME, getRelativePath());
+        } else if (root.equals(file)) {
+            return file.toURI();
         } else {
-            return file.getPath();
+            return createURI(FILE_SCHEME, getRelativePath());
         }
+    }
+
+    private static URI createURI(String classpathScheme, String ssp) {
+        try {
+            return new URI(classpathScheme, ssp, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private String getRelativePath() {
+        URI relativeUri = root.toURI().relativize(file.toURI());
+        return relativeUri.getSchemeSpecificPart();
     }
 
     @Override
