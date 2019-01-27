@@ -12,16 +12,13 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
-
 /**
- * Identifies scenarios and examples (pickles) in a feature.
+ * Identifies either a directory containing feature files, a specific
+ * feature or specific scenarios and examples (pickles) in a feature.
  * <p>
- * The structure {@code URI[:LINE]*} is a URI as defined by
- * {@link FeatureIdentifier} followed by a sequence of line
+ * The syntax of a a feature with lines defined as either a {@link FeaturePath}
+ * or a {@link FeatureIdentifier} followed by a sequence of line
  * numbers each preceded by a colon.
- *
- * @see FeatureIdentifier
  */
 public class FeatureWithLines implements Serializable {
     private static final long serialVersionUID = 20190126L;
@@ -37,15 +34,15 @@ public class FeatureWithLines implements Serializable {
     }
 
     public static FeatureWithLines create(URI uri, Collection<Integer> lines) {
-        return new FeatureWithLines(uri, lines);
-    }
+        if (lines.isEmpty()) {
+            return new FeatureWithLines(uri, lines);
+        }
 
-    public static FeatureWithLines parse(String uri, Collection<Integer> lines) {
         return new FeatureWithLines(FeatureIdentifier.parse(uri), lines);
     }
 
-    public static FeatureWithLines parse(String uri, Integer... lines) {
-        return new FeatureWithLines(FeatureIdentifier.parse(uri), asList(lines));
+    public static FeatureWithLines parse(String uri, Collection<Integer> lines) {
+        return create(FeaturePath.parse(uri), lines);
     }
 
     public static FeatureWithLines parse(String featurePath) {
@@ -53,7 +50,7 @@ public class FeatureWithLines implements Serializable {
 
         try {
             if (!matcher.matches()) {
-                return parseFeatureIdentifier(featurePath);
+                return parseFeaturePath(featurePath);
             }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(featurePath + INVALID_PATH_MESSAGE, e);
@@ -72,14 +69,12 @@ public class FeatureWithLines implements Serializable {
     }
 
     private static FeatureWithLines parseFeatureIdentifierAndLines(String uriGroup, String linesGroup) {
-        URI uri = FeatureIdentifier.parse(uriGroup);
         List<Integer> lines = toInts(linesGroup.split(":"));
-        return new FeatureWithLines(uri, lines);
+        return parse(uriGroup, lines);
     }
 
-    private static FeatureWithLines parseFeatureIdentifier(String pathName) {
-        URI uri = FeatureIdentifier.parse(pathName);
-        return new FeatureWithLines(uri, Collections.<Integer>emptyList());
+    private static FeatureWithLines parseFeaturePath(String pathName) {
+        return create(FeaturePath.parse(pathName), Collections.<Integer>emptyList());
     }
 
     private static List<Integer> toInts(String[] strings) {

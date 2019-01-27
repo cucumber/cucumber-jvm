@@ -3,14 +3,15 @@ package cucumber.runtime;
 import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
-import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
+import io.cucumber.core.model.RerunLoader;
 import io.cucumber.core.options.FeatureOptions;
 import io.cucumber.core.options.FilterOptions;
 import io.cucumber.core.options.PluginOptions;
@@ -18,7 +19,6 @@ import io.cucumber.core.options.RunnerOptions;
 import io.cucumber.datatable.DataTable;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cucumber.util.FixJava.join;
@@ -55,7 +54,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             return keyword.replaceAll("[\\s',!]", "");
         }
     };
-    private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
     private final List<String> glue = new ArrayList<String>();
     private final List<String> tagFilters = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
@@ -63,8 +61,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<URI> featurePaths = new ArrayList<>();
 
     private final List<String> junitOptions = new ArrayList<String>();
-    private final ResourceLoader resourceLoader;
     private final char fileSeparatorChar;
+    private final RerunLoader rerunLoader;
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -109,7 +107,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     RuntimeOptions(char fileSeparatorChar, ResourceLoader resourceLoader, Env env, List<String> argv) {
         this.fileSeparatorChar = fileSeparatorChar;
-        this.resourceLoader = resourceLoader;
+        this.rerunLoader= new RerunLoader(resourceLoader);
         argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
@@ -190,10 +188,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
-                FeatureWithLines featureWithLines = parseFeatureWithLines(arg.substring(1));
-                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, featureWithLines.uri());
+                URI rerunFile = FeaturePath.parse(arg.substring(1));
+                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, rerunFile);
             } else if (!arg.isEmpty()){
-                FeatureWithLines featureWithLines = parseFeatureWithLines(arg);
+                FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
                 processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
             }
         }
@@ -226,10 +224,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
     }
 
-    private FeatureWithLines parseFeatureWithLines(String pathWithLines) {
-        return FeatureWithLines.parse(pathWithLines);
-    }
-
     private void addLineFilters(Map<URI, Set<Integer>> parsedLineFilters, URI key, Set<Integer> lines) {
         if(lines.isEmpty()){
             return;
@@ -247,33 +241,12 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     private void processPathWitheLinesFromRerunFile(Map<URI, Set<Integer>> parsedLineFilters, List<URI> parsedFeaturePaths, URI rerunPath) {
-        for (FeatureWithLines featureWithLines : loadRerunFile(rerunPath)) {
+        for (FeatureWithLines featureWithLines : rerunLoader.load(rerunPath)) {
             processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
         }
     }
 
-    private List<FeatureWithLines> loadRerunFile(URI rerunPath) {
-        List<FeatureWithLines> featurePaths = new ArrayList<>();
-        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
-        for (Resource resource : resources) {
-            String source = read(resource);
-            if (!source.isEmpty()) {
-                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
-                while (matcher.find()) {
-                    featurePaths.add(parseFeatureWithLines(matcher.group(1)));
-                }
-            }
-        }
-        return featurePaths;
-    }
 
-    private static String read(Resource resource) {
-        try {
-            return FixJava.readReader(new InputStreamReader(resource.getInputStream()));
-        } catch (IOException e) {
-            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
-        }
-    }
 
     private String parseGlue(String gluePath) {
         return convertFileSeparatorToForwardSlash(gluePath);
