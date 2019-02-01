@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public final class CucumberFeature{
+public class CucumberFeature {
     private final URI uri;
     private final List<PickleEvent> pickles;
     private GherkinDocument gherkinDocument;

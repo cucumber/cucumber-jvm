@@ -6,8 +6,7 @@ import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static io.cucumber.core.io.MultiLoader.CLASSPATH_SCHEME_PREFIX;
-
+import static cucumber.runtime.io.MultiLoader.CLASSPATH_SCHEME_PREFIX;
 
 final class ZipResource implements Resource {
     private final ZipFile jarFile;

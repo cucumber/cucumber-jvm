@@ -22,24 +22,14 @@
             <artifactId>cucumber-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>gherkin</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.picocontainer</groupId>
             <artifactId>picocontainer</artifactId>
             <version>${picocontainer.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

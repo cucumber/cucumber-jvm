@@ -8,16 +8,18 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
+import io.cucumber.core.model.RerunLoader;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import io.cucumber.datatable.DataTable;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,8 +63,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<URI> featurePaths = new ArrayList<>();
 
     private final List<String> junitOptions = new ArrayList<String>();
-    private final ResourceLoader resourceLoader;
     private final char fileSeparatorChar;
+    private final RerunLoader rerunLoader;
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -109,7 +111,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     RuntimeOptions(char fileSeparatorChar, ResourceLoader resourceLoader, Env env, List<String> argv) {
         this.fileSeparatorChar = fileSeparatorChar;
-        this.resourceLoader = resourceLoader;
+        this.rerunLoader= new RerunLoader(resourceLoader);
         argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
 
@@ -199,8 +201,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
-                FeatureWithLines featureWithLines = parseFeatureWithLines(arg.substring(1));
-                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, featureWithLines.uri());
+                URI rerunFile = FeaturePath.parse(arg.substring(1));
+                processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, rerunFile);
             } else if (!arg.isEmpty()){
                 FeatureWithLines featureWithLines = parseFeatureWithLines(arg);
                 processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
@@ -256,31 +258,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     private void processPathWitheLinesFromRerunFile(Map<URI, Set<Integer>> parsedLineFilters, List<URI> parsedFeaturePaths, URI rerunPath) {
-        for (FeatureWithLines featureWithLines : loadRerunFile(rerunPath)) {
+        for (FeatureWithLines featureWithLines : rerunLoader.load(rerunPath)) {
             processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
-        }
-    }
-
-    private List<FeatureWithLines> loadRerunFile(URI rerunPath) {
-        List<FeatureWithLines> featurePaths = new ArrayList<>();
-        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
-        for (Resource resource : resources) {
-            String source = read(resource);
-            if (!source.isEmpty()) {
-                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
-                while (matcher.find()) {
-                    featurePaths.add(parseFeatureWithLines(matcher.group(1)));
-                }
-            }
-        }
-        return featurePaths;
-    }
-
-    private static String read(Resource resource) {
-        try {
-            return FixJava.readReader(new InputStreamReader(resource.getInputStream()));
-        } catch (IOException e) {
-            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }
     }
 

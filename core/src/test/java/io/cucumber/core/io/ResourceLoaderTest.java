@@ -1,6 +1,6 @@
 package io.cucumber.core.io;
 
-import io.cucumber.core.model.FeatureIdentifier;
+import io.cucumber.core.model.FeaturePath;
 import org.junit.Test;
 
 import java.net.URI;
@@ -13,21 +13,21 @@ public class ResourceLoaderTest {
 
     @Test
     public void loads_resources_from_filesystem_dir() {
-        URI uri = FeatureIdentifier.parse("src/test/resources/io/cucumber/core");
+        URI uri = FeaturePath.parse("src/test/resources/io/cucumber/core");
         Iterable<Resource> files = new FileResourceLoader().resources(uri, ".properties");
         assertEquals(3, toList(files).size());
     }
 
     @Test
     public void loads_resource_from_filesystem_file() {
-        URI uri = FeatureIdentifier.parse("src/test/resources/io/cucumber/core/bar.properties");
+        URI uri = FeaturePath.parse("src/test/resources/io/cucumber/core/bar.properties");
         Iterable<Resource> files = new FileResourceLoader().resources(uri, ".doesntmatter");
         assertEquals(1, toList(files).size());
     }
 
     @Test
     public void loads_resources_from_jar_on_classpath() {
-        URI uri = FeatureIdentifier.parse("classpath:io/cucumber");
+        URI uri = FeaturePath.parse("classpath:io/cucumber");
         Iterable<Resource> files = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader()).resources(uri, ".properties");
         assertEquals(4, toList(files).size());
     }

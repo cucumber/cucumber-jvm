@@ -64,6 +64,10 @@ public class RuntimeOptionsFactoryTest {
         return singletonList(URI.create(str));
     }
 
+    public List<URI> uris(String str) {
+        return singletonList(URI.create(str));
+    }
+
     @Test
     public void create_without_options_with_base_class_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);

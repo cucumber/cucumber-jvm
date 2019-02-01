@@ -39,6 +39,9 @@ public final class ResourceLoaderClassFinder implements ClassFinder {
     }
 
     private String getClassName(String path) {
+        if (path.charAt(0) == PACKAGE_PATH_SEPARATOR) {
+            path = path.substring(1);
+        }
         return path.substring(0, path.length() - CLASS_SUFFIX.length()).replace(PACKAGE_PATH_SEPARATOR, DOT);
     }
 
