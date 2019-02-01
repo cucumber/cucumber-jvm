@@ -46,7 +46,7 @@ public class RerunFileTest {
     @Test
     public void loads_no_features_when_rerun_file_is_empty() throws Exception {
         ResourceLoader resourceLoader = mockFileResource(
-            "path/rerun.txt",
+            "file:path/rerun.txt",
             ""
         );
 
@@ -59,7 +59,7 @@ public class RerunFileTest {
     @Test
     public void loads_no_features_when_rerun_file_contains_new_line() throws Exception {
         ResourceLoader resourceLoader = mockFileResource(
-            "path/rerun.txt",
+            "file:path/rerun.txt",
             "\n"
         );
 
@@ -72,7 +72,7 @@ public class RerunFileTest {
     @Test
     public void loads_no_features_when_rerun_file_contains_carriage_return() throws Exception {
         ResourceLoader resourceLoader = mockFileResource(
-            "path/rerun.txt",
+            "file:path/rerun.txt",
             "\r");
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@path/rerun.txt"));
@@ -84,7 +84,7 @@ public class RerunFileTest {
     @Test
     public void loads_no_features_when_rerun_file_contains_new_line_and_carriage_return() throws Exception {
         ResourceLoader resourceLoader = mockFileResource(
-            "path/rerun.txt",
+            "file:path/rerun.txt",
             "\r\n");
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@path/rerun.txt"));

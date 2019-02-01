@@ -60,11 +60,7 @@ public class RuntimeOptionsFactoryTest {
         assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
     }
 
-    public List<URI> uris(String str) {
-        return singletonList(URI.create(str));
-    }
-
-    public List<URI> uris(String str) {
+    private List<URI> uris(String str) {
         return singletonList(URI.create(str));
     }
 

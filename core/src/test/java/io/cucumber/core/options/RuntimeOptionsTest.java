@@ -101,9 +101,9 @@ public class RuntimeOptionsTest {
 
     @Test
     public void strips_line_filters_from_feature_paths_and_put_them_among_line_filters() {
-        RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
-        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else"), singleton(3)));
+        RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else.feature:3");
+        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
+        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), singleton(3)));
     }
 
     @Test

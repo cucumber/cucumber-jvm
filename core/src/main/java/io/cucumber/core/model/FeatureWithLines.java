@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class FeatureWithLines implements Serializable {
     private static final long serialVersionUID = 20190126L;
     private static final Pattern FEATURE_COLON_LINE_PATTERN = Pattern.compile("^(.*?):([\\d:]+)$");
-    private static final String INVALID_PATH_MESSAGE = " is not valid. Try URI[:LINE]*";
+    private static final String INVALID_PATH_MESSAGE = " is not valid. Try <uri or path>/<name>.feature[:LINE]*";
 
     private final URI uri;
     private final SortedSet<Integer> lines;

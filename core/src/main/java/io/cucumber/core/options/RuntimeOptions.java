@@ -6,12 +6,10 @@ import gherkin.IGherkinDialectProvider;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import io.cucumber.core.model.RerunLoader;
-import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import io.cucumber.datatable.DataTable;
@@ -20,7 +18,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +25,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.util.FixJava.join;
@@ -40,7 +36,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/io/cucumber/core/api/cli/USAGE.txt";
-    private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     static String usageText;
 

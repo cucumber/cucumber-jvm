@@ -1,9 +1,9 @@
 package io.cucumber.core.model;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.Resource;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.util.FixJava;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.io.Resource;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.util.FixJava;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
