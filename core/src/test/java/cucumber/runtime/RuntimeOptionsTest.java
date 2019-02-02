@@ -507,14 +507,14 @@ public class RuntimeOptionsTest {
 
     @Test
     public void understands_whitespace_in_rerun_filepath() throws Exception {
-        String featurePath1 = "/home/users/mp/My Documents/tests/bar.feature";
+        String featurePath1 = "My Documents/tests/bar.feature";
         String rerunPath = "file:rerun.txt";
         String rerunFile = featurePath1 + ":2\n";
         mockFileResource(resourceLoader, rerunPath, rerunFile);
 
         RuntimeOptions options = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
-        assertThat(options.getFeaturePaths(), contains(uri("file:/home/users/mp/My%20Documents/tests/bar.feature")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)));
+        assertThat(options.getFeaturePaths(), contains(uri("file:My%20Documents/tests/bar.feature")));
+        assertThat(options.getLineFilters(), hasEntry(uri("file:My%20Documents/tests/bar.feature"), singleton(2)));
     }
 
     @Test
