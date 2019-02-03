@@ -78,7 +78,7 @@ public class RuntimeOptionsTest {
         throws IOException {
         Resource resource = mock(Resource.class);
         when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes(UTF_8)));
-        when(resourceLoader.resources(URI.create(path), null)).thenReturn(singletonList(resource));
+        when(resourceLoader.resources(uri(path), null)).thenReturn(singletonList(resource));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class RuntimeOptionsTest {
     @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere");
-        assertThat(options.getGlue(), contains("somewhere"));
+        assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
     }
 
     @Test
@@ -249,7 +249,7 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--strict", "--glue", "somewhere", "somewhere_else"));
         assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths")));
-        assertThat(options.getGlue(), contains("lookatme"));
+        assertThat(options.getGlue(), contains(uri("classpath:lookatme")));
         assertTrue(options.isStrict());
     }
 
@@ -257,7 +257,7 @@ public class RuntimeOptionsTest {
     public void ensure_cli_glue_is_preserved_when_cucumber_options_property_defined() {
         properties.setProperty("cucumber.options", "--tags @foo");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--glue", "somewhere"));
-        assertThat(options.getGlue(), contains("somewhere"));
+        assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
     }
 
     @Test

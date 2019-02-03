@@ -10,7 +10,6 @@ import cucumber.runtime.formatter.Plugins;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -18,8 +17,8 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.RuntimeOptionsFactory.packageName;
 import static cucumber.runtime.RuntimeOptionsFactory.packagePath;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -45,8 +44,8 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
-        assertEquals(uris("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
-        assertEquals(singletonList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:cucumber/runtime")));
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:cucumber/runtime")));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
 
         assertThat(plugins.getPlugins(), hasSize(2));
@@ -54,8 +53,8 @@ public class RuntimeOptionsFactoryTest {
         assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.DefaultSummaryPrinter");
     }
 
-    public List<URI> uris(String str) {
-        return singletonList(URI.create(str));
+    public static URI uri(String str) {
+        return URI.create(str);
     }
 
     @Test
@@ -63,8 +62,8 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
-        assertEquals(uris("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
-        assertEquals(singletonList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:cucumber/runtime")));
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:cucumber/runtime")));
 
         assertThat(plugins.getPlugins(), hasSize(2));
         assertPluginExists(plugins.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
@@ -162,7 +161,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithGlue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        assertEquals(asList("app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
     }
 
     @Test
@@ -170,7 +169,8 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithExtraGlue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        assertEquals(asList("app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/hooks"), uri("classpath:cucumber/runtime")));
+
     }
 
     @Test
@@ -178,7 +178,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithExtraGlueOfExtraGlue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        assertEquals(asList("app.features.user.hooks", "app.features.hooks", "classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/hooks"), uri("classpath:cucumber/runtime")));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithExtraGlueOfGlue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        assertEquals(asList("app.features.user.hooks", "app.features.user.registration", "app.features.hooks"), runtimeOptions.getGlue());
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
     }
 
     @Test(expected = CucumberException.class)

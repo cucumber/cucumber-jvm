@@ -4,8 +4,8 @@ Options:
 
   --threads COUNT                        Number of threads to run tests under. 
                                          Defaults to 1.
-  -g, --glue PATH                        Where glue code (step definitions, hooks
-                                         and plugins) are loaded from.
+  -g, --glue PATH                        Package to load glue code (step definitions,
+                                         hooks and plugins) from. E.g: com.example.app
   -p, --[add-]plugin PLUGIN[:PATH_OR_URL]
                                          Register a plugin.
                                          Built-in formatter PLUGIN types: junit,

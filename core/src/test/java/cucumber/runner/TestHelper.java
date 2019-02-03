@@ -97,7 +97,7 @@ public class TestHelper {
 
 
         @Override
-        public void loadGlue(Glue glue, List<String> gluePaths) {
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
             try {
                 mockSteps(glue, features, stepsToResult, stepsToLocation);
                 mockHooks(glue, hooks, hookLocations, hookActions);

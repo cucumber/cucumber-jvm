@@ -19,6 +19,7 @@ import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +62,7 @@ public class RunnerTest {
                 glue.addBeforeHook(beforeHook);
                 return null;
             }
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<String>anyList());
+        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<URI>anyList());
 
 
         PickleStep step = mock(PickleStep.class);
@@ -84,7 +85,7 @@ public class RunnerTest {
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(ArgumentMatchers.<Scenario>any());
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(failingBeforeHook);
                 glue.addStepDefinition(stepDefinition);
             }
@@ -107,7 +108,7 @@ public class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addAfterHook(afteStepHook);
                 glue.addStepDefinition(stepDefinition);
             }
@@ -130,7 +131,7 @@ public class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addAfterHook(afteStepHook1);
                 glue.addAfterHook(afteStepHook2);
                 glue.addStepDefinition(stepDefinition);
@@ -154,7 +155,7 @@ public class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(failingBeforeHook);
                 glue.addBeforeHook(beforeHook);
                 glue.addAfterHook(afterHook);
@@ -176,7 +177,7 @@ public class RunnerTest {
         PickleEvent pickleEventMatchingStepDefinitions = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
             }
         };
@@ -191,7 +192,7 @@ public class RunnerTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions("--dry-run");
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
             }
         };
@@ -211,7 +212,7 @@ public class RunnerTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
 
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(beforeHook);
                 glue.addBeforeHook(afterHook);
                 glue.addAfterStepHook(afterStepHook);
@@ -235,7 +236,7 @@ public class RunnerTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
 
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(beforeHook);
                 glue.addBeforeHook(afterHook);
                 glue.addAfterStepHook(afterStepHook);
