@@ -2,8 +2,11 @@ package cucumber.runtime.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static cucumber.runtime.io.MultiLoader.CLASSPATH_SCHEME_PREFIX;
 
 class ZipResource implements Resource {
     private final ZipFile jarFile;
@@ -15,8 +18,8 @@ class ZipResource implements Resource {
     }
 
     @Override
-    public String getPath() {
-        return jarEntry.getName();
+    public URI getPath() {
+        return URI.create(CLASSPATH_SCHEME_PREFIX + "/" + jarEntry.getName());
     }
 
     @Override

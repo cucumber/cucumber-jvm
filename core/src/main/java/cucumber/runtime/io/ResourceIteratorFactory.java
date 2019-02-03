@@ -1,6 +1,6 @@
 package cucumber.runtime.io;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Iterator;
 
 /**
@@ -15,7 +15,7 @@ public interface ResourceIteratorFactory {
      * @param url The URL to check.
      * @return True if the factory can create an iterator for the given URL.
      */
-    boolean isFactoryFor(URL url);
+    boolean isFactoryFor(URI url);
 
     /**
      * Creates an iterator for the given URL with the path and suffix.
@@ -26,5 +26,5 @@ public interface ResourceIteratorFactory {
      * @return The iterator over the resources designated by the URL, path, and
      * suffix.
      */
-    Iterator<Resource> createIterator(URL url, String path, String suffix);
+    Iterator<Resource> createIterator(URI url, String path, String suffix);
 }

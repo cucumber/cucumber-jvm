@@ -28,6 +28,7 @@ import gherkin.pickles.PickleStep;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -76,14 +77,14 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, List<URI> gluePaths) {
         this.glue = glue;
         // Scan for Java7 style glue (annotated methods)
         methodScanner.scan(this, gluePaths);
 
         // Scan for Java8 style glue (lambdas)
-        for (final String gluePath : gluePaths) {
-            Collection<Class<? extends GlueBase>> glueDefinerClasses = classFinder.getDescendants(GlueBase.class, packageName(gluePath));
+        for (final String gluePackage : packageName(gluePaths)) {
+            Collection<Class<? extends GlueBase>> glueDefinerClasses = classFinder.getDescendants(GlueBase.class, gluePackage);
             for (final Class<? extends GlueBase> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {
                     continue;

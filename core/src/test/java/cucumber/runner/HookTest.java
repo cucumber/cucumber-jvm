@@ -17,6 +17,7 @@ import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.net.URI;
 import java.util.Collections;
 
 import static java.util.Collections.singletonList;
@@ -51,7 +52,7 @@ public class HookTest {
                 glue.addBeforeHook(hook);
                 return null;
             }
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<String>anyList());
+        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<URI>anyList());
 
         Runner runner = new Runner(bus, Collections.singleton(backend), runtimeOptions);
 

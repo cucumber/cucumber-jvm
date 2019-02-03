@@ -5,18 +5,19 @@ import cucumber.runner.EventBus;
 import gherkin.ast.GherkinDocument;
 import gherkin.events.PickleEvent;
 
+import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 public class CucumberFeature {
-    private final String uri;
+    private final URI uri;
     private final List<PickleEvent> pickles;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
 
 
-    public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource, List<PickleEvent> pickles) {
+    public CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<PickleEvent> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
@@ -35,12 +36,12 @@ public class CucumberFeature {
         return gherkinDocument;
     }
 
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), getUri(), gherkinSource));
+        bus.send(new TestSourceRead(bus.getTime(), getUri().toString(), gherkinSource));
     }
 
     String getSource() {

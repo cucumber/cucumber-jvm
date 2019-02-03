@@ -368,6 +368,7 @@
                                         <regex>true</regex>
                                         <exclude>
                                             <item>io\.cucumber\.core\.options\..*</item>
+                                            <item>io\.cucumber\.core\.model\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
