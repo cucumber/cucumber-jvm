@@ -10,6 +10,7 @@ import gherkin.pickles.Pickle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ class TestPickleBuilder {
 
             @Override
             public InputStream getInputStream() {
-                return new ByteArrayInputStream(source.getBytes());
+                return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
         });
