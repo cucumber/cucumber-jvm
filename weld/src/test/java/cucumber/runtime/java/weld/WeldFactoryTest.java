@@ -87,12 +87,16 @@ public class WeldFactoryTest {
 
         factory.stop();
 
-        final String expectedErrOutput = "\n" +
-            "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
-            "this message, it means your weld container didn't shut down properly. It's a Weld bug\n" +
-            "and we can't do much to fix it in Cucumber-JVM.\n" +
-            "\n" +
-            "java.lang.NullPointerException\n" +
+        final String expectedErrOutput = WeldFactory.LINE_SEPARATOR +
+            "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing" +
+            WeldFactory.LINE_SEPARATOR +
+            "this message, it means your weld container didn't shut down properly. It's a Weld bug" +
+            WeldFactory.LINE_SEPARATOR +
+            "and we can't do much to fix it in Cucumber-JVM." +
+            WeldFactory.LINE_SEPARATOR +
+            WeldFactory.LINE_SEPARATOR +
+            "java.lang.NullPointerException" +
+            WeldFactory.LINE_SEPARATOR +
             "\tat cucumber.runtime.java.weld.WeldFactory.stop";
 
         assertThat(this.errContent.toString(), is(startsWith(expectedErrOutput)));
