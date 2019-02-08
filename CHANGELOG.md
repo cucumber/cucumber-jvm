@@ -13,6 +13,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+ * [Build] Fix windows build ([#1552](https://github.com/cucumber/cucumber-jvm/pull/1552), [#1551](https://github.com/cucumber/cucumber-jvm/issues/1551) Alexey Mozhenin) 
+ * [Core] Formalize glue and feature paths ([#1544](https://github.com/cucumber/cucumber-jvm/pull/1544) M.P. Korstanje)
+     * Fixes Line filtering  on Windows ([#1547](https://github.com/cucumber/cucumber-jvm/issues/1547) grasshopper7)
+     * Invalid glue and feature paths are no longer silently ignored
+     * Explicit references to non-existing feature files are no longer silently ignored
 
 ## [4.2.2](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
 
