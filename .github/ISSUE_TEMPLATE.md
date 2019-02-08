@@ -1,17 +1,43 @@
-<!-- Please use the [support](https://cucumber.io/support) forums for questions 
-and discussions which are not related to bug reports or feature requests -->
+<!-- 
 
-<!-- Please search for related issues and check the [documentation](https://docs.cucumber.io/support)
-before opening a new issue -->
 
-<!-- If your issue is related to other tools (Serenity, Selenium, etc),
-please open an issue on the related tool. Only open an issue here once
-you have confirmed the issue is with Cucumber -->
 
-<!-- If you are reporting a bug, please provide as much information as you can to help us solving your problem.
-The sections below are meant as guidance, to help you give the kind of information we'll need to help with your issue. 
-If a section  doesn't seem to fit, just skip it.-->
+Hi,
 
+
+
+you are about to create an issue. Great.
+
+
+
+Please read this first. You'll be more successfull.
+
+
+
+Before you do so please consider the following:
+
+ * Use the [support](https://cucumber.io/support) forums for questions 
+   and discussions which are not related to bug reports or feature requests 
+
+ * Search for related issues and check the documentation before opening a 
+   new issue. https://docs.cucumber.io/support
+
+ * If your issue is related to other tools (Serenity, Selenium, etc),
+   please open an issue on the related tool. Only open an issue here once
+   you have confirmed the issue is with Cucumber 
+
+  * If you are reporting a bug, please provide as much information as you 
+    can to help us solving your problem. 
+    
+
+Finally the sections below are meant as guidance, to help you give the kind of 
+information we'll need to help with your issue. Please try your best. 
+
+If a section  doesn't seem to fit, just delete it.
+
+
+-->    
+    
 ## Summary
 
 <!--- Provide a general summary description of the issue -->
@@ -28,9 +54,10 @@ If a section  doesn't seem to fit, just skip it.-->
 <!--- If suggesting a change/improvement, explain the difference from current behavior -->
 
 <!--- If you have got some output place it in the code block below. Otherwise remove it. -->
-~~~
-~~~
+```
 
+
+```
 ## Possible Solution
 
 <!--- Not obligatory, but suggest a fix/reason for the bug, -->
