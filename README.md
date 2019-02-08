@@ -8,64 +8,35 @@
 [![Coverage Status](https://coveralls.io/repos/github/cucumber/cucumber-jvm/badge.svg?branch=master)](https://coveralls.io/github/cucumber/cucumber-jvm?branch=master)
 
 Cucumber-JVM is a pure Java implementation of Cucumber. 
-You can [run](https://docs.cucumber.io/cucumber/api/#running-cucumber) it with the tool of your choice.
-Cucumber-JVM also integrates with all the popular [Dependency Injection containers](https://docs.cucumber.io/installation/java/#dependency-injection).
+You can [run](https://docs.cucumber.io/cucumber/api/#running-cucumber) it with 
+the tool of your choice.
 
-## Documentation
+Cucumber-JVM also integrates with all the popular 
+[Dependency Injection containers](https://docs.cucumber.io/installation/java/#dependency-injection).
 
-[Start Here](https://cucumber.io/docs).
+## Getting started
+ * [Installation](https://docs.cucumber.io/installation/java/)
+ * [Documentation](https://cucumber.io/docs)
+ * [Hello World project](https://github.com/cucumber/cucumber-java-skeleton)
 
-If you'd like to contribute to the documentation, go [here](https://github.com/cucumber/docs.cucumber.io).
+## Questions, Problems, Help needed?
 
-## Hello World
-
-Check out the simple [cucumber-java-skeleton](https://github.com/cucumber/cucumber-java-skeleton) starter project.
-
-## Downloading / Installation
-
-[Install](https://docs.cucumber.io/installation/java/)
+Please ask on 
+[The Cukes Google Group](http://groups.google.com/group/cukes).
 
 ## Bugs and Feature requests
 
-You can register bugs and feature requests in the [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues).
+You can register bugs and feature requests in the 
+[Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues). 
 
-You're most likely going to paste code and output, so familiarise yourself with
-[Github Flavored Markdown](https://help.github.com/articles/github-flavored-markdown) to make sure it remains readable.
+Please bear in mind that this project is almost entirely developed by 
+volunteers. If you do not provided the implementation yourself (or pay someone 
+to do it for you), the bug might never get fixed. If it is a serious bug, other 
+people than you might care enough to provide a fix.
 
-*At the very least - use triple backticks*:
+## Contributing 
 
-<pre>
-```java
-// Why doesn't this work?
-@Given("I have {int} cukes in my {string}")
-public void some_cukes(int howMany, String what) {
-    // HALP!
-}
-```
-</pre>
-
-Please consider including the following information if you register a ticket:
-
-* What cucumber-jvm version you're using
-* What modules you're using (`cucumber-java`, `cucumber-spring`, `cucumber-groovy` etc)
-* What command you ran
-* What output you saw
-* How it can be reproduced
-
-### How soon will my ticket be fixed?
-
-The best way to have a bug fixed or feature request implemented is to
-[fork the cucumber-jvm repo](http://help.github.com/fork-a-repo/) and send a
-[pull request](http://help.github.com/send-pull-requests/).
-If the pull request has good tests and follows the coding conventions (see below) it has a good chance of
-making it into the next release.
-
-If you don't fix the bug yourself (or pay someone to do it for you), the bug might never get fixed. If it is a serious
-bug, other people than you might care enough to provide a fix.
-
-In other words, there is no guarantee that a bug or feature request gets fixed. Tickets that are more than 6 months old
-are likely to be closed to keep the backlog manageable.
-
-## Contributing fixes
-
-See [CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/master/CONTRIBUTING.md)
+If you'd like to contribute to the documentation, checkout 
+[cucumber/docs.cucumber.io](https://github.com/cucumber/docs.cucumber.io) 
+otherwise see our
+[CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/master/CONTRIBUTING.md).
