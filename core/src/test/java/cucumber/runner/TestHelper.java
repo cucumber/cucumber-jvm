@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -421,7 +422,7 @@ public class TestHelper {
 
             @Override
             public InputStream getInputStream() {
-                return new ByteArrayInputStream(source.getBytes());
+                return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
         });

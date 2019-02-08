@@ -8,23 +8,35 @@ import org.jboss.weld.environment.se.WeldContainer;
 public class WeldFactory
         implements ObjectFactory {
 
+    protected static final String LINE_SEPARATOR = System.lineSeparator();
+
     protected static final String START_EXCEPTION_MESSAGE = "" +
-        "\n" +
-        "It looks like you're running on a single-core machine, and Weld doesn't like that. See:\n" +
-        "* http://in.relation.to/Bloggers/Weld200Alpha2Released\n" +
-        "* https://issues.jboss.org/browse/WELD-1119\n" +
-        "\n" +
-        "The workaround is to add enabled=false to a org.jboss.weld.executor.properties file on\n" +
-        "your CLASSPATH. Beware that this will trigger another Weld bug - startup will now work,\n" +
-        "but shutdown will fail with a NullPointerException. This exception will be printed and\n" +
-        "not rethrown. It's the best Cucumber-JVM can do until this bug is fixed in Weld.\n" +
-        "\n";
+        LINE_SEPARATOR +
+        "It looks like you're running on a single-core machine, and Weld doesn't like that. See:" +
+        LINE_SEPARATOR +
+        "* http://in.relation.to/Bloggers/Weld200Alpha2Released" +
+        LINE_SEPARATOR +
+        "* https://issues.jboss.org/browse/WELD-1119" +
+        LINE_SEPARATOR +
+        LINE_SEPARATOR +
+        "The workaround is to add enabled=false to a org.jboss.weld.executor.properties file on" +
+        LINE_SEPARATOR +
+        "your CLASSPATH. Beware that this will trigger another Weld bug - startup will now work," +
+        LINE_SEPARATOR +
+        "but shutdown will fail with a NullPointerException. This exception will be printed and" +
+        LINE_SEPARATOR +
+        "not rethrown. It's the best Cucumber-JVM can do until this bug is fixed in Weld." +
+        LINE_SEPARATOR +
+        LINE_SEPARATOR;
 
     protected static final String STOP_EXCEPTION_MESSAGE = "" +
-        "\nIf you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
-        "this message, it means your weld container didn't shut down properly. It's a Weld bug\n" +
-        "and we can't do much to fix it in Cucumber-JVM.\n" +
-        "";
+        LINE_SEPARATOR +
+        "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing" +
+        LINE_SEPARATOR +
+        "this message, it means your weld container didn't shut down properly. It's a Weld bug" +
+        LINE_SEPARATOR +
+        "and we can't do much to fix it in Cucumber-JVM." +
+        LINE_SEPARATOR;
 
     private WeldContainer containerInstance;
 
