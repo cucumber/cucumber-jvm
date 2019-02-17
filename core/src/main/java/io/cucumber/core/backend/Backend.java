@@ -3,13 +3,14 @@ package io.cucumber.core.backend;
 import io.cucumber.core.api.options.SnippetType;
 import gherkin.pickles.PickleStep;
 
+import java.net.URI;
 import java.util.List;
 
 public interface Backend {
     /**
      * Invoked once before all features. This is where stepdefs and hooks should be loaded.
      */
-    void loadGlue(Glue glue, List<String> gluePaths);
+    void loadGlue(Glue glue, List<URI> gluePaths);
 
     /**
      * Invoked before a new scenario starts. Implementations should do any necessary

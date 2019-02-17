@@ -19,6 +19,7 @@ import io.cucumber.java.api.BeforeStep;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.List;
 
 import static java.lang.Thread.currentThread;
@@ -45,7 +46,7 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, List<URI> gluePaths) {
         this.glue = glue;
         // Scan for Java7 style glue (annotated methods)
         methodScanner.scan(this, gluePaths);

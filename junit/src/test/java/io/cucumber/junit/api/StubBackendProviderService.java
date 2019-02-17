@@ -10,6 +10,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
+import java.net.URI;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -30,7 +31,7 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public void loadGlue(Glue glue, List<String> gluePaths) {
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
         }
 
         @Override

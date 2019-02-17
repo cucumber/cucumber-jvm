@@ -7,6 +7,7 @@ import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.TimeServiceStub;
 import io.cucumber.core.model.CucumberFeature;
 import gherkin.pickles.PickleLocation;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;

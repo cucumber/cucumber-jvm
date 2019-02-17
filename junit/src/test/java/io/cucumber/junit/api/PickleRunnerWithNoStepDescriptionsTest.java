@@ -2,6 +2,7 @@ package io.cucumber.junit.api;
 
 import gherkin.events.PickleEvent;
 import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.junit.api.PickleRunners.PickleRunner;
 import org.junit.Test;
 
@@ -46,6 +47,24 @@ public class PickleRunnerWithNoStepDescriptionsTest {
         );
 
         assertEquals("scenario_name(feature_name)", runner.getDescription().getDisplayName());
+    }
+
+    @Test
+    public void shouldConvertTextFromFeatureFileWithRussianLanguage() throws Exception {
+        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
+            "#language:ru\n" +
+            "Функция: имя функции\n" +
+            "  Сценарий: имя сценария\n" +
+            "    Тогда он работает\n");
+
+        PickleRunner runner = PickleRunners.withNoStepDescriptions(
+            "имя функции",
+            mock(RunnerSupplier.class),
+            pickles.get(0),
+            createJUnitOptions("--filename-compatible-names")
+        );
+
+        assertEquals("____________(___________)", runner.getDescription().getDisplayName());
     }
 
     private JUnitOptions createJUnitOptions() {

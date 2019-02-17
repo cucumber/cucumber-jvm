@@ -1,8 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-
-## [4.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...master) (In Git)
+## [4.2.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.3...master) (In Git)
 
 ### Added
 
@@ -14,8 +13,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Fixed
 
+## [4.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...v4.2.3) (2019-02-08)
 
-## [4.2.](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
+### Fixed
+ * [Build] Fix windows build ([#1552](https://github.com/cucumber/cucumber-jvm/pull/1552), [#1551](https://github.com/cucumber/cucumber-jvm/issues/1551) Alexey Mozhenin) 
+ * [Core] Formalize glue and feature paths ([#1544](https://github.com/cucumber/cucumber-jvm/pull/1544) M.P. Korstanje)
+     * Fixes Line filtering  on Windows ([#1547](https://github.com/cucumber/cucumber-jvm/issues/1547) grasshopper7)
+     * Invalid glue and feature paths are no longer silently ignored
+     * Explicit references to non-existing feature files are no longer silently ignored
+
+## [4.2.2](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
 
 ### Fixed
  * [Core] Fix class loading on Windows ([#1541](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
@@ -50,7 +57,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
       * Fixes CVE-2018-19361 
       * Fixes CVE-2018-19362
 
-## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0)
+## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0) (2018-10-31) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-4-2-0)
 
 ### Added
  * [Core] Add anonymous parameter types ([#1478](https://github.com/cucumber/cucumber-jvm/issues/1478), [#1492](https://github.com/cucumber/cucumber-jvm/pull/1492) M.P. Korstanje)
@@ -87,7 +94,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Java8] Apply identity transform when target type is unknown ([#1475](https://github.com/cucumber/cucumber-jvm/pull/1475) Daryl Piffre, M.P. Korstanje) 
 
-## [4.0.0](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...v4.0.0) 
+## [4.0.0](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...v4.0.0) (2018-09-24) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-4-0-0)
 
 ### Added
  * [Core] Added extraGlue option to `@CucumberOptions` ([#1439](https://github.com/cucumber/cucumber-jvm/pull/1439) Eduardo Kalinowski) 
@@ -137,7 +144,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
   * [Core] Support quoted strings in cucumber.options ([#1453](https://github.com/cucumber/cucumber-jvm/pull/1453) John Patrick)
   * [Core] Set scenario result as step finishes ([#1430](https://github.com/cucumber/cucumber-jvm/pull/1430) M.P. Korstanje)
 
-## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) 
+## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) (2017-11-11) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-3-0-2)
 
 ### Fixed
 * [Android] Fix PatternSyntaxException ([#1370](https://github.com/cucumber/cucumber-jvm/pull/1370) M.P. Korstanje)
@@ -151,7 +158,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
 
-## [3.0.0](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) 
+## [3.0.0](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) (2017-09-27) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-3-0-0)
 
 ### Added
  * [Core] Implement [cucumber expressions](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)
@@ -206,12 +213,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Core] Remove scenario scoped step definitions from step definition cache ([#1301](https://github.com/cucumber/cucumber-jvm/pull/1301) M.P. Korstanje)
 
-## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0) (2017-12-10)
+## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0) (2017-12-10) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-3-0)
 
 ### Added
  * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
 
-## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (2017-12-04)
+## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (2017-12-04) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-2-0)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
@@ -229,7 +236,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Fix detection of XStreamsConverters annotation ([#1283](https://github.com/cucumber/cucumber-jvm/pull/1283), [#1284](https://github.com/cucumber/cucumber-jvm/pull/1284) Dmitrii Demin)
  * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282) M.P. Korstanje)
 
-## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0) (2017-10-28)
+## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0) (2017-10-28) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-1-0)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
@@ -253,7 +260,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
  * [Spring] Exception is thrown complaining about multiple matching beans ([#1225](https://github.com/cucumber/cucumber-jvm/pull/1225), [#1226](https://github.com/cucumber/cucumber-jvm/pull/1226), M.P. Korstanje)
 
-## [2.0.1](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17)
+## [2.0.1](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-1)
 
 ### Added
  * [Core] cucumber.api.TableConverter interface ([#1223](https://github.com/cucumber/cucumber-jvm/pull/1223) M.P. Korstanje) 
@@ -267,7 +274,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Scenario.isFailed always return false ([#1216](https://github.com/cucumber/cucumber-jvm/pull/1216), [#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
  * [Docs] Javadoc stylesheet issue ([#1212](https://github.com/cucumber/cucumber-jvm/pull/1212), [#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk)
 
-## [2.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v2.0.0) (2017-08-29)
+## [2.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v2.0.0) (2017-08-29) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-0)
+
 
 * [Java] Reduce Throwable to Exception in JavaSnippet ([#1207](https://github.com/cucumber/cucumber-jvm/issues/1207), [#1208](https://github.com/cucumber/cucumber-jvm/pull/1208) M.P. Korstanje)
 * [Core] Update the cucumber-html dependency to version 0.2.6 (Björn Rasmusson)

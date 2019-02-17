@@ -24,6 +24,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Locale;
 
@@ -76,7 +77,7 @@ public class JavaHookTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
-        backend.loadGlue(glue, Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<URI>emptyList());
     }
 
     @Test

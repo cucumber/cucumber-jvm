@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Locale;
 
@@ -47,7 +48,7 @@ public class MethodScannerTest {
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
         MethodScanner methodScanner = new MethodScanner(classFinder);
         Glue world = Mockito.mock(Glue.class);
-        backend.loadGlue(world,Collections.<String>emptyList());
+        backend.loadGlue(world,Collections.<URI>emptyList());
 
         // this delegates to methodScanner.scan which we test
         methodScanner.scan(backend, BaseStepDefs.class.getMethod("m"), BaseStepDefs.class);

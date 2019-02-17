@@ -254,7 +254,7 @@ public class RuntimeTest {
         final StubStepDefinition stepDefinition = new StubStepDefinition("some pattern", new TypeRegistry(Locale.ENGLISH));
         TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
             }
         };
@@ -314,7 +314,7 @@ public class RuntimeTest {
     private TestBackendSupplier createTestBackendSupplier(final CucumberFeature feature, final HookDefinition beforeHook) {
         return new TestBackendSupplier() {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
                     for (Step step : child.getSteps()) {
                         mockMatch(glue, step.getText());

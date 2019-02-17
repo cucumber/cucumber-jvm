@@ -50,7 +50,9 @@ public class FeaturePathTest {
     public void can_parse_absolute_path_form(){
         URI uri = FeaturePath.parse("/path/to/file.feature");
         assertEquals("file", uri.getScheme());
-        assertEquals("/path/to/file.feature", uri.getSchemeSpecificPart());
+        // Use File to work out the drive letter on windows.
+        File file = new File("/path/to/file.feature");
+        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
     }
 
     @Test
@@ -73,10 +75,11 @@ public class FeaturePathTest {
     @Test
     public void can_parse_windows_absolute_path_form(){
         assumeThat(File.separatorChar, is('\\')); //Requires windows
-
         URI uri = FeaturePath.parse("C:\\path\\to\\file.feature");
         assertEquals("file", uri.getScheme());
-        assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
+        // Use File to work out the drive letter
+        File file = new File("/path/to/file.feature");
+        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
     }
 
 

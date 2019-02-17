@@ -10,6 +10,7 @@ import gherkin.pickles.PickleStep;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, List<URI> gluePaths) {
 
     }
 

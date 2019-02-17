@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +49,7 @@ public class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(new StubStepDefinition("pattern1", new TypeRegistry(Locale.ENGLISH)));
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeHook(hook);
@@ -75,7 +76,7 @@ public class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeStepHook(hook);
@@ -102,7 +103,7 @@ public class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterHook(hook);
@@ -129,7 +130,7 @@ public class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterStepHook(hook);
@@ -158,7 +159,7 @@ public class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
 
                 for (HookDefinition hook : backend1Hooks) {

@@ -12,6 +12,8 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.TypeRegistry;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,11 +41,11 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, List<URI> gluePaths) {
         this.glue = glue;
         // Scan for Java8 style glue (lambdas)
-        for (final String gluePath : gluePaths) {
-            Collection<Class<? extends LambdaGlue>> glueDefinerClasses = classFinder.getDescendants(LambdaGlue.class, packageName(gluePath));
+        for (final String packageName : packageName(gluePaths)) {
+            Collection<Class<? extends LambdaGlue>> glueDefinerClasses = classFinder.getDescendants(LambdaGlue.class, packageName);
             for (final Class<? extends LambdaGlue> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {
                     continue;

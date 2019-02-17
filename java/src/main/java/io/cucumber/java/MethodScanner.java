@@ -11,6 +11,7 @@ import io.cucumber.core.reflection.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.List;
 
 import static io.cucumber.core.io.MultiLoader.packageName;
@@ -29,9 +30,9 @@ class MethodScanner {
      * @param javaBackend the backend where stepdefs and hooks will be registered
      * @param gluePaths   where to look
      */
-    void scan(JavaBackend javaBackend, List<String> gluePaths) {
-        for (String gluePath : gluePaths) {
-            for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, packageName(gluePath))) {
+    void scan(JavaBackend javaBackend, List<URI> gluePaths) {
+        for (String gluePackage : packageName(gluePaths)) {
+            for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, gluePackage)) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Reflections.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();

@@ -30,16 +30,17 @@ public final class MultiLoader implements ResourceLoader {
         }
     }
 
-    //TODO: Move this?
-    public static List<String> packageName(List<String> glue) {
-        List<String> packageNames = new ArrayList<String>(glue.size());
-        for (String gluePath : glue) {
-            packageNames.add(packageName(gluePath));
+    public static List<String> packageName(List<URI> glue) {
+        List<String> packageNames = new ArrayList<>(glue.size());
+        for (URI gluePath : glue) {
+            if(CLASSPATH_SCHEME.equals(gluePath.getScheme())) {
+                packageNames.add(packageName(gluePath.getSchemeSpecificPart()));
+            }
         }
         return packageNames;
     }
 
-    public static String packageName(String gluePath) {
+    private static String packageName(String gluePath) {
         if (isClasspathPath(gluePath)) {
             gluePath = stripClasspathPrefix(gluePath);
         }

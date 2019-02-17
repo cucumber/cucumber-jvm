@@ -9,12 +9,12 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
+import io.cucumber.core.model.GluePath;
 import io.cucumber.core.model.RerunLoader;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import io.cucumber.datatable.DataTable;
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -51,14 +51,13 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             return keyword.replaceAll("[\\s',!]", "");
         }
     };
-    private final List<String> glue = new ArrayList<String>();
+    private final List<URI> glue = new ArrayList<>();
     private final List<String> tagExpressions = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
     private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
     private final List<URI> featurePaths = new ArrayList<>();
 
     private final List<String> junitOptions = new ArrayList<String>();
-    private final char fileSeparatorChar;
     private final RerunLoader rerunLoader;
     private boolean dryRun;
     private boolean strict = false;
@@ -97,15 +96,12 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         this(new MultiLoader(RuntimeOptions.class.getClassLoader()), env, argv);
     }
 
-    public RuntimeOptions(ResourceLoader resourceLoader, List<String> argv) {
-        this(resourceLoader, Env.INSTANCE, argv);
-    }
-    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
-        this(File.separatorChar, resourceLoader, env, argv);
+
+    public RuntimeOptions(ResourceLoader resoureceLoader, List<String> args) {
+        this(resoureceLoader, Env.INSTANCE, args);
     }
 
-    RuntimeOptions(char fileSeparatorChar, ResourceLoader resourceLoader, Env env, List<String> argv) {
-        this.fileSeparatorChar = fileSeparatorChar;
+    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
         this.rerunLoader= new RerunLoader(resourceLoader);
         argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
@@ -146,7 +142,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
         Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
         List<URI> parsedFeaturePaths = new ArrayList<>();
-        List<String> parsedGlue = new ArrayList<String>();
+        List<URI> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
 
@@ -170,7 +166,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 }
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
-                parsedGlue.add(parseGlue(gluePath));
+                parsedGlue.add(GluePath.parse(gluePath));
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedTagExpressions.add(args.remove(0));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
@@ -258,9 +254,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         }
     }
 
-    private String parseGlue(String gluePath) {
-        return convertFileSeparatorToForwardSlash(gluePath);
-    }
 
     private void printUsage() {
         loadUsageTextIfNeeded();
@@ -331,7 +324,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     @Override
-    public List<String> getGlue() {
+    public List<URI> getGlue() {
         return glue;
     }
 
@@ -442,10 +435,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 }
             }
         }
-    }
-
-    private String convertFileSeparatorToForwardSlash(String path) {
-        return path.replace(fileSeparatorChar, '/');
     }
 
 }

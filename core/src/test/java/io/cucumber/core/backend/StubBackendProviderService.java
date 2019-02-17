@@ -5,6 +5,7 @@ import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
+import java.net.URI;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -18,7 +19,7 @@ public class StubBackendProviderService implements BackendProviderService {
     static class StubBackend implements Backend {
 
         @Override
-        public void loadGlue(Glue glue, List<String> gluePaths) {
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
 
         }
 

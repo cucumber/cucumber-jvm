@@ -12,6 +12,7 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public void loadGlue(Glue glue, List<String> gluePaths) {
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
             glue.addStepDefinition(createStepDefinition("background step"));
             glue.addStepDefinition(createStepDefinition("scenario name"));
             glue.addStepDefinition(createStepDefinition("scenario C"));

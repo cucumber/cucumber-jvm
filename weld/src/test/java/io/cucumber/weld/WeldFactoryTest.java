@@ -4,8 +4,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
 
 import org.jboss.weld.environment.se.Weld;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,24 +24,6 @@ public class WeldFactoryTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    private static final PrintStream ORIGINAL_OUT = System.out;
-    private static final PrintStream ORIGINAL_ERR = System.err;
-
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-
-    @Before
-    public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-    }
-
-    @After
-    public void restoreStreams() {
-        System.setOut(ORIGINAL_OUT);
-        System.setErr(ORIGINAL_ERR);
-    }
 
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
@@ -66,7 +46,7 @@ public class WeldFactoryTest {
     }
 
     @Test
-    public void startstopCalledWithoutStart() {
+    public void startStopCalledWithoutStart() {
 
         final Weld weld = mock(Weld.class);
         when(weld.initialize())
@@ -82,20 +62,15 @@ public class WeldFactoryTest {
 
     @Test
     public void stopCalledWithoutStart() {
-
-        final ObjectFactory factory = new WeldFactory();
-
-        factory.stop();
-
-        final String expectedErrOutput = "\n" +
-            "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
-            "this message, it means your weld container didn't shut down properly. It's a Weld bug\n" +
-            "and we can't do much to fix it in Cucumber-JVM.\n" +
-            "\n" +
-            "java.lang.NullPointerException\n" +
-            "\tat io.cucumber.weld.WeldFactory.stop";
-
-        assertThat(this.errContent.toString(), is(startsWith(expectedErrOutput)));
+        PrintStream originalErr = System.err;
+        try {
+            ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+            System.setErr(new PrintStream(errContent));
+            ObjectFactory factory = new WeldFactory();
+            factory.stop();
+            assertThat(errContent.toString(), startsWith(WeldFactory.STOP_EXCEPTION_MESSAGE));
+        } finally {
+            System.setErr(originalErr);
+        }
     }
-
 }

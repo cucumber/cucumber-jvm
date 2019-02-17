@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,28 +58,21 @@ public class JavaBackendTest {
 
     @Test
     public void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, asList("classpath:io/cucumber/java/stepdefs"));
-        backend.buildWorld();
-        verify(factory).addClass(Stepdefs.class);
-    }
-
-    @Test
-    public void finds_step_definitions_by_package_name() {
-        backend.loadGlue(glue, asList("io.cucumber.java.stepdefs"));
+        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/stepdefs")));
         backend.buildWorld();
         verify(factory).addClass(Stepdefs.class);
     }
 
     @Test
     public void detects_subclassed_glue_and_throws_exception() {
-        final Executable testMethod = () -> backend.loadGlue(glue, asList("io.cucumber.java.stepdefs", "io.cucumber.java.incorrectlysubclassedstepdefs"));
+        final Executable testMethod = () -> backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/stepdefs"), URI.create("classpath:io/cucumber/java/incorrectlysubclassedstepdefs")));
         final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedstepdefs.SubclassesStepdefs extends class io.cucumber.java.stepdefs.Stepdefs")));
     }
 
     @Test
     public void detects_repeated_annotations() {
-        backend.loadGlue(glue, asList("io.cucumber.java.repeatable"));
+        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/repeatable")));
         verify(glue, times(2)).addStepDefinition(stepDefinition.capture());
 
         List<String> patterns = stepDefinition.getAllValues()

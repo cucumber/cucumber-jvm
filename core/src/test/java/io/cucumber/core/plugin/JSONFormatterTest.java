@@ -21,6 +21,8 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1144,7 +1146,7 @@ public class JSONFormatterTest {
 
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(hook);
 
             }
@@ -1180,7 +1182,7 @@ public class JSONFormatterTest {
 
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public void loadGlue(Glue glue, List<String> gluePaths) {
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(hook);
 
             }

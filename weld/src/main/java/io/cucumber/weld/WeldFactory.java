@@ -5,11 +5,9 @@ import io.cucumber.core.backend.ObjectFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-public class WeldFactory
-        implements ObjectFactory {
+public class WeldFactory implements ObjectFactory {
 
-    protected static final String START_EXCEPTION_MESSAGE = "" +
-        "\n" +
+    static final String START_EXCEPTION_MESSAGE = "\n" +
         "It looks like you're running on a single-core machine, and Weld doesn't like that. See:\n" +
         "* http://in.relation.to/Bloggers/Weld200Alpha2Released\n" +
         "* https://issues.jboss.org/browse/WELD-1119\n" +
@@ -20,11 +18,10 @@ public class WeldFactory
         "not rethrown. It's the best Cucumber-JVM can do until this bug is fixed in Weld.\n" +
         "\n";
 
-    protected static final String STOP_EXCEPTION_MESSAGE = "" +
-        "\nIf you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
+    static final String STOP_EXCEPTION_MESSAGE = "\n" +
+        "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
         "this message, it means your weld container didn't shut down properly. It's a Weld bug\n" +
-        "and we can't do much to fix it in Cucumber-JVM.\n" +
-        "";
+        "and we can't do much to fix it in Cucumber-JVM.\n";
 
     private WeldContainer containerInstance;
 
