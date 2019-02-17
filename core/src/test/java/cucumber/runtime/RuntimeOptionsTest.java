@@ -26,7 +26,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -103,6 +105,24 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else.feature:3");
         assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
         assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), singleton(3)));
+    }
+
+
+    @Test
+    public void select_multiple_lines_in_a_features() {
+        RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else.feature:3:5");
+        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
+        Set<Integer> lines = new HashSet<>(asList(3, 5));
+        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), lines));
+    }
+
+
+    @Test
+    public void combines_line_filters_from_repeated_features() {
+        RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else.feature:3 somewhere_else.feature:5");
+        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
+        Set<Integer> lines = new HashSet<>(asList(3, 5));
+        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), lines));
     }
 
     @Test
