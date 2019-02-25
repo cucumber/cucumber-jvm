@@ -114,5 +114,6 @@ public class FeaturePathTest {
         } finally {
             System.setProperty("os.name", originalOSName);
         }
+    }
 
 }
