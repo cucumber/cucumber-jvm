@@ -94,9 +94,6 @@ public class FeaturePathTest {
         assumeThat(System.getProperty("os.name"), containsString("Windows")); //Requires windows
         URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
         assertEquals("file", uri.getScheme());
-        // Use File to work out the drive letter
-        File file = new File("/path/to/the/file.feature");
-        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
     }
 
     @Test
@@ -104,9 +101,6 @@ public class FeaturePathTest {
         assumeThat(System.getProperty("os.name"), containsString("Windows")); //Requires windows
         URI uri = FeaturePath.parse("C:/path-to/the_file.feature");
         assertEquals("file", uri.getScheme());
-        // Use File to work out the drive letter
-        File file = new File("/path-to/the_file.feature");
-        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
     }
 
 }
