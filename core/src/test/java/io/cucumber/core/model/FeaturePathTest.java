@@ -92,26 +92,25 @@ public class FeaturePathTest {
     
     @Test
     public void can_parse_windows_file_path_with_standard_file_separator(){
-        String osName = System.getProperty("os.name");
-        assumeThat(normalize(osName), containsString("windows")); //Requires windows
+        assumeThat(System.getProperty("os.name"), isWindows());
+
         URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
         assertEquals("file", uri.getScheme());
         assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
     }
 
-    @Test
-    public void can_parse_windows_file_path_with_standard_file_separator_and_non_alpanumeric_chars(){
-        String osName = System.getProperty("os.name");
-        assumeThat(normalize(osName), containsString("windows")); //Requires windows
-        URI uri = FeaturePath.parse("C:/path-to/the_file.feature");
-        assertEquals("file", uri.getScheme());
+    private static Matcher<String> isWindows() {
+        return new CustomTypeSafeMatcher<String>("windows") {
+            @Override
+            protected boolean matchesSafely(String value) {
+                if (value == null) {
+                    return false;
+                }
+                return value
+                    .toLowerCase(Locale.US)
+                    .replaceAll("[^a-z0-9]+", "")
+                    .contains("windows");
+            }
+        };
     }
-    
-    private static String normalize(final String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
-    }        
-
 }
