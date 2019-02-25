@@ -59,7 +59,7 @@ public class FeaturePath {
     }
     
     private static boolean probablyURI(String featureIdentifier) {
-        return featureIdentifier.matches("^\\w+:.*$");
+        return featureIdentifier.matches("^[a-zA-Z+.\\-]+:.*$");
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
