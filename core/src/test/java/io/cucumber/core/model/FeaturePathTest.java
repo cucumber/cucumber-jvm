@@ -4,11 +4,13 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
+
 
 public class FeaturePathTest {
 
@@ -91,16 +93,25 @@ public class FeaturePathTest {
     
     @Test
     public void can_parse_windows_file_path_with_standard_file_separator(){
-        assumeThat(System.getProperty("os.name"), containsString("Windows")); //Requires windows
+        String osName = System.getProperty("os.name");
+        assumeThat(normalize(osName), containsString("windows")); //Requires windows
         URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
         assertEquals("file", uri.getScheme());
     }
 
     @Test
     public void can_parse_windows_file_path_with_standard_file_separator_and_non_alpanumeric_chars(){
-        assumeThat(System.getProperty("os.name"), containsString("Windows")); //Requires windows
+        String osName = System.getProperty("os.name");
+        assumeThat(normalize(osName), containsString("windows")); //Requires windows
         URI uri = FeaturePath.parse("C:/path-to/the_file.feature");
         assertEquals("file", uri.getScheme());
     }
+    
+    private static String normalize(final String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+    }        
 
 }
