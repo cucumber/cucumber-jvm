@@ -71,7 +71,6 @@ public class FeaturePathTest {
         assertEquals("path/to/file.feature", uri.getSchemeSpecificPart());
     }
 
-
     @Test
     public void can_parse_windows_absolute_path_form(){
         assumeThat(File.separatorChar, is('\\')); //Requires windows
@@ -82,12 +81,29 @@ public class FeaturePathTest {
         assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
     }
 
-
     @Test
     public void can_parse_whitespace_in_path(){
         URI uri = FeaturePath.parse("path/to the/file.feature");
         assertEquals("file", uri.getScheme());
         assertEquals("path/to the/file.feature", uri.getSchemeSpecificPart());
     }
-
+    
+    @Test
+    public void can_parse_windows_file_path_with_standard_file_separator(){
+        URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
+        assertEquals("file", uri.getScheme());
+        // Use File to work out the drive letter
+        File file = new File("/path/to/the/file.feature");
+        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
+    }
+    
+    @Test
+    public void can_parse_windows_file_path_with_standard_file_separator_and_non_alpanumeric_chars(){
+        URI uri = FeaturePath.parse("C:/path-to/the_file.feature");
+        assertEquals("file", uri.getScheme());
+        // Use File to work out the drive letter
+        File file = new File("/path-to/the_file.feature");
+        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
+    }
+    
 }
