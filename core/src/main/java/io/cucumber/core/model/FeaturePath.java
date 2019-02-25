@@ -32,6 +32,10 @@ public class FeaturePath {
             String standardized = replaceNonStandardPathSeparator(featureIdentifier);
             return parseAssumeFileScheme(standardized);
         }
+        
+        if (isWindowsOS() && pathContainsWindowsDrivePattern(featureIdentifier)) {
+            return parseAssumeFileScheme(featureIdentifier);
+        }
 
         if (probablyURI(featureIdentifier)) {
             return parseProbableURI(featureIdentifier);
@@ -43,11 +47,16 @@ public class FeaturePath {
     private static URI parseProbableURI(String featureIdentifier) {
         return URI.create(featureIdentifier);
     }
-
+    
+    private static boolean isWindowsOS() { return System.getProperty("os.name").contains("Windows");}
+    
+    private static boolean pathContainsWindowsDrivePattern(String featureIdentifier) {
+        return featureIdentifier.matches("^(?:[a-zA-Z]:.*)$");
+    }
+    
     private static boolean probablyURI(String featureIdentifier) {
         return featureIdentifier.matches("^\\w+:.*$");
     }
-
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
         return featureIdentifier.replace(File.separatorChar, '/');
