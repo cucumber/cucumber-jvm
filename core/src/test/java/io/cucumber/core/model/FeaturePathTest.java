@@ -90,20 +90,29 @@ public class FeaturePathTest {
     
     @Test
     public void can_parse_windows_file_path_with_standard_file_separator(){
-        URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
-        assertEquals("file", uri.getScheme());
-        // Use File to work out the drive letter
-        File file = new File("/path/to/the/file.feature");
-        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
+        String originalOSName = System.getProperty("os.name");
+        try {
+            URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
+            assertEquals("file", uri.getScheme());
+            // Use File to work out the drive letter
+            File file = new File("/path/to/the/file.feature");
+            assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
+        } finally {
+            System.setProperty("os.name", originalOSName);
+        }
     }
     
     @Test
     public void can_parse_windows_file_path_with_standard_file_separator_and_non_alpanumeric_chars(){
-        URI uri = FeaturePath.parse("C:/path-to/the_file.feature");
-        assertEquals("file", uri.getScheme());
-        // Use File to work out the drive letter
-        File file = new File("/path-to/the_file.feature");
-        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
-    }
-    
+        String originalOSName = System.getProperty("os.name");
+        try {
+            URI uri = FeaturePath.parse("C:/path-to/the_file.feature");
+            assertEquals("file", uri.getScheme());
+            // Use File to work out the drive letter
+            File file = new File("/path-to/the_file.feature");
+            assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
+        } finally {
+            System.setProperty("os.name", originalOSName);
+        }
+
 }
