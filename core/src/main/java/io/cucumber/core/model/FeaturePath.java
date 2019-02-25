@@ -3,6 +3,7 @@ package io.cucumber.core.model;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 
 /**
@@ -48,7 +49,10 @@ public class FeaturePath {
         return URI.create(featureIdentifier);
     }
     
-    private static boolean isWindowsOS() { return System.getProperty("os.name").contains("Windows");}
+    private static boolean isWindowsOS() { 
+        String osName = System.getProperty("os.name");
+        return normalize(osName).contains("windows");
+    }
     
     private static boolean pathContainsWindowsDrivePattern(String featureIdentifier) {
         return featureIdentifier.matches("^(?:[a-zA-Z]:.*)$");
@@ -81,4 +85,12 @@ public class FeaturePath {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
+    
+    private static String normalize(final String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+    }
+    
 }
