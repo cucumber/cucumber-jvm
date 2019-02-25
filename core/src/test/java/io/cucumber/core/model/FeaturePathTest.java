@@ -1,12 +1,13 @@
 package io.cucumber.core.model;
 
+import org.hamcrest.CustomTypeSafeMatcher;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.File;
 import java.net.URI;
 import java.util.Locale;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
@@ -79,9 +80,7 @@ public class FeaturePathTest {
         assumeThat(File.separatorChar, is('\\')); //Requires windows
         URI uri = FeaturePath.parse("C:\\path\\to\\file.feature");
         assertEquals("file", uri.getScheme());
-        // Use File to work out the drive letter
-        File file = new File("/path/to/file.feature");
-        assertEquals(file.toURI().getSchemeSpecificPart(), uri.getSchemeSpecificPart());
+        assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
     }
 
     @Test
@@ -97,6 +96,7 @@ public class FeaturePathTest {
         assumeThat(normalize(osName), containsString("windows")); //Requires windows
         URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
         assertEquals("file", uri.getScheme());
+        assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
     }
 
     @Test

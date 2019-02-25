@@ -55,7 +55,7 @@ public class FeaturePath {
     }
     
     private static boolean pathContainsWindowsDrivePattern(String featureIdentifier) {
-        return featureIdentifier.matches("^(?:[a-zA-Z]:.*)$");
+        return featureIdentifier.matches("^[a-zA-Z]:.*$");
     }
     
     private static boolean probablyURI(String featureIdentifier) {
