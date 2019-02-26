@@ -3,6 +3,7 @@ package io.cucumber.core.model;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 
 /**
@@ -32,6 +33,10 @@ public class FeaturePath {
             String standardized = replaceNonStandardPathSeparator(featureIdentifier);
             return parseAssumeFileScheme(standardized);
         }
+        
+        if (isWindowsOS() && pathContainsWindowsDrivePattern(featureIdentifier)) {
+            return parseAssumeFileScheme(featureIdentifier);
+        }
 
         if (probablyURI(featureIdentifier)) {
             return parseProbableURI(featureIdentifier);
@@ -43,11 +48,19 @@ public class FeaturePath {
     private static URI parseProbableURI(String featureIdentifier) {
         return URI.create(featureIdentifier);
     }
-
-    private static boolean probablyURI(String featureIdentifier) {
-        return featureIdentifier.matches("^\\w+:.*$");
+    
+    private static boolean isWindowsOS() { 
+        String osName = System.getProperty("os.name");
+        return normalize(osName).contains("windows");
     }
-
+    
+    private static boolean pathContainsWindowsDrivePattern(String featureIdentifier) {
+        return featureIdentifier.matches("^[a-zA-Z]:.*$");
+    }
+    
+    private static boolean probablyURI(String featureIdentifier) {
+        return featureIdentifier.matches("^[a-zA-Z+.\\-]+:.*$");
+    }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
         return featureIdentifier.replace(File.separatorChar, '/');
@@ -72,4 +85,12 @@ public class FeaturePath {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
+    
+    private static String normalize(final String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+    }
+    
 }
