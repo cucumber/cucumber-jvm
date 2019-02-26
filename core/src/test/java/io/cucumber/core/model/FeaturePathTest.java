@@ -94,7 +94,7 @@ public class FeaturePathTest {
     public void can_parse_windows_file_path_with_standard_file_separator(){
         assumeThat(System.getProperty("os.name"), isWindows());
 
-        URI uri = FeaturePath.parse("C:/path/to/the/file.feature");
+        URI uri = FeaturePath.parse("C:/path/to/file.feature");
         assertEquals("file", uri.getScheme());
         assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
     }
