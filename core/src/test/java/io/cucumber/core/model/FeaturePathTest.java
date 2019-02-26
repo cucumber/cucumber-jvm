@@ -80,7 +80,7 @@ public class FeaturePathTest {
         assumeThat(File.separatorChar, is('\\')); //Requires windows
         URI uri = FeaturePath.parse("C:\\path\\to\\file.feature");
         assertEquals("file", uri.getScheme());
-        assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
+        assertEquals("/C:/path/to/file.feature", uri.getSchemeSpecificPart());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class FeaturePathTest {
 
         URI uri = FeaturePath.parse("C:/path/to/file.feature");
         assertEquals("file", uri.getScheme());
-        assertEquals("C:/path/to/file.feature", uri.getSchemeSpecificPart());
+        assertEquals("/C:/path/to/file.feature", uri.getSchemeSpecificPart());
     }
 
     private static Matcher<String> isWindows() {
