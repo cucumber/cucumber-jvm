@@ -1,7 +1,7 @@
 package cucumber.runtime.io;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Iterator;
 
 import cucumber.runtime.CucumberException;
@@ -10,18 +10,18 @@ import cucumber.runtime.CucumberException;
  * Factory which creates {@link ZipResourceIterator}s for URL's with "jar", "zip" and "wsjar"
  * protocols.
  */
-public class ZipResourceIteratorFactory implements ResourceIteratorFactory {
+class ZipResourceIteratorFactory implements ResourceIteratorFactory {
 
     @Override
-    public boolean isFactoryFor(URL url) {
-        return url.getFile().contains("!/");
+    public boolean isFactoryFor(URI url) {
+        return url.getSchemeSpecificPart().contains("!/");
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(URI url, String path, String suffix) {
         try {
-            String jarPath = Helpers.jarFilePath(url);
-            return new ZipResourceIterator(jarPath, path, suffix);
+            URI fileUri = Helpers.jarFilePath(url);
+            return new ZipResourceIterator(fileUri, path, suffix);
         } catch (IOException e) {
             throw new CucumberException(e);
         }

@@ -5,6 +5,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import io.cucumber.stepexpression.TypeRegistry;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, List<URI> gluePaths) {
     }
 
     @Override

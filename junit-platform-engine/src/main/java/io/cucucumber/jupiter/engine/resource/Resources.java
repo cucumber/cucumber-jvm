@@ -4,6 +4,7 @@ import cucumber.runtime.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
@@ -49,8 +50,8 @@ public class Resources {
         }
 
         @Override
-        public String getPath() {
-            return uri;
+        public URI getPath() {
+            return URI.create(uri);
         }
 
         @Override
@@ -67,8 +68,8 @@ public class Resources {
         }
 
         @Override
-        public String getPath() {
-            return resource.toUri().toString();
+        public URI getPath() {
+            return resource.toUri();
         }
 
         @Override
@@ -88,8 +89,8 @@ public class Resources {
         }
 
         @Override
-        public String getPath() {
-            return uri;
+        public URI getPath() {
+            return URI.create(uri);
         }
 
         @Override

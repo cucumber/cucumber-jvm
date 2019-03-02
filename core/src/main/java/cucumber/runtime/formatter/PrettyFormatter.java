@@ -27,6 +27,7 @@ import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
 
+import java.net.URI;
 import java.util.List;
 
 import static cucumber.api.Result.Type.UNDEFINED;
@@ -244,7 +245,8 @@ final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private String getLocationText(String file, int line) {
-        return getLocationText(file + ":" + line);
+        String path = URI.create(file).getSchemeSpecificPart();
+        return getLocationText(path + ":" + line);
     }
 
     private String getLocationText(String location) {

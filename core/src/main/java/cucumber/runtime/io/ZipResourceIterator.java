@@ -1,23 +1,25 @@
 package cucumber.runtime.io;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipResourceIterator implements Iterator<Resource> {
+class ZipResourceIterator implements Iterator<Resource> {
     private final String path;
     private final String suffix;
     private final ZipFile jarFile;
     private final Enumeration<? extends ZipEntry> entries;
     private Resource next;
 
-    public ZipResourceIterator(String zipPath, String path, String suffix) throws IOException {
+    ZipResourceIterator(URI zipPath, String path, String suffix) throws IOException {
         this.path = path;
         this.suffix = suffix;
-        jarFile = new ZipFile(zipPath);
+        jarFile = new ZipFile(new File(zipPath));
         entries = jarFile.entries();
 
         moveToNext();

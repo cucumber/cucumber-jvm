@@ -110,7 +110,7 @@ abstract class FeatureOrigin {
 
         @Override
         UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
-            return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri());
+            return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri().toString());
         }
 
     }
@@ -150,12 +150,12 @@ abstract class FeatureOrigin {
         }
 
         private String classPathUri(CucumberFeature feature) {
-            return classpathUri(feature.getUri());
+            return feature.getUri().getSchemeSpecificPart();
         }
 
         @Override
         UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
-            return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri());
+            return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri().toString());
         }
     }
 

@@ -57,7 +57,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(true);
 
-        assertEquals("path/test.feature:2:4:6\n", formatterOutput);
+        assertEquals("file:path/test.feature:2:4:6\n", formatterOutput);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/test.feature:2\n", formatterOutput);
+        assertEquals("file:path/test.feature:2\n", formatterOutput);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/test.feature:4\n", formatterOutput);
+        assertEquals("file:path/test.feature:4\n", formatterOutput);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/test.feature:8\n", formatterOutput);
+        assertEquals("file:path/test.feature:8\n", formatterOutput);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/test.feature:2\n", formatterOutput);
+        assertEquals("file:path/test.feature:2\n", formatterOutput);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/test.feature:2\n", formatterOutput);
+        assertEquals("file:path/test.feature:2\n", formatterOutput);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/test.feature:2:5\n", formatterOutput);
+        assertEquals("file:path/test.feature:2:5\n", formatterOutput);
     }
 
     @Test
@@ -198,7 +198,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("path/second.feature:2\npath/first.feature:2\n", formatterOutput);
+        assertEquals("file:path/first.feature:2\nfile:path/second.feature:2\n", formatterOutput);
     }
 
     private String runFeaturesWithFormatter(boolean isStrict) {

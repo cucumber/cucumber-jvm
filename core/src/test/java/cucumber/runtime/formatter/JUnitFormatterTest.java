@@ -48,26 +48,26 @@ public class JUnitFormatterTest {
 
     @Test
     public void featureSimpleTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_1.feature"));
+        File report = runFeaturesWithJunitFormatter(asList("classpath:cucumber/runtime/formatter/JUnitFormatterTest_1.feature"));
         assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_1.report.xml", report);
     }
 
     @Test
     public void featureWithBackgroundTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_2.feature"));
+        File report = runFeaturesWithJunitFormatter(asList("classpath:cucumber/runtime/formatter/JUnitFormatterTest_2.feature"));
         assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_2.report.xml", report);
     }
 
     @Test
     public void featureWithOutlineTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_3.feature"));
+        File report = runFeaturesWithJunitFormatter(asList("classpath:cucumber/runtime/formatter/JUnitFormatterTest_3.feature"));
         assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_3.report.xml", report);
     }
 
     @Test
     public void featureSimpleStrictTest() throws Exception {
         boolean strict = true;
-        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_1.feature"), strict);
+        File report = runFeaturesWithJunitFormatter(asList("classpath:cucumber/runtime/formatter/JUnitFormatterTest_1.feature"), strict);
         assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_1_strict.report.xml", report);
     }
 

@@ -2,12 +2,15 @@ package io.cucucumber.jupiter.engine;
 
 import cucumber.api.SnippetType;
 import cucumber.runtime.Shellwords;
+import io.cucumber.core.model.GluePath;
 import io.cucumber.core.options.PluginOptions;
 import io.cucumber.core.options.RunnerOptions;
 import org.junit.platform.engine.ConfigurationParameters;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.cucucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucucumber.jupiter.engine.Constants.DRY_RUN_ENABLED_PROPERTY_NAME;
@@ -44,10 +47,13 @@ class CucumberEngineOptions implements PluginOptions, RunnerOptions {
     }
 
     @Override
-    public List<String> getGlue() {
+    public List<URI> getGlue() {
         return configurationParameters
             .get(GLUE_PROPERTY_NAME, Shellwords::parse)
-            .orElse(Collections.singletonList("classpath:"));
+            .orElse(Collections.singletonList("classpath:"))
+            .stream()
+            .map(GluePath::parse)
+            .collect(Collectors.toList());
     }
 
     @Override

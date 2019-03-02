@@ -13,6 +13,7 @@ import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URI;
 import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
@@ -37,15 +38,7 @@ public class JavaBackendTest {
     @Test
     public void finds_step_definitions_by_classpath_url() {
         GlueStub glue = new GlueStub();
-        backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
-        backend.buildWorld();
-        assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
-    }
-
-    @Test
-    public void finds_step_definitions_by_package_name() {
-        GlueStub glue = new GlueStub();
-        backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs"));
+        backend.loadGlue(glue, asList(URI.create("classpath:cucumber/runtime/java/stepdefs")));
         backend.buildWorld();
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
@@ -53,7 +46,10 @@ public class JavaBackendTest {
     @Test(expected = CucumberException.class)
     public void detects_subclassed_glue_and_throws_exception() {
         GlueStub glue = new GlueStub();
-        backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs"));
+        backend.loadGlue(glue, asList(
+            URI.create("classpath:cucumber/runtime/java/stepdefs"),
+            URI.create("classpath:cucumber/runtime/java/incorrectlysubclassedstepdefs"))
+        );
     }
 
     private class GlueStub implements Glue {

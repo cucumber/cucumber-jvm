@@ -33,7 +33,7 @@ public class RunCukesTest extends AbstractTestNGCucumberTests {
 
 This will execute all scenarios in same package as the runner, by default glue code is also assumed to be in the same 
 package. The `@CucumberOptions` can be used to provide
-[additional configuration](https://cucumber.io/docs/reference/jvm#list-configuration-options) to the runner. 
+[additional configuration](https://docs.cucumber.io/cucumber/api/#list-configuration-options) to the runner. 
 
 ## Test composition ##
 

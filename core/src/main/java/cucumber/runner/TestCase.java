@@ -8,6 +8,7 @@ import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +94,7 @@ final class TestCase implements cucumber.api.TestCase {
     }
 
     private String fileColonLine(PickleLocation location) {
-        return pickleEvent.uri + ":" + location.getLine();
+        return URI.create(pickleEvent.uri).getSchemeSpecificPart() + ":" + location.getLine();
     }
 
     @Override

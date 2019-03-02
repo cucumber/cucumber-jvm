@@ -2,7 +2,7 @@ package cucumber.runtime.io;
 
 import cucumber.runtime.CucumberException;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
@@ -11,7 +11,7 @@ import java.util.ServiceLoader;
  * A {@link ResourceIteratorFactory} implementation which delegates to
  * factories found by the ServiceLoader class.
  */
-public class DelegatingResourceIteratorFactory implements ResourceIteratorFactory {
+class DelegatingResourceIteratorFactory implements ResourceIteratorFactory {
 
     private final Iterable<ResourceIteratorFactory> delegates = ServiceLoader.load(ResourceIteratorFactory.class);
 
@@ -24,12 +24,12 @@ public class DelegatingResourceIteratorFactory implements ResourceIteratorFactor
      * @param fallbackResourceIteratorFactory The factory to use when an
      *                                        appropriate one couldn't be found otherwise.
      */
-    public DelegatingResourceIteratorFactory(ResourceIteratorFactory fallbackResourceIteratorFactory) {
+    DelegatingResourceIteratorFactory(ResourceIteratorFactory fallbackResourceIteratorFactory) {
         this.fallbackResourceIteratorFactory = fallbackResourceIteratorFactory;
     }
 
     @Override
-    public boolean isFactoryFor(URL url) {
+    public boolean isFactoryFor(URI url) {
         for (ResourceIteratorFactory delegate : delegates) {
             if (delegate.isFactoryFor(url)) {
                 return true;
@@ -39,7 +39,7 @@ public class DelegatingResourceIteratorFactory implements ResourceIteratorFactor
     }
 
     @Override
-    public Iterator<Resource> createIterator(URL url, String path, String suffix) {
+    public Iterator<Resource> createIterator(URI url, String path, String suffix) {
         for (ResourceIteratorFactory delegate : delegates) {
             if (delegate.isFactoryFor(url)) {
                 return delegate.createIterator(url, path, suffix);

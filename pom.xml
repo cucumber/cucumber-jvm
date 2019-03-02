@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -7,7 +6,7 @@
         <version>1.0.3</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>4.2.1-SNAPSHOT</version>
+    <version>4.2.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -42,7 +41,7 @@
         <!--Dependencies -->
         <gherkin.version>5.1.0</gherkin.version>
         <cucumber-expressions.version>6.2.0</cucumber-expressions.version>
-        <datatable.version>1.1.7</datatable.version>
+        <datatable.version>1.1.12</datatable.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <cucumber-html.version>0.2.7</cucumber-html.version>
 
@@ -241,7 +240,7 @@
                                 <instrumentation>
                                     <ignoreTrivial>true</ignoreTrivial>
                                 </instrumentation>
-                                <check/>
+                                <check />
                             </configuration>
                         </plugin>
                         <plugin>
@@ -376,6 +375,7 @@
                                         <regex>true</regex>
                                         <exclude>
                                             <item>io\.cucumber\.core\.options\..*</item>
+                                            <item>io\.cucumber\.core\.model\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>

@@ -9,7 +9,6 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -26,7 +25,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
     }
 
     static TestDescriptor create(CucumberFeature feature, TestDescriptor parent) {
-        FeatureOrigin source = FeatureOrigin.fromUri(URI.create(feature.getUri()));
+        FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
         UniqueId uniqueId = source.featureSegment(parent.getUniqueId(), feature);
         TestSource testSource = source.featureSource(feature);
         TestDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, feature.getName(), testSource, feature);

@@ -7,15 +7,15 @@ import java.util.Iterator;
 import static cucumber.runtime.io.Helpers.hasSuffix;
 import static java.util.Arrays.asList;
 
-public class FileResourceIterator implements Iterator<Resource> {
+class FileResourceIterator implements Iterator<Resource> {
     private final FlatteningIterator<Resource> flatteningIterator = new FlatteningIterator<Resource>();
 
     static Iterator<Resource> createFileResourceIterator(File root, File file, final String suffix) {
         return new FileResourceIterator(root, file, suffix, false);
     }
 
-    static Iterator<Resource> createClasspathFileResourceIterator(File root, File file, final String suffix) {
-        return new FileResourceIterator(root, file, suffix, true);
+    static Iterator<Resource> createClasspathFileResourceIterator(File classpathRoot, File file, final String suffix) {
+        return new FileResourceIterator(classpathRoot, file, suffix, true);
     }
 
     private FileResourceIterator(File root, File file, final String suffix, boolean classpathFileResourceIterator) {
