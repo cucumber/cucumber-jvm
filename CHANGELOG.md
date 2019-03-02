@@ -1,7 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.2.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.3...master) (In Git)
+## [4.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.4...master) (In Git)
 
 ### Added
 
@@ -12,6 +12,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.2.4](https://github.com/cucumber/cucumber-jvm/compare/v4.2.3...v4.2.4) (2019-02-28)
+
+### Fixed
+ * [Core] Disambiguate between Windows drive letter and uri scheme ([#1568](https://github.com/cucumber/cucumber-jvm/issues/1568), [#1564](https://github.com/cucumber/cucumber-jvm/issues/1564) jsa34)
 
 ## [4.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...v4.2.3) (2019-02-08)
 

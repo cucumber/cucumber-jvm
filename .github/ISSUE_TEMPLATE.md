@@ -6,34 +6,34 @@ Hi,
 
 
 
-you are about to create an issue. Great.
+You are about to create an issue - great!
 
 
 
-Please read this first. You'll be more successfull.
+Please read this first: you'll be more successful.
 
 
 
-Before you do so please consider the following:
+Before you do so, please consider the following:
 
  * Use the [support](https://cucumber.io/support) forums for questions 
-   and discussions which are not related to bug reports or feature requests 
+   and discussions which are not related to bug reports or feature requests. 
 
  * Search for related issues and check the documentation before opening a 
    new issue. https://docs.cucumber.io/support
 
- * If your issue is related to other tools (Serenity, Selenium, etc),
+ * If your issue is related to other tools (Serenity, Selenium, etc.),
    please open an issue on the related tool. Only open an issue here once
-   you have confirmed the issue is with Cucumber 
+   you have confirmed the issue is with Cucumber. 
 
   * If you are reporting a bug, please provide as much information as you 
-    can to help us solving your problem. 
+    can to help us in solving your problem. 
     
 
-Finally the sections below are meant as guidance, to help you give the kind of 
+Finally, the sections below are meant as guidance, to help you give the kind of 
 information we'll need to help with your issue. Please try your best. 
 
-If a section  doesn't seem to fit, just delete it.
+If a section doesn't seem to fit, just delete it.
 
 
 -->    
@@ -46,14 +46,14 @@ If a section  doesn't seem to fit, just delete it.
 
 <!--- If you're describing a bug, tell us what should happen -->
 <!--- If you're suggesting a change/improvement, tell us how it should work -->
-<!--- Feel free to use Given / Then / Then if that helps, but please add some plain-language context too -->
+<!--- Feel free to use Given / Then / Then if that helps, but please add some plain-language context, too -->
 
 ## Current Behavior
 
-<!--- If describing a bug, tell us what happens instead of the expected behavior -->
-<!--- If suggesting a change/improvement, explain the difference from current behavior -->
+<!--- If describing a bug, tell us what happens that is different to the expected behavior -->
+<!--- If suggesting a change/improvement, explain the difference from the current behavior -->
 
-<!--- If you have got some output place it in the code block below. Otherwise remove it. -->
+<!--- If you have got some output place it in the code block below, otherwise remove it. -->
 ```
 
 

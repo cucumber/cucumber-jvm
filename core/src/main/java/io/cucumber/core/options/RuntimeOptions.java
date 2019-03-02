@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -55,7 +56,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<String> tagExpressions = new ArrayList<String>();
     private final List<Pattern> nameFilters = new ArrayList<Pattern>();
     private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
-    private final List<URI> featurePaths = new ArrayList<>();
+    private final SortedSet<URI> featurePaths = new TreeSet<>();
 
     private final List<String> junitOptions = new ArrayList<String>();
     private final RerunLoader rerunLoader;
@@ -344,7 +345,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     @Override
     public List<URI> getFeaturePaths() {
-        return featurePaths;
+        return new ArrayList<>(featurePaths);
     }
 
     @Override
