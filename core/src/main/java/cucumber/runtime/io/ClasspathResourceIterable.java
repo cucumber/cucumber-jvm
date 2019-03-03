@@ -9,11 +9,11 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import static cucumber.runtime.io.MultiLoader.CLASSPATH_SCHEME;
+import static io.cucumber.core.model.Classpath.resourceName;
 
 class ClasspathResourceIterable implements Iterable<Resource> {
     private final ResourceIteratorFactory resourceIteratorFactory =
-            new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
+        new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
 
     private final ClassLoader classLoader;
     private final String path;
@@ -21,13 +21,7 @@ class ClasspathResourceIterable implements Iterable<Resource> {
 
     ClasspathResourceIterable(ClassLoader classLoader, URI path, String suffix) {
         this.classLoader = classLoader;
-
-
-        if(!CLASSPATH_SCHEME.equals(path.getScheme())){
-            throw new IllegalArgumentException("path must have classpath scheme " + path);
-        }
-
-        this.path = path.getSchemeSpecificPart();
+        this.path = resourceName(path);
         this.suffix = suffix;
     }
 

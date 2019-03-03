@@ -2,6 +2,7 @@ package cucumber.runtime.model;
 
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import io.cucumber.core.model.FeatureIdentifier;
 
 import java.io.PrintStream;
 import java.net.URI;
@@ -41,7 +42,7 @@ public final class FeatureLoader {
         Iterable<Resource> resources = resourceLoader.resources(featurePath, FEATURE_SUFFIX);
 
         Iterator<Resource> iterator = resources.iterator();
-        if (featurePath.getSchemeSpecificPart().endsWith(FEATURE_SUFFIX) && !iterator.hasNext()) {
+        if (FeatureIdentifier.isFeature(featurePath) && !iterator.hasNext()) {
             throw new IllegalArgumentException("Feature not found: " + featurePath);
         }
         while (iterator.hasNext()) {
