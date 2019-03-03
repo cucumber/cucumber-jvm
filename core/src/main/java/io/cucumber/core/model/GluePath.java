@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME_PREFIX;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.Character.isJavaIdentifierStart;
 import static java.util.Objects.requireNonNull;
@@ -30,6 +31,12 @@ public class GluePath {
     public static URI parse(String gluePath) {
         requireNonNull(gluePath, "gluePath may not be null");
         if(gluePath.isEmpty()){
+            return rootPackage();
+        }
+
+        // Legacy from the Cucumber Eclipse plugin
+        // Older versions of Cucumber allowed it.
+        if(CLASSPATH_SCHEME_PREFIX.equals(gluePath)){
             return rootPackage();
         }
 

@@ -32,6 +32,14 @@ public class GluePathTest {
     }
 
     @Test
+    public void can_parse_eclipse_plugin_default_glue(){
+        // The eclipse plugin uses `classpath:` as the default
+        URI uri = GluePath.parse("classpath:");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
+
+    @Test
     public void can_parse_classpath_form(){
         URI uri = GluePath.parse("classpath:com/example/app");
         assertThat(uri.getScheme(), is("classpath"));
