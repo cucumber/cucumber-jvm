@@ -4,8 +4,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.Character.isJavaIdentifierStart;
+import static java.util.Objects.requireNonNull;
 
 /**
  * The glue path is a class path URI to a package.
@@ -20,7 +22,17 @@ import static java.lang.Character.isJavaIdentifierStart;
  *
  */
 public class GluePath {
+
+    private GluePath(){
+
+    }
+
     public static URI parse(String gluePath) {
+        requireNonNull(gluePath, "gluePath may not be null");
+        if(gluePath.isEmpty()){
+            return rootPackage();
+        }
+
         if (nonStandardPathSeparatorInUse(gluePath)) {
             String standardized = replaceNonStandardPathSeparator(gluePath);
             return parseAssumeClasspathScheme(standardized);
@@ -32,6 +44,14 @@ public class GluePath {
         }
 
         return parseAssumeClasspathScheme(gluePath);
+    }
+
+    private static URI rootPackage() {
+        try {
+            return new URI(CLASSPATH_SCHEME, "/" ,null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private static boolean isProbablyPackage(String gluePath) {
@@ -59,13 +79,13 @@ public class GluePath {
 
         if(uri.getScheme() == null){
             try {
-                return new URI("classpath", uri.getSchemeSpecificPart(), uri.getFragment());
+                return new URI(CLASSPATH_SCHEME, uri.getSchemeSpecificPart(), uri.getFragment());
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
         }
 
-        if(!"classpath".equals(uri.getScheme())){
+        if(!CLASSPATH_SCHEME.equals(uri.getScheme())){
             throw new IllegalArgumentException("The glue path must have a classpath scheme " + uri);
         }
 
