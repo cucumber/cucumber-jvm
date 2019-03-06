@@ -2,7 +2,6 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
-import cucumber.api.TestCase;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -19,6 +18,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -38,23 +38,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class TestNGFormatter implements EventListener, StrictAware {
+final class TestNGFormatter implements EventListener, StrictAware {
 
     private final Writer writer;
     private final Document document;
     private final Element results;
     private final Element suite;
     private final Element test;
+    private final TestSourcesModel testSources = new TestSourcesModel();
     private Element clazz;
     private Element root;
-    private TestMethod testMethod;
-
-    private final TestSourcesModel testSources = new TestSourcesModel();
-    private String currentFeatureFile = null;
+    private TestCase testCase;
     private boolean strict = false;
+    private String currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
-
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -62,7 +60,7 @@ class TestNGFormatter implements EventListener, StrictAware {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -87,7 +85,7 @@ class TestNGFormatter implements EventListener, StrictAware {
         }
     };
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
+    @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(url));
         try {
@@ -132,21 +130,21 @@ class TestNGFormatter implements EventListener, StrictAware {
         }
         root = document.createElement("test-method");
         clazz.appendChild(root);
-        testMethod = new TestMethod(event.testCase);
-        testMethod.start(root);
+        testCase = new TestCase(event.testCase);
+        testCase.start(root);
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
         if (event.testStep instanceof PickleStepTestStep) {
-            testMethod.steps.add((PickleStepTestStep) event.testStep);
-            testMethod.results.add(event.result);
+            testCase.steps.add((PickleStepTestStep) event.testStep);
+            testCase.results.add(event.result);
         } else {
-            testMethod.hooks.add(event.result);
+            testCase.hooks.add(event.result);
         }
     }
 
     private void handleTestCaseFinished() {
-        testMethod.finish(document, root);
+        testCase.finish(document, root);
     }
 
     private void finishReport() {
@@ -160,7 +158,9 @@ class TestNGFormatter implements EventListener, StrictAware {
             test.setAttribute("name", TestNGFormatter.class.getName());
             test.setAttribute("duration-ms", getTotalDuration(suite.getElementsByTagName("test-method")));
 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            Transformer transformer = factory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             StreamResult streamResult = new StreamResult(writer);
             DOMSource domSource = new DOMSource(document);
@@ -168,6 +168,14 @@ class TestNGFormatter implements EventListener, StrictAware {
             closeQuietly(writer);
         } catch (TransformerException e) {
             throw new CucumberException("Error transforming report.", e);
+        }
+    }
+
+    private void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
         }
     }
 
@@ -195,34 +203,31 @@ class TestNGFormatter implements EventListener, StrictAware {
             try {
                 String duration = testCaseNodes.item(i).getAttributes().getNamedItem("duration-ms").getNodeValue();
                 totalDuration += Long.parseLong(duration);
-            } catch (NumberFormatException e) {
-                throw new CucumberException(e);
-            } catch (NullPointerException e) {
+            } catch (NumberFormatException | NullPointerException e) {
                 throw new CucumberException(e);
             }
         }
         return String.valueOf(totalDuration);
     }
 
-    private class TestMethod {
+    final class TestCase {
 
+        private final List<PickleStepTestStep> steps = new ArrayList<>();
+        private final List<Result> results = new ArrayList<>();
+        private final List<Result> hooks = new ArrayList<>();
+        private final cucumber.api.TestCase testCase;
         private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
-        final List<Result> hooks = new ArrayList<Result>();
-        final TestCase scenario;
-
-        private TestMethod(TestCase scenario) {
-            this.scenario = scenario;
+        TestCase(cucumber.api.TestCase testCase) {
+            this.testCase = testCase;
         }
 
         private void start(Element element) {
-            element.setAttribute("name", calculateElementName(scenario));
+            element.setAttribute("name", calculateElementName(testCase));
             element.setAttribute("started-at", dateFormat.format(new Date()));
         }
 
-        private String calculateElementName(TestCase testCase) {
+        private String calculateElementName(cucumber.api.TestCase testCase) {
             String testCaseName = testCase.getName();
             if (testCaseName.equals(previousTestCaseName)) {
                 return testCaseName + "_" + ++exampleNumber;
@@ -231,7 +236,7 @@ class TestNGFormatter implements EventListener, StrictAware {
                 exampleNumber = 1;
                 return testCaseName;
             }
-         }
+        }
 
         void finish(Document doc, Element element) {
             element.setAttribute("duration-ms", calculateTotalDurationString());
@@ -290,13 +295,18 @@ class TestNGFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
+                sb.append(getKeywordFromSource(steps.get(i).getStepLine()));
+                sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");
                 } while (sb.length() - length < 76);
                 sb.append(resultStatus);
                 sb.append("\n");
             }
+        }
+
+        private String getKeywordFromSource(int stepLine) {
+            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private Element createException(Document doc, String clazz, String message, String stacktrace) {
@@ -314,14 +324,6 @@ class TestNGFormatter implements EventListener, StrictAware {
             exceptionElement.appendChild(stacktraceElement);
 
             return exceptionElement;
-        }
-    }
-
-    private static void closeQuietly(Closeable out) {
-        try {
-            out.close();
-        } catch (IOException ignored) {
-            // go gentle into that good night
         }
     }
 }
