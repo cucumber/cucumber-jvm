@@ -40,7 +40,6 @@ import java.util.List;
 
 class TestNGFormatter implements EventListener, StrictAware {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private final Writer writer;
     private final Document document;
     private final Element results;
@@ -49,6 +48,13 @@ class TestNGFormatter implements EventListener, StrictAware {
     private Element clazz;
     private Element root;
     private TestMethod testMethod;
+
+    private final TestSourcesModel testSources = new TestSourcesModel();
+    private String currentFeatureFile = null;
+    private boolean strict = false;
+    private String previousTestCaseName;
+    private int exampleNumber;
+
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -84,8 +90,6 @@ class TestNGFormatter implements EventListener, StrictAware {
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public TestNGFormatter(URL url) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(url));
-        TestMethod.treatSkippedAsFailure = false;
-        TestMethod.currentFeatureFile = null;
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             results = document.createElement("testng-results");
@@ -110,20 +114,20 @@ class TestNGFormatter implements EventListener, StrictAware {
 
     @Override
     public void setStrict(boolean strict) {
-        TestMethod.treatSkippedAsFailure = strict;
+        this.strict = strict;
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestMethod.testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getUri())) {
-            TestMethod.currentFeatureFile = event.testCase.getUri();
-            TestMethod.previousTestCaseName = "";
-            TestMethod.exampleNumber = 1;
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
+            currentFeatureFile = event.testCase.getUri();
+            previousTestCaseName = "";
+            exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getUri()).getName());
+            clazz.setAttribute("name", testSources.getFeature(event.testCase.getUri()).getName());
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
@@ -200,13 +204,10 @@ class TestNGFormatter implements EventListener, StrictAware {
         return String.valueOf(totalDuration);
     }
 
-    private static class TestMethod {
+    private class TestMethod {
 
-        static String currentFeatureFile;
-        static boolean treatSkippedAsFailure = false;
-        static String previousTestCaseName;
-        static int exampleNumber;
-        static final TestSourcesModel testSources = new TestSourcesModel();
+        private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
         final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
@@ -218,7 +219,7 @@ class TestNGFormatter implements EventListener, StrictAware {
 
         private void start(Element element) {
             element.setAttribute("name", calculateElementName(scenario));
-            element.setAttribute("started-at", DATE_FORMAT.format(new Date()));
+            element.setAttribute("started-at", dateFormat.format(new Date()));
         }
 
         private String calculateElementName(TestCase testCase) {
@@ -232,9 +233,9 @@ class TestNGFormatter implements EventListener, StrictAware {
             }
          }
 
-        public void finish(Document doc, Element element) {
+        void finish(Document doc, Element element) {
             element.setAttribute("duration-ms", calculateTotalDurationString());
-            element.setAttribute("finished-at", DATE_FORMAT.format(new Date()));
+            element.setAttribute("finished-at", dateFormat.format(new Date()));
             StringBuilder stringBuilder = new StringBuilder();
             addStepAndResultListing(stringBuilder);
             Result skipped = null;
@@ -259,7 +260,7 @@ class TestNGFormatter implements EventListener, StrictAware {
                 Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stringWriter.toString());
                 element.appendChild(exception);
             } else if (skipped != null) {
-                if (treatSkippedAsFailure) {
+                if (strict) {
                     element.setAttribute("status", "FAIL");
                     Element exception = createException(doc, "The scenario has pending or undefined step(s)", stringBuilder.toString(), "The scenario has pending or undefined step(s)");
                     element.appendChild(exception);

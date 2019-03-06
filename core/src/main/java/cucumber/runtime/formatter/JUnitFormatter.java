@@ -45,6 +45,12 @@ final class JUnitFormatter implements EventListener, StrictAware {
     private TestCase testCase;
     private Element root;
 
+    private final TestSourcesModel testSources = new TestSourcesModel();
+    private boolean strict = false;
+    private String currentFeatureFile = null;
+    private String previousTestCaseName = "";
+    private int exampleNumber = 1;
+
     private EventHandler<TestSourceRead> sourceReadHandler= new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
@@ -79,10 +85,6 @@ final class JUnitFormatter implements EventListener, StrictAware {
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
-        TestCase.treatConditionallySkippedAsFailure = false;
-        TestCase.currentFeatureFile = null;
-        TestCase.previousTestCaseName = "";
-        TestCase.exampleNumber = 1;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");
@@ -102,14 +104,14 @@ final class JUnitFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestCase.testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getUri())) {
-            TestCase.currentFeatureFile = event.testCase.getUri();
-            TestCase.previousTestCaseName = "";
-            TestCase.exampleNumber = 1;
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
+            currentFeatureFile = event.testCase.getUri();
+            previousTestCaseName = "";
+            exampleNumber = 1;
         }
         testCase = new TestCase(event.testCase);
         root = testCase.createElement(doc);
@@ -181,28 +183,18 @@ final class JUnitFormatter implements EventListener, StrictAware {
 
     @Override
     public void setStrict(boolean strict) {
-        TestCase.treatConditionallySkippedAsFailure = strict;
+        this.strict = strict;
     }
 
-    private static class TestCase {
-        private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        private static final TestSourcesModel testSources = new TestSourcesModel();
+    private class TestCase {
 
-        static {
-            NUMBER_FORMAT.applyPattern("0.######");
-        }
+        final List<PickleStepTestStep> steps = new ArrayList<>();
+        final List<Result> results = new ArrayList<>();
+        private final cucumber.api.TestCase testCase;
 
         private TestCase(cucumber.api.TestCase testCase) {
             this.testCase = testCase;
         }
-
-        static String currentFeatureFile;
-        static String previousTestCaseName;
-        static int exampleNumber;
-        static boolean treatConditionallySkippedAsFailure = false;
-        final List<PickleStepTestStep> steps = new ArrayList<PickleStepTestStep>();
-        final List<Result> results = new ArrayList<Result>();
-        private final cucumber.api.TestCase testCase;
 
         private Element createElement(Document doc) {
             return doc.createElement("testcase");
@@ -237,7 +229,7 @@ final class JUnitFormatter implements EventListener, StrictAware {
                 addStackTrace(sb, result);
                 child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
             } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
-                if (treatConditionallySkippedAsFailure) {
+                if (strict) {
                     child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
                 }
                 else {
@@ -256,14 +248,16 @@ final class JUnitFormatter implements EventListener, StrictAware {
         public void handleEmptyTestCase(Document doc, Element tc, Result result) {
             tc.setAttribute("time", calculateTotalDurationString(result));
 
-            String resultType = treatConditionallySkippedAsFailure ? "failure" : "skipped";
+            String resultType = strict ? "failure" : "skipped";
             Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
 
             tc.appendChild(child);
         }
 
         private String calculateTotalDurationString(Result result) {
-            return NUMBER_FORMAT.format(((double) result.getDuration()) / 1000000000);
+            DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+            numberFormat.applyPattern("0.######");
+            return numberFormat.format(((double) result.getDuration()) / 1000000000);
         }
 
         private void addStepAndResultListing(StringBuilder sb) {
