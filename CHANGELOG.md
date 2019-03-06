@@ -4,7 +4,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.2.7-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...master) (In Git)
 
 ### Added
-
+ *  [Core] Improve CucumberOptions documentation ([#1573](https://github.com/cucumber/cucumber-jvm/pull/1573) M.P. Korstanje, Marit van Dijk)
+ 
 ### Changed
 
 ### Deprecated
