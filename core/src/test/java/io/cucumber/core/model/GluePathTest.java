@@ -18,6 +18,28 @@ public class GluePathTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
+    public void can_parse_empty_glue_path(){
+        URI uri = GluePath.parse("");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
+
+    @Test
+    public void can_parse_root_package(){
+        URI uri = GluePath.parse("classpath:/");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
+
+    @Test
+    public void can_parse_eclipse_plugin_default_glue(){
+        // The eclipse plugin uses `classpath:` as the default
+        URI uri = GluePath.parse("classpath:");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
+
+    @Test
     public void can_parse_classpath_form(){
         URI uri = GluePath.parse("classpath:com/example/app");
         assertThat(uri.getScheme(), is("classpath"));

@@ -7,7 +7,6 @@ import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
@@ -63,7 +62,7 @@ public final class BackendServiceLoader implements BackendSupplier {
 
     private TypeRegistry createTypeRegistry() {
         Reflections reflections = new Reflections(classFinder);
-        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, runtimeOptions.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
         TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
         typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
         return typeRegistry;

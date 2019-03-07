@@ -4,6 +4,7 @@ import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
 
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public final class Reflections {
         return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
     }
 
-    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, List<String> packageNames, Class[] constructorParams, Object[] constructorArgs, T fallback) {
+    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs, T fallback) {
         Collection<? extends T> instances = instantiateSubclasses(parentType, packageNames, constructorParams, constructorArgs);
         if (instances.size() == 1) {
             return instances.iterator().next();
@@ -36,9 +37,9 @@ public final class Reflections {
         }
     }
 
-    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<String> packageNames, Class[] constructorParams, Object[] constructorArgs) {
+    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs) {
         Collection<T> result = new HashSet<T>();
-        for (String packageName : packageNames) {
+        for (URI packageName : packageNames) {
             for (Class<? extends T> clazz : classFinder.getDescendants(parentType, packageName)) {
                 if (isInstantiable(clazz)) {
                     result.add(newInstance(constructorParams, constructorArgs, clazz));

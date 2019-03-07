@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.core.reflection.Reflections;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.java.api.After;
 import io.cucumber.java.api.AfterStep;
@@ -7,14 +8,11 @@ import io.cucumber.java.api.Before;
 import io.cucumber.java.api.BeforeStep;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
-
-import static io.cucumber.core.io.MultiLoader.packageName;
 
 class MethodScanner {
 
@@ -31,8 +29,8 @@ class MethodScanner {
      * @param gluePaths   where to look
      */
     void scan(JavaBackend javaBackend, List<URI> gluePaths) {
-        for (String gluePackage : packageName(gluePaths)) {
-            for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, gluePackage)) {
+        for (URI gluePath : gluePaths) {
+            for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, gluePath)) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Reflections.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();

@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import static io.cucumber.core.io.MultiLoader.packageName;
 import static java.lang.Thread.currentThread;
 
 public class Java8Backend implements Backend, LambdaGlueRegistry {
@@ -44,7 +43,7 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
     public void loadGlue(Glue glue, List<URI> gluePaths) {
         this.glue = glue;
         // Scan for Java8 style glue (lambdas)
-        for (final String packageName : packageName(gluePaths)) {
+        for (final URI packageName : gluePaths) {
             Collection<Class<? extends LambdaGlue>> glueDefinerClasses = classFinder.getDescendants(LambdaGlue.class, packageName);
             for (final Class<? extends LambdaGlue> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {

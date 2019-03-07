@@ -5,6 +5,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
+import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A feature path is a URI to a single feature file or directory of features.
@@ -29,6 +32,17 @@ public class FeaturePath {
     }
 
     public static URI parse(String featureIdentifier) {
+        requireNonNull(featureIdentifier, "featureIdentifier may not be null");
+        if(featureIdentifier.isEmpty()){
+            throw new IllegalArgumentException("featureIdentifier may not be empty");
+        }
+
+        // Legacy from the Cucumber Eclipse plugin
+        // Older versions of Cucumber allowed it.
+        if(CLASSPATH_SCHEME_PREFIX.equals(featureIdentifier)){
+            return rootPackage();
+        }
+
         if (nonStandardPathSeparatorInUse(featureIdentifier)) {
             String standardized = replaceNonStandardPathSeparator(featureIdentifier);
             return parseAssumeFileScheme(standardized);
@@ -43,6 +57,14 @@ public class FeaturePath {
         }
 
         return parseAssumeFileScheme(featureIdentifier);
+    }
+
+    private static URI rootPackage() {
+        try {
+            return new URI(CLASSPATH_SCHEME, "/" ,null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private static URI parseProbableURI(String featureIdentifier) {

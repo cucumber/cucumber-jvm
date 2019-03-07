@@ -1,6 +1,5 @@
 package io.cucumber.core.model;
 
-
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 
@@ -42,7 +41,7 @@ public final class FeatureLoader {
         Iterable<Resource> resources = resourceLoader.resources(featurePath, FEATURE_SUFFIX);
 
         Iterator<Resource> iterator = resources.iterator();
-        if (featurePath.getSchemeSpecificPart().endsWith(FEATURE_SUFFIX) && !iterator.hasNext()) {
+        if (FeatureIdentifier.isFeature(featurePath) && !iterator.hasNext()) {
             throw new IllegalArgumentException("Feature not found: " + featurePath);
         }
         while (iterator.hasNext()) {

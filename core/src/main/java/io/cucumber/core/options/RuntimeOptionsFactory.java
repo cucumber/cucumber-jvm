@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.api.options.CucumberOptions;
+import io.cucumber.core.model.Classpath;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
@@ -103,7 +104,7 @@ public final class RuntimeOptionsFactory {
 
     private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(List<String> args, Class clazz) {
         if (!featuresSpecified) {
-            args.add(MultiLoader.CLASSPATH_SCHEME_PREFIX + packagePath(clazz));
+            args.add(packagePath(clazz));
         }
     }
 
@@ -133,7 +134,7 @@ public final class RuntimeOptionsFactory {
     private void addDefaultGlueIfNoOverridingGlueIsSpecified(List<String> args, Class clazz) {
         if (!overridingGlueSpecified) {
             args.add("--glue");
-            args.add(MultiLoader.CLASSPATH_SCHEME_PREFIX + packagePath(clazz));
+            args.add(packageName(clazz));
         }
     }
 
@@ -150,16 +151,19 @@ public final class RuntimeOptionsFactory {
         }
     }
 
-    static String packagePath(Class clazz) {
-        return packagePath(packageName(clazz.getName()));
+    private static String packagePath(Class clazz) {
+        String packageName = packageName(clazz);
+
+        if (packageName.isEmpty()) {
+            return Classpath.CLASSPATH_SCHEME_PREFIX +  "/";
+        }
+
+        return Classpath.CLASSPATH_SCHEME_PREFIX + packageName.replace('.', '/');
     }
 
-    static String packagePath(String packageName) {
-        return packageName.replace('.', '/');
-    }
-
-    static String packageName(String className) {
-        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
+    static String packageName(Class clazz) {
+        String className = clazz.getName();
+        return className.substring(0, Math.max(0, className.lastIndexOf('.')));
     }
 
     private boolean runningInEnvironmentWithoutAnsiSupport() {

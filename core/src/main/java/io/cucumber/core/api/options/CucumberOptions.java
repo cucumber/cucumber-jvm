@@ -1,72 +1,99 @@
 package io.cucumber.core.api.options;
 
-import io.cucumber.core.api.cli.Main;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation provides the same options as the cucumber command line, {@link Main}.
+ * This annotation provides the same options as the cucumber command line, {@link io.cucumber.core.api.cli.Main}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface CucumberOptions {
+
     /**
-     * @return true if this is a dry run
+     * Skip execution of glue code.
      */
     boolean dryRun() default false;
 
     /**
-     * @return true if strict mode is enabled (fail if there are undefined or pending steps)
+     * Treat undefined and pending steps as errors.
      */
     boolean strict() default false;
 
     /**
-     * @return the uris to the feature(s)
+     * Either a URI or path to a directory of features or a URI or path to a single
+     * feature optionally followed by a colon and line numbers.
+     * <p>
+     * When no feature path is provided, Cucumber will use the package of the annotated
+     * class. For example, if the annotated class is {@code com.example.RunCucumber}
+     * then features are assumed to be located in {@code classpath:com/example}.
+     *
+     * @see io.cucumber.core.model.FeatureWithLines
      */
     String[] features() default {};
 
     /**
-     * @return where to look for glue code (stepdefs and hooks)
+     * Package to load glue code (step definitions,
+     * hooks and plugins) from. E.g: {@code com.example.app}
+     * <p>
+     * When no glue is provided, Cucumber will use the package of the annotated
+     * class. For example, if the annotated class is {@code com.example.RunCucumber}
+     * then glue is assumed to be located in {@code com.example}.
+     *
+     * @see io.cucumber.core.model.GluePath
      */
     String[] glue() default {};
 
     /**
-     * @return where to look for glue code (stepdefs and hooks), in addition to default search path
+     * Package to load additional glue code (step definitions, hooks and
+     * plugins) from. E.g: {@code com.example.app}
+     * <p>
+     * These packages are used in addition to the default described in {@code #glue}.
      */
     String[] extraGlue() default {};
 
     /**
-     * @return what tags in the features should be executed
+     * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.
+     * <p>
+     * For example {@code "@smoke and not @fast"}.
      */
     String[] tags() default {};
 
     /**
-     * @return what plugins(s) to use
+     * Register plugins.
+     * Built-in plugin types: {@code junit}, {@code html},
+     * {@code pretty}, {@code progress}, {@code json}, {@code usage},
+     * {@code rerun}, {@code testng}.
+     * <p>
+     * Can also be a fully qualified class name, allowing
+     * registration of 3rd party plugins.
+     * <p>
+     * Plugins can be provided with an argument. For example
+     * {@code json:target/cucumber-report.json}
+     *
+     * @see io.cucumber.core.api.plugin.Plugin
      */
     String[] plugin() default {};
 
     /**
-     * @return whether or not to use monochrome output
+     * Don't colour terminal output.
      */
     boolean monochrome() default false;
 
     /**
-     * Specify a patternfilter for features or scenarios
-     *
-     * @return a list of patterns
+     * Only run scenarios whose names match provided regular expression.
      */
     String[] name() default {};
 
     /**
-     * @return what format should the snippets use. underscore, camelcase
+     * Format of the generated snippets.
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
     /**
-     * @return the options for the JUnit runner
+     * Pass options to the JUnit runner.
      */
     String[] junit() default {};
 

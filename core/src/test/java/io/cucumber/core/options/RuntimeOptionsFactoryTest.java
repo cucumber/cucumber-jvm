@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.options.RuntimeOptionsFactory.packageName;
-import static io.cucumber.core.options.RuntimeOptionsFactory.packagePath;
 import static java.util.Arrays.asList;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -107,16 +105,6 @@ public class RuntimeOptionsFactoryTest {
 
     private String getRegexpPattern(Object pattern) {
         return ((Pattern) pattern).pattern();
-    }
-
-    @Test
-    public void finds_path_for_class_in_package() {
-        assertEquals("java/lang", packagePath(String.class));
-    }
-
-    @Test
-    public void finds_path_for_class_in_toplevel_package() {
-        assertEquals("", packageName("TopLevelClass"));
     }
 
     @Test
