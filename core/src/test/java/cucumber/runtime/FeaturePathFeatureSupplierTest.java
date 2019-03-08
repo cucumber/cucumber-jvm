@@ -48,7 +48,7 @@ public class FeaturePathFeatureSupplierTest {
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), featureOptions);
         supplier.get();
-        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), containsString("No features found at [file:does/not/exist]"));
+        assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("No features found at file:does/not/exist"));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FeaturePathFeatureSupplierTest {
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), featureOptions);
         supplier.get();
-        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), containsString("Got no path to feature directory or feature file"));
+        assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("Got no path to feature directory or feature file"));
     }
 
 }
