@@ -5,46 +5,42 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.net.URI;
 import java.util.Collections;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CucumberFeatureTest {
 
-    private final PrintStream printStream = new PrintStream(new ByteArrayOutputStream());
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void succeeds_if_no_features_are_found() {
+        URI featurePath = URI.create("does/not/exist");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources(URI.create("does/not/exist"), ".feature")).thenReturn(Collections.emptyList());
-        new FeatureLoader(resourceLoader).load(singletonList(URI.create("does/not/exist")), printStream);
+        when(resourceLoader.resources(featurePath, ".feature")).thenReturn(Collections.emptyList());
+        new FeatureLoader(resourceLoader).load(singletonList(featurePath));
     }
 
     @Test
-    public void logs_message_if_no_features_are_found() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public void gives_error_message_if_path_does_not_exist() {
+        URI featurePath = URI.create("path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources(URI.create("does/not/exist"), ".feature")).thenReturn(Collections.emptyList());
-        new FeatureLoader(resourceLoader).load(singletonList(URI.create("does/not/exist")), new PrintStream(baos));
-
-        assertEquals(String.format("No features found at [does/not/exist]%n"), baos.toString());
+        when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + "path/bar.feature"));
+        expectedException.expectMessage("Not a file or directory: path/bar.feature");
+        new FeatureLoader(resourceLoader).load(singletonList(featurePath));
     }
 
     @Test
-    public void logs_message_if_no_feature_paths_are_given() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public void gives_error_message_if_feature_on_class_path_does_not_exist() {
+        URI featurePath = URI.create("classpath:path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-
-        new FeatureLoader(resourceLoader).load(Collections.emptyList(), new PrintStream(baos));
-
-        assertEquals(String.format("Got no path to feature directory or feature file%n"), baos.toString());
+        when(resourceLoader.resources(featurePath, ".feature")).thenReturn(emptyList());
+        expectedException.expectMessage("Feature not found: classpath:path/bar.feature");
+        new FeatureLoader(resourceLoader).load(singletonList(featurePath));
     }
 }

@@ -82,7 +82,7 @@ public class CucumberTest {
             new Cucumber(FormatterWithLexerErrorFeature.class);
             fail("Expecting error");
         } catch (CucumberException e){
-            assertFalse("File is created despite Lexor Error", new File("lexor_error_feature.json").exists());
+            assertFalse("File is created despite Lexor Error", new File("target/lexor_error_feature.json").exists());
         }
     }
 

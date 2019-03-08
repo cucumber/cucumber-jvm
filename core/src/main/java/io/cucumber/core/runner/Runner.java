@@ -9,13 +9,20 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RunnerOptions;
+import io.cucumber.core.util.FixJava;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public final class Runner {
+
+    private static final Logger log = LoggerFactory.getLogger(Runner.class);
+
     private final CachingGlue glue = new CachingGlue();
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
@@ -25,10 +32,12 @@ public final class Runner {
         this.bus = bus;
         this.runnerOptions = runnerOptions;
         this.backends = backends;
+        List<URI> gluePaths = runnerOptions.getGlue();
+        log.debug("Loading glue from " + FixJava.join(gluePaths, ", "));
         for (Backend backend : backends) {
-            backend.loadGlue(glue, runnerOptions.getGlue());
+            log.debug("Loading glue for backend " + backend.getClass().getName());
+            backend.loadGlue(this.glue, gluePaths);
         }
-
     }
 
     public EventBus getBus() {

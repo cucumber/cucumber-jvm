@@ -1,27 +1,29 @@
 package io.cucumber.testng.api;
 
+import gherkin.events.PickleEvent;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
-import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runtime.BackendServiceLoader;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.plugin.PluginFactory;
-import io.cucumber.core.model.FeatureLoader;
-import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.options.RuntimeOptionsFactory;
+import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.model.CucumberFeature;
-import gherkin.events.PickleEvent;
+import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsFactory;
+import io.cucumber.core.plugin.PluginFactory;
+import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.runner.Runner;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
+import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +34,10 @@ import java.util.List;
 public class TestNGCucumberRunner {
     private final EventBus bus;
     private final Filters filters;
-    private final FeaturePathFeatureSupplier featureSupplier;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
+    private final Plugins plugins;
+    private final FeaturePathFeatureSupplier featureSupplier;
 
     /**
      * Bootstrap the cucumber runtime
@@ -43,20 +46,25 @@ public class TestNGCucumberRunner {
      *              and {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class clazz) {
+
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
+        // Parse the options early to provide fast feedback about invalid options
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, resourceLoader);
         runtimeOptions = runtimeOptionsFactory.create();
 
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
-        bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        new Plugins(new PluginFactory(), bus, runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        filters = new Filters(runtimeOptions);
+        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+
+        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
+
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
+        this.filters = new Filters(runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
-        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, bus);
+
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
@@ -98,7 +106,14 @@ public class TestNGCucumberRunner {
     }
 
     List<CucumberFeature> getFeatures() {
+        List<CucumberFeature> features = featureSupplier.get();
+
         bus.send(new TestRunStarted(bus.getTime()));
-        return featureSupplier.get();
+        for (CucumberFeature feature : features) {
+            bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+        }
+        StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
+        runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
+        return features;
     }
 }

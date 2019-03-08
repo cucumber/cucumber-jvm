@@ -1,5 +1,6 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.plugin.Plugin;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.plugin.StepDefinitionReporter;
@@ -75,7 +76,9 @@ public final class Runtime {
     public void run() {
         bus.send(new TestRunStarted(bus.getTime()));
         final List<CucumberFeature> features = featureSupplier.get();
-
+        for (CucumberFeature feature : features) {
+            bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+        }
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
@@ -211,7 +214,7 @@ public final class Runtime {
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions, this.eventBus);
+                : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
             final Filters filters = new Filters(runtimeOptions);
 

@@ -1,33 +1,45 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.options.FeatureOptions;
+import io.cucumber.core.util.FixJava;
 
+import java.net.URI;
 import java.util.List;
 
 /**
  * Supplies a list of features found on the the feature path provided to RuntimeOptions.
  */
 public final class FeaturePathFeatureSupplier implements FeatureSupplier {
+
+    private static final Logger log = LoggerFactory.getLogger(FeaturePathFeatureSupplier.class);
+
     private final FeatureLoader featureLoader;
     private final FeatureOptions featureOptions;
-    private final EventBus bus;
 
-    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, FeatureOptions featureOptions, EventBus bus) {
+    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, FeatureOptions featureOptions) {
         this.featureLoader = featureLoader;
         this.featureOptions = featureOptions;
-        this.bus = bus;
     }
 
     @Override
     public List<CucumberFeature> get() {
-        List<CucumberFeature> features = featureLoader.load(featureOptions.getFeaturePaths(), System.out);
-        for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+        List<URI> featurePaths = featureOptions.getFeaturePaths();
+
+        log.debug("Loading features from " + FixJava.join(featurePaths, ", "));
+        List<CucumberFeature> cucumberFeatures = featureLoader.load(featurePaths);
+
+        if (cucumberFeatures.isEmpty()) {
+            if (featurePaths.isEmpty()) {
+                log.warn("Got no path to feature directory or feature file");
+            } else {
+                log.warn("No features found at " + FixJava.join(featurePaths, ", "));
+            }
         }
-        return features;
+
+        return cucumberFeatures;
     }
 }
