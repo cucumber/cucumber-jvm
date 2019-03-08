@@ -78,7 +78,7 @@ public class CucumberTest {
             new Cucumber(FormatterWithLexerErrorFeature.class);
             fail("Expecting error");
         } catch (CucumberException e){
-            assertFalse("File is created despite Lexor Error", new File("lexor_error_feature.json").exists());
+            assertFalse("File is created despite Lexor Error", new File("target/lexor_error_feature.json").exists());
         }
     }
 
@@ -199,7 +199,7 @@ public class CucumberTest {
 
     }
 
-    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, plugin = {"json:lexor_error_feature.json"})
+    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
     public class FormatterWithLexerErrorFeature {
 
     }
