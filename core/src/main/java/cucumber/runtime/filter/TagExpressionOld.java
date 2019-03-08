@@ -1,6 +1,8 @@
 package cucumber.runtime.filter;
 
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 class TagExpressionOld {
+
+    private static final Logger logger = LoggerFactory.getLogger(TagExpressionOld.class);
+
     private final Map<String, Integer> limits = new HashMap<String, Integer>();
     private And and = new And();
 
@@ -17,10 +22,10 @@ class TagExpressionOld {
             return false;
         }
         if (tagExpression.contains(",")) {
-            System.err.println("WARNING: Found tags option '" + tagExpression + "'. Support for '@tag1,@tag2' will be removed from the next release of Cucumber-JVM. Please use '@tag or @tag2' instead");
+            logger.warn("Found tags option '" + tagExpression + "'. Support for '@tag1,@tag2' will be removed from the next release of Cucumber-JVM. Please use '@tag or @tag2' instead");
         }
         if (tagExpression.contains("~")) {
-            System.err.println("WARNING: Found tags option '" + tagExpression + "'. Support for '~@tag' will be removed from the next release of Cucumber-JVM. Please use 'not @tag' instead.");
+            logger.warn("Found tags option '" + tagExpression + "'. Support for '~@tag' will be removed from the next release of Cucumber-JVM. Please use 'not @tag' instead.");
         }
         return tagExpression.contains(",") || tagExpression.contains("~");
     }

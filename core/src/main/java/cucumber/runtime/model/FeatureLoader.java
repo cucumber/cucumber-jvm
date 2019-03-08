@@ -4,7 +4,6 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import io.cucumber.core.model.FeatureIdentifier;
 
-import java.io.PrintStream;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
@@ -16,18 +15,6 @@ public final class FeatureLoader {
 
     public FeatureLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-    }
-
-    public List<CucumberFeature> load(List<URI> featurePaths, PrintStream out) {
-        final List<CucumberFeature> cucumberFeatures = load(featurePaths);
-        if (cucumberFeatures.isEmpty()) {
-            if (featurePaths.isEmpty()) {
-                out.println("Got no path to feature directory or feature file");
-            } else {
-                out.println(String.format("No features found at %s", featurePaths));
-            }
-        }
-        return cucumberFeatures;
     }
 
     public List<CucumberFeature> load(List<URI> featurePaths) {

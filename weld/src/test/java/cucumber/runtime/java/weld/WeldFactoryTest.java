@@ -2,20 +2,21 @@ package cucumber.runtime.java.weld;
 
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
 import org.jboss.weld.environment.se.Weld;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +24,19 @@ public class WeldFactoryTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    private LogRecordListener logRecordListener;
+
+    @Before
+    public void setup() {
+        logRecordListener = new LogRecordListener();
+        LoggerFactory.addListener(logRecordListener);
+    }
+
+    @After
+    public void tearDown(){
+        LoggerFactory.removeListener(logRecordListener);
+    }
 
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
@@ -61,15 +75,8 @@ public class WeldFactoryTest {
 
     @Test
     public void stopCalledWithoutStart() {
-        PrintStream originalErr = System.err;
-        try {
-            ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-            System.setErr(new PrintStream(errContent));
-            ObjectFactory factory = new WeldFactory();
-            factory.stop();
-            assertThat(errContent.toString(), startsWith(WeldFactory.STOP_EXCEPTION_MESSAGE));
-        } finally {
-            System.setErr(originalErr);
-        }
+        ObjectFactory factory = new WeldFactory();
+        factory.stop();
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), containsString(WeldFactory.STOP_EXCEPTION_MESSAGE));
     }
 }
