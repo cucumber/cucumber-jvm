@@ -7,10 +7,14 @@ import java.util.List;
 
 public class FixJava {
 
-    public static String join(List<String> strings, String separator) {
+    private FixJava() {
+
+    }
+
+    public static String join(List<? extends Object> objects, String separator) {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (String s : strings) {
+        for (Object s : objects) {
             if (i != 0) sb.append(separator);
             sb.append(s);
             i++;

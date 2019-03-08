@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import cucumber.util.FixJava;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.FeatureOptions;
@@ -27,13 +28,15 @@ public class FeaturePathFeatureSupplier implements FeatureSupplier {
     @Override
     public List<CucumberFeature> get() {
         List<URI> featurePaths = featureOptions.getFeaturePaths();
+
+        log.debug("Loading features from " + FixJava.join(featurePaths, ", "));
         List<CucumberFeature> cucumberFeatures = featureLoader.load(featurePaths);
 
         if (cucumberFeatures.isEmpty()) {
             if (featurePaths.isEmpty()) {
                 log.warn("Got no path to feature directory or feature file");
             } else {
-                log.warn(String.format("No features found at %s", featurePaths));
+                log.warn("No features found at " + FixJava.join(featurePaths, ", "));
             }
         }
 
