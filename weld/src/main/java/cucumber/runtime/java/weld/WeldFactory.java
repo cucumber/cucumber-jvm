@@ -2,10 +2,14 @@ package cucumber.runtime.java.weld;
 
 import cucumber.runtime.CucumberException;
 import cucumber.api.java.ObjectFactory;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
 public class WeldFactory implements ObjectFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(WeldFactory.class);
 
     static final String START_EXCEPTION_MESSAGE = "\n" +
         "It looks like you're running on a single-core machine, and Weld doesn't like that. See:\n" +
@@ -48,8 +52,7 @@ public class WeldFactory implements ObjectFactory {
                 containerInstance.close();
             }
         } catch (NullPointerException npe) {
-            System.err.println(STOP_EXCEPTION_MESSAGE);
-            npe.printStackTrace(System.err);
+            log.error(STOP_EXCEPTION_MESSAGE, npe);
         }
     }
 

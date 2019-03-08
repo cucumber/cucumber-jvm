@@ -1,5 +1,6 @@
 package io.cucumber.core.logging;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -13,8 +14,18 @@ import static java.util.Objects.requireNonNull;
  */
 public final class LoggerFactory {
 
+    private static final ConcurrentLinkedDeque<LogRecordListener> listeners = new ConcurrentLinkedDeque<>();
+
     private LoggerFactory() {
 
+    }
+
+    public static void addListener(LogRecordListener listener) {
+        listeners.add(listener);
+    }
+
+    public static void removeListener(LogRecordListener listener) {
+        listeners.remove(listener);
     }
 
     /**
@@ -103,9 +114,12 @@ public final class LoggerFactory {
 
         private void log(Level level, Throwable throwable, String message) {
             boolean loggable = julLogger.isLoggable(level);
-            if (loggable) {
+            if (loggable || !listeners.isEmpty()) {
                 LogRecord logRecord = createLogRecord(level, throwable, message);
                 julLogger.log(logRecord);
+                for (LogRecordListener listener : listeners) {
+                    listener.logRecordSubmitted(logRecord);
+                }
             }
         }
 
