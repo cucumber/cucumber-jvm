@@ -14,11 +14,15 @@ public @interface CucumberOptions {
 
     /**
      * Skip execution of glue code.
+     * 
+     * @return True when dry run, false otherwise.
      */
     boolean dryRun() default false;
 
     /**
      * Treat undefined and pending steps as errors.
+     * 
+     * @return True when strict, false otherwise.
      */
     boolean strict() default false;
 
@@ -31,6 +35,7 @@ public @interface CucumberOptions {
      * then features are assumed to be located in {@code classpath:com/example}.
      *
      * @see io.cucumber.core.model.FeatureWithLines
+     * @return The location(s) of the features.
      */
     String[] features() default {};
 
@@ -43,6 +48,7 @@ public @interface CucumberOptions {
      * then glue is assumed to be located in {@code com.example}.
      *
      * @see io.cucumber.core.model.GluePath
+     * @return The package(s) that contain glue code.
      */
     String[] glue() default {};
 
@@ -51,6 +57,8 @@ public @interface CucumberOptions {
      * plugins) from. E.g: {@code com.example.app}
      * <p>
      * These packages are used in addition to the default described in {@code #glue}.
+     * 
+     * @return The package(s) that contain the extra glue code.
      */
     String[] extraGlue() default {};
 
@@ -58,6 +66,8 @@ public @interface CucumberOptions {
      * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.
      * <p>
      * For example {@code "@smoke and not @fast"}.
+     * 
+     * @return The tags that should be matched.
      */
     String[] tags() default {};
 
@@ -74,26 +84,36 @@ public @interface CucumberOptions {
      * {@code json:target/cucumber-report.json}
      *
      * @see io.cucumber.core.api.plugin.Plugin
+     * @return The plugins that should be added.
      */
     String[] plugin() default {};
 
     /**
      * Don't colour terminal output.
+     * 
+     * @return True when no color should be present in the terminal output, false when color is allowed.
      */
     boolean monochrome() default false;
 
     /**
      * Only run scenarios whose names match provided regular expression.
+     * 
+     * @return The name(s) that should be matched via regular expressions.
      */
     String[] name() default {};
 
     /**
      * Format of the generated snippets.
+     * 
+     * @see io.cucumber.core.api.options.SnippetType
+     * @return The snippet type to be generated for missing steps.
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
     /**
      * Pass options to the JUnit runner.
+     * 
+     * @param The JUnit options to pass on.
      */
     String[] junit() default {};
 
