@@ -73,8 +73,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     /**
      * Create a new instance from a string of options, for example:
-     * <p/>
-     * <pre<{@code "--name 'the fox' --plugin pretty --strict"}</pre>
+     * <p>
+     * <pre>{@code "--name 'the fox' --plugin pretty --strict"}</pre>
      *
      * @param argv the arguments
      */
@@ -84,8 +84,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     /**
      * Create a new instance from a list of options, for example:
-     * <p/>
-     * <pre<{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
+     * <p>
+     * <pre>{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
      *
      * @param argv the arguments
      */
