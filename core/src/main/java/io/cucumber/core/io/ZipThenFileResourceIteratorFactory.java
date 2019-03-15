@@ -1,7 +1,6 @@
 package io.cucumber.core.io;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.Iterator;
 
 /**

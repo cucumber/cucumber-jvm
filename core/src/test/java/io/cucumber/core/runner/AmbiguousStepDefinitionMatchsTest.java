@@ -1,18 +1,17 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
+import static org.mockito.Mockito.mock;
+
+import java.util.Collections;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import io.cucumber.core.api.Scenario;
 
 public class AmbiguousStepDefinitionMatchsTest {
 

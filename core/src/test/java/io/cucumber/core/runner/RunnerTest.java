@@ -1,44 +1,45 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.api.options.SnippetType;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.backend.Backend;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.options.RuntimeOptions;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.stepexpression.Argument;
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InOrder;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import gherkin.events.PickleEvent;
+import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.event.EventBus;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.stepexpression.Argument;
 
 public class RunnerTest {
     private static final String ENGLISH = "en";

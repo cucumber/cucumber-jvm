@@ -1,20 +1,8 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.plugin.TestUTF8OutputStreamWriter;
-import io.cucumber.core.plugin.URLOutputStream;
-import io.cucumber.core.util.FixJava;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.webbitserver.HttpControl;
-import org.webbitserver.HttpHandler;
-import org.webbitserver.HttpRequest;
-import org.webbitserver.HttpResponse;
-import org.webbitserver.WebServer;
-import org.webbitserver.netty.NettyWebServer;
-import org.webbitserver.rest.Rest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,9 +28,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.webbitserver.HttpControl;
+import org.webbitserver.HttpHandler;
+import org.webbitserver.HttpRequest;
+import org.webbitserver.HttpResponse;
+import org.webbitserver.WebServer;
+import org.webbitserver.netty.NettyWebServer;
+import org.webbitserver.rest.Rest;
+
+import io.cucumber.core.util.FixJava;
 
 public class URLOutputStreamTest {
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");

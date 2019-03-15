@@ -1,23 +1,23 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeServiceStub;
-import io.cucumber.core.model.CucumberFeature;
-import gherkin.pickles.PickleLocation;
-import org.junit.Ignore;
-import org.junit.Test;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import gherkin.pickles.PickleLocation;
+import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.EventBus;
+import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runner.TimeServiceStub;
 
 public class UndefinedStepsTrackerTest {
 

@@ -1,14 +1,8 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.model.CucumberFeature;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AssumptionViolatedException;
-import org.junit.Test;
-import org.mockito.stubbing.Answer;
-import org.xml.sax.SAXException;
+import static io.cucumber.core.runner.TestHelper.result;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,11 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static io.cucumber.core.runner.TestHelper.result;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AssumptionViolatedException;
+import org.junit.Test;
+import org.mockito.stubbing.Answer;
+import org.xml.sax.SAXException;
+
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.runner.TestHelper;
 
 public class JUnitFormatterTest {
 
