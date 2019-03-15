@@ -49,7 +49,6 @@
  * You should use scenario scope when you want to store state during a scenario but do not want the state to interfere
  * with subsequent scenarios.
  * </p>
- * <p>
  * <h3>Singleton scope</h3>
  * <p>
  * Cucumber will create just one instance of a class bound in singleton scope that will last for the lifetime of all

@@ -9,6 +9,9 @@ import java.util.List;
 public interface Backend {
     /**
      * Invoked once before all features. This is where stepdefs and hooks should be loaded.
+     * 
+     * @param glue Glue that provides the stepdefs to be executed.
+     * @param gluePaths The locations for the glue to be loaded.
      */
     void loadGlue(Glue glue, List<URI> gluePaths);
 
