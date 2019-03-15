@@ -1,10 +1,11 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.4...master) (In Git)
+## [4.2.7-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...master) (In Git)
 
 ### Added
-
+ *  [Core] Improve CucumberOptions documentation ([#1573](https://github.com/cucumber/cucumber-jvm/pull/1573) M.P. Korstanje, Marit van Dijk)
+ 
 ### Changed
 
 ### Deprecated
@@ -12,6 +13,19 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.2.6](https://github.com/cucumber/cucumber-jvm/compare/v4.2.5...v4.2.6) (2019-03-06)
+
+### Fixed
+ * [Core] Fix concurrent access issues in JUnit and TestNG formatters ([#1576](https://github.com/cucumber/cucumber-jvm/pull/1576), [#1575](https://github.com/cucumber/cucumber-jvm/issues/1575) M.P. Korstanje, grasshopper7)
+ 
+## [4.2.5](https://github.com/cucumber/cucumber-jvm/compare/v4.2.4...v4.2.5) (2019-03-04)
+
+### Fixed
+ * [Core] Fix illegal argument exception when using root package as glue ([#1572](https://github.com/cucumber/cucumber-jvm/pull/1572) M.P. Korstanje)
+    * Correctly parses glue path `""` as the root package
+    * Correctly parses glue path `"classpath:"` as the root package
+    * Correctly parses feature identifier `"classpath:"` as the root package  
 
 ## [4.2.4](https://github.com/cucumber/cucumber-jvm/compare/v4.2.3...v4.2.4) (2019-02-28)
 

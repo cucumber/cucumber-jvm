@@ -10,10 +10,33 @@ import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 
 public class FeaturePathTest {
+
+    @Test(expected = IllegalArgumentException.class)
+    public void can_parse_empty_feature_path(){
+        URI uri = FeaturePath.parse("");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
+
+    @Test
+    public void can_parse_root_package(){
+        URI uri = FeaturePath.parse("classpath:/");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
+
+    @Test
+    public void can_parse_eclipse_plugin_default_glue(){
+        // The eclipse plugin uses `classpath:` as the default
+        URI uri = FeaturePath.parse("classpath:");
+        assertThat(uri.getScheme(), is("classpath"));
+        assertThat(uri.getSchemeSpecificPart(), is("/"));
+    }
 
     @Test
     public void can_parse_classpath_form(){

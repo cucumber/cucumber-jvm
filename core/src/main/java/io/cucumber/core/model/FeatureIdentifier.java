@@ -21,11 +21,14 @@ public class FeatureIdentifier {
     }
 
     public static URI parse(URI featureIdentifier) {
-        String schemeSpecificPart = featureIdentifier.getSchemeSpecificPart();
-        if (!schemeSpecificPart.endsWith(".feature")) {
+        if (!isFeature(featureIdentifier)) {
             throw new IllegalArgumentException("featureIdentifier does not reference a single feature file: " + featureIdentifier);
         }
         return featureIdentifier;
+    }
+
+    public static boolean isFeature(URI featureIdentifier) {
+        return featureIdentifier.getSchemeSpecificPart().endsWith(".feature");
     }
 
 }

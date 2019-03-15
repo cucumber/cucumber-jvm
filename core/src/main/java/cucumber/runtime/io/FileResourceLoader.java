@@ -3,9 +3,7 @@ package cucumber.runtime.io;
 import java.io.File;
 import java.net.URI;
 
-import static cucumber.runtime.io.MultiLoader.CLASSPATH_SCHEME;
 import static cucumber.runtime.io.MultiLoader.FILE_SCHEME;
-import static cucumber.runtime.io.MultiLoader.FILE_SCHEME_PREFIX;
 
 class FileResourceLoader implements ResourceLoader {
     @Override

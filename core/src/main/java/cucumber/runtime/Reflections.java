@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,7 +14,7 @@ public class Reflections {
         this.classFinder = classFinder;
     }
 
-    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, List<String> packageNames, Class[] constructorParams, Object[] constructorArgs, T fallback) {
+    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs, T fallback) {
         Collection<? extends T> instances = instantiateSubclasses(parentType, packageNames, constructorParams, constructorArgs);
         if (instances.size() == 1) {
             return instances.iterator().next();
@@ -27,9 +28,9 @@ public class Reflections {
         }
     }
 
-    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<String> packageNames, Class[] constructorParams, Object[] constructorArgs) {
+    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs) {
         Collection<T> result = new HashSet<T>();
-        for (String packageName : packageNames) {
+        for (URI packageName : packageNames) {
             for (Class<? extends T> clazz : classFinder.getDescendants(parentType, packageName)) {
                 if (Utils.isInstantiable(clazz)) {
                     result.add(newInstance(constructorParams, constructorArgs, clazz));

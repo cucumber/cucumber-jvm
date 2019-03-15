@@ -1,6 +1,5 @@
 package cucumber.runtime.java;
 
-import static cucumber.runtime.io.MultiLoader.packageName;
 import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
@@ -83,8 +82,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         methodScanner.scan(this, gluePaths);
 
         // Scan for Java8 style glue (lambdas)
-        for (final String gluePackage : packageName(gluePaths)) {
-            Collection<Class<? extends GlueBase>> glueDefinerClasses = classFinder.getDescendants(GlueBase.class, gluePackage);
+        for (final URI gluePath : gluePaths) {
+            Collection<Class<? extends GlueBase>> glueDefinerClasses = classFinder.getDescendants(GlueBase.class, gluePath);
             for (final Class<? extends GlueBase> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {
                     continue;

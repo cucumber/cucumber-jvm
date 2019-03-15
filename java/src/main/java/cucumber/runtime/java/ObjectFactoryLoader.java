@@ -6,10 +6,18 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.NoInstancesException;
 import cucumber.runtime.Reflections;
 import cucumber.runtime.TooManyInstancesException;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+
+import java.net.URI;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 
 public class ObjectFactoryLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(ObjectFactoryLoader.class);
+
     private ObjectFactoryLoader() {
     }
 
@@ -17,7 +25,7 @@ public class ObjectFactoryLoader {
      * Loads an instance of {@link ObjectFactory}. The class name can be explicit, or it can be null.
      * When it's null, the implementation is searched for in the <pre>cucumber.runtime</pre> packahe.
      *
-     * @param classFinder where to load classes from
+     * @param classFinder            where to load classes from
      * @param objectFactoryClassName specific class name of {@link ObjectFactory} implementation. May be null.
      * @return an instance of {@link ObjectFactory}
      */
@@ -26,15 +34,16 @@ public class ObjectFactoryLoader {
         try {
             Reflections reflections = new Reflections(classFinder);
 
-            if(objectFactoryClassName != null) {
+            if (objectFactoryClassName != null) {
                 Class<ObjectFactory> objectFactoryClass = (Class<ObjectFactory>) classFinder.loadClass(objectFactoryClassName);
                 objectFactory = reflections.newInstance(new Class[0], new Object[0], objectFactoryClass);
             } else {
-                objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, asList("cucumber.runtime"), new Class[0], new Object[0], null);
+                List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
+                objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
             }
         } catch (TooManyInstancesException e) {
-            System.out.println(e.getMessage());
-            System.out.println(getMultipleObjectFactoryLogMessage());
+            log.warn(e.getMessage());
+            log.warn(getMultipleObjectFactoryLogMessage());
             objectFactory = new DefaultJavaObjectFactory();
         } catch (NoInstancesException e) {
             objectFactory = new DefaultJavaObjectFactory();
