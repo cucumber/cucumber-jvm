@@ -5,7 +5,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Added
  *  [Core] Improve CucumberOptions documentation ([#1573](https://github.com/cucumber/cucumber-jvm/pull/1573) M.P. Korstanje, Marit van Dijk)
- 
+ *  [Core] Add logger ([#1577](https://github.com/cucumber/cucumber-jvm/pull/1577) M.P. Korstanje)
+     - Errors and warnings are now logged via `java.util.Logging` system 
+     - Glue and feature path config is logged via `java.util.Logging` system
+
 ### Changed
  *  [Core] Upgrade cucumber-expressions to v6.2.2
     * Limit explosion of generated expressions to 256 ([#cucumber/576](https://github.com/cucumber/cucumber/pull/576) M.P. Korstanje)
@@ -18,8 +21,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
- *  Cucumber JVM is hanging when trying to generate suggestions on how to write undefined step #1579 
-
+ * [JUnit] Invoke `@BeforeClass` before `TestRunStarted` event ([#1578](https://github.com/cucumber/cucumber-jvm/pull/1578) M.P. Korstanje) 
+ 
+ 
 ## [4.2.6](https://github.com/cucumber/cucumber-jvm/compare/v4.2.5...v4.2.6) (2019-03-06)
 
 ### Fixed
