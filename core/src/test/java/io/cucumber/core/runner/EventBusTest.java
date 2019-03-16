@@ -1,17 +1,18 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.event.PickleStepTestStep;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.event.TestStepStarted;
-import io.cucumber.core.event.EventBus;
-import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+
+import org.junit.Test;
+
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.event.EventBus;
 
 public class EventBusTest {
 

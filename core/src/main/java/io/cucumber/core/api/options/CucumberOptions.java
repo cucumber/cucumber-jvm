@@ -113,7 +113,7 @@ public @interface CucumberOptions {
     /**
      * Pass options to the JUnit runner.
      * 
-     * @param The JUnit options to pass on.
+     * @return The JUnit options to pass on.
      */
     String[] junit() default {};
 

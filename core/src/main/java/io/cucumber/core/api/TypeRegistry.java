@@ -6,10 +6,20 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
+/**
+ * The type registry records defines parameter types and data table transformers.
+ */
 public interface TypeRegistry {
-
+    /**
+     * Defines a new parameter type.
+     * @param parameterType The new parameter type.
+     */
     void defineParameterType(ParameterType<?> parameterType);
 
+    /**
+     * Defines a new data table type.
+     * @param tableType The new table type.
+     */
     void defineDataTableType(DataTableType tableType);
 
     /**

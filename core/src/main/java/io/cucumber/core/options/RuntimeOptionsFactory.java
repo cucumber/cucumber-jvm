@@ -1,16 +1,16 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.api.options.CucumberOptions;
-import io.cucumber.core.model.Classpath;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
+import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
+import io.cucumber.core.api.options.CucumberOptions;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.model.Classpath;
 
 public final class RuntimeOptionsFactory {
     private final Class clazz;

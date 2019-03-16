@@ -35,6 +35,7 @@ public interface StepDefinition {
      * if the invocation fails, which will cause the step to fail.
      * 
      * @param args The arguments for the step
+     * @throws The throwable in case of step failure.
      */
     void execute(Object[] args) throws Throwable;
 
