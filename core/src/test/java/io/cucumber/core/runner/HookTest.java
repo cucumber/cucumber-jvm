@@ -4,6 +4,7 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.options.Env;
@@ -47,6 +48,7 @@ public class HookTest {
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
 
         Backend backend = mock(Backend.class);
+        ObjectFactory objectFactory = mock(ObjectFactory.class);
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
 
@@ -59,7 +61,7 @@ public class HookTest {
             }
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<URI>anyList());
 
-        Runner runner = new Runner(bus, Collections.singleton(backend), runtimeOptions);
+        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, runtimeOptions);
 
         runner.runPickle(pickleEvent);
 

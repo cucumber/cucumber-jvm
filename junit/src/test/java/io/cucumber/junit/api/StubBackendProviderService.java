@@ -5,8 +5,8 @@ import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
@@ -18,7 +18,7 @@ import static java.util.Collections.singletonList;
 public class StubBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(ObjectFactory objectFactory, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public Backend create(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
         return new StubBackend();
     }
 

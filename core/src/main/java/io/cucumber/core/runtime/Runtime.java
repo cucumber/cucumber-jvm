@@ -11,6 +11,10 @@ import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactorySupplier;
+import io.cucumber.core.backend.SingletonObjectFactorySupplier;
+import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.options.Env;
@@ -38,6 +42,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.cucumber.core.api.event.Result.SEVERITY;
+import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
@@ -190,9 +195,13 @@ public final class Runtime {
                 ? this.classFinder
                 : new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
 
+            final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
+                ? new ThreadLocalObjectFactorySupplier()
+                : new SingletonObjectFactorySupplier();
+
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
+                : new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), this.eventBus, runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
@@ -202,8 +211,8 @@ public final class Runtime {
             plugins.addPlugin(exitStatus);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier)
-                : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier);
+                ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier)
+                : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads())

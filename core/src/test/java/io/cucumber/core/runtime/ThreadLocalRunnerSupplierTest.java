@@ -3,16 +3,18 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.backend.ObjectFactorySupplier;
+import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runner.Runner;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,9 +39,10 @@ public class ThreadLocalRunnerSupplierTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
         eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
-        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier);
+        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
     }
 
 

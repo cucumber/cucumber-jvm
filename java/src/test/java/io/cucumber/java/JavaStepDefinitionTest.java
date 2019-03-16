@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java.api.en.Given;
 import io.cucumber.core.options.Env;
@@ -72,9 +73,9 @@ public class JavaStepDefinitionTest {
     public void createBackendAndLoadNoGlue() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ObjectFactory factory = new SingletonFactory(defs);
+        ObjectFactory objectFactory = new SingletonFactory(defs);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(factory, resourceLoader, typeRegistry);
+        this.backend = new JavaBackend(objectFactory, resourceLoader, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
         EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         BackendSupplier backendSupplier = new BackendSupplier() {
@@ -83,7 +84,7 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier).get();
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, () -> objectFactory).get();
 
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override

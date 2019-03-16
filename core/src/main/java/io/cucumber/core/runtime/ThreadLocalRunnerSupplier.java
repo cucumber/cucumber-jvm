@@ -3,6 +3,8 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.event.AbstractEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.options.RunnerOptions;
@@ -18,22 +20,19 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final BackendSupplier backendSupplier;
     private final RunnerOptions runnerOptions;
     private final SynchronizedEventBus sharedEventBus;
+    private final ObjectFactorySupplier objectFactory;
 
-    private final ThreadLocal<Runner> runners = new ThreadLocal<Runner>() {
-        @Override
-        protected Runner initialValue() {
-            return createRunner();
-        }
-    };
+    private final ThreadLocal<Runner> runners = ThreadLocal.withInitial(this::createRunner);
 
     public ThreadLocalRunnerSupplier(
         RunnerOptions runnerOptions,
         EventBus sharedEventBus,
-        BackendSupplier backendSupplier
-    ) {
+        BackendSupplier backendSupplier,
+        ObjectFactorySupplier objectFactory) {
         this.runnerOptions = runnerOptions;
         this.sharedEventBus = SynchronizedEventBus.synchronize(sharedEventBus);
         this.backendSupplier = backendSupplier;
+        this.objectFactory = objectFactory;
     }
 
     @Override
@@ -42,7 +41,7 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(new LocalEventBus(sharedEventBus), backendSupplier.get(), runnerOptions);
+        return new Runner(new LocalEventBus(sharedEventBus), backendSupplier.get(), objectFactory.get(), runnerOptions);
     }
 
     private static final class LocalEventBus extends AbstractEventBus {

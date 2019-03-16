@@ -3,9 +3,9 @@ package io.cucumber.java8;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
@@ -26,15 +26,15 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
     private final TypeRegistry typeRegistry;
     private final SnippetGenerator lambdaSnippetGenerator;
 
-    private final ObjectFactory objectFactory;
+    private final Container container;
     private final ClassFinder classFinder;
 
     private Glue glue;
     private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
 
-    Java8Backend(ObjectFactory objectFactory, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    Java8Backend(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader());
-        this.objectFactory = objectFactory;
+        this.container = container;
         this.lambdaSnippetGenerator = new SnippetGenerator(new Java8Snippet(), typeRegistry.parameterTypeRegistry());
         this.typeRegistry = typeRegistry;
     }
@@ -50,7 +50,7 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
                     continue;
                 }
 
-                if (objectFactory.addClass(glueClass)) {
+                if (container.addClass(glueClass)) {
                     lambdaGlueClasses.add(glueClass);
                 }
             }
@@ -59,14 +59,12 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
 
     @Override
     public void buildWorld() {
-        objectFactory.start();
-
         // Instantiate all the stepdef classes for java8 - the stepdef will be initialised
         // in the constructor.
         try {
             INSTANCE.set(this);
             for (Class<? extends LambdaGlue> lambdaGlueClass: lambdaGlueClasses) {
-                objectFactory.getInstance(lambdaGlueClass);
+                container.getInstance(lambdaGlueClass);
             }
         } finally {
             INSTANCE.remove();
@@ -75,7 +73,7 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
 
     @Override
     public void disposeWorld() {
-        objectFactory.stop();
+
     }
 
     @Override

@@ -5,6 +5,9 @@ import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactorySupplier;
+import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
@@ -14,6 +17,7 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsFactory;
 import io.cucumber.core.plugin.PluginFactory;
@@ -27,6 +31,8 @@ import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 
 /**
  * Glue code for running Cucumber via TestNG.
@@ -60,10 +66,10 @@ public class TestNGCucumberRunner {
 
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
-
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
         this.filters = new Filters(runtimeOptions);
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory);
 
     }
 

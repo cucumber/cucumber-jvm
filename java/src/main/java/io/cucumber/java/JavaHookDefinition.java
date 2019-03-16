@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.reflection.MethodFormat;
@@ -18,14 +18,14 @@ class JavaHookDefinition implements HookDefinition {
     private final long timeoutMillis;
     private final TagPredicate tagPredicate;
     private final int order;
-    private final ObjectFactory objectFactory;
+    private final Lookup lookup;
 
-    JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, ObjectFactory objectFactory) {
+    JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
         this.tagPredicate = new TagPredicate(tagExpression);
         this.order = order;
-        this.objectFactory = objectFactory;
+        this.lookup = lookup;
     }
 
     Method getMethod() {
@@ -55,7 +55,7 @@ class JavaHookDefinition implements HookDefinition {
                 throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());
         }
 
-        Invoker.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
+        Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
     @Override

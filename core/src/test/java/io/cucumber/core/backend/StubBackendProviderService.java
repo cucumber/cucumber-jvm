@@ -12,7 +12,7 @@ import static java.util.Collections.emptyList;
 
 public class StubBackendProviderService implements BackendProviderService {
     @Override
-    public Backend create(ObjectFactory objectFactory, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public Backend create(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
         return new StubBackend();
     }
 

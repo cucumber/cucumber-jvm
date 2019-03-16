@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.io.MultiLoader;
@@ -30,7 +30,7 @@ public class MethodScannerTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    private ObjectFactory factory;
+    private Container factory;
 
     private ResourceLoaderClassFinder classFinder;
     private JavaBackend backend;

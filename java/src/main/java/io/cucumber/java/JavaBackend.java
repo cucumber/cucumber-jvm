@@ -3,8 +3,8 @@ package io.cucumber.java;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
@@ -29,17 +29,17 @@ public class JavaBackend implements Backend {
     private final TypeRegistry typeRegistry;
     private final SnippetGenerator annotationSnippetGenerator;
 
-    private final ObjectFactory objectFactory;
+    private final Container container;
 
     private final MethodScanner methodScanner;
     private Glue glue;
 
-    JavaBackend(ObjectFactory objectFactory, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
-        this(objectFactory, new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
+    JavaBackend(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+        this(container, new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
     }
 
-    JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TypeRegistry typeRegistry) {
-        this.objectFactory = objectFactory;
+    JavaBackend(Container container, ClassFinder classFinder, TypeRegistry typeRegistry) {
+        this.container = container;
         this.methodScanner = new MethodScanner(classFinder);
         this.annotationSnippetGenerator = new SnippetGenerator(new JavaSnippet(), typeRegistry.parameterTypeRegistry());
         this.typeRegistry = typeRegistry;
@@ -54,12 +54,12 @@ public class JavaBackend implements Backend {
 
     @Override
     public void buildWorld() {
-        objectFactory.start();
+
     }
 
     @Override
     public void disposeWorld() {
-        objectFactory.stop();
+
     }
 
     @Override
@@ -69,13 +69,13 @@ public class JavaBackend implements Backend {
 
     void addStepDefinition(Annotation annotation, Method method) {
         try {
-            objectFactory.addClass(method.getDeclaringClass());
+            container.addClass(method.getDeclaringClass());
             glue.addStepDefinition(
                 new JavaStepDefinition(
                     method,
                     expression(annotation),
                     timeoutMillis(annotation),
-                    objectFactory,
+                    container,
                     typeRegistry));
         } catch (CucumberException e) {
             throw e;
@@ -85,23 +85,23 @@ public class JavaBackend implements Backend {
     }
 
     void addHook(Annotation annotation, Method method) {
-        if (objectFactory.addClass(method.getDeclaringClass())) {
+        if (container.addClass(method.getDeclaringClass())) {
             if (annotation.annotationType().equals(Before.class)) {
                 String tagExpression = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
-                glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, ((Before) annotation).order(), timeout, objectFactory));
+                glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, ((Before) annotation).order(), timeout, container));
             } else if (annotation.annotationType().equals(After.class)) {
                 String tagExpression = ((After) annotation).value();
                 long timeout = ((After) annotation).timeout();
-                glue.addAfterHook(new JavaHookDefinition(method, tagExpression, ((After) annotation).order(), timeout, objectFactory));
+                glue.addAfterHook(new JavaHookDefinition(method, tagExpression, ((After) annotation).order(), timeout, container));
             } else if (annotation.annotationType().equals(BeforeStep.class)) {
                 String tagExpression = ((BeforeStep) annotation).value();
                 long timeout = ((BeforeStep) annotation).timeout();
-                glue.addBeforeStepHook(new JavaHookDefinition(method, tagExpression, ((BeforeStep) annotation).order(), timeout, objectFactory));
+                glue.addBeforeStepHook(new JavaHookDefinition(method, tagExpression, ((BeforeStep) annotation).order(), timeout, container));
             } else if (annotation.annotationType().equals(AfterStep.class)) {
                 String tagExpression = ((AfterStep) annotation).value();
                 long timeout = ((AfterStep) annotation).timeout();
-                glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, ((AfterStep) annotation).order(), timeout, objectFactory));
+                glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, ((AfterStep) annotation).order(), timeout, container));
             }
         }
     }

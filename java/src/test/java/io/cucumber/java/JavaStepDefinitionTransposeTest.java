@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.Lookup;
 import io.cucumber.java.api.Transpose;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
@@ -112,9 +112,9 @@ public class JavaStepDefinitionTransposeTest {
 
     private StepDefs runStepDef(Method method, PickleTable table) throws Throwable {
         StepDefs stepDefs = new StepDefs();
-        ObjectFactory objectFactory = new SingletonFactory(stepDefs);
+        Lookup lookup = new SingletonFactory(stepDefs);
 
-        StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", 0, objectFactory, typeRegistry);
+        StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", 0, lookup, typeRegistry);
         PickleStep stepWithTable = new PickleStep("some text", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
         List<Argument> arguments = stepDefinition.matchedArguments(stepWithTable);
 

@@ -1,5 +1,33 @@
 package io.cucumber.core.runner;
 
+import gherkin.events.PickleEvent;
+import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.event.EventBus;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.stepexpression.Argument;
+import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InOrder;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -12,34 +40,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.api.options.SnippetType;
-import io.cucumber.core.backend.Backend;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.stepexpression.Argument;
 
 public class RunnerTest {
     private static final String ENGLISH = "en";
@@ -59,6 +59,7 @@ public class RunnerTest {
         final HookDefinition afterHook = addAfterHook();
 
         Backend backend = mock(Backend.class);
+        ObjectFactory objectFactory = mock(ObjectFactory.class);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) {
@@ -72,7 +73,7 @@ public class RunnerTest {
 
         PickleStep step = mock(PickleStep.class);
 
-        new Runner(bus, singletonList(backend), runtimeOptions).runPickle(createPickleEventWithSteps(asList(step)));
+        new Runner(bus, singletonList(backend), objectFactory, runtimeOptions).runPickle(createPickleEventWithSteps(asList(step)));
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
@@ -180,7 +181,7 @@ public class RunnerTest {
     public void steps_are_executed() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
         PickleEvent pickleEventMatchingStepDefinitions = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
@@ -195,7 +196,7 @@ public class RunnerTest {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
         final PickleEvent pickleEvent = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, singletonList("--dry-run"));
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
@@ -214,7 +215,7 @@ public class RunnerTest {
         final HookDefinition afterHook = addAfterHook();
         final HookDefinition afterStepHook = addAfterStepHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -238,7 +239,7 @@ public class RunnerTest {
         final HookDefinition afterHook = addAfterHook();
         final HookDefinition afterStepHook = addAfterStepHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -259,7 +260,8 @@ public class RunnerTest {
     public void backends_are_asked_for_snippets_for_undefined_steps() {
         PickleStep step = mock(PickleStep.class);
         Backend backend = mock(Backend.class);
-        Runner runner = new Runner(bus, singletonList(backend), runtimeOptions);
+        ObjectFactory objectFactory = mock(ObjectFactory.class);
+        Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runPickle(createPickleEventWithSteps(asList(step)));
         verify(backend).getSnippet(ArgumentMatchers.eq(step), anyString(), any(SnippetType.FunctionNameGenerator.class));
     }

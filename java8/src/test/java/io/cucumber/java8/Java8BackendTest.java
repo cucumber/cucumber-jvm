@@ -1,7 +1,7 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
@@ -35,7 +35,7 @@ public class Java8BackendTest {
     private Glue glue;
 
     @Mock
-    private ObjectFactory factory;
+    private Container factory;
 
     private Java8Backend backend;
 

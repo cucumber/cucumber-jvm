@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
@@ -23,7 +23,7 @@ class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final StepExpression expression;
     private final long timeoutMillis;
-    private final ObjectFactory objectFactory;
+    private final Lookup lookup;
 
     private final ArgumentMatcher argumentMatcher;
     private final Type[] parameterTypes;
@@ -33,11 +33,11 @@ class JavaStepDefinition implements StepDefinition {
     JavaStepDefinition(Method method,
                        String expression,
                        long timeoutMillis,
-                       ObjectFactory objectFactory,
+                       Lookup lookup,
                        TypeRegistry typeRegistry) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
-        this.objectFactory = objectFactory;
+        this.lookup = lookup;
         List<ParameterInfo> parameterInfos = ParameterInfo.fromMethod(method);
         this.parameterTypes = getTypes(parameterInfos);
         this.expression = createExpression(parameterInfos, expression, typeRegistry);
@@ -57,7 +57,7 @@ class JavaStepDefinition implements StepDefinition {
 
     @Override
     public void execute(Object[] args) throws Throwable {
-        Invoker.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
+        Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
     @Override

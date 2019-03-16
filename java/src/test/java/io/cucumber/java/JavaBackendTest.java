@@ -1,12 +1,12 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java.stepdefs.Stepdefs;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,7 +44,7 @@ public class JavaBackendTest {
     private Glue glue;
 
     @Mock
-    private ObjectFactory factory;
+    private Container factory;
 
     private JavaBackend backend;
 

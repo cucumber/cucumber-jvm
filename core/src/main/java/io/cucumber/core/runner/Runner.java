@@ -8,6 +8,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -27,11 +28,13 @@ public final class Runner {
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RunnerOptions runnerOptions;
+    private final ObjectFactory objectFactory;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, RunnerOptions runnerOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, RunnerOptions runnerOptions) {
         this.bus = bus;
         this.runnerOptions = runnerOptions;
         this.backends = backends;
+        this.objectFactory = objectFactory;
         List<URI> gluePaths = runnerOptions.getGlue();
         log.debug("Loading glue from " + FixJava.join(gluePaths, ", "));
         for (Backend backend : backends) {
@@ -49,7 +52,6 @@ public final class Runner {
         TestCase testCase = createTestCaseForPickle(pickle);
         testCase.run(bus);
         disposeBackendWorlds();
-        glue.removeScenarioScopedGlue();
     }
 
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
@@ -127,6 +129,7 @@ public final class Runner {
     }
 
     private void buildBackendWorlds() {
+        objectFactory.start();
         for (Backend backend : backends) {
             backend.buildWorld();
         }
@@ -136,5 +139,7 @@ public final class Runner {
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
+        objectFactory.stop();
+        glue.removeScenarioScopedGlue();
     }
 }

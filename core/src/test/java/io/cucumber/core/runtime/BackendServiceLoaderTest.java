@@ -1,6 +1,8 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.backend.ObjectFactorySupplier;
+import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
@@ -30,7 +32,8 @@ public class BackendServiceLoaderTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
 
@@ -39,8 +42,9 @@ public class BackendServiceLoaderTest {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.emptyList());
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
 
         expectedException.expect(CucumberException.class);
         backendSupplier.get(emptyList()).iterator().next();

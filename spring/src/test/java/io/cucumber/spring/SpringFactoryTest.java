@@ -1,5 +1,6 @@
 package io.cucumber.spring;
 
+import io.cucumber.core.backend.Container;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.spring.beans.BellyBean;
@@ -246,7 +247,7 @@ public class SpringFactoryTest {
 
 
         expectedException.expectMessage("Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context");
-        final ObjectFactory factory = new SpringFactory();
+        final Container factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
         factory.addClass(BellyStepdefs.class);
     }
@@ -256,7 +257,7 @@ public class SpringFactoryTest {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component");
         expectedException.expectMessage("Please remove the @Component annotation");
-        final ObjectFactory factory = new SpringFactory();
+        final Container factory = new SpringFactory();
         factory.addClass(WithComponentAnnotation.class);
     }
 
@@ -265,7 +266,7 @@ public class SpringFactoryTest {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller");
         expectedException.expectMessage("Please remove the @Controller annotation");
-        final ObjectFactory factory = new SpringFactory();
+        final Container factory = new SpringFactory();
         factory.addClass(WithControllerAnnotation.class);
 
     }

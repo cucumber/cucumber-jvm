@@ -1,5 +1,8 @@
 package io.cucumber.junit.api;
 
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactorySupplier;
+import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
@@ -26,6 +29,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -156,6 +160,8 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+
         final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
 
         final TimeService timeServiceStub = new TimeService() {
@@ -179,7 +185,7 @@ public class FeatureRunnerTest {
             }
         });
         Filters filters = new Filters(runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
     }
 

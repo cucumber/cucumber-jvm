@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.RuntimeOptions;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 
-public class TestRunnerSupplier implements Backend, RunnerSupplier {
+public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
 
     private final EventBus bus;
     private final RuntimeOptions runtimeOptions;
@@ -54,6 +55,26 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier {
 
     @Override
     public Runner get() {
-        return new Runner(bus, Collections.singleton(this), runtimeOptions);
+        return new Runner(bus, Collections.singleton(this), this, runtimeOptions);
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public boolean addClass(Class<?> glueClass) {
+        return false;
+    }
+
+    @Override
+    public <T> T getInstance(Class<T> glueClass) {
+        return null;
     }
 }
