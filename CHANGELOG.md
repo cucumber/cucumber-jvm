@@ -1,19 +1,29 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.2.7-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...master) (In Git)
+## [4.3.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...master) (In Git)
 
 ### Added
  *  [Core] Improve CucumberOptions documentation ([#1573](https://github.com/cucumber/cucumber-jvm/pull/1573) M.P. Korstanje, Marit van Dijk)
- 
+ *  [Core] Add logger ([#1577](https://github.com/cucumber/cucumber-jvm/pull/1577) M.P. Korstanje)
+     - Errors and warnings are now logged via `java.util.Logging` system 
+     - Glue and feature path config is logged via `java.util.Logging` system
+
 ### Changed
+ *  [Core] Upgrade cucumber-expressions to v6.2.2
+    * Limit explosion of generated expressions to 256 ([#cucumber/576](https://github.com/cucumber/cucumber/pull/576) M.P. Korstanje)
+    * Allow parameter-types in escaped optional groups ([#cucumber/572](https://github.com/cucumber/cucumber/pull/572), [#cucumber/561](https://github.com/cucumber/cucumber/pull/561) Luke Hill, Jayson Smith, M.P. Korstanje)
+    * Prefer expression with the longest non-empty match ([#cucumber/580](https://github.com/cucumber/cucumber/pull/580) M.P. Korstanje)
+    * Improve heuristics for creating Cucumber/Regular Expressions from strings ([#cucumber/518](https://github.com/cucumber/cucumber/pull/518) Aslak Hellesøy)
 
 ### Deprecated
    
 ### Removed
 
 ### Fixed
-
+ * [JUnit] Invoke `@BeforeClass` before `TestRunStarted` event ([#1578](https://github.com/cucumber/cucumber-jvm/pull/1578) M.P. Korstanje) 
+ 
+ 
 ## [4.2.6](https://github.com/cucumber/cucumber-jvm/compare/v4.2.5...v4.2.6) (2019-03-06)
 
 ### Fixed
