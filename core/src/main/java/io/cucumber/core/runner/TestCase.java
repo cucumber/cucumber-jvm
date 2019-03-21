@@ -1,17 +1,17 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestStep;
-import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.event.TestCaseStarted;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.event.EventBus;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import gherkin.events.PickleEvent;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.TestStep;
+import io.cucumber.core.event.EventBus;
 
 final class TestCase implements io.cucumber.core.api.event.TestCase {
     private final PickleEvent pickleEvent;
@@ -35,7 +35,9 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
         Long startTime = bus.getTime();
-        bus.send(new TestCaseStarted(startTime, this));
+        Long startTimeMillis = bus.getElapsedTimeMillis();
+        
+        bus.send(new TestCaseStarted(startTime, startTimeMillis, this));
         Scenario scenario = new Scenario(bus, this);
 
         for (HookTestStep before : beforeHooks) {

@@ -92,6 +92,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -142,6 +143,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -195,6 +197,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -252,6 +255,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"fruit-party;monkey-eats-fruits;fruit-table;2\",\n" +
             "        \"keyword\": \"Scenario Outline\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats fruits\",\n" +
             "        \"line\": 7,\n" +
             "        \"description\": \"\",\n" +
@@ -336,6 +340,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 6,\n" +
             "        \"description\": \"\",\n" +
@@ -379,6 +384,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats more bananas\",\n" +
             "        \"line\": 9,\n" +
             "        \"description\": \"\",\n" +
@@ -432,6 +438,7 @@ public class JSONFormatterTest {
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"steps\": [\n" +
             "          {\n" +
             "            \"result\": {\n" +
@@ -518,6 +525,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -601,6 +609,7 @@ public class JSONFormatterTest {
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"steps\": [\n" +
             "          {\n" +
             "            \"result\": {\n" +
@@ -732,6 +741,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -802,6 +812,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -875,6 +886,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -935,6 +947,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -995,6 +1008,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1070,6 +1084,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1103,6 +1118,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"orange-party;monkey-eats-oranges\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T05:30:00\",\n" +
             "        \"name\": \"Monkey eats oranges\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1195,6 +1211,7 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
 
         Appendable stringBuilder = new StringBuilder();
+        
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)

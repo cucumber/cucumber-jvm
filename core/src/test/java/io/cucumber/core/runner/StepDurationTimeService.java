@@ -35,4 +35,10 @@ public class StepDurationTimeService implements TimeService, EventListener {
         long time = time();
         currentTime.set(time + stepDuration);
     }
+
+    @Override
+    public long elapsedTimeMillis()
+    {
+        return 0L;
+    }
 }

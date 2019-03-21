@@ -1,21 +1,14 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.HookTestStep;
-import io.cucumber.core.api.event.HookType;
-import io.cucumber.core.api.event.PickleStepTestStep;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.TestStep;
-import io.cucumber.core.api.event.EmbedEvent;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventListener;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.event.TestCaseStarted;
-import io.cucumber.core.api.event.TestRunFinished;
-import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.event.TestStepStarted;
-import io.cucumber.core.api.event.WriteEvent;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -29,11 +22,22 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.cucumber.core.api.event.EmbedEvent;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.HookTestStep;
+import io.cucumber.core.api.event.HookType;
+import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.api.event.TestStep;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.api.event.WriteEvent;
 
 public final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
@@ -47,6 +51,7 @@ public final class JSONFormatter implements EventListener {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
+    private DateTimeFormatter dateTimeFormatter;
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -118,7 +123,7 @@ public final class JSONFormatter implements EventListener {
             featureMaps.add(currentFeatureMap);
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
-        currentTestCaseMap = createTestCase(event.testCase);
+        currentTestCaseMap = createTestCase(event);
         if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
             currentElementMap = createBackground(event.testCase);
             currentElementsList.add(currentElementMap);
@@ -187,8 +192,13 @@ public final class JSONFormatter implements EventListener {
         return featureMap;
     }
 
-    private Map<String, Object> createTestCase(TestCase testCase) {
+    private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
+        
+        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event));
+        
+        TestCase testCase = event.getTestCase();
+        
         testCaseMap.put("name", testCase.getName());
         testCaseMap.put("line", testCase.getLine());
         testCaseMap.put("type", "scenario");
@@ -210,6 +220,11 @@ public final class JSONFormatter implements EventListener {
             testCaseMap.put("tags", tagList);
         }
         return testCaseMap;
+    }
+
+    private String getDateTimeFromTimeStamp(TestCaseStarted event) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getElapsedTimiMillis()), ZoneId.systemDefault());
+        return localDateTime.format(dateTimeFormatter == null ? DateTimeFormatter.ISO_DATE_TIME : dateTimeFormatter);
     }
 
     private Map<String, Object> createBackground(TestCase testCase) {
@@ -378,4 +393,10 @@ public final class JSONFormatter implements EventListener {
         }
         return resultMap;
     }
+
+    public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter)
+    {
+        this.dateTimeFormatter = dateTimeFormatter;
+    }
+
 }

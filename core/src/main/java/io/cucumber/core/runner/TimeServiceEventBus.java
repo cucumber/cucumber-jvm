@@ -8,9 +8,13 @@ public final class TimeServiceEventBus extends AbstractEventBus {
     public TimeServiceEventBus(TimeService stopWatch) {
         this.stopWatch = stopWatch;
     }
-
+    
     @Override
     public Long getTime() {
         return stopWatch.time();
+    }
+    
+    public Long getElapsedTimeMillis() {
+        return stopWatch.elapsedTimeMillis();
     }
 }

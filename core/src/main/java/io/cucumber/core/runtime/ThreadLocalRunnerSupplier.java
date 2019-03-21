@@ -3,7 +3,6 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.event.AbstractEventBus;
 import io.cucumber.core.event.EventBus;
@@ -62,6 +61,12 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
             super.send(event);
             parent.send(event);
         }
+
+        @Override
+        public Long getElapsedTimeMillis()
+        {
+            return parent.getElapsedTimeMillis();
+        }
     }
 
     private static final class SynchronizedEventBus implements EventBus {
@@ -103,6 +108,12 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         @Override
         public synchronized <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
             delegate.removeHandlerFor(eventType, handler);
+        }
+
+        @Override
+        public Long getElapsedTimeMillis()
+        {
+            return delegate.getElapsedTimeMillis();
         }
     }
 }

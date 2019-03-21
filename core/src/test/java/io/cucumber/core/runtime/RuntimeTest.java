@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +35,6 @@ import io.cucumber.core.api.event.HookType;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.plugin.Plugin;
 import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
@@ -48,6 +48,7 @@ import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
+import io.cucumber.core.plugin.JSONFormatter;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runner.TimeService;
@@ -73,7 +74,9 @@ public class RuntimeTest {
             "    When s\n");
         StringBuilder out = new StringBuilder();
 
-        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
+        JSONFormatter jsonFormatter = FormatterBuilder.jsonFormatter(out);
+        jsonFormatter.setDateTimeFormatter(DateTimeFormatter.ofPattern(""));
+        
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
@@ -81,6 +84,7 @@ public class RuntimeTest {
                 return singletonList(mock(Backend.class));
             }
         };
+        
         FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
@@ -114,6 +118,7 @@ public class RuntimeTest {
             "        ]\n" +
             "      },\n" +
             "      {\n" +
+            "        \"start_timestamp\": \"\",\n" +
             "        \"line\": 4,\n" +
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +

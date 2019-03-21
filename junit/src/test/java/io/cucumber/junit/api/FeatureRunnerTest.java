@@ -1,35 +1,5 @@
 package io.cucumber.junit.api;
 
-import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.Resource;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.backend.Backend;
-import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.core.filter.Filters;
-import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.core.model.FeatureLoader;
-import org.junit.Test;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
-import org.mockito.InOrder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -38,6 +8,35 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
+import org.mockito.InOrder;
+
+import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.backend.ObjectFactorySupplier;
+import io.cucumber.core.backend.SingletonObjectFactorySupplier;
+import io.cucumber.core.event.EventBus;
+import io.cucumber.core.filter.Filters;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.Resource;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 
 public class FeatureRunnerTest {
 
@@ -167,6 +166,12 @@ public class FeatureRunnerTest {
         final TimeService timeServiceStub = new TimeService() {
             @Override
             public long time() {
+                return 0L;
+            }
+
+            @Override
+            public long elapsedTimeMillis()
+            {
                 return 0L;
             }
         };

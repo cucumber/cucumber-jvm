@@ -15,4 +15,10 @@ public class TimeServiceStub implements TimeService {
         currentTime.set(result + duration);
         return result;
     }
+
+    @Override
+    public long elapsedTimeMillis()
+    {
+        return 0L;
+    }
 }

@@ -7,6 +7,8 @@ public interface EventBus extends EventPublisher {
 
     Long getTime();
 
+    Long getElapsedTimeMillis();
+    
     void send(Event event);
 
     void sendAll(Iterable<Event> queue);
