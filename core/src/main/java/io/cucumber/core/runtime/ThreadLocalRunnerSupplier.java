@@ -111,8 +111,7 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Long getElapsedTimeMillis()
-        {
+        public Long getElapsedTimeMillis() {
             return delegate.getElapsedTimeMillis();
         }
     }

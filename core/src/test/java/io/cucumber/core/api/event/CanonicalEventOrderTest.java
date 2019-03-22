@@ -32,8 +32,7 @@ public class CanonicalEventOrderTest {
         return new Date().getTime();
     }
 
-    private static long getTimeInMillis()
-    {
+    private static long getTimeInMillis() {
         return System.currentTimeMillis();
     }
 

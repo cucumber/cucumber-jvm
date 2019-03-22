@@ -394,8 +394,7 @@ public final class JSONFormatter implements EventListener {
         return resultMap;
     }
 
-    public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter)
-    {
+    public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
         this.dateTimeFormatter = dateTimeFormatter;
     }
 

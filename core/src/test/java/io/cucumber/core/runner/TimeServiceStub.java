@@ -17,8 +17,7 @@ public class TimeServiceStub implements TimeService {
     }
 
     @Override
-    public long elapsedTimeMillis()
-    {
+    public long elapsedTimeMillis() {
         return 0L;
     }
 }

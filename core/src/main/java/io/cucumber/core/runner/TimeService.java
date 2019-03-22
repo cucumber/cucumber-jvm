@@ -11,8 +11,7 @@ public interface TimeService {
         }
 
         @Override
-        public long elapsedTimeMillis()
-        {
+        public long elapsedTimeMillis() {
             return System.currentTimeMillis();
         }
     };

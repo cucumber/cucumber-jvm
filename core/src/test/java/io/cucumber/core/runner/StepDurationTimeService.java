@@ -37,8 +37,7 @@ public class StepDurationTimeService implements TimeService, EventListener {
     }
 
     @Override
-    public long elapsedTimeMillis()
-    {
+    public long elapsedTimeMillis() {
         return 0L;
     }
 }

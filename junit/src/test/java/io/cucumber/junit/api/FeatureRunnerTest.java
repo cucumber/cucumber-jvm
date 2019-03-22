@@ -170,8 +170,7 @@ public class FeatureRunnerTest {
             }
 
             @Override
-            public long elapsedTimeMillis()
-            {
+            public long elapsedTimeMillis() {
                 return 0L;
             }
         };
