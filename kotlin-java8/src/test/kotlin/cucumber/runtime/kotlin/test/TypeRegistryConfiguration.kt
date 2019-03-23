@@ -15,13 +15,10 @@ class TypeRegistryConfiguration : TypeRegistryConfigurer {
 
     override fun configureTypeRegistry(typeRegistry: TypeRegistry) {
         typeRegistry.defineDataTableType(DataTableType(
-                LambdaStepdefs.Person::class.java,
-                TableEntryTransformer<LambdaStepdefs.Person>
+                Person::class.java,
+                TableEntryTransformer<Person>
                 { map: Map<String, String> ->
-                    val person = LambdaStepdefs.Person()
-                    person.first = map.get("first")
-                    person.last = map.get("last")
-                    person
+                    Person(map["first"], map["last"])
                 }))
     }
 }
