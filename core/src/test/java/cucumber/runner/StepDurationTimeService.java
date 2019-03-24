@@ -31,9 +31,16 @@ public class StepDurationTimeService implements TimeService, EventListener {
         Long result = currentTime.get();
         return result != null ? result : 0l;
     }
+    
+    @Override
+    public long timeStampMillis() {
+        Long result = currentTime.get();
+        return result != null ? result : 0l;
+    }
 
     private void handleTestStepStarted(TestStepStarted event) {
         long time = time();
         currentTime.set(time + stepDuration);
     }
+
 }

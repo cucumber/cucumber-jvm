@@ -11,10 +11,12 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
+import cucumber.util.TimeUtils;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
@@ -89,6 +91,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -139,6 +142,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -192,6 +196,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -249,6 +254,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"fruit-party;monkey-eats-fruits;fruit-table;2\",\n" +
             "        \"keyword\": \"Scenario Outline\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats fruits\",\n" +
             "        \"line\": 7,\n" +
             "        \"description\": \"\",\n" +
@@ -333,6 +339,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 6,\n" +
             "        \"description\": \"\",\n" +
@@ -376,6 +383,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats more bananas\",\n" +
             "        \"line\": 9,\n" +
             "        \"description\": \"\",\n" +
@@ -429,6 +437,7 @@ public class JSONFormatterTest {
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"steps\": [\n" +
             "          {\n" +
             "            \"result\": {\n" +
@@ -515,6 +524,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -598,6 +608,7 @@ public class JSONFormatterTest {
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"steps\": [\n" +
             "          {\n" +
             "            \"result\": {\n" +
@@ -729,6 +740,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -799,6 +811,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -872,6 +885,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -932,6 +946,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -992,6 +1007,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1067,6 +1083,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1100,6 +1117,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"orange-party;monkey-eats-oranges\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"name\": \"Monkey eats oranges\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1156,13 +1174,18 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
 
         Appendable stringBuilder = new StringBuilder();
+        
+        TimeUtils timeUtils = Mockito.mock(TimeUtils.class);
+        Mockito.when(timeUtils.getDateTimeFromTimeStamp(Mockito.anyLong())).thenReturn("1970-01-01T00:00:00.Z");
+        JSONFormatter jsonFormatter = new JSONFormatter(stringBuilder, timeUtils);
+        
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withArgs(featurePaths)
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(new JSONFormatter(stringBuilder))
+            .withAdditionalPlugins(jsonFormatter)
             .build()
             .run();
 
@@ -1192,13 +1215,19 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
 
         Appendable stringBuilder = new StringBuilder();
+        
+        TimeUtils timeUtils = Mockito.mock(TimeUtils.class);
+        Mockito.when(timeUtils.getDateTimeFromTimeStamp(Mockito.anyLong())).thenReturn("1970-01-01T00:00:00.Z");
+        
+        JSONFormatter jsonFormatter = new JSONFormatter(stringBuilder, timeUtils);
+        
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withArgs(featurePaths)
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(new JSONFormatter(stringBuilder))
+            .withAdditionalPlugins(jsonFormatter)
             .build()
             .run();
 
@@ -1207,10 +1236,14 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatter() {
         final StringBuilder report = new StringBuilder();
-        final JSONFormatter formatter = new JSONFormatter(report);
+        
+        TimeUtils timeUtils = Mockito.mock(TimeUtils.class);
+        Mockito.when(timeUtils.getDateTimeFromTimeStamp(Mockito.anyLong())).thenReturn("1970-01-01T00:00:00.Z");
+        
+        JSONFormatter jsonFormatter = new JSONFormatter(report, timeUtils);
 
         TestHelper.builder()
-            .withFormatterUnderTest(formatter)
+            .withFormatterUnderTest(jsonFormatter)
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)

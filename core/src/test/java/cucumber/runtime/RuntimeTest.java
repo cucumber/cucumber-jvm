@@ -37,17 +37,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cucumber.util.TimeUtils;
+
 import static cucumber.runner.TestHelper.feature;
 import static cucumber.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
@@ -68,7 +72,10 @@ public class RuntimeTest {
             "    When s\n");
         StringBuilder out = new StringBuilder();
 
-        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
+		TimeUtils timeUtils = mock(TimeUtils.class);
+        when(timeUtils.getDateTimeFromTimeStamp(anyLong())).thenReturn("1970-01-01T00:00:00.Z");
+		
+        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out, timeUtils);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
@@ -90,7 +97,8 @@ public class RuntimeTest {
             .build()
             .run();
 
-        String expected = "[\n" +
+        String expected = "" +
+            "[\n" +
             "  {\n" +
             "    \"line\": 1,\n" +
             "    \"elements\": [\n" +
@@ -117,6 +125,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
+			"        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
@@ -140,7 +149,7 @@ public class RuntimeTest {
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
-        assertEquals(expected, out.toString());
+        assertThat(out.toString(), sameJSONAs(expected));
     }
 
     @Test

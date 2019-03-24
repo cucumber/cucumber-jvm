@@ -17,6 +17,7 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.util.TimeUtils;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -48,7 +49,8 @@ final class JSONFormatter implements EventListener {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
-
+    private final TimeUtils timeUtils;
+    
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
@@ -95,6 +97,13 @@ final class JSONFormatter implements EventListener {
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
+        this.timeUtils = new TimeUtils();
+    }
+    
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
+    JSONFormatter(Appendable out, TimeUtils timeUtils) {
+        this.out = new NiceAppendable(out);
+        this.timeUtils = timeUtils;
     }
 
     @Override
@@ -119,7 +128,7 @@ final class JSONFormatter implements EventListener {
             featureMaps.add(currentFeatureMap);
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
-        currentTestCaseMap = createTestCase(event.testCase);
+        currentTestCaseMap = createTestCase(event);
         if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
             currentElementMap = createBackground(event.testCase);
             currentElementsList.add(currentElementMap);
@@ -188,8 +197,13 @@ final class JSONFormatter implements EventListener {
         return featureMap;
     }
 
-    private Map<String, Object> createTestCase(TestCase testCase) {
+    private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
+        
+        testCaseMap.put("start_timestamp", timeUtils.getDateTimeFromTimeStamp(event.getTimeStampMillis()));
+
+        TestCase testCase = event.getTestCase();
+
         testCaseMap.put("name", testCase.getName());
         testCaseMap.put("line", testCase.getLine());
         testCaseMap.put("type", "scenario");
