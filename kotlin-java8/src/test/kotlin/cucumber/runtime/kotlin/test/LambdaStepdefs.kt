@@ -50,7 +50,7 @@ class LambdaStepdefs : En {
 
         Given("A statement with a body expression$") { assertTrue(true) }
 
-        Given("A statement with a simple match$", { -> assertTrue(true) })
+        Given("A statement with a simple match$", { assertTrue(true) })
 
         val localInt = 1
         Given("A statement with a scoped argument$", { assertEquals(2, localInt + 1) })
@@ -62,9 +62,6 @@ class LambdaStepdefs : En {
             assertEquals(4, d)
         }
     }
-
-    class Person {
-        var first: String? = null
-        var last: String? = null
-    }
 }
+
+data class Person(val first: String?, val last: String?)
