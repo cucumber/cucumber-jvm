@@ -8,6 +8,7 @@ import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.SingletonObjectFactorySupplier;
+import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeService;
@@ -101,9 +102,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
 
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
-        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory);
+        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
+        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier);
         Filters filters = new Filters(runtimeOptions);
         for (CucumberFeature cucumberFeature : features) {
             FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
