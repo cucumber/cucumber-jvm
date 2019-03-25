@@ -20,9 +20,9 @@ public @interface BeforeStep {
      * Duration in milliseconds this hook is allowed to run. Cucumber
      * will mark the hook as failed when exceeded.
      *
-     * When the maximum  duration is exceeded the thread will
-     * receive an in interrupt. Note: if the interrupt is ignored
-     * cucumber will wait for the this hook to finish.
+     * When the maximum duration is exceeded the thread will
+     * receive an interrupt. Note: if the interrupt is ignored
+     * Cucumber will wait for the this hook to finish.
      *
      * @return timeout in milliseconds. 0 (default) means no restriction.
      */
