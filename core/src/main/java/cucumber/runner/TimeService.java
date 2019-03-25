@@ -11,8 +11,7 @@ public interface TimeService {
         }
 
         @Override
-        public long timeStampMillis()
-        {
+        public long timeStampMillis() {
             return System.currentTimeMillis();
         }
     };
