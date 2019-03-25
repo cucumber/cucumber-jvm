@@ -12,6 +12,7 @@ import cucumber.runner.TestBackendSupplier;
 import cucumber.runner.TestHelper;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.formatter.FormatterBuilder;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -37,8 +38,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import cucumber.util.TimeUtils;
-
 import static cucumber.runner.TestHelper.feature;
 import static cucumber.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
@@ -46,7 +45,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -72,10 +70,7 @@ public class RuntimeTest {
             "    When s\n");
         StringBuilder out = new StringBuilder();
 
-		TimeUtils timeUtils = mock(TimeUtils.class);
-        when(timeUtils.getDateTimeFromTimeStamp(anyLong())).thenReturn("1970-01-01T00:00:00.Z");
-		
-        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out, timeUtils);
+        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
@@ -93,6 +88,7 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(new ClasspathResourceLoader(classLoader))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();

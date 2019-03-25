@@ -11,12 +11,10 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import cucumber.util.TimeUtils;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
@@ -383,7 +381,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:33:20.Z\",\n" +
             "        \"name\": \"Monkey eats more bananas\",\n" +
             "        \"line\": 9,\n" +
             "        \"description\": \"\",\n" +
@@ -1117,7 +1115,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"orange-party;monkey-eats-oranges\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:16:40.Z\",\n" +
             "        \"name\": \"Monkey eats oranges\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1175,17 +1173,13 @@ public class JSONFormatterTest {
 
         Appendable stringBuilder = new StringBuilder();
         
-        TimeUtils timeUtils = Mockito.mock(TimeUtils.class);
-        Mockito.when(timeUtils.getDateTimeFromTimeStamp(Mockito.anyLong())).thenReturn("1970-01-01T00:00:00.Z");
-        JSONFormatter jsonFormatter = new JSONFormatter(stringBuilder, timeUtils);
-        
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withArgs(featurePaths)
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(jsonFormatter)
+            .withAdditionalPlugins(new JSONFormatter(stringBuilder))
             .build()
             .run();
 
@@ -1216,18 +1210,13 @@ public class JSONFormatterTest {
 
         Appendable stringBuilder = new StringBuilder();
         
-        TimeUtils timeUtils = Mockito.mock(TimeUtils.class);
-        Mockito.when(timeUtils.getDateTimeFromTimeStamp(Mockito.anyLong())).thenReturn("1970-01-01T00:00:00.Z");
-        
-        JSONFormatter jsonFormatter = new JSONFormatter(stringBuilder, timeUtils);
-        
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withArgs(featurePaths)
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(jsonFormatter)
+            .withAdditionalPlugins(new JSONFormatter(stringBuilder))
             .build()
             .run();
 
@@ -1237,13 +1226,8 @@ public class JSONFormatterTest {
     private String runFeaturesWithFormatter() {
         final StringBuilder report = new StringBuilder();
         
-        TimeUtils timeUtils = Mockito.mock(TimeUtils.class);
-        Mockito.when(timeUtils.getDateTimeFromTimeStamp(Mockito.anyLong())).thenReturn("1970-01-01T00:00:00.Z");
-        
-        JSONFormatter jsonFormatter = new JSONFormatter(report, timeUtils);
-
         TestHelper.builder()
-            .withFormatterUnderTest(jsonFormatter)
+            .withFormatterUnderTest(new JSONFormatter(report))
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)

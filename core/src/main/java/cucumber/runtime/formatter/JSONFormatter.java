@@ -17,7 +17,6 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.util.TimeUtils;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -32,10 +31,13 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
@@ -49,7 +51,6 @@ final class JSONFormatter implements EventListener {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
-    private final TimeUtils timeUtils;
     
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -97,15 +98,8 @@ final class JSONFormatter implements EventListener {
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
-        this.timeUtils = new TimeUtils();
     }
     
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    JSONFormatter(Appendable out, TimeUtils timeUtils) {
-        this.out = new NiceAppendable(out);
-        this.timeUtils = timeUtils;
-    }
-
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
@@ -200,7 +194,7 @@ final class JSONFormatter implements EventListener {
     private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
         
-        testCaseMap.put("start_timestamp", timeUtils.getDateTimeFromTimeStamp(event.getTimeStampMillis()));
+        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getTimeStampMillis()));
 
         TestCase testCase = event.getTestCase();
 
@@ -392,5 +386,12 @@ final class JSONFormatter implements EventListener {
             resultMap.put("duration", result.getDuration());
         }
         return resultMap;
+    }
+    
+    private String getDateTimeFromTimeStamp(long timeStampMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.XXX");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        
+        return sdf.format(new Date(timeStampMillis));
     }
 }
