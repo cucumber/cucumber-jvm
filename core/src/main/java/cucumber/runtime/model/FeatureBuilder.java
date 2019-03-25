@@ -16,12 +16,12 @@ import java.util.Set;
 public class FeatureBuilder {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final List<CucumberFeature> cucumberFeatures = new ArrayList<>();
-    private final MessageDigest md5;
+    private final MessageDigest md;
     private final Set<String> pathsByChecksum = new HashSet<>();
 
     public FeatureBuilder() {
         try {
-            this.md5 = MessageDigest.getInstance("MD5");
+            this.md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             throw new CucumberException(e);
         }
@@ -45,7 +45,7 @@ public class FeatureBuilder {
     }
 
     private String checksum(String gherkin) {
-        return new BigInteger(1, md5.digest(gherkin.getBytes(UTF8))).toString(16);
+        return new BigInteger(1, md.digest(gherkin.getBytes(UTF8))).toString(16);
     }
 
 
