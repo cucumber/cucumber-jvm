@@ -389,7 +389,7 @@ final class JSONFormatter implements EventListener {
     }
     
     private String getDateTimeFromTimeStamp(long timeStampMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.XXX");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         
         return sdf.format(new Date(timeStampMillis));

@@ -121,7 +121,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
-			"        \"start_timestamp\": \"1970-01-01T00:00:00.Z\",\n" +
+			"        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
