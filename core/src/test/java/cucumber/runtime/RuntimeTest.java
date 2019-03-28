@@ -12,6 +12,7 @@ import cucumber.runner.TestBackendSupplier;
 import cucumber.runner.TestHelper;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.formatter.FormatterBuilder;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -42,12 +43,13 @@ import static cucumber.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class RuntimeTest {
     private final static long ANY_TIMESTAMP = 1234567890;
@@ -86,11 +88,13 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(new ClasspathResourceLoader(classLoader))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();
 
-        String expected = "[\n" +
+        String expected = "" +
+            "[\n" +
             "  {\n" +
             "    \"line\": 1,\n" +
             "    \"elements\": [\n" +
@@ -117,6 +121,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
+			"        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
@@ -140,7 +145,7 @@ public class RuntimeTest {
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
-        assertEquals(expected, out.toString());
+        assertThat(out.toString(), sameJSONAs(expected));
     }
 
     @Test

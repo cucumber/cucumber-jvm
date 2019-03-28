@@ -31,10 +31,13 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
@@ -48,7 +51,7 @@ final class JSONFormatter implements EventListener {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
-
+    
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
@@ -96,7 +99,7 @@ final class JSONFormatter implements EventListener {
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
     }
-
+    
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
@@ -119,7 +122,7 @@ final class JSONFormatter implements EventListener {
             featureMaps.add(currentFeatureMap);
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
-        currentTestCaseMap = createTestCase(event.testCase);
+        currentTestCaseMap = createTestCase(event);
         if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
             currentElementMap = createBackground(event.testCase);
             currentElementsList.add(currentElementMap);
@@ -188,8 +191,13 @@ final class JSONFormatter implements EventListener {
         return featureMap;
     }
 
-    private Map<String, Object> createTestCase(TestCase testCase) {
+    private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
+        
+        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getTimeStampMillis()));
+
+        TestCase testCase = event.getTestCase();
+
         testCaseMap.put("name", testCase.getName());
         testCaseMap.put("line", testCase.getLine());
         testCaseMap.put("type", "scenario");
@@ -378,5 +386,12 @@ final class JSONFormatter implements EventListener {
             resultMap.put("duration", result.getDuration());
         }
         return resultMap;
+    }
+    
+    private String getDateTimeFromTimeStamp(long timeStampMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        
+        return sdf.format(new Date(timeStampMillis));
     }
 }

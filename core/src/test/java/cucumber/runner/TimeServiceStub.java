@@ -17,4 +17,9 @@ public class TimeServiceStub implements TimeService {
         currentTime.set(result + duration);
         return result;
     }
+
+    @Override
+    public long timeStampMillis() {
+        return 0L;
+    }
 }

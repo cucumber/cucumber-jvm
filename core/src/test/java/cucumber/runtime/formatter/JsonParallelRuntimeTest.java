@@ -1,10 +1,14 @@
 package cucumber.runtime.formatter;
 
+import cucumber.runner.TimeServiceEventBus;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Runtime;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
 
 //TODO: Merge with the existing test
 public class JsonParallelRuntimeTest {
@@ -12,18 +16,22 @@ public class JsonParallelRuntimeTest {
     @Test
     public void testSingleFeature() {
         StringBuilder parallel = new StringBuilder();
+        
         Runtime.builder()
             .withArgs("--threads", "3",
                 "src/test/resources/cucumber/runtime/formatter/JSONPrettyFormatterTest.feature")
             .withAdditionalPlugins(new JSONFormatter(parallel))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .build()
             .run();
 
         StringBuilder serial = new StringBuilder();
+        
         Runtime.builder()
             .withArgs("--threads", "1",
                 "src/test/resources/cucumber/runtime/formatter/JSONPrettyFormatterTest.feature")
             .withAdditionalPlugins(new JSONFormatter(serial))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .build()
             .run();
 
@@ -33,21 +41,25 @@ public class JsonParallelRuntimeTest {
     @Test
     public void testMultipleFeatures() {
         StringBuilder parallel = new StringBuilder();
+        
         Runtime.builder()
             .withArgs("--threads", "3",
                 "src/test/resources/cucumber/runtime/formatter/JSONPrettyFormatterTest.feature",
                 "src/test/resources/cucumber/runtime/formatter/FormatterInParallel.feature")
             .withAdditionalPlugins(new JSONFormatter(parallel))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .build()
             .run();
 
 
         StringBuilder serial = new StringBuilder();
+        
         Runtime.builder()
             .withArgs("--threads", "1",
                 "src/test/resources/cucumber/runtime/formatter/JSONPrettyFormatterTest.feature",
                 "src/test/resources/cucumber/runtime/formatter/FormatterInParallel.feature")
             .withAdditionalPlugins(new JSONFormatter(serial))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .build()
             .run();
 
