@@ -15,7 +15,7 @@ public interface PickleStepTestStep extends TestStep {
     String getPattern();
 
     /**
-     * The matched Gherkin step as a compiled Pickle
+     * The matched Gherkin step as a compiled Pickle.
      *
      * @return the matched step
      */
@@ -27,7 +27,7 @@ public interface PickleStepTestStep extends TestStep {
      *
      * For example the step definition <code>Given (.*) pickles</code>
      * when matched with <code>Given 15 pickles</code> will receive
-     * as argument <code>"15"</code>
+     * as argument <code>"15"</code>.
      *
      * @return argument provided to the step definition
      */

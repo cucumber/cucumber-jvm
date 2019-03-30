@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * Formatter to measure performance of steps. Aggregated results for all steps can be computed
- * by adding {@link UsageStatisticStrategy} to the usageFormatter
+ * by adding {@link UsageStatisticStrategy} to the usageFormatter.
  */
 final class UsageFormatter implements Plugin, EventListener {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
@@ -29,19 +29,6 @@ final class UsageFormatter implements Plugin, EventListener {
     private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
 
     private final NiceAppendable out;
-
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
 
     /**
      * Constructor
@@ -55,6 +42,19 @@ final class UsageFormatter implements Plugin, EventListener {
         addUsageStatisticStrategy("median", new MedianUsageStatisticStrategy());
         addUsageStatisticStrategy("average", new AverageUsageStatisticStrategy());
     }
+
+    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            handleTestStepFinished(event);
+        }
+    };
+    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+        @Override
+        public void receive(TestRunFinished event) {
+            finishReport();
+        }
+    };
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
@@ -169,7 +169,7 @@ final class UsageFormatter implements Plugin, EventListener {
      * @param key      the key, will be displayed in the output
      * @param strategy the strategy
      */
-    public void addUsageStatisticStrategy(String key, UsageStatisticStrategy strategy) {
+    void addUsageStatisticStrategy(String key, UsageStatisticStrategy strategy) {
         statisticStrategies.put(key, strategy);
     }
 
@@ -193,8 +193,8 @@ final class UsageFormatter implements Plugin, EventListener {
      */
     static class StepContainer {
         public String name;
-        public Map<String, BigDecimal> aggregatedDurations = new HashMap<String, BigDecimal>();
-        public List<StepDuration> durations = new ArrayList<StepDuration>();
+        Map<String, BigDecimal> aggregatedDurations = new HashMap<String, BigDecimal>();
+        List<StepDuration> durations = new ArrayList<StepDuration>();
     }
 
     static class StepDuration {
@@ -205,9 +205,9 @@ final class UsageFormatter implements Plugin, EventListener {
     /**
      * Calculate a statistical value to be displayed in the usage-file
      */
-    static interface UsageStatisticStrategy {
+    interface UsageStatisticStrategy {
         /**
-         * @param durationEntries list of execution times of steps as nanoseconds
+         * @param durationEntries list of execution times of steps in nanoseconds
          * @return a statistical value (e.g. median, average, ..)
          */
         Long calculate(List<Long> durationEntries);

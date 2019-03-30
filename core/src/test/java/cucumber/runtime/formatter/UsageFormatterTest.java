@@ -46,7 +46,6 @@ public class UsageFormatterTest {
     public void resultWithStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-
         TestStep testStep = mockTestStep();
         Result result = new Result(Result.Type.PASSED, 12345L, null);
 
