@@ -31,12 +31,16 @@ public class CanonicalEventOrderTest {
     static long getTime() {
         return new Date().getTime();
     }
+    
+    private static long getTimeStampMillis() {
+        return System.currentTimeMillis();
+    }
 
     static Event createTestCaseEvent(final String uri, final int line) {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
         given(testCase.getLine()).willReturn(line);
-        return new TestCaseStarted(getTime(), testCase);
+        return new TestCaseStarted(getTime(), getTimeStampMillis(), testCase);
     }
 
     private Event runStarted = new TestRunStarted(getTime());

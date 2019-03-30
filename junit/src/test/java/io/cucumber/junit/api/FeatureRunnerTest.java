@@ -169,6 +169,11 @@ public class FeatureRunnerTest {
             public long time() {
                 return 0L;
             }
+
+            @Override
+            public long timeStampMillis() {
+                return 0L;
+            }
         };
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

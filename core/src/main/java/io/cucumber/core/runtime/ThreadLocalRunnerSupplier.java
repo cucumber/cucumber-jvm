@@ -62,6 +62,11 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
             super.send(event);
             parent.send(event);
         }
+
+        @Override
+        public Long getTimeStampMillis() {
+            return parent.getTimeStampMillis();
+        }
     }
 
     private static final class SynchronizedEventBus implements EventBus {
@@ -103,6 +108,11 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         @Override
         public synchronized <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
             delegate.removeHandlerFor(eventType, handler);
+        }
+
+        @Override
+        public Long getTimeStampMillis() {
+            return delegate.getTimeStampMillis();
         }
     }
 }

@@ -35,7 +35,8 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
         Long startTime = bus.getTime();
-        bus.send(new TestCaseStarted(startTime, this));
+        Long startTimeStampMillis = bus.getTimeStampMillis();
+        bus.send(new TestCaseStarted(startTime, startTimeStampMillis, this));
         Scenario scenario = new Scenario(bus, this);
 
         for (HookTestStep before : beforeHooks) {

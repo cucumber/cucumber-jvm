@@ -98,6 +98,6 @@ public class ThreadLocalRunnerSupplierTest {
                 fail();
             }
         });
-        eventBus.send(new TestCaseStarted(0L, null));
+        eventBus.send(new TestCaseStarted(0L, 0L, null));
     }
 }

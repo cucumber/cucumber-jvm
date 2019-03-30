@@ -5,11 +5,13 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.cucumber.core.runner.TimeServiceStub;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -86,12 +89,13 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .withFeatureSupplier(featureSupplier)
-            .withEventBus(bus)
             .build()
             .run();
 
-        String expected = "[\n" +
+        String expected = "" +
+            "[\n" +
             "  {\n" +
             "    \"line\": 1,\n" +
             "    \"elements\": [\n" +
@@ -118,6 +122,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
+			"        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
@@ -141,7 +146,7 @@ public class RuntimeTest {
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
-        assertEquals(expected, out.toString());
+        assertThat(out.toString(), sameJSONAs(expected));
     }
 
     @Test

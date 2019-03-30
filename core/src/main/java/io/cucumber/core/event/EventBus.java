@@ -6,6 +6,8 @@ import io.cucumber.core.api.event.EventPublisher;
 public interface EventBus extends EventPublisher {
 
     Long getTime();
+    
+    Long getTimeStampMillis();
 
     void send(Event event);
 

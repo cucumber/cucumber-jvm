@@ -13,4 +13,9 @@ public final class TimeServiceEventBus extends AbstractEventBus {
     public Long getTime() {
         return stopWatch.time();
     }
+
+    @Override
+    public Long getTimeStampMillis() {
+        return stopWatch.timeStampMillis();
+    }
 }
