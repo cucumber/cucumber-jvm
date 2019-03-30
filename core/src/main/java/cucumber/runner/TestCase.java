@@ -33,9 +33,9 @@ final class TestCase implements cucumber.api.TestCase {
 
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
-        Long startTime = bus.getTime();
-        Long startTimeStampMillis = bus.getTimeStampMillis();
-        bus.send(new TestCaseStarted(startTime, startTimeStampMillis, this));
+        Long startTimeMillis = bus.getTimeMillis();
+        Long startTimeNanos = bus.getTime();
+        bus.send(new TestCaseStarted(startTimeNanos, startTimeMillis, this));
         Scenario scenario = new Scenario(bus, this);
 
         for (HookTestStep before : beforeHooks) {
@@ -50,8 +50,9 @@ final class TestCase implements cucumber.api.TestCase {
             after.run(this, bus, scenario, dryRun);
         }
 
-        Long stopTime = bus.getTime();
-        bus.send(new TestCaseFinished(stopTime, this, new Result(scenario.getStatus(), stopTime - startTime, scenario.getError())));
+        Long stopTimeNanos = bus.getTime();
+        Long stopTimeMillis = bus.getTimeMillis();
+        bus.send(new TestCaseFinished(stopTimeNanos, stopTimeMillis, this, new Result(scenario.getStatus(), stopTimeNanos - startTimeNanos, scenario.getError())));
     }
 
     @Override

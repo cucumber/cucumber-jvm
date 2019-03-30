@@ -4,10 +4,10 @@ import cucumber.api.TestCase;
 
 public abstract class TestCaseEvent extends TimeStampedEvent {
 
-    final TestCase testCase;
+    private final TestCase testCase;
 
-    TestCaseEvent(Long timeStamp, TestCase testCase) {
-        super(timeStamp);
+    TestCaseEvent(Long timeStamp, long timeStampMillis, TestCase testCase) {
+        super(timeStamp, timeStampMillis);
         this.testCase = testCase;
     }
 

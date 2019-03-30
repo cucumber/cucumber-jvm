@@ -65,7 +65,7 @@ public class Runtime {
 
     public void run() {
         final List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getTime()));
+        bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
         }
@@ -93,7 +93,7 @@ public class Runtime {
             throw new CucumberException(e);
         }
 
-        bus.send(new TestRunFinished(bus.getTime()));
+        bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
     }
 
     public byte exitStatus() {

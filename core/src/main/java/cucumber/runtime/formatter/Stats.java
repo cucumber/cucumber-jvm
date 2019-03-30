@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -11,10 +11,6 @@ import cucumber.api.event.TestRunStarted;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
-import cucumber.runtime.formatter.AnsiFormats;
-import cucumber.runtime.formatter.Format;
-import cucumber.runtime.formatter.Formats;
-import cucumber.runtime.formatter.MonochromeFormats;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -23,8 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 public class Stats implements EventListener, ColorAware, StrictAware {
-    static final long ONE_SECOND = 1000000000;
+    static final long ONE_SECOND = SECONDS.toNanos(1);
     static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();

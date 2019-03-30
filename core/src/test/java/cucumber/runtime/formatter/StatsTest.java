@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -12,12 +13,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import cucumber.runtime.formatter.Stats;
 import org.junit.Test;
 
 public class StatsTest {
     private static final long ANY_TIME = 1234567890;
-    private static final long ONE_MILLI_SECOND = 1000000;
+    private static final long ONE_MILLI_SECOND = MILLISECONDS.toNanos(1);
     private static final long ONE_HOUR = 60 * Stats.ONE_MINUTE;
 
     @Test
@@ -150,8 +150,7 @@ public class StatsTest {
         counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), endsWith(String.format(
-                "1m1,001s%n")));
+        assertThat(baos.toString(), endsWith(String.format("1m1,001s%n")));
     }
 
     @Test

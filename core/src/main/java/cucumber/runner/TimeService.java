@@ -2,7 +2,7 @@ package cucumber.runner;
 
 public interface TimeService {
     long time();
-    long timeStampMillis();
+    long timeMillis();
 
     TimeService SYSTEM = new TimeService() {
         @Override
@@ -11,7 +11,7 @@ public interface TimeService {
         }
 
         @Override
-        public long timeStampMillis() {
+        public long timeMillis() {
             return System.currentTimeMillis();
         }
     };

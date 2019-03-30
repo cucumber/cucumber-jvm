@@ -63,7 +63,7 @@ public class TestNGCucumberRunner {
     }
 
     public void finish() {
-        bus.send(new TestRunFinished(bus.getTime()));
+        bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
     }
 
     /**
@@ -91,7 +91,7 @@ public class TestNGCucumberRunner {
     List<CucumberFeature> getFeatures() {
 
         List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getTime()));
+        bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
         }
