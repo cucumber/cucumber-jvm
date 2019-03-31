@@ -13,6 +13,8 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,28 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Formatter to measure performance of steps. Aggregated results for all steps can be computed
- * by adding {@link UsageStatisticStrategy} to the usageFormatter.
+ * Formatter to measure performance of steps. Includes average and median step duration.
  */
 final class UsageFormatter implements Plugin, EventListener {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
-    final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
-    private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
-
+    final Map<String, List<StepContainer>> usageMap = new HashMap<>();
     private final NiceAppendable out;
-
-    /**
-     * Constructor
-     *
-     * @param out {@link Appendable} to print the result
-     */
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public UsageFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
-
-        addUsageStatisticStrategy("median", new MedianUsageStatisticStrategy());
-        addUsageStatisticStrategy("average", new AverageUsageStatisticStrategy());
-    }
 
     private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
@@ -55,6 +41,16 @@ final class UsageFormatter implements Plugin, EventListener {
             finishReport();
         }
     };
+
+    /**
+     * Constructor
+     *
+     * @param out {@link Appendable} to print the result
+     */
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
+    public UsageFormatter(Appendable out) {
+        this.out = new NiceAppendable(out);
+    }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
@@ -70,23 +66,23 @@ final class UsageFormatter implements Plugin, EventListener {
     }
 
     void finishReport() {
-        List<StepDefContainer> stepDefContainers = new ArrayList<StepDefContainer>();
+        List<StepDefContainer> stepDefContainers = new ArrayList<>();
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
             StepDefContainer stepDefContainer = new StepDefContainer();
             stepDefContainers.add(stepDefContainer);
 
-            stepDefContainer.source = usageEntry.getKey();
-            stepDefContainer.steps = createStepContainer(usageEntry.getValue());
+            stepDefContainer.setSource(usageEntry.getKey());
+            stepDefContainer.setSteps(createStepContainers(usageEntry.getValue()));
         }
 
         out.append(gson().toJson(stepDefContainers));
         out.close();
     }
 
-    private List<StepContainer> createStepContainer(List<StepContainer> stepContainers) {
+    private List<StepContainer> createStepContainers(List<StepContainer> stepContainers) {
         for (StepContainer stepContainer : stepContainers) {
-            stepContainer.aggregatedDurations = createAggregatedDurations(stepContainer);
-            formatDurationAsSeconds(stepContainer.durations);
+            stepContainer.setAggregatedDurations(createAggregatedDurations(stepContainer));
+            formatDurationAsSeconds(stepContainer.getDurations());
         }
         return stepContainers;
     }
@@ -98,15 +94,15 @@ final class UsageFormatter implements Plugin, EventListener {
     }
 
     private Map<String, BigDecimal> createAggregatedDurations(StepContainer stepContainer) {
-        Map<String, BigDecimal> aggregatedResults = new HashMap<String, BigDecimal>();
-        for (Map.Entry<String, UsageStatisticStrategy> calculatorEntry : statisticStrategies.entrySet()) {
-            UsageStatisticStrategy statisticStrategy = calculatorEntry.getValue();
-            List<Long> rawDurations = getRawDurations(stepContainer.durations);
-            Long calculationResult = statisticStrategy.calculate(rawDurations);
+        Map<String, BigDecimal> aggregatedResults = new HashMap<>();
+        List<BigDecimal> rawDurations = getRawDurations(stepContainer.getDurations());
 
-            String strategy = calculatorEntry.getKey();
-            aggregatedResults.put(strategy, toSeconds(calculationResult));
-        }
+        BigDecimal average = calculateAverage(rawDurations);
+        aggregatedResults.put("average", average);
+
+        BigDecimal median = calculateMedian(rawDurations);
+        aggregatedResults.put("median", median);
+
         return aggregatedResults;
     }
 
@@ -114,11 +110,11 @@ final class UsageFormatter implements Plugin, EventListener {
         return BigDecimal.valueOf(nanoSeconds).divide(NANOS_PER_SECOND);
     }
 
-    private List<Long> getRawDurations(List<StepDuration> stepDurations) {
-        List<Long> rawDurations = new ArrayList<Long>();
+    private List<BigDecimal> getRawDurations(List<StepDuration> stepDurations) {
+        List<BigDecimal> rawDurations = new ArrayList<>();
 
         for (StepDuration stepDuration : stepDurations) {
-            rawDurations.add(stepDuration.duration.longValue());
+            rawDurations.add(toSeconds(stepDuration.duration.longValue()));
         }
         return rawDurations;
     }
@@ -130,14 +126,14 @@ final class UsageFormatter implements Plugin, EventListener {
     private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs, String stepLocation) {
         List<StepContainer> stepContainers = usageMap.get(stepDefinition);
         if (stepContainers == null) {
-            stepContainers = new ArrayList<StepContainer>();
+            stepContainers = new ArrayList<>();
             usageMap.put(stepDefinition, stepContainers);
         }
         StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
 
         Long duration = result.getDuration();
         StepDuration stepDuration = createStepDuration(duration, stepLocation);
-        stepContainer.durations.add(stepDuration);
+        stepContainer.getDurations().add(stepDuration);
     }
 
     private StepDuration createStepDuration(Long duration, String location) {
@@ -153,108 +149,125 @@ final class UsageFormatter implements Plugin, EventListener {
 
     private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
         for (StepContainer container : stepContainers) {
-            if (stepNameWithArgs.equals(container.name)) {
+            if (stepNameWithArgs.equals(container.getName())) {
                 return container;
             }
         }
         StepContainer stepContainer = new StepContainer();
-        stepContainer.name = stepNameWithArgs;
+        stepContainer.setName(stepNameWithArgs);
         stepContainers.add(stepContainer);
         return stepContainer;
-    }
-
-    /**
-     * Add a {@link UsageStatisticStrategy} to the formatter
-     *
-     * @param key      the key, will be displayed in the output
-     * @param strategy the strategy
-     */
-    void addUsageStatisticStrategy(String key, UsageStatisticStrategy strategy) {
-        statisticStrategies.put(key, strategy);
     }
 
     /**
      * Container of Step Definitions (patterns)
      */
     static class StepDefContainer {
+        private String source;
+        private List<StepContainer> steps;
+
         /**
          * The StepDefinition (pattern)
          */
-        public String source;
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
 
         /**
          * A list of Steps
          */
-        public List<StepContainer> steps;
+        public List<StepContainer> getSteps() {
+            return steps;
+        }
+
+        public void setSteps(List<StepContainer> steps) {
+            this.steps = steps;
+        }
     }
 
     /**
-     * Contains for usage-entries of steps
+     * Container for usage-entries of steps
      */
     static class StepContainer {
-        public String name;
-        Map<String, BigDecimal> aggregatedDurations = new HashMap<String, BigDecimal>();
-        List<StepDuration> durations = new ArrayList<StepDuration>();
+        private String name;
+        private Map<String, BigDecimal> aggregatedDurations = new HashMap<>();
+        private List<StepDuration> durations = new ArrayList<>();
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        void setAggregatedDurations(Map<String, BigDecimal> aggregatedDurations) {
+            this.aggregatedDurations = aggregatedDurations;
+        }
+
+        List<StepDuration> getDurations() {
+            return durations;
+        }
+
+        void setDurations(List<StepDuration> durations) {
+            this.durations = durations;
+        }
     }
 
     static class StepDuration {
         public BigDecimal duration;
         public String location;
-    }
 
-    /**
-     * Calculate a statistical value to be displayed in the usage-file
-     */
-    interface UsageStatisticStrategy {
-        /**
-         * @param durationEntries list of execution times of steps in nanoseconds
-         * @return a statistical value (e.g. median, average, ..)
-         */
-        Long calculate(List<Long> durationEntries);
+        public BigDecimal getDuration() {
+            return duration;
+        }
+
+        public void setDuration(BigDecimal duration) {
+            this.duration = duration;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
     }
 
     /**
      * Calculate the average of a list of duration entries
      */
-    static class AverageUsageStatisticStrategy implements UsageStatisticStrategy {
-        @Override
-        public Long calculate(List<Long> durationEntries) {
-            if (verifyNoNulls(durationEntries)) {
-                return 0L;
-            }
-
-            long sum = 0;
-            for (Long duration : durationEntries) {
-                sum += duration;
-            }
-            return sum / durationEntries.size();
+    BigDecimal calculateAverage(List<BigDecimal> durationEntries) {
+         if (durationEntries.isEmpty()) {
+            return BigDecimal.ZERO;
         }
 
-        private boolean verifyNoNulls(List<Long> durationEntries) {
-            return durationEntries == null || durationEntries.isEmpty() || durationEntries.contains(null);
+        BigDecimal sum = BigDecimal.valueOf(0L);
+        for (BigDecimal duration : durationEntries) {
+            sum = sum.add(duration);
         }
+        return sum.divide(BigDecimal.valueOf(durationEntries.size()), 9, RoundingMode.HALF_UP);
     }
 
     /**
      * Calculate the median of a list of duration entries
      */
-    static class MedianUsageStatisticStrategy implements UsageStatisticStrategy {
-        @Override
-        public Long calculate(List<Long> durationEntries) {
-            if (verifyNoNulls(durationEntries)) {
-                return 0L;
-            }
-            Collections.sort(durationEntries);
-            int middle = durationEntries.size() / 2;
-            if (durationEntries.size() % 2 == 1) {
-                return durationEntries.get(middle);
-            } else {
-                return (durationEntries.get(middle - 1) + durationEntries.get(middle)) / 2;
-            }
+    BigDecimal calculateMedian(List<BigDecimal> durationEntries) {
+         if (durationEntries.isEmpty()) {
+            return BigDecimal.ZERO;
         }
-
-        private boolean verifyNoNulls(List<Long> durationEntries) {
-            return durationEntries == null || durationEntries.isEmpty() || durationEntries.contains(null);
+        Collections.sort(durationEntries);
+        int middle = durationEntries.size() / 2;
+        if (durationEntries.size() % 2 == 1) {
+        return durationEntries.get(middle);
+        } else {
+            BigDecimal total = durationEntries.get(middle - 1).add(durationEntries.get(middle));
+            return total.divide(BigDecimal.valueOf(2.0), 9, RoundingMode.HALF_UP);
         }
     }
 }
