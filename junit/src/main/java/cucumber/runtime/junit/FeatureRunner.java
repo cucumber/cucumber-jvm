@@ -15,6 +15,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,13 @@ public class FeatureRunner extends BlockJUnit4ClassRunner {
     public Description getDescription() {
         if (description == null) {
             description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature));
+            try {
+				Field fTestClassField = Description.class.getDeclaredField("fTestClass");
+				fTestClassField.setAccessible(true);
+				fTestClassField.set(description, getTestClass().getJavaClass());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
             for (FrameworkMethod child : getChildren()) {
                 description.addChild(describeChild(child));
             }
