@@ -158,7 +158,7 @@ public class FeatureRunnerTest {
             }
 
             @Override
-            public long timeStampMillis() {
+            public long timeMillis() {
                 return 0L;
             }
         };

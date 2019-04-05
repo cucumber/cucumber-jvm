@@ -233,7 +233,7 @@ public class TimelineFormatterTest {
             .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath())
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(TimeUnit.MILLISECONDS.toNanos(STEP_DURATION_MS))
+            .withTimeServiceIncrement(STEP_DURATION_MS)
             .build()
             .run();
     }

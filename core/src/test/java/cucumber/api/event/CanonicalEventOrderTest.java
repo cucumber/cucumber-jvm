@@ -36,14 +36,14 @@ public class CanonicalEventOrderTest {
         return new TestCaseStarted(getTime(), getTimeStampMillis(), testCase);
     }
 
-    private Event runStarted = new TestRunStarted(getTime());
-    private Event testRead = new TestSourceRead(getTime(), "uri", "source");
-    private Event suggested = new SnippetsSuggestedEvent(getTime(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
+    private Event runStarted = new TestRunStarted(getTime(), getTimeStampMillis());
+    private Event testRead = new TestSourceRead(getTime(), getTimeStampMillis(), "uri", "source");
+    private Event suggested = new SnippetsSuggestedEvent(getTime(), getTimeStampMillis(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
     private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
     private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
     private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
     private Event feature2Case1Started = createTestCaseEvent("feature2", 1);
-    private Event runFinished = new TestRunFinished(getTime());
+    private Event runFinished = new TestRunFinished(getTime(), getTimeStampMillis());
 
     @Test
     public void verifyTestRunStartedSortedCorrectly() {
