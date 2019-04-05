@@ -45,7 +45,7 @@ public class InvokeMethodsAroundEventsTest {
     public void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(BeforeAfterClass.class);
         cucumber.run(new RunNotifier());
-        assertThat(events, contains("BeforeClass", "TestRunStarted", "TestRunFinished", "AfterClass"));
+        assertThat(events, contains("BeforeClass", "TestRunStarted", "BeforeClass", "AfterClass", "BeforeClass", "AfterClass", "TestRunFinished", "AfterClass"));
     }
 
     @CucumberOptions(plugin = {"cucumber.runtime.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener"})

@@ -9,15 +9,25 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.model.CucumberFeature;
+
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -144,11 +154,15 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
-        JUnitOptions junitOption = new JUnitOptions(false, Arrays.asList(options));
-        return createFeatureRunner(cucumberFeature, junitOption);
+    	return createFeatureRunner(RunCukesTest.class, cucumberFeature, options);
     }
 
-    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
+    private FeatureRunner createFeatureRunner(Class<?> clazz, CucumberFeature cucumberFeature, String... options) throws InitializationError {
+        JUnitOptions junitOption = new JUnitOptions(false, Arrays.asList(options));
+        return createFeatureRunner(clazz, cucumberFeature, junitOption);
+    }
+
+    private FeatureRunner createFeatureRunner(Class<?> clazz, CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("");
 
         final TimeService timeServiceStub = new TimeService() {
@@ -172,7 +186,10 @@ public class FeatureRunnerTest {
         EventBus bus = new TimeServiceEventBus(timeServiceStub);
         Filters filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
-        return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
+        return new FeatureRunner(clazz, cucumberFeature, filters, runnerSupplier, junitOption);
+    }
+    
+    public static class RunCukesTest {
     }
 
     @Test
@@ -204,133 +221,73 @@ public class FeatureRunnerTest {
         assertDescriptionIsPredictable(rerunner.getDescription(), descriptions);
 
     }
-
+    
     @Test
-    public void step_descriptions_can_be_turned_on() throws Exception {
+    public void should_run_junit_rules() throws InitializationError {
         CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background:\n" +
-            "    Given background step\n" +
-            "  Scenario: A\n" +
-            "    Then scenario name\n" +
-            "  Scenario: B\n" +
-            "    Then scenario name\n" +
-            "  Scenario Outline: C\n" +
-            "    Then scenario <name>\n" +
-            "  Examples:\n" +
-            "    | name |\n" +
-            "    | C    |\n" +
-            "    | D    |\n" +
-            "    | E    |\n"
+                "Feature: feature name\n" +
+                "  Scenario: A\n" +
+                "    Then scenario name\n" +
+                "  Scenario: B\n" +
+                "    Then scenario name\n"
+            );
 
-        );
-
-        FeatureRunner runner = createFeatureRunner(cucumberFeature, "--step-notifications");
-
-        Description feature = runner.getDescription();
-        Description scenarioA = feature.getChildren().get(0);
-        assertEquals(2, scenarioA.getChildren().size());
-        Description scenarioB = feature.getChildren().get(1);
-        assertEquals(2, scenarioB.getChildren().size());
-        Description scenarioC0 = feature.getChildren().get(2);
-        assertEquals(2, scenarioC0.getChildren().size());
-        Description scenarioC1 = feature.getChildren().get(3);
-        assertEquals(2, scenarioC1.getChildren().size());
-        Description scenarioC2 = feature.getChildren().get(4);
-        assertEquals(2, scenarioC2.getChildren().size());
+            FeatureRunner runner = createFeatureRunner(RunCukesTestWithRules.class, cucumberFeature);
+            RunNotifier notifier = mock(RunNotifier.class);
+            runner.run(notifier);
+            
+            assertEquals(1, classRuleActivations.size());
+            assertEquals(2, ruleActivations.size());
+            assertEquals(2, methodRuleActivations.size());
     }
+    
+	public static final List<Object[]> classRuleActivations = new LinkedList<>();
+	public static final List<Object[]> ruleActivations = new LinkedList<>();
+	public static final List<Object[]> methodRuleActivations = new LinkedList<>();
 
-    @Test
-    public void step_notification_can_be_turned_on_scenario_outline_with_two_examples_table_and_background() throws Throwable {
-        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given first step\n" +
-            "  Scenario Outline: scenario outline name\n" +
-            "    When <x> step\n" +
-            "    Then <y> step\n" +
-            "    Examples: examples 1 name\n" +
-            "      |   x    |   y   |\n" +
-            "      | second | third |\n" +
-            "      | second | third |\n" +
-            "    Examples: examples 2 name\n" +
-            "      |   x    |   y   |\n" +
-            "      | second | third |\n");
+    public static class RunCukesTestWithRules {
+    	
+    	public static class MyTestRule implements TestRule {
+    		
+    		private List<Object[]> activations;
+    		
+    		public MyTestRule(List<Object[]> activations) {
+    			this.activations = activations;
+    		}
 
-        RunNotifier notifier = runFeatureWithNotifier(feature, "--step-notifications");
+    		@Override
+    		public Statement apply(Statement base, Description description) {
+    			activations.add(new Object[] { base, description });
+    			return base;
+    		}
+    		
+    	}
 
-        InOrder order = inOrder(notifier);
+    	public static class MyMethodRule implements MethodRule {
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("third step(scenario outline name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name")));
-    }
+    		private List<Object[]> activations;
 
-    @Test
-    public void step_notification_can_be_turned_on_two_scenarios_with_background() throws Throwable {
-        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given first step\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    When second step\n" +
-            "    Then third step\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Then another second step\n");
+    		public MyMethodRule(List<Object[]> activations) {
+    			this.activations = activations;
+    		}
 
-        RunNotifier notifier = runFeatureWithNotifier(feature, "--step-notifications");
+    		@Override
+    		public Statement apply(Statement base, FrameworkMethod method, Object target) {
+    			activations.add(new Object[] { base, method, target });
+    			return base;
+    		}
 
-        InOrder order = inOrder(notifier);
+    	}
+    	
+    	@ClassRule
+    	public static TestRule classRule = new MyTestRule(classRuleActivations);
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("first step(scenario_1 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("first step(scenario_1 name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("second step(scenario_1 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("second step(scenario_1 name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("third step(scenario_1 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("third step(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("first step(scenario_2 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario_2 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("first step(scenario_2 name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("another second step(scenario_2 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("another second step(scenario_2 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("another second step(scenario_2 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name")));
+    	@Rule
+    	public TestRule rule = new MyTestRule(ruleActivations);
+    	
+    	@Rule
+    	public MethodRule methodRule = new MyMethodRule(methodRuleActivations);
+    	    	
     }
 
 }

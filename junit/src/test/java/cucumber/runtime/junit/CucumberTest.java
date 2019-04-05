@@ -156,17 +156,17 @@ public class CucumberTest {
 
 
     @RunWith(Cucumber.class)
-    public class RunCukesTestValidEmpty {
+    public static class RunCukesTestValidEmpty {
     }
 
     @RunWith(Cucumber.class)
-    private class RunCukesTestValidIgnored {
+    private static class RunCukesTestValidIgnored {
         public void ignoreMe() {
         }
     }
 
     @RunWith(Cucumber.class)
-    private class RunCukesTestInvalid {
+    private static class RunCukesTestInvalid {
         @DummyWhen
         public void ignoreMe() {
         }
@@ -183,24 +183,24 @@ public class CucumberTest {
         Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
     }
 
-    public class ImplicitFeatureAndGluePath {
+    public static class ImplicitFeatureAndGluePath {
     }
 
     @CucumberOptions(features = {"classpath:cucumber/runtime/junit"})
-    public class ExplicitFeaturePath {
+    public static class ExplicitFeaturePath {
     }
 
     @CucumberOptions(features = {"classpath:gibber/ish"})
-    public class ExplicitFeaturePathWithNoFeatures {
+    public static class ExplicitFeaturePathWithNoFeatures {
     }
 
     @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
-    public class LexerErrorFeature {
+    public static class LexerErrorFeature {
 
     }
 
     @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
-    public class FormatterWithLexerErrorFeature {
+    public static class FormatterWithLexerErrorFeature {
 
     }
 

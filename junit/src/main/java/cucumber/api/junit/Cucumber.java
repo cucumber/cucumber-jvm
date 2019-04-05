@@ -101,7 +101,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
         Filters filters = new Filters(runtimeOptions);
         for (CucumberFeature cucumberFeature : features) {
-            FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
+            FeatureRunner featureRunner = new FeatureRunner(clazz, cucumberFeature, filters, runnerSupplier, junitOptions);
             if (!featureRunner.isEmpty()) {
                 children.add(featureRunner);
             }
