@@ -10,7 +10,7 @@ import static java.util.Objects.requireNonNull;
 
 public final class Result {
 
-    public final static Comparator<Result> SEVERITY = new Comparator<Result>() {
+    public static final Comparator<Result> SEVERITY = new Comparator<Result>() {
 
         @Override
         public int compare(Result a, Result b) {

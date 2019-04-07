@@ -30,7 +30,7 @@ You can register bugs and feature requests in the
 [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues). 
 
 Please bear in mind that this project is almost entirely developed by 
-volunteers. If you do not provided the implementation yourself (or pay someone 
+volunteers. If you do not provide the implementation yourself (or pay someone 
 to do it for you), the bug might never get fixed. If it is a serious bug, other 
 people than you might care enough to provide a fix.
 

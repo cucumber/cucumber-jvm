@@ -93,7 +93,6 @@ public class PickleStepTestStepTest {
         assertEquals(SKIPPED, scenario.getStatus());
     }
 
-
     @Test
     public void result_is_skipped_when_before_step_hook_does_not_pass() throws Throwable {
         doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
@@ -138,6 +137,7 @@ public class PickleStepTestStepTest {
         List<TestCaseEvent> allValues = captor.getAllValues();
         assertEquals(failure, ((TestStepFinished) allValues.get(3)).result);
     }
+
     @Test
     public void result_is_result_from_hook_when_after_step_hook_does_not_pass() throws Throwable {
         Exception exception = new RuntimeException();
@@ -152,6 +152,7 @@ public class PickleStepTestStepTest {
         List<TestCaseEvent> allValues = captor.getAllValues();
         assertEquals(failure, ((TestStepFinished) allValues.get(5)).result);
     }
+
     @Test
     public void after_step_hook_is_run_when_before_step_hook_does_not_pass() throws Throwable {
         doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
@@ -172,7 +173,7 @@ public class PickleStepTestStepTest {
         doThrow(expectedError).when(definitionMatch).runStep(any(Scenario.class));
         doThrow(new Exception()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
         step.run(testCase, bus, scenario, false);
-        assertThat(scenario.getError(),is(expectedError));
+        assertThat(scenario.getError(), is(expectedError));
     }
 
     @Test
@@ -181,7 +182,7 @@ public class PickleStepTestStepTest {
         doThrow(expectedError).when(beforeHookDefinition).execute(any(Scenario.class));
         doThrow(new Exception()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
         step.run(testCase, bus, scenario, false);
-        assertThat(scenario.getError(),is(expectedError));
+        assertThat(scenario.getError(), is(expectedError));
     }
 
     private static ArgumentMatcher<Scenario> scenarioDoesNotHave(final Throwable type) {

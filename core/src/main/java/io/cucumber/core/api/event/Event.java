@@ -30,6 +30,14 @@ public interface Event {
      */
     Comparator<Event> CANONICAL_ORDER = new CanonicalEventOrder();
 
+    /**
+     * Returns timestamp in nano seconds since an arbitrary start time.
+     *
+     * @return timestamp in nano seconds
+     * @see System#nanoTime()
+     * @deprecated prefer {@link TimeStampedEvent#getTimeStampMillis()}
+     */
+    @Deprecated
     Long getTimeStamp();
 
 }

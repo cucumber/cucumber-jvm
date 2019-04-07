@@ -5,19 +5,22 @@ import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestStepStarted;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public class StepDurationTimeService implements TimeService, EventListener {
-    private long stepDuration;
-    private final ThreadLocal<Long> currentTime = new ThreadLocal<Long>();
+
+    private final ThreadLocal<Long> currentTime = new ThreadLocal<>();
+    private final long stepDurationMillis;
+
     private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {
-            handleTestStepStarted(event);
+            handleTestStepStarted();
         }
     };
 
-
-    public StepDurationTimeService(long stepDuration) {
-        this.stepDuration = stepDuration;
+    public StepDurationTimeService(long stepDurationMillis) {
+        this.stepDurationMillis = stepDurationMillis;
     }
 
     @Override
@@ -28,18 +31,18 @@ public class StepDurationTimeService implements TimeService, EventListener {
     @Override
     public long time() {
         Long result = currentTime.get();
-        return result != null ? result : 0L;
+        return result != null ? MILLISECONDS.toNanos(result) : 0L;
     }
-    
+
     @Override
-    public long timeStampMillis() {
+    public long timeMillis() {
         Long result = currentTime.get();
         return result != null ? result : 0L;
     }
 
-    private void handleTestStepStarted(TestStepStarted event) {
-        long time = time();
-        currentTime.set(time + stepDuration);
+    private void handleTestStepStarted() {
+        long time = timeMillis();
+        currentTime.set(time + stepDurationMillis);
     }
 
 }

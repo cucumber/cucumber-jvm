@@ -62,12 +62,12 @@ final class CanonicalEventOrder implements Comparator<Event> {
 
         @Override
         public int compare(TestCaseEvent a, TestCaseEvent b) {
-            int uri = a.testCase.getUri().compareTo(b.testCase.getUri());
+            int uri = a.getTestCase().getUri().compareTo(b.getTestCase().getUri());
             if (uri != 0) {
                 return uri;
             }
 
-            int line = Integer.compare(a.testCase.getLine(), b.testCase.getLine());
+            int line = Integer.compare(a.getTestCase().getLine(), b.getTestCase().getLine());
             if(line != 0){
                 return line;
             }

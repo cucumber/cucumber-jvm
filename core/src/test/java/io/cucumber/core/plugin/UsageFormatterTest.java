@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -37,7 +38,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Result.Type.FAILED, 0L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), mockTestStep(), result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -50,7 +51,7 @@ public class UsageFormatterTest {
         Result result = new Result(Result.Type.PASSED, 12345L, null);
 
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -69,7 +70,7 @@ public class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = new Result(Result.Type.PASSED, 0L, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -88,7 +89,7 @@ public class UsageFormatterTest {
         PickleStepTestStep testStep = mockTestStep();
         Result result = new Result(Result.Type.PASSED, 0L, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L,mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -100,7 +101,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void doneWithoutUsageStatisticStrategies() throws IOException {
+    public void doneWithoutUsageStatisticStrategies() {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -114,11 +115,11 @@ public class UsageFormatterTest {
 
         usageFormatter.finishReport();
 
-        assertTrue(out.toString().contains("0.012345678"));
+        assertThat(out.toString(), containsString("0.012345678"));
     }
 
     @Test
-    public void doneWithUsageStatisticStrategies() throws IOException {
+    public void doneWithUsageStatisticStrategies() {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -136,8 +137,8 @@ public class UsageFormatterTest {
 
         usageFormatter.finishReport();
 
-        assertTrue(out.toString().contains("0.000023456"));
-        assertTrue(out.toString().contains("0.012345678"));
+        assertThat(out.toString(), containsString("0.000023456"));
+        assertThat(out.toString(), containsString("0.012345678"));
     }
 
     private PickleStepTestStep mockTestStep() {

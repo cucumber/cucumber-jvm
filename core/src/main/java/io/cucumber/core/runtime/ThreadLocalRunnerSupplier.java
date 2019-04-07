@@ -64,8 +64,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Long getTimeStampMillis() {
-            return parent.getTimeStampMillis();
+        public Long getTimeMillis() {
+            return parent.getTimeMillis();
         }
     }
 
@@ -111,8 +111,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Long getTimeStampMillis() {
-            return delegate.getTimeStampMillis();
+        public Long getTimeMillis() {
+            return delegate.getTimeMillis();
         }
     }
 }

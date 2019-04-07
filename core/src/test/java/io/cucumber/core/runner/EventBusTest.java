@@ -22,7 +22,7 @@ public class EventBusTest {
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         Result result = new Result(Result.Type.PASSED, 0L, null);
         TestCase testCase = mock(TestCase.class);
-        TestStepFinished event = new TestStepFinished(0L, testCase, testStep, result);
+        TestStepFinished event = new TestStepFinished(0L, 0L, testCase, testStep, result);
 
         EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);
@@ -36,7 +36,7 @@ public class EventBusTest {
         EventHandler handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         TestCase testCase = mock(TestCase.class);
-        TestStepStarted event = new TestStepStarted(0L, testCase, testStep);
+        TestStepStarted event = new TestStepStarted(0L, 0L, testCase, testStep);
 
         EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);

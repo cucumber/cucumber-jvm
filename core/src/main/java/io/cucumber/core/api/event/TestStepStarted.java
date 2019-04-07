@@ -20,8 +20,13 @@ package io.cucumber.core.api.event;
 public final class TestStepStarted extends TestCaseEvent {
     public final TestStep testStep;
 
+    @Deprecated
     public TestStepStarted(Long timeStamp, TestCase testCase, TestStep testStep) {
-        super(timeStamp, testCase);
+        this(timeStamp, 0, testCase, testStep);
+    }
+
+    public TestStepStarted(Long timeStamp, long timeStampMillis, TestCase testCase, TestStep testStep) {
+        super(timeStamp, timeStampMillis, testCase);
         this.testStep = testStep;
     }
 

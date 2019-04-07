@@ -48,7 +48,7 @@ public class JSONFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private Long stepDuration = 0L;
+    private Long stepDurationMillis = 0L;
 
     @Test
     public void featureWithOutlineTest() {
@@ -92,7 +92,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -126,7 +126,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -143,7 +143,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -180,7 +180,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("failed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -197,7 +197,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -238,7 +238,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -255,7 +255,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"fruit-party;monkey-eats-fruits;fruit-table;2\",\n" +
             "        \"keyword\": \"Scenario Outline\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats fruits\",\n" +
             "        \"line\": 7,\n" +
             "        \"description\": \"\",\n" +
@@ -302,7 +302,7 @@ public class JSONFormatterTest {
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
         stepsToLocation.put("the monkey eats bananas", "StepDefs.monkey_eats_bananas()");
         stepsToLocation.put("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -340,7 +340,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 6,\n" +
             "        \"description\": \"\",\n" +
@@ -384,7 +384,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:33:20.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.002Z\",\n" +
             "        \"name\": \"Monkey eats more bananas\",\n" +
             "        \"line\": 9,\n" +
             "        \"description\": \"\",\n" +
@@ -422,7 +422,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("the monkey eats more bananas", result("passed"));
         stepsToLocation.put("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -438,7 +438,7 @@ public class JSONFormatterTest {
             "        \"id\": \"banana-party;monkey-eats-more-bananas\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"steps\": [\n" +
             "          {\n" +
             "            \"result\": {\n" +
@@ -508,7 +508,7 @@ public class JSONFormatterTest {
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
         hookLocations.add("Hooks.after_hook_1()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -525,7 +525,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -593,7 +593,7 @@ public class JSONFormatterTest {
         hookLocations.add("Hooks.beforestep_hooks_1()");
         hookLocations.add("Hooks.afterstep_hooks_1()");
         hookLocations.add("Hooks.afterstep_hooks_2()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -609,7 +609,7 @@ public class JSONFormatterTest {
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"steps\": [\n" +
             "          {\n" +
             "            \"result\": {\n" +
@@ -724,7 +724,7 @@ public class JSONFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
         hookActions.add(createWriteHookAction("printed from hook"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -741,7 +741,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -795,7 +795,7 @@ public class JSONFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
         hookActions.add(createEmbedHookAction(new byte[]{1, 2, 3}, "mime-type;base64"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -812,7 +812,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -869,7 +869,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -886,7 +886,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -930,7 +930,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -947,7 +947,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -991,7 +991,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -1008,7 +1008,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1067,7 +1067,7 @@ public class JSONFormatterTest {
         stepsToResult.put("there are oranges", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
         stepsToLocation.put("there are oranges", "StepDefs.there_are_oranges()");
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -1084,7 +1084,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1118,7 +1118,7 @@ public class JSONFormatterTest {
             "      {\n" +
             "        \"id\": \"orange-party;monkey-eats-oranges\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:16:40.000\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.001Z\",\n" +
             "        \"name\": \"Monkey eats oranges\",\n" +
             "        \"line\": 3,\n" +
             "        \"description\": \"\",\n" +
@@ -1237,14 +1237,11 @@ public class JSONFormatterTest {
             .withHooks(hooks)
             .withHookLocations(hookLocations)
             .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDuration)
+            .withTimeServiceIncrement(stepDurationMillis)
             .build()
             .run();
 
         return report.toString();
     }
 
-    private Long milliSeconds(int milliSeconds) {
-        return milliSeconds * 1000000L;
-    }
 }

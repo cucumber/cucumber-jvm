@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-final class Stats implements EventListener, ColorAware, StrictAware {
-    static final long ONE_SECOND = 1000000000;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+public class Stats implements EventListener, ColorAware, StrictAware {
+    static final long ONE_SECOND = SECONDS.toNanos(1);
     static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();

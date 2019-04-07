@@ -37,7 +37,7 @@ public class JUnitFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private Long stepDuration = null;
+    private Long stepDurationMillis = null;
 
     @Test
     public void featureSimpleTest() throws Exception {
@@ -76,7 +76,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -106,7 +106,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("skipped", exception));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -139,7 +139,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("pending"));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("undefined"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -168,7 +168,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -201,7 +201,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -234,7 +234,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("pending")));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -265,7 +265,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -298,7 +298,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -330,7 +330,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -363,7 +363,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -410,7 +410,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"d\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -465,7 +465,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = milliSeconds(1);
+        stepDurationMillis = 1L;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -532,7 +532,7 @@ public class JUnitFormatterTest {
             .withHooks(hooks)
             .withHookLocations(hookLocations)
             .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDuration)
+            .withTimeServiceIncrement(stepDurationMillis)
             .build()
             .run();
 
@@ -557,10 +557,6 @@ public class JUnitFormatterTest {
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
         return new JUnitFormatter(report.toURI().toURL());
-    }
-
-    private Long milliSeconds(int milliSeconds) {
-        return milliSeconds * 1000000L;
     }
 
     private String getStackTrace(Throwable exception) {

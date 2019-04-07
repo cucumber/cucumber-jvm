@@ -1,36 +1,35 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
+import gherkin.events.PickleEvent;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
+import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.runner.TimeService;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.plugin.PluginFactory;
-import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
-import gherkin.events.PickleEvent;
+import io.cucumber.core.plugin.PluginFactory;
+import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.runner.TimeService;
+import io.cucumber.core.runner.TimeServiceEventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +41,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.cucumber.core.api.event.Result.SEVERITY;
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
@@ -79,10 +77,10 @@ public final class Runtime {
     }
 
     public void run() {
-        bus.send(new TestRunStarted(bus.getTime()));
         final List<CucumberFeature> features = featureSupplier.get();
+        bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getTime(), bus.getTimeMillis(), feature.getUri().toString(), feature.getSource()));
         }
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
@@ -107,7 +105,7 @@ public final class Runtime {
             throw new CucumberException(e);
         }
 
-        bus.send(new TestRunFinished(bus.getTime()));
+        bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
     }
 
     public byte exitStatus() {

@@ -42,8 +42,9 @@ abstract class TestStep implements io.cucumber.core.api.event.TestStep {
      * @return true iff subsequent skippable steps should be skipped
      */
     boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
-        Long startTime = bus.getTime();
-        bus.send(new TestStepStarted(startTime, testCase, this));
+        Long startTimeMillis = bus.getTimeMillis();
+        Long startTimeNanos = bus.getTime();
+        bus.send(new TestStepStarted(startTimeNanos, startTimeMillis, testCase, this));
         Result.Type status;
         Throwable error = null;
         try {
@@ -52,10 +53,11 @@ abstract class TestStep implements io.cucumber.core.api.event.TestStep {
             error = t;
             status = mapThrowableToStatus(t);
         }
-        Long stopTime = bus.getTime();
-        Result result = mapStatusToResult(status, error, stopTime - startTime);
+        Long stopTimeNanos = bus.getTime();
+        Long stopTimeMillis = bus.getTimeMillis();
+        Result result = mapStatusToResult(status, error, stopTimeNanos - startTimeNanos);
         scenario.add(result);
-        bus.send(new TestStepFinished(stopTime, testCase, this, result));
+        bus.send(new TestStepFinished(stopTimeNanos, stopTimeMillis, testCase, this, result));
         return !result.is(Result.Type.PASSED);
     }
 
