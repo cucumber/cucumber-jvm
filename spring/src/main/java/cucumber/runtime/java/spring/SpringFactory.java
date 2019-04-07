@@ -9,8 +9,10 @@ import cucumber.runtime.CucumberException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -61,6 +63,9 @@ import java.util.Stack;
  */
 public class SpringFactory implements ObjectFactory {
 
+    public static Class<?> testClassWithSpringContext;
+    public static ApplicationContext parentContext;
+
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
 
@@ -73,16 +78,18 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public boolean addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
-            checkNoComponentAnnotations(stepClass);
             if (dependsOnSpringContext(stepClass)) {
-                if (stepClassWithSpringContext != null) {
+                if (stepClassWithSpringContext != null || testClassWithSpringContext != null) {
                     throw new CucumberException(String.format("" +
                         "Glue class %1$s and %2$s both attempt to configure the spring context. Please ensure only one " +
                         "glue class configures the spring context", stepClass, stepClassWithSpringContext));
                 }
                 stepClassWithSpringContext = stepClass;
             }
+        	if (parentContext == null || parentContext.getBeanNamesForType(stepClass).length < 1) {
+            checkNoComponentAnnotations(stepClass);
             stepClasses.add(stepClass);
+        	}
         }
         return true;
     }
@@ -153,6 +160,7 @@ public class SpringFactory implements ObjectFactory {
         } else {
             applicationContext = new GenericApplicationContext();
         }
+        applicationContext.setParent(parentContext);
         applicationContext.registerShutdownHook();
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         beanFactory.registerScope(GlueCodeScope.NAME, new GlueCodeScope());
@@ -183,6 +191,7 @@ public class SpringFactory implements ObjectFactory {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
         BeanDefinition beanDefinition = BeanDefinitionBuilder
                 .genericBeanDefinition(stepClass)
+                .setAutowireMode(AbstractBeanDefinition.AUTOWIRE_AUTODETECT)
                 .setScope(GlueCodeScope.NAME)
                 .getBeanDefinition();
         registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
