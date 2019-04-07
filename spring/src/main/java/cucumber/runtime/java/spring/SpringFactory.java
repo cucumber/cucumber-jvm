@@ -1,8 +1,8 @@
 package cucumber.runtime.java.spring;
 
+import static cucumber.runtime.java.spring.FixBootstrapUtils.createBootstrapContext;
+import static cucumber.runtime.java.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
 import static java.util.Arrays.asList;
-import static org.springframework.test.context.FixBootstrapUtils.createBootstrapContext;
-import static org.springframework.test.context.FixBootstrapUtils.resolveTestContextBootstrapper;
 
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
