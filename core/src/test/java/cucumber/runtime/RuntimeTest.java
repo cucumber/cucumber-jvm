@@ -121,7 +121,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
-			"        \"start_timestamp\": \"1970-01-01T00:00:00.000\",\n" +
+			"        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
@@ -558,6 +558,6 @@ public class RuntimeTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
+        return new TestCaseFinished(ANY_TIMESTAMP, ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
     }
 }

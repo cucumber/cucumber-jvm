@@ -382,14 +382,14 @@ final class JSONFormatter implements EventListener {
         if (result.getErrorMessage() != null) {
             resultMap.put("error_message", result.getErrorMessage());
         }
-        if (result.getDuration() != null && result.getDuration() != 0) {
+        if (result.getDuration() != 0) {
             resultMap.put("duration", result.getDuration());
         }
         return resultMap;
     }
     
     private String getDateTimeFromTimeStamp(long timeStampMillis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         
         return sdf.format(new Date(timeStampMillis));

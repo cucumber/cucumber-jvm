@@ -10,8 +10,13 @@ public class SnippetsSuggestedEvent extends TimeStampedEvent {
     public final List<PickleLocation> stepLocations;
     public final List<String> snippets;
 
+    @Deprecated
     public SnippetsSuggestedEvent(Long timeStamp, String uri, List<PickleLocation> stepLocations, List<String> snippets) {
-        super(timeStamp);
+        this(timeStamp, 0, uri, stepLocations, snippets);
+    }
+
+    public SnippetsSuggestedEvent(Long timeStamp, long timeStampMillis, String uri, List<PickleLocation> stepLocations, List<String> snippets) {
+        super(timeStamp, timeStampMillis);
         this.uri = uri;
         this.stepLocations = stepLocations;
         this.snippets = Collections.unmodifiableList(snippets);

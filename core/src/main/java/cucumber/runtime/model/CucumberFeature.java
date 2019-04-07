@@ -41,7 +41,7 @@ public class CucumberFeature {
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), getUri().toString(), gherkinSource));
+        bus.send(new TestSourceRead(bus.getTime(), bus.getTimeMillis(), getUri().toString(), gherkinSource));
     }
 
     String getSource() {

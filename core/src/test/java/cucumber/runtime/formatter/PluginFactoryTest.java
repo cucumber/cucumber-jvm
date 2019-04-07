@@ -78,7 +78,7 @@ public class PluginFactoryTest {
     }
 
     @Test
-    public void plugin_does_not_buffer_its_output() throws IOException {
+    public void plugin_does_not_buffer_its_output() {
         PrintStream previousSystemOut = System.out;
         OutputStream mockSystemOut = new ByteArrayOutputStream();
 
@@ -92,7 +92,7 @@ public class PluginFactoryTest {
             EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, 0L, null);
-            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
+            TestStepFinished event = new TestStepFinished(bus.getTime(), bus.getTimeMillis(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));
