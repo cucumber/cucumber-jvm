@@ -4,10 +4,13 @@ import cucumber.annotation.DummyWhen;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.CucumberException;
+import gherkin.ParserException.CompositeParserException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
@@ -18,20 +21,21 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.mockito.ArgumentMatchers.argThat;
 
 public class CucumberTest {
 
+    @Rule
+    public ExpectedException thrownException = ExpectedException.none();
     private String dir;
 
     @Before
@@ -62,15 +66,11 @@ public class CucumberTest {
         assertEquals("Feature: Feature A", cucumber.getChildren().get(0).getName());
     }
 
-    @Test
-    public void testThatParsingErrorsIsNicelyReported() throws Exception {
-        try {
-            new Cucumber(LexerErrorFeature.class);
-            fail("Expecting error");
-        } catch (CucumberException e) {
-            assertThat(e.getMessage(), startsWith("gherkin.ParserException$CompositeParserException: Parser errors:"));
-        }
-    }
+	@Test
+	public void testThatParsingErrorsIsNicelyReported() throws Exception {
+		thrownException.expectCause(isA(CompositeParserException.class));
+		new Cucumber(LexerErrorFeature.class);
+	}
 
     @Test
     public void testThatFileIsNotCreatedOnParsingError() throws Exception {
