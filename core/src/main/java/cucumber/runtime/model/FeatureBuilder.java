@@ -1,52 +1,33 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.Resource;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class FeatureBuilder {
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-    private final List<CucumberFeature> cucumberFeatures = new ArrayList<>();
-    private final MessageDigest md5;
-    private final Set<String> pathsByChecksum = new HashSet<>();
 
-    public FeatureBuilder() {
-        try {
-            this.md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new CucumberException(e);
-        }
-    }
+    private final Logger log = LoggerFactory.getLogger(FeatureBuilder.class);
+    private final Map<String, CucumberFeature> sourceToFeature = new HashMap<>();
 
     public List<CucumberFeature> build() {
+        List<CucumberFeature> cucumberFeatures = new ArrayList<>(sourceToFeature.values());
         Collections.sort(cucumberFeatures, new CucumberFeature.CucumberFeatureUriComparator());
         return cucumberFeatures;
     }
 
     public void parse(Resource resource) {
-        CucumberFeature feature = FeatureParser.parseResource(resource);
-
-        String checksum = checksum(feature.getSource());
-        if (pathsByChecksum.contains(checksum)) {
+        CucumberFeature parsedFeature = FeatureParser.parseResource(resource);
+        CucumberFeature existingFeature = sourceToFeature.get(parsedFeature.getSource());
+        if (existingFeature != null) {
+            log.warn("Duplicate feature ignored. " + parsedFeature.getUri() + " was identical to " + existingFeature.getUri());
             return;
         }
-        pathsByChecksum.add(checksum);
-        cucumberFeatures.add(feature);
-
+        sourceToFeature.put(parsedFeature.getSource(), parsedFeature);
     }
-
-    private String checksum(String gherkin) {
-        return new BigInteger(1, md5.digest(gherkin.getBytes(UTF8))).toString(16);
-    }
-
-
 }
