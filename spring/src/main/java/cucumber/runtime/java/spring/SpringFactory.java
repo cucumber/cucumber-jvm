@@ -1,11 +1,9 @@
 package cucumber.runtime.java.spring;
 
-import static cucumber.runtime.java.spring.FixBootstrapUtils.createBootstrapContext;
-import static cucumber.runtime.java.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
-import static java.util.Arrays.asList;
-
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -21,11 +19,16 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+
+import static cucumber.runtime.java.spring.FixBootstrapUtils.createBootstrapContext;
+import static cucumber.runtime.java.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
+import static java.util.Arrays.asList;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -61,18 +64,16 @@ import java.util.Stack;
  */
 public class SpringFactory implements ObjectFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(SpringFactory.class);
+    private final Collection<Class<?>> stepClasses = new HashSet<>();
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
-
-    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
     private Class<?> stepClassWithSpringContext = null;
-
-    public SpringFactory() {
-    }
 
     @Override
     public boolean addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
+            warnOnNoDefaultConstructor(stepClass);
             checkNoComponentAnnotations(stepClass);
             if (dependsOnSpringContext(stepClass)) {
                 if (stepClassWithSpringContext != null) {
@@ -85,6 +86,19 @@ public class SpringFactory implements ObjectFactory {
             stepClasses.add(stepClass);
         }
         return true;
+    }
+
+    private static void warnOnNoDefaultConstructor(Class<?> stepClass) {
+        Constructor<?>[] constructors = stepClass.getConstructors();
+        if (constructors.length != 1 || constructors[0].getParameterTypes().length != 0) {
+            log.warn("" +
+                "Step definition class '" + stepClass.getName() + "' " +
+                "should have exactly one public zero-argument constructor. " +
+                "Multi argument constructors are deprecated in preparation of " +
+                "https://github.com/cucumber/cucumber-jvm/issues/1470. Prefer " +
+                "using field injection with @Autowired instead."
+            );
+        }
     }
 
     private static void checkNoComponentAnnotations(Class<?> type) {

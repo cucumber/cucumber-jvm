@@ -6,6 +6,7 @@ import cucumber.runtime.java.spring.beans.BellyBean;
 import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManager;
 import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
 import cucumber.runtime.java.spring.commonglue.OneStepDef;
+import cucumber.runtime.java.spring.commonglue.StepDefsWithConstructorArgs;
 import cucumber.runtime.java.spring.commonglue.ThirdStepDef;
 import cucumber.runtime.java.spring.componentannotation.WithComponentAnnotation;
 import cucumber.runtime.java.spring.componentannotation.WithControllerAnnotation;
@@ -15,21 +16,34 @@ import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class SpringFactoryTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    private LogRecordListener logRecordListener;
+
+    @Before
+    public void setup() {
+        logRecordListener = new LogRecordListener();
+        LoggerFactory.addListener(logRecordListener);
+    }
 
     @Test
     public void shouldGiveUsNewStepInstancesForEachScenario() {
@@ -265,6 +279,12 @@ public class SpringFactoryTest {
         expectedException.expectMessage("Please remove the @Controller annotation");
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithControllerAnnotation.class);
+    }
 
+    @Test
+    public void shouldWarnIfStepDefClassHasNotExactlyOnePublicZeroArgumentConstructor(){
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(StepDefsWithConstructorArgs.class);
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), containsString("should have exactly one public zero-argument constructor"));
     }
 }
