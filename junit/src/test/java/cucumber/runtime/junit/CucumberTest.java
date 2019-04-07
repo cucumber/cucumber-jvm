@@ -18,7 +18,6 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.argThat;
 
 public class CucumberTest {
@@ -68,7 +67,7 @@ public class CucumberTest {
             new Cucumber(LexerErrorFeature.class);
             fail("Expecting error");
         } catch (CucumberException e) {
-            assertThat(e.getMessage(), startsWith("gherkin.ParserException$CompositeParserException: Parser errors:"));
+            assertThat(e.getCause().toString(), containsString("gherkin.ParserException$CompositeParserException: Parser errors:"));
         }
     }
 

@@ -37,7 +37,7 @@ public class FeatureParser {
             List<PickleEvent> pickleEvents = compilePickles(gherkinDocument, resource);
             return new CucumberFeature(gherkinDocument, path, source, pickleEvents);
         } catch (ParserException e) {
-            throw new CucumberException("Failed to parse resourse : " + path.getPath(), e);
+            throw new CucumberException("Failed to parse resourse at: " + path.toString(), e);
         }
     }
 
