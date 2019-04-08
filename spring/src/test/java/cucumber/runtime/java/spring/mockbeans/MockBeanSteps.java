@@ -30,10 +30,4 @@ public class MockBeanSteps {
         when(belly.getCukes()).thenReturn(cukes);
     }
 
-    @Then("the belly contains {int} cukes")
-    public void checkCukes(int cukes) {
-        assertEquals(cukes, belly.getCukes());
-    }
-
-
 }

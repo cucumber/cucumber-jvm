@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestContextManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -28,7 +27,7 @@ import static java.util.Arrays.asList;
  * Application beans are accessible from the step definitions using autowiring
  * (with annotations).
  * <p>
- * SpringFactory uses TestContextManager to manage the spring context. The step definitions are added to the
+ * SpringFactory uses CucumberTestContextManager to manage the spring context. The step definitions are added to the
  * TestContextManagers context and the context is reloaded for each scenario.
  * <p>
  * The spring context can be configured by:
@@ -59,7 +58,7 @@ public class SpringFactory implements ObjectFactory {
     private final Collection<Class<?>> stepClasses = new HashSet<>();
     private Class<?> stepClassWithSpringContext = null;
     private Map<Class<?>, Object> instances;
-    private TestContextManager testContextManager;
+    private CucumberTestContextManager testContextManager;
 
     private static void checkOneNoDefaultConstructor(Class<?> stepClass) {
         Constructor<?>[] constructors = stepClass.getConstructors();
@@ -149,21 +148,17 @@ public class SpringFactory implements ObjectFactory {
         try {
             Method dummyTestMethod = SpringFactory.class.getMethod("dummyTestMethod");
 
-            testContextManager = new TestContextManager(stepClassWithSpringContext);
+            testContextManager = new CucumberTestContextManager(stepClassWithSpringContext, stepClasses);
             testContextManager.beforeTestClass();
 
             instances = new HashMap<>();
             for (Class<?> stepClass : stepClasses) {
                 Object instance = stepClass.getConstructor().newInstance();
-                testContextManager.prepareTestInstance(instance);
                 instances.put(stepClass, instance);
             }
-            for (Object instance : instances.values()) {
-                testContextManager.beforeTestMethod(instance, dummyTestMethod);
-            }
-            for (Object instance : instances.values()) {
-                testContextManager.beforeTestExecution(instance, dummyTestMethod);
-            }
+            testContextManager.prepareTestInstance(instances);
+            testContextManager.beforeTestMethod(instances, dummyTestMethod);
+            testContextManager.beforeTestExecution(instances, dummyTestMethod);
         } catch (Exception e) {
             throw new CucumberException(e);
         }
@@ -174,15 +169,10 @@ public class SpringFactory implements ObjectFactory {
     public void stop() {
         try {
             Method dummyTestMethod = SpringFactory.class.getMethod("dummyTestMethod");
-
-            for (Object instance : instances.values()) {
-                testContextManager.afterTestExecution(instance, dummyTestMethod, null);
-            }
-            for (Object instance : instances.values()) {
-                testContextManager.afterTestMethod(instance, dummyTestMethod, null);
-            }
-            instances = null;
+            testContextManager.afterTestExecution(instances, dummyTestMethod, null);
+            testContextManager.afterTestMethod(instances, dummyTestMethod, null);
             testContextManager.afterTestClass();
+            instances = null;
             testContextManager = null;
         } catch (Exception e) {
             throw new CucumberException(e);
@@ -195,7 +185,7 @@ public class SpringFactory implements ObjectFactory {
         return (T) instances.get(type);
     }
 
-    public void dummyTestMethod(){
+    public void dummyTestMethod() {
 
     }
 }
