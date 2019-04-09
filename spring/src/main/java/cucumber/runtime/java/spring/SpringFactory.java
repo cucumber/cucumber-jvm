@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextHierarchy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -127,48 +128,54 @@ public class SpringFactory implements ObjectFactory {
 
     @Override
     public boolean addClass(final Class<?> stepClass) {
-        if (!stepClasses.contains(stepClass)) {
-            checkOneNoDefaultConstructor(stepClass);
-            checkNoComponentAnnotations(stepClass);
-            if (dependsOnSpringContext(stepClass)) {
-                if (stepClassWithSpringContext != null) {
-                    throw new CucumberException(String.format("" +
-                        "Glue class %1$s and %2$s both attempt to configure the spring context. Please ensure only one " +
-                        "glue class configures the spring context", stepClass, stepClassWithSpringContext));
-                }
-                stepClassWithSpringContext = stepClass;
-            }
-            stepClasses.add(stepClass);
+        if (stepClasses.contains(stepClass)) {
+            return true;
         }
+
+        checkOneNoDefaultConstructor(stepClass);
+        checkNoComponentAnnotations(stepClass);
+
+        if (dependsOnSpringContext(stepClass)) {
+            if (stepClassWithSpringContext != null) {
+                throw new CucumberException(String.format("" +
+                    "Glue class %1$s and %2$s both attempt to configure the spring context. Please ensure only one " +
+                    "glue class configures the spring context", stepClass, stepClassWithSpringContext));
+            }
+            stepClassWithSpringContext = stepClass;
+        }
+
+        stepClasses.add(stepClass);
         return true;
     }
 
     @Override
     public void start() {
         try {
-            Method dummyTestMethod = SpringFactory.class.getMethod("dummyTestMethod");
-
+            Method dummyTestMethod = SpringFactory.class.getMethod("cucumberDoesNotHaveTestMethods");
             testContextManager = new CucumberTestContextManager(stepClassWithSpringContext, stepClasses);
             testContextManager.beforeTestClass();
-
-            instances = new HashMap<>();
-            for (Class<?> stepClass : stepClasses) {
-                Object instance = stepClass.getConstructor().newInstance();
-                instances.put(stepClass, instance);
-            }
+            instances = instantiateStepDefinitions();
             testContextManager.prepareTestInstance(instances);
             testContextManager.beforeTestMethod(instances, dummyTestMethod);
             testContextManager.beforeTestExecution(instances, dummyTestMethod);
         } catch (Exception e) {
             throw new CucumberException(e);
         }
+    }
 
+    private Map<Class<?>, Object> instantiateStepDefinitions() throws ReflectiveOperationException {
+        Map<Class<?>, Object> typeToInstance = new HashMap<>();
+        for (Class<?> stepClass : stepClasses) {
+            Object instance = stepClass.getConstructor().newInstance();
+            typeToInstance.put(stepClass, instance);
+        }
+        return typeToInstance;
     }
 
     @Override
     public void stop() {
         try {
-            Method dummyTestMethod = SpringFactory.class.getMethod("dummyTestMethod");
+            Method dummyTestMethod = SpringFactory.class.getMethod("cucumberDoesNotHaveTestMethods");
             testContextManager.afterTestExecution(instances, dummyTestMethod, null);
             testContextManager.afterTestMethod(instances, dummyTestMethod, null);
             testContextManager.afterTestClass();
@@ -179,14 +186,23 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getInstance(final Class<T> type) {
         return (T) instances.get(type);
     }
 
-    public void dummyTestMethod() {
-
+    /**
+     * Dummy method to use in before/after test methods.
+     *
+     * Some {@link org.springframework.test.context.TestExecutionListener}s use annotations
+     * on the test method to prepare the test context. However Cucumber does not have any test methods.
+     *
+     * This method can stand in for that.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void cucumberDoesNotHaveTestMethods() {
+        // No-op
     }
 }
 
