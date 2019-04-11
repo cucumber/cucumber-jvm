@@ -1,7 +1,19 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.3.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...master) (In Git)
+## [4.3.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.3.0...master) (In Git)
+
+### Added
+
+### Changed
+
+### Deprecated
+   
+### Removed
+
+### Fixed
+
+## [4.3.0](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...v4.3.0) (2019-04-11)
 
 ### Added
  * [Core] Improve CucumberOptions documentation ([#1573](https://github.com/cucumber/cucumber-jvm/pull/1573) M.P. Korstanje, Marit van Dijk)
