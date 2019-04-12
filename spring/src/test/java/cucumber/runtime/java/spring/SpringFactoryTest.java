@@ -3,9 +3,10 @@ package cucumber.runtime.java.spring;
 import cucumber.runtime.CucumberException;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.spring.beans.BellyBean;
-import cucumber.runtime.java.spring.commonglue.StepDefsWithConstructorArgs;
+import cucumber.runtime.java.spring.deprecatedglue.StepDefsWithConstructorArgs;
 import cucumber.runtime.java.spring.componentannotation.WithComponentAnnotation;
 import cucumber.runtime.java.spring.componentannotation.WithControllerAnnotation;
+import cucumber.runtime.java.spring.deprecatedglue.UnusedGlue;
 import cucumber.runtime.java.spring.metaconfig.general.BellyMetaStepdefs;
 import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
@@ -15,7 +16,6 @@ import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaSt
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -210,6 +210,17 @@ public class SpringFactoryTest {
         expectedException.expectMessage("should have exactly one public zero-argument constructor");
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(StepDefsWithConstructorArgs.class);
+
+    }
+
+    @Test
+    public void shouldThrowIfStepDefClassCanNotBeInstantiated(){
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(BellyStepdefs.class);
+        factory.addClass(UnusedGlue.class);
+
+        expectedException.expectMessage("Failed to start cucumber-spring factory");
+        factory.start();
 
     }
 }

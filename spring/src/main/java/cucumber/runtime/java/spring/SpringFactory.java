@@ -159,7 +159,7 @@ public class SpringFactory implements ObjectFactory {
             testContextManager.beforeTestMethod(instances, dummyTestMethod);
             testContextManager.beforeTestExecution(instances, dummyTestMethod);
         } catch (Exception e) {
-            throw new CucumberException(e);
+            throw new CucumberException("Failed to start cucumber-spring factory",e);
         }
     }
 

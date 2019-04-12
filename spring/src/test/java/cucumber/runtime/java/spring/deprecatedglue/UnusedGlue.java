@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring.commonglue;
+package cucumber.runtime.java.spring.deprecatedglue;
 
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
