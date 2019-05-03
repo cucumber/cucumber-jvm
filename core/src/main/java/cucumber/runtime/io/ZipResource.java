@@ -19,7 +19,7 @@ class ZipResource implements Resource {
 
     @Override
     public URI getPath() {
-        return URI.create(CLASSPATH_SCHEME_PREFIX + "/" + jarEntry.getName());
+        return URI.create(CLASSPATH_SCHEME_PREFIX + jarEntry.getName());
     }
 
     @Override
