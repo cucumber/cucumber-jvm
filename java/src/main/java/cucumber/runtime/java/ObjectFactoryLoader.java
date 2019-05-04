@@ -13,10 +13,15 @@ import java.net.URI;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.ServiceLoader;
 
-public class ObjectFactoryLoader {
+public final class ObjectFactoryLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(ObjectFactoryLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectFactoryLoader.class);
 
     private ObjectFactoryLoader() {
     }
@@ -30,27 +35,50 @@ public class ObjectFactoryLoader {
      * @return an instance of {@link ObjectFactory}
      */
     public static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName) {
-        ObjectFactory objectFactory;
         try {
-            Reflections reflections = new Reflections(classFinder);
-
-            if (objectFactoryClassName != null) {
-                Class<ObjectFactory> objectFactoryClass = (Class<ObjectFactory>) classFinder.loadClass(objectFactoryClassName);
-                objectFactory = reflections.newInstance(new Class[0], new Object[0], objectFactoryClass);
+            final Reflections reflections = new Reflections(classFinder);
+            if (objectFactoryClassName == null) {
+                return loadSingleObjectFactory(reflections);
             } else {
-                List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
-                objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
+                return loadSelectedObjectFactory(reflections, classFinder, objectFactoryClassName);
             }
         } catch (TooManyInstancesException e) {
-            log.warn(e.getMessage());
-            log.warn(getMultipleObjectFactoryLogMessage());
-            objectFactory = new DefaultJavaObjectFactory();
+            LOG.warn(e.getMessage());
+            LOG.warn(getMultipleObjectFactoryLogMessage());
+            return new DefaultJavaObjectFactory();
         } catch (NoInstancesException e) {
-            objectFactory = new DefaultJavaObjectFactory();
+            return new DefaultJavaObjectFactory();
         } catch (ClassNotFoundException e) {
             throw new CucumberException("Couldn't instantiate custom ObjectFactory", e);
         }
-        return objectFactory;
+    }
+
+    private static ObjectFactory loadSingleObjectFactory(final Reflections reflections) {
+        Iterator<io.cucumber.core.backend.ObjectFactory> serviceLoaderObjectFactories = ServiceLoader.load(io.cucumber.core.backend.ObjectFactory.class).iterator();
+        if (serviceLoaderObjectFactories.hasNext()) {
+            final Collection<io.cucumber.core.backend.ObjectFactory> instances = new HashSet<>();
+            do {
+                instances.add(serviceLoaderObjectFactories.next());
+            } while (serviceLoaderObjectFactories.hasNext());
+            if (instances.size() > 1) {
+                throw new TooManyInstancesException(instances);
+            }
+            return new ObjectFactoryAdapter(instances.iterator().next());
+        } else {
+            LOG.warn("Use deprecated reflections to load ObjectFactory.");
+            final List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
+            return reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
+        }
+    }
+
+    private static ObjectFactory loadSelectedObjectFactory(final Reflections reflections, final ClassFinder classFinder, final String objectFactoryClassName) throws ClassNotFoundException {
+        final Iterator<? extends io.cucumber.core.backend.ObjectFactory> serviceLoaderObjectFactories = ServiceLoader.load(classFinder.<io.cucumber.core.backend.ObjectFactory>loadClass(objectFactoryClassName)).iterator();
+        if (serviceLoaderObjectFactories.hasNext()) {
+            return new ObjectFactoryAdapter(serviceLoaderObjectFactories.next());
+        } else {
+            LOG.warn("Use deprecated reflections to load requested ObjectFactory.");
+            return reflections.newInstance(new Class[0], new Object[0], classFinder.<ObjectFactory>loadClass(objectFactoryClassName));
+        }
     }
 
     private static String getMultipleObjectFactoryLogMessage() {
@@ -62,4 +90,35 @@ public class ObjectFactoryLoader {
         sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
         return sb.toString();
     }
+
+    private static class ObjectFactoryAdapter implements ObjectFactory {
+
+        private final io.cucumber.core.backend.ObjectFactory delegate;
+
+        public ObjectFactoryAdapter(final io.cucumber.core.backend.ObjectFactory delegate) {
+            this.delegate = Objects.requireNonNull(delegate);
+        }
+
+        @Override
+        public void start() {
+            delegate.start();
+        }
+
+        @Override
+        public void stop() {
+            delegate.stop();
+        }
+
+        @Override
+        public boolean addClass(Class<?> arg0) {
+            return delegate.addClass(arg0);
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> arg0) {
+            return delegate.getInstance(arg0);
+        }
+
+    }
+
 }
