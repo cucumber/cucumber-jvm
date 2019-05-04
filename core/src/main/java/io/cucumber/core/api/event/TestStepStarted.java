@@ -22,16 +22,16 @@ import java.time.Instant;
 public final class TestStepStarted extends TestCaseEvent {
     public final TestStep testStep;
 
-    //gazler
-//    @Deprecated
-//    public TestStepStarted(Long timeStamp, TestCase testCase, TestStep testStep) {
-//        this(timeStamp, 0, testCase, testStep);
-//    }
-//
-//    public TestStepStarted(Long timeStamp, long timeStampMillis, TestCase testCase, TestStep testStep) {
-//        super(timeStamp, timeStampMillis, testCase);
-//        this.testStep = testStep;
-//    }
+    @Deprecated
+    public TestStepStarted(Long timeStamp, TestCase testCase, TestStep testStep) {
+        this(timeStamp, 0, testCase, testStep);
+    }
+
+    @Deprecated
+    public TestStepStarted(Long timeStamp, long timeStampMillis, TestCase testCase, TestStep testStep) {
+        super(timeStamp, timeStampMillis, testCase);
+        this.testStep = testStep;
+    }
     
     public TestStepStarted(Instant timeInstant, TestCase testCase, TestStep testStep) {
         super(timeInstant, testCase);

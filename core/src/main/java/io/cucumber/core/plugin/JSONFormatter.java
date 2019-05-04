@@ -382,8 +382,8 @@ public final class JSONFormatter implements EventListener {
         if (result.getErrorMessage() != null) {
             resultMap.put("error_message", result.getErrorMessage());
         }
-        if (!result.getDuration().isZero()) {
-            resultMap.put("duration", result.getDuration().toNanos());
+        if (!result.getTimeDuration().isZero()) {
+            resultMap.put("duration", result.getTimeDuration().toNanos());
         }
         return resultMap;
     }

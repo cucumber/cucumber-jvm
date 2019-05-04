@@ -128,7 +128,7 @@ public final class UsageFormatter implements Plugin, EventListener {
         }
         StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
 
-        Duration duration = result.getDuration();
+        Duration duration = result.getTimeDuration();
         StepDuration stepDuration = createStepDuration(duration, stepLocation);
         stepContainer.durations.add(stepDuration);
     }

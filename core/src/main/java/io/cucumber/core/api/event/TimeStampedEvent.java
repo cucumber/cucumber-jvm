@@ -8,11 +8,12 @@ abstract class TimeStampedEvent implements Event {
     private final long timeStampMillis;
     private final Instant timeInstant;
 
-    //gazler    
-//    @Deprecated
-//    TimeStampedEvent(Long timeStamp, Long timeStampMillis) {
-//        this(Instant.EPOCH);
-//    }
+    @Deprecated
+    TimeStampedEvent(Long timeStamp, Long timeStampMillis) {
+        this.timeStamp = timeStamp;
+        this.timeStampMillis = timeStampMillis;
+        this.timeInstant = Instant.EPOCH;
+    }
 
     TimeStampedEvent(Instant timeInstant) {
         this.timeStamp = 0L;
@@ -23,11 +24,12 @@ abstract class TimeStampedEvent implements Event {
     /**
      * {@inheritDoc}
      */
-    //gazler
-//    @Override
-//    public Long getTimeStamp() {
-//        return timeStamp;
-//    }
+
+    @Deprecated
+    @Override
+    public Long getTimeStamp() {
+        return timeStamp;
+    }
 
     /**
      * Returns timestamp in milliseconds of the epoch.
@@ -35,9 +37,11 @@ abstract class TimeStampedEvent implements Event {
      * @return timestamp in milli seconds
      * @see System#currentTimeMillis()
      */
-//    public long getTimeStampMillis() {
-//        return timeStampMillis;
-//    }
+    
+    @Deprecated
+    public long getTimeStampMillis() {
+        return timeStampMillis;
+    }
     
     /**
      * {@inheritDoc}

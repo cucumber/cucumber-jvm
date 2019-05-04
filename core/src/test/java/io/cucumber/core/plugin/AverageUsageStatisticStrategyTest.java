@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 public class AverageUsageStatisticStrategyTest {
     
-    //gazler doubt : should be nanos?
     @Test
     public void calculate() {
         UsageFormatter.AverageUsageStatisticStrategy averageUsageStatisticStrategy = new UsageFormatter.AverageUsageStatisticStrategy();

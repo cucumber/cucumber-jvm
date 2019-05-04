@@ -280,14 +280,13 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             }
         }
 
-        //gazler doubt : return millis or nanos?
         private String calculateTotalDurationString() {
             Duration totalDuration = ZERO;
             for (Result r : results) {
-                totalDuration = totalDuration.plus(r.getDuration());
+                totalDuration = totalDuration.plus(r.getTimeDuration());
             }
             for (Result r : hooks) {
-                totalDuration = totalDuration.plus(r.getDuration());
+                totalDuration = totalDuration.plus(r.getTimeDuration());
             }
             return String.valueOf(totalDuration.toMillis());
         }

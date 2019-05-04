@@ -38,9 +38,8 @@ public interface Event {
      * @see System#nanoTime()
      * @deprecated prefer {@link TimeStampedEvent#getTimeStampMillis()}
      */
-    //gazler
-//    @Deprecated
-//    Long getTimeStamp();
+    @Deprecated
+    Long getTimeStamp();
 
     /**
      * Returns instant from epoch.

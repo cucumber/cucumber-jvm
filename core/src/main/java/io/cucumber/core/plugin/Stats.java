@@ -151,7 +151,6 @@ public class Stats implements EventListener, ColorAware, StrictAware {
         return addComma;
     }
 
-    //gazler doubt
     private void printDuration(PrintStream out) {
         out.print(String.format("%dm", (totalDuration.toNanos() / ONE_MINUTE)));
         DecimalFormat format = new DecimalFormat("0.000", new DecimalFormatSymbols(locale));

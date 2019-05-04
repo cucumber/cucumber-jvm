@@ -20,12 +20,10 @@ public final class Result {
         }
     };
 
-    //gazler
     private final Type status;
-//    private final Long duration;
-    private final Duration duration;
+    private final Long duration;
+    private final Duration timeDuration;
     private final Throwable error;
-//    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, 0L, null);
     public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, ZERO, null);
     public enum Type {
         PASSED,
@@ -54,18 +52,21 @@ public final class Result {
      * The result of a step or scenario
      *
      * @param status status of the step or scenario
-     * @param duration the duration in nanoseconds
+     * @param timeDuration the duration in nanoseconds
      * @param error the error that caused the failure if any
      */
-//    public Result(Result.Type status, Long duration, Throwable error) {
-//        this.status = requireNonNull(status);
-//        this.duration = requireNonNull(duration);
-//        this.error = error;
-//    }
+    @Deprecated
+    public Result(Result.Type status, Long durationLong, Throwable error) {
+        this.status = requireNonNull(status);
+        this.duration = requireNonNull(durationLong);
+        this.timeDuration = Duration.ZERO;
+        this.error = error;
+    }
     
     public Result(Result.Type status, Duration duration, Throwable error) {
         this.status = requireNonNull(status);
-        this.duration = requireNonNull(duration);
+        this.duration = 0L;
+        this.timeDuration = requireNonNull(duration);
         this.error = error;
     }
 
@@ -73,12 +74,13 @@ public final class Result {
         return status;
     }
 
-//    public Long getDuration() {
-//        return duration;
-//    }
-
-    public Duration getDuration() {
+    @Deprecated
+    public Long getDuration() {
         return duration;
+    }
+
+    public Duration getTimeDuration() {
+        return timeDuration;
     }
     
     public String getErrorMessage() {
@@ -116,7 +118,7 @@ public final class Result {
     public String toString() {
         return "Result{" +
             "status=" + status +
-            ", duration=" + duration +
+            ", duration=" + timeDuration.getSeconds() +
             ", error=" + error +
             '}';
     }
@@ -127,12 +129,12 @@ public final class Result {
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
         return status == result.status &&
-            Objects.equals(duration, result.duration) &&
+            Objects.equals(timeDuration, result.timeDuration) &&
             Objects.equals(error, result.error);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, duration, error);
+        return Objects.hash(status, timeDuration, error);
     }
 }

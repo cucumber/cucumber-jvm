@@ -11,17 +11,6 @@ public final class TimeServiceEventBus extends AbstractEventBus {
         this.stopWatch = stopWatch;
     }
 
-    //gazler
-//    @Override
-//    public Long getTime() {
-//        return stopWatch.time();
-//    }
-//
-//    @Override
-//    public Long getTimeMillis() {
-//        return stopWatch.timeMillis();
-//    }
-    
     @Override
     public Instant getTimeInstant() {
         return stopWatch.timeInstant();
