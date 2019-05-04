@@ -5,8 +5,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-import java.time.Instant;
-
 final class CanonicalEventOrder implements Comparator<Event> {
 
     private static final FixedEventOrderComparator fixedOrder = new FixedEventOrderComparator();
