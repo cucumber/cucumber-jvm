@@ -1,11 +1,8 @@
 package io.cucumber.junit.api;
 
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.Resource;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
@@ -16,20 +13,18 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.core.model.FeatureLoader;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.InOrder;
 
-import java.net.URI;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -166,13 +161,8 @@ public class FeatureRunnerTest {
 
         final TimeService timeServiceStub = new TimeService() {
             @Override
-            public long time() {
-                return 0L;
-            }
-
-            @Override
-            public long timeMillis() {
-                return 0L;
+            public Instant timeInstant() {
+                return Instant.EPOCH;
             }
         };
         BackendSupplier backendSupplier = new BackendSupplier() {
@@ -183,12 +173,6 @@ public class FeatureRunnerTest {
         };
 
         EventBus bus = new TimeServiceEventBus(timeServiceStub);
-        FeatureLoader featureLoader = new FeatureLoader(new ResourceLoader() {
-            @Override
-            public Iterable<Resource> resources(URI path, String suffix) {
-                return emptyList();
-            }
-        });
         Filters filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);

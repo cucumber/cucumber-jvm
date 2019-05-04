@@ -2,6 +2,7 @@ package io.cucumber.core.runtime;
 
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ZERO;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,7 +60,7 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
 public class RuntimeTest {
-    private final static long ANY_TIMESTAMP = 1234567890;
+    private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
@@ -89,7 +91,7 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
+            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(ZERO)))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();
@@ -548,6 +550,6 @@ public class RuntimeTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
+        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 }

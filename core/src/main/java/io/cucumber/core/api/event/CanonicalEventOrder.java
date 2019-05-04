@@ -5,6 +5,8 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+import java.time.Instant;
+
 final class CanonicalEventOrder implements Comparator<Event> {
 
     private static final FixedEventOrderComparator fixedOrder = new FixedEventOrderComparator();
@@ -72,7 +74,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
                 return line;
             }
 
-            return Long.compare(a.getTimeStamp(), b.getTimeStamp());
+            return a.getTimeInstant().compareTo(b.getTimeInstant());
         }
     }
 }

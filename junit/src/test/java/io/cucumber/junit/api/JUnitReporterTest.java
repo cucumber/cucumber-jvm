@@ -26,6 +26,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
 
 
@@ -450,11 +451,11 @@ public class JUnitReporterTest {
     }
 
     private Result mockResult(Result.Type status, Throwable exception) {
-        return new Result(status, 0L, exception);
+        return new Result(status, ZERO, exception);
     }
 
     private Result mockResult(Result.Type status) {
-        return new Result(status, 0L, null);
+        return new Result(status, ZERO, null);
     }
 
     private PickleRunner mockPickleRunner(List<PickleStep> runnerSteps) {

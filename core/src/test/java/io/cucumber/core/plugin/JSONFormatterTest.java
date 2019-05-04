@@ -3,6 +3,8 @@ package io.cucumber.core.plugin;
 import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofMillis;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertThat;
@@ -13,6 +15,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +51,7 @@ public class JSONFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private Long stepDurationMillis = 0L;
+    private Duration stepDuration = Duration.ZERO;
 
     @Test
     public void featureWithOutlineTest() {
@@ -126,7 +129,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -180,7 +183,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("failed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -238,7 +241,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -302,7 +305,7 @@ public class JSONFormatterTest {
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
         stepsToLocation.put("the monkey eats bananas", "StepDefs.monkey_eats_bananas()");
         stepsToLocation.put("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -422,7 +425,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("the monkey eats more bananas", result("passed"));
         stepsToLocation.put("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -508,7 +511,7 @@ public class JSONFormatterTest {
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
         hookLocations.add("Hooks.after_hook_1()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -593,7 +596,7 @@ public class JSONFormatterTest {
         hookLocations.add("Hooks.beforestep_hooks_1()");
         hookLocations.add("Hooks.afterstep_hooks_1()");
         hookLocations.add("Hooks.afterstep_hooks_2()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -724,7 +727,7 @@ public class JSONFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
         hookActions.add(createWriteHookAction("printed from hook"));
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -795,7 +798,7 @@ public class JSONFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
         hookActions.add(createEmbedHookAction(new byte[]{1, 2, 3}, "mime-type;base64"));
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -869,7 +872,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -930,7 +933,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -991,7 +994,7 @@ public class JSONFormatterTest {
         features.add(feature);
         stepsToResult.put("there are bananas", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -1067,7 +1070,7 @@ public class JSONFormatterTest {
         stepsToResult.put("there are oranges", result("passed"));
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
         stepsToLocation.put("there are oranges", "StepDefs.there_are_oranges()");
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -1172,7 +1175,7 @@ public class JSONFormatterTest {
                 return singletonList("TEST SNIPPET");
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
+        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ofMillis(1234L)));
 
         Appendable stringBuilder = new StringBuilder();
         
@@ -1209,7 +1212,7 @@ public class JSONFormatterTest {
                 return singletonList("TEST SNIPPET");
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
+        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ofMillis(1234L)));
 
         Appendable stringBuilder = new StringBuilder();
         
@@ -1237,7 +1240,7 @@ public class JSONFormatterTest {
             .withHooks(hooks)
             .withHookLocations(hookLocations)
             .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDurationMillis)
+            .withTimeServiceIncrement(stepDuration)
             .build()
             .run();
 

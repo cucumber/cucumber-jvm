@@ -5,12 +5,9 @@ import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.backend.BackendSupplier;
@@ -39,8 +36,6 @@ import org.junit.runners.model.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 
 /**
  * <p>
@@ -144,14 +139,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
-            bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
+            bus.send(new TestRunStarted(bus.getTimeInstant()));
             for (CucumberFeature feature : features) {
-                bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+                bus.send(new TestSourceRead(bus.getTimeInstant(), feature.getUri().toString(), feature.getSource()));
             }
             StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
             runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
             runFeatures.evaluate();
-            bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
+            bus.send(new TestRunFinished(bus.getTimeInstant()));
         }
     }
 }

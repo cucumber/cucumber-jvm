@@ -1,5 +1,6 @@
 package io.cucumber.core.api.event;
 
+import java.time.Instant;
 import java.util.Comparator;
 
 public interface Event {
@@ -37,7 +38,15 @@ public interface Event {
      * @see System#nanoTime()
      * @deprecated prefer {@link TimeStampedEvent#getTimeStampMillis()}
      */
-    @Deprecated
-    Long getTimeStamp();
+    //gazler
+//    @Deprecated
+//    Long getTimeStamp();
 
+    /**
+     * Returns instant from epoch.
+     *
+     * @return time instant in Instant
+     * @see Instant#now()
+     */
+    Instant getTimeInstant();
 }

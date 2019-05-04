@@ -82,7 +82,7 @@ public class TestNGCucumberRunner {
     }
 
     public void finish() {
-        bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
+        bus.send(new TestRunFinished(bus.getTimeInstant()));
     }
 
     /**
@@ -109,9 +109,9 @@ public class TestNGCucumberRunner {
 
     List<CucumberFeature> getFeatures() {
         List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
+        bus.send(new TestRunStarted(bus.getTimeInstant()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), bus.getTimeMillis(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getTimeInstant(), feature.getUri().toString(), feature.getSource()));
         }
         StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);

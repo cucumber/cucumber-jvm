@@ -36,9 +36,9 @@ public class TimeServiceTest {
         @Override
         public void run() {
             try {
-                stopWatch.time();
+                stopWatch.timeInstant();
                 Thread.sleep(timeoutMillis);
-                stopWatch.time();
+                stopWatch.timeInstant();
             } catch (NullPointerException e) {
                 exception = e;
             } catch (InterruptedException e) {

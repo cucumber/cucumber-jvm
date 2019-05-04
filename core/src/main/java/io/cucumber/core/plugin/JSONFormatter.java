@@ -31,6 +31,7 @@ import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -193,7 +194,7 @@ public final class JSONFormatter implements EventListener {
     private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
         
-        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getTimeStampMillis()));
+        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getTimeInstant()));
 
         TestCase testCase = event.getTestCase();
 
@@ -381,16 +382,16 @@ public final class JSONFormatter implements EventListener {
         if (result.getErrorMessage() != null) {
             resultMap.put("error_message", result.getErrorMessage());
         }
-        if (result.getDuration() != 0) {
-            resultMap.put("duration", result.getDuration());
+        if (!result.getDuration().isZero()) {
+            resultMap.put("duration", result.getDuration().toNanos());
         }
         return resultMap;
     }
     
-    private String getDateTimeFromTimeStamp(long timeStampMillis) {
+    private String getDateTimeFromTimeStamp(Instant instant) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         
-        return sdf.format(new Date(timeStampMillis));
+        return sdf.format(new Date(instant.toEpochMilli()));
     }
 }

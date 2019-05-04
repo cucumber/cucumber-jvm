@@ -2,44 +2,46 @@ package io.cucumber.core.plugin;
 
 import org.junit.Test;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static java.time.Duration.ofMillis;
 import static org.junit.Assert.assertEquals;
 
 public class MedianUsageStatisticStrategyTest {
     @Test
     public void calculateOddEntries() throws Exception {
         UsageFormatter.MedianUsageStatisticStrategy medianUsageStatisticStrategy = new UsageFormatter.MedianUsageStatisticStrategy();
-        Long result = medianUsageStatisticStrategy.calculate(Arrays.asList(1L, 2L, 3L));
-        assertEquals(result, Long.valueOf(2));
+        Duration result = medianUsageStatisticStrategy.calculate(Arrays.asList(ofMillis(1L), ofMillis(2L), ofMillis(3L)));
+        assertEquals(result, ofMillis(2));
     }
 
     @Test
     public void calculateEvenEntries() throws Exception {
         UsageFormatter.MedianUsageStatisticStrategy medianUsageStatisticStrategy = new UsageFormatter.MedianUsageStatisticStrategy();
-        Long result = medianUsageStatisticStrategy.calculate(Arrays.asList(1L, 3L, 10L, 5L));
-        assertEquals(result, Long.valueOf(4));
+        Duration result = medianUsageStatisticStrategy.calculate(Arrays.asList(ofMillis(1L), ofMillis(3L), ofMillis(10L), ofMillis(5L)));
+        assertEquals(result, ofMillis(4));
     }
 
     @Test
     public void calculateNull() throws Exception {
         UsageFormatter.MedianUsageStatisticStrategy medianUsageStatisticStrategy = new UsageFormatter.MedianUsageStatisticStrategy();
-        Long result = medianUsageStatisticStrategy.calculate(null);
-        assertEquals(result, Long.valueOf(0));
+        Duration result = medianUsageStatisticStrategy.calculate(null);
+        assertEquals(result, ofMillis(0));
     }
 
     @Test
     public void calculateEmptylist() throws Exception {
         UsageFormatter.MedianUsageStatisticStrategy medianUsageStatisticStrategy = new UsageFormatter.MedianUsageStatisticStrategy();
-        Long result = medianUsageStatisticStrategy.calculate(Collections.<Long>emptyList());
-        assertEquals(result, Long.valueOf(0));
+        Duration result = medianUsageStatisticStrategy.calculate(Collections.<Duration>emptyList());
+        assertEquals(result, ofMillis(0));
     }
 
     @Test
     public void calculateListWithNulls() throws Exception {
         UsageFormatter.MedianUsageStatisticStrategy medianUsageStatisticStrategy = new UsageFormatter.MedianUsageStatisticStrategy();
-        Long result = medianUsageStatisticStrategy.calculate(Arrays.<Long>asList(1L, null, 3L));
-        assertEquals(result, Long.valueOf(0));
+        Duration result = medianUsageStatisticStrategy.calculate(Arrays.<Duration>asList(ofMillis(1L), null, ofMillis(3L)));
+        assertEquals(result, ofMillis(0));
     }
 }

@@ -2,9 +2,11 @@ package io.cucumber.core.api.event;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.Objects;
 
+import static java.time.Duration.ZERO;
 import static java.util.Locale.ROOT;
 import static java.util.Objects.requireNonNull;
 
@@ -18,10 +20,13 @@ public final class Result {
         }
     };
 
+    //gazler
     private final Type status;
-    private final Long duration;
+//    private final Long duration;
+    private final Duration duration;
     private final Throwable error;
-    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, 0L, null);
+//    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, 0L, null);
+    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, ZERO, null);
     public enum Type {
         PASSED,
         SKIPPED,
@@ -52,7 +57,13 @@ public final class Result {
      * @param duration the duration in nanoseconds
      * @param error the error that caused the failure if any
      */
-    public Result(Result.Type status, Long duration, Throwable error) {
+//    public Result(Result.Type status, Long duration, Throwable error) {
+//        this.status = requireNonNull(status);
+//        this.duration = requireNonNull(duration);
+//        this.error = error;
+//    }
+    
+    public Result(Result.Type status, Duration duration, Throwable error) {
         this.status = requireNonNull(status);
         this.duration = requireNonNull(duration);
         this.error = error;
@@ -62,10 +73,14 @@ public final class Result {
         return status;
     }
 
-    public Long getDuration() {
+//    public Long getDuration() {
+//        return duration;
+//    }
+
+    public Duration getDuration() {
         return duration;
     }
-
+    
     public String getErrorMessage() {
         return error != null ? getErrorMessage(error) : null;
     }

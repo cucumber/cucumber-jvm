@@ -12,12 +12,15 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Test;
 
+import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import java.time.Instant;
+
 public class ExitStatusTest {
-    private final static long ANY_TIMESTAMP = 1234567890;
+    private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private EventBus bus;
     private Runtime.ExitStatus exitStatus;
@@ -35,7 +38,7 @@ public class ExitStatusTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
+        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
     private void createExitStatus(String... runtimeArgs) {

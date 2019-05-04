@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 
+import static java.time.Instant.EPOCH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotSame;
@@ -98,6 +99,6 @@ public class ThreadLocalRunnerSupplierTest {
                 fail();
             }
         });
-        eventBus.send(new TestCaseStarted(0L, 0L, null));
+        eventBus.send(new TestCaseStarted(EPOCH, null));
     }
 }
