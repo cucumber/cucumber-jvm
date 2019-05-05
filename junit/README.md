@@ -73,6 +73,7 @@ Cucumber JUnit supports parallel execution of feature files across multiple thre
     <plugins>
         <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin.version}</version>  <!-- Use 2.22.1 or higher -->
             <configuration>
                 <parallel>both</parallel>
                 <threadCount>4</threadCount>
