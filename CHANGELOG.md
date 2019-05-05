@@ -1,7 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.3.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.3.0...master) (In Git)
+## [4.3.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...master) (In Git)
 
 ### Added
 
@@ -12,6 +12,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.3.1](https://github.com/cucumber/cucumber-jvm/compare/v4.3.0...v4.3.1) (2019-05-05)
+
+### Fixed
+  * [Core] Fix filtering scenarios loaded from jar ([#1618](https://github.com/cucumber/cucumber-jvm/pull/1618) Denys Zhuravel)
 
 ## [4.3.0](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...v4.3.0) (2019-04-11)
 
