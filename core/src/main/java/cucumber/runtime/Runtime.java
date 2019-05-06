@@ -224,7 +224,7 @@ public class Runtime {
         
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(this.group, r, "cucumber-thread-" + this.threadNumber.getAndIncrement(), 0L);
+            Thread t = new Thread(this.group, r, "cucumber-runner-thread-" + this.threadNumber.getAndIncrement(), 0L);
             if (t.isDaemon()) {
                 t.setDaemon(false);
             }
