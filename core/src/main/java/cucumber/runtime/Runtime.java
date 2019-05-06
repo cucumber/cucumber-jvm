@@ -219,8 +219,6 @@ public class Runtime {
         private final String namePrefix;
 
         CucumberThreadFactory() {
-            SecurityManager s = System.getSecurityManager();
-            this.group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
             this.namePrefix = "cucumber-runner-" + poolNumber.getAndIncrement() + "-thread-";
         }
         
