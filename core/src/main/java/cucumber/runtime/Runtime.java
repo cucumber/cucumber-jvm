@@ -214,26 +214,19 @@ public class Runtime {
 
     private static final class CucumberThreadFactory implements ThreadFactory {
 
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
         private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
+        private final String namePrefix;
 
         CucumberThreadFactory() {
             SecurityManager s = System.getSecurityManager();
             this.group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            this.namePrefix = "cucumber-runner-" + poolNumber.getAndIncrement() + "-thread-";
         }
         
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(this.group, r, "cucumber-runner-thread-" + this.threadNumber.getAndIncrement(), 0L);
-            if (t.isDaemon()) {
-                t.setDaemon(false);
-            }
-
-            if (t.getPriority() != 5) {
-                t.setPriority(5);
-            }
-
-            return t;
+            return new Thread(r, namePrefix + this.threadNumber.getAndIncrement());
         }
     }
 
