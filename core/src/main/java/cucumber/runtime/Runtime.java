@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This is the main entry point for running Cucumber features from the CLI.
@@ -195,7 +197,7 @@ public class Runtime {
                 : new SingletonRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
-                ? Executors.newFixedThreadPool(runtimeOptions.getThreads())
+                ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
 
@@ -207,6 +209,31 @@ public class Runtime {
 
             final Filters filters = new Filters(this.runtimeOptions);
             return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
+        }
+    }
+
+    private static final class CucumberThreadFactory implements ThreadFactory {
+
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+
+        CucumberThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            this.group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        }
+        
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(this.group, r, "cucumber-thread-" + this.threadNumber.getAndIncrement(), 0L);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+
+            if (t.getPriority() != 5) {
+                t.setPriority(5);
+            }
+
+            return t;
         }
     }
 
