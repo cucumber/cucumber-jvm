@@ -20,12 +20,16 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,20 +79,34 @@ public class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
+        List<Callable<Void>> pickles = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    executor.execute(new Runnable() {
+                    pickles.add(new Callable<Void>() {
                         @Override
-                        public void run() {
+                        public Void call() throws Exception {
                             runnerSupplier.get().runPickle(pickleEvent);
+                            return null;
                         }
                     });
                 }
             }
         }
-        executor.shutdown();
+
         try {
+            List<Future<Void>> futures = executor.invokeAll(pickles);
+
+            for (Future f : futures) {
+                try {
+                    f.get();
+                } catch (ExecutionException e) {
+                    throw new CucumberException("Exception executing pickle", e.getCause());
+                }
+            }
+
+            executor.shutdown();
+            
             //noinspection StatementWithEmptyBody we wait, nothing else
             while (!executor.awaitTermination(1, TimeUnit.DAYS)) ;
         } catch (InterruptedException e) {
