@@ -99,7 +99,9 @@ public class Runtime {
         for (Future f : futures) {
             try {
                 f.get();
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (ExecutionException e){
+                thrown.add(e.getCause());
+            } catch (InterruptedException e) {
                 thrown.add(e);
             }
         }
@@ -112,12 +114,13 @@ public class Runtime {
         bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
     }
 
-    class MultipleFailureException extends CucumberException {
+    static class MultipleFailureException extends CucumberException {
         private final List<Throwable> throwables;
 
         MultipleFailureException(List<Throwable> throwables) {
-            super("There ");
+            super("");
             this.throwables = throwables;
+            initCause(throwables.get(0));
         }
 
         public List<Throwable> getFailures() {
@@ -126,6 +129,8 @@ public class Runtime {
 
         public String getMessage() {
             StringBuilder sb = new StringBuilder(String.format("There were %d exceptions:", this.throwables.size()));
+            sb.append("\nThe first exception is shown as cause of this MultipleFailureException.")
+                .append("\nThe other exceptions are these (without stack traces):");
 
             for (Throwable e : this.throwables) {
                 sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));

@@ -457,7 +457,7 @@ public class RuntimeTest {
             "TestRun finished\n", formatterOutput);
     }
 
-    @Test(expected = CucumberException.class)
+    @Test(expected = Runtime.MultipleFailureException.class)
     public void should_fail_on_eventlistener_exception_when_running_in_parallel() {
         CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name 1\n" +
@@ -491,6 +491,7 @@ public class RuntimeTest {
             .build()
             .run();
 
+        expectedException.expectMessage("There were 3 exceptions");
         expectedException.expectCause(ThrowableMessageMatcher.hasMessage(equalTo("boom")));
     }
 
