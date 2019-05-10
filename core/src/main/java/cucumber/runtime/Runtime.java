@@ -5,11 +5,11 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
 import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
-import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.RunnerSupplier;
 import cucumber.runner.SingletonRunnerSupplier;
 import cucumber.runner.ThreadLocalRunnerSupplier;
+import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
@@ -23,6 +23,7 @@ import gherkin.events.PickleEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutionException;
@@ -92,21 +93,46 @@ public class Runtime {
             }
         }
 
-        try {
-            for (Future f : futures) {
-                try {
-                    f.get();
-                } catch (ExecutionException e) {
-                    throw new CucumberException("Exception executing pickle", e.getCause());
-                }
-            }
+        executor.shutdown();
 
-            executor.shutdown();
-        } catch (InterruptedException e) {
-            throw new CucumberException(e);
+        List<Throwable> thrown = new ArrayList<>();
+        for (Future f : futures) {
+            try {
+                f.get();
+            } catch (ExecutionException | InterruptedException e) {
+                thrown.add(e);
+            }
+        }
+        if(thrown.size() == 1){
+            throw new CucumberException(thrown.get(0));
+        } else if (thrown.size() > 1){
+            throw new MultipleFailureException(thrown);
         }
 
         bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
+    }
+
+    class MultipleFailureException extends CucumberException {
+        private final List<Throwable> throwables;
+
+        MultipleFailureException(List<Throwable> throwables) {
+            super("There ");
+            this.throwables = throwables;
+        }
+
+        public List<Throwable> getFailures() {
+            return Collections.unmodifiableList(this.throwables);
+        }
+
+        public String getMessage() {
+            StringBuilder sb = new StringBuilder(String.format("There were %d exceptions:", this.throwables.size()));
+
+            for (Throwable e : this.throwables) {
+                sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
+            }
+
+            return sb.toString();
+        }
     }
 
     public byte exitStatus() {
@@ -232,7 +258,7 @@ public class Runtime {
         CucumberThreadFactory() {
             this.namePrefix = "cucumber-runner-" + poolNumber.getAndIncrement() + "-thread-";
         }
-        
+
         @Override
         public Thread newThread(Runnable r) {
             return new Thread(r, namePrefix + this.threadNumber.getAndIncrement());
