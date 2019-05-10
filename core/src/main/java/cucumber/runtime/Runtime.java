@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -79,24 +78,21 @@ public class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        List<Callable<Void>> pickles = new ArrayList<>();
+        final List<Future<?>> futures = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    pickles.add(new Callable<Void>() {
+                    futures.add(executor.submit(new Runnable() {
                         @Override
-                        public Void call() throws Exception {
+                        public void run() {
                             runnerSupplier.get().runPickle(pickleEvent);
-                            return null;
                         }
-                    });
+                    }));
                 }
             }
         }
 
         try {
-            List<Future<Void>> futures = executor.invokeAll(pickles);
-
             for (Future f : futures) {
                 try {
                     f.get();
@@ -106,9 +102,6 @@ public class Runtime {
             }
 
             executor.shutdown();
-            
-            //noinspection StatementWithEmptyBody we wait, nothing else
-            while (!executor.awaitTermination(1, TimeUnit.DAYS)) ;
         } catch (InterruptedException e) {
             throw new CucumberException(e);
         }
