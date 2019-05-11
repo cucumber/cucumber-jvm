@@ -19,11 +19,12 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This is the main entry point for running Cucumber features from the CLI.
  */
 public class Runtime {
+
+    private static final Logger log = LoggerFactory.getLogger(Runtime.class);
 
     private final ExitStatus exitStatus;
 
@@ -79,11 +82,11 @@ public class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
-        final List<Future<?>> futures = new ArrayList<>();
+        final List<Future<?>> executingPickles = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    futures.add(executor.submit(new Runnable() {
+                    executingPickles.add(executor.submit(new Runnable() {
                         @Override
                         public void run() {
                             runnerSupplier.get().runPickle(pickleEvent);
@@ -96,48 +99,24 @@ public class Runtime {
         executor.shutdown();
 
         List<Throwable> thrown = new ArrayList<>();
-        for (Future f : futures) {
+        for (Future executingPickle : executingPickles) {
             try {
-                f.get();
+                executingPickle.get();
             } catch (ExecutionException e){
+                log.error("Exception while executing pickle", e);
                 thrown.add(e.getCause());
-            } catch (InterruptedException e) {
-                thrown.add(e);
+            } catch (InterruptedException e){
+                executor.shutdownNow();
+                throw new CucumberException(e);
             }
         }
         if(thrown.size() == 1){
             throw new CucumberException(thrown.get(0));
         } else if (thrown.size() > 1){
-            throw new MultipleFailureException(thrown);
+            throw new CompositeCucumberException(thrown);
         }
 
         bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
-    }
-
-    static class MultipleFailureException extends CucumberException {
-        private final List<Throwable> throwables;
-
-        MultipleFailureException(List<Throwable> throwables) {
-            super("");
-            this.throwables = throwables;
-            initCause(throwables.get(0));
-        }
-
-        public List<Throwable> getFailures() {
-            return Collections.unmodifiableList(this.throwables);
-        }
-
-        public String getMessage() {
-            StringBuilder sb = new StringBuilder(String.format("There were %d exceptions:", this.throwables.size()));
-            sb.append("\nThe first exception is shown as cause of this MultipleFailureException.")
-                .append("\nThe other exceptions are these (without stack traces):");
-
-            for (Throwable e : this.throwables) {
-                sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
-            }
-
-            return sb.toString();
-        }
     }
 
     public byte exitStatus() {
