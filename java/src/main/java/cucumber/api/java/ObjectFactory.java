@@ -2,7 +2,10 @@ package cucumber.api.java;
 
 /**
  * Minimal facade for Dependency Injection containers
+ *
+ * @deprecated use @code io.cucumber.core.backend.ObjectFactory instead
  */
+@Deprecated
 public interface ObjectFactory {
 
     /**
