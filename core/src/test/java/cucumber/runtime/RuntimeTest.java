@@ -488,6 +488,9 @@ public class RuntimeTest {
             }
         };
 
+        expectedException.expect(CompositeCucumberException.class);
+        expectedException.expectMessage("There were 3 exceptions");
+
         TestHelper.builder()
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
@@ -496,9 +499,6 @@ public class RuntimeTest {
             .build()
             .run();
 
-        expectedException.expect(CompositeCucumberException.class);
-        expectedException.expectMessage("There were 3 exceptions");
-        expectedException.expectCause(hasMessage(equalTo("boom")));
     }
 
     @Test
