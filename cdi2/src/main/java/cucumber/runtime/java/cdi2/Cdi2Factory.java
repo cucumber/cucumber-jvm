@@ -1,6 +1,6 @@
 package cucumber.runtime.java.cdi2;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.se.SeContainer;

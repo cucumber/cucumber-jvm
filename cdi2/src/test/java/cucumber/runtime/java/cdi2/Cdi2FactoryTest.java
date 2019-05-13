@@ -1,6 +1,6 @@
 package cucumber.runtime.java.cdi2;
 
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
