@@ -6,7 +6,11 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
+import cucumber.api.event.ConcurrentEventListener;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TestBackendSupplier;
 import cucumber.runner.TestHelper;
@@ -25,6 +29,7 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.matchers.ThrowableMessageMatcher;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
@@ -37,13 +42,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cucumber.runner.TestHelper.feature;
 import static cucumber.runner.TestHelper.result;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -447,6 +460,101 @@ public class RuntimeTest {
             "  TestStep finished\n" +
             "TestCase finished\n" +
             "TestRun finished\n", formatterOutput);
+    }
+
+    @Test
+    public void should_fail_on_event_listener_exception_when_running_in_parallel() {
+        CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
+            "Feature: feature name 1\n" +
+            "  Scenario: scenario_1 name\n" +
+            "    Given first step\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Given first step\n");
+
+        CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+            "Feature: feature name 2\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Given first step\n");
+
+        ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
+            @Override
+            public void setEventPublisher(EventPublisher publisher) {
+                publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
+                    @Override
+                    public void receive(TestStepFinished event) {
+                        throw new RuntimeException("boom");
+                    }
+                });
+            }
+        };
+
+        expectedException.expect(CompositeCucumberException.class);
+        expectedException.expectMessage("There were 3 exceptions");
+
+        TestHelper.builder()
+            .withFeatures(Arrays.asList(feature1, feature2))
+            .withFormatterUnderTest(brokenEventListener)
+            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+            .withRuntimeArgs("--threads", "2")
+            .build()
+            .run();
+
+    }
+
+    @Test
+    public void should_interrupt_waiting_plugins() throws InterruptedException {
+        final CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
+            "Feature: feature name 1\n" +
+            "  Scenario: scenario_1 name\n" +
+            "    Given first step\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Given first step\n");
+
+        final CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+            "Feature: feature name 2\n" +
+            "  Scenario: scenario_2 name\n" +
+            "    Given first step\n");
+
+        final AtomicBoolean threadBlocked = new AtomicBoolean(false);
+        final AtomicBoolean interruptHit = new AtomicBoolean(false);
+
+        final ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
+            @Override
+            public void setEventPublisher(EventPublisher publisher) {
+                publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
+                    @Override
+                    public void receive(TestStepFinished event) {
+                        try {
+                            threadBlocked.set(true);
+                            HOURS.sleep(1);
+                        } catch (InterruptedException ignored) {
+                            interruptHit.set(true);
+                        }
+                    }
+                });
+            }
+        };
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                TestHelper.builder()
+                    .withFeatures(Arrays.asList(feature1, feature2))
+                    .withFormatterUnderTest(brokenEventListener)
+                    .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+                    .withRuntimeArgs("--threads", "2")
+                    .build()
+                    .run();
+
+            }
+        });
+        thread.start();
+        do {
+            SECONDS.sleep(5);
+        } while (!threadBlocked.get());
+        thread.interrupt();
+        MINUTES.timedJoin(thread, 1);
+        assertTrue(interruptHit.get());
     }
 
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) {
