@@ -203,6 +203,7 @@
         <module>weld</module>
         <module>openejb</module>
         <module>needle</module>
+        <module>cdi2</module>
     </modules>
 
     <profiles>
