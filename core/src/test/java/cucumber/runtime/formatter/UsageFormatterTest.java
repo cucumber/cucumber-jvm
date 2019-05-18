@@ -50,7 +50,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Result.Type.SKIPPED, 0L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), mockTestStep(), result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -59,7 +59,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Result.Type.PENDING, 0L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), mockTestStep(), result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -77,7 +77,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Result.Type.AMBIGUOUS, 0L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), mockTestStep(), result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
