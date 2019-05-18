@@ -81,15 +81,8 @@ final class UsageFormatter implements Plugin, EventListener {
     private List<StepContainer> createStepContainers(List<StepContainer> stepContainers) {
         for (StepContainer stepContainer : stepContainers) {
             stepContainer.setAggregatedDurations(createAggregatedDurations(stepContainer));
-            formatDurationAsSeconds(stepContainer.getDurations());
         }
         return stepContainers;
-    }
-
-    private void formatDurationAsSeconds(List<StepDuration> durations) {
-        for (StepDuration duration : durations) {
-            duration.duration = toSeconds(duration.duration.longValue());
-        }
     }
 
     private Map<String, BigDecimal> createAggregatedDurations(StepContainer stepContainer) {
@@ -113,7 +106,7 @@ final class UsageFormatter implements Plugin, EventListener {
         List<BigDecimal> rawDurations = new ArrayList<>();
 
         for (StepDuration stepDuration : stepDurations) {
-            rawDurations.add(toSeconds(stepDuration.duration.longValue()));
+            rawDurations.add(stepDuration.duration);
         }
         return rawDurations;
     }
@@ -140,7 +133,7 @@ final class UsageFormatter implements Plugin, EventListener {
         if (duration == null) {
             stepDuration.duration = BigDecimal.ZERO;
         } else {
-            stepDuration.duration = BigDecimal.valueOf(duration);
+            stepDuration.duration = toSeconds(duration);
         }
         stepDuration.location = location;
         return stepDuration;

@@ -96,7 +96,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).getName(), "step");
         assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).duration, BigDecimal.valueOf(12345));
+        assertEquals(durationEntries.get(0).getDurations().get(0).duration, new BigDecimal("0.000012345"));
     }
 
     @Test
@@ -106,10 +106,10 @@ public class UsageFormatterTest {
         TestStep testStep = mockTestStep();
 
         Result passed = new Result(Result.Type.PASSED, 12345L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), testStep, passed));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, passed));
 
         Result failed = new Result(Result.Type.FAILED, 0L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, mock(TestCase.class), testStep, failed));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, failed));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -117,7 +117,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).getName(), "step");
         assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).duration, BigDecimal.valueOf(12345));
+        assertEquals(durationEntries.get(0).getDurations().get(0).duration, new BigDecimal("0.000012345"));
     }
 
     @Test
@@ -163,14 +163,12 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
-        stepDuration.duration = BigDecimal.valueOf(12345678L);
+        stepDuration.duration = new BigDecimal("0.012345678");
         stepDuration.location = "location.feature";
         stepContainer.setDurations(asList(stepDuration));
         usageFormatter.usageMap.put("aStep", asList(stepContainer));
 
         usageFormatter.finishReport();
-
-        assertThat(out.toString(), containsString("0.012345678"));
 
         String json =
         "[\n" +
@@ -203,7 +201,7 @@ public class UsageFormatterTest {
 
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
-        stepDuration.duration = BigDecimal.valueOf(12345678L);
+        stepDuration.duration = new BigDecimal("0.012345678");
         stepDuration.location = "location.feature";
         stepContainer.setDurations(asList(stepDuration));
 
