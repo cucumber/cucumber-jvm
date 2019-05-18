@@ -13,7 +13,6 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,11 +67,11 @@ final class UsageFormatter implements Plugin, EventListener {
     void finishReport() {
         List<StepDefContainer> stepDefContainers = new ArrayList<>();
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
-            StepDefContainer stepDefContainer = new StepDefContainer();
+            StepDefContainer stepDefContainer = new StepDefContainer(
+                usageEntry.getKey(),
+                createStepContainers(usageEntry.getValue())
+            );
             stepDefContainers.add(stepDefContainer);
-
-            stepDefContainer.setSource(usageEntry.getKey());
-            stepDefContainer.setSteps(createStepContainers(usageEntry.getValue()));
         }
 
         out.append(gson().toJson(stepDefContainers));
@@ -163,18 +162,19 @@ final class UsageFormatter implements Plugin, EventListener {
      * Container of Step Definitions (patterns)
      */
     static class StepDefContainer {
-        private String source;
-        private List<StepContainer> steps;
+        private final String source;
+        private final List<StepContainer> steps;
+
+        StepDefContainer(String source, List<StepContainer> steps) {
+            this.source = source;
+            this.steps = steps;
+        }
 
         /**
          * The StepDefinition (pattern)
          */
         public String getSource() {
             return source;
-        }
-
-        public void setSource(String source) {
-            this.source = source;
         }
 
         /**
@@ -184,9 +184,6 @@ final class UsageFormatter implements Plugin, EventListener {
             return steps;
         }
 
-        public void setSteps(List<StepContainer> steps) {
-            this.steps = steps;
-        }
     }
 
     /**
