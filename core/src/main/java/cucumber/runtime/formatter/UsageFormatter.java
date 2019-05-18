@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 final class UsageFormatter implements Plugin, EventListener {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
-    final Map<String, List<StepContainer>> usageMap = new HashMap<>();
+    final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final NiceAppendable out;
 
     private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
@@ -60,7 +61,7 @@ final class UsageFormatter implements Plugin, EventListener {
     void handleTestStepFinished(TestStepFinished event) {
         if (event.testStep instanceof PickleStepTestStep && event.result.is(Result.Type.PASSED)) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
-            addUsageEntry(event.result, testStep.getPattern(), testStep.getStepText(), testStep.getStepLocation());
+            addUsageEntry(event.result, testStep);
         }
     }
 
@@ -80,13 +81,13 @@ final class UsageFormatter implements Plugin, EventListener {
 
     private List<StepContainer> createStepContainers(List<StepContainer> stepContainers) {
         for (StepContainer stepContainer : stepContainers) {
-            stepContainer.setAggregatedDurations(createAggregatedDurations(stepContainer));
+            stepContainer.putAllAggregatedDurations(createAggregatedDurations(stepContainer));
         }
         return stepContainers;
     }
 
     private Map<String, BigDecimal> createAggregatedDurations(StepContainer stepContainer) {
-        Map<String, BigDecimal> aggregatedResults = new HashMap<>();
+        Map<String, BigDecimal> aggregatedResults = new LinkedHashMap<>();
         List<BigDecimal> rawDurations = getRawDurations(stepContainer.getDurations());
 
         BigDecimal average = calculateAverage(rawDurations);
@@ -115,28 +116,25 @@ final class UsageFormatter implements Plugin, EventListener {
         return new GsonBuilder().setPrettyPrinting().create();
     }
 
-    private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs, String stepLocation) {
+    private void addUsageEntry(Result result, PickleStepTestStep testStep) {
+        List<StepContainer> stepContainers = findOrCreateUsageEntry(testStep.getPattern());
+        StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
+        StepDuration stepDuration = createStepDuration(result.getDuration(), testStep.getStepLocation());
+        stepContainer.getDurations().add(stepDuration);
+    }
+
+    private List<StepContainer> findOrCreateUsageEntry(String stepDefinition) {
         List<StepContainer> stepContainers = usageMap.get(stepDefinition);
         if (stepContainers == null) {
             stepContainers = new ArrayList<>();
             usageMap.put(stepDefinition, stepContainers);
         }
-        StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
-
-        Long duration = result.getDuration();
-        StepDuration stepDuration = createStepDuration(duration, stepLocation);
-        stepContainer.getDurations().add(stepDuration);
+        return stepContainers;
     }
 
     private StepDuration createStepDuration(Long duration, String location) {
-        StepDuration stepDuration = new StepDuration();
-        if (duration == null) {
-            stepDuration.duration = BigDecimal.ZERO;
-        } else {
-            stepDuration.duration = toSeconds(duration);
-        }
-        stepDuration.location = location;
-        return stepDuration;
+        StepDuration stepDuration = new StepDuration(toSeconds(duration), location);
+        return  stepDuration;
     }
 
     private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
@@ -145,8 +143,7 @@ final class UsageFormatter implements Plugin, EventListener {
                 return container;
             }
         }
-        StepContainer stepContainer = new StepContainer();
-        stepContainer.setName(stepNameWithArgs);
+        StepContainer stepContainer = new StepContainer(stepNameWithArgs);
         stepContainers.add(stepContainer);
         return stepContainer;
     }
@@ -183,49 +180,47 @@ final class UsageFormatter implements Plugin, EventListener {
      * Container for usage-entries of steps
      */
     static class StepContainer {
-        private String name;
-        private Map<String, BigDecimal> aggregatedDurations = new HashMap<>();
-        private List<StepDuration> durations = new ArrayList<>();
+        private final String name;
+        private final Map<String, BigDecimal> aggregatedDurations = new HashMap<>();
+        private final List<StepDuration> durations = new ArrayList<>();
+
+        StepContainer(String name) {
+            this.name = name;
+        }
 
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        void putAllAggregatedDurations(Map<String, BigDecimal> aggregatedDurations) {
+            this.aggregatedDurations.putAll(aggregatedDurations);
         }
 
-        void setAggregatedDurations(Map<String, BigDecimal> aggregatedDurations) {
-            this.aggregatedDurations = aggregatedDurations;
+        public Map<String, BigDecimal> getAggregatedDurations() {
+            return aggregatedDurations;
         }
 
         List<StepDuration> getDurations() {
             return durations;
         }
 
-        void setDurations(List<StepDuration> durations) {
-            this.durations = durations;
-        }
     }
 
     static class StepDuration {
-        public BigDecimal duration;
-        public String location;
+        private final BigDecimal duration;
+        private final String location;
+
+        StepDuration(BigDecimal duration, String location) {
+            this.duration = duration;
+            this.location = location;
+        }
 
         public BigDecimal getDuration() {
             return duration;
         }
 
-        public void setDuration(BigDecimal duration) {
-            this.duration = duration;
-        }
-
         public String getLocation() {
             return location;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
         }
     }
 

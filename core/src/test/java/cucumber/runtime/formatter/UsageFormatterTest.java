@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class UsageFormatterTest {
     @Test
@@ -96,7 +97,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).getName(), "step");
         assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).duration, new BigDecimal("0.000012345"));
+        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), new BigDecimal("0.000012345"));
     }
 
     @Test
@@ -117,7 +118,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).getName(), "step");
         assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).duration, new BigDecimal("0.000012345"));
+        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), new BigDecimal("0.000012345"));
     }
 
     @Test
@@ -135,7 +136,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).getName(), "step");
         assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).duration, BigDecimal.ZERO);
+        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), BigDecimal.ZERO);
     }
 
     // Note: Duplicate of above test
@@ -154,31 +155,30 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).getName(), "step");
         assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).duration, BigDecimal.ZERO);
+        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), BigDecimal.ZERO);
     }
 
     @Test
     public void doneWithoutUsageStatisticStrategies() {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
-        stepDuration.duration = new BigDecimal("0.012345678");
-        stepDuration.location = "location.feature";
-        stepContainer.setDurations(asList(stepDuration));
-        usageFormatter.usageMap.put("aStep", asList(stepContainer));
+        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(new BigDecimal("0.012345678"), "location.feature");
+        stepContainer.getDurations().addAll(asList(stepDuration));
+        usageFormatter.usageMap.put("a (.*)", asList(stepContainer));
 
         usageFormatter.finishReport();
 
-        String json =
-        "[\n" +
+        String json = "" +
+            "[\n" +
             "  {\n" +
-            "    \"source\": \"aStep\",\n" +
+            "    \"source\": \"a (.*)\",\n" +
             "    \"steps\": [\n" +
             "      {\n" +
+            "        \"name\": \"a step\",\n" +
             "        \"aggregatedDurations\": {\n" +
-            "          \"average\": 0.012345678,\n" +
-            "          \"median\": 0.012345678\n" +
+            "          \"median\": 0.012345678,\n" +
+            "          \"average\": 0.012345678\n" +
             "        },\n" +
             "        \"durations\": [\n" +
             "          {\n" +
@@ -191,7 +191,7 @@ public class UsageFormatterTest {
             "  }\n" +
             "]";
 
-        assertEquals(out.toString(), json);
+        assertThat(out.toString(), sameJSONAs(json));
     }
 
     @Test
@@ -199,39 +199,38 @@ public class UsageFormatterTest {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
-        stepDuration.duration = new BigDecimal("0.012345678");
-        stepDuration.location = "location.feature";
-        stepContainer.setDurations(asList(stepDuration));
+        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(new BigDecimal("0.012345678"), "location.feature");
+        stepContainer.getDurations().addAll(asList(stepDuration));
 
-        usageFormatter.usageMap.put("aStep", asList(stepContainer));
+        usageFormatter.usageMap.put("a (.*)", asList(stepContainer));
 
         usageFormatter.finishReport();
 
         assertThat(out.toString(), containsString("0.012345678"));
         String json =
-        "[\n" +
-            "  {\n" +
-            "    \"source\": \"aStep\",\n" +
-            "    \"steps\": [\n" +
-            "      {\n" +
-            "        \"aggregatedDurations\": {\n" +
-            "          \"average\": 0.012345678,\n" +
-            "          \"median\": 0.012345678\n" +
-            "        },\n" +
-            "        \"durations\": [\n" +
-            "          {\n" +
-            "            \"duration\": 0.012345678,\n" +
-            "            \"location\": \"location.feature\"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ]\n" +
-            "  }\n" +
-            "]";
+            "[\n" +
+                "  {\n" +
+                "    \"source\": \"a (.*)\",\n" +
+                "    \"steps\": [\n" +
+                "      {\n" +
+                "        \"name\": \"a step\",\n" +
+                "        \"aggregatedDurations\": {\n" +
+                "          \"median\": 0.012345678,\n" +
+                "          \"average\": 0.012345678\n" +
+                "        },\n" +
+                "        \"durations\": [\n" +
+                "          {\n" +
+                "            \"duration\": 0.012345678,\n" +
+                "            \"location\": \"location.feature\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "]";
 
-        assertEquals(out.toString(), json);
+        assertThat(out.toString(), sameJSONAs(json));
     }
 
     @Test
