@@ -1,4 +1,4 @@
-package cucumber.runtime.java.cdi2;
+package io.cucumber.cdi2;
 
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;

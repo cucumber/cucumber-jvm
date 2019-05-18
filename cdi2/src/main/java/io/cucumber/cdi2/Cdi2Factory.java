@@ -1,4 +1,4 @@
-package cucumber.runtime.java.cdi2;
+package io.cucumber.cdi2;
 
 import io.cucumber.core.backend.ObjectFactory;
 
@@ -9,10 +9,10 @@ import javax.enterprise.inject.spi.Unmanaged;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Cdi2Factory implements ObjectFactory {
+public final class Cdi2Factory implements ObjectFactory {
 
-    protected SeContainerInitializer initializer;
-    protected SeContainer container;
+    private SeContainerInitializer initializer;
+    private SeContainer container;
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
 
     @Override

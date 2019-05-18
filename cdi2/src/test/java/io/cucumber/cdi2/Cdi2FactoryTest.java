@@ -1,4 +1,4 @@
-package cucumber.runtime.java.cdi2;
+package io.cucumber.cdi2;
 
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.Test;
