@@ -69,6 +69,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
+    private boolean isRerun = false;
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
@@ -184,6 +185,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
+                isRerun = true;
                 URI rerunFile = FeaturePath.parse(arg.substring(1));
                 processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, rerunFile);
             } else if (!arg.isEmpty()){
@@ -201,7 +203,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 lineFilters.put(path, parsedLineFilters.get(path));
             }
         }
-        if (!parsedFeaturePaths.isEmpty()) {
+        if (!parsedFeaturePaths.isEmpty() || isRerun) {
             featurePaths.clear();
             featurePaths.addAll(parsedFeaturePaths);
         }
