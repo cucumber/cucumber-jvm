@@ -41,12 +41,12 @@ public class GlueTest {
 
     @Before
     public void setUp() {
-        glue = new Glue();
+        glue = new Glue(mock(EventBus.class));
     }
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
-        Glue glue = new Glue();
+        Glue glue = new Glue(mock(EventBus.class));
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");

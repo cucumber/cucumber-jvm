@@ -5,6 +5,7 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.event.StepDefinedEvent;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
@@ -23,6 +24,12 @@ final class Glue implements cucumber.runtime.Glue {
     final List<HookDefinition> afterHooks = new ArrayList<>();
     final List<HookDefinition> afterStepHooks = new ArrayList<>();
 
+    private final EventBus bus;
+
+    public Glue(EventBus bus) {
+        this.bus = bus;
+    }
+
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
         StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
@@ -30,6 +37,7 @@ final class Glue implements cucumber.runtime.Glue {
             throw new DuplicateStepDefinitionException(previous, stepDefinition);
         }
         stepDefinitionsByPattern.put(stepDefinition.getPattern(), stepDefinition);
+        bus.send(new StepDefinedEvent(bus.getTime(), bus.getTimeMillis(), stepDefinition));
     }
 
     @Override

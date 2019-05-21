@@ -22,13 +22,14 @@ public final class Runner {
 
     private static final Logger log = LoggerFactory.getLogger(Runner.class);
 
-    private final Glue glue = new Glue();
+    private final Glue glue;
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RunnerOptions runnerOptions;
 
     public Runner(EventBus bus, Collection<? extends Backend> backends, RunnerOptions runnerOptions) {
         this.bus = bus;
+        this.glue = new Glue(bus);
         this.runnerOptions = runnerOptions;
         this.backends = backends;
         List<URI> gluePaths = runnerOptions.getGlue();
