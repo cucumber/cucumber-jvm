@@ -69,7 +69,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
-    private boolean isRerun = false;
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
@@ -138,6 +137,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         List<URI> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
+        boolean isRerun = false;
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
