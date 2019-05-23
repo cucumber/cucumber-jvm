@@ -3,10 +3,11 @@ package cucumber.runtime.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
 
 class ZipResource implements Resource {
     private final ZipFile jarFile;
@@ -19,7 +20,11 @@ class ZipResource implements Resource {
 
     @Override
     public URI getPath() {
-        return URI.create(CLASSPATH_SCHEME_PREFIX + jarEntry.getName());
+        try {
+            return new URI(CLASSPATH_SCHEME, jarEntry.getName(), null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
