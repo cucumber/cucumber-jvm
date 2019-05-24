@@ -324,6 +324,17 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property()
+        throws IOException {
+        properties.setProperty("cucumber.options", "--tags @Tag");
+        String rerunPath = "file:path/rerun.txt";
+        String rerunFile = "file:path/file.feature:3\n";
+        mockFileResource(resourceLoader, rerunPath, rerunFile);
+        RuntimeOptions options = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
+        assertThat(options.getFeaturePaths(), contains(uri("file:path/file.feature")));
+    }
+
+    @Test
     public void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("old", "older"));

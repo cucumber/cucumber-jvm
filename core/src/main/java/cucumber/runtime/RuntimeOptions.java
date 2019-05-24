@@ -67,7 +67,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean strict = false;
     private boolean monochrome = false;
     private boolean wip = false;
-    private boolean wasRerun = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
 
@@ -187,7 +186,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
                 isRerun = true;
-                wasRerun = true;
                 URI rerunFile = FeaturePath.parse(arg.substring(1));
                 processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, rerunFile);
             } else if (!arg.isEmpty()){
@@ -195,7 +193,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
             }
         }
-        if (isRerun || (wasRerun && !parsedFeaturePaths.isEmpty())){
+        if (isRerun || !parsedFeaturePaths.isEmpty()){
             featurePaths.clear();
             lineFilters.clear();
         }
