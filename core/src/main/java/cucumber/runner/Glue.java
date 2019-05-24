@@ -2,6 +2,7 @@ package cucumber.runner;
 
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.ScenarioScoped;
 import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.StepDefinitionReporter;
@@ -138,6 +139,10 @@ final class Glue implements cucumber.runtime.Glue {
         Iterator<HookDefinition> hookIterator = beforeHooks.iterator();
         while (hookIterator.hasNext()) {
             HookDefinition hook = hookIterator.next();
+            if (hook instanceof ScenarioScoped) {
+                ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) hook;
+                scenarioScopedHookDefinition.disposeScenarioScope();
+            }
             if (hook.isScenarioScoped()) {
                 hookIterator.remove();
             }
@@ -148,6 +153,10 @@ final class Glue implements cucumber.runtime.Glue {
         Iterator<Map.Entry<String, StepDefinition>> stepDefinitionIterator = stepDefinitions.entrySet().iterator();
         while(stepDefinitionIterator.hasNext()){
             StepDefinition stepDefinition = stepDefinitionIterator.next().getValue();
+            if (stepDefinition instanceof ScenarioScoped) {
+                ScenarioScoped scenarioScopedStepDefinition = (ScenarioScoped) stepDefinition;
+                scenarioScopedStepDefinition.disposeScenarioScope();
+            }
             if(stepDefinition.isScenarioScoped()){
                 stepDefinitionIterator.remove();
             }
