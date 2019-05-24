@@ -6,12 +6,12 @@ import cucumber.api.event.SnippetsSuggestedEvent;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.util.FixJava;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.options.RunnerOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.RunnerOptions;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -135,5 +135,6 @@ public final class Runner {
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
+        glue.removeScenarioScopedGlue();
     }
 }
