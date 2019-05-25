@@ -24,7 +24,7 @@ For your own classes:
 
 * Add a `@Component` annotation to each of the classes cucumber-spring should manage.
 ```java
-package cucumber.runtime.java.spring.beans;
+package com.example.app;
 
 import org.springframework.stereotype.Component;
 
@@ -50,7 +50,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("cucumber.runtime.java.spring.beans")
+@ComponentScan("com.example.app")
 public class Config {
     // the rest of your configuration
 }
@@ -58,7 +58,7 @@ public class Config {
 
 * Add `@DirtiesContext` to your test configuration if each scenario should have a fresh application context.
 ```java
-package cucumber.runtime.java.spring.dirtiescontextconfig;
+package com.example.app;
 
 import com.example.app.Config;
 import cucumber.runtime.java.spring.beans.Belly;
@@ -69,7 +69,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = { Config.class })
 @DirtiesContext
-public class DirtiesContextBellyStepDefs {
+public class SomeServiceSteps {
 
     @Autowired
     private Belly belly; // Each scenario have a new instance of Belly
