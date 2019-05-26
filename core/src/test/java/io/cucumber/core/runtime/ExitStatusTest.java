@@ -7,7 +7,6 @@ import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.options.Env;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Test;

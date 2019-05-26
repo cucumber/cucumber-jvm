@@ -13,7 +13,6 @@ import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Before;
 import org.junit.Test;
