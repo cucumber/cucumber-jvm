@@ -13,7 +13,7 @@ public final class TimeServiceEventBus extends AbstractEventBus {
     }
 
     @Override
-    public Instant getTimeInstant() {
+    public Instant getInstant() {
         return clock.instant();
     }
 }

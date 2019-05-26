@@ -94,7 +94,7 @@ public class PluginFactoryTest {
             EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, ZERO, null);
-            TestStepFinished event = new TestStepFinished(bus.getTimeInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
+            TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));

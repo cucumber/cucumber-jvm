@@ -88,9 +88,9 @@ public final class Runtime {
 
     public void run() {
         final List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getTimeInstant()));
+        bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTimeInstant(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
@@ -129,7 +129,7 @@ public final class Runtime {
             throw new CompositeCucumberException(thrown);
         }
 
-        bus.send(new TestRunFinished(bus.getTimeInstant()));
+        bus.send(new TestRunFinished(bus.getInstant()));
     }
 
     public byte exitStatus() {

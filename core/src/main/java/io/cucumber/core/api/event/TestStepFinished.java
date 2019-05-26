@@ -22,18 +22,6 @@ public final class TestStepFinished extends TestCaseEvent {
     public final TestStep testStep;
     public final Result result;
 
-    @Deprecated
-    public TestStepFinished(Long timeStamp, TestCase testCase, TestStep testStep, Result result) {
-        this(timeStamp, 0, testCase, testStep, result);
-    }
-
-    @Deprecated
-    public TestStepFinished(Long timeStamp, long timeStampMillis, TestCase testCase, TestStep testStep, Result result) {
-        super(timeStamp, timeStampMillis, testCase);
-        this.testStep = testStep;
-        this.result = result;
-    }
-    
     public TestStepFinished(Instant timeInstant, TestCase testCase, TestStep testStep, Result result) {
         super(timeInstant, testCase);
         this.testStep = testStep;

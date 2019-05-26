@@ -40,7 +40,7 @@ public class TestCaseTest {
 
     @Before
     public void init() {
-        Mockito.when(bus.getTimeInstant()).thenReturn(Instant.now());
+        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
     }
     
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(

@@ -40,7 +40,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     private final EventHandler<TestRunStarted> testRunStartedHandler = new EventHandler<TestRunStarted>() {
         @Override
         public void receive(TestRunStarted event) {
-            setStartTime(event.getTimeInstant());
+            setStartTime(event.getInstant());
         }
     };
     private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
@@ -64,7 +64,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     private final EventHandler<TestRunFinished> testRunFinishedHandler = new EventHandler<TestRunFinished>() {
         @Override
         public void receive(TestRunFinished event) {
-            setFinishTime(event.getTimeInstant());
+            setFinishTime(event.getInstant());
         }
     };
     private boolean strict;

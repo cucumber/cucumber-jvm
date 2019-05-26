@@ -60,8 +60,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Instant getTimeInstant() {
-            return parent.getTimeInstant();
+        public Instant getInstant() {
+            return parent.getInstant();
         }
     }
 
@@ -102,8 +102,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Instant getTimeInstant() {
-            return delegate.getTimeInstant();
+        public Instant getInstant() {
+            return delegate.getInstant();
         }
     }
 }

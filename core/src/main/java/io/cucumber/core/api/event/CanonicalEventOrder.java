@@ -72,7 +72,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
                 return line;
             }
 
-            return a.getTimeInstant().compareTo(b.getTimeInstant());
+            return a.getInstant().compareTo(b.getInstant());
         }
     }
 }

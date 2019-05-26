@@ -139,14 +139,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
-            bus.send(new TestRunStarted(bus.getTimeInstant()));
+            bus.send(new TestRunStarted(bus.getInstant()));
             for (CucumberFeature feature : features) {
-                bus.send(new TestSourceRead(bus.getTimeInstant(), feature.getUri().toString(), feature.getSource()));
+                bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
             }
             StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
             runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
             runFeatures.evaluate();
-            bus.send(new TestRunFinished(bus.getTimeInstant()));
+            bus.send(new TestRunFinished(bus.getInstant()));
         }
     }
 }

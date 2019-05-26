@@ -28,7 +28,7 @@ public class CanonicalEventOrderTest {
 
     private CanonicalEventOrder comparator = new CanonicalEventOrder();
 
-    private static Instant getTimeInstant() {
+    private static Instant getInstant() {
         return Instant.now();
     }
 
@@ -36,17 +36,17 @@ public class CanonicalEventOrderTest {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
         given(testCase.getLine()).willReturn(line);
-        return new TestCaseStarted(getTimeInstant(), testCase);
+        return new TestCaseStarted(getInstant(), testCase);
     }
 
-    private Event runStarted = new TestRunStarted(getTimeInstant());
-    private Event testRead = new TestSourceRead(getTimeInstant(), "uri", "source");
-    private Event suggested = new SnippetsSuggestedEvent(getTimeInstant(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
+    private Event runStarted = new TestRunStarted(getInstant());
+    private Event testRead = new TestSourceRead(getInstant(), "uri", "source");
+    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
     private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
     private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
     private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
     private Event feature2Case1Started = createTestCaseEvent("feature2", 1);
-    private Event runFinished = new TestRunFinished(getTimeInstant());
+    private Event runFinished = new TestRunFinished(getInstant());
 
     @Test
     public void verifyTestRunStartedSortedCorrectly() {

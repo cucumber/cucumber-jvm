@@ -194,7 +194,7 @@ public final class JSONFormatter implements EventListener {
     private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
         
-        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getTimeInstant()));
+        testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
 
         TestCase testCase = event.getTestCase();
 

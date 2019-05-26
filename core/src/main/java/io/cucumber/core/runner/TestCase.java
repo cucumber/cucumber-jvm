@@ -36,7 +36,7 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
 
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
-        Instant startTimeInstant = bus.getTimeInstant();
+        Instant startTimeInstant = bus.getInstant();
         bus.send(new TestCaseStarted(startTimeInstant, this));
         Scenario scenario = new Scenario(bus, this);
 
@@ -52,7 +52,7 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
             after.run(this, bus, scenario, dryRun);
         }
 
-        Instant stopTimeInstant = bus.getTimeInstant();
+        Instant stopTimeInstant = bus.getInstant();
         bus.send(new TestCaseFinished(stopTimeInstant, this, new Result(scenario.getStatus(), Duration.between(startTimeInstant, stopTimeInstant), scenario.getError())));
     }
 

@@ -92,7 +92,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     private void sendTestSourceRead(EventBus bus, CucumberFeature feature) {
-        bus.send(new TestSourceRead(bus.getTimeInstant(), feature.getUri().toString(), feature.getSource()));
+        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
     }
 
     @Test

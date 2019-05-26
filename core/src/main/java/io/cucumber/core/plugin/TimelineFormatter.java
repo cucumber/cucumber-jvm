@@ -222,7 +222,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             final String uri = testCase.getUri();
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = testCase.getName();
-            this.startTime = started.getTimeInstant();
+            this.startTime = started.getInstant();
             this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
         }
@@ -236,7 +236,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
 
         public void end(final TestCaseFinished event) {
-            this.endTime = event.getTimeInstant();
+            this.endTime = event.getInstant();
             this.className = event.result.getStatus().lowerCaseName();
         }
     }

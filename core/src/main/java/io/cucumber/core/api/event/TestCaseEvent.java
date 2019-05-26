@@ -6,12 +6,6 @@ public abstract class TestCaseEvent extends TimeStampedEvent {
 
     private final TestCase testCase;
 
-    @Deprecated
-    TestCaseEvent(Long timeStamp, long timeStampMillis, TestCase testCase) {
-        super(timeStamp, timeStampMillis);
-        this.testCase = testCase;
-    }
-    
     TestCaseEvent(Instant timeInstant, TestCase testCase) {
         super(timeInstant);
         this.testCase = testCase;

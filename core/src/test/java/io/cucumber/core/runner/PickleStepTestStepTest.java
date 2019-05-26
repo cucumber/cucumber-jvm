@@ -66,7 +66,7 @@ public class PickleStepTestStepTest {
 
     @Before
     public void init() {
-        Mockito.when(bus.getTimeInstant()).thenReturn(Instant.now());
+        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
     }
     
     @Test
@@ -238,7 +238,7 @@ public class PickleStepTestStepTest {
     @Test
     public void step_execution_time_is_measured() {
         TestStep step = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
-        when(bus.getTimeInstant()).thenReturn(ofEpochMilli(234L), ofEpochMilli(1234L));
+        when(bus.getInstant()).thenReturn(ofEpochMilli(234L), ofEpochMilli(1234L));
         step.run(testCase, bus, scenario, false);
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
@@ -248,8 +248,8 @@ public class PickleStepTestStepTest {
         TestStepStarted started = (TestStepStarted) allValues.get(0);
         TestStepFinished finished = (TestStepFinished) allValues.get(1);
 
-        assertEquals(ofEpochMilli(234L), started.getTimeInstant());
-        assertEquals(ofEpochMilli(1234L), finished.getTimeInstant());
+        assertEquals(ofEpochMilli(234L), started.getInstant());
+        assertEquals(ofEpochMilli(1234L), finished.getInstant());
         assertEquals(ofMillis(1000L), finished.result.getDuration());
     }
 
