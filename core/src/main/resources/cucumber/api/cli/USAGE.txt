@@ -47,13 +47,13 @@ Options:
   
     
       --order                              Run the scenarios in a different order.
-					                       The various options are 'reverse' and 
-      					                   'random'. For 'random' option you can add
-      					                   the --count option.
+					   The various options are 'reverse' and 
+      					   'random'. For 'random' option you can add
+      					   the --count option.
       					   
       --count                              Number of scenarios selected to run with 
-      					                   'random' order option. If not specified all
-      					                   filtered scenarios are shuffled and run.
+      					   'random' order option. If not specified all
+      					   filtered scenarios are shuffled and run.
 
 Feature path examples:
 
