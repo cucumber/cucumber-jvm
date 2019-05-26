@@ -16,6 +16,7 @@ import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
@@ -29,15 +30,21 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.cucumber.core.api.event.Result.SEVERITY;
 import static java.util.Collections.emptyList;
@@ -50,6 +57,8 @@ import java.time.Clock;
  * This is the main entry point for running Cucumber features from the CLI.
  */
 public final class Runtime {
+
+    private static final Logger log = LoggerFactory.getLogger(Runtime.class);
 
     private final ExitStatus exitStatus;
 
@@ -86,24 +95,38 @@ public final class Runtime {
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
+        final List<Future<?>> executingPickles = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    executor.execute(new Runnable() {
+                    executingPickles.add(executor.submit(new Runnable() {
                         @Override
                         public void run() {
                             runnerSupplier.get().runPickle(pickleEvent);
                         }
-                    });
+                    }));
                 }
             }
         }
+
         executor.shutdown();
-        try {
-            //noinspection StatementWithEmptyBody we wait, nothing else
-            while (!executor.awaitTermination(1, TimeUnit.DAYS)) ;
-        } catch (InterruptedException e) {
-            throw new CucumberException(e);
+
+        List<Throwable> thrown = new ArrayList<>();
+        for (Future executingPickle : executingPickles) {
+            try {
+                executingPickle.get();
+            } catch (ExecutionException e){
+                log.error("Exception while executing pickle", e);
+                thrown.add(e.getCause());
+            } catch (InterruptedException e){
+                executor.shutdownNow();
+                throw new CucumberException(e);
+            }
+        }
+        if(thrown.size() == 1){
+            throw new CucumberException(thrown.get(0));
+        } else if (thrown.size() > 1){
+            throw new CompositeCucumberException(thrown);
         }
 
         bus.send(new TestRunFinished(bus.getTimeInstant()));
@@ -214,7 +237,7 @@ public final class Runtime {
                 : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
-                ? Executors.newFixedThreadPool(runtimeOptions.getThreads())
+                ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
 
@@ -227,6 +250,22 @@ public final class Runtime {
             final Filters filters = new Filters(runtimeOptions);
 
             return new Runtime(plugins, exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor);
+        }
+    }
+
+    private static final class CucumberThreadFactory implements ThreadFactory {
+
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        CucumberThreadFactory() {
+            this.namePrefix = "cucumber-runner-" + poolNumber.getAndIncrement() + "-thread-";
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r, namePrefix + this.threadNumber.getAndIncrement());
         }
     }
 

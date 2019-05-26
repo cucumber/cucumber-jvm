@@ -3,10 +3,10 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -219,6 +219,7 @@
         <module>weld</module>
         <module>openejb</module>
         <module>needle</module>
+        <module>cdi2</module>
     </modules>
 
     <profiles>
