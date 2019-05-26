@@ -30,14 +30,13 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
@@ -389,9 +388,8 @@ public final class JSONFormatter implements EventListener {
     }
     
     private String getDateTimeFromTimeStamp(Instant instant) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        
-        return sdf.format(new Date(instant.toEpochMilli()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                .withZone(ZoneOffset.UTC);
+        return formatter.format(instant);
     }
 }
