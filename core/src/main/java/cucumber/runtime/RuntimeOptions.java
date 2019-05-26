@@ -4,6 +4,8 @@ import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.order.OrderType;
+import cucumber.runtime.order.OrderTypeFactory;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import cucumber.util.FixJava;
@@ -69,6 +71,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
+    private OrderType orderType = OrderTypeFactory.createNoneOrderType();
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
@@ -137,6 +140,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         List<URI> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
+        Map<String, String> orderTypeData = new HashMap<>();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -180,6 +184,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 parsedJunitOptions.addAll(asList(arg.substring("--junit,".length()).split(",")));
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 wip = true;
+            } else if (arg.equals("--order")) {
+            	orderTypeData.put(OrderType.TYPE_NAME, args.remove(0));
+            } else if (arg.equals("--count")) {
+            	orderTypeData.put(OrderType.PROPERTY_COUNT, args.remove(0));
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -213,6 +221,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         if (!parsedJunitOptions.isEmpty()) {
             junitOptions.clear();
             junitOptions.addAll(parsedJunitOptions);
+        }
+        if(orderTypeData.containsKey(OrderType.TYPE_NAME)) {
+        	orderType = OrderTypeFactory.getOrderType(orderTypeData);
+        	orderType.checkVariableValues(orderTypeData);
         }
 
         parsedPluginData.updatePluginFormatterNames(pluginFormatterNames);
@@ -375,6 +387,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     public int getThreads() {
         return threads;
+    }
+    
+    public OrderType getOrderType() {
+    	return orderType;
     }
 
     class ParsedPluginData {

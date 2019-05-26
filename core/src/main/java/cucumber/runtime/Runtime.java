@@ -81,19 +81,24 @@ public class Runtime {
 
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
-
-        final List<Future<?>> executingPickles = new ArrayList<>();
+        
+        final List<PickleEvent> filteredEvents = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    executingPickles.add(executor.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            runnerSupplier.get().runPickle(pickleEvent);
-                        }
-                    }));
+                	filteredEvents.add(pickleEvent);
                 }
             }
+        }
+        
+        final List<Future<?>> executingPickles = new ArrayList<>();
+        for(final PickleEvent pickleEvent : runtimeOptions.getOrderType().orderPickleEvents(filteredEvents)) {        	
+        	executingPickles.add(executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    runnerSupplier.get().runPickle(pickleEvent);
+                }
+            }));
         }
 
         executor.shutdown();
