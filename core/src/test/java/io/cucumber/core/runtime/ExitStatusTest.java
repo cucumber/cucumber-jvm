@@ -17,6 +17,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import java.time.Clock;
 import java.time.Instant;
 
 public class ExitStatusTest {
@@ -43,7 +44,7 @@ public class ExitStatusTest {
 
     private void createExitStatus(String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList(runtimeArgs));
-        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(Clock.systemUTC());
         exitStatus = new Runtime.ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
     }

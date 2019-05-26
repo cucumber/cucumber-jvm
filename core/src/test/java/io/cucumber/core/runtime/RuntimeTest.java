@@ -15,7 +15,9 @@ import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.net.URI;
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.cucumber.core.runner.TimeServiceStub;
+import io.cucumber.core.runner.ClockStub;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -63,7 +65,7 @@ public class RuntimeTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
-    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -91,7 +93,7 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC"))))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();

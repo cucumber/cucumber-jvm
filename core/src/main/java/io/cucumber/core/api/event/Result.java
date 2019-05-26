@@ -21,8 +21,7 @@ public final class Result {
     };
 
     private final Type status;
-    private final Long duration;
-    private final Duration timeDuration;
+    private final Duration duration;
     private final Throwable error;
     public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, ZERO, null);
     public enum Type {
@@ -52,21 +51,12 @@ public final class Result {
      * The result of a step or scenario
      *
      * @param status status of the step or scenario
-     * @param timeDuration the duration in nanoseconds
+     * @param duration the duration
      * @param error the error that caused the failure if any
      */
-    @Deprecated
-    public Result(Result.Type status, Long durationLong, Throwable error) {
-        this.status = requireNonNull(status);
-        this.duration = requireNonNull(durationLong);
-        this.timeDuration = Duration.ZERO;
-        this.error = error;
-    }
-    
     public Result(Result.Type status, Duration duration, Throwable error) {
         this.status = requireNonNull(status);
-        this.duration = 0L;
-        this.timeDuration = requireNonNull(duration);
+        this.duration = requireNonNull(duration);
         this.error = error;
     }
 
@@ -74,13 +64,8 @@ public final class Result {
         return status;
     }
 
-    @Deprecated
-    public Long getDuration() {
+    public Duration getDuration() {
         return duration;
-    }
-
-    public Duration getTimeDuration() {
-        return timeDuration;
     }
     
     public String getErrorMessage() {
@@ -118,7 +103,7 @@ public final class Result {
     public String toString() {
         return "Result{" +
             "status=" + status +
-            ", duration=" + timeDuration.getSeconds() +
+            ", duration=" + duration.getSeconds() +
             ", error=" + error +
             '}';
     }
@@ -129,12 +114,12 @@ public final class Result {
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
         return status == result.status &&
-            Objects.equals(timeDuration, result.timeDuration) &&
+            Objects.equals(duration, result.duration) &&
             Objects.equals(error, result.error);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, timeDuration, error);
+        return Objects.hash(status, duration, error);
     }
 }

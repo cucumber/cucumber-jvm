@@ -40,7 +40,10 @@ import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -319,13 +322,13 @@ public class TestHelper {
         EventBus bus = null;
 
         if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(TimeService.SYSTEM);
+            bus = new TimeServiceEventBus(Clock.systemUTC());
         } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
             final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
             bus = new TimeServiceEventBus(timeService);
             timeService.setEventPublisher(bus);
         } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(new TimeServiceStub(this.timeServiceIncrement));
+            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
         }
         return bus;
     }
@@ -389,7 +392,7 @@ public class TestHelper {
         /**
          * Specifies what type of TimeService to be used by the {@link EventBus}
          * {@link TimeServiceType#REAL_TIME} > {@link TimeService#SYSTEM}
-         * {@link TimeServiceType#FIXED_INCREMENT} > {@link TimeServiceStub}
+         * {@link TimeServiceType#FIXED_INCREMENT} > {@link ClockStub}
          * {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START} > {@link StepDurationTimeService}
          * <p>
          * Defaults to {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}

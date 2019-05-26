@@ -18,6 +18,7 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Clock;
 import java.util.Collections;
 
 import static java.time.Instant.EPOCH;
@@ -42,7 +43,7 @@ public class ThreadLocalRunnerSupplierTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
-        eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
+        eventBus = new TimeServiceEventBus(Clock.systemUTC());
         runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
     }
 

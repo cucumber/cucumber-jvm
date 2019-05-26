@@ -24,6 +24,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.net.URI;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +51,7 @@ public class RunnerTest {
 
 
     private final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
-    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
 
     @Test

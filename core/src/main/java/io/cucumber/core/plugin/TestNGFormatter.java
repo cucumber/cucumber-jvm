@@ -283,10 +283,10 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         private String calculateTotalDurationString() {
             Duration totalDuration = ZERO;
             for (Result r : results) {
-                totalDuration = totalDuration.plus(r.getTimeDuration());
+                totalDuration = totalDuration.plus(r.getDuration());
             }
             for (Result r : hooks) {
-                totalDuration = totalDuration.plus(r.getTimeDuration());
+                totalDuration = totalDuration.plus(r.getDuration());
             }
             return String.valueOf(totalDuration.toMillis());
         }

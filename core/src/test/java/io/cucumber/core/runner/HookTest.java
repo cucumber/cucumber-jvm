@@ -22,6 +22,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.net.URI;
+import java.time.Clock;
 import java.util.Collections;
 
 import static java.util.Collections.emptyList;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class HookTest {
     private final static String ENGLISH = "en";
     private final MultiLoader resoureceLoader = new MultiLoader(RuntimeOptions.class.getClassLoader());
-    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
     private final RuntimeOptions runtimeOptions = new RuntimeOptions(resoureceLoader, Env.INSTANCE, emptyList());
     private final PickleStep pickleStep = new PickleStep("pattern1", Collections.<Argument>emptyList(), singletonList(new PickleLocation(2, 2)));
     private final PickleEvent pickleEvent = new PickleEvent("uri",

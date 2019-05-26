@@ -2,7 +2,6 @@ package io.cucumber.testng.api;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
@@ -13,9 +12,11 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.time.Clock;
+
 public class TestCaseResultListenerTest {
 
-    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Test
     public void should_be_passed_for_passed_result() {

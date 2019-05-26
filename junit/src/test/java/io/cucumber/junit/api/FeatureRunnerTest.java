@@ -6,7 +6,6 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
@@ -19,7 +18,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.InOrder;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -159,11 +160,21 @@ public class FeatureRunnerTest {
 
         final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
 
-        final TimeService timeServiceStub = new TimeService() {
+        final Clock clockStub = new Clock() {
             @Override
-            public Instant timeInstant() {
+            public Instant instant() {
                 return Instant.EPOCH;
             }
+
+			@Override
+			public ZoneId getZone() {
+				return null;
+			}
+
+			@Override
+			public Clock withZone(ZoneId zone) {
+				return null;
+			}
         };
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
@@ -172,7 +183,7 @@ public class FeatureRunnerTest {
             }
         };
 
-        EventBus bus = new TimeServiceEventBus(timeServiceStub);
+        EventBus bus = new TimeServiceEventBus(clockStub);
         Filters filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);

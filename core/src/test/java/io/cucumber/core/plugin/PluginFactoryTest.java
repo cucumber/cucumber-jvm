@@ -7,7 +7,7 @@ import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.TimeServiceStub;
+import io.cucumber.core.runner.ClockStub;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -91,7 +91,7 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
-            EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ZERO));
+            EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, ZERO, null);
             TestStepFinished event = new TestStepFinished(bus.getTimeInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);

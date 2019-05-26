@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.TimeServiceStub;
+import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.Runtime;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class JsonParallelRuntimeTest {
             .withArgs("--threads", "3",
                 "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
             .withAdditionalPlugins(new JSONFormatter(parallel))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
             .build()
             .run();
 
@@ -31,7 +31,7 @@ public class JsonParallelRuntimeTest {
             .withArgs("--threads", "1",
                 "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
             .withAdditionalPlugins(new JSONFormatter(serial))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
             .build()
             .run();
 
@@ -47,7 +47,7 @@ public class JsonParallelRuntimeTest {
                 "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
                 "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
             .withAdditionalPlugins(new JSONFormatter(parallel))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
             .build()
             .run();
 
@@ -59,7 +59,7 @@ public class JsonParallelRuntimeTest {
                 "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
                 "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
             .withAdditionalPlugins(new JSONFormatter(serial))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
             .build()
             .run();
 

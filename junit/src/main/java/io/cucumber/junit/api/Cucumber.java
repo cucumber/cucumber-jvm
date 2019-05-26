@@ -34,6 +34,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
-        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
 
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();

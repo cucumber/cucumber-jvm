@@ -40,7 +40,7 @@ import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.TimeServiceStub;
+import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.Runtime;
 
 public class JSONFormatterTest {
@@ -1175,7 +1175,7 @@ public class JSONFormatterTest {
                 return singletonList("TEST SNIPPET");
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ofMillis(1234L)));
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
 
         Appendable stringBuilder = new StringBuilder();
         
@@ -1212,7 +1212,7 @@ public class JSONFormatterTest {
                 return singletonList("TEST SNIPPET");
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ofMillis(1234L)));
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
 
         Appendable stringBuilder = new StringBuilder();
         

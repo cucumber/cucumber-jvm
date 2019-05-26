@@ -1,18 +1,19 @@
 package io.cucumber.core.runner;
 
+import java.time.Clock;
 import java.time.Instant;
 
 import io.cucumber.core.event.AbstractEventBus;
 
 public final class TimeServiceEventBus extends AbstractEventBus {
-    private final TimeService stopWatch;
+    private final Clock clock;
 
-    public TimeServiceEventBus(TimeService stopWatch) {
-        this.stopWatch = stopWatch;
+    public TimeServiceEventBus(Clock clock) {
+        this.clock = clock;
     }
 
     @Override
     public Instant getTimeInstant() {
-        return stopWatch.timeInstant();
+        return clock.instant();
     }
 }

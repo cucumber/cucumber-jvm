@@ -45,6 +45,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
 
+import java.time.Clock;
+
 /**
  * This is the main entry point for running Cucumber features from the CLI.
  */
@@ -118,7 +120,7 @@ public final class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
+        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         private RuntimeOptions runtimeOptions;
         private BackendSupplier backendSupplier;

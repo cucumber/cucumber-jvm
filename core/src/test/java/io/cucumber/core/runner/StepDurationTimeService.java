@@ -5,10 +5,12 @@ import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestStepStarted;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 
-public class StepDurationTimeService implements TimeService, EventListener {
+public class StepDurationTimeService extends Clock implements EventListener {
 
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
     private final Duration stepDuration;
@@ -29,15 +31,25 @@ public class StepDurationTimeService implements TimeService, EventListener {
         publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
     }
 
-    @Override
-    public Instant timeInstant() {
-        Instant result = currentInstant.get();
-        return result != null ? result : Instant.EPOCH;
+    private void handleTestStepStarted() {
+        Instant timeInstant = instant();
+        currentInstant.set(timeInstant.plus(stepDuration));
     }
 
-    private void handleTestStepStarted() {
-        Instant timeInstant = timeInstant();
-        currentInstant.set(timeInstant.plus(stepDuration));
+    @Override
+    public ZoneId getZone() {
+        return null;
+    }
+
+    @Override
+    public Clock withZone(ZoneId zone) {
+        return null;
+    }
+
+    @Override
+    public Instant instant() {
+        Instant result = currentInstant.get();
+        return result != null ? result : Instant.EPOCH;
     }
 
 }

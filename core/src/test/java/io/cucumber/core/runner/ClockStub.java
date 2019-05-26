@@ -1,18 +1,30 @@
 package io.cucumber.core.runner;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 
-public class TimeServiceStub implements TimeService {
+public class ClockStub extends Clock {
     private final Duration duration;
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
 
-    public TimeServiceStub(Duration duration) {
+    public ClockStub(Duration duration) {
         this.duration = duration;
     }
     
     @Override
-    public Instant timeInstant() {
+    public ZoneId getZone() {
+        return null;
+    }
+
+    @Override
+    public Clock withZone(ZoneId zone) {
+        return null;
+    }
+
+    @Override
+    public Instant instant() {
         Instant result = currentInstant.get();
         result = result != null ? result : Instant.EPOCH;
         currentInstant.set(result.plus(duration));

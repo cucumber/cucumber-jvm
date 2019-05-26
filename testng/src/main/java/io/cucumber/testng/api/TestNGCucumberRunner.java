@@ -27,6 +27,7 @@ import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class TestNGCucumberRunner {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
-        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);

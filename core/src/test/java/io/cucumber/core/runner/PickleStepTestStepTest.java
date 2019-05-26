@@ -250,7 +250,7 @@ public class PickleStepTestStepTest {
 
         assertEquals(ofEpochMilli(234L), started.getTimeInstant());
         assertEquals(ofEpochMilli(1234L), finished.getTimeInstant());
-        assertEquals(ofMillis(1000L), finished.result.getTimeDuration());
+        assertEquals(ofMillis(1000L), finished.result.getDuration());
     }
 
 }

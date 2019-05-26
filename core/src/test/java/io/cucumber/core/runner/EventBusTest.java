@@ -6,6 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import org.junit.Test;
 
 import io.cucumber.core.api.event.EventHandler;
@@ -26,7 +30,7 @@ public class EventBusTest {
         TestCase testCase = mock(TestCase.class);
         TestStepFinished event = new TestStepFinished(EPOCH, testCase, testStep, result);
 
-        EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ZERO));
+        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
@@ -40,7 +44,7 @@ public class EventBusTest {
         TestCase testCase = mock(TestCase.class);
         TestStepStarted event = new TestStepStarted(EPOCH, testCase, testStep);
 
-        EventBus bus = new TimeServiceEventBus(new TimeServiceStub(ZERO));
+        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 

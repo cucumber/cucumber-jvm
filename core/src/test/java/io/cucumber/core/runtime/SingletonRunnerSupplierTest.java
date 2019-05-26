@@ -21,6 +21,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
+import java.time.Clock;
+
 
 public class SingletonRunnerSupplierTest {
 
@@ -34,7 +36,7 @@ public class SingletonRunnerSupplierTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
-        EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
+        EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
         runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
     }
 
