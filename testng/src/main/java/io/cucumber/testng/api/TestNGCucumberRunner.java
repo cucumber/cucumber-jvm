@@ -21,7 +21,6 @@ import io.cucumber.core.options.RuntimeOptionsFactory;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;

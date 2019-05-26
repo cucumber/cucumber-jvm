@@ -8,7 +8,6 @@ import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;

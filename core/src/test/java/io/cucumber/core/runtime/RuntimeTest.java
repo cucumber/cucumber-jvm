@@ -31,13 +31,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.runner.TimeServiceStub;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
