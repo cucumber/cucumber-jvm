@@ -78,7 +78,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -108,7 +108,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("skipped", exception));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -141,7 +141,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("pending"));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("undefined"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -170,7 +170,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -203,7 +203,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -236,7 +236,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("pending")));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -267,7 +267,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -300,7 +300,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -332,7 +332,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -365,7 +365,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -412,7 +412,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"d\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -467,7 +467,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDuration = Duration.ofNanos(1L);
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
