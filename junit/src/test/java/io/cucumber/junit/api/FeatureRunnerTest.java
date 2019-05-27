@@ -169,12 +169,12 @@ public class FeatureRunnerTest {
             @Override
             public ZoneId getZone() {
                 return null;
-			}
+            }
 
             @Override
             public Clock withZone(ZoneId zone) {
                 return null;
-			}
+            }
         };
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
