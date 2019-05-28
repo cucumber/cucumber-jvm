@@ -324,6 +324,17 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property()
+        throws IOException {
+        properties.setProperty("cucumber.options", "--tags @Tag");
+        String rerunPath = "file:path/rerun.txt";
+        String rerunFile = "file:path/file.feature:3\n";
+        mockFileResource(resourceLoader, rerunPath, rerunFile);
+        RuntimeOptions options = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
+        assertThat(options.getFeaturePaths(), contains(uri("file:path/file.feature")));
+    }
+
+    @Test
     public void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("old", "older"));
@@ -468,6 +479,30 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void loads_features_specified_in_rerun_file_with_empty_cucumber_options() throws Exception {
+        properties.put("cucumber.options", "");
+        String rerunPath = "file:path/rerun.txt";
+        String rerunFile = "file:path/bar.feature:2\n";
+        mockFileResource(resourceLoader, rerunPath, rerunFile);
+        RuntimeOptions options = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
+
+        assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature")));
+        assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)));
+    }
+
+    @Test
+    public void clobbers_features_from_rerun_file_specified_in_cli_if_features_specified_in_cucumber_options_property() throws Exception {
+        properties.put("cucumber.options", "file:path/foo.feature");
+        String rerunPath = "file:path/rerun.txt";
+        String rerunFile = "file:path/bar.feature:2\n";
+        mockFileResource(resourceLoader, rerunPath, rerunFile);
+        RuntimeOptions options = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
+
+        assertThat(options.getFeaturePaths(), contains(uri("file:path/foo.feature")));
+        assertThat(options.getLineFilters().size(), is(0));
+    }
+
+    @Test
     public void loads_no_features_when_rerun_file_is_empty() throws Exception {
         String rerunPath = "file:path/rerun.txt";
         String rerunFile = "";
@@ -475,6 +510,14 @@ public class RuntimeOptionsTest {
 
         RuntimeOptions options = new RuntimeOptions(resourceLoader, new Env(properties), singletonList("@" + rerunPath));
 
+        assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
+    }
+
+
+    @Test
+    public void loads_no_features_when_rerun_file_specified_in_cucumber_options_property_is_empty() throws Exception {
+        properties.setProperty("cucumber.options", "@src/test/resources/cucumber/runtime/runtime-options-empty-rerun.txt");
+        RuntimeOptions options = new RuntimeOptions(new Env(properties), singletonList("src/test/resources/cucumber/runtime/formatter"));
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
     }
 

@@ -137,6 +137,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         List<URI> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
         List<String> parsedJunitOptions = new ArrayList<String>();
+        boolean isRerun = false;
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -184,12 +185,17 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
+                isRerun = true;
                 URI rerunFile = FeaturePath.parse(arg.substring(1));
                 processPathWitheLinesFromRerunFile(parsedLineFilters, parsedFeaturePaths, rerunFile);
             } else if (!arg.isEmpty()){
                 FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
                 processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
             }
+        }
+        if (isRerun || !parsedFeaturePaths.isEmpty()){
+            featurePaths.clear();
+            lineFilters.clear();
         }
         if (!parsedTagFilters.isEmpty() || !parsedNameFilters.isEmpty() || !parsedLineFilters.isEmpty()) {
             tagFilters.clear();
@@ -201,7 +207,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 lineFilters.put(path, parsedLineFilters.get(path));
             }
         }
-        if (!parsedFeaturePaths.isEmpty()) {
+        if (!parsedFeaturePaths.isEmpty() ) {
             featurePaths.clear();
             featurePaths.addAll(parsedFeaturePaths);
         }
