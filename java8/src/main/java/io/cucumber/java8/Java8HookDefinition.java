@@ -1,5 +1,6 @@
 package io.cucumber.java8;
 
+import cucumber.runtime.ScenarioScoped;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
@@ -10,12 +11,12 @@ import io.cucumber.java8.api.HookNoArgsBody;
 
 import java.util.Collection;
 
-public class Java8HookDefinition implements HookDefinition {
+public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
     private final TagPredicate tagPredicate;
     private final int order;
     private final long timeoutMillis;
     private final HookNoArgsBody hookNoArgsBody;
-    private final HookBody hookBody;
+    private HookBody hookBody;
     private final StackTraceElement location;
 
     private Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, HookBody hookBody, HookNoArgsBody hookNoArgsBody) {
@@ -66,5 +67,10 @@ public class Java8HookDefinition implements HookDefinition {
     @Override
     public boolean isScenarioScoped() {
         return true;
+    }
+
+    @Override
+    public void disposeScenarioScope() {
+        this.hookBody = null;
     }
 }

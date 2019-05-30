@@ -31,6 +31,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
                 TestRunStarted.class,
             TestSourceRead.class,
             SnippetsSuggestedEvent.class,
+            StepDefinedEvent.class,
             TestCaseEvent.class,
             TestRunFinished.class
         );

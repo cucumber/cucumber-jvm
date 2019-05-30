@@ -1,5 +1,6 @@
 package io.cucumber.java8;
 
+import cucumber.runtime.ScenarioScoped;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
@@ -24,7 +25,7 @@ import static io.cucumber.java8.Java8StepDefinition.ParameterInfo.fromTypes;
 import static java.lang.String.format;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
-public class Java8StepDefinition implements StepDefinition {
+public class Java8StepDefinition implements StepDefinition, ScenarioScoped {
 
     public static <T extends StepdefBody> Java8StepDefinition create(
         String expression, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
@@ -37,7 +38,7 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     private final long timeoutMillis;
-    private final StepdefBody body;
+    private StepdefBody body;
 
     private final StepExpression expression;
     private final StackTraceElement location;
@@ -160,6 +161,11 @@ public class Java8StepDefinition implements StepDefinition {
             }
             return argumentType;
         }
+    }
+
+    @Override
+    public void disposeScenarioScope() {
+        this.body = null;
     }
 
     static class ParameterInfo {

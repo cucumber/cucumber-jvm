@@ -24,7 +24,7 @@ public final class Runner {
 
     private static final Logger log = LoggerFactory.getLogger(Runner.class);
 
-    private final CachingGlue glue = new CachingGlue();
+    private final CachingGlue glue;
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RunnerOptions runnerOptions;
@@ -32,6 +32,7 @@ public final class Runner {
 
     public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, RunnerOptions runnerOptions) {
         this.bus = bus;
+        this.glue = new CachingGlue(bus);
         this.runnerOptions = runnerOptions;
         this.backends = backends;
         this.objectFactory = objectFactory;

@@ -7,6 +7,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -22,8 +23,8 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,11 +32,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.cucumber.core.api.event.StepDefinedEvent;
+import cucumber.runtime.ScenarioScoped;
+import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.runner.StepDurationTimeService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -52,7 +58,6 @@ import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.plugin.Plugin;
 import io.cucumber.core.api.plugin.StepDefinitionReporter;
-import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -90,10 +95,10 @@ public class RuntimeTest {
 
         Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        BackendSupplier backendSupplier = new BackendSupplier() {
+        BackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public Collection<? extends Backend> get() {
-                return singletonList(mock(Backend.class));
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+
             }
         };
         FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
@@ -577,6 +582,83 @@ public class RuntimeTest {
         assertTrue(interruptHit.get());
     }
 
+    @Test
+    public void generates_events_for_glue_and_scenario_scoped_glue() {
+        final CucumberFeature feature = feature("test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: Run a scenario once\n" +
+            "    Given global scoped\n" +
+            "    And scenario scoped\n" +
+            "  Scenario: Then do it again\n" +
+            "    Given global scoped\n" +
+            "    And scenario scoped\n" +
+            "");
+
+        final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
+
+        Plugin eventListener = new EventListener() {
+            @Override
+            public void setEventPublisher(EventPublisher publisher) {
+                publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
+                    @Override
+                    public void receive(StepDefinedEvent event) {
+                        stepDefinedEvents.add(event.stepDefinition);
+                    }
+                });
+            }
+        };
+
+
+        final List<StepDefinition> definedStepDefinitions = new ArrayList<>();
+
+        BackendSupplier backendSupplier = new TestBackendSupplier() {
+
+            private Glue glue;
+
+            @Override
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+                this.glue = glue;
+                final StepDefinition mockedStepDefinition = new MockedStepDefinition();
+                definedStepDefinitions.add(mockedStepDefinition);
+                glue.addStepDefinition(mockedStepDefinition);
+            }
+
+            @Override
+            public void buildWorld() {
+                final StepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
+                definedStepDefinitions.add(mockedScenarioScopedStepDefinition);
+                glue.addStepDefinition(mockedScenarioScopedStepDefinition);
+            }
+        };
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
+            @Override
+            public List<CucumberFeature> get() {
+                return singletonList(feature);
+            }
+        };
+        Runtime.builder()
+            .withBackendSupplier(backendSupplier)
+            .withAdditionalPlugins(eventListener)
+            .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
+            .withEventBus(new TimeServiceEventBus(new StepDurationTimeService(ZERO)))
+            .withFeatureSupplier(featureSupplier)
+            .build()
+            .run();
+
+        assertThat(stepDefinedEvents, equalTo(definedStepDefinitions));
+
+        for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
+            if(stepDefinedEvent instanceof MockedScenarioScopedStepDefinition){
+                MockedScenarioScopedStepDefinition mocked = (MockedScenarioScopedStepDefinition) stepDefinedEvent;
+                assertTrue("Scenario scoped step definition should be disposed of", mocked.disposed);
+            }
+        }
+
+    }
+
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();
 
@@ -616,11 +698,10 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        BackendSupplier backendSupplier = new BackendSupplier() {
+        BackendSupplier backendSupplier = new TestBackendSupplier(){
             @Override
-            public Collection<? extends Backend> get() {
-                Backend backend = mock(Backend.class);
-                return singletonList(backend);
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+
             }
         };
 
@@ -656,5 +737,88 @@ public class RuntimeTest {
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
+    }
+
+    private static final class MockedStepDefinition implements StepDefinition {
+
+        @Override
+        public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
+            return step.getText().equals(getPattern()) ? new ArrayList<>() : null;
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked step definition";
+        }
+
+        @Override
+        public Integer getParameterCount() {
+            return 0;
+        }
+
+        @Override
+        public void execute(Object[] args) {
+
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getPattern() {
+            return "global scoped";
+        }
+
+        @Override
+        public boolean isScenarioScoped() {
+            return true;
+        }
+    }
+
+    private static final class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
+
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
+            return step.getText().equals(getPattern()) ? new ArrayList<>() : null;
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked scenario scoped step definition";
+        }
+
+        @Override
+        public Integer getParameterCount() {
+            return 0;
+        }
+
+        @Override
+        public void execute(Object[] args) {
+
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getPattern() {
+            return "scenario scoped";
+        }
+
+        @Override
+        public boolean isScenarioScoped() {
+            return true;
+        }
     }
 }

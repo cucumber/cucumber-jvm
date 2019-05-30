@@ -11,6 +11,7 @@ public interface EventPublisher {
      * <li>{@link TestRunStarted} - the first event sent.
      * <li>{@link TestSourceRead} - sent for each feature file read, contains the feature file source.
      * <li>{@link SnippetsSuggestedEvent} - sent for each step that could not be matched to a step definition, contains the raw snippets for the step.
+     * <li>{@link StepDefinedEvent} - sent for each step definition as it is loaded, contains the StepDefinition
      * <li>{@link TestCaseStarted} - sent before starting the execution of a Test Case(/Pickle/Scenario), contains the Test Case
      * <li>{@link TestStepStarted} - sent before starting the execution of a Test Step, contains the Test Step
      * <li>{@link EmbedEvent} - calling scenario.embed in a hook triggers this event.

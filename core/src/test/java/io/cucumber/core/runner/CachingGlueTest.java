@@ -10,6 +10,7 @@ import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.event.EventBus;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
@@ -37,17 +38,10 @@ import static org.mockito.Mockito.when;
 
 public class CachingGlueTest {
 
-    private CachingGlue glue;
-
-    @Before
-    public void setUp() {
-        glue = new CachingGlue();
-    }
+    private CachingGlue glue = new CachingGlue(mock(EventBus.class));
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
-        CachingGlue glue = new CachingGlue();
-
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
         when(a.getLocation(true)).thenReturn("foo.bf:10");
