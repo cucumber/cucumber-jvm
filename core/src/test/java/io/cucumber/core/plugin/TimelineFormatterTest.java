@@ -5,12 +5,16 @@ import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.model.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
+import gherkin.deps.com.google.gson.JsonDeserializer;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
@@ -38,9 +41,13 @@ public class TimelineFormatterTest {
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/core/plugin/timeline";
     private static final String REPORT_JS = "report.js";
-    private static final long STEP_DURATION_MS = 1000;
+    private static final Duration STEP_DURATION = Duration.ofMillis(1000);
 
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json,
+            type, jsonDeserializationContext) -> {
+                    return json.isJsonObject() ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong()) : Instant.ofEpochMilli(json.getAsLong());
+            }).create();
+    
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
@@ -128,7 +135,7 @@ public class TimelineFormatterTest {
             .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath(), "--threads", "3")
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(TimeUnit.MILLISECONDS.toNanos(STEP_DURATION_MS))
+            .withTimeServiceIncrement(STEP_DURATION)
             .build()
             .run();
 
@@ -233,7 +240,7 @@ public class TimelineFormatterTest {
             .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath())
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(STEP_DURATION_MS)
+            .withTimeServiceIncrement(STEP_DURATION)
             .build()
             .run();
     }

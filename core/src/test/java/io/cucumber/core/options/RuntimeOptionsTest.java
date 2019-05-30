@@ -11,7 +11,6 @@ import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -26,6 +25,7 @@ import org.mockito.junit.MockitoRule;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
@@ -148,35 +148,35 @@ public class RuntimeOptionsTest {
     @Test
     public void creates_html_formatter() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.HTMLFormatter"));
     }
 
     @Test
     public void creates_progress_formatter_as_default() {
         RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.ProgressFormatter"));
     }
 
     @Test
     public void creates_progress_formatter_when_no_formatter_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "io.cucumber.core.plugin.AnyStepDefinitionReporter", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.ProgressFormatter")));
     }
 
     @Test
     public void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "pretty", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
     }
 
     @Test
     public void creates_null_summary_printer() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "null_summary", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter")));
         assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))));
     }
@@ -344,7 +344,7 @@ public class RuntimeOptionsTest {
     public void clobbers_formatter_plugins_from_cli_if_formatters_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")));
         assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))));
     }
@@ -353,7 +353,7 @@ public class RuntimeOptionsTest {
     public void adds_to_formatter_plugins_with_add_plugin_option() {
         properties.setProperty("cucumber.options", "--add-plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter")));
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")));
     }
@@ -362,7 +362,7 @@ public class RuntimeOptionsTest {
     public void clobbers_summary_plugins_from_cli_if_summary_printer_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
         assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))));
     }
@@ -371,7 +371,7 @@ public class RuntimeOptionsTest {
     public void adds_to_summary_plugins_with_add_plugin_option() {
         properties.setProperty("cucumber.options", "--add-plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter")));
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
     }
@@ -380,7 +380,7 @@ public class RuntimeOptionsTest {
     public void does_not_clobber_plugins_of_different_type_when_specifying_plugins_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "pretty", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")));
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
     }
@@ -420,7 +420,7 @@ public class RuntimeOptionsTest {
     @Test
     public void set_monochrome_on_color_aware_formatters() {
         RuntimeOptions options = new RuntimeOptions(new Env(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertThat(formatter.isMonochrome(), is(true));
     }
@@ -428,7 +428,7 @@ public class RuntimeOptionsTest {
     @Test
     public void set_strict_on_strict_aware_formatters() {
         RuntimeOptions options = new RuntimeOptions(new Env(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
         AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertThat(formatter.isStrict(), is(true));
 

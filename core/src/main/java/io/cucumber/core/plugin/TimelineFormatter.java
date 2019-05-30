@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -203,9 +204,9 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         @SerializedName("scenario")
         final String scenario;
         @SerializedName("start")
-        final long startTime;
+        final Instant startTime;
         @SerializedName("end")
-        long endTime;
+        Instant endTime;
         @SerializedName("group")
         final long threadId;
         @SerializedName("content")
@@ -221,7 +222,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             final String uri = testCase.getUri();
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = testCase.getName();
-            this.startTime = started.getTimeStampMillis();
+            this.startTime = started.getInstant();
             this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
         }
@@ -235,7 +236,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
 
         public void end(final TestCaseFinished event) {
-            this.endTime = event.getTimeStampMillis();
+            this.endTime = event.getInstant();
             this.className = event.result.getStatus().lowerCaseName();
         }
     }

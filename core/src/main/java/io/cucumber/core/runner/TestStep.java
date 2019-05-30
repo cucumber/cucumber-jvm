@@ -8,6 +8,8 @@ import io.cucumber.core.api.event.TestStepStarted;
 import io.cucumber.core.backend.StepDefinitionMatch;
 import io.cucumber.core.event.EventBus;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 
 abstract class TestStep implements io.cucumber.core.api.event.TestStep {
@@ -42,9 +44,8 @@ abstract class TestStep implements io.cucumber.core.api.event.TestStep {
      * @return true iff subsequent skippable steps should be skipped
      */
     boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
-        Long startTimeMillis = bus.getTimeMillis();
-        Long startTimeNanos = bus.getTime();
-        bus.send(new TestStepStarted(startTimeNanos, startTimeMillis, testCase, this));
+        Instant startTimeMillis = bus.getInstant();
+        bus.send(new TestStepStarted(startTimeMillis, testCase, this));
         Result.Type status;
         Throwable error = null;
         try {
@@ -53,11 +54,10 @@ abstract class TestStep implements io.cucumber.core.api.event.TestStep {
             error = t;
             status = mapThrowableToStatus(t);
         }
-        Long stopTimeNanos = bus.getTime();
-        Long stopTimeMillis = bus.getTimeMillis();
-        Result result = mapStatusToResult(status, error, stopTimeNanos - startTimeNanos);
+        Instant stopTimeNanos = bus.getInstant();
+        Result result = mapStatusToResult(status, error, Duration.between(startTimeMillis, stopTimeNanos));
         scenario.add(result);
-        bus.send(new TestStepFinished(stopTimeNanos, stopTimeMillis, testCase, this, result));
+        bus.send(new TestStepFinished(stopTimeNanos, testCase, this, result));
         return !result.is(Result.Type.PASSED);
     }
 
@@ -87,7 +87,7 @@ abstract class TestStep implements io.cucumber.core.api.event.TestStep {
         return Result.Type.FAILED;
     }
 
-    private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
+    private Result mapStatusToResult(Result.Type status, Throwable error, Duration duration) {
         if (status == Result.Type.UNDEFINED) {
             return Result.UNDEFINED;
         }

@@ -10,6 +10,8 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.core.event.EventBus;
 
 import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +36,8 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
 
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
-        Long startTimeMillis = bus.getTimeMillis();
-        Long startTimeNanos = bus.getTime();
-        bus.send(new TestCaseStarted(startTimeNanos, startTimeMillis, this));
+        Instant startTimeInstant = bus.getInstant();
+        bus.send(new TestCaseStarted(startTimeInstant, this));
         Scenario scenario = new Scenario(bus, this);
 
         for (HookTestStep before : beforeHooks) {
@@ -51,9 +52,8 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
             after.run(this, bus, scenario, dryRun);
         }
 
-        Long stopTimeNanos = bus.getTime();
-        Long stopTimeMillis = bus.getTimeMillis();
-        bus.send(new TestCaseFinished(stopTimeNanos, stopTimeMillis, this, new Result(scenario.getStatus(), stopTimeNanos - startTimeNanos, scenario.getError())));
+        Instant stopTimeInstant = bus.getInstant();
+        bus.send(new TestCaseFinished(stopTimeInstant, this, new Result(scenario.getStatus(), Duration.between(startTimeInstant, stopTimeInstant), scenario.getError())));
     }
 
     @Override

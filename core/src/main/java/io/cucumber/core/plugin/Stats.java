@@ -15,6 +15,8 @@ import io.cucumber.core.api.plugin.StrictAware;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -26,8 +28,8 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();
-    private long startTime = 0;
-    private long totalDuration = 0;
+    private Instant startTime = Instant.EPOCH;
+    private Duration totalDuration = Duration.ZERO;
     private Formats formats = new AnsiFormats();
     private Locale locale;
     private final List<String> failedScenarios = new ArrayList<String>();
@@ -38,7 +40,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     private final EventHandler<TestRunStarted> testRunStartedHandler = new EventHandler<TestRunStarted>() {
         @Override
         public void receive(TestRunStarted event) {
-            setStartTime(event.getTimeStamp());
+            setStartTime(event.getInstant());
         }
     };
     private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
@@ -62,7 +64,7 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     private final EventHandler<TestRunFinished> testRunFinishedHandler = new EventHandler<TestRunFinished>() {
         @Override
         public void receive(TestRunFinished event) {
-            setFinishTime(event.getTimeStamp());
+            setFinishTime(event.getInstant());
         }
     };
     private boolean strict;
@@ -150,9 +152,9 @@ public class Stats implements EventListener, ColorAware, StrictAware {
     }
 
     private void printDuration(PrintStream out) {
-        out.print(String.format("%dm", (totalDuration / ONE_MINUTE)));
+        out.print(String.format("%dm", (totalDuration.toNanos() / ONE_MINUTE)));
         DecimalFormat format = new DecimalFormat("0.000", new DecimalFormatSymbols(locale));
-        out.println(format.format(((double) (totalDuration % ONE_MINUTE)) / ONE_SECOND) + "s");
+        out.println(format.format(((double) (totalDuration.toNanos() % ONE_MINUTE) / ONE_SECOND)) + "s");
     }
 
     private void printNonZeroResultScenarios(PrintStream out) {
@@ -189,12 +191,12 @@ public class Stats implements EventListener, ColorAware, StrictAware {
         errors.add(error);
     }
 
-    void setStartTime(Long startTime) {
+    void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
-    void setFinishTime(Long finishTime) {
-        this.totalDuration = finishTime - startTime;
+    void setFinishTime(Instant finishTime) {
+        this.totalDuration = Duration.between(startTime, finishTime);
     }
 
     private void addResultToSubCount(SubCounts subCounts, Result.Type resultStatus) {

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,8 @@ import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
 
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ZERO;
+import static java.time.Duration.ofMillis;
 import static org.junit.Assert.assertTrue;
 
 public final class TestNGFormatterTest {
@@ -32,7 +35,7 @@ public final class TestNGFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private Long stepDurationMillis = null;
+    private Duration stepDuration = null;
 
     @Test
     public final void testScenarioWithUndefinedSteps() throws Throwable {
@@ -43,7 +46,7 @@ public final class TestNGFormatterTest {
                 "    Then step\n");
         features.add(feature);
         stepsToResult.put("step", result("undefined"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -67,7 +70,7 @@ public final class TestNGFormatterTest {
                 "    Then step\n");
         features.add(feature);
         stepsToResult.put("step", result("undefined"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(true);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -99,7 +102,7 @@ public final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step1", result("pending"));
         stepsToResult.put("step2", result("skipped"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -124,7 +127,7 @@ public final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step1", result("failed", new TestNGException("message", "stacktrace")));
         stepsToResult.put("step2", result("skipped"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -155,7 +158,7 @@ public final class TestNGFormatterTest {
                 "    Then step\n");
         features.add(feature);
         stepsToResult.put("step", result("passed"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -183,7 +186,7 @@ public final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("background", result("undefined"));
         stepsToResult.put("step", result("undefined"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -211,7 +214,7 @@ public final class TestNGFormatterTest {
                 "    |  2  |\n");
         features.add(feature);
         stepsToResult.put("step", result("undefined"));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -247,7 +250,7 @@ public final class TestNGFormatterTest {
         stepsToResult.put("step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        stepDurationMillis = 1L;
+        stepDuration = ofMillis(1);
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -276,7 +279,7 @@ public final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("failed", new TestNGException("message", "stacktrace"))));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -308,7 +311,7 @@ public final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed", new TestNGException("message", "stacktrace"))));
-        stepDurationMillis = 0L;
+        stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
@@ -357,7 +360,7 @@ public final class TestNGFormatterTest {
             .withHooks(hooks)
             .withHookLocations(hookLocations)
             .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDurationMillis)
+            .withTimeServiceIncrement(stepDuration)
             .build()
             .run();
 

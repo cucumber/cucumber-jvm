@@ -11,9 +11,9 @@ import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,29 +28,25 @@ public class CanonicalEventOrderTest {
 
     private CanonicalEventOrder comparator = new CanonicalEventOrder();
 
-    static long getTime() {
-        return new Date().getTime();
-    }
-    
-    private static long getTimeStampMillis() {
-        return System.currentTimeMillis();
+    private static Instant getInstant() {
+        return Instant.now();
     }
 
     static Event createTestCaseEvent(final String uri, final int line) {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
         given(testCase.getLine()).willReturn(line);
-        return new TestCaseStarted(getTime(), getTimeStampMillis(), testCase);
+        return new TestCaseStarted(getInstant(), testCase);
     }
 
-    private Event runStarted = new TestRunStarted(getTime(), getTimeStampMillis());
-    private Event testRead = new TestSourceRead(getTime(), getTimeStampMillis(), "uri", "source");
-    private Event suggested = new SnippetsSuggestedEvent(getTime(), getTimeStampMillis(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
+    private Event runStarted = new TestRunStarted(getInstant());
+    private Event testRead = new TestSourceRead(getInstant(), "uri", "source");
+    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
     private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
     private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
     private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
     private Event feature2Case1Started = createTestCaseEvent("feature2", 1);
-    private Event runFinished = new TestRunFinished(getTime(), getTimeStampMillis());
+    private Event runFinished = new TestRunFinished(getInstant());
 
     @Test
     public void verifyTestRunStartedSortedCorrectly() {

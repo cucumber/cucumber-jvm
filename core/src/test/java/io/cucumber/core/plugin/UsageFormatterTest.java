@@ -10,10 +10,13 @@ import org.mockito.Mockito;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.Duration.ZERO;
+import static java.time.Duration.ofMillis;
+import static java.time.Instant.EPOCH;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -37,8 +40,8 @@ public class UsageFormatterTest {
     public void resultWithoutSkippedSteps() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = new Result(Result.Type.FAILED, 0L, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), mockTestStep(), result));
+        Result result = new Result(Result.Type.FAILED, ZERO, null);
+        usageFormatter.handleTestStepFinished(new TestStepFinished(EPOCH, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -48,10 +51,10 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         TestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, 12345L, null);
+        Result result = new Result(Result.Type.PASSED, ofMillis(12345L), null);
 
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -59,7 +62,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).name, "step");
         assertEquals(durationEntries.get(0).durations.size(), 1);
-        assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.valueOf(12345));
+        assertEquals(durationEntries.get(0).durations.get(0).duration, Duration.ofMillis(12345));
     }
 
     @Test
@@ -68,9 +71,9 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         TestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, 0L, null);
+        Result result = new Result(Result.Type.PASSED, ZERO, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -78,7 +81,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).name, "step");
         assertEquals(durationEntries.get(0).durations.size(), 1);
-        assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.ZERO);
+        assertEquals(durationEntries.get(0).durations.get(0).duration, Duration.ZERO);
     }
 
     @Test
@@ -87,9 +90,9 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         PickleStepTestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, 0L, null);
+        Result result = new Result(Result.Type.PASSED, ZERO, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(0L, 0L, mock(TestCase.class), testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -97,7 +100,7 @@ public class UsageFormatterTest {
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0).name, "step");
         assertEquals(durationEntries.get(0).durations.size(), 1);
-        assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.ZERO);
+        assertEquals(durationEntries.get(0).durations.get(0).duration, Duration.ZERO);
     }
 
     @Test
@@ -107,7 +110,7 @@ public class UsageFormatterTest {
 
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
-        stepDuration.duration = BigDecimal.valueOf(12345678L);
+        stepDuration.duration = ofMillis(12345678L);
         stepDuration.location = "location.feature";
         stepContainer.durations = asList(stepDuration);
 
@@ -115,7 +118,7 @@ public class UsageFormatterTest {
 
         usageFormatter.finishReport();
 
-        assertThat(out.toString(), containsString("0.012345678"));
+        assertThat(out.toString(), containsString("12345"));
     }
 
     @Test
@@ -125,20 +128,20 @@ public class UsageFormatterTest {
 
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
-        stepDuration.duration = BigDecimal.valueOf(12345678L);
+        stepDuration.duration = ofMillis(12345678L);
         stepDuration.location = "location.feature";
         stepContainer.durations = asList(stepDuration);
 
         usageFormatter.usageMap.put("aStep", asList(stepContainer));
 
         UsageFormatter.UsageStatisticStrategy usageStatisticStrategy = mock(UsageFormatter.UsageStatisticStrategy.class);
-        when(usageStatisticStrategy.calculate(asList(12345678L))).thenReturn(23456L);
+        when(usageStatisticStrategy.calculate(asList(ofMillis(12345678L)))).thenReturn(ofMillis(23456L));
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
 
         usageFormatter.finishReport();
 
-        assertThat(out.toString(), containsString("0.000023456"));
-        assertThat(out.toString(), containsString("0.012345678"));
+        assertThat(out.toString(), containsString("12345"));
+        assertThat(out.toString(), containsString("12345"));
     }
 
     private PickleStepTestStep mockTestStep() {

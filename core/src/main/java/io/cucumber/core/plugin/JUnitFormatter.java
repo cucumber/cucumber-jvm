@@ -12,6 +12,7 @@ import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.api.plugin.StrictAware;
 import io.cucumber.core.exception.CucumberException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -25,6 +26,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -39,6 +43,7 @@ import java.util.Locale;
 
 public final class JUnitFormatter implements EventListener, StrictAware {
 
+    private static final long NANOS_PER_SECONDS = SECONDS.toNanos(1L);
     private final Writer writer;
     private final Document document;
     private final Element rootElement;
@@ -264,7 +269,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         private String calculateTotalDurationString(Result result) {
             DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
             numberFormat.applyPattern("0.######");
-            return numberFormat.format(((double) result.getDuration()) / 1000000000);
+            return numberFormat.format(((double) result.getDuration().toNanos() / NANOS_PER_SECONDS));
         }
 
         private void addStepAndResultListing(StringBuilder sb) {

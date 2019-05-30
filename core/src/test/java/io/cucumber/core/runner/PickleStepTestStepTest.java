@@ -10,11 +10,14 @@ import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.event.EventBus;
 import org.junit.AssumptionViolatedException;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +26,9 @@ import static io.cucumber.core.api.event.HookType.BeforeStep;
 import static io.cucumber.core.api.event.Result.Type.FAILED;
 import static io.cucumber.core.api.event.Result.Type.PASSED;
 import static io.cucumber.core.api.event.Result.Type.SKIPPED;
+import static java.time.Duration.ZERO;
+import static java.time.Duration.ofMillis;
+import static java.time.Instant.ofEpochMilli;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -58,6 +64,11 @@ public class PickleStepTestStepTest {
         definitionMatch
     );
 
+    @Before
+    public void init() {
+        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
+    }
+    
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
         step.run(testCase, bus, scenario, false);
@@ -112,7 +123,7 @@ public class PickleStepTestStepTest {
     public void result_is_result_from_hook_when_before_step_hook_does_not_pass() throws Throwable {
         Exception exception = new RuntimeException();
         doThrow(exception).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
-        Result failure = new Result(Result.Type.FAILED, 0L, exception);
+        Result failure = new Result(Result.Type.FAILED, ZERO, exception);
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
         assertEquals(FAILED, scenario.getStatus());
@@ -126,7 +137,7 @@ public class PickleStepTestStepTest {
     @Test
     public void result_is_result_from_step_when_step_hook_does_not_pass() throws Throwable {
         RuntimeException runtimeException = new RuntimeException();
-        Result failure = new Result(Result.Type.FAILED, 0L, runtimeException);
+        Result failure = new Result(Result.Type.FAILED, ZERO, runtimeException);
         doThrow(runtimeException).when(definitionMatch).runStep(any(Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
@@ -141,7 +152,7 @@ public class PickleStepTestStepTest {
     @Test
     public void result_is_result_from_hook_when_after_step_hook_does_not_pass() throws Throwable {
         Exception exception = new RuntimeException();
-        Result failure = new Result(Result.Type.FAILED, 0L, exception);
+        Result failure = new Result(Result.Type.FAILED, ZERO, exception);
         doThrow(exception).when(afterHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
@@ -227,7 +238,7 @@ public class PickleStepTestStepTest {
     @Test
     public void step_execution_time_is_measured() {
         TestStep step = new PickleStepTestStep("uri", mock(PickleStep.class), definitionMatch);
-        when(bus.getTime()).thenReturn(234L, (Long) 1234L);
+        when(bus.getInstant()).thenReturn(ofEpochMilli(234L), ofEpochMilli(1234L));
         step.run(testCase, bus, scenario, false);
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
@@ -237,9 +248,9 @@ public class PickleStepTestStepTest {
         TestStepStarted started = (TestStepStarted) allValues.get(0);
         TestStepFinished finished = (TestStepFinished) allValues.get(1);
 
-        assertEquals((Long) 234L, started.getTimeStamp());
-        assertEquals((Long) 1234L, finished.getTimeStamp());
-        assertEquals((Long) 1000L, finished.result.getDuration());
+        assertEquals(ofEpochMilli(234L), started.getInstant());
+        assertEquals(ofEpochMilli(1234L), finished.getInstant());
+        assertEquals(ofMillis(1000L), finished.result.getDuration());
     }
 
 }

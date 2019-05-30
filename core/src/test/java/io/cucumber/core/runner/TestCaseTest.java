@@ -9,9 +9,13 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.event.EventBus;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
+import java.time.Instant;
 import java.util.Collections;
 
 import static io.cucumber.core.api.event.HookType.AfterStep;
@@ -34,6 +38,11 @@ public class TestCaseTest {
     private HookDefinition beforeStep1HookDefinition1 = mock(HookDefinition.class);
     private HookDefinition afterStep1HookDefinition1 = mock(HookDefinition.class);
 
+    @Before
+    public void init() {
+        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
+    }
+    
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
         "uri",
         mock(PickleStep.class),

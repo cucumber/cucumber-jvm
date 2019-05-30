@@ -13,13 +13,14 @@ import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Clock;
 import java.util.Collections;
 
+import static java.time.Instant.EPOCH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotSame;
@@ -41,7 +42,7 @@ public class ThreadLocalRunnerSupplierTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
-        eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
+        eventBus = new TimeServiceEventBus(Clock.systemUTC());
         runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
     }
 
@@ -98,6 +99,6 @@ public class ThreadLocalRunnerSupplierTest {
                 fail();
             }
         });
-        eventBus.send(new TestCaseStarted(0L, 0L, null));
+        eventBus.send(new TestCaseStarted(EPOCH, null));
     }
 }

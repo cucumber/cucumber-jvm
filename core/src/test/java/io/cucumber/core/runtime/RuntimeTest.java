@@ -2,6 +2,7 @@ package io.cucumber.core.runtime;
 
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ZERO;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -18,6 +19,9 @@ import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.net.URI;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +36,6 @@ import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.runner.TimeServiceStub;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -63,15 +66,14 @@ import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
 public class RuntimeTest {
-    private final static long ANY_TIMESTAMP = 1234567890;
+    private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
-    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -99,7 +101,7 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
             .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
-            .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
+            .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC"))))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();
@@ -653,6 +655,6 @@ public class RuntimeTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
-        return new TestCaseFinished(ANY_TIMESTAMP, ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, 0L, null));
+        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 }

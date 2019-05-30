@@ -5,13 +5,9 @@ import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -37,10 +33,9 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
 
 /**
  * <p>
@@ -99,7 +94,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
-        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
 
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
@@ -144,14 +139,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
-            bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
+            bus.send(new TestRunStarted(bus.getInstant()));
             for (CucumberFeature feature : features) {
-                bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+                bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
             }
             StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
             runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
             runFeatures.evaluate();
-            bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
+            bus.send(new TestRunFinished(bus.getInstant()));
         }
     }
 }

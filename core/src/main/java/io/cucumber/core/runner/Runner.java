@@ -82,7 +82,7 @@ public final class Runner {
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {
-                        bus.send(new SnippetsSuggestedEvent(bus.getTime(), bus.getTimeMillis(), pickleEvent.uri, step.getLocations(), snippets));
+                        bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickleEvent.uri, step.getLocations(), snippets));
                     }
                     match = new UndefinedPickleStepDefinitionMatch(step);
                 }

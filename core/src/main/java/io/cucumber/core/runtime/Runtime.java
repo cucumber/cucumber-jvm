@@ -29,7 +29,6 @@ import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -51,6 +50,8 @@ import static io.cucumber.core.api.event.Result.SEVERITY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
+
+import java.time.Clock;
 
 /**
  * This is the main entry point for running Cucumber features from the CLI.
@@ -87,9 +88,9 @@ public final class Runtime {
 
     public void run() {
         final List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
+        bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), bus.getTimeMillis(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
@@ -128,7 +129,7 @@ public final class Runtime {
             throw new CompositeCucumberException(thrown);
         }
 
-        bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
+        bus.send(new TestRunFinished(bus.getInstant()));
     }
 
     public byte exitStatus() {
@@ -141,7 +142,7 @@ public final class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
+        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         private RuntimeOptions runtimeOptions;
         private BackendSupplier backendSupplier;

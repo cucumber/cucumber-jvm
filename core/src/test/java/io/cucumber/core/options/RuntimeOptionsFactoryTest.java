@@ -3,7 +3,6 @@ package io.cucumber.core.options;
 import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.api.plugin.Plugin;
 import io.cucumber.core.api.options.SnippetType;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
@@ -12,6 +11,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.net.URI;
+import java.time.Clock;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -50,7 +50,7 @@ public class RuntimeOptionsFactoryTest {
         assertFalse(runtimeOptions.isStrict());
         assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options")));
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), runtimeOptions);
 
         assertThat(plugins.getPlugins(), hasSize(2));
         assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter");
@@ -65,7 +65,7 @@ public class RuntimeOptionsFactoryTest {
     public void create_without_options_with_base_class_without_options() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), runtimeOptions);
         assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options")));
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")));
 
@@ -111,7 +111,7 @@ public class RuntimeOptionsFactoryTest {
     public void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoSummaryPrinterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions);
+        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), runtimeOptions);
         assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
     }
 
@@ -119,7 +119,7 @@ public class RuntimeOptionsFactoryTest {
     public void inherit_plugin_from_baseclass() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        List<Plugin> plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), runtimeOptions).getPlugins();
+        List<Plugin> plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), runtimeOptions).getPlugins();
         assertPluginExists(plugins, "io.cucumber.core.plugin.JSONFormatter");
         assertPluginExists(plugins, "io.cucumber.core.plugin.PrettyFormatter");
     }

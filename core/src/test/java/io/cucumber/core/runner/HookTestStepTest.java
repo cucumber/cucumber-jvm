@@ -7,9 +7,13 @@ import io.cucumber.core.api.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.event.EventBus;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
+import java.time.Instant;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -34,6 +38,11 @@ public class HookTestStepTest {
     private final Scenario scenario = new Scenario(bus, testCase);
     private HookTestStep step = new HookTestStep(HookType.AfterStep, definitionMatch);
 
+    @Before
+    public void init() {
+        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
+    }
+    
     @Test
     public void run_does_run() throws Throwable {
         step.run(testCase, bus, scenario, false);

@@ -21,12 +21,12 @@ import io.cucumber.core.options.RuntimeOptionsFactory;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class TestNGCucumberRunner {
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
-        this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
@@ -82,7 +82,7 @@ public class TestNGCucumberRunner {
     }
 
     public void finish() {
-        bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
+        bus.send(new TestRunFinished(bus.getInstant()));
     }
 
     /**
@@ -109,9 +109,9 @@ public class TestNGCucumberRunner {
 
     List<CucumberFeature> getFeatures() {
         List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
+        bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), bus.getTimeMillis(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
         StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);

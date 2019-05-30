@@ -23,7 +23,7 @@ public class TestFeatureSupplier implements FeatureSupplier {
     @Override
     public List<CucumberFeature> get() {
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getTime(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
         return features;
     }

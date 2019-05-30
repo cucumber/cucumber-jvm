@@ -1,6 +1,9 @@
 package io.cucumber.core.plugin;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.time.Duration.ofHours;
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofSeconds;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -10,14 +13,13 @@ import io.cucumber.core.api.event.Result;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.time.Instant;
 import java.util.Locale;
 
 import org.junit.Test;
 
 public class StatsTest {
-    private static final long ANY_TIME = 1234567890;
-    private static final long ONE_MILLI_SECOND = MILLISECONDS.toNanos(1);
-    private static final long ONE_HOUR = 60 * Stats.ONE_MINUTE;
+    private static final Instant ANY_TIME = Instant.ofEpochMilli(1234567890);
 
     @Test
     public void should_print_zero_scenarios_zero_steps_if_nothing_has_executed() {
@@ -106,7 +108,7 @@ public class StatsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
-        counter.setFinishTime(ANY_TIME + 4*ONE_MILLI_SECOND);
+        counter.setFinishTime(ANY_TIME.plus(ofMillis(4)));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -119,7 +121,7 @@ public class StatsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
-        counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
+        counter.setFinishTime(ANY_TIME.plus(ofMinutes(1)).plus(ofSeconds(1)).plus(ofMillis(1)));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -132,7 +134,7 @@ public class StatsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
-        counter.setFinishTime(ANY_TIME + ONE_HOUR + Stats.ONE_MINUTE);
+        counter.setFinishTime(ANY_TIME.plus(ofHours(1)).plus(ofMinutes(1)));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -146,7 +148,7 @@ public class StatsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
-        counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
+        counter.setFinishTime(ANY_TIME.plus(ofMinutes(1)).plus(ofSeconds(1)).plus(ofMillis(1)));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format("1m1,001s%n")));

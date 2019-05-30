@@ -1,5 +1,7 @@
 package io.cucumber.core.api.event;
 
+import java.time.Instant;
+
 /**
  * A test step started event is broadcast when ever a step starts.
  * <p>
@@ -20,13 +22,8 @@ package io.cucumber.core.api.event;
 public final class TestStepStarted extends TestCaseEvent {
     public final TestStep testStep;
 
-    @Deprecated
-    public TestStepStarted(Long timeStamp, TestCase testCase, TestStep testStep) {
-        this(timeStamp, 0, testCase, testStep);
-    }
-
-    public TestStepStarted(Long timeStamp, long timeStampMillis, TestCase testCase, TestStep testStep) {
-        super(timeStamp, timeStampMillis, testCase);
+    public TestStepStarted(Instant timeInstant, TestCase testCase, TestStep testStep) {
+        super(timeInstant, testCase);
         this.testStep = testStep;
     }
 

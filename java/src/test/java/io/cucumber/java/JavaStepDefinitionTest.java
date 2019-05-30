@@ -3,14 +3,12 @@ package io.cucumber.java;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java.api.en.Given;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.AmbiguousStepDefinitionsException;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendSupplier;
@@ -29,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -77,7 +76,7 @@ public class JavaStepDefinitionTest {
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(objectFactory, resourceLoader, typeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
-        EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override
             public Collection<? extends Backend> get() {

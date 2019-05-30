@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ZERO;
 import static org.junit.Assert.assertEquals;
 
 public class RerunFormatterTest {
@@ -211,7 +212,7 @@ public class RerunFormatterTest {
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withHooks(hooks)
-            .withTimeServiceIncrement(0L)
+            .withTimeServiceIncrement(ZERO)
             .build()
             .run();
 

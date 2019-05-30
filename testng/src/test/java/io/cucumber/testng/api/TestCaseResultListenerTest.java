@@ -2,20 +2,21 @@ package io.cucumber.testng.api;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runner.TimeService;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.mock;
+import static java.time.Duration.ZERO;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.time.Clock;
+
 public class TestCaseResultListenerTest {
 
-    private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Test
     public void should_be_passed_for_passed_result() {
@@ -100,27 +101,27 @@ public class TestCaseResultListenerTest {
     }
 
     private Result mockPassedResult() {
-        return new Result(Result.Type.PASSED, 0L, null);
+        return new Result(Result.Type.PASSED, ZERO, null);
     }
 
     private Result mockSkippedResult() {
-        return new Result(Result.Type.SKIPPED, 0L, null);
+        return new Result(Result.Type.SKIPPED, ZERO, null);
     }
 
     private Result mockUndefinedResult() {
-        return new Result(Result.Type.UNDEFINED, 0L, null);
+        return new Result(Result.Type.UNDEFINED, ZERO, null);
     }
 
     private Result mockFailedResult() {
-        return new Result(Result.Type.FAILED, 0L, new Exception());
+        return new Result(Result.Type.FAILED, ZERO, new Exception());
     }
 
     private Result mockAmbiguousResult() {
-        return new Result(Result.Type.AMBIGUOUS, 0L, new Exception());
+        return new Result(Result.Type.AMBIGUOUS, ZERO, new Exception());
     }
 
     private Result mockPendingResult() {
-        return new Result(Result.Type.PENDING, 0L, new TestPendingException());
+        return new Result(Result.Type.PENDING, ZERO, new TestPendingException());
     }
 
 }

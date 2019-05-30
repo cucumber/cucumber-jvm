@@ -1,30 +1,24 @@
 package io.cucumber.core.api.event;
 
+import java.time.Instant;
+
 abstract class TimeStampedEvent implements Event {
 
-    private final Long timeStamp;
-    private final long timeStampMillis;
+    private final Instant instant;
 
-    TimeStampedEvent(Long timeStamp, Long timeStampMillis) {
-        this.timeStamp = timeStamp;
-        this.timeStampMillis = timeStampMillis;
+    TimeStampedEvent(Instant timeInstant) {
+        this.instant = timeInstant;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long getTimeStamp() {
-        return timeStamp;
-    }
-
-    /**
-     * Returns timestamp in milliseconds of the epoch.
-     *
-     * @return timestamp in milli seconds
-     * @see System#currentTimeMillis()
-     */
-    public long getTimeStampMillis() {
-        return timeStampMillis;
+    public Instant getInstant() {
+        return instant;
     }
 }

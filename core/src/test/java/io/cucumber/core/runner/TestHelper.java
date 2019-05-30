@@ -40,6 +40,10 @@ import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +56,7 @@ import static io.cucumber.core.api.event.Result.Type.PASSED;
 import static io.cucumber.core.api.event.Result.Type.PENDING;
 import static io.cucumber.core.api.event.Result.Type.SKIPPED;
 import static io.cucumber.core.api.event.Result.Type.UNDEFINED;
+import static java.time.Duration.ZERO;
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,7 +79,7 @@ public class TestHelper {
     private List<String> hookLocations = Collections.emptyList();
     private List<Answer<Object>> hookActions = Collections.emptyList();
     private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
-    private long timeServiceIncrement = 0L;
+    private Duration timeServiceIncrement = Duration.ZERO;
     private Object formatterUnderTest = null;
     private List<String> runtimeArgs = Collections.emptyList();
 
@@ -184,7 +189,7 @@ public class TestHelper {
 
 
         private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
-            return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, 0L, null);
+            return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, ZERO, null);
         }
 
 
@@ -317,13 +322,13 @@ public class TestHelper {
         EventBus bus = null;
 
         if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(TimeService.SYSTEM);
+            bus = new TimeServiceEventBus(Clock.systemUTC());
         } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
             final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
             bus = new TimeServiceEventBus(timeService);
             timeService.setEventPublisher(bus);
         } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(new TimeServiceStub(this.timeServiceIncrement));
+            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
         }
         return bus;
     }
@@ -379,7 +384,7 @@ public class TestHelper {
          * @param timeServiceIncrement increment to be used
          * @return this instance
          */
-        public Builder withTimeServiceIncrement(long timeServiceIncrement) {
+        public Builder withTimeServiceIncrement(Duration timeServiceIncrement) {
             this.instance.timeServiceIncrement = timeServiceIncrement;
             return this;
         }
@@ -387,7 +392,7 @@ public class TestHelper {
         /**
          * Specifies what type of TimeService to be used by the {@link EventBus}
          * {@link TimeServiceType#REAL_TIME} > {@link TimeService#SYSTEM}
-         * {@link TimeServiceType#FIXED_INCREMENT} > {@link TimeServiceStub}
+         * {@link TimeServiceType#FIXED_INCREMENT} > {@link ClockStub}
          * {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START} > {@link StepDurationTimeService}
          * <p>
          * Defaults to {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START}
@@ -469,7 +474,7 @@ public class TestHelper {
     }
 
     public static Result result(Result.Type status, Throwable error) {
-        return new Result(status, 0L, error);
+        return new Result(status, Duration.ZERO, error);
     }
 
     public static Answer<Object> createWriteHookAction(final String output) {

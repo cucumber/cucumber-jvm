@@ -1,8 +1,14 @@
 package io.cucumber.core.runner;
 
+import static java.time.Duration.ZERO;
+import static java.time.Instant.EPOCH;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import org.junit.Test;
 
@@ -20,11 +26,11 @@ public class EventBusTest {
     public void handlers_receive_the_events_they_registered_for() {
         EventHandler<TestStepFinished> handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        Result result = new Result(Result.Type.PASSED, 0L, null);
+        Result result = new Result(Result.Type.PASSED, ZERO, null);
         TestCase testCase = mock(TestCase.class);
-        TestStepFinished event = new TestStepFinished(0L, 0L, testCase, testStep, result);
+        TestStepFinished event = new TestStepFinished(EPOCH, testCase, testStep, result);
 
-        EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
+        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
@@ -36,9 +42,9 @@ public class EventBusTest {
         EventHandler handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         TestCase testCase = mock(TestCase.class);
-        TestStepStarted event = new TestStepStarted(0L, 0L, testCase, testStep);
+        TestStepStarted event = new TestStepStarted(EPOCH, testCase, testStep);
 
-        EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
+        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 

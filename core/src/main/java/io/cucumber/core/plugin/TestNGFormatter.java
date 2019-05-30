@@ -34,11 +34,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.time.Duration.ZERO;
 
 public final class TestNGFormatter implements EventListener, StrictAware {
 
@@ -280,14 +281,14 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         }
 
         private String calculateTotalDurationString() {
-            long totalDurationNanos = 0;
+            Duration totalDuration = ZERO;
             for (Result r : results) {
-                totalDurationNanos += r.getDuration();
+                totalDuration = totalDuration.plus(r.getDuration());
             }
             for (Result r : hooks) {
-                totalDurationNanos += r.getDuration();
+                totalDuration = totalDuration.plus(r.getDuration());
             }
-            return String.valueOf(NANOSECONDS.toMillis(totalDurationNanos));
+            return String.valueOf(totalDuration.toMillis());
         }
 
         private void addStepAndResultListing(StringBuilder sb) {

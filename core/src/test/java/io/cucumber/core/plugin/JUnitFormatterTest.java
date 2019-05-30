@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +39,7 @@ public class JUnitFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private Long stepDurationMillis = null;
+    private Duration stepDuration = null;
 
     @Test
     public void featureSimpleTest() throws Exception {
@@ -76,7 +78,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -106,7 +108,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("skipped", exception));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -139,7 +141,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("pending"));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("undefined"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -168,7 +170,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -201,7 +203,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -234,7 +236,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("pending")));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -265,7 +267,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -298,7 +300,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -330,7 +332,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -363,7 +365,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -410,7 +412,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"d\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -465,7 +467,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step \"b\"", result("passed"));
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
-        stepDurationMillis = 1L;
+        stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -513,7 +515,7 @@ public class JUnitFormatterTest {
             .withHookLocations(hookLocations)
             .withHookActions(hookActions)
             .withTimeServiceType(TestHelper.TimeServiceType.FIXED_INCREMENT)
-            .withTimeServiceIncrement(0L)
+            .withTimeServiceIncrement(ZERO)
             .build()
             .run();
 
@@ -532,7 +534,7 @@ public class JUnitFormatterTest {
             .withHooks(hooks)
             .withHookLocations(hookLocations)
             .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDurationMillis)
+            .withTimeServiceIncrement(stepDuration)
             .build()
             .run();
 

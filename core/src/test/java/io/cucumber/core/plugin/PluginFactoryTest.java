@@ -7,7 +7,7 @@ import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.runner.TimeServiceStub;
+import io.cucumber.core.runner.ClockStub;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
+import static java.time.Duration.ZERO;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -90,10 +91,10 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
-            EventBus bus = new TimeServiceEventBus(new TimeServiceStub(0));
+            EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
             plugin.setEventPublisher(bus);
-            Result result = new Result(Result.Type.PASSED, 0L, null);
-            TestStepFinished event = new TestStepFinished(bus.getTime(), bus.getTimeMillis(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
+            Result result = new Result(Result.Type.PASSED, ZERO, null);
+            TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));

@@ -1,9 +1,10 @@
 package io.cucumber.core.runtime;
 
+import java.time.Instant;
+
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.event.AbstractEventBus;
 import io.cucumber.core.event.EventBus;
@@ -53,19 +54,14 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Long getTime() {
-            return parent.getTime();
-        }
-
-        @Override
         public void send(final Event event) {
             super.send(event);
             parent.send(event);
         }
 
         @Override
-        public Long getTimeMillis() {
-            return parent.getTimeMillis();
+        public Instant getInstant() {
+            return parent.getInstant();
         }
     }
 
@@ -83,11 +79,6 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
         private SynchronizedEventBus(final EventBus delegate) {
             this.delegate = delegate;
-        }
-
-        @Override
-        public synchronized Long getTime() {
-            return delegate.getTime();
         }
 
         @Override
@@ -111,8 +102,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public Long getTimeMillis() {
-            return delegate.getTimeMillis();
+        public Instant getInstant() {
+            return delegate.getInstant();
         }
     }
 }

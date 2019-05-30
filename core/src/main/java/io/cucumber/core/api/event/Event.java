@@ -1,5 +1,6 @@
 package io.cucumber.core.api.event;
 
+import java.time.Instant;
 import java.util.Comparator;
 
 public interface Event {
@@ -31,13 +32,10 @@ public interface Event {
     Comparator<Event> CANONICAL_ORDER = new CanonicalEventOrder();
 
     /**
-     * Returns timestamp in nano seconds since an arbitrary start time.
+     * Returns instant from epoch.
      *
-     * @return timestamp in nano seconds
-     * @see System#nanoTime()
-     * @deprecated prefer {@link TimeStampedEvent#getTimeStampMillis()}
+     * @return time instant in Instant
+     * @see Instant#now()
      */
-    @Deprecated
-    Long getTimeStamp();
-
+    Instant getInstant();
 }
