@@ -28,14 +28,12 @@ import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.matchers.ThrowableMessageMatcher;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cucumber.runner.TestHelper.feature;
@@ -46,7 +44,6 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
-import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -75,10 +72,10 @@ public class RuntimeTest {
 
         Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        BackendSupplier backendSupplier = new BackendSupplier() {
+        BackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public Collection<? extends Backend> get() {
-                return singletonList(mock(Backend.class));
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+
             }
         };
         FeatureSupplier featureSupplier = new FeatureSupplier() {
@@ -663,11 +660,10 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        BackendSupplier backendSupplier = new BackendSupplier() {
+        BackendSupplier backendSupplier = new TestBackendSupplier(){
             @Override
-            public Collection<? extends Backend> get() {
-                Backend backend = mock(Backend.class);
-                return singletonList(backend);
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+
             }
         };
 
@@ -799,7 +795,7 @@ public class RuntimeTest {
         }
 
         @Override
-        public void execute(Object[] args) throws Throwable {
+        public void execute(Object[] args) {
 
         }
 
