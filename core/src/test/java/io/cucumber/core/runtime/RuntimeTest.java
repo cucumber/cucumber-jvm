@@ -57,7 +57,6 @@ import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -268,41 +267,6 @@ public class RuntimeTest {
         runtime.run();
 
         assertEquals(0x0, runtime.exitStatus());
-    }
-
-    @Test
-    public void reports_step_definitions_to_plugin() {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        final StubStepDefinition stepDefinition = new StubStepDefinition("some pattern", new TypeRegistry(Locale.ENGLISH));
-        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(stepDefinition);
-            }
-        };
-
-        Runtime.builder()
-            .withResourceLoader(resourceLoader)
-            .withArgs("--plugin", "io.cucumber.core.runtime.RuntimeTest$StepdefsPrinter")
-            .withBackendSupplier(testBackendSupplier)
-            .build()
-            .run();
-
-        assertSame(stepDefinition, StepdefsPrinter.instance.stepDefinition);
-    }
-
-    public static class StepdefsPrinter implements StepDefinitionReporter {
-        static StepdefsPrinter instance;
-        StepDefinition stepDefinition;
-
-        public StepdefsPrinter() {
-            instance = this;
-        }
-
-        @Override
-        public void stepDefinition(StepDefinition stepDefinition) {
-            this.stepDefinition = stepDefinition;
-        }
     }
 
     @Test
@@ -771,10 +735,6 @@ public class RuntimeTest {
             return "global scoped";
         }
 
-        @Override
-        public boolean isScenarioScoped() {
-            return true;
-        }
     }
 
     private static final class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
@@ -816,9 +776,5 @@ public class RuntimeTest {
             return "scenario scoped";
         }
 
-        @Override
-        public boolean isScenarioScoped() {
-            return true;
-        }
     }
 }

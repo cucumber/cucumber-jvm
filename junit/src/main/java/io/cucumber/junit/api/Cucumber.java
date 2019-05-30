@@ -2,7 +2,6 @@ package io.cucumber.junit.api;
 
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.options.CucumberOptions;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.ObjectFactorySupplier;
@@ -143,8 +142,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             for (CucumberFeature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
             }
-            StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
-            runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
         }

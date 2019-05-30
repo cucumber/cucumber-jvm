@@ -1,7 +1,6 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.api.event.HookType;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.api.event.SnippetsSuggestedEvent;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
@@ -53,10 +52,6 @@ public final class Runner {
         TestCase testCase = createTestCaseForPickle(pickle);
         testCase.run(bus);
         disposeBackendWorlds();
-    }
-
-    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        glue.reportStepDefinitions(stepDefinitionReporter);
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {

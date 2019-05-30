@@ -63,8 +63,4 @@ public class StubStepDefinition implements StepDefinition {
         return expression.getSource();
     }
 
-    @Override
-    public boolean isScenarioScoped() {
-        return false;
-    }
 }

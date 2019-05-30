@@ -4,7 +4,6 @@ import gherkin.events.PickleEvent;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
@@ -113,8 +112,6 @@ public class TestNGCucumberRunner {
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
-        StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
-        runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
         return features;
     }
 }

@@ -1,7 +1,6 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.api.plugin.SummaryPrinter;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventListener;
@@ -67,10 +66,6 @@ public class PluginOption implements Options.Plugin {
 
     boolean isFormatter() {
         return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
-    }
-
-    boolean isStepDefinitionReporter() {
-        return StepDefinitionReporter.class.isAssignableFrom(pluginClass);
     }
 
     boolean isSummaryPrinter() {

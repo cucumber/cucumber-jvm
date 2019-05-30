@@ -1,7 +1,10 @@
 package io.cucumber.core.runner;
 
+import cucumber.runtime.ScenarioScoped;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
@@ -17,12 +20,11 @@ import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
@@ -32,6 +34,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,17 +67,14 @@ public class CachingGlueTest {
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
 
-        StepDefinition sd = mock(StepDefinition.class);
-        when(sd.isScenarioScoped()).thenReturn(true);
+        StepDefinition sd = spy(new MockedScenarioScopedStepDefinition());
         when(sd.getPattern()).thenReturn("pattern");
         glue.addStepDefinition(sd);
 
-        HookDefinition bh = mock(HookDefinition.class);
-        when(bh.isScenarioScoped()).thenReturn(true);
+        HookDefinition bh = spy(new MockedScenarioScopedHookDefinition());
         glue.addBeforeHook(bh);
 
-        HookDefinition ah = mock(HookDefinition.class);
-        when(ah.isScenarioScoped()).thenReturn(true);
+        HookDefinition ah = spy(new MockedScenarioScopedHookDefinition());
         glue.addAfterHook(ah);
 
         assertEquals(1, glue.stepDefinitionsByPattern.size());
@@ -90,8 +90,7 @@ public class CachingGlueTest {
 
     @Test
     public void removes_scenario_scoped_cache_entries() {
-        StepDefinition sd = getStepDefinitionMockWithPattern("pattern");
-        when(sd.isScenarioScoped()).thenReturn(true);
+        StepDefinition sd = new MockedScenarioScopedStepDefinition("pattern");
         glue.addStepDefinition(sd);
         String featurePath = "someFeature.feature";
 
@@ -108,7 +107,7 @@ public class CachingGlueTest {
 
     @Test
     public void returns_null_if_no_matching_steps_found() {
-        StepDefinition stepDefinition = getStepDefinitionMockWithPattern("pattern1");
+        StepDefinition stepDefinition = spy(new MockedStepDefinition("pattern1"));
         glue.addStepDefinition(stepDefinition);
         String featurePath = "someFeature.feature";
 
@@ -119,8 +118,8 @@ public class CachingGlueTest {
 
     @Test
     public void returns_match_from_cache_if_single_found() {
-        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
-        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
+        StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         String featurePath = "someFeature.feature";
@@ -146,8 +145,8 @@ public class CachingGlueTest {
 
     @Test
     public void returns_match_from_cache_for_step_with_table() {
-        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
-        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
+        StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         String featurePath = "someFeature.feature";
@@ -185,8 +184,8 @@ public class CachingGlueTest {
 
     @Test
     public void returns_match_from_cache_for_ste_with_doc_string() {
-        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
-        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
+        StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         String featurePath = "someFeature.feature";
@@ -233,9 +232,9 @@ public class CachingGlueTest {
 
     @Test
     public void throws_ambiguous_steps_def_exception_when_many_patterns_match() {
-        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("pattern1");
-        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
-        StepDefinition stepDefinition3 = getStepDefinitionMockWithPattern("^pattern[1,3]");
+        StepDefinition stepDefinition1 = new MockedStepDefinition("pattern1");
+        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
+        StepDefinition stepDefinition3 = new MockedStepDefinition("^pattern[1,3]");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.addStepDefinition(stepDefinition3);
@@ -262,17 +261,127 @@ public class CachingGlueTest {
         return new PickleStep(text, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
     }
 
-    private static StepDefinition getStepDefinitionMockWithPattern(String pattern) {
-        StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
-        final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
-        StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getPattern()).thenReturn(pattern);
-        when(stepDefinition.matchedArguments(any(PickleStep.class))).then(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) {
-                return argumentMatcher.argumentsFrom((PickleStep) invocationOnMock.getArgument(0));
-            }
-        });
-        return stepDefinition;
+    private static class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
+
+        private final String pattern;
+
+        MockedScenarioScopedStepDefinition(String pattern) {
+            this.pattern = pattern;
+        }
+
+        MockedScenarioScopedStepDefinition() {
+            this("mocked scenario scoped step definition");
+        }
+
+        @Override
+        public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
+            StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
+            final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+            return argumentMatcher.argumentsFrom(step);
+        }
+
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked scenario scoped step definition";
+        }
+
+        @Override
+        public Integer getParameterCount() {
+            return 0;
+        }
+
+        @Override
+        public void execute(Object[] args) {
+
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getPattern() {
+            return pattern;
+        }
+
+    }
+
+    private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
+
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked scenario scoped hook definition";
+        }
+
+        @Override
+        public void execute(Scenario scenario) {
+
+        }
+
+        @Override
+        public boolean matches(Collection<PickleTag> tags) {
+            return true;
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+    }
+
+    private static class MockedStepDefinition implements StepDefinition {
+
+        private final String pattern;
+
+        MockedStepDefinition(String pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
+            StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
+            final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+            return argumentMatcher.argumentsFrom(step);
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked step location";
+        }
+
+        @Override
+        public Integer getParameterCount() {
+            return 0;
+        }
+
+        @Override
+        public void execute(Object[] args) {
+
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getPattern() {
+            return pattern;
+        }
     }
 }

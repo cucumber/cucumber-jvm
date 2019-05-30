@@ -37,9 +37,4 @@ final class NoStepDefinition implements StepDefinition {
         return null;
     }
 
-    @Override
-    public boolean isScenarioScoped() {
-        return false;
-    }
-
 }

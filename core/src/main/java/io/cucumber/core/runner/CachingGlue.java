@@ -8,7 +8,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
@@ -121,12 +120,6 @@ final class CachingGlue implements Glue {
         return result;
     }
 
-    void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
-        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            stepDefinitionReporter.stepDefinition(stepDefinition);
-        }
-    }
-
     void removeScenarioScopedGlue() {
         removeScenarioScopedHooks(beforeHooks);
         removeScenarioScopedHooks(beforeStepHooks);
@@ -143,8 +136,6 @@ final class CachingGlue implements Glue {
             if (hook instanceof ScenarioScoped) {
                 ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) hook;
                 scenarioScopedHookDefinition.disposeScenarioScope();
-            }
-            if (hook.isScenarioScoped()) {
                 hookIterator.remove();
             }
         }
@@ -157,8 +148,6 @@ final class CachingGlue implements Glue {
             if (stepDefinition instanceof ScenarioScoped) {
                 ScenarioScoped scenarioScopedStepDefinition = (ScenarioScoped) stepDefinition;
                 scenarioScopedStepDefinition.disposeScenarioScope();
-            }
-            if(stepDefinition.isScenarioScoped()){
                 stepDefinitionIterator.remove();
             }
         }

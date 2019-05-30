@@ -33,7 +33,6 @@ import java.net.URL;
  * <li>{@link StrictAware}</li>
  * <li>{@link EventListener}</li>
  * <li>{@link ConcurrentEventListener}</li>
- * <li>{@link StepDefinitionReporter}</li>
  * <li>{@link SummaryPrinter}</li>
  * </ul>
  */

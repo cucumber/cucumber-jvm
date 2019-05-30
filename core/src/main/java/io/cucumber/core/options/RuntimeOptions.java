@@ -68,7 +68,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private int threads = 1;
 
     private final List<Plugin> formatters = new ArrayList<>();
-    private final List<Plugin> stepDefinitionReporters = new ArrayList<>();
     private final List<Plugin> summaryPrinters = new ArrayList<>();
 
     /**
@@ -135,7 +134,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     public List<Plugin> plugins() {
         List<Plugin> plugins = new ArrayList<>();
         plugins.addAll(formatters);
-        plugins.addAll(stepDefinitionReporters);
         plugins.addAll(summaryPrinters);
         return plugins;
     }
@@ -234,7 +232,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         }
 
         parsedPluginData.updateFormatters(formatters);
-        parsedPluginData.updateStepDefinitionReporters(stepDefinitionReporters);
         parsedPluginData.updateSummaryPrinters(summaryPrinters);
     }
 
@@ -397,14 +394,11 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     static final class ParsedPluginData {
         private ParsedPlugins formatters = new ParsedPlugins();
-        private ParsedPlugins stepDefinitionReporters = new ParsedPlugins();
         private ParsedPlugins summaryPrinters = new ParsedPlugins();
 
         void addPluginName(String name, boolean isAddPlugin) {
             PluginOption pluginOption = PluginOption.parse(name);
-            if (pluginOption.isStepDefinitionReporter()) {
-                stepDefinitionReporters.addName(pluginOption, isAddPlugin);
-            } else if (pluginOption.isSummaryPrinter()) {
+            if (pluginOption.isSummaryPrinter()) {
                 summaryPrinters.addName(pluginOption, isAddPlugin);
             } else if (pluginOption.isFormatter()) {
                 formatters.addName(pluginOption, isAddPlugin);
@@ -415,10 +409,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
         void updateFormatters(List<Plugin> formatter) {
             this.formatters.updateNameList(formatter);
-        }
-
-        void updateStepDefinitionReporters(List<Plugin> stepDefintionReporter) {
-            stepDefinitionReporters.updateNameList(stepDefintionReporter);
         }
 
         void updateSummaryPrinters(List<Plugin> pluginSummaryPrinterNames) {

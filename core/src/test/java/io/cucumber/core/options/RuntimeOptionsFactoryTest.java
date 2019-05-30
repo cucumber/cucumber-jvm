@@ -244,11 +244,6 @@ public class RuntimeOptionsFactoryTest {
         // empty
     }
 
-    @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
-    private static class ClassWithNoFormatterPlugin {
-        // empty
-    }
-
     @CucumberOptions(plugin = "pretty")
     private static class ClassWithNoSummaryPrinterPlugin {
         // empty

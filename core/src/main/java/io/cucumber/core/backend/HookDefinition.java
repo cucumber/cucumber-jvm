@@ -20,11 +20,4 @@ public interface HookDefinition {
     boolean matches(Collection<PickleTag> tags);
 
     int getOrder();
-
-    /**
-     * @deprecated replaced with {@link ScenarioScoped}
-     * @return true if this instance is scoped to a single scenario, or false if it can be reused across scenarios.
-     */
-    @Deprecated
-    boolean isScenarioScoped();
 }

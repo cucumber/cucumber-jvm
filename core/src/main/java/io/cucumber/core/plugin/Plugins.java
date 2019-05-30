@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.EventHandler;
@@ -9,7 +8,6 @@ import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.plugin.ColorAware;
 import io.cucumber.core.api.plugin.StrictAware;
-import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.options.PluginOptions;
 
 import java.util.ArrayList;
@@ -66,20 +64,6 @@ public final class Plugins {
 
     public List<Plugin> getPlugins() {
         return plugins;
-    }
-
-    public StepDefinitionReporter stepDefinitionReporter() {
-        return new StepDefinitionReporter() {
-            @Override
-            public void stepDefinition(StepDefinition stepDefinition) {
-                for (Plugin plugin : getPlugins()) {
-                    if (plugin instanceof StepDefinitionReporter) {
-                        StepDefinitionReporter stepDefinitionReporter = (StepDefinitionReporter) plugin;
-                        stepDefinitionReporter.stepDefinition(stepDefinition);
-                    }
-                }
-            }
-        };
     }
 
     public void addPlugin(Plugin plugin) {

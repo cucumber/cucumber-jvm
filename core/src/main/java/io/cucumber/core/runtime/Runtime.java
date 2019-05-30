@@ -10,7 +10,6 @@ import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.plugin.StepDefinitionReporter;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.SingletonObjectFactorySupplier;
@@ -92,8 +91,6 @@ public final class Runtime {
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
-        final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
-        runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
 
         final List<Future<?>> executingPickles = new ArrayList<>();
         for (CucumberFeature feature : features) {

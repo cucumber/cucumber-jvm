@@ -160,13 +160,6 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void creates_progress_formatter_when_no_formatter_plugin_is_specified() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "io.cucumber.core.plugin.AnyStepDefinitionReporter", "--glue", "somewhere"));
-        Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.ProgressFormatter")));
-    }
-
-    @Test
     public void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "pretty", "--glue", "somewhere"));
         Plugins plugins = new Plugins(new PluginFactory(), new TimeServiceEventBus(Clock.systemUTC()), options);
