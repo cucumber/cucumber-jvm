@@ -9,6 +9,7 @@ import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.ScenarioScoped;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import io.cucumber.stepexpression.StepExpression;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Java8StepDefinition implements StepDefinition {
+public class Java8StepDefinition implements StepDefinition, ScenarioScoped {
 
     public static <T extends StepdefBody> Java8StepDefinition create(
         String expression, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
@@ -37,7 +38,7 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     private final long timeoutMillis;
-    private final StepdefBody body;
+    private StepdefBody body;
 
     private final StepExpression expression;
     private final StackTraceElement location;
@@ -160,5 +161,10 @@ public class Java8StepDefinition implements StepDefinition {
             }
             return argumentType;
         }
+    }
+
+    @Override
+    public void disposeScenarioScope() {
+        this.body = null;
     }
 }
