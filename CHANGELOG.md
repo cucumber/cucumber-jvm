@@ -12,7 +12,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Refactored usage formatter ([#1608](https://github.com/cucumber/cucumber-jvm/pull/1608) Marit van Dijk, M.P. Korstanje) 
 
 ### Deprecated
-   
+ * [Core] Deprecated `StepDefinitionReporter` ([#1634](https://github.com/cucumber/cucumber-jvm/pull/1634) Tim te Beek, M.P. Korstanje) 
+
 ### Removed
 
 ### Fixed
