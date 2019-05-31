@@ -50,8 +50,8 @@ Options:
                                            The various options are 'reverse' and 
                                            'random'.
 
-      --count                              Number of scenarios selected to execute. 
-                                           If not specified all scenarios are run.
+      --count                              Number of scenarios to be executed. If not 
+                                           specified all scenarios are run.
 
 Feature path examples:
 
