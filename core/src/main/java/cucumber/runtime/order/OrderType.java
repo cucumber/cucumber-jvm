@@ -1,26 +1,41 @@
 package cucumber.runtime.order;
 
+ import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+ import cucumber.runtime.CucumberException;
 import gherkin.events.PickleEvent;
 
-public abstract class OrderType {
+ public enum OrderType implements OrderPickleEvents {
 
-	public static final String NONE_ORDER_TYPE = "None";
-	
-	public static final String RANDOM_ORDER_TYPE = "Random";
-		
-	public static final String REVERSE_ORDER_TYPE = "Reverse";
-	
-	public static final String TYPE_NAME = "type";
-	
-	public static final String PROPERTY_COUNT = "count";
-	
-	public List<PickleEvent> orderPickleEvents(List<PickleEvent> filteredPickleEvents) {
-		return filteredPickleEvents;
-	}
-	
-	public void checkVariableValues(Map<String, String> orderTypeData) {}
-		
-}
+ 	NONE {
+		@Override
+		public List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents) {
+			return pickleEvents;
+		}
+	},
+	REVERSE {
+		@Override
+		public List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents) {
+			Collections.reverse(pickleEvents);
+			return pickleEvents;
+		}
+	},
+	RANDOM {
+		@Override
+		public List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents) {
+			Collections.shuffle(pickleEvents);
+			return pickleEvents;
+		}		
+	};
+
+
+     public static OrderType getOrderType(String name) {
+        for (OrderType orderType : OrderType.values()) {
+            if (name.equalsIgnoreCase(orderType.name())) {
+                return orderType;
+            }
+        }
+        throw new CucumberException(String.format("Unrecognized OrderType %s", name));
+    }
+ }

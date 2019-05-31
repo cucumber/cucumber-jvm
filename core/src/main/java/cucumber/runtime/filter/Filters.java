@@ -13,22 +13,26 @@ import java.util.regex.Pattern;
 public class Filters {
 
     private final List<PicklePredicate> filters;
+    
+    private int count;
 
-    public Filters(FilterOptions filterOPtions) {
+    public Filters(FilterOptions filterOptions) {
 
         filters = new ArrayList<>();
-        List<String> tagFilters = filterOPtions.getTagFilters();
+        List<String> tagFilters = filterOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
             this.filters.add(new TagPredicate(tagFilters));
         }
-        List<Pattern> nameFilters = filterOPtions.getNameFilters();
+        List<Pattern> nameFilters = filterOptions.getNameFilters();
         if (!nameFilters.isEmpty()) {
             this.filters.add(new NamePredicate(nameFilters));
         }
-        Map<URI, ? extends Collection<Integer>> lineFilters = filterOPtions.getLineFilters();
+        Map<URI, ? extends Collection<Integer>> lineFilters = filterOptions.getLineFilters();
         if (!lineFilters.isEmpty()) {
             this.filters.add(new LinePredicate(lineFilters));
         }
+        
+        this.count = filterOptions.getLimitCount(); 
     }
 
     public boolean matchesFilters(PickleEvent pickleEvent) {
@@ -39,5 +43,11 @@ public class Filters {
         }
         return true;
     }
-
+    
+    public List<PickleEvent> limitPickleEvents(List<PickleEvent> pickleEvents) {
+    	if (count > pickleEvents.size() || count < 1) {
+    		return pickleEvents;
+    	}
+		return pickleEvents.subList(0, count);
+	}
 }

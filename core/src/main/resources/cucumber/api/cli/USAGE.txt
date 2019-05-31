@@ -46,14 +46,12 @@ Options:
   -w, --wip                                Fail if there are any passing scenarios.
   
     
-      --order                              Run the scenarios in a different order.
-					   The various options are 'reverse' and 
-      					   'random'. For 'random' option you can add
-      					   the --count option.
-      					   
-      --count                              Number of scenarios selected to run with 
-      					   'random' order option. If not specified all
-      					   filtered scenarios are shuffled and run.
+      --order                              Run the scenarios in a different order. 
+                                           The various options are 'reverse' and 
+                                           'random'.
+
+      --count                              Number of scenarios selected to execute. 
+                                           If not specified all scenarios are run.
 
 Feature path examples:
 

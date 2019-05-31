@@ -18,6 +18,7 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import cucumber.runtime.order.OrderType;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -52,6 +53,7 @@ public class Runtime {
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
     private final ExecutorService executor;
+    private final OrderType orderType;
 
     public Runtime(final Plugins plugins,
                    final RuntimeOptions runtimeOptions,
@@ -59,7 +61,8 @@ public class Runtime {
                    final Filters filters,
                    final RunnerSupplier runnerSupplier,
                    final FeatureSupplier featureSupplier,
-                   final ExecutorService executor) {
+                   final ExecutorService executor,
+                   final OrderType orderType) {
 
         this.plugins = plugins;
         this.runtimeOptions = runtimeOptions;
@@ -69,6 +72,7 @@ public class Runtime {
         this.featureSupplier = featureSupplier;
         this.executor = executor;
         this.exitStatus = new ExitStatus(runtimeOptions);
+        this.orderType = orderType;
         exitStatus.setEventPublisher(bus);
     }
 
@@ -91,8 +95,11 @@ public class Runtime {
             }
         }
         
-        final List<Future<?>> executingPickles = new ArrayList<>();
-        for(final PickleEvent pickleEvent : runtimeOptions.getOrderType().orderPickleEvents(filteredEvents)) {        	
+        final List<PickleEvent> orderedEvents = orderType.orderPickleEvents(filteredEvents);
+        final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);
+
+         final List<Future<?>> executingPickles = new ArrayList<>();
+        for(final PickleEvent pickleEvent : limitedEvents) {        	
         	executingPickles.add(executor.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -234,7 +241,8 @@ public class Runtime {
                 : new FeaturePathFeatureSupplier(featureLoader, this.runtimeOptions);
 
             final Filters filters = new Filters(this.runtimeOptions);
-            return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
+            final OrderType orderType = runtimeOptions.getOrderType();
+            return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor, orderType);
         }
     }
 

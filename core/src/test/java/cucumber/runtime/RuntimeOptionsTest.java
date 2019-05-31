@@ -12,9 +12,7 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.order.NoneOrderType;
-import cucumber.runtime.order.RandomOrderType;
-import cucumber.runtime.order.ReverseOrderType;
+import cucumber.runtime.order.OrderType;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -41,7 +39,6 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.collection.IsEmptyCollection.emptyCollectionOf;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -454,38 +451,39 @@ public class RuntimeOptionsTest {
     @Test
     public void ordertype_default_none() {
     	RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
-        assertThat(options.getOrderType(), instanceOf(NoneOrderType.class));
+        assertThat(options.getOrderType(), is(OrderType.NONE));
     }
-    
-    @Test
+
+     @Test
     public void ensure_ordertype_none_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "none"));
-        assertThat(options.getOrderType(), instanceOf(NoneOrderType.class));
+        assertThat(options.getOrderType(), is(OrderType.NONE));
     }
-    
-    @Test
+
+     @Test
     public void ensure_ordertype_reverse_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
-        assertThat(options.getOrderType(), instanceOf(ReverseOrderType.class));
+        assertThat(options.getOrderType(), is(OrderType.REVERSE));
     }
-    
-    @Test
+
+     @Test
     public void ensure_ordertype_random_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "random"));
-        assertThat(options.getOrderType(), instanceOf(RandomOrderType.class));
+        assertThat(options.getOrderType(), is(OrderType.RANDOM));
     }
-    
-    @Test
-    public void ensure_ordertype_random_with_valid_count_is_used() {
-    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random", "--count", "5"));
-        assertThat(options.getOrderType(), instanceOf(RandomOrderType.class));
-    }
-    
-    @Test
-    public void ensure_less_than_1_random_ordertype_count_is_not_allowed() {
+
+     @Test
+    public void ensure_invalid_ordertype_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Unrecognized OrderType invalid");
+        new RuntimeOptions(asList("--order", "invalid"));
+    } 
+
+     @Test
+    public void ensure_less_than_1_count_is_not_allowed() {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("--count must be > 0");
-        new RuntimeOptions(asList("--order", "random", "--count", "0"));
+        new RuntimeOptions(asList("--count", "0"));
     }
     
     @Test
