@@ -45,7 +45,7 @@ public class Filters {
     }
     
     public List<PickleEvent> limitPickleEvents(List<PickleEvent> pickleEvents) {
-    	if (count > pickleEvents.size() || count < 0) {
+    	if (count > pickleEvents.size() || count < 1) {
     		return pickleEvents;
     	}
 		return pickleEvents.subList(0, count);
