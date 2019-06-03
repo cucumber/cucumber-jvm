@@ -36,3 +36,4 @@ public class UnusedStepsSummaryPrinter implements EventListener, SummaryPrinter 
 		out.append("" + unusedSteps.size()).println(" Unused steps:");
 		unusedSteps.forEach((location, pattern) -> out.append(location).append(": ").println(pattern));
 	}
+}
