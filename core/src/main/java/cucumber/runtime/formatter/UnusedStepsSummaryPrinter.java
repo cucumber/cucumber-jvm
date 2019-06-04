@@ -1,39 +1,76 @@
 package cucumber.runtime.formatter;
 
 import java.util.Map;
-import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import cucumber.api.Result;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.*;
+import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.NiceAppendable;
 
-public class UnusedStepsSummaryPrinter implements EventListener, SummaryPrinter {
+public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, SummaryPrinter {
 
-	private final Map<String, String> unusedSteps = new TreeMap<>();
+	private EventHandler<StepDefinedEvent> stepDefinedHandler = new EventHandler<StepDefinedEvent>() {
+		@Override
+		public void receive(StepDefinedEvent event) {
+			unusedSteps.put(event.stepDefinition.getLocation(false), event.stepDefinition.getPattern());
+		}
+	};
+	private EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
+		@Override
+		public void receive(TestStepFinished event) {
+			String codeLocation = event.testStep.getCodeLocation();
+			if (codeLocation != null) {
+				unusedSteps.remove(codeLocation);
+			}
+		}
+	};
+	private EventHandler<TestRunFinished> testRunFinishedhandler = new EventHandler<TestRunFinished>() {
+		@Override
+		public void receive(TestRunFinished event) {
+			if (unusedSteps.isEmpty()) {
+				return;
+			}
 
-	private NiceAppendable out;
+			Format format = formats.get(Result.Type.UNUSED.lowerCaseName());
+			out.println(format.text(unusedSteps.size() + " Unused steps:"));
+
+			// Output results when done
+			for (Entry<String, String> entry : unusedSteps.entrySet()) {
+				String location = entry.getKey();
+				String pattern = entry.getValue();
+				out.println(format.text(location + " # " + pattern));
+			}
+		}
+	};
+
+	final Map<String, String> unusedSteps = new TreeMap<>();
+	final NiceAppendable out;
+	Formats formats;
 
 	@SuppressWarnings("WeakerAccess") // Used by PluginFactory
-	public UnusedStepsPlugin(Appendable out) {
+	public UnusedStepsSummaryPrinter(Appendable out) {
 		this.out = new NiceAppendable(out);
 	}
 
 	@Override
 	public void setEventPublisher(EventPublisher publisher) {
 		// Record any steps registered
-		publisher.registerHandlerFor(StepDefinedEvent.class,
-				event -> unusedSteps.put(event.stepDefinition.getLocation(false), event.stepDefinition.getPattern()));
+		publisher.registerHandlerFor(StepDefinedEvent.class, stepDefinedHandler);
 		// Remove any steps that run
-		publisher.registerHandlerFor(TestStepFinished.class,
-				event -> Optional.ofNullable(event.testStep.getCodeLocation()).ifPresent(unusedSteps::remove));
+		publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
 		// Print summary when done
-		publisher.registerHandlerFor(TestRunFinished.class, event -> printSummary());
+		publisher.registerHandlerFor(TestRunFinished.class, testRunFinishedhandler);
 	}
 
-	private void printSummary() {
-		// Output results when done
-		out.append("" + unusedSteps.size()).println(" Unused steps:");
-		unusedSteps.forEach((location, pattern) -> out.append(location).append(": ").println(pattern));
+	@Override
+	public void setMonochrome(boolean monochrome) {
+		if (monochrome) {
+			formats = new MonochromeFormats();
+		} else {
+			formats = new AnsiFormats();
+		}
 	}
 }

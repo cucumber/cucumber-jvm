@@ -27,6 +27,7 @@ public final class Result {
         SKIPPED,
         PENDING,
         UNDEFINED,
+        UNUSED,
         AMBIGUOUS,
         FAILED;
 
