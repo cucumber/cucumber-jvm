@@ -41,14 +41,14 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 			for (Entry<String, String> entry : unusedSteps.entrySet()) {
 				String location = entry.getKey();
 				String pattern = entry.getValue();
-				out.println(format.text(location + " # " + pattern));
+				out.println(format.text(location) + " # " + pattern);
 			}
 		}
 	};
 
-	final Map<String, String> unusedSteps = new TreeMap<>();
-	final NiceAppendable out;
-	Formats formats = new MonochromeFormats();
+	private final Map<String, String> unusedSteps = new TreeMap<>();
+	private final NiceAppendable out;
+	private Formats formats = new MonochromeFormats();
 
 	@SuppressWarnings("WeakerAccess") // Used by PluginFactory
 	public UnusedStepsSummaryPrinter(Appendable out) {
