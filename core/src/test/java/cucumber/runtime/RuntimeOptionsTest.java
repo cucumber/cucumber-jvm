@@ -146,7 +146,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_html_formatter() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:some/dir", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
         assertThat(plugins.getPlugins().get(0).getClass().getName(), is("cucumber.runtime.formatter.HTMLFormatter"));
     }
@@ -353,7 +353,7 @@ public class RuntimeOptionsTest {
     @Test
     public void clobbers_formatter_plugins_from_cli_if_formatters_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin pretty");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("cucumber.runtime.formatter.PrettyFormatter")));
         assertThat(plugins.getPlugins(), not(hasItem(plugin("cucumber.runtime.formatter.HTMLFormatter"))));
@@ -362,7 +362,7 @@ public class RuntimeOptionsTest {
     @Test
     public void adds_to_formatter_plugins_with_add_plugin_option() {
         properties.setProperty("cucumber.options", "--add-plugin pretty");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), new TimeServiceEventBus(TimeService.SYSTEM), options);
         assertThat(plugins.getPlugins(), hasItem(plugin("cucumber.runtime.formatter.HTMLFormatter")));
         assertThat(plugins.getPlugins(), hasItem(plugin("cucumber.runtime.formatter.PrettyFormatter")));

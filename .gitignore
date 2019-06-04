@@ -16,11 +16,6 @@ gen-external-apklibs/
 out/
 
 # Build & test droppings
-report.js
-report.xml
-chromedriver.log
-.scala_dependencies
-nexus.properties
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
@@ -34,5 +29,4 @@ libpeerconnection.log
 ehthumbs.db
 Icon?
 Thumbs.db
-test-json-report.json
 testng/test-output/
