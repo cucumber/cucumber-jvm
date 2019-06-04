@@ -14,9 +14,10 @@ target/
 tmp/
 gen-external-apklibs/
 out/
+some/
 
 # Build & test droppings
-report.js
+# report.js
 report.xml
 chromedriver.log
 .scala_dependencies

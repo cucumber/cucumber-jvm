@@ -21,10 +21,10 @@
     </properties>
 
     <dependencies>
-        <dependency>
+        <!-- <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-html</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
