@@ -45,6 +45,7 @@ public final class PluginFactory {
         put("rerun", RerunFormatter.class);
         put("default_summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
+        put("unused", UnusedStepsSummaryPrinter.class);
         put("timeline", TimelineFormatter.class);
     }};
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
