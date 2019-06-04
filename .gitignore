@@ -14,6 +14,7 @@ target/
 tmp/
 gen-external-apklibs/
 out/
+some/
 
 # Build & test droppings
 pom.xml.releaseBackup
