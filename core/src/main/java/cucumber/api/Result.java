@@ -28,7 +28,8 @@ public final class Result {
         PENDING,
         UNDEFINED,
         AMBIGUOUS,
-        FAILED;
+        FAILED,
+        UNUSED;
 
         public static Type fromLowerCaseName(String lowerCaseName) {
             return valueOf(lowerCaseName.toUpperCase(ROOT));

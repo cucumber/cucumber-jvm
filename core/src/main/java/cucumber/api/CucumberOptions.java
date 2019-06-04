@@ -65,7 +65,7 @@ public @interface CucumberOptions {
      * Register plugins.
      * Built-in plugin types: {@code junit}, {@code html},
      * {@code pretty}, {@code progress}, {@code json}, {@code usage},
-     * {@code rerun}, {@code testng}.
+     * {@code unused}, {@code rerun}, {@code testng}.
      * <p>
      * Can also be a fully qualified class name, allowing
      * registration of 3rd party plugins.

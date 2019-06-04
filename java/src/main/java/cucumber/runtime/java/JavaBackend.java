@@ -117,7 +117,6 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         // in the constructor.
         try {
             INSTANCE.set(this);
-            glue.removeScenarioScopedGlue();
             for (Class<? extends GlueBase> glueBaseClass : glueBaseClasses) {
                 objectFactory.getInstance(glueBaseClass);
             }

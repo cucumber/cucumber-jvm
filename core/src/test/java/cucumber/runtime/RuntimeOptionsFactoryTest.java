@@ -221,7 +221,7 @@ public class RuntimeOptionsFactoryTest {
         // empty
     }
 
-    @CucumberOptions(plugin = "json:test-json-report.json")
+    @CucumberOptions(plugin = "json:target/test-json-report.json")
     private static class BaseClassWithFormatter {
         // empty
     }
