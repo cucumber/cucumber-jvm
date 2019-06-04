@@ -48,7 +48,7 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 
 	final Map<String, String> unusedSteps = new TreeMap<>();
 	final NiceAppendable out;
-	Formats formats;
+	Formats formats = new MonochromeFormats();
 
 	@SuppressWarnings("WeakerAccess") // Used by PluginFactory
 	public UnusedStepsSummaryPrinter(Appendable out) {
