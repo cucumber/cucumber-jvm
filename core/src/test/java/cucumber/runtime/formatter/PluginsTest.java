@@ -71,8 +71,18 @@ public class PluginsTest {
 
 
     @Test
-    public void shouldSetNonConcurrentEventListener() {
+    public void shouldSetConcurrentEventListenerForSingleThread() {
         RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        EventListener plugin = Mockito.mock(EventListener.class);
+        plugins.addPlugin(plugin);
+        verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
+    }
+
+
+    @Test
+    public void shouldSetNonConcurrentEventListenerForMultiThread() {
+        RuntimeOptions runtimeOptions = new RuntimeOptions("--threads 2");
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
@@ -83,7 +93,7 @@ public class PluginsTest {
 
     @Test
     public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions("--threads 2");
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
