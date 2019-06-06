@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import cucumber.runtime.ScenarioScoped;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
@@ -14,6 +13,7 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.runtime.ScenarioScoped;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;

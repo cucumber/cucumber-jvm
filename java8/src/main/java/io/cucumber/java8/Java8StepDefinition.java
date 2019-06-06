@@ -1,10 +1,10 @@
 package io.cucumber.java8;
 
-import cucumber.runtime.ScenarioScoped;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
+import io.cucumber.core.runtime.ScenarioScoped;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
