@@ -77,11 +77,6 @@ public class StubBackendProviderService implements BackendProviderService {
                 public String getPattern() {
                     return pattern;
                 }
-
-                @Override
-                public boolean isScenarioScoped() {
-                    return false;
-                }
             };
         }
 
