@@ -93,11 +93,6 @@ class JavaStepDefinition implements StepDefinition {
         return expression.getSource();
     }
 
-    @Override
-    public boolean isScenarioScoped() {
-        return false;
-    }
-
     /**
      * This class composes all interesting parameter information into one object.
      */
