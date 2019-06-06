@@ -105,12 +105,12 @@ public final class Plugins {
     }
 
     private void setEventBusOnEventListenerPlugins(Plugin plugin) {
-        if (plugin instanceof ConcurrentEventListener || runtimeOptions.isMultiThreaded()) {
+        if (plugin instanceof ConcurrentEventListener) {
             ConcurrentEventListener formatter = (ConcurrentEventListener) plugin;
             formatter.setEventPublisher(eventPublisher);
         } else if (plugin instanceof EventListener) {
             EventListener formatter = (EventListener) plugin;
-            formatter.setEventPublisher(getOrderedEventPublisher());
+            formatter.setEventPublisher(runtimeOptions.isMultiThreaded() ? getOrderedEventPublisher() : eventPublisher);
         }
     }
 
