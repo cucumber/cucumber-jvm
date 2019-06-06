@@ -6,7 +6,9 @@ import java.util.Map;
 final class AnsiFormats implements Formats {
     private static final Map<String, Format> formats = new HashMap<String, Format>() {{
         put("undefined", new ColorFormat(AnsiEscapes.YELLOW));
-        put("undefined_arg", new ColorFormat(AnsiEscapes.YELLOW, AnsiEscapes.INTENSITY_BOLD)); // Never used, but avoids NPE in plugin.
+        put("undefined_arg", new ColorFormat(AnsiEscapes.YELLOW, AnsiEscapes.INTENSITY_BOLD)); // Never used, but avoids NPE in formatters.
+        put("unused", new ColorFormat(AnsiEscapes.YELLOW));
+        put("unused_arg", new ColorFormat(AnsiEscapes.YELLOW, AnsiEscapes.INTENSITY_BOLD));
         put("pending", new ColorFormat(AnsiEscapes.YELLOW));
         put("pending_arg", new ColorFormat(AnsiEscapes.YELLOW, AnsiEscapes.INTENSITY_BOLD));
         put("executing", new ColorFormat(AnsiEscapes.GREY));

@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.cucumber.core.api.event.StepDefinedEvent;
-import cucumber.runtime.ScenarioScoped;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;

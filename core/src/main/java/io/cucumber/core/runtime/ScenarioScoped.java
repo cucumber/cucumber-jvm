@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package io.cucumber.core.runtime;
 
 public interface ScenarioScoped {
     /**
