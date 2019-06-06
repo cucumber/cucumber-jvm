@@ -16,6 +16,7 @@ import io.cucumber.core.plugin.ProgressFormatter;
 import io.cucumber.core.plugin.RerunFormatter;
 import io.cucumber.core.plugin.TestNGFormatter;
 import io.cucumber.core.plugin.TimelineFormatter;
+import io.cucumber.core.plugin.UnusedStepsSummaryPrinter;
 import io.cucumber.core.plugin.UsageFormatter;
 
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class PluginOption implements Options.Plugin {
         put("rerun", RerunFormatter.class);
         put("default_summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
+        put("unused", UnusedStepsSummaryPrinter.class);
         put("timeline", TimelineFormatter.class);
     }};
 
