@@ -28,7 +28,7 @@ def package_info_java = """\
 /**
  * \${locale.getDisplayLanguage()}
  */
-package io.cucumber.java.api.annotation.\${normalized_language}; 
+package io.cucumber.java.api.\${normalized_language}; 
 """
 
 
