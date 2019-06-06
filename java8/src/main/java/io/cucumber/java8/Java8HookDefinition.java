@@ -65,11 +65,6 @@ public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
     }
 
     @Override
-    public boolean isScenarioScoped() {
-        return true;
-    }
-
-    @Override
     public void disposeScenarioScope() {
         this.hookBody = null;
     }

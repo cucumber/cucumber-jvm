@@ -123,11 +123,6 @@ public class Java8StepDefinition implements StepDefinition, ScenarioScoped {
         return expression.getSource();
     }
 
-    @Override
-    public boolean isScenarioScoped() {
-        return true;
-    }
-
     private final class LambdaTypeResolver implements TypeResolver {
 
 
