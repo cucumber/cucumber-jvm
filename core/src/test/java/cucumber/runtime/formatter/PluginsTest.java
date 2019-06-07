@@ -73,6 +73,7 @@ public class PluginsTest {
     @Test
     public void shouldSetConcurrentEventListenerForSingleThread() {
         RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        runtimeOptions.setAssumeEventsInOrder(true);
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);

@@ -32,6 +32,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.util.ArrayList;
@@ -67,7 +68,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     private final EventBus bus;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final List<CucumberFeature> features;
-    private final Plugins plugins;
+    private final RuntimeOptions runtimeOptions;
+    private final ClassLoader classLoader;
 
     /**
      * Constructor called by JUnit.
@@ -81,10 +83,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        runtimeOptions = runtimeOptionsFactory.create();
+        runtimeOptions.setAssumeEventsInOrder(true);
         JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
 
-        ClassLoader classLoader = clazz.getClassLoader();
+        classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
@@ -95,7 +98,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
 
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
@@ -138,6 +140,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
+            Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+
             bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
             for (CucumberFeature feature : features) {
                 feature.sendTestSourceRead(bus);
@@ -147,5 +151,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
         }
+    }
+
+    @Override
+    public void setScheduler(RunnerScheduler scheduler) {
+        super.setScheduler(scheduler);
+        runtimeOptions.setAssumeEventsInOrder(false);
     }
 }

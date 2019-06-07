@@ -370,6 +370,17 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         return monochrome;
     }
 
+    private boolean assumeEventsInOrder = false;
+
+    @Override
+    public boolean assumeEventsInOrder() {
+        return assumeEventsInOrder && !isMultiThreaded();
+    }
+
+    public void setAssumeEventsInOrder(boolean assumeEventsInOrder) {
+        this.assumeEventsInOrder = assumeEventsInOrder;
+    }
+
     @Override
     public SnippetType getSnippetType() {
         return snippetType;

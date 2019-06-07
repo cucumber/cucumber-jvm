@@ -11,7 +11,6 @@ import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.CanonicalOrderEventPublisher;
 import io.cucumber.core.options.PluginOptions;
-import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.Utils;
 
 import java.lang.reflect.InvocationHandler;
@@ -28,13 +27,13 @@ public final class Plugins {
     private final PluginFactory pluginFactory;
     private final EventPublisher eventPublisher;
     private EventPublisher orderedEventPublisher;
-    private final RuntimeOptions runtimeOptions;
+    private final PluginOptions pluginOptions;
 
-    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventPublisher eventPublisher, RuntimeOptions runtimeOptions) {
+    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventPublisher eventPublisher, PluginOptions pluginOptions) {
         this.classLoader = classLoader;
         this.pluginFactory = pluginFactory;
         this.eventPublisher = eventPublisher;
-        this.runtimeOptions = runtimeOptions;
+        this.pluginOptions = pluginOptions;
         this.plugins = createPlugins();
     }
 
@@ -62,7 +61,7 @@ public final class Plugins {
     private List<Plugin> createPlugins() {
         List<Plugin> plugins = new ArrayList<Plugin>();
         if (!pluginNamesInstantiated) {
-            for (String pluginName : runtimeOptions.getPluginNames()) {
+            for (String pluginName : pluginOptions.getPluginNames()) {
                 Plugin plugin = pluginFactory.create(pluginName);
                 addPlugin(plugins, plugin);
             }
@@ -93,14 +92,14 @@ public final class Plugins {
     private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
         if (plugin instanceof ColorAware) {
             ColorAware colorAware = (ColorAware) plugin;
-            colorAware.setMonochrome(runtimeOptions.isMonochrome());
+            colorAware.setMonochrome(pluginOptions.isMonochrome());
         }
     }
 
     private void setStrictOnStrictAwarePlugins(Plugin plugin) {
         if (plugin instanceof StrictAware) {
             StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(runtimeOptions.isStrict());
+            strictAware.setStrict(pluginOptions.isStrict());
         }
     }
 
@@ -110,7 +109,7 @@ public final class Plugins {
             formatter.setEventPublisher(eventPublisher);
         } else if (plugin instanceof EventListener) {
             EventListener formatter = (EventListener) plugin;
-            formatter.setEventPublisher(runtimeOptions.isMultiThreaded() ? getOrderedEventPublisher() : eventPublisher);
+            formatter.setEventPublisher(pluginOptions.assumeEventsInOrder() ? eventPublisher : getOrderedEventPublisher());
         }
     }
 

@@ -196,6 +196,8 @@ public class Runtime {
         }
 
         public Runtime build() {
+            runtimeOptions.setAssumeEventsInOrder(true);
+
             final ResourceLoader resourceLoader = this.resourceLoader != null
                 ? this.resourceLoader
                 : new MultiLoader(this.classLoader);
