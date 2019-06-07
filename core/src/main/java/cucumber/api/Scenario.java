@@ -48,6 +48,14 @@ public interface Scenario {
     void write(String text);
 
     /**
+     * Outputs some text into the report with name.
+     *
+     * @param name what to display name in the report.
+     * @param text what to put in the report.
+     */
+    void write(String name, String text);
+
+    /**
      *
      * @return the name of the Scenario
      */

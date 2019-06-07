@@ -67,6 +67,13 @@ class Scenario implements cucumber.api.Scenario {
     }
 
     @Override
+    public void write(String name, String text) {
+        if (bus != null) {
+            bus.send(new WriteEvent(bus.getTime(), bus.getTimeMillis(), testCase, name, text));
+        }
+    }
+
+    @Override
     public String getName() {
         return testCase.getName();
     }

@@ -48,10 +48,11 @@ final class JSONFormatter implements EventListener {
     private List<Map<String, Object>> currentStepsList;
     private Map<String, Object> currentStepOrHookMap;
     private Map<String, Object> currentBeforeStepHookList = new HashMap<String, Object>();
+    private Map<String, Object> namedOutputHookMap = new HashMap<String, Object>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
-    
+
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
@@ -99,7 +100,7 @@ final class JSONFormatter implements EventListener {
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
     }
-    
+
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
@@ -157,7 +158,12 @@ final class JSONFormatter implements EventListener {
     }
 
     private void handleWrite(WriteEvent event) {
-        addOutputToHookMap(event.text);
+
+        if (event.name != null) {
+            addOutputToHookMap(event.name, event.text);
+        } else {
+            addOutputToHookMap(event.text);
+        }
     }
 
     private void handleEmbed(EmbedEvent event) {
@@ -193,7 +199,7 @@ final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<String, Object>();
-        
+
         testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getTimeStampMillis()));
 
         TestCase testCase = event.getTestCase();
@@ -335,7 +341,20 @@ final class JSONFormatter implements EventListener {
         if (!currentStepOrHookMap.containsKey("output")) {
             currentStepOrHookMap.put("output", new ArrayList<String>());
         }
-        ((List<String>)currentStepOrHookMap.get("output")).add(text);
+
+        ((List<String>) currentStepOrHookMap.get("output")).add(text);
+    }
+
+    private void addOutputToHookMap(String name, String text) {
+        if (!currentStepOrHookMap.containsKey("output")) {
+            currentStepOrHookMap.put("output", new ArrayList<String>());
+        }
+        if (!namedOutputHookMap.containsKey(name)) {
+            namedOutputHookMap.put(name, new ArrayList<String>());
+            ((List<Map<String, Object>>)currentStepOrHookMap.get("output")).add(namedOutputHookMap);
+        }
+
+        ((List<String>) namedOutputHookMap.get(name)).add(text);
     }
 
     private void addEmbeddingToHookMap(byte[] data, String mimeType) {
@@ -387,11 +406,11 @@ final class JSONFormatter implements EventListener {
         }
         return resultMap;
     }
-    
+
     private String getDateTimeFromTimeStamp(long timeStampMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        
+
         return sdf.format(new Date(timeStampMillis));
     }
 }
