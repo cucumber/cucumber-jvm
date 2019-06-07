@@ -193,6 +193,16 @@
                                 <elementKind>method</elementKind>
                                 <justification>This class is part of Cucumbers internal API. The change adds a vararg argument.</justification>
                             </item>
+                            <item>
+                                <code>java.method.addedToInterface</code>
+                                <new>method void cucumber.api.Scenario::write(java.lang.String, java.lang.String)</new>
+                                <package>cucumber.api</package>
+                                <classQualifiedName>cucumber.api.Scenario</classQualifiedName>
+                                <classSimpleName>Scenario</classSimpleName>
+                                <methodName>write</methodName>
+                                <elementKind>method</elementKind>
+                                <justification>This interface can be used by users of Cucumber.</justification>
+                            </item>
                         </revapi.ignore>
                     </analysisConfiguration>
                 </configuration>
