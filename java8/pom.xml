@@ -123,6 +123,27 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <configuration>
+                    <analysisConfiguration>
+                        <revapi.ignore>
+                            <item>
+                                <code>java.method.addedToInterface</code>
+                                <new>method void cucumber.api.Scenario::write(java.lang.String, java.lang.String)</new>
+                                <justification>This interface can be used by users of Cucumber.</justification>
+                                <package>cucumber.api</package>
+                                <classQualifiedName>cucumber.api.Scenario</classQualifiedName>
+                                <classSimpleName>Scenario</classSimpleName>
+                                <methodName>write</methodName>
+                                <newArchive>io.cucumber:cucumber-core:jar:4.4.0-SNAPSHOT</newArchive>
+                                <elementKind>method</elementKind>
+                            </item>
+                        </revapi.ignore>
+                    </analysisConfiguration>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
