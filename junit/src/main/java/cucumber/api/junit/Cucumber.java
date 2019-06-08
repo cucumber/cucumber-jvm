@@ -32,6 +32,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.util.ArrayList;
@@ -69,6 +70,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<CucumberFeature> features;
     private final Plugins plugins;
 
+    private boolean multiThreadingAssumed = false;
+
     /**
      * Constructor called by JUnit.
      *
@@ -94,8 +97,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
+        this.plugins = new Plugins(classLoader, new PluginFactory(), runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        this.plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
 
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
@@ -138,6 +141,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
+            if (multiThreadingAssumed) {
+                plugins.setSerialEventBusOnEventListenerPlugins(bus);
+            } else {
+                plugins.setEventBusOnEventListenerPlugins(bus);
+            }
+
             bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
             for (CucumberFeature feature : features) {
                 feature.sendTestSourceRead(bus);
@@ -147,5 +156,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
         }
+    }
+
+    @Override
+    public void setScheduler(RunnerScheduler scheduler) {
+        super.setScheduler(scheduler);
+        multiThreadingAssumed = true;
     }
 }

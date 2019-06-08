@@ -25,31 +25,29 @@ public final class Plugins {
     private boolean pluginNamesInstantiated;
 
     private final PluginFactory pluginFactory;
-    private final EventPublisher eventPublisher;
     private EventPublisher orderedEventPublisher;
     private final PluginOptions pluginOptions;
 
-    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, EventPublisher eventPublisher, PluginOptions pluginOptions) {
+    public Plugins(ClassLoader classLoader, PluginFactory pluginFactory, PluginOptions pluginOptions) {
         this.classLoader = classLoader;
         this.pluginFactory = pluginFactory;
-        this.eventPublisher = eventPublisher;
         this.pluginOptions = pluginOptions;
         this.plugins = createPlugins();
     }
 
 
-    private EventPublisher getOrderedEventPublisher() {
+    private EventPublisher getOrderedEventPublisher(EventPublisher eventPublisher) {
         // The ordered event publisher stores all events
         // so don't create it unless we need it.
         if(orderedEventPublisher == null){
-            orderedEventPublisher = createCanonicalOrderEventPublisher();
+            orderedEventPublisher = createCanonicalOrderEventPublisher(eventPublisher);
         }
         return orderedEventPublisher;
     }
 
-    private EventPublisher createCanonicalOrderEventPublisher() {
+    private static EventPublisher createCanonicalOrderEventPublisher(EventPublisher eventPublisher) {
         final CanonicalOrderEventPublisher canonicalOrderEventPublisher = new CanonicalOrderEventPublisher();
-        this.eventPublisher.registerHandlerFor(Event.class, new EventHandler<Event>() {
+        eventPublisher.registerHandlerFor(Event.class, new EventHandler<Event>() {
             @Override
             public void receive(Event event) {
                 canonicalOrderEventPublisher.handle(event);
@@ -86,7 +84,6 @@ public final class Plugins {
         plugins.add(plugin);
         setMonochromeOnColorAwarePlugins(plugin);
         setStrictOnStrictAwarePlugins(plugin);
-        setEventBusOnEventListenerPlugins(plugin);
     }
 
     private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
@@ -103,16 +100,26 @@ public final class Plugins {
         }
     }
 
-    private void setEventBusOnEventListenerPlugins(Plugin plugin) {
-        if (plugin instanceof ConcurrentEventListener) {
-            ConcurrentEventListener formatter = (ConcurrentEventListener) plugin;
-            formatter.setEventPublisher(eventPublisher);
-        } else if (plugin instanceof EventListener) {
-            EventListener formatter = (EventListener) plugin;
-            formatter.setEventPublisher(getOrderedEventPublisher());
-        }
+    public void setEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
+       for (Plugin plugin : plugins) {
+           if (plugin instanceof ConcurrentEventListener) {
+                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher);
+            } else if (plugin instanceof EventListener) {
+                ((EventListener) plugin).setEventPublisher(eventPublisher);
+            }
+       }
     }
 
+    public void setSerialEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
+        for (Plugin plugin : plugins) {
+            if (plugin instanceof ConcurrentEventListener) {
+                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher);
+            } else if (plugin instanceof EventListener) {
+                EventPublisher orderedEventPublisher = getOrderedEventPublisher(eventPublisher);
+                ((EventListener) plugin).setEventPublisher(orderedEventPublisher);
+            }
+        }
+    }
 
     /**
      * Creates a dynamic proxy that multiplexes method invocations to all plugins of the same type.

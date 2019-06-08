@@ -44,8 +44,6 @@ public class Runtime {
 
     private final ExitStatus exitStatus;
 
-    private final RuntimeOptions runtimeOptions;
-
     private final RunnerSupplier runnerSupplier;
     private final Filters filters;
     private final EventBus bus;
@@ -62,7 +60,6 @@ public class Runtime {
                    final ExecutorService executor) {
 
         this.plugins = plugins;
-        this.runtimeOptions = runtimeOptions;
         this.filters = filters;
         this.bus = bus;
         this.runnerSupplier = runnerSupplier;
@@ -208,9 +205,14 @@ public class Runtime {
                 ? this.backendSupplier
                 : new BackendModuleBackendSupplier(resourceLoader, classFinder, this.runtimeOptions);
 
-            final Plugins plugins = new Plugins(this.classLoader, new PluginFactory(), this.eventBus, this.runtimeOptions);
+            final Plugins plugins = new Plugins(this.classLoader, new PluginFactory(), this.runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
                 plugins.addPlugin(plugin);
+            }
+            if (this.runtimeOptions.isMultiThreaded()) {
+                plugins.setSerialEventBusOnEventListenerPlugins(this.eventBus);
+            } else {
+                plugins.setEventBusOnEventListenerPlugins(this.eventBus);
             }
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()

@@ -26,6 +26,7 @@ public class TestNGCucumberRunner {
     private final FeaturePathFeatureSupplier featureSupplier;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
+    private final Plugins plugins;
 
     /**
      * Bootstrap the cucumber runtime
@@ -43,7 +44,7 @@ public class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        plugins = new Plugins(classLoader, new PluginFactory(), runtimeOptions);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         filters = new Filters(runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
@@ -89,6 +90,7 @@ public class TestNGCucumberRunner {
     }
 
     List<CucumberFeature> getFeatures() {
+        plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
         List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
