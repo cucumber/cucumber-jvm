@@ -68,8 +68,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     private final EventBus bus;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final List<CucumberFeature> features;
-    private final RuntimeOptions runtimeOptions;
-    private final ClassLoader classLoader;
+    private final Plugins plugins;
 
     private boolean multiThreadingAssumed = false;
 
@@ -85,10 +84,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        runtimeOptions = runtimeOptionsFactory.create();
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
 
-        classLoader = clazz.getClassLoader();
+        ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
@@ -98,6 +97,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
+        this.plugins = new Plugins(classLoader, new PluginFactory(), runtimeOptions);
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
         BackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
@@ -141,7 +141,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
-            Plugins plugins = new Plugins(classLoader, new PluginFactory(), runtimeOptions);
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
