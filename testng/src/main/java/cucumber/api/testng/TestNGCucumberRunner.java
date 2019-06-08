@@ -43,7 +43,8 @@ public class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);
         bus = new TimeServiceEventBus(TimeService.SYSTEM);
-        new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+        Plugins plugins = new Plugins(classLoader, new PluginFactory(), runtimeOptions);
+        plugins.setSerialEventBusOnEventListenerPlugins(bus);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         filters = new Filters(runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier);
