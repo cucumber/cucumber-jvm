@@ -209,7 +209,11 @@ public class Runtime {
             for (final Plugin plugin : additionalPlugins) {
                 plugins.addPlugin(plugin);
             }
-            plugins.setSerialEventBusOnEventListenerPlugins(this.eventBus);
+            if (this.runtimeOptions.isMultiThreaded()) {
+                plugins.setSerialEventBusOnEventListenerPlugins(this.eventBus);
+            } else {
+                plugins.setEventBusOnEventListenerPlugins(this.eventBus);
+            }
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
                 ? new ThreadLocalRunnerSupplier(this.runtimeOptions, eventBus, backendSupplier)
