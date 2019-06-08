@@ -510,7 +510,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void loads_no_features_when_rerun_file_specified_in_cucumber_options_property_is_empty() throws Exception {
-        properties.setProperty("cucumber.options", "@src/test/resources/cucumber/runtime/runtime-options-empty-rerun.txt");
+        properties.setProperty("cucumber.options", "@src/test/resources/io/cucumber/core/options/runtime-options-empty-rerun.txt");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), singletonList("src/test/resources/cucumber/runtime/formatter"));
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
     }
