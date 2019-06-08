@@ -65,18 +65,14 @@ public final class Runtime {
     private final Filters filters;
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
-    private final Plugins plugins;
     private final ExecutorService executor;
 
-    private Runtime(final Plugins plugins,
-                    final ExitStatus exitStatus,
+    private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
                     final Filters filters,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
                     final ExecutorService executor) {
-
-        this.plugins = plugins;
         this.filters = filters;
         this.bus = bus;
         this.runnerSupplier = runnerSupplier;
@@ -222,12 +218,18 @@ public final class Runtime {
                 ? this.backendSupplier
                 : new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
 
-            final Plugins plugins = new Plugins(new PluginFactory(), this.eventBus, runtimeOptions);
+            final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
                 plugins.addPlugin(plugin);
             }
             final ExitStatus exitStatus = new ExitStatus(runtimeOptions);
             plugins.addPlugin(exitStatus);
+            if (runtimeOptions.isMultiThreaded()) {
+                plugins.setSerialEventBusOnEventListenerPlugins(eventBus);
+            } else {
+                plugins.setEventBusOnEventListenerPlugins(eventBus);
+            }
+
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
                 ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier)
@@ -246,7 +248,7 @@ public final class Runtime {
 
             final Filters filters = new Filters(runtimeOptions);
 
-            return new Runtime(plugins, exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor);
+            return new Runtime(exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor);
         }
     }
 

@@ -30,6 +30,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
@@ -64,9 +65,10 @@ import java.util.List;
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<>();
     private final EventBus bus;
-    private final ThreadLocalRunnerSupplier runnerSupplier;
     private final List<CucumberFeature> features;
     private final Plugins plugins;
+
+    private boolean multiThreadingAssumed = false;
 
     /**
      * Constructor called by JUnit.
@@ -93,12 +95,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
+        this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
-        this.plugins = new Plugins(new PluginFactory(), bus, runtimeOptions);
 
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier);
         Filters filters = new Filters(runtimeOptions);
         for (CucumberFeature cucumberFeature : features) {
             FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
@@ -138,6 +140,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
+            if (multiThreadingAssumed) {
+                plugins.setSerialEventBusOnEventListenerPlugins(bus);
+            } else {
+                plugins.setEventBusOnEventListenerPlugins(bus);
+            }
+
             bus.send(new TestRunStarted(bus.getInstant()));
             for (CucumberFeature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
@@ -145,5 +153,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
         }
+    }
+
+    @Override
+    public void setScheduler(RunnerScheduler scheduler) {
+        super.setScheduler(scheduler);
+        multiThreadingAssumed = true;
     }
 }
