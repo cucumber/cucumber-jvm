@@ -46,7 +46,6 @@ public class PluginsTest {
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         StrictAware plugin = Mockito.mock(StrictAware.class);
         plugins.addPlugin(plugin);
-        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin).setStrict(true);
     }
 
@@ -57,7 +56,6 @@ public class PluginsTest {
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         ColorAware plugin = Mockito.mock(ColorAware.class);
         plugins.addPlugin(plugin);
-        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin).setMonochrome(true);
     }
 
