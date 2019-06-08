@@ -14,6 +14,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.order.OrderType;
 
+import cucumber.runtime.order.PickleOrder;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -451,31 +452,25 @@ public class RuntimeOptionsTest {
     @Test
     public void ordertype_default_none() {
     	RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
-        assertThat(options.getOrderType(), is(OrderType.NONE));
-    }
-
-     @Test
-    public void ensure_ordertype_none_is_used() {
-    	RuntimeOptions options = new RuntimeOptions(asList("--order", "none"));
-        assertThat(options.getOrderType(), is(OrderType.NONE));
+        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.NONE));
     }
 
      @Test
     public void ensure_ordertype_reverse_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
-        assertThat(options.getOrderType(), is(OrderType.REVERSE));
+        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.REVERSE));
     }
 
      @Test
     public void ensure_ordertype_random_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "random"));
-        assertThat(options.getOrderType(), is(OrderType.RANDOM));
+        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.RANDOM));
     }
 
      @Test
     public void ensure_invalid_ordertype_is_not_allowed() {
         expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Unrecognized OrderType invalid");
+        expectedException.expectMessage("Unknown order: invalid");
         new RuntimeOptions(asList("--order", "invalid"));
     } 
 

@@ -3,10 +3,9 @@ package cucumber.runtime.order;
  import java.util.Collections;
 import java.util.List;
 
- import cucumber.runtime.CucumberException;
 import gherkin.events.PickleEvent;
 
- public enum OrderType implements OrderPickleEvents {
+ public enum OrderType implements PickleOrder {
 
  	NONE {
 		@Override
@@ -27,15 +26,6 @@ import gherkin.events.PickleEvent;
 			Collections.shuffle(pickleEvents);
 			return pickleEvents;
 		}		
-	};
+	}
 
-
-     public static OrderType getOrderType(String name) {
-        for (OrderType orderType : OrderType.values()) {
-            if (name.equalsIgnoreCase(orderType.name())) {
-                return orderType;
-            }
-        }
-        throw new CucumberException(String.format("Unrecognized OrderType %s", name));
-    }
  }

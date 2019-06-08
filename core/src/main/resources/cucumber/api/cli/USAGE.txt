@@ -47,8 +47,7 @@ Options:
   
     
       --order                              Run the scenarios in a different order. 
-                                           The various options are 'reverse' and 
-                                           'random'.
+                                           The options are 'reverse' and 'random'.
 
       --count                              Number of scenarios to be executed. If not 
                                            specified all scenarios are run.
