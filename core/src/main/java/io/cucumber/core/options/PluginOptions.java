@@ -8,6 +8,4 @@ public interface PluginOptions {
     boolean isStrict();
 
     boolean isMonochrome();
-
-    boolean assumeEventsInOrder();
 }

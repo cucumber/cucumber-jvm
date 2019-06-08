@@ -43,9 +43,10 @@ public class PluginsTest {
     @Test
     public void shouldSetStrictOnPlugin() {
         RuntimeOptions runtimeOptions = new RuntimeOptions("--strict");
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         StrictAware plugin = Mockito.mock(StrictAware.class);
         plugins.addPlugin(plugin);
+        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin).setStrict(true);
     }
 
@@ -53,9 +54,10 @@ public class PluginsTest {
     @Test
     public void shouldSetMonochromeOnPlugin() {
         RuntimeOptions runtimeOptions = new RuntimeOptions("--monochrome");
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         ColorAware plugin = Mockito.mock(ColorAware.class);
         plugins.addPlugin(plugin);
+        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin).setMonochrome(true);
     }
 
@@ -63,9 +65,10 @@ public class PluginsTest {
     @Test
     public void shouldSetConcurrentEventListener() {
         RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         ConcurrentEventListener plugin = Mockito.mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
+        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
     }
 
@@ -73,20 +76,21 @@ public class PluginsTest {
     @Test
     public void shouldSetConcurrentEventListenerForSingleThread() {
         RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
-        runtimeOptions.setAssumeEventsInOrder(true);
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
+        plugins.setEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
     }
 
 
     @Test
     public void shouldSetNonConcurrentEventListenerForMultiThread() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--threads 2");
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
+        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin, times(1)).setEventPublisher(eventPublisher.capture());
         assertEquals(CanonicalOrderEventPublisher.class, eventPublisher.getValue().getClass());
     }
@@ -94,10 +98,11 @@ public class PluginsTest {
 
     @Test
     public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--threads 2");
-        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, rootEventPublisher, runtimeOptions);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
+        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(rootEventPublisher, times(1)).registerHandlerFor(eq(Event.class), ArgumentMatchers.<EventHandler<Event>>any());
     }
 

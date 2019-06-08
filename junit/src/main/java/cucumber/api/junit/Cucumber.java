@@ -32,7 +32,6 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.util.ArrayList;
@@ -84,7 +83,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
-        runtimeOptions.setAssumeEventsInOrder(true);
         JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
 
         classLoader = clazz.getClassLoader();
@@ -140,7 +138,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         @Override
         public void evaluate() throws Throwable {
-            Plugins plugins = new Plugins(classLoader, new PluginFactory(), bus, runtimeOptions);
+            Plugins plugins = new Plugins(classLoader, new PluginFactory(), runtimeOptions);
+            plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
             bus.send(new TestRunStarted(bus.getTime(), bus.getTimeMillis()));
             for (CucumberFeature feature : features) {
@@ -151,11 +150,5 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getTime(), bus.getTimeMillis()));
         }
-    }
-
-    @Override
-    public void setScheduler(RunnerScheduler scheduler) {
-        super.setScheduler(scheduler);
-        runtimeOptions.setAssumeEventsInOrder(false);
     }
 }
