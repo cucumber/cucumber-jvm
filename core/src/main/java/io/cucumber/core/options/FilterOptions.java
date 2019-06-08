@@ -12,4 +12,6 @@ public interface FilterOptions {
     List<String> getTagFilters();
 
     Map<URI, Set<Integer>> getLineFilters();
+    
+    int getLimitCount();
 }

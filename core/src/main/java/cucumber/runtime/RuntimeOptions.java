@@ -4,6 +4,8 @@ import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.order.PickleOrder;
+import cucumber.runtime.order.OrderType;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import cucumber.util.FixJava;
@@ -69,10 +71,21 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
+    private PickleOrder pickleOrder = OrderType.NONE;
+    private int count = 0;
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
     private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
+
+    private final Map<String, PickleOrder> orderOptions = createOrderOptions();
+
+    private static Map<String, PickleOrder> createOrderOptions() {
+        Map<String, PickleOrder> orderOptions = new HashMap<>();
+        orderOptions.put("random", OrderType.RANDOM);
+        orderOptions.put("reverse", OrderType.REVERSE);
+        return orderOptions;
+    }
 
 
     /**
@@ -181,6 +194,17 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 parsedJunitOptions.addAll(asList(arg.substring("--junit,".length()).split(",")));
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 wip = true;
+            } else if (arg.equals("--order")) {
+                String orderOption = args.remove(0);
+                if(!orderOptions.containsKey(orderOption)){
+                    throw new CucumberException("Unknown order: " + orderOption);
+                }
+                pickleOrder = orderOptions.get(orderOption);
+            } else if (arg.equals("--count")) {
+            	count = Integer.parseInt(args.remove(0));
+                if (this.count < 1) {
+                    throw new CucumberException("--count must be > 0");
+                }
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -364,6 +388,11 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     public Map<URI, Set<Integer>> getLineFilters() {
         return lineFilters;
     }
+    
+	@Override
+	public int getLimitCount() {
+		return count;
+	}
 
     @Override
     public boolean isMonochrome() {
@@ -381,6 +410,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     public int getThreads() {
         return threads;
+    }
+    
+    public PickleOrder getPickleOrder() {
+    	return pickleOrder;
     }
 
     class ParsedPluginData {

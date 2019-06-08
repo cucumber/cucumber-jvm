@@ -18,6 +18,7 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import cucumber.runtime.order.PickleOrder;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -50,6 +51,7 @@ public class Runtime {
     private final FeatureSupplier featureSupplier;
     private final Plugins plugins;
     private final ExecutorService executor;
+    private final PickleOrder pickleOrder;
 
     public Runtime(final Plugins plugins,
                    final RuntimeOptions runtimeOptions,
@@ -57,7 +59,8 @@ public class Runtime {
                    final Filters filters,
                    final RunnerSupplier runnerSupplier,
                    final FeatureSupplier featureSupplier,
-                   final ExecutorService executor) {
+                   final ExecutorService executor,
+                   final PickleOrder pickleOrder) {
 
         this.plugins = plugins;
         this.filters = filters;
@@ -66,6 +69,7 @@ public class Runtime {
         this.featureSupplier = featureSupplier;
         this.executor = executor;
         this.exitStatus = new ExitStatus(runtimeOptions);
+        this.pickleOrder = pickleOrder;
         exitStatus.setEventPublisher(bus);
     }
 
@@ -78,19 +82,27 @@ public class Runtime {
 
         final StepDefinitionReporter stepDefinitionReporter = plugins.stepDefinitionReporter();
         runnerSupplier.get().reportStepDefinitions(stepDefinitionReporter);
-
-        final List<Future<?>> executingPickles = new ArrayList<>();
+        
+        final List<PickleEvent> filteredEvents = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    executingPickles.add(executor.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            runnerSupplier.get().runPickle(pickleEvent);
-                        }
-                    }));
+                	filteredEvents.add(pickleEvent);
                 }
             }
+        }
+        
+        final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
+        final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);
+
+         final List<Future<?>> executingPickles = new ArrayList<>();
+        for(final PickleEvent pickleEvent : limitedEvents) {        	
+        	executingPickles.add(executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    runnerSupplier.get().runPickle(pickleEvent);
+                }
+            }));
         }
 
         executor.shutdown();
@@ -231,7 +243,8 @@ public class Runtime {
                 : new FeaturePathFeatureSupplier(featureLoader, this.runtimeOptions);
 
             final Filters filters = new Filters(this.runtimeOptions);
-            return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor);
+            final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
+            return new Runtime(plugins, this.runtimeOptions, eventBus, filters, runnerSupplier, featureSupplier, executor, pickleOrder);
         }
     }
 

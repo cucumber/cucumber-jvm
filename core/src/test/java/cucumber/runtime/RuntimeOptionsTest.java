@@ -12,6 +12,9 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.order.OrderType;
+
+import cucumber.runtime.order.PickleOrder;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -479,7 +482,39 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
         assertThat(options.getSnippetType(), is(SnippetType.CAMELCASE));
     }
+    
+    @Test
+    public void ordertype_default_none() {
+    	RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
+        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.NONE));
+    }
 
+     @Test
+    public void ensure_ordertype_reverse_is_used() {
+    	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
+        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.REVERSE));
+    }
+
+     @Test
+    public void ensure_ordertype_random_is_used() {
+    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random"));
+        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.RANDOM));
+    }
+
+     @Test
+    public void ensure_invalid_ordertype_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Unknown order: invalid");
+        new RuntimeOptions(asList("--order", "invalid"));
+    } 
+
+     @Test
+    public void ensure_less_than_1_count_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("--count must be > 0");
+        new RuntimeOptions(asList("--count", "0"));
+    }
+    
     @Test
     public void loads_no_features_when_rerun_file_contains_carriage_return() throws Exception {
         String rerunPath = "file:path/rerun.txt";
