@@ -7,14 +7,15 @@ cache:
 
 jobs:
   include:
-  # 1.1 Semver check
-  - stage: test
-    jdk: oraclejdk8
-    script: mvn verify -Pcheck-semantic-version -DskipTests=true
-    env: CHECK_SEMANTIC_VERSION=true
+  # 1.1 Semver check disabled for v5. We're breaking it.
+#  - stage: test
+#    jdk: oraclejdk8
+#    script: mvn verify -Pcheck-semantic-version -DskipTests=true
+#    env: CHECK_SEMANTIC_VERSION=true
 
     # 1.2 Check JDK 8,10,ea
-  - jdk: oraclejdk8
+  - stage: test
+    jdk: oraclejdk8
     script: mvn -q verify
     after_success:
     - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
