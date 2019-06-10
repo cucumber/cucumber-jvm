@@ -15,6 +15,8 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.order.OrderType;
 
 import cucumber.runtime.order.PickleOrder;
+import cucumber.runtime.order.RandomOrderType;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -39,6 +41,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.collection.IsEmptyCollection.emptyCollectionOf;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -489,26 +492,60 @@ public class RuntimeOptionsTest {
         assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.NONE));
     }
 
-     @Test
+    @Test
     public void ensure_ordertype_reverse_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
         assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.REVERSE));
     }
 
-     @Test
+    @Test
     public void ensure_ordertype_random_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "random"));
-        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.RANDOM));
+        assertThat(options.getPickleOrder(), instanceOf(RandomOrderType.class));
+    }
+    
+    @Test
+    public void ensure_ordertype_random_with_seed_is_used() {
+    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random:5000"));
+        assertThat(options.getPickleOrder(), instanceOf(RandomOrderType.class));
     }
 
-     @Test
+    @Test
     public void ensure_invalid_ordertype_is_not_allowed() {
         expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Unknown order: invalid");
+        expectedException.expectMessage("Unknown Order Type : invalid");
         new RuntimeOptions(asList("--order", "invalid"));
-    } 
+    }
+    
+    @Test
+    public void ensure_delimiter_ending_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Order Type options cannot end in delimiter.");
+        new RuntimeOptions(asList("--order", "random:"));
+    }
+    
+    @Test
+    public void ensure_reverse_with_delimiter_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Order Type does not require options. The correct format is '--order reverse'");
+        new RuntimeOptions(asList("--order", "reverse:34"));
+    }
 
-     @Test
+    @Test
+    public void ensure_random_with_options_number_more_than_two_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("The correct format for Random order type with seed is '--order random:<seed>'");
+        new RuntimeOptions(asList("--order", "random:34:45"));
+    }
+    
+    @Test
+    public void ensure_ordertype_option_wrong_delimiter_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Unknown Order Type : random%5000");
+        new RuntimeOptions(asList("--order", "random%5000"));
+    }
+    
+    @Test
     public void ensure_less_than_1_count_is_not_allowed() {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("--count must be > 0");

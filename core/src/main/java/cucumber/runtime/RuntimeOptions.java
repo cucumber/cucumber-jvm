@@ -78,15 +78,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
     private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
 
-    private final Map<String, PickleOrder> orderOptions = createOrderOptions();
-
-    private static Map<String, PickleOrder> createOrderOptions() {
-        Map<String, PickleOrder> orderOptions = new HashMap<>();
-        orderOptions.put("random", OrderType.RANDOM);
-        orderOptions.put("reverse", OrderType.REVERSE);
-        return orderOptions;
-    }
-
 
     /**
      * Create a new instance from a string of options, for example:
@@ -196,10 +187,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 wip = true;
             } else if (arg.equals("--order")) {
                 String orderOption = args.remove(0);
-                if(!orderOptions.containsKey(orderOption)){
-                    throw new CucumberException("Unknown order: " + orderOption);
-                }
-                pickleOrder = orderOptions.get(orderOption);
+                pickleOrder = OrderType.getPickleOrderType(orderOption);
             } else if (arg.equals("--count")) {
             	count = Integer.parseInt(args.remove(0));
                 if (this.count < 1) {
