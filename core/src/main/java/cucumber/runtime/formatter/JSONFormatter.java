@@ -170,7 +170,7 @@ final class JSONFormatter implements EventListener {
     }
 
     private void finishReport() {
-        out.append(gson.toJson(featureMaps));
+        gson.toJson(featureMaps, out);
         out.close();
     }
 

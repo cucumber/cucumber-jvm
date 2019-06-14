@@ -126,7 +126,7 @@ public class TimelineFormatter implements ConcurrentEventListener {
 
     private void appendAsJsonToJs(final Gson gson, final NiceAppendable out, final String pushTo, final Collection<?> content) {
         out.append("CucumberHTML." + pushTo + ".pushArray(");
-        out.append(gson.toJson(content));
+        gson.toJson(content, out);
         out.append(");");
     }
 
