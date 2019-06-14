@@ -5,7 +5,9 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.order.PickleOrder;
-import cucumber.runtime.order.OrderType;
+import cucumber.runtime.order.StandardPickleOrders;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import cucumber.util.FixJava;
@@ -28,10 +30,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cucumber.util.FixJava.join;
@@ -42,6 +46,8 @@ import static java.util.Arrays.asList;
 public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
+    private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
+    private static final Logger log = LoggerFactory.getLogger(RuntimeOptions.class);
 
     static String usageText;
 
@@ -71,21 +77,12 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
-    private PickleOrder pickleOrder = OrderType.NONE;
+    private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
 
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
     private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
-
-    private final Map<String, PickleOrder> orderOptions = createOrderOptions();
-
-    private static Map<String, PickleOrder> createOrderOptions() {
-        Map<String, PickleOrder> orderOptions = new HashMap<>();
-        orderOptions.put("random", OrderType.RANDOM);
-        orderOptions.put("reverse", OrderType.REVERSE);
-        return orderOptions;
-    }
 
 
     /**
@@ -131,6 +128,28 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         if (pluginSummaryPrinterNames.isEmpty()) {
             pluginSummaryPrinterNames.add("default_summary");
         }
+    }
+
+    public static PickleOrder parsePickleOrder(String argument) {
+
+        if ("reverse".equals(argument)) {
+            return StandardPickleOrders.reverseLexicalUriOrder();
+        }
+
+        Matcher matcher = RANDOM_AND_SEED_PATTERN.matcher(argument);
+        if (matcher.matches()) {
+            long seed = new Random().nextLong();
+            String seedString = matcher.group(1);
+            if (seedString != null) {
+                seed = Long.parseLong(seedString);
+            } else {
+                log.info("Using random scenario order. Seed: " + seed);
+            }
+
+            return StandardPickleOrders.random(seed);
+        }
+
+        throw new CucumberException("Invalid order. Must be either reverse, random or random:<long>");
     }
 
     public boolean isMultiThreaded() {
@@ -195,11 +214,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 wip = true;
             } else if (arg.equals("--order")) {
-                String orderOption = args.remove(0);
-                if(!orderOptions.containsKey(orderOption)){
-                    throw new CucumberException("Unknown order: " + orderOption);
-                }
-                pickleOrder = orderOptions.get(orderOption);
+                pickleOrder = parsePickleOrder(args.remove(0));
             } else if (arg.equals("--count")) {
             	count = Integer.parseInt(args.remove(0));
                 if (this.count < 1) {

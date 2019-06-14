@@ -12,9 +12,8 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.order.OrderType;
 
-import cucumber.runtime.order.PickleOrder;
+import gherkin.events.PickleEvent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -28,10 +27,7 @@ import org.mockito.junit.MockitoRule;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -486,29 +482,44 @@ public class RuntimeOptionsTest {
     @Test
     public void ordertype_default_none() {
     	RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
-        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.NONE));
+        PickleEvent a = new PickleEvent("a", null);
+        PickleEvent b = new PickleEvent("b", null);
+        assertThat(options.getPickleOrder()
+            .orderPickleEvents(Arrays.asList(a, b)), contains(a, b));
     }
 
-     @Test
+    @Test
     public void ensure_ordertype_reverse_is_used() {
     	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
-        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.REVERSE));
+        PickleEvent a = new PickleEvent("a", null);
+        PickleEvent b = new PickleEvent("b", null);
+        assertThat(options.getPickleOrder()
+            .orderPickleEvents(Arrays.asList(a, b)), contains(b, a));
     }
 
-     @Test
+    @Test
     public void ensure_ordertype_random_is_used() {
-    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random"));
-        assertThat(options.getPickleOrder(), is((PickleOrder) OrderType.RANDOM));
+    	new RuntimeOptions(asList("--order", "random"));
+    }
+    
+    @Test
+    public void ensure_ordertype_random_with_seed_is_used() {
+    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random:5000"));
+        PickleEvent a = new PickleEvent("a", null);
+        PickleEvent b = new PickleEvent("b", null);
+        PickleEvent c = new PickleEvent("c", null);
+        assertThat(options.getPickleOrder()
+            .orderPickleEvents(Arrays.asList(a, b, c)), contains(c, a, b));
     }
 
-     @Test
+    @Test
     public void ensure_invalid_ordertype_is_not_allowed() {
         expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Unknown order: invalid");
+        expectedException.expectMessage("Invalid order. Must be either reverse, random or random:<long>");
         new RuntimeOptions(asList("--order", "invalid"));
-    } 
-
-     @Test
+    }
+    
+    @Test
     public void ensure_less_than_1_count_is_not_allowed() {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("--count must be > 0");

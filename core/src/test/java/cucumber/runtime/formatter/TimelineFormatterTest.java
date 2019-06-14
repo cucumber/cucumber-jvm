@@ -205,8 +205,8 @@ public class TimelineFormatterTest {
             "  {\n" +
             "    \"id\": \"pending-feature;scenario-1\",\n" +
             "    \"feature\": \"Pending Feature\",\n" +
-            "    \"start\": 18000,\n" +
-            "    \"end\": 24000,\n" +
+            "    \"start\": 12000,\n" +
+            "    \"end\": 18000,\n" +
             "    \"group\": groupId,\n" +
             "    \"content\": \"\",\n" +
             "    \"tags\": \"\",\n" +
@@ -215,8 +215,8 @@ public class TimelineFormatterTest {
             "  {\n" +
             "    \"id\": \"successful-feature;scenario-1\",\n" +
             "    \"feature\": \"Successful Feature\",\n" +
-            "    \"start\": 12000,\n" +
-            "    \"end\": 18000,\n" +
+            "    \"start\": 18000,\n" +
+            "    \"end\": 24000,\n" +
             "    \"group\": groupId,\n" +
             "    \"content\": \"\",\n" +
             "    \"tags\": \"@tagb,@tagc,\",\n" +

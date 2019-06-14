@@ -47,7 +47,9 @@ Options:
   
     
       --order                              Run the scenarios in a different order. 
-                                           The options are 'reverse' and 'random'.
+                                           The options are 'reverse' and 'random'. In
+                                           case of 'random' order an optional seed
+                                           parameter can be added 'random:<seed>'.
 
       --count                              Number of scenarios to be executed. If not 
                                            specified all scenarios are run.
