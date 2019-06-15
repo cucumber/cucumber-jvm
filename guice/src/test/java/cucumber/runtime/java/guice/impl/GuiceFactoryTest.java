@@ -8,8 +8,8 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import cucumber.api.guice.CucumberModules;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.guice.ScenarioScoped;
+import io.cucumber.core.backend.ObjectFactory;
 import org.junit.After;
 import org.junit.Test;
 

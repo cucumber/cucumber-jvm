@@ -1,9 +1,9 @@
 package cucumber.runtime.java.guice.impl;
 
 import com.google.inject.Injector;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Env;
 import cucumber.runtime.java.guice.ScenarioScope;
+import io.cucumber.core.backend.ObjectFactory;
 
 /**
  * Guice implementation of the <code>cucumber.api.java.ObjectFactory</code>.
