@@ -48,8 +48,8 @@
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <assertj.core.version>3.12.1</assertj.core.version>
-        <mockito.version>2.25.1</mockito.version>
+        <assertj.core.version>3.12.2</assertj.core.version>
+        <mockito.version>2.28.2</mockito.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>
@@ -350,7 +350,7 @@
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.19.0</version>
+                            <version>0.19.1</version>
                         </dependency>
                     </dependencies>
                     <configuration>

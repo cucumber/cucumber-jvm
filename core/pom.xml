@@ -13,7 +13,7 @@
 
     <properties>
         <!-- version 2.4.0 does not work on Java 7 -->
-        <jsoup.version>1.11.3</jsoup.version>
+        <jsoup.version>1.12.1</jsoup.version>
         <xmlunit.version>1.6</xmlunit.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>

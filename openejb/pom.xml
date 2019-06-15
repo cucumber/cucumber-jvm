@@ -14,7 +14,7 @@
     <properties>
         <openejb-core.version>8.0.0-M1</openejb-core.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <activation.version>1.1</activation.version>
+        <activation.version>1.1.1</activation.version>
     </properties>
 
     <dependencies>
