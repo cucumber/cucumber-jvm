@@ -1,7 +1,7 @@
 package cucumber.runtime.java.weld;
 
 import cucumber.runtime.CucumberException;
-import cucumber.api.java.ObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import org.jboss.weld.environment.se.Weld;
