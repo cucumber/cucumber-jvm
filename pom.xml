@@ -40,8 +40,8 @@
     <properties>
         <!--Dependencies -->
         <gherkin.version>5.1.0</gherkin.version>
-        <cucumber-expressions.version>6.2.2</cucumber-expressions.version>
-        <datatable.version>1.1.12</datatable.version>
+        <cucumber-expressions.version>7.0.2</cucumber-expressions.version>
+        <datatable.version>1.1.14</datatable.version>
         <tag-expressions.version>1.1.1</tag-expressions.version>
         <cucumber-html.version>0.2.7</cucumber-html.version>
 
