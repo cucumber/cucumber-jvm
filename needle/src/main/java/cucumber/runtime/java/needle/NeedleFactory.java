@@ -1,11 +1,11 @@
 package cucumber.runtime.java.needle;
 
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.needle.config.CollectInjectionProvidersFromStepsInstance;
 import cucumber.runtime.java.needle.config.CreateInstanceByDefaultConstructor;
 import cucumber.runtime.java.needle.config.CucumberNeedleConfiguration;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.core.backend.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
