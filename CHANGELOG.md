@@ -1,7 +1,19 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.4.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...master) (In Git)
+## [4.4.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...master) (In Git)
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.0.0) (2019-06-15)
 
 ### Added
  * [Core] Add StepDefinedEvent ([#1634](https://github.com/cucumber/cucumber-jvm/pull/1634) Tim te Beek, M.P. Korstanje) 
@@ -27,8 +39,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Java] Deprecated classpath scanning for ObjectFactory ([#1615](https://github.com/cucumber/cucumber-jvm/pull/1615) Toepi, M.P. Korstanje)
     - Deprecated `cucumber.api.java.ObjectFactory` in favour of `io.cucumber.core.backend.ObjectFactory`.
 
-### Removed
-
 ### Fixed
  * [Core] Clear RuntimeOptions.featurePaths if rerun was used ([#1631](https://github.com/cucumber/cucumber-jvm/pull/1631) Tommy Wo) 
  * [Core] Escape spaces in ZipResource path ([#1636](https://github.com/cucumber/cucumber-jvm/pull/1636) Bearded QA)
@@ -38,7 +48,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Allow runner to register bus as concurrent or serial event source ([#1656](https://github.com/cucumber/cucumber-jvm/pull/1656) Tim te Beek, M.P. Korstanje)
    - When using JUnit or the CLI the pretty formatter will print steps as the test progresses
  * [Core] Efficiently write JSON to output ([#1663](https://github.com/cucumber/cucumber-jvm/pull/1663) M.P. Korstanje) 
- 
 
 ## [4.3.1](https://github.com/cucumber/cucumber-jvm/compare/v4.3.0...v4.3.1) (2019-05-05)
 
