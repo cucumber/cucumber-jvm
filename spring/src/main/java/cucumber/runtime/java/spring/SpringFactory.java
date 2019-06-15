@@ -4,8 +4,8 @@ import static cucumber.runtime.java.spring.FixBootstrapUtils.createBootstrapCont
 import static cucumber.runtime.java.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
 import static java.util.Arrays.asList;
 
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
+import io.cucumber.core.backend.ObjectFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

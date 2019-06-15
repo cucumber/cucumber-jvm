@@ -1,7 +1,6 @@
 package cucumber.runtime.java.spring;
 
 import cucumber.runtime.CucumberException;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.spring.beans.BellyBean;
 import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManager;
 import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
@@ -15,6 +14,7 @@ import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
+import io.cucumber.core.backend.ObjectFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
