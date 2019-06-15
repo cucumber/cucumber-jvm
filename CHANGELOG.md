@@ -21,12 +21,13 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Add StepDefinedEvent ([#1634](https://github.com/cucumber/cucumber-jvm/pull/1634) Tim te Beek, M.P. Korstanje) 
  * [Core] Add CDI2 integration ([#1626](https://github.com/cucumber/cucumber-jvm/pull/1626) Romain Manni-Bucau)
  * [Java] Use ServiceLoader for ObjectFactory ([#1615](https://github.com/cucumber/cucumber-jvm/pull/1615) Toepi, M.P. Korstanje)
-    - Object factories that implement `io.cucumber.core.backend.ObjectFactory` will be loaded via the ServiceLoader
+   - Object factories that implement `io.cucumber.core.backend.ObjectFactory` will be loaded via the ServiceLoader
  * [Core] Add UnusedStepsSummaryPrinter ([#1648](https://github.com/cucumber/cucumber-jvm/pull/1648) Tim te Beek)
+   - Adds `--plugin unused` CLI option
  * [Core] Add reverse and random scenario execution order ([#1645](https://github.com/cucumber/cucumber-jvm/pull/1645), [#1658](https://github.com/cucumber/cucumber-jvm/pull/1658) Grasshopper, M.P. Korstanje)
-  - Adds `--order reverse` CLI option
-  - Adds `--order random` and `--order random:<seed>` CLI options
-  - Adds `--limit <number of pickles>` CLI option
+   - Adds `--order reverse` CLI option
+   - Adds `--order random` and `--order random:<seed>` CLI options
+   - Adds `--limit <number of pickles>` CLI option
 
 ### Changed
  * [Core] Refactored usage formatter ([#1608](https://github.com/cucumber/cucumber-jvm/pull/1608) Marit van Dijk, M.P. Korstanje) 
