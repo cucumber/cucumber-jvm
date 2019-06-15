@@ -6,6 +6,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Added
 
 ### Changed
+ * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld ObjectFactories
+    - Removes deprecation warning
 
 ### Deprecated
 
