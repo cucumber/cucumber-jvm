@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * A nice appendable that doesn't throw checked exceptions
  */
-final class NiceAppendable {
+final class NiceAppendable implements Appendable {
     private static final CharSequence NL = "\n";
     private final Appendable out;
 

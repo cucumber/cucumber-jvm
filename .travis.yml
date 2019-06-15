@@ -9,13 +9,13 @@ jobs:
   include:
   # 1.1 Semver check disabled for v5. We're breaking it.
 #  - stage: test
-#    jdk: oraclejdk8
+#    jdk: openjdk8
 #    script: mvn verify -Pcheck-semantic-version -DskipTests=true
 #    env: CHECK_SEMANTIC_VERSION=true
 
     # 1.2 Check JDK 8,10,ea
   - stage: test
-    jdk: oraclejdk8
+    jdk: openjdk8
     script: mvn -q verify
     after_success:
     - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
@@ -25,7 +25,7 @@ jobs:
     script: mvn -q verify
 
    # 1.3 Check java doc
-  - jdk: oraclejdk8
+  - jdk: openjdk8
     env: JAVADOC=true
     script:
     - mvn clean verify -DskipTests=true
@@ -33,7 +33,7 @@ jobs:
 
   # 2. Deploy
   - stage: deploy
-    jdk: oraclejdk8
+    jdk: openjdk8
     script:
     - "./continuous-deployment/before-deploy.sh"
     - "./continuous-deployment/deploy.sh"

@@ -13,6 +13,8 @@ public final class Filters {
 
     private final List<PicklePredicate> filters;
 
+    private int count;
+
     public Filters(Options options) {
         filters = new ArrayList<>();
         List<String> tagExpressions = options.getTagExpressions();
@@ -27,6 +29,8 @@ public final class Filters {
         if (!lineFilters.isEmpty()) {
             this.filters.add(new LinePredicate(lineFilters));
         }
+
+        this.count = options.getLimitCount();
     }
 
     public boolean matchesFilters(PickleEvent pickleEvent) {
@@ -38,4 +42,10 @@ public final class Filters {
         return true;
     }
 
+    public List<PickleEvent> limitPickleEvents(List<PickleEvent> pickleEvents) {
+    	if (count > pickleEvents.size() || count < 1) {
+    		return pickleEvents;
+    	}
+		return pickleEvents.subList(0, count);
+	}
 }

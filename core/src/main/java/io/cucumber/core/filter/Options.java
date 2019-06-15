@@ -12,4 +12,6 @@ public interface Options {
     List<Pattern> getNameFilters();
 
     Map<URI, Set<Integer>> getLineFilters();
+
+    int getLimitCount();
 }

@@ -77,7 +77,7 @@ public final class UsageFormatter implements Plugin, EventListener {
             stepDefContainers.add(stepDefContainer);
         }
 
-        out.append(gson().toJson(stepDefContainers));
+        gson().toJson(stepDefContainers, out);
         out.close();
     }
 

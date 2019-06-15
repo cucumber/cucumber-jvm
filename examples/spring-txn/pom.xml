@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>4.4.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>spring-txn</artifactId>
@@ -12,7 +12,7 @@
     <name>Examples: Spring Transactions</name>
 
     <properties>
-        <spring-boot.version>2.1.3.RELEASE</spring-boot.version>
+        <spring-boot.version>2.1.5.RELEASE</spring-boot.version>
     </properties>
 
     <dependencyManagement>

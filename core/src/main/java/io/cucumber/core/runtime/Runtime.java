@@ -26,6 +26,7 @@ import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -66,19 +67,22 @@ public final class Runtime {
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
+    private final PickleOrder pickleOrder;
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
                     final Filters filters,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
-                    final ExecutorService executor) {
+                    final ExecutorService executor,
+                    final PickleOrder pickleOrder) {
         this.filters = filters;
         this.bus = bus;
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
         this.exitStatus = exitStatus;
+        this.pickleOrder = pickleOrder;
     }
 
     public void run() {
@@ -88,18 +92,26 @@ public final class Runtime {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
 
-        final List<Future<?>> executingPickles = new ArrayList<>();
+        final List<PickleEvent> filteredEvents = new ArrayList<>();
         for (CucumberFeature feature : features) {
             for (final PickleEvent pickleEvent : feature.getPickles()) {
                 if (filters.matchesFilters(pickleEvent)) {
-                    executingPickles.add(executor.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            runnerSupplier.get().runPickle(pickleEvent);
-                        }
-                    }));
+                    filteredEvents.add(pickleEvent);
                 }
             }
+        }
+
+        final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
+        final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);
+
+         final List<Future<?>> executingPickles = new ArrayList<>();
+        for(final PickleEvent pickleEvent : limitedEvents) {
+        	executingPickles.add(executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    runnerSupplier.get().runPickle(pickleEvent);
+                }
+            }));
         }
 
         executor.shutdown();
@@ -247,8 +259,9 @@ public final class Runtime {
                 : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
             final Filters filters = new Filters(runtimeOptions);
+            final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
 
-            return new Runtime(exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor);
+            return new Runtime(exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor, pickleOrder);
         }
     }
 

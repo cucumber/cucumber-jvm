@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import gherkin.events.PickleEvent;
 import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.options.SnippetType;
@@ -27,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
@@ -459,6 +461,53 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--snippets camelcase");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
         assertThat(options.getSnippetType(), is(SnippetType.CAMELCASE));
+    }
+
+    @Test
+    public void ordertype_default_none() {
+    	RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
+        PickleEvent a = new PickleEvent("a", null);
+        PickleEvent b = new PickleEvent("b", null);
+        assertThat(options.getPickleOrder()
+            .orderPickleEvents(Arrays.asList(a, b)), contains(a, b));
+    }
+
+    @Test
+    public void ensure_ordertype_reverse_is_used() {
+    	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
+        PickleEvent a = new PickleEvent("a", null);
+        PickleEvent b = new PickleEvent("b", null);
+        assertThat(options.getPickleOrder()
+            .orderPickleEvents(Arrays.asList(a, b)), contains(b, a));
+    }
+
+    @Test
+    public void ensure_ordertype_random_is_used() {
+    	new RuntimeOptions(asList("--order", "random"));
+    }
+
+    @Test
+    public void ensure_ordertype_random_with_seed_is_used() {
+    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random:5000"));
+        PickleEvent a = new PickleEvent("a", null);
+        PickleEvent b = new PickleEvent("b", null);
+        PickleEvent c = new PickleEvent("c", null);
+        assertThat(options.getPickleOrder()
+            .orderPickleEvents(Arrays.asList(a, b, c)), contains(c, a, b));
+    }
+
+    @Test
+    public void ensure_invalid_ordertype_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Invalid order. Must be either reverse, random or random:<long>");
+        new RuntimeOptions(asList("--order", "invalid"));
+    }
+
+    @Test
+    public void ensure_less_than_1_count_is_not_allowed() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("--count must be > 0");
+        new RuntimeOptions(asList("--count", "0"));
     }
 
     @Test

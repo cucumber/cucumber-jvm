@@ -7,10 +7,14 @@ import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import io.cucumber.core.model.GluePath;
 import io.cucumber.core.model.RerunLoader;
+import io.cucumber.core.order.PickleOrder;
+import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.util.FixJava;
 import io.cucumber.core.util.Mapper;
 import io.cucumber.datatable.DataTable;
@@ -22,10 +26,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.util.FixJava.join;
@@ -34,9 +40,10 @@ import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
-
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     private static final String USAGE_RESOURCE = "/io/cucumber/core/api/cli/USAGE.txt";
+    private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
+    private static final Logger log = LoggerFactory.getLogger(RuntimeOptions.class);
 
     static String usageText;
 
@@ -66,6 +73,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
+    private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
+    private int count = 0;
 
     private final List<Plugin> formatters = new ArrayList<>();
     private final List<Plugin> summaryPrinters = new ArrayList<>();
@@ -119,6 +128,28 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         if (summaryPrinters.isEmpty()) {
             summaryPrinters.add(PluginOption.parse("default_summary"));
         }
+    }
+
+    public static PickleOrder parsePickleOrder(String argument) {
+
+        if ("reverse".equals(argument)) {
+            return StandardPickleOrders.reverseLexicalUriOrder();
+        }
+
+        Matcher matcher = RANDOM_AND_SEED_PATTERN.matcher(argument);
+        if (matcher.matches()) {
+            long seed = new Random().nextLong();
+            String seedString = matcher.group(1);
+            if (seedString != null) {
+                seed = Long.parseLong(seedString);
+            } else {
+                log.info("Using random scenario order. Seed: " + seed);
+            }
+
+            return StandardPickleOrders.random(seed);
+        }
+
+        throw new CucumberException("Invalid order. Must be either reverse, random or random:<long>");
     }
 
     public boolean isMultiThreaded() {
@@ -190,6 +221,13 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 parsedJunitOptions.addAll(asList(arg.substring("--junit,".length()).split(",")));
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 wip = true;
+            } else if (arg.equals("--order")) {
+                pickleOrder = parsePickleOrder(args.remove(0));
+            } else if (arg.equals("--count")) {
+            	count = Integer.parseInt(args.remove(0));
+                if (this.count < 1) {
+                    throw new CucumberException("--count must be > 0");
+                }
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -374,6 +412,11 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         return lineFilters;
     }
 
+	@Override
+	public int getLimitCount() {
+		return count;
+	}
+
     @Override
     public boolean isMonochrome() {
         return monochrome;
@@ -390,6 +433,10 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     public int getThreads() {
         return threads;
+    }
+
+    public PickleOrder getPickleOrder() {
+    	return pickleOrder;
     }
 
     static final class ParsedPluginData {

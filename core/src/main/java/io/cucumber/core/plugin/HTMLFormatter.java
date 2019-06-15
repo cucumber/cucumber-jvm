@@ -458,8 +458,7 @@ public final class HTMLFormatter implements EventListener {
             if (comma) {
                 out.append(", ");
             }
-            String stringArg = gson.toJson(arg);
-            out.append(stringArg);
+            gson.toJson(arg, out);
             comma = true;
         }
         out.append(");").println();
