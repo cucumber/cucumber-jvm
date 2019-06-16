@@ -6,7 +6,7 @@
         <version>1.0.4</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>4.4.1-SNAPSHOT</version>
+    <version>4.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -380,9 +380,13 @@
                                             <item>io\.cucumber\.core\.model\..*</item>
                                             <item>io\.cucumber\.junit\..*</item>
                                             <item>io\.cucumber\.testng\..*</item>
-                                            <item>io\.cucumber\.picocontainer\..*</item>
+                                            <item>io\.cucumber\.needle\..*</item>
                                             <item>cucumber\.api\.junit\..*</item>
                                             <item>cucumber\.api\.testng\..*</item>
+                                            <item>cucumber\.api\.picocontainer\..*</item>
+                                            <item>cucumber\.api\.weld\..*</item>
+                                            <item>cucumber\.api\.openejb\..*</item>
+                                            <item>cucumber\.api\.needle\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
@@ -395,10 +399,13 @@
                                         <exclude>
                                             <item>io\.cucumber\.core\.options\..*</item>
                                             <item>io\.cucumber\.junit\..*</item>
-                                            <item>io\.cucumber\.testng\..*</item>
-                                            <item>io\.cucumber\.picocontainer\..*</item>
+                                            <item>io\.cucumber\.needle\..*</item>
                                             <item>cucumber\.api\.junit\..*</item>
                                             <item>cucumber\.api\.testng\..*</item>
+                                            <item>cucumber\.api\.picocontainer\..*</item>
+                                            <item>cucumber\.api\.weld\..*</item>
+                                            <item>cucumber\.api\.openejb\..*</item>
+                                            <item>cucumber\.api\.needle\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
