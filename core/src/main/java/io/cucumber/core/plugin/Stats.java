@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class Stats implements EventListener, ColorAware, StrictAware {
+class Stats implements EventListener, ColorAware, StrictAware {
     static final long ONE_SECOND = SECONDS.toNanos(1);
     static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
