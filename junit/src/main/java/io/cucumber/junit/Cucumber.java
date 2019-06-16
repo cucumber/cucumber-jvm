@@ -43,7 +43,7 @@ import java.util.List;
  * <blockquote><pre>
  * &#64;RunWith(Cucumber.class)
  * &#64;CucumberOptions(plugin = "pretty")
- * public class RunCukesTest {
+ * public class RunCucumberTest {
  * }
  * </pre></blockquote>
  * <p>

@@ -9,5 +9,5 @@ import org.junit.runner.RunWith;
  * The test object classes are bound using cucumber.runtime.java.guice.loadguicemodule.YourModuleClass.
  */
 @RunWith(Cucumber.class)
-public class RunCukesTest {
+public class RunCucumberTest {
 }

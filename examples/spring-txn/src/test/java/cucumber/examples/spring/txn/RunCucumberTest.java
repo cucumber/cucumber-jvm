@@ -6,5 +6,5 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(glue = {"cucumber.examples.spring.txn", "cucumber.api.spring"})
-public class RunCukesTest {
+public class RunCucumberTest {
 }
