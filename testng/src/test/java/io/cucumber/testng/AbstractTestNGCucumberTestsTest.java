@@ -1,4 +1,4 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
 import java.util.Collections;
 import java.util.List;

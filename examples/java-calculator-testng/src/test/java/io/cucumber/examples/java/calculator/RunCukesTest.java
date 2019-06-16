@@ -1,7 +1,7 @@
 package io.cucumber.examples.java.calculator;
 
 import io.cucumber.core.api.options.CucumberOptions;
-import io.cucumber.testng.api.AbstractTestNGCucumberTests;
+import io.cucumber.testng.AbstractTestNGCucumberTests;
 import org.testng.annotations.DataProvider;
 
 @CucumberOptions(plugin = "json:target/cucumber-report.json")

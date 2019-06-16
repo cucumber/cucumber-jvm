@@ -1,5 +1,6 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
+import org.apiguardian.api.API;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -8,11 +9,12 @@ import org.testng.annotations.Test;
 /**
  * Runs each cucumber scenario found in the features as separated test
  */
+@API(status = API.Status.STABLE)
 public abstract class AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
-    public void setUpClass() throws Exception {
+    public void setUpClass() {
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
@@ -23,7 +25,8 @@ public abstract class AbstractTestNGCucumberTests {
     }
 
     /**
-     * Returns two dimensional array of PickleEventWrapper scenarios with their associated CucumberFeatureWrapper feature.
+     * Returns two dimensional array of PickleEventWrapper scenarios
+     * with their associated CucumberFeatureWrapper feature.
      *
      * @return a two dimensional array of scenarios features.
      */
@@ -36,7 +39,7 @@ public abstract class AbstractTestNGCucumberTests {
     }
 
     @AfterClass(alwaysRun = true)
-    public void tearDownClass() throws Exception {
+    public void tearDownClass() {
         if (testNGCucumberRunner == null) {
             return;
         }

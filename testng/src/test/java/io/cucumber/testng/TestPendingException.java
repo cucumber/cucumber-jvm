@@ -1,4 +1,4 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
 import io.cucumber.core.backend.Pending;
 

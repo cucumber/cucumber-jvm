@@ -1,4 +1,4 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.event.EventBus;
@@ -67,7 +67,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockUndefinedResult());
 
         assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError().getMessage(), TestCaseResultListener.UNDEFINED_MESSAGE);
+        assertEquals(resultListener.getError().getMessage(), "There are undefined steps");
     }
 
     @Test

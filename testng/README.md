@@ -23,8 +23,8 @@ Create an empty class that extends the `AbstractTestNGCucumberTests`.
 ```java
 package io.cucumber.runtime.testng;
 
-import cucumber.api.CucumberOptions;
-import io.cucumber.testng.api.AbstractTestNGCucumberTests;
+import io.cucumber.core.api.options.CucumberOptions;
+import io.cucumber.testng.AbstractTestNGCucumberTests;
 
 @CucumberOptions(plugin = "json:target/cucumber-report.json")
 public class RunCukesTest extends AbstractTestNGCucumberTests {
@@ -54,7 +54,7 @@ as skipped.
 Cucumber TestNG supports parallel execution of scenarios. Override the `scenarios` method to enable parallel execution.
 
 ```java
-public class RunCukesTest extends AbstractTestNGCucumberTests {
+public class RunCucumberTest extends AbstractTestNGCucumberTests {
 
     @Override
     @DataProvider(parallel = true)

@@ -64,7 +64,7 @@ import java.util.List;
  * @see CucumberOptions
  */
 @API(status = API.Status.STABLE)
-public class Cucumber extends ParentRunner<FeatureRunner> {
+public final class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<>();
     private final EventBus bus;
     private final List<CucumberFeature> features;

@@ -1,4 +1,4 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
 import io.cucumber.core.exception.CucumberException;
 import gherkin.events.PickleEvent;

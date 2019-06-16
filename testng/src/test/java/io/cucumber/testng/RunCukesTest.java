@@ -1,4 +1,4 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
 public class RunCukesTest extends AbstractTestNGCucumberTests {
 }

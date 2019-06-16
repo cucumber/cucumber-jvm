@@ -1,6 +1,6 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
-import gherkin.events.PickleEvent;
+import org.apiguardian.api.API;
 
 /**
  * The only purpose of this interface is to be able to provide a custom
@@ -8,8 +8,7 @@ import gherkin.events.PickleEvent;
  *
  * @see AbstractTestNGCucumberTests#runScenario(PickleEventWrapper, CucumberFeatureWrapper)
  */
-public interface PickleEventWrapper {
-
-    PickleEvent getPickleEvent();
+@API(status = API.Status.STABLE)
+public interface CucumberFeatureWrapper {
 
 }

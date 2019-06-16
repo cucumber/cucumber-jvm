@@ -1,4 +1,4 @@
-package io.cucumber.testng.api;
+package io.cucumber.testng;
 
 import gherkin.events.PickleEvent;
 import io.cucumber.core.api.event.TestRunFinished;
@@ -24,6 +24,7 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
+import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -32,7 +33,8 @@ import java.util.List;
 /**
  * Glue code for running Cucumber via TestNG.
  */
-public class TestNGCucumberRunner {
+@API(status = API.Status.STABLE)
+public final class TestNGCucumberRunner {
     private final EventBus bus;
     private final Filters filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
