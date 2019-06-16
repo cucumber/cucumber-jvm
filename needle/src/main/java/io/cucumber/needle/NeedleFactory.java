@@ -14,9 +14,9 @@ import static java.lang.String.format;
 /**
  * Needle factory for object resolution inside of cucumber tests.
  */
-public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
+public final class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
-    private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<>();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final CreateInstanceByDefaultConstructor createInstanceByDefaultConstructor = CreateInstanceByDefaultConstructor.INSTANCE;
     private final CollectInjectionProvidersFromStepsInstance collectInjectionProvidersFromStepsInstance = CollectInjectionProvidersFromStepsInstance.INSTANCE;
@@ -27,7 +27,7 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        logger.trace("getInstance: " + type.getCanonicalName());
+        logger.trace("getInstance: {}", type.getCanonicalName());
         assertTypeHasBeenAdded(type);
         return nullSafeGetInstance(type);
     }
@@ -63,7 +63,7 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
     @Override
     public boolean addClass(final Class<?> type) {
-        logger.trace("addClass(): " + type.getCanonicalName());
+        logger.trace("addClass(): {}", type.getCanonicalName());
 
         // build up cache keys ...
         if (!cachedStepsInstances.containsKey(type)) {
@@ -88,7 +88,7 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
         return (T) instance;
     }
 
-    private <T> T createStepsInstance(final Class<T> type) throws Exception {
+    private <T> T createStepsInstance(final Class<T> type) {
         logger.trace("createInstance(): " + type.getCanonicalName());
         return createInstanceByDefaultConstructor.apply(type);
     }
