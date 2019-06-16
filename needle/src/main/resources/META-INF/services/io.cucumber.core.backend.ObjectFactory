@@ -1,1 +1,1 @@
-cucumber.runtime.java.needle.NeedleFactory
+io.cucumber.needle.NeedleFactory

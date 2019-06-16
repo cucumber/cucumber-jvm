@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: Needle</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.needle</project.Automatic-Module-Name>
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>

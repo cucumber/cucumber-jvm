@@ -1,4 +1,4 @@
-package cucumber.api.needle;
+package io.cucumber.needle;
 
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 
@@ -10,11 +10,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation to mark InjectionProviders in the cucumber glue or cucumber steps.
  * Should be placed on fields of type {@link InjectionProvider} or an array of those.
- *
- * @deprecated use {@code NeedleInjectionProvider} instead
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
 public @interface NeedleInjectionProvider {
 }
