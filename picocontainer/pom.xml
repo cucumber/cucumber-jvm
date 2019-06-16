@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: PicoContainer</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.picocontainer</project.Automatic-Module-Name>
         <picocontainer.version>2.15</picocontainer.version>
     </properties>
 
@@ -48,12 +49,12 @@
                         <configuration>
                             <target>
                                 <echo message="Running CLI test for picocontainer" />
-                                <java classname="cucumber.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
+                                <java classname="io.cucumber.core.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
                                     <arg value="--plugin" />
                                     <arg value="progress" />
                                     <arg value="--glue" />
-                                    <arg value="cucumber.runtime.java.picocontainer" />
-                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
+                                    <arg value="io.cucumber.picocontainer" />
+                                    <arg value="${basedir}/src/test/resources/io/cucumber/picocontainer" />
                                 </java>
                             </target>
                         </configuration>
@@ -62,4 +63,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

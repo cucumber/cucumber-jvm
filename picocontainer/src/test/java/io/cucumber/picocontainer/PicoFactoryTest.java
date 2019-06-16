@@ -1,4 +1,4 @@
-package cucumber.runtime.java.picocontainer;
+package io.cucumber.picocontainer;
 
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.Test;

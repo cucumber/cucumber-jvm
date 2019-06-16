@@ -1,1 +1,1 @@
-cucumber.runtime.java.picocontainer.PicoFactory
+io.cucumber.picocontainer.PicoFactory

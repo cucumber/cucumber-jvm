@@ -1,4 +1,4 @@
-package cucumber.runtime.java.picocontainer;
+package io.cucumber.picocontainer;
 
 import cucumber.runtime.Utils;
 import io.cucumber.core.backend.ObjectFactory;
@@ -9,9 +9,9 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PicoFactory implements ObjectFactory {
+public final class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
+    private final Set<Class<?>> classes = new HashSet<>();
 
     public void start() {
         pico = new PicoBuilder()

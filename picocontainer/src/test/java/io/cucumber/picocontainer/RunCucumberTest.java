@@ -1,4 +1,4 @@
-package cucumber.runtime.java.picocontainer;
+package io.cucumber.picocontainer;
 
 import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;

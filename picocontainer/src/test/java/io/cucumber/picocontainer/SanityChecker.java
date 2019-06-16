@@ -1,4 +1,4 @@
-package cucumber.runtime.java.picocontainer;
+package io.cucumber.picocontainer;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.JUnit4TestAdapter;
@@ -18,14 +18,14 @@ public class SanityChecker implements TestListener {
     private static final String INDENT = "  ";
     private static final String INSANITY = "INSANITY";
 
-    private List<Test> tests = new ArrayList<Test>();
+    private List<Test> tests = new ArrayList<>();
     private final StringWriter out = new StringWriter();
 
     public static void run(Class<?> testClass) {
         run(testClass, false);
     }
 
-    public static void run(Class<?> testClass, boolean debug) {
+    static void run(Class<?> testClass, boolean debug) {
         JUnit4TestAdapter testAdapter = new JUnit4TestAdapter(testClass);
         TestResult result = new TestResult();
         SanityChecker listener = new SanityChecker();
