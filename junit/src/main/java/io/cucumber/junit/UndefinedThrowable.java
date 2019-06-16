@@ -1,14 +1,13 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
-
-public class UndefinedThrowable extends Throwable {
+class UndefinedThrowable extends Throwable {
     private static final long serialVersionUID = 1L;
 
-    public UndefinedThrowable() {
+    UndefinedThrowable() {
         super("This step is undefined", null, false, false);
     }
 
-    public UndefinedThrowable(String stepText) {
+    UndefinedThrowable(String stepText) {
         super(String.format("The step \"%s\" is undefined", stepText), null, false, false);
     }
 }

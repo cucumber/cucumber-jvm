@@ -1,12 +1,12 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.filter.Filters;
-import cucumber.runner.ThreadLocalRunnerSupplier;
-import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -17,23 +17,23 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
-import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
+import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
+import static io.cucumber.junit.PickleRunners.withStepDescriptions;
 
-public class FeatureRunner extends ParentRunner<PickleRunner> {
-    private final List<PickleRunner> children = new ArrayList<PickleRunner>();
+class FeatureRunner extends ParentRunner<PickleRunner> {
+    private final List<PickleRunner> children = new ArrayList<>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
+    FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
         buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
     }
 
     @Override
-    public String getName() {
+    protected String getName() {
         Feature feature = cucumberFeature.getGherkinFeature().getFeature();
         return feature.getKeyword() + ": " + feature.getName();
     }
@@ -66,11 +66,6 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
     @Override
     protected void runChild(PickleRunner child, RunNotifier notifier) {
         child.run(notifier);
-    }
-
-    @Override
-    public void run(RunNotifier notifier) {
-        super.run(notifier);
     }
 
     private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {

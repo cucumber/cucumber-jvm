@@ -38,6 +38,8 @@
 
 
     <properties>
+        <!--Semantic version -->
+        <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
         <gherkin.version>5.1.0</gherkin.version>
         <cucumber-expressions.version>7.0.2</cucumber-expressions.version>
@@ -64,6 +66,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apiguardian</groupId>
+                <artifactId>apiguardian-api</artifactId>
+                <version>${apiguardian-api.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
@@ -370,6 +378,8 @@
                                         <exclude>
                                             <item>io\.cucumber\.core\.options\..*</item>
                                             <item>io\.cucumber\.core\.model\..*</item>
+                                            <item>io\.cucumber\.junit\..*</item>
+                                            <item>cucumber\.api\.junit\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
@@ -381,6 +391,8 @@
                                         <regex>true</regex>
                                         <exclude>
                                             <item>io\.cucumber\.core\.options\..*</item>
+                                            <item>io\.cucumber\.junit\..*</item>
+                                            <item>cucumber\.api\.junit\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>

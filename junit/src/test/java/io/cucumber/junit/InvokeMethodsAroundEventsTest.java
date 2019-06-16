@@ -1,4 +1,4 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.event.ConcurrentEventListener;
@@ -6,7 +6,6 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.api.junit.Cucumber;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,13 +41,13 @@ public class InvokeMethodsAroundEventsTest {
     }
 
     @Test
-    public void finds_features_based_on_implicit_package() throws InitializationError {
+    public void invoke_methods_around_events() throws InitializationError {
         Cucumber cucumber = new Cucumber(BeforeAfterClass.class);
         cucumber.run(new RunNotifier());
         assertThat(events, contains("BeforeClass", "TestRunStarted", "TestRunFinished", "AfterClass"));
     }
 
-    @CucumberOptions(plugin = {"cucumber.runtime.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener"})
+    @CucumberOptions(plugin = {"io.cucumber.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener"})
     public static class BeforeAfterClass {
 
         @BeforeClass
