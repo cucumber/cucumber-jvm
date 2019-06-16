@@ -100,6 +100,19 @@ public class SomeServiceSteps {
 }
 ```
 
+Changing a Spring bean's scope to `SCOPE_CUCUMBER_GLUE` will bound its lifecycle to the standard glue lifecycle.
+
+```java
+import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Scope;
+import static io.cucumber.spring.api.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+
+@Component
+@Scope(SCOPE_CUCUMBER_GLUE)
+public class MyComponent {
+}
+```
+
 ### XML Configuration
 
 If you are using xml based configuration, you can to register the beans in a `cucumber.xml` file:

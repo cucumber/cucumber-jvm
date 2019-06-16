@@ -2,6 +2,8 @@ package io.cucumber.spring;
 
 import cucumber.runtime.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.spring.beans.Belly;
+import io.cucumber.spring.beans.GlueScopedComponent;
 import io.cucumber.spring.beans.BellyBean;
 import io.cucumber.spring.commonglue.AutowiresPlatformTransactionManager;
 import io.cucumber.spring.commonglue.AutowiresThirdStepDef;
@@ -266,5 +268,27 @@ public class SpringFactoryTest {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithControllerAnnotation.class);
 
+    }
+
+    @Test
+    public void shouldGlueScopedSpringBeanBehaveLikeGlueLifecycle() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithSpringAnnotations.class);
+
+        // Scenario 1
+        factory.start();
+        final Belly belly1 = factory.getInstance(Belly.class);
+        final GlueScopedComponent glue1 = factory.getInstance(GlueScopedComponent.class);
+        assertNotNull(belly1);
+        assertNotNull(glue1);
+        factory.stop();
+
+        // Scenario 2
+        final Belly belly2 = factory.getInstance(Belly.class);
+        final GlueScopedComponent glue2 = factory.getInstance(GlueScopedComponent.class);
+        assertNotNull(belly2);
+        assertNotNull(glue2);
+        assertNotSame(glue1, glue2);
+        assertSame(belly1, belly2);
     }
 }

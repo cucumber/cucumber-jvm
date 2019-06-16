@@ -4,7 +4,6 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
 class GlueCodeScope implements Scope {
-    public static final String NAME = "cucumber-glue";
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
