@@ -1,4 +1,4 @@
-package cucumber.api.testng;
+package io.cucumber.testng;
 
 import java.util.*;
 
@@ -8,8 +8,8 @@ import org.testng.ITestResult;
 
 public final class InvokedMethodListener implements IInvokedMethodListener {
 
-    private Set<String> invokedConfigurationMethodNames = new HashSet<String>();
-    private List<String> invokedTestMethodNames = new ArrayList<String>();
+    private Set<String> invokedConfigurationMethodNames = new HashSet<>();
+    private List<String> invokedTestMethodNames = new ArrayList<>();
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {

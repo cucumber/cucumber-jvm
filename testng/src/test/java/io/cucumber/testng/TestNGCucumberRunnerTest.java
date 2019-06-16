@@ -1,21 +1,16 @@
-package cucumber.api.testng;
+package io.cucumber.testng;
 
+import cucumber.api.CucumberOptions;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.testng.RunCukesStrict;
-import cucumber.runtime.testng.RunCukesTest;
-import cucumber.runtime.testng.RunScenarioWithUndefinedStepsStrict;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 public class TestNGCucumberRunnerTest {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCukesTest.class);
     }
 
@@ -44,24 +39,28 @@ public class TestNGCucumberRunnerTest {
 
     @Test
     public void parse_error_propagated_to_testng_test_execution() throws Exception {
-        testNGCucumberRunner = new ParseErrorCucumberRunner(RunCukesTest.class);
+        testNGCucumberRunner = new TestNGCucumberRunner(ParseError.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios(); // a CucumberException is caught
         try {
-            ((PickleEventWrapper)scenarios[0][0]).getPickleEvent();
+            ((PickleEventWrapper) scenarios[0][0]).getPickleEvent();
             Assert.fail("CucumberException not thrown");
         } catch (CucumberException e) {
-            Assert.assertEquals(e.getMessage(), "parse error");
+            Assert.assertEquals(e.getMessage(), "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature");
         }
     }
-}
 
-class ParseErrorCucumberRunner extends TestNGCucumberRunner {
-    public ParseErrorCucumberRunner(Class clazz) {
-        super(clazz);
+    @CucumberOptions(
+        features = "classpath:io/cucumber/testng/undefined_steps.feature",
+        strict = true
+    )
+    static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
     }
 
-    @Override
-    List<CucumberFeature> getFeatures() {
-        throw new CucumberException("parse error");
+    @CucumberOptions(strict = true)
+    static class RunCukesStrict extends AbstractTestNGCucumberTests {
+    }
+
+    @CucumberOptions(features = "classpath:io/cucumber/error/parse-error.feature")
+    static class ParseError extends AbstractTestNGCucumberTests {
     }
 }

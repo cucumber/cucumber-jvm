@@ -12,6 +12,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
  *  [JUnit] Deprecate `cucumber.junit.api.Cucumber` ([#1666](https://github.com/cucumber/cucumber-jvm/pull/1666) M.P. Korstanje) 
     - Use `io.cucumber.junit.Cucumber` instead.
+ *  [TestNG] Deprecate `cucumber.testng.api.TestNGCucumberRunner` ([#1666](https://github.com/cucumber/cucumber-jvm/pull/1666) M.P. Korstanje) 
+    - Use `io.cucumber.testng.TestNGCucumberRunner` instead.
 
 ### Removed
 

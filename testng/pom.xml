@@ -12,10 +12,16 @@
     <name>Cucumber-JVM: TestNG</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.testng</project.Automatic-Module-Name>
         <testng.version>6.14.3</testng.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
@@ -36,4 +42,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

@@ -1,6 +1,5 @@
-package cucumber.api.testng;
+package io.cucumber.testng;
 
-import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
@@ -8,8 +7,6 @@ import cucumber.runner.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
@@ -68,7 +65,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockUndefinedResult());
 
         assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError().getMessage(), TestCaseResultListener.UNDEFINED_MESSAGE);
+        assertEquals(resultListener.getError().getMessage(), "There are undefined steps");
     }
 
     @Test
@@ -88,7 +85,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockPendingResult());
 
         assertFalse(resultListener.isPassed());
-        assertTrue(resultListener.getError() instanceof PendingException);
+        assertTrue(resultListener.getError() instanceof TestPendingException);
     }
 
     @Test
@@ -122,7 +119,7 @@ public class TestCaseResultListenerTest {
     }
 
     private Result mockPendingResult() {
-        return new Result(Result.Type.PENDING, 0L, new PendingException());
+        return new Result(Result.Type.PENDING, 0L, new TestPendingException());
     }
 
 }

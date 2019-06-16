@@ -379,7 +379,9 @@
                                             <item>io\.cucumber\.core\.options\..*</item>
                                             <item>io\.cucumber\.core\.model\..*</item>
                                             <item>io\.cucumber\.junit\..*</item>
+                                            <item>io\.cucumber\.testng\..*</item>
                                             <item>cucumber\.api\.junit\..*</item>
+                                            <item>cucumber\.api\.testng\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>
@@ -392,7 +394,9 @@
                                         <exclude>
                                             <item>io\.cucumber\.core\.options\..*</item>
                                             <item>io\.cucumber\.junit\..*</item>
+                                            <item>io\.cucumber\.testng\..*</item>
                                             <item>cucumber\.api\.junit\..*</item>
+                                            <item>cucumber\.api\.testng\..*</item>
                                             <item>cucumber\.runner\..*</item>
                                             <item>cucumber\.runtime\..*</item>
                                             <item>cucumber\.util\..*</item>

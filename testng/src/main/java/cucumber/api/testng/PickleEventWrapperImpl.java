@@ -2,20 +2,24 @@ package cucumber.api.testng;
 
 import gherkin.events.PickleEvent;
 
+/**
+ * @deprecated use {@link io.cucumber.testng.PickleEventWrapper} instead
+ */
+@Deprecated
 class PickleEventWrapperImpl implements PickleEventWrapper {
 
-    private final PickleEvent pickleEvent;
+    private final io.cucumber.testng.PickleEventWrapper delegate;
 
-    PickleEventWrapperImpl(PickleEvent pickleEvent) {
-        this.pickleEvent = pickleEvent;
+    PickleEventWrapperImpl(io.cucumber.testng.PickleEventWrapper delegate) {
+        this.delegate = delegate;
     }
 
     public PickleEvent getPickleEvent() {
-        return pickleEvent;
+        return delegate.getPickleEvent();
     }
 
     @Override
     public String toString() {
-        return "\"" + pickleEvent.pickle.getName() + "\"";
+        return delegate.toString();
     }
 }

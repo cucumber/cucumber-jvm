@@ -1,16 +1,18 @@
 package cucumber.api.testng;
 
-import cucumber.runtime.model.CucumberFeature;
-
+/**
+ * @deprecated use {@link io.cucumber.testng.CucumberFeatureWrapper} instead
+ */
+@Deprecated
 class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
-    private final CucumberFeature cucumberFeature;
+    private final io.cucumber.testng.CucumberFeatureWrapper delegate;
 
-    CucumberFeatureWrapperImpl(CucumberFeature cucumberFeature) {
-        this.cucumberFeature = cucumberFeature;
+    CucumberFeatureWrapperImpl(io.cucumber.testng.CucumberFeatureWrapper cucumberFeature) {
+        this.delegate = cucumberFeature;
     }
 
     @Override
     public String toString() {
-        return "\"" + cucumberFeature.getGherkinFeature().getFeature().getName() + "\"";
+        return delegate.toString();
     }
 }

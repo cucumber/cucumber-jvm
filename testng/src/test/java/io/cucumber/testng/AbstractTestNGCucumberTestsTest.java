@@ -1,11 +1,11 @@
-package cucumber.api.testng;
+package io.cucumber.testng;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import cucumber.runtime.testng.RunFeatureWithThreeScenariosTest;
 import org.testng.Assert;
+import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -20,7 +20,7 @@ public final class AbstractTestNGCucumberTestsTest {
     public void setUp() {
         InvokedMethodListener icml = new InvokedMethodListener();
         TestNG testNG = new TestNG();
-        testNG.addListener(icml);
+        testNG.addListener((ITestNGListener)icml);
         testNG.setGroups("cucumber");
         testNG.setTestClasses(new Class[]{RunFeatureWithThreeScenariosTest.class});
         testNG.run();
