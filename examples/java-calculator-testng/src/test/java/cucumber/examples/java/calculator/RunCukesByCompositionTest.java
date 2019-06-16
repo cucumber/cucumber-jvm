@@ -1,9 +1,9 @@
 package cucumber.examples.java.calculator;
 
 import cucumber.api.CucumberOptions;
-import cucumber.api.testng.CucumberFeatureWrapper;
-import cucumber.api.testng.PickleEventWrapper;
-import cucumber.api.testng.TestNGCucumberRunner;
+import io.cucumber.testng.CucumberFeatureWrapper;
+import io.cucumber.testng.PickleEventWrapper;
+import io.cucumber.testng.TestNGCucumberRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -19,7 +19,7 @@ public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
-    public void setUpClass() throws Exception {
+    public void setUpClass() {
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
@@ -34,7 +34,7 @@ public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
     }
 
     @AfterClass(alwaysRun = true)
-    public void tearDownClass() throws Exception {
+    public void tearDownClass() {
         testNGCucumberRunner.finish();
     }
 }
