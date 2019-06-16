@@ -1,4 +1,4 @@
-package cucumber.runtime.java.weld;
+package io.cucumber.weld;
 
 import cucumber.runtime.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
@@ -7,11 +7,11 @@ import io.cucumber.core.logging.LoggerFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-public class WeldFactory implements ObjectFactory {
+public final class WeldFactory implements ObjectFactory {
 
     private static final Logger log = LoggerFactory.getLogger(WeldFactory.class);
 
-    static final String START_EXCEPTION_MESSAGE = "\n" +
+    private static final String START_EXCEPTION_MESSAGE = "\n" +
         "It looks like you're running on a single-core machine, and Weld doesn't like that. See:\n" +
         "* http://in.relation.to/Bloggers/Weld200Alpha2Released\n" +
         "* https://issues.jboss.org/browse/WELD-1119\n" +
@@ -22,7 +22,7 @@ public class WeldFactory implements ObjectFactory {
         "not rethrown. It's the best Cucumber-JVM can do until this bug is fixed in Weld.\n" +
         "\n";
 
-    static final String STOP_EXCEPTION_MESSAGE = "\n" +
+    private static final String STOP_EXCEPTION_MESSAGE = "\n" +
         "If you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
         "this message, it means your weld container didn't shut down properly. It's a Weld bug\n" +
         "and we can't do much to fix it in Cucumber-JVM.\n";
@@ -31,15 +31,8 @@ public class WeldFactory implements ObjectFactory {
 
     @Override
     public void start() {
-        start(null);
-    }
-
-    protected void start(Weld weld) {
         try {
-            if (weld == null) {
-                weld = new Weld();
-            }
-            containerInstance = weld.initialize();
+            containerInstance = new Weld().initialize();
         } catch (IllegalArgumentException e) {
             throw new CucumberException(START_EXCEPTION_MESSAGE, e);
         }
@@ -63,8 +56,7 @@ public class WeldFactory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        return containerInstance.select(type)
-            .get();
+        return containerInstance.select(type).get();
     }
 
 }

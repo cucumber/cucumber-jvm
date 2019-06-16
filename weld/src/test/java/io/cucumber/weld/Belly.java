@@ -1,4 +1,4 @@
-package cucumber.runtime.java.weld;
+package io.cucumber.weld;
 
 public class Belly {
     private int cukes;

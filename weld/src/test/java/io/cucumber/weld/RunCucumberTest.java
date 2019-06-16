@@ -1,4 +1,4 @@
-package cucumber.runtime.java.weld;
+package io.cucumber.weld;
 
 import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
