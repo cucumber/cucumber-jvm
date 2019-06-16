@@ -1,14 +1,15 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
-import cucumber.api.Result;
 import cucumber.api.PickleStepTestStep;
+import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
-import cucumber.runtime.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.SkippedThrowable.NotificationLevel;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -16,7 +17,7 @@ import org.junit.runners.model.MultipleFailureException;
 
 import java.util.ArrayList;
 
-public class JUnitReporter {
+class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;
@@ -67,7 +68,7 @@ public class JUnitReporter {
 
     };
 
-    public JUnitReporter(EventBus bus, JUnitOptions junitOption) {
+    JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
         this.bus = bus;
         bus.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
@@ -76,7 +77,7 @@ public class JUnitReporter {
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
-    public void finishExecutionUnit() {
+    void finishExecutionUnit() {
         bus.removeHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         bus.removeHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.removeHandlerFor(TestStepFinished.class, testStepFinishedHandler);

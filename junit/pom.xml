@@ -13,6 +13,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
         </dependency>
@@ -33,4 +38,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.junit</project.Automatic-Module-Name>
+    </properties>
 </project>

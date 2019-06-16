@@ -1,13 +1,13 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
-import cucumber.runner.ThreadLocalRunnerSupplier;
-import cucumber.runtime.junit.PickleRunners.PickleRunner;
-import cucumber.runtime.junit.PickleRunners.WithStepDescriptions;
+import cucumber.runner.RunnerSupplier;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.PickleRunners.WithStepDescriptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
@@ -43,7 +43,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         };
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-                mock(ThreadLocalRunnerSupplier.class),
+                mock(RunnerSupplier.class),
                 pickleEvents.get(0),
                 createJUnitOptions()
         );
@@ -75,7 +75,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-                mock(ThreadLocalRunnerSupplier.class),
+                mock(RunnerSupplier.class),
                 features.getPickles().get(0),
                 createJUnitOptions()
         );
@@ -101,7 +101,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(ThreadLocalRunnerSupplier.class),
+                mock(RunnerSupplier.class),
                 features.getPickles().get(0),
                 createJUnitOptions()
         );
@@ -124,7 +124,7 @@ public class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(ThreadLocalRunnerSupplier.class),
+                mock(RunnerSupplier.class),
                 pickles.get(0),
                 createJUnitOptions()
         );
@@ -140,7 +140,7 @@ public class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(ThreadLocalRunnerSupplier.class),
+                mock(RunnerSupplier.class),
                 pickleEvents.get(0),
                 createJUnitOptions()
         );
@@ -156,7 +156,7 @@ public class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(ThreadLocalRunnerSupplier.class),
+                mock(RunnerSupplier.class),
                 pickles.get(0),
                 createJunitOptions("--filename-compatible-names")
         );

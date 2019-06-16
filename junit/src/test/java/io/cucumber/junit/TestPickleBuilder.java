@@ -1,4 +1,4 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;

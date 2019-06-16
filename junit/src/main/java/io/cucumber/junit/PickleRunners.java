@@ -1,4 +1,4 @@
-package cucumber.runtime.junit;
+package io.cucumber.junit;
 
 import cucumber.runner.Runner;
 import cucumber.runner.RunnerSupplier;
@@ -57,7 +57,7 @@ class PickleRunners {
         }
 
         @Override
-        public String getName() {
+        protected String getName() {
             return getPickleName(pickleEvent, jUnitOptions.filenameCompatibleNames());
         }
 
