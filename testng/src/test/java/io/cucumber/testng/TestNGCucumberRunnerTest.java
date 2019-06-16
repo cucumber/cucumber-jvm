@@ -11,7 +11,7 @@ public class TestNGCucumberRunnerTest {
 
     @BeforeMethod
     public void setUp() {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCukesTest.class);
+        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
     }
 
     @Test(expectedExceptions = CucumberException.class)

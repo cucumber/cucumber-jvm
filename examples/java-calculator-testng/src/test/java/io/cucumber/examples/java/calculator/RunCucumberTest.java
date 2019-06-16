@@ -5,7 +5,7 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
 import org.testng.annotations.DataProvider;
 
 @CucumberOptions(plugin = "json:target/cucumber-report.json")
-public class RunCukesTest extends AbstractTestNGCucumberTests {
+public class RunCucumberTest extends AbstractTestNGCucumberTests {
 
     @DataProvider(parallel = true)
     @Override

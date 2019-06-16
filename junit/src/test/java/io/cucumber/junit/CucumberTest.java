@@ -100,7 +100,7 @@ public class CucumberTest {
         RunListener listener = Mockito.mock(RunListener.class);
         notifier.addListener(listener);
         ParallelComputer computer = new ParallelComputer(true, true);
-        Request.classes(computer, RunCukesTestValidEmpty.class).getRunner().run(notifier);
+        Request.classes(computer, ValidEmpty.class).getRunner().run(notifier);
         {
             InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("A good start(Feature A)")));
@@ -150,9 +150,9 @@ public class CucumberTest {
 
     @Test
     public void cucumber_returns_description_tree_with_features_and_pickles() throws InitializationError {
-        Description description = new Cucumber(RunCukesTestValidEmpty.class).getDescription();
+        Description description = new Cucumber(ValidEmpty.class).getDescription();
 
-        assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$RunCukesTestValidEmpty"));
+        assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$ValidEmpty"));
         Description feature = description.getChildren().get(0);
         assertThat(feature.getDisplayName(), is("Feature: Feature A"));
         Description pickle = feature.getChildren().get(0);
@@ -161,17 +161,17 @@ public class CucumberTest {
 
 
     @RunWith(Cucumber.class)
-    public class RunCukesTestValidEmpty {
+    public class ValidEmpty {
     }
 
     @RunWith(Cucumber.class)
-    private class RunCukesTestValidIgnored {
+    private class ValidIgnored {
         public void ignoreMe() {
         }
     }
 
     @RunWith(Cucumber.class)
-    private class RunCukesTestInvalid {
+    private class Invalid {
         @DummyWhen
         public void ignoreMe() {
         }
@@ -179,15 +179,15 @@ public class CucumberTest {
 
     @Test
     public void no_stepdefs_in_cucumber_runner_valid() {
-        Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestValidEmpty.class);
-        Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestValidIgnored.class);
+        Assertions.assertNoCucumberAnnotatedMethods(ValidEmpty.class);
+        Assertions.assertNoCucumberAnnotatedMethods(ValidIgnored.class);
     }
 
     @Test
     public void no_stepdefs_in_cucumber_runner_invalid() {
-        final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
+        final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
         final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$RunCukesTestInvalid\n")));
+        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 
     public class ImplicitFeatureAndGluePath {

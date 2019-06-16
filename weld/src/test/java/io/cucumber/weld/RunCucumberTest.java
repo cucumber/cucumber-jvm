@@ -1,8 +1,8 @@
-package io.cucumber.needle;
+package io.cucumber.weld;
 
 import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-public class RunCukesTest {
+public class RunCucumberTest {
 }

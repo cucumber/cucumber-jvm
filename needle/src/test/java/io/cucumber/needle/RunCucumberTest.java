@@ -1,9 +1,8 @@
-package io.cucumber.picocontainer;
+package io.cucumber.needle;
 
 import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
 
-
 @RunWith(Cucumber.class)
-public class RunCukesTest {
+public class RunCucumberTest {
 }
