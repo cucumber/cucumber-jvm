@@ -10,6 +10,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Removes deprecation warning
 
 ### Deprecated
+ *  [JUnit] Deprecate `cucumber.junit.api.Cucumber` ([#1666](https://github.com/cucumber/cucumber-jvm/pull/1666) M.P. Korstanje) 
+    - Use `io.cucumber.junit.Cucumber` instead.
 
 ### Removed
 
