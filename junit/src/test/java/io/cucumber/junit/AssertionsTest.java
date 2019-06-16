@@ -1,4 +1,4 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class AssertionsTest {
     public void should_throw_cucumber_exception_when_annotated() {
         final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(WithCucumberMethod.class);
         final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.api.AssertionsTest$WithCucumberMethod\n")));
+        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.AssertionsTest$WithCucumberMethod\n")));
     }
 
     @RunWith(Cucumber.class)

@@ -1,4 +1,4 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.util.FixJava;

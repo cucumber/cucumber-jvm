@@ -1,12 +1,12 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
 import io.cucumber.core.runtime.RunnerSupplier;
-import io.cucumber.junit.api.PickleRunners.PickleRunner;
-import io.cucumber.junit.api.PickleRunners.WithStepDescriptions;
+import io.cucumber.junit.PickleRunners.PickleRunner;
+import io.cucumber.junit.PickleRunners.WithStepDescriptions;
 import io.cucumber.core.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;

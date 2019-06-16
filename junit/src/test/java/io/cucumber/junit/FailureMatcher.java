@@ -1,4 +1,4 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import org.junit.runner.notification.Failure;
 import org.mockito.ArgumentMatcher;

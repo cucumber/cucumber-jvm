@@ -1,9 +1,8 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import gherkin.events.PickleEvent;
 import io.cucumber.core.runtime.RunnerSupplier;
-import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.junit.api.PickleRunners.PickleRunner;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.Test;
 
 import java.util.Arrays;

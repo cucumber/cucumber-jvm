@@ -1,4 +1,4 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.PickleStepTestStep;
@@ -7,7 +7,7 @@ import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestCaseStarted;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.api.event.TestStepStarted;
-import io.cucumber.junit.api.PickleRunners.PickleRunner;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.core.event.EventBus;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -16,8 +16,8 @@ import org.junit.runners.model.MultipleFailureException;
 
 import java.util.ArrayList;
 
-import static io.cucumber.junit.api.SkippedThrowable.NotificationLevel.SCENARIO;
-import static io.cucumber.junit.api.SkippedThrowable.NotificationLevel.STEP;
+import static io.cucumber.junit.SkippedThrowable.NotificationLevel.SCENARIO;
+import static io.cucumber.junit.SkippedThrowable.NotificationLevel.STEP;
 
 class JUnitReporter {
 

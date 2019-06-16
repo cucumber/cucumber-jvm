@@ -1,7 +1,7 @@
 package io.cucumber.spring.contextconfig;
 
 import io.cucumber.core.api.options.CucumberOptions;
-import io.cucumber.junit.api.Cucumber;
+import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)

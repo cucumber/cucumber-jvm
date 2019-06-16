@@ -1,1 +1,1 @@
-io.cucumber.junit.api.StubBackendProviderService
+io.cucumber.junit.StubBackendProviderService

@@ -1,10 +1,10 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.junit.api.PickleRunners.PickleRunner;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import org.junit.runner.Description;
@@ -17,8 +17,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.cucumber.junit.api.PickleRunners.withNoStepDescriptions;
-import static io.cucumber.junit.api.PickleRunners.withStepDescriptions;
+import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
+import static io.cucumber.junit.PickleRunners.withStepDescriptions;
 
 class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children = new ArrayList<>();

@@ -1,4 +1,4 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import gherkin.ParserException.CompositeParserException;
 import io.cucumber.core.api.options.CucumberOptions;
@@ -152,7 +152,7 @@ public class CucumberTest {
     public void cucumber_returns_description_tree_with_features_and_pickles() throws InitializationError {
         Description description = new Cucumber(RunCukesTestValidEmpty.class).getDescription();
 
-        assertThat(description.getDisplayName(), is("io.cucumber.junit.api.CucumberTest$RunCukesTestValidEmpty"));
+        assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$RunCukesTestValidEmpty"));
         Description feature = description.getChildren().get(0);
         assertThat(feature.getDisplayName(), is("Feature: Feature A"));
         Description pickle = feature.getChildren().get(0);
@@ -187,13 +187,13 @@ public class CucumberTest {
     public void no_stepdefs_in_cucumber_runner_invalid() {
         final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
         final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.api.CucumberTest$RunCukesTestInvalid\n")));
+        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$RunCukesTestInvalid\n")));
     }
 
     public class ImplicitFeatureAndGluePath {
     }
 
-    @CucumberOptions(features = {"classpath:io/cucumber/junit/api"})
+    @CucumberOptions(features = {"classpath:io/cucumber/junit"})
     public class ExplicitFeaturePath {
     }
 
@@ -201,12 +201,12 @@ public class CucumberTest {
     public class ExplicitFeaturePathWithNoFeatures {
     }
 
-    @CucumberOptions(features = {"classpath:io/cucumber/junit/error/lexer_error.feature"})
+    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"})
     public class LexerErrorFeature {
 
     }
 
-    @CucumberOptions(features = {"classpath:io/cucumber/junit/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
+    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
     public class FormatterWithLexerErrorFeature {
 
     }

@@ -1,4 +1,4 @@
-package io.cucumber.junit.api;
+package io.cucumber.junit;
 
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.options.CucumberOptions;
@@ -23,6 +23,7 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.model.CucumberFeature;
+import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -62,6 +63,7 @@ import java.util.List;
  *
  * @see CucumberOptions
  */
+@API(status = API.Status.STABLE)
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final List<FeatureRunner> children = new ArrayList<>();
     private final EventBus bus;
