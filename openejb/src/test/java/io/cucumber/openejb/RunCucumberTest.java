@@ -1,4 +1,4 @@
-package cucumber.runtime.java.openejb;
+package io.cucumber.openejb;
 
 import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;

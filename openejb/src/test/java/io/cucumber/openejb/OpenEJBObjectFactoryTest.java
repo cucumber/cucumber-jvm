@@ -1,4 +1,4 @@
-package cucumber.runtime.java.openejb;
+package io.cucumber.openejb;
 
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.Test;

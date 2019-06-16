@@ -1,1 +1,1 @@
-cucumber.runtime.java.openejb.OpenEJBObjectFactory
+io.cucumber.openejb.OpenEJBObjectFactory
