@@ -11,8 +11,6 @@ import javax.inject.Named;
 
 import org.junit.Test;
 
-import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
-import io.cucumber.needle.api.NeedleInjectionProvider;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;

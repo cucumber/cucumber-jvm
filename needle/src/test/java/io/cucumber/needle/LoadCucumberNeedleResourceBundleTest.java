@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ResourceBundle;
 
-import io.cucumber.needle.LoadResourceBundle;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -27,14 +26,14 @@ public class LoadCucumberNeedleResourceBundleTest {
     }
 
     @Test
-    public void shouldReturnExistingResourceBundle() throws Exception {
+    public void shouldReturnExistingResourceBundle() {
         final ResourceBundle resourceBundle = function.apply("empty");
         assertNotNull(resourceBundle);
         assertTrue(resourceBundle.keySet().isEmpty());
     }
 
     @Test
-    public void shouldAlwaysReturnEmptyForEmptyResourceBundle() throws Exception {
+    public void shouldAlwaysReturnEmptyForEmptyResourceBundle() {
         final ResourceBundle resourceBundle = LoadResourceBundle.EMPTY_RESOURCE_BUNDLE;
 
         assertNotNull(resourceBundle.getObject("foo"));

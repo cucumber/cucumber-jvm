@@ -1,4 +1,4 @@
-package io.cucumber.needle.api;
+package io.cucumber.needle;
 
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 
@@ -14,5 +14,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NeedleInjectionProvider {
-    // Nothing here
 }

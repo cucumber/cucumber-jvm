@@ -1,7 +1,5 @@
 package io.cucumber.needle;
 
-import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
-import io.cucumber.needle.api.NeedleInjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import de.akquinet.jbosscc.needle.reflection.ReflectionUtil;
 import org.slf4j.Logger;
@@ -33,7 +31,7 @@ enum CollectInjectionProvidersFromStepsInstance {
      * @return collected injection providers.
      */
     final <T> InjectionProvider<?>[] apply(final T instance) {
-        final Set<InjectionProvider<?>> providers = new LinkedHashSet<InjectionProvider<?>>();
+        final Set<InjectionProvider<?>> providers = new LinkedHashSet<>();
         for (final Field field : ReflectionUtil.getAllFieldsWithAnnotation(instance, NeedleInjectionProvider.class)) {
             field.setAccessible(true);
             try {
@@ -56,7 +54,7 @@ enum CollectInjectionProvidersFromStepsInstance {
             logger.trace("Adding {} InjectionProvider instances.", providers.size());
         }
 
-        return providers.toArray(new InjectionProvider<?>[providers.size()]);
+        return providers.toArray(new InjectionProvider<?>[0]);
     }
 
 }

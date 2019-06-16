@@ -1,14 +1,14 @@
 package io.cucumber.needle.test;
 
-import static org.junit.Assert.assertTrue;
-
+import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import io.cucumber.java.api.Before;
 import io.cucumber.java.api.en.Given;
-import io.cucumber.needle.api.NeedleInjectionProvider;
 import io.cucumber.needle.DefaultInstanceInjectionProvider;
-import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.needle.NeedleInjectionProvider;
 
 import javax.inject.Inject;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Just here to show that injection providers from this class also work in other classes.

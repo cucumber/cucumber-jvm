@@ -17,7 +17,7 @@ enum CreateInstanceByDefaultConstructor {
     final <T> T apply(final Class<T> type) {
         try {
             final T newInstance = type.getConstructor().newInstance();
-            logger.debug("newInstance by DefaultConstructor: " + newInstance);
+            logger.debug("newInstance by DefaultConstructor: {}", newInstance);
             return newInstance;
         } catch (final Exception e) {
             throw new IllegalStateException("Can not instantiate Instance by Default Constructor.", e);

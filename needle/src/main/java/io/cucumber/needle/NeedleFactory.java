@@ -22,7 +22,7 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
     private final CollectInjectionProvidersFromStepsInstance collectInjectionProvidersFromStepsInstance = CollectInjectionProvidersFromStepsInstance.INSTANCE;
 
     public NeedleFactory() {
-        super(setUpInjectionProviders(CucumberNeedleConfiguration.RESOURCE_CUCUMBER_NEEDLE));
+        super(setUpInjectionProviders());
     }
 
     @Override
@@ -89,11 +89,11 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
     }
 
     private <T> T createStepsInstance(final Class<T> type) {
-        logger.trace("createInstance(): " + type.getCanonicalName());
+        logger.trace("createInstance(): {}", type.getCanonicalName());
         return createInstanceByDefaultConstructor.apply(type);
     }
 
-    static InjectionProvider<?>[] setUpInjectionProviders(final String resourceName) {
-        return new CucumberNeedleConfiguration(resourceName).getInjectionProviders();
+    static InjectionProvider<?>[] setUpInjectionProviders() {
+        return new CucumberNeedleConfiguration().getInjectionProviders();
     }
 }

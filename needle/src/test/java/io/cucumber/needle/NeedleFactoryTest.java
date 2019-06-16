@@ -12,10 +12,10 @@ import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 public class NeedleFactoryTest {
 
     @Test
-    public void shouldSetUpInjectionProviders() throws Exception {
+    public void shouldSetUpInjectionProviders() {
 
         final InjectionProvider<?>[] injectionProviders = NeedleFactory
-                .setUpInjectionProviders(CucumberNeedleConfiguration.RESOURCE_CUCUMBER_NEEDLE);
+                .setUpInjectionProviders();
 
         assertNotNull(injectionProviders);
         assertThat(injectionProviders.length, is(1));

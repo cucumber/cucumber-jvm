@@ -1,9 +1,6 @@
 package io.cucumber.needle;
 
-import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -18,34 +15,28 @@ class CucumberNeedleConfiguration {
      */
     static final String RESOURCE_CUCUMBER_NEEDLE = "cucumber-needle";
 
-    @SuppressWarnings("unused")
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final LoadResourceBundle loadResourceBundle = LoadResourceBundle.INSTANCE;
-    private final ReadInjectionProviderClassNames readInjectionProviderClassNames = ReadInjectionProviderClassNames.INSTANCE;
-    private final CreateInstanceByDefaultConstructor createInstance = CreateInstanceByDefaultConstructor.INSTANCE;
-
-    private final Set<InjectionProvider<?>> injectionProviders = new HashSet<InjectionProvider<?>>();
+    private final Set<InjectionProvider<?>> injectionProviders = new HashSet<>();
 
     /**
      * Creates new instance from default resource {@link #RESOURCE_CUCUMBER_NEEDLE}.
      */
-    public CucumberNeedleConfiguration() {
+    CucumberNeedleConfiguration() {
         this(RESOURCE_CUCUMBER_NEEDLE);
     }
 
     CucumberNeedleConfiguration(final String resourceName) {
-        final ResourceBundle resourceBundle = loadResourceBundle.apply(resourceName);
-        final Set<String> classNames = readInjectionProviderClassNames.apply(resourceBundle);
+        final ResourceBundle resourceBundle = LoadResourceBundle.INSTANCE.apply(resourceName);
+        final Set<String> classNames = ReadInjectionProviderClassNames.INSTANCE.apply(resourceBundle);
 
         for (final String className : classNames) {
             try {
                 final Class<?> clazz = Class.forName(className);
+                CreateInstanceByDefaultConstructor createInstance = CreateInstanceByDefaultConstructor.INSTANCE;
                 if (isInjectionProvider(clazz)) {
                     injectionProviders.add((InjectionProvider<?>) createInstance.apply(clazz));
                 } else if (isInjectionProviderInstanceSupplier(clazz)) {
                     final InjectionProviderInstancesSupplier supplier = (InjectionProviderInstancesSupplier) createInstance
-                            .apply(clazz);
+                        .apply(clazz);
                     final Set<InjectionProvider<?>> providers = supplier.get();
                     if (providers != null) {
                         injectionProviders.addAll(providers);
@@ -55,10 +46,6 @@ class CucumberNeedleConfiguration {
                 throw new IllegalStateException("failed to initialize custom injection providers", e);
             }
         }
-    }
-
-    public InjectionProvider<?>[] getInjectionProviders() {
-        return injectionProviders.toArray(new InjectionProvider<?>[injectionProviders.size()]);
     }
 
     /**
@@ -79,5 +66,9 @@ class CucumberNeedleConfiguration {
      */
     static boolean isInjectionProviderInstanceSupplier(final Class<?> type) {
         return InjectionProviderInstancesSupplier.class.isAssignableFrom(type);
+    }
+
+    InjectionProvider<?>[] getInjectionProviders() {
+        return injectionProviders.toArray(new InjectionProvider<?>[0]);
     }
 }

@@ -1,26 +1,24 @@
 package io.cucumber.needle;
 
+import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
-import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
-import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
-import de.akquinet.jbosscc.needle.injection.InjectionProvider;
-
 public class CucumberNeedleConfigurationTest {
 
     public abstract static class A implements InjectionProviderInstancesSupplier {
-    };
+    }
 
     @Test
     public void shouldReturnEmptyInstances() {
         final InjectionProvider<?>[] allInjectionProviders = new CucumberNeedleConfiguration("resource-bundles/empty")
-                .getInjectionProviders();
+            .getInjectionProviders();
         assertNotNull(allInjectionProviders);
         assertThat(allInjectionProviders.length, is(0));
     }

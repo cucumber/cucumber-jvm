@@ -1,30 +1,29 @@
 package io.cucumber.needle.test;
 
+import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
+import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.java.api.Before;
+import io.cucumber.java.api.en.Given;
+import io.cucumber.java.api.en.Then;
+import io.cucumber.java.api.en.When;
+import io.cucumber.needle.DefaultInstanceInjectionProvider;
+import io.cucumber.needle.InjectionProviderInstancesSupplier;
+import io.cucumber.needle.NeedleInjectionProvider;
+import io.cucumber.needle.test.atm.AtmService;
+import io.cucumber.needle.test.atm.AtmServiceBean;
+import io.cucumber.needle.test.atm.BicGetter;
+import io.cucumber.needle.test.injectionprovider.ValueInjectionProvider;
+import org.hamcrest.core.Is;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.Set;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.en.Given;
-import io.cucumber.java.api.en.Then;
-import io.cucumber.java.api.en.When;
-import io.cucumber.needle.api.InjectionProviderInstancesSupplier;
-import io.cucumber.needle.api.NeedleInjectionProvider;
-import io.cucumber.needle.DefaultInstanceInjectionProvider;
-import io.cucumber.needle.test.atm.AtmService;
-import io.cucumber.needle.test.atm.AtmServiceBean;
-import io.cucumber.needle.test.atm.BicGetter;
-import io.cucumber.needle.test.injectionprovider.ValueInjectionProvider;
-import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
-import de.akquinet.jbosscc.needle.injection.InjectionProvider;
-import org.hamcrest.core.Is;
-
-import java.util.Collections;
-import java.util.Set;
-
-import javax.inject.Inject;
 
 public class AtmWithdrawalSteps {
 

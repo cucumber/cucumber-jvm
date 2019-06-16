@@ -1,26 +1,22 @@
 package io.cucumber.needle;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
+import org.junit.Test;
 
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import io.cucumber.needle.CucumberNeedleConfiguration;
-import io.cucumber.needle.LoadResourceBundle;
-import io.cucumber.needle.ReadInjectionProviderClassNames;
-import org.junit.Test;
-
-import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class ReadInjectionProviderClassNamesTest {
 
     private final ReadInjectionProviderClassNames function = ReadInjectionProviderClassNames.INSTANCE;
 
     @Test
-    public void shouldReturnProviderFromCucumberNeedleProperties() throws Exception {
+    public void shouldReturnProviderFromCucumberNeedleProperties() {
         final Set<String> classNames = function.apply(loadBundle(CucumberNeedleConfiguration.RESOURCE_CUCUMBER_NEEDLE));
         assertNotNull(classNames);
         assertThat(classNames.size(), is(1));
@@ -49,7 +45,7 @@ public class ReadInjectionProviderClassNamesTest {
     }
 
     @Test
-    public void shouldReturnOneTrimmedClassName() throws Exception {
+    public void shouldReturnOneTrimmedClassName() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/one-classname"));
         assertThat(classNames.size(), is(1));
         final String first = classNames.iterator().next();
@@ -57,7 +53,7 @@ public class ReadInjectionProviderClassNamesTest {
     }
 
     @Test
-    public void shouldReturnTwoTrimmedClassNames() throws Exception {
+    public void shouldReturnTwoTrimmedClassNames() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/two-classname"));
         assertThat(classNames.size(), is(2));
         assertThat(classNames, hasItems("java.lang.String", "java.util.Set"));
