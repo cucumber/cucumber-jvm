@@ -46,7 +46,7 @@ import java.util.List;
  * <blockquote><pre>
  * &#64;RunWith(Cucumber.class)
  * &#64;CucumberOptions(plugin = "pretty")
- * public class RunCukesTest {
+ * public class RunCucumberTest {
  * }
  * </pre></blockquote>
  * <p>
@@ -113,7 +113,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     @Override
-    public List<FeatureRunner> getChildren() {
+    protected List<FeatureRunner> getChildren() {
         return children;
     }
 

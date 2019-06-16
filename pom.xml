@@ -341,14 +341,14 @@
                         <use>false</use>
                         <excludePackageNames>io.cucumber.examples*,org.springframework</excludePackageNames>
                         <links>
-                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                            <link>http://docs.oracle.com/javase/8/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
                         <groups>
                             <group>
                                 <title>API Packages</title>
                                 <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit.api:io.cucumber.testng.api
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.testng.api
                                 </packages>
                             </group>
                             <group>

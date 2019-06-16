@@ -33,7 +33,7 @@ class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     @Override
-    public String getName() {
+    protected String getName() {
         Feature feature = cucumberFeature.getGherkinFeature().getFeature();
         return feature.getKeyword() + ": " + feature.getName();
     }
@@ -49,7 +49,7 @@ class FeatureRunner extends ParentRunner<PickleRunner> {
         return description;
     }
 
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return children.isEmpty();
     }
 
@@ -66,11 +66,6 @@ class FeatureRunner extends ParentRunner<PickleRunner> {
     @Override
     protected void runChild(PickleRunner child, RunNotifier notifier) {
         child.run(notifier);
-    }
-
-    @Override
-    public void run(RunNotifier notifier) {
-        super.run(notifier);
     }
 
     private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {

@@ -57,7 +57,7 @@ class PickleRunners {
         }
 
         @Override
-        public String getName() {
+        protected String getName() {
             return getPickleName(pickleEvent, jUnitOptions.filenameCompatibleNames());
         }
 
