@@ -60,24 +60,10 @@ public class WeldFactoryTest {
     }
 
     @Test
-    public void startStopCalledWithoutStart() {
-
-        final Weld weld = mock(Weld.class);
-        when(weld.initialize())
-            .thenThrow(new IllegalArgumentException());
-
-        final WeldFactory factory = new WeldFactory();
-
-        this.expectedException.expect(CucumberException.class);
-        this.expectedException.expectMessage(is(equalTo(WeldFactory.START_EXCEPTION_MESSAGE)));
-
-        factory.start(weld);
-    }
-
-    @Test
     public void stopCalledWithoutStart() {
         ObjectFactory factory = new WeldFactory();
         factory.stop();
-        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), containsString(WeldFactory.STOP_EXCEPTION_MESSAGE));
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
+            containsString("your weld container didn't shut down properly"));
     }
 }

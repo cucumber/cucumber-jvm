@@ -17,11 +17,12 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 
 import static io.cucumber.spring.FixBootstrapUtils.createBootstrapContext;
 import static io.cucumber.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
@@ -59,16 +60,13 @@ import static java.util.Arrays.asList;
  * </li>
  * </ul>
  */
-public class SpringFactory implements ObjectFactory {
+public final class SpringFactory implements ObjectFactory {
 
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
 
-    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
+    private final Collection<Class<?>> stepClasses = new HashSet<>();
     private Class<?> stepClassWithSpringContext = null;
-
-    public SpringFactory() {
-    }
 
     @Override
     public boolean addClass(final Class<?> stepClass) {
@@ -101,12 +99,12 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private static boolean hasComponentAnnotation(Annotation annotation) {
-        return hasAnnotation(annotation, Collections.<Class<? extends Annotation>>singleton(Component.class));
+        return hasAnnotation(annotation, Collections.singleton(Component.class));
     }
 
     private static boolean hasAnnotation(Annotation annotation, Collection<Class<? extends Annotation>> desired) {
-        Set<Class<? extends Annotation>> seen = new HashSet<Class<? extends Annotation>>();
-        Stack<Class<? extends Annotation>> toCheck = new Stack<Class<? extends Annotation>>();
+        Set<Class<? extends Annotation>> seen = new HashSet<>();
+        Deque<Class<? extends Annotation>> toCheck = new ArrayDeque<>();
         toCheck.add(annotation.annotationType());
 
         while (!toCheck.isEmpty()) {
