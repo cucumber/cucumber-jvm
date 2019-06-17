@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: Spring</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
         <spring.version>5.1.8.RELEASE</spring.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
     </properties>
@@ -74,4 +75,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>

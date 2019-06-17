@@ -2,6 +2,8 @@ package cucumber.api.spring;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -26,11 +28,25 @@ import org.springframework.transaction.support.SimpleTransactionStatus;
  * NOTE: This class is NOT threadsafe!  It relies on the fact that cucumber-jvm will instantiate an instance of any
  * applicable hookdef class per scenario run.
  * </p>
+ *
+ * @deprecated SpringTransactionHooks has been deprecated as it adds an unnecessary dependency on 'spring-tx'.
+ * Please implement your own transaction hooks if required.
  */
+@Deprecated
 public class SpringTransactionHooks implements BeanFactoryAware {
+
+    private static final Logger log = LoggerFactory.getLogger(SpringTransactionHooks.class);
 
     private BeanFactory beanFactory;
     private String txnManagerBeanName;
+    private TransactionStatus transactionStatus;
+
+    public SpringTransactionHooks() {
+        log.warn(
+            "SpringTransactionHooks has been deprecated as it adds an unnecessary dependency on 'spring-tx'. " +
+                "Please implement your own transaction hooks if required."
+        );
+    }
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -52,8 +68,6 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     public void setTxnManagerBeanName(String txnManagerBeanName) {
         this.txnManagerBeanName = txnManagerBeanName;
     }
-
-    private TransactionStatus transactionStatus;
 
     @Before(value = {"@txn"}, order = 100)
     public void startTransaction() {

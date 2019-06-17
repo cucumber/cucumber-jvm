@@ -1,1 +1,1 @@
-cucumber.runtime.java.spring.SpringFactory
+io.cucumber.spring.SpringFactory

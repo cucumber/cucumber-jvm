@@ -3,9 +3,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="bellyBean" class="cucumber.runtime.java.spring.beans.BellyBean"/>
+    <bean id="bellyBean" class="io.cucumber.spring.beans.BellyBean"/>
 
-	<bean id="testController" class="cucumber.runtime.java.spring.beans.TestController"/>
+	<bean id="testController" class="io.cucumber.spring.beans.TestController"/>
 
     <bean id="placeholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
@@ -15,6 +15,6 @@
         </property>
     </bean>
 
-	<bean id="transactionManager" class="cucumber.runtime.java.spring.beans.PlatformTransactionManagerImpl" scope="cucumber-glue"/>
+	<bean id="transactionManager" class="io.cucumber.spring.beans.PlatformTransactionManagerImpl" scope="cucumber-glue"/>
 
 </beans>

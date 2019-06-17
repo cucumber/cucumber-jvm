@@ -6,16 +6,20 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Added
 
 ### Changed
- * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld ObjectFactories
-    - Removes deprecation warning
+ * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld `ObjectFactory` implementations.
+    - Removes spurious deprecation warning.
+    - Moves `ObjectFactory` implements to `io.cucumber.<module-name>` package.
 
 ### Deprecated
- *  [JUnit] Deprecate `cucumber.api.junit.Cucumber` ([#1666](https://github.com/cucumber/cucumber-jvm/pull/1666) M.P. Korstanje) 
+ *  [JUnit] Deprecate `cucumber.api.junit.Cucumber`
     - Use `io.cucumber.junit.Cucumber` instead.
  *  [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
     - Use `io.cucumber.testng.TestNGCucumberRunner` instead.
  *  [Needle] Deprecate `cucumber.api.needle.*` 
-    - Use `io.cucumber.needle.*` instead.
+    - Use `io.cucumber.needle.*` instead. 
+ *  [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
+    - It is recommended to implement your own transaction hooks.
+    - Will allow the dependency on `spring-txn` to be removed. 
 
 ### Removed
 
