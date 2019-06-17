@@ -1,4 +1,4 @@
-package io.cucumber.spring.api;
+package io.cucumber.examples.spring.txn;
 
 import io.cucumber.java.api.After;
 import io.cucumber.java.api.Before;

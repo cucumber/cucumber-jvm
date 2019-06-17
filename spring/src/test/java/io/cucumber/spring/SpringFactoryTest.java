@@ -1,10 +1,8 @@
 package io.cucumber.spring;
 
-import io.cucumber.core.backend.Container;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.spring.beans.BellyBean;
-import io.cucumber.spring.commonglue.AutowiresPlatformTransactionManager;
 import io.cucumber.spring.commonglue.AutowiresThirdStepDef;
 import io.cucumber.spring.commonglue.OneStepDef;
 import io.cucumber.spring.commonglue.ThirdStepDef;
@@ -19,7 +17,6 @@ import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,29 +42,6 @@ public class SpringFactoryTest {
         // Scenario 2
         factory.start();
         final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
-        factory.stop();
-
-        assertNotNull(o1);
-        assertNotNull(o2);
-        assertNotSame(o1, o2);
-    }
-
-    @Test
-    public void shouldGiveUsNewInstancesOfGlueScopeClassesForEachScenario() {
-        final ObjectFactory factory = new SpringFactory();
-        factory.addClass(BellyStepdefs.class);
-        factory.addClass(AutowiresPlatformTransactionManager.class);
-
-        // Scenario 1
-        factory.start();
-        final PlatformTransactionManager o1 =
-                factory.getInstance(AutowiresPlatformTransactionManager.class).getTransactionManager();
-        factory.stop();
-
-        // Scenario 2
-        factory.start();
-        final PlatformTransactionManager o2 =
-                factory.getInstance(AutowiresPlatformTransactionManager.class).getTransactionManager();
         factory.stop();
 
         assertNotNull(o1);
@@ -231,23 +205,19 @@ public class SpringFactoryTest {
     @Test
     public void shouldUseCucumberXmlIfNoClassWithSpringAnnotationIsFound() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(AutowiresPlatformTransactionManager.class);
+        factory.addClass(Object.class);
         factory.start();
-        final AutowiresPlatformTransactionManager o1 =
-                factory.getInstance(AutowiresPlatformTransactionManager.class);
+        final BellyBean o1 = factory.getInstance(BellyBean.class);
         factory.stop();
 
         assertNotNull(o1);
-        assertNotNull(o1.getTransactionManager());
     }
 
     @Test
     public void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
         expectedException.expect(CucumberException.class);
-
-
         expectedException.expectMessage("Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context");
-        final Container factory = new SpringFactory();
+        final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
         factory.addClass(BellyStepdefs.class);
     }
@@ -257,7 +227,7 @@ public class SpringFactoryTest {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component");
         expectedException.expectMessage("Please remove the @Component annotation");
-        final Container factory = new SpringFactory();
+        final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithComponentAnnotation.class);
     }
 
@@ -266,7 +236,7 @@ public class SpringFactoryTest {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller");
         expectedException.expectMessage("Please remove the @Controller annotation");
-        final Container factory = new SpringFactory();
+        final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithControllerAnnotation.class);
 
     }

@@ -227,7 +227,6 @@ public final class SpringFactory implements ObjectFactory {
             BootstrapWith.class));
     }
 
-
     static class CucumberTestContextManager extends TestContextManager {
 
         CucumberTestContextManager(Class<?> testClass) {

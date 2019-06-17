@@ -14,7 +14,4 @@
             </props>
         </property>
     </bean>
-
-	<bean id="transactionManager" class="io.cucumber.spring.beans.PlatformTransactionManagerImpl" scope="cucumber-glue"/>
-
 </beans>
