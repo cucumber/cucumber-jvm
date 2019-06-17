@@ -53,42 +53,26 @@
                         <configuration>
                             <target>
                                 <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
-
-                                <groovy><![CDATA[
-import groovy.text.SimpleTemplateEngine
-import gherkin.GherkinDialect
-import gherkin.GherkinDialectProvider
-
-def engine = new SimpleTemplateEngine()
-
-def normalize(s) {
-  if(System.getProperty("java.version").startsWith("1.6")) {
-    return s
-  } else {
-    return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFC)
-  }
-}
-
-def unsupported = ["em"] // The generated files for Emoij do not compile.
-def dialectProvider = new GherkinDialectProvider()
-
-GherkinDialectProvider.DIALECTS.keySet().each { language ->
-  def dialect = dialectProvider.getDialect(language, null)
-  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
-  if (!unsupported.contains(normalized_language)) {
-    def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java8.txt").getText()
-    def className = "${normalized_language}".capitalize()
-    def binding = [ "i18n":dialect, "className":className ]
-    def template = engine.createTemplate(templateSource).make(binding)
-    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
-    file.parentFile.mkdirs()
-    file.write(template.toString(), "UTF-8")
-  }
-}
-
-        ]]></groovy>
-
+                                <groovy src="src/main/groovy/generate-interfaces.groovy"/>
                             </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/generated-sources/i18n/java</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>
@@ -103,25 +87,6 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
                     <target>1.8</target>
                     <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/generated-sources/i18n/java8</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -16,6 +16,8 @@ import cucumber.runtime.java8.Java8StepDefinition;
 import cucumber.runtime.java8.LambdaGlueBase;
 
 /**
+ * ${locale.getDisplayLanguage()}
+ * <p>
  * To execute steps in a feature file the steps must be
  * connected to executable code. This can be done by
  * implementing this interface.
@@ -49,8 +51,14 @@ public interface ${className} extends LambdaGlueBase {
     /**
      * Creates a new step definition.
      *
+     * The timeout controls how long step is allowed to run. Cucumber
+     * will mark the step as failed when exceeded. When the maximum
+     * duration is exceeded the thread will receive an in interrupt.
+     * Note: if the interrupt is ignored cucumber will wait for the this
+     * step to finish.
+     *
      * @param expression    the cucumber expression
-     * @param timeoutMillis max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.
+     * @param timeoutMillis timeout in milliseconds. 0 (default) means no restriction.
      * @param body          a lambda expression with no parameters
      */
     default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A0 body) {
@@ -61,13 +69,15 @@ public interface ${className} extends LambdaGlueBase {
 
     <% (1..9).each { arity ->
       def ts = (1..arity).collect { n -> "T"+n }
-      def genericSignature = ts.join(",") %>    
+      def genericSignature = ts.join(",") %>
     /**
      * Creates a new step definition.
      *
      * @param expression the cucumber expression
      * @param body       a lambda expression with ${arity} parameters
-     */      
+     * <% (1..arity).each { i -> %>
+     * @param <T${i}> type of argument ${i} <% } %>
+     */
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A${arity}<${genericSignature}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
             Java8StepDefinition.create(expression, A${arity}.class, body, typeRegistry)
@@ -77,9 +87,17 @@ public interface ${className} extends LambdaGlueBase {
     /**
      * Creates a new step definition.
      *
+     * The timeout controls how long step is allowed to run. Cucumber
+     * will mark the step as failed when exceeded. When the maximum
+     * duration is exceeded the thread will receive an in interrupt.
+     * Note: if the interrupt is ignored cucumber will wait for the this
+     * step to finish.
+     *
      * @param expression    the cucumber expression
-     * @param timeoutMillis max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.
+     * @param timeoutMillis timeout in milliseconds. 0 (default) means no restriction.
      * @param body          a lambda expression with ${arity} parameters
+     * <% (1..arity).each { i -> %>
+     * @param <T${i}> type of argument ${i} <% } %>
      */
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A${arity}<${genericSignature}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
