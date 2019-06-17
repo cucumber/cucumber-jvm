@@ -2,11 +2,11 @@ package cucumber.api.java.${lang};
 
 import cucumber.runtime.java.StepDefAnnotation;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.Documented;
 
 /**
  * To execute steps in a feature file the steps must be
@@ -24,21 +24,31 @@ import java.lang.annotation.Documented;
  * by the argument name value. When none is provided cucumber will
  * attempt to transform the data table or doc string to the type
  * of the last argument.
+ *
+ * @deprecated use {@link io.cucumber.java.api.${lang}.${kw}} instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @StepDefAnnotation
 @Documented
+@Deprecated
 public @interface ${kw} {
     /**
+     * A cucumber or regular expression.
+     *
      * @return a cucumber or regular expression
      */
     String value();
 
     /**
-     * @return max amount of milliseconds this is allowed to run for. 0 (default) means no restriction.
+     * Duration in milliseconds this step is allowed to run. Cucumber
+     * will mark the step as failed when exceeded.
+     *
+     * When the maximum  duration is exceeded the thread will
+     * receive an in interrupt. Note: if the interrupt is ignored
+     * cucumber will wait for the this hook to finish.
+     *
+     * @return timeout in milliseconds. 0 (default) means no restriction.
      */
     long timeout() default 0;
-
 }
-

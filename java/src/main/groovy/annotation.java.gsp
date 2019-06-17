@@ -1,4 +1,4 @@
-package cucumber.api.java.${lang};
+package io.cucumber.java.${lang};
 
 import cucumber.runtime.java.StepDefAnnotation;
 
@@ -48,14 +48,4 @@ public @interface ${kw} {
      * @return timeout in milliseconds. 0 (default) means no restriction.
      */
     long timeout() default 0;
-
-    /**
-     * Allows the use of multiple '${kw}'s on a single method.
-     */
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @interface ${kw}s {
-        ${kw}[] value();
-    }
 }
