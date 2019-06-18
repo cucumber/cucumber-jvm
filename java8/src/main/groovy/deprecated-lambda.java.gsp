@@ -1,4 +1,4 @@
-package io.cucumber.java8.api;
+package cucumber.api.java8;
 
 import cucumber.api.java8.StepdefBody.A0;
 import cucumber.api.java8.StepdefBody.A1;
@@ -33,7 +33,10 @@ import cucumber.runtime.java8.LambdaGlueBase;
  * by the argument name value. When none is provided cucumber will
  * attempt to transform the data table or doc string to the the
  * type of last argument.
+ *
+ * @deprecated use {@link io.cucumber.java8.${className}} instead.
  */
+@Deprecated
 public interface ${className} extends LambdaGlueBase {
 <% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
     /**
