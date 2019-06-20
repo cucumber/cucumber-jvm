@@ -75,4 +75,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.java</project.Automatic-Module-Name>
+    </properties>
 </project>

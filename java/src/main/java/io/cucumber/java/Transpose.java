@@ -1,4 +1,4 @@
-package cucumber.api;
+package io.cucumber.java;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -41,12 +41,9 @@ import java.lang.annotation.Target;
  *     this.user = user;
  * }
  * </pre>
- *
- * @deprecated use {@link io.cucumber.java.Transpose} instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Deprecated
 public @interface Transpose {
     boolean value() default true;
 }

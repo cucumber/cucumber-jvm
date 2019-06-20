@@ -1,9 +1,5 @@
 package cucumber.runtime.java;
 
-import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
-import static java.lang.Thread.currentThread;
-
-import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
@@ -24,6 +20,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
+import io.cucumber.stepexpression.TypeRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -31,6 +28,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
+import static java.lang.Thread.currentThread;
 
 public class JavaBackend implements Backend, LambdaGlueRegistry {
 
@@ -160,22 +160,46 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     void addHook(Annotation annotation, Method method) {
         if (objectFactory.addClass(method.getDeclaringClass())) {
-            if (annotation.annotationType().equals(Before.class)) {
-                String[] tagExpressions = ((Before) annotation).value();
-                long timeout = ((Before) annotation).timeout();
-                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+            if (annotation.annotationType().equals(io.cucumber.java.Before.class)) {
+                io.cucumber.java.Before before = (io.cucumber.java.Before) annotation;
+                String[] tagExpressions = new String[]{before.value()};
+                long timeout = before.timeout();
+                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, before.order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(io.cucumber.java.After.class)) {
+                io.cucumber.java.After after = (io.cucumber.java.After) annotation;
+                String[] tagExpressions = new String[]{after.value()};
+                long timeout = after.timeout();
+                addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, after.order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(io.cucumber.java.BeforeStep.class)) {
+                io.cucumber.java.BeforeStep beforeStep = (io.cucumber.java.BeforeStep) annotation;
+                String[] tagExpressions = new String[]{beforeStep.value()};
+                long timeout = beforeStep.timeout();
+                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpressions, beforeStep.order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(io.cucumber.java.AfterStep.class)) {
+                io.cucumber.java.AfterStep afterStep = (io.cucumber.java.AfterStep) annotation;
+                String[] tagExpressions = new String[]{afterStep.value()};
+                long timeout = afterStep.timeout();
+                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpressions, afterStep.order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(Before.class)) {
+                Before before = (Before) annotation;
+                String[] tagExpressions = before.value();
+                long timeout = before.timeout();
+                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, before.order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(After.class)) {
-                String[] tagExpressions = ((After) annotation).value();
-                long timeout = ((After) annotation).timeout();
-                addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+                After after = (After) annotation;
+                String[] tagExpressions = after.value();
+                long timeout = after.timeout();
+                addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, after.order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(BeforeStep.class)) {
-                String[] tagExpressions = ((BeforeStep) annotation).value();
-                long timeout = ((BeforeStep) annotation).timeout();
-                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((BeforeStep) annotation).order(), timeout, objectFactory));
+                BeforeStep beforeStep = (BeforeStep) annotation;
+                String[] tagExpressions = beforeStep.value();
+                long timeout = beforeStep.timeout();
+                addBeforeStepHookDefinition(new JavaHookDefinition(method, tagExpressions, beforeStep.order(), timeout, objectFactory));
             } else if (annotation.annotationType().equals(AfterStep.class)) {
-                String[] tagExpressions = ((AfterStep) annotation).value();
-                long timeout = ((AfterStep) annotation).timeout();
-                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpressions, ((AfterStep) annotation).order(), timeout, objectFactory));
+                AfterStep afterStep = (AfterStep) annotation;
+                String[] tagExpressions = afterStep.value();
+                long timeout = afterStep.timeout();
+                addAfterStepHookDefinition(new JavaHookDefinition(method, tagExpressions, afterStep.order(), timeout, objectFactory));
             }
         }
     }
