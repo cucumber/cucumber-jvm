@@ -31,7 +31,6 @@ import java.util.TreeMap;
 
 public final class TimelineFormatter implements ConcurrentEventListener {
 
-    //TODO: if accepted then should move resources out into own project as per HTML report
     private static final String[] TEXT_ASSETS = new String[]{
         "/io/cucumber/core/plugin/timeline/index.html",
         "/io/cucumber/core/plugin/timeline/formatter.js",

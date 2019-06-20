@@ -24,8 +24,8 @@ import java.util.Locale;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 class Stats implements EventListener, ColorAware, StrictAware {
-    static final long ONE_SECOND = SECONDS.toNanos(1);
-    static final long ONE_MINUTE = 60 * ONE_SECOND;
+    private static final long ONE_SECOND = SECONDS.toNanos(1);
+    private static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();
     private Instant startTime = Instant.EPOCH;

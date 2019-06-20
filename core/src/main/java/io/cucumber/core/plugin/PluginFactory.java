@@ -50,7 +50,7 @@ public final class PluginFactory {
         }
     }
 
-    public Plugin create(Options.Plugin plugin) {
+    Plugin create(Options.Plugin plugin) {
         try {
             return instantiate(plugin.pluginString(), plugin.pluginClass(), plugin.argument());
         } catch (IOException | URISyntaxException e) {

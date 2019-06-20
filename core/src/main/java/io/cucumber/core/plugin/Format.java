@@ -1,5 +1,5 @@
 package io.cucumber.core.plugin;
 
-public interface Format {
+interface Format {
     String text(String text);
 }
