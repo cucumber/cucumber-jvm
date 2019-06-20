@@ -5,6 +5,7 @@ import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.java.JavaBackend;
 
+@Deprecated
 public interface LambdaGlueBase extends GlueBase {
 
     String[] EMPTY_TAG_EXPRESSIONS = new String[0];

@@ -9,9 +9,10 @@
 
     <artifactId>cucumber-java8</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Java8</name>
+    <name>Cucumber-JVM: Java 8</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.java8</project.Automatic-Module-Name>
         <typetools.version>0.5.0</typetools.version>
     </properties>
 
@@ -90,4 +91,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

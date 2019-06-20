@@ -38,6 +38,14 @@ public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
         this(tagExpressions, order, timeoutMillis, null, hookNoArgsBody);
     }
 
+    public Java8HookDefinition(String tagExpression, int order, long timeoutMillis, HookBody hookBody) {
+        this(new String[]{tagExpression}, order, timeoutMillis, hookBody);
+    }
+
+    public Java8HookDefinition(String tagExpression, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
+        this(new String[]{tagExpression}, order, timeoutMillis, hookNoArgsBody);
+    }
+
     @Override
     public String getLocation(boolean detail) {
         return location.getFileName() + ":" + location.getLineNumber();

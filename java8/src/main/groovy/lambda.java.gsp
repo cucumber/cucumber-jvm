@@ -1,19 +1,19 @@
-package io.cucumber.java8.api;
+package io.cucumber.java8;
 
-import cucumber.api.java8.StepdefBody.A0;
-import cucumber.api.java8.StepdefBody.A1;
-import cucumber.api.java8.StepdefBody.A2;
-import cucumber.api.java8.StepdefBody.A3;
-import cucumber.api.java8.StepdefBody.A4;
-import cucumber.api.java8.StepdefBody.A5;
-import cucumber.api.java8.StepdefBody.A6;
-import cucumber.api.java8.StepdefBody.A7;
-import cucumber.api.java8.StepdefBody.A8;
-import cucumber.api.java8.StepdefBody.A9;
+import io.cucumber.java8.StepdefBody.A0;
+import io.cucumber.java8.StepdefBody.A1;
+import io.cucumber.java8.StepdefBody.A2;
+import io.cucumber.java8.StepdefBody.A3;
+import io.cucumber.java8.StepdefBody.A4;
+import io.cucumber.java8.StepdefBody.A5;
+import io.cucumber.java8.StepdefBody.A6;
+import io.cucumber.java8.StepdefBody.A7;
+import io.cucumber.java8.StepdefBody.A8;
+import io.cucumber.java8.StepdefBody.A9;
 
 import cucumber.runtime.java.LambdaGlueRegistry;
 import cucumber.runtime.java8.Java8StepDefinition;
-import cucumber.runtime.java8.LambdaGlueBase;
+import io.cucumber.java8.LambdaGlue;
 
 /**
  * ${locale.getDisplayLanguage()}
@@ -34,7 +34,7 @@ import cucumber.runtime.java8.LambdaGlueBase;
  * attempt to transform the data table or doc string to the the
  * type of last argument.
  */
-public interface ${className} extends LambdaGlueBase {
+public interface ${className} extends LambdaGlue {
 <% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
     /**
      * Creates a new step definition.

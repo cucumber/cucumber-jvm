@@ -1,5 +1,6 @@
 package cucumber.api.java8;
 
+@Deprecated
 public interface StepdefBody {
     public static interface A0 extends StepdefBody {
         void accept() throws Throwable;

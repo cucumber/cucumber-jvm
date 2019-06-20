@@ -1,6 +1,6 @@
-package cucumber.api.java8;
+package io.cucumber.java8;
 
-@Deprecated
+@FunctionalInterface
 public interface HookNoArgsBody {
     void accept() throws Throwable;
 }
