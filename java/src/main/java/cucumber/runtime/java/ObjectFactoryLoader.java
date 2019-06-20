@@ -65,9 +65,12 @@ public final class ObjectFactoryLoader {
             }
             return new ObjectFactoryAdapter(instances.iterator().next());
         } else {
-            LOG.warn("Use deprecated reflections to load ObjectFactory.");
             final List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
-            return reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
+            ObjectFactory objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
+            if(objectFactory != null){
+                LOG.warn("Used deprecated reflections to load ObjectFactory " + objectFactory.getClass().getSimpleName());
+            }
+            return objectFactory;
         }
     }
 
