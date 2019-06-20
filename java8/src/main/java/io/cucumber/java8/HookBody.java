@@ -1,4 +1,4 @@
-package io.cucumber.java8.api;
+package io.cucumber.java8;
 
 import io.cucumber.core.api.Scenario;
 

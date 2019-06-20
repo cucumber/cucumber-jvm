@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 import static java.lang.Thread.currentThread;
 
-public class Java8Backend implements Backend, LambdaGlueRegistry {
+final class Java8Backend implements Backend, LambdaGlueRegistry {
 
     private final TypeRegistry typeRegistry;
     private final SnippetGenerator lambdaSnippetGenerator;
@@ -43,18 +43,16 @@ public class Java8Backend implements Backend, LambdaGlueRegistry {
     public void loadGlue(Glue glue, List<URI> gluePaths) {
         this.glue = glue;
         // Scan for Java8 style glue (lambdas)
-        for (final URI packageName : gluePaths) {
-            Collection<Class<? extends LambdaGlue>> glueDefinerClasses = classFinder.getDescendants(LambdaGlue.class, packageName);
-            for (final Class<? extends LambdaGlue> glueClass : glueDefinerClasses) {
-                if (glueClass.isInterface()) {
-                    continue;
-                }
-
+        gluePaths.stream()
+            .map(packageName -> classFinder.getDescendants(LambdaGlue.class, packageName))
+            .flatMap(Collection::stream)
+            .filter(glueClass -> !glueClass.isInterface())
+            .filter(glueClass -> glueClass.getConstructors().length > 0)
+            .forEach(glueClass -> {
                 if (container.addClass(glueClass)) {
                     lambdaGlueClasses.add(glueClass);
                 }
-            }
-        }
+            });
     }
 
     @Override

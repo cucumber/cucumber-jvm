@@ -353,7 +353,7 @@
                             </group>
                             <group>
                                 <title>I18n</title>
-                                <packages>io.cucumber.java8.api.lambda:io.cucumber.java8.api.annotation.*</packages>
+                                <packages>io.cucumber.java8.*:io.cucumber.java.*</packages>
                             </group>
                             <group>
                                 <title>Dependency Injection Providers</title>

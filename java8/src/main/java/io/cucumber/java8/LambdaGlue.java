@@ -1,8 +1,5 @@
 package io.cucumber.java8;
 
-import io.cucumber.java8.api.HookBody;
-import io.cucumber.java8.api.HookNoArgsBody;
-
 public interface LambdaGlue {
 
     String EMPTY_TAG_EXPRESSIONS = "";

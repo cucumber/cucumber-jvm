@@ -1,4 +1,4 @@
-package io.cucumber.java8.lambda;
+package io.cucumber.java8;
 
 import io.cucumber.core.api.TypeRegistry;
 import io.cucumber.core.api.TypeRegistryConfigurer;

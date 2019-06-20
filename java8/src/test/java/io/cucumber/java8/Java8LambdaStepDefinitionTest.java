@@ -9,7 +9,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java8.api.StepdefBody;
 import org.junit.Test;
 
 import java.util.List;

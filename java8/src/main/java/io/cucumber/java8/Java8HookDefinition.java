@@ -6,12 +6,10 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.filter.TagPredicate;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.runtime.ScenarioScoped;
-import io.cucumber.java8.api.HookBody;
-import io.cucumber.java8.api.HookNoArgsBody;
 
 import java.util.Collection;
 
-public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
+final class Java8HookDefinition implements HookDefinition, ScenarioScoped {
     private final TagPredicate tagPredicate;
     private final int order;
     private final long timeoutMillis;

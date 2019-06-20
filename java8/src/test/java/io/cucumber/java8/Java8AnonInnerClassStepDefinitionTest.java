@@ -3,7 +3,6 @@ package io.cucumber.java8;
 import static org.junit.Assert.assertEquals;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java8.api.StepdefBody;
 import org.junit.Test;
 
 import java.util.List;

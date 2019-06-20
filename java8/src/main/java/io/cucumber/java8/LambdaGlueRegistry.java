@@ -6,7 +6,7 @@ import io.cucumber.core.backend.StepDefinition;
 
 import java.util.function.Function;
 
-public interface LambdaGlueRegistry {
+interface LambdaGlueRegistry {
     ThreadLocal<LambdaGlueRegistry> INSTANCE = new ThreadLocal<>();
 
     void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinition);

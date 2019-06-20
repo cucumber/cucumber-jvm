@@ -12,7 +12,6 @@ import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.stepexpression.TypeResolver;
-import io.cucumber.java8.api.StepdefBody;
 import net.jodah.typetools.TypeResolver.Unknown;
 
 import java.lang.reflect.Method;
@@ -25,7 +24,7 @@ import static io.cucumber.java8.Java8StepDefinition.ParameterInfo.fromTypes;
 import static java.lang.String.format;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
-public class Java8StepDefinition implements StepDefinition, ScenarioScoped {
+final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
 
     public static <T extends StepdefBody> Java8StepDefinition create(
         String expression, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {

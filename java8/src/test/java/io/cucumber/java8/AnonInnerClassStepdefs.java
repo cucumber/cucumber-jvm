@@ -1,15 +1,11 @@
-package io.cucumber.java8.lambda;
+package io.cucumber.java8;
 
-import static org.junit.Assert.assertEquals;
-
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java8.Java8StepDefinition;
-import io.cucumber.java8.Java8Backend;
-import io.cucumber.java8.LambdaGlue;
-import io.cucumber.java8.api.StepdefBody;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
 
 public class AnonInnerClassStepdefs implements LambdaGlue {
 
