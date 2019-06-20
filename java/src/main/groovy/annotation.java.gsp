@@ -1,4 +1,4 @@
-package io.cucumber.java.api.${lang};
+package io.cucumber.java.${lang};
 
 import io.cucumber.java.StepDefAnnotation;
 import io.cucumber.java.StepDefAnnotations;

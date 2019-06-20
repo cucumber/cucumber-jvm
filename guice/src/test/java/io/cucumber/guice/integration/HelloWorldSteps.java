@@ -1,6 +1,6 @@
 package io.cucumber.guice.integration;
 
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.en.Given;
 import io.cucumber.guice.api.ScenarioScoped;
 
 @ScenarioScoped

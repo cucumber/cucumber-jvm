@@ -2,8 +2,8 @@ package io.cucumber.spring.commonglue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cucumber.java.api.en.Given;
-import io.cucumber.java.api.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 
 public class OneStepDef {
     int cucumbers;

@@ -1,11 +1,11 @@
 package io.cucumber.examples.java.calculator;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.java.api.After;
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.en.Given;
-import io.cucumber.java.api.en.Then;
-import io.cucumber.java.api.en.When;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 import java.util.List;
 

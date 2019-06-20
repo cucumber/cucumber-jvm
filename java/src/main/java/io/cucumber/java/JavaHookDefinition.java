@@ -12,7 +12,7 @@ import io.cucumber.core.runtime.Invoker;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-class JavaHookDefinition implements HookDefinition {
+final class JavaHookDefinition implements HookDefinition {
 
     private final Method method;
     private final long timeoutMillis;

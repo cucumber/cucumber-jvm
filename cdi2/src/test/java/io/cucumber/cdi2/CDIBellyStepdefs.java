@@ -1,6 +1,6 @@
 package io.cucumber.cdi2;
 
-import io.cucumber.java.api.en.Then;
+import io.cucumber.java.en.Then;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

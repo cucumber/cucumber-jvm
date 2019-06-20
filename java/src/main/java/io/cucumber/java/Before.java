@@ -1,4 +1,4 @@
-package io.cucumber.java.api;
+package io.cucumber.java;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,6 @@
 package io.cucumber.spring.commonglue;
 
-import io.cucumber.java.api.en.Then;
+import io.cucumber.java.en.Then;
 
 import static org.junit.Assert.assertEquals;
 

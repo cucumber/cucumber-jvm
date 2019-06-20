@@ -1,6 +1,6 @@
 package io.cucumber.examples.spring.txn;
 
-import io.cucumber.java.api.Before;
+import io.cucumber.java.Before;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 

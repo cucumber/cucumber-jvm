@@ -1,6 +1,6 @@
 package io.cucumber.java.repeatable;
 
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.en.Given;
 
 public class Stepdefs {
 

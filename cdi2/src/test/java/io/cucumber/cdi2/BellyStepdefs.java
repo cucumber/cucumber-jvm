@@ -1,6 +1,6 @@
 package io.cucumber.cdi2;
 
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.en.Given;
 
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;

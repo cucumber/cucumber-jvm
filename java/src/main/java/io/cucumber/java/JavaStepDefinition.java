@@ -11,7 +11,6 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import gherkin.pickles.PickleStep;
-import io.cucumber.java.api.Transpose;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,7 +18,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-class JavaStepDefinition implements StepDefinition {
+final class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final StepExpression expression;
     private final long timeoutMillis;

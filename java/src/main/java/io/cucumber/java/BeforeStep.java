@@ -1,4 +1,4 @@
-package io.cucumber.java.api;
+package io.cucumber.java;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface After {
+public @interface BeforeStep {
     /**
      * Tag expression. If the expression applies to the current
      * scenario this hook will be executed.
@@ -29,7 +29,7 @@ public @interface After {
     long timeout() default 0;
 
     /**
-     * @return the order in which this hook should run. Higher numbers are run first.
+     * @return the order in which this hook should run. Lower numbers are run first.
      * The default order is 10000.
      */
     int order() default 10000;

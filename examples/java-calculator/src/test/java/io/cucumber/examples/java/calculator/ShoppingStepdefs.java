@@ -1,8 +1,8 @@
 package io.cucumber.examples.java.calculator;
 
-import io.cucumber.java.api.en.Given;
-import io.cucumber.java.api.en.Then;
-import io.cucumber.java.api.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 import java.util.List;
 

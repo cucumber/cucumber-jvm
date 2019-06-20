@@ -1,7 +1,7 @@
 package io.cucumber.weld;
 
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 
 public class UnusedGlue {
     public UnusedGlue() {

@@ -85,7 +85,7 @@ public class MethodScannerTest {
     }
 
     public static class BaseStepDefs {
-        @io.cucumber.java.api.Before
+        @io.cucumber.java.Before
         public void m() {
         }
     }

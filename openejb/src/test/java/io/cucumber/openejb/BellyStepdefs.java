@@ -1,7 +1,7 @@
 package io.cucumber.openejb;
 
-import io.cucumber.java.api.en.Given;
-import io.cucumber.java.api.en.Then;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 
 import javax.inject.Inject;
 

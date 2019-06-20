@@ -1,8 +1,8 @@
 package io.cucumber.needle.test;
 
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import io.cucumber.needle.DefaultInstanceInjectionProvider;
 import io.cucumber.needle.NeedleInjectionProvider;
 

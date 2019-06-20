@@ -1,10 +1,10 @@
 package io.cucumber.java.annotation;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.en.Given;
-import io.cucumber.java.api.en.Then;
-import io.cucumber.java.api.en.When;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 import static org.junit.Assert.assertEquals;
 

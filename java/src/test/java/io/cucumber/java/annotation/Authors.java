@@ -1,7 +1,7 @@
 package io.cucumber.java.annotation;
 
-import io.cucumber.java.api.Transpose;
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.Transpose;
+import io.cucumber.java.en.Given;
 
 import java.util.List;
 

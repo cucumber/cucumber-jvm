@@ -1,7 +1,7 @@
 package io.cucumber.examples.spring.txn;
 
-import io.cucumber.java.api.After;
-import io.cucumber.java.api.Before;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

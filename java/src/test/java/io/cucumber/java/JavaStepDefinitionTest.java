@@ -4,7 +4,7 @@ import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.java.api.en.Given;
+import io.cucumber.java.en.Given;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;

@@ -1,4 +1,4 @@
-package io.cucumber.java.api;
+package io.cucumber.java;
 
 import io.cucumber.core.backend.Pending;
 

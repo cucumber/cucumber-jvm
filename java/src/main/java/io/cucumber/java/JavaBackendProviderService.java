@@ -6,7 +6,7 @@ import io.cucumber.core.backend.Container;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
-public class JavaBackendProviderService implements BackendProviderService {
+public final class JavaBackendProviderService implements BackendProviderService {
 
     @Override
     public Backend create(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {

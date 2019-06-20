@@ -2,10 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.reflection.Reflections;
 import io.cucumber.core.runtime.Invoker;
-import io.cucumber.java.api.After;
-import io.cucumber.java.api.AfterStep;
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.BeforeStep;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
 
@@ -14,7 +10,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 
-class MethodScanner {
+final class MethodScanner {
 
     private final ClassFinder classFinder;
 

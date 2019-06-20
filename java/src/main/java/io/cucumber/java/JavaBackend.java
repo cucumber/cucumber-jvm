@@ -12,10 +12,6 @@ import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.api.After;
-import io.cucumber.java.api.AfterStep;
-import io.cucumber.java.api.Before;
-import io.cucumber.java.api.BeforeStep;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,7 +20,7 @@ import java.util.List;
 
 import static java.lang.Thread.currentThread;
 
-public class JavaBackend implements Backend {
+final class JavaBackend implements Backend {
 
     private final TypeRegistry typeRegistry;
     private final SnippetGenerator annotationSnippetGenerator;
