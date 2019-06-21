@@ -30,7 +30,7 @@ import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
 
-class RuntimeOptionsParser {
+final class RuntimeOptionsParser {
     private static final Logger log = LoggerFactory.getLogger(RuntimeOptionsParser.class);
 
     static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");

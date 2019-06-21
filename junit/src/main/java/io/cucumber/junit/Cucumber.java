@@ -10,9 +10,11 @@ import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.Env;
+import cucumber.runtime.EnvironmentOptionsParser;
 import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.RuntimeOptionsFactory;
+import cucumber.runtime.CucumberOptionsAnnotationParser;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
@@ -80,13 +82,23 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         super(clazz);
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
-        // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
-
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
+
+        // Parse the options early to provide fast feedback about invalid options
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+            .parse(clazz)
+            .addDefaultFormatterIfNotPresent()
+            .addDefaultSummaryPrinterIfNotPresent()
+            .build();
+
+        RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
+            .parse(Env.INSTANCE)
+            .build(annotationOptions);
+
+        JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
+
+
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the features early. Don't proceed when there are lexer errors

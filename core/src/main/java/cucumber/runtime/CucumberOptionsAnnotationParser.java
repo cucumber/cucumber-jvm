@@ -1,35 +1,31 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
 import io.cucumber.core.model.Classpath;
+import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
 import io.cucumber.core.model.GluePath;
+import io.cucumber.core.model.RerunLoader;
 
+import java.net.URI;
 import java.util.regex.Pattern;
 
-public class RuntimeOptionsFactory {
-    private final Class clazz;
+public final class CucumberOptionsAnnotationParser {
+    private final RerunLoader rerunLoader;
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
 
-    public RuntimeOptionsFactory(Class clazz) {
-        this.clazz = clazz;
+    public CucumberOptionsAnnotationParser() {
+        this(new MultiLoader(CucumberOptionsAnnotationParser.class.getClassLoader()));
     }
 
-    public RuntimeOptions create() {
-        RuntimeOptions runtimeOptions = buildArgsFromOptions()
-            .addDefaultFormatterIfNotPresent()
-            .addDefaultSummaryPrinterIfNotPresent()
-            .build();
-
-        new EnvironmentOptionsParser()
-            .parse(Env.INSTANCE)
-            .build(runtimeOptions);
-
-        return runtimeOptions;
+    public CucumberOptionsAnnotationParser(ResourceLoader resourceLoader) {
+        this.rerunLoader= new RerunLoader(resourceLoader);
     }
 
-    private RuntimeOptionsBuilder buildArgsFromOptions() {
+    public RuntimeOptionsBuilder parse(Class<?> clazz) {
         RuntimeOptionsBuilder args = new RuntimeOptionsBuilder();
 
         for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
@@ -90,8 +86,16 @@ public class RuntimeOptionsFactory {
     private void addFeatures(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options != null && options.features().length != 0) {
             for (String feature : options.features()) {
-                FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
-                args.addFeature(featureWithLines);
+                if(feature.startsWith("@")) {
+                    args.setIsRerun(true);
+                    URI rerunFile = FeaturePath.parse(feature.substring(1));
+                    for (FeatureWithLines featureWithLines : rerunLoader.load(rerunFile)) {
+                        args.addFeature(featureWithLines);
+                    }
+                } else {
+                    FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
+                    args.addFeature(featureWithLines);
+                }
             }
             featuresSpecified = true;
         }

@@ -23,15 +23,15 @@ public class Main {
      * @return 0 if execution was successful, 1 if it was not (test failures)
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
-        ResourceLoader multiLoader = new MultiLoader(classLoader);
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(multiLoader)
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
             .parse(argv)
             .addDefaultFormatterIfNotPresent()
             .addDefaultSummaryPrinterIfNotPresent()
             .build();
 
-        new EnvironmentOptionsParser(multiLoader)
+        new EnvironmentOptionsParser(resourceLoader)
             .parse(Env.INSTANCE)
             .build(runtimeOptions);
 
