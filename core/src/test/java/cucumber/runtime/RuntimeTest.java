@@ -6,8 +6,13 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
-import cucumber.api.event.*;
+import cucumber.api.event.ConcurrentEventListener;
+import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.StepDefinedEvent;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TestBackendSupplier;
 import cucumber.runner.TestHelper;
@@ -33,7 +38,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cucumber.runner.TestHelper.feature;
@@ -43,7 +54,10 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -121,7 +135,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
-			"        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
@@ -265,7 +279,11 @@ public class RuntimeTest {
 
         Runtime.builder()
             .withResourceLoader(resourceLoader)
-            .withArgs("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter")
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter")
+                    .apply()
+            )
             .withBackendSupplier(testBackendSupplier)
             .build()
             .run();
@@ -613,7 +631,7 @@ public class RuntimeTest {
         assertThat(stepDefinedEvents, equalTo(definedStepDefinitions));
 
         for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
-            if(stepDefinedEvent instanceof MockedScenarioScopedStepDefinition){
+            if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
                 MockedScenarioScopedStepDefinition mocked = (MockedScenarioScopedStepDefinition) stepDefinedEvent;
                 assertTrue("Scenario scoped step definition should be disposed of", mocked.disposed);
             }
@@ -660,7 +678,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        BackendSupplier backendSupplier = new TestBackendSupplier(){
+        BackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
 
@@ -668,7 +686,11 @@ public class RuntimeTest {
         };
 
         return Runtime.builder()
-            .withArgs(runtimeArgs)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(runtimeArgs)
+                    .apply()
+            )
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)
@@ -700,7 +722,11 @@ public class RuntimeTest {
         };
 
         return Runtime.builder()
-            .withArgs(runtimeArgs)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(runtimeArgs)
+                    .apply()
+            )
             .withBackendSupplier(testBackendSupplier)
             .withFeatureSupplier(featureSupplier)
             .build();

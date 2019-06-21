@@ -36,7 +36,7 @@ import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
 
-class RuntimeOptionsParser {
+public class RuntimeOptionsParser {
     private static final Logger log = LoggerFactory.getLogger(RuntimeOptionsParser.class);
 
     static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
@@ -64,6 +64,7 @@ class RuntimeOptionsParser {
     }
 
     ParsedOptions parse(List<String> args) {
+        args = new ArrayList<>(args);
         ParsedOptions parsedOptions = new ParsedOptions();
 
         while (!args.isEmpty()) {
@@ -231,7 +232,7 @@ class RuntimeOptionsParser {
     }
 
 
-    static class ParsedOptions {
+    public static class ParsedOptions {
         private List<String> parsedTagFilters = new ArrayList<>();
         private List<Pattern> parsedNameFilters = new ArrayList<>();
         private Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
@@ -287,7 +288,11 @@ class RuntimeOptionsParser {
             this.parsedTagFilters.add(tagExpression);
         }
 
-        void apply(RuntimeOptions runtimeOptions) {
+        public RuntimeOptions apply(){
+            return apply(RuntimeOptions.defaultOptions());
+        }
+
+        public RuntimeOptions apply(RuntimeOptions runtimeOptions) {
             if (this.parsedThreads != null) {
                 runtimeOptions.setThreads(this.parsedThreads);
             }
@@ -343,6 +348,8 @@ class RuntimeOptionsParser {
             this.parsedPluginData.updatePluginFormatterNames(runtimeOptions.getPluginFormatterNames());
             this.parsedPluginData.updatePluginStepDefinitionReporterNames(runtimeOptions.getPluginStepDefinitionReporterNames());
             this.parsedPluginData.updatePluginSummaryPrinterNames(runtimeOptions.getPluginSummaryPrinterNames());
+
+            return runtimeOptions;
         }
 
         public void setDryRun(boolean dryRun) {

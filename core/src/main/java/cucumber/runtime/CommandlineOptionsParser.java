@@ -1,13 +1,20 @@
 package cucumber.runtime;
 
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import io.cucumber.core.model.RerunLoader;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandlineOptionsParser {
 
     private final ResourceLoader resourceLoader;
+
+    public CommandlineOptionsParser() {
+        this(new MultiLoader(CommandlineOptionsParser.class.getClassLoader()));
+    }
+
 
     public CommandlineOptionsParser(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -17,5 +24,9 @@ public class CommandlineOptionsParser {
         RerunLoader rerunLoader = new RerunLoader(resourceLoader);
         RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
         return parser.parse(args);
+    }
+
+    public RuntimeOptionsParser.ParsedOptions parse(String... args) {
+        return parse(Arrays.asList(args));
     }
 }

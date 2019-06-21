@@ -1,6 +1,14 @@
 package cucumber.api.cli;
 
+import cucumber.runtime.CommandlineOptionsParser;
+import cucumber.runtime.Env;
+import cucumber.runtime.EnvironmentOptionsParser;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
+
+import static java.util.Arrays.asList;
 
 public class Main {
 
@@ -17,9 +25,21 @@ public class Main {
      * @return 0 if execution was successful, 1 if it was not (test failures)
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
+        ResourceLoader multiLoader = new MultiLoader(classLoader);
+
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(multiLoader)
+            .parse(argv)
+            .apply();
+
+        new EnvironmentOptionsParser(multiLoader)
+            .parse(Env.INSTANCE)
+            .apply(runtimeOptions);
+
+        runtimeOptions.addDefaultFormatterIfNotPresent();
+        runtimeOptions.addDefaultSummaryPrinterIfNotPresent();
 
         final Runtime runtime = Runtime.builder()
-            .withArgs(argv)
+            .withRuntimeOptions(runtimeOptions)
             .withClassLoader(classLoader)
             .build();
 

@@ -140,7 +140,7 @@ public class Runtime {
 
         private EventBus eventBus = new TimeServiceEventBus(TimeService.SYSTEM);
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        private RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
         private ClassFinder classFinder;
@@ -148,20 +148,6 @@ public class Runtime {
         private List<Plugin> additionalPlugins = Collections.emptyList();
 
         private Builder() {
-        }
-
-        public Builder withArg(final String arg) {
-            this.runtimeOptions = new RuntimeOptions(arg);
-            return this;
-        }
-
-        public Builder withArgs(final String... args) {
-            return withArgs(Arrays.asList(args));
-        }
-
-        public Builder withArgs(final List<String> args) {
-            this.runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, args);
-            return this;
         }
 
         public Builder withRuntimeOptions(final RuntimeOptions runtimeOptions) {

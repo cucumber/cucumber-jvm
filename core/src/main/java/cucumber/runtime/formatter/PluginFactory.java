@@ -44,6 +44,7 @@ public final class PluginFactory {
         put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
         put("default_summary", DefaultSummaryPrinter.class);
+        put("summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
         put("unused", UnusedStepsSummaryPrinter.class);
         put("timeline", TimelineFormatter.class);
