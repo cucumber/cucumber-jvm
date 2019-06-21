@@ -88,8 +88,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
             .parse(clazz)
-            .addDefaultFormatterIfNotPresent()
-            .addDefaultSummaryPrinterIfNotPresent()
             .build();
 
         RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
