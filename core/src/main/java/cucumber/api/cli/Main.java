@@ -8,8 +8,6 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 
-import static java.util.Arrays.asList;
-
 public class Main {
 
     public static void main(String[] argv) {
@@ -29,11 +27,11 @@ public class Main {
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser(multiLoader)
             .parse(argv)
-            .apply();
+            .build();
 
         new EnvironmentOptionsParser(multiLoader)
             .parse(Env.INSTANCE)
-            .apply(runtimeOptions);
+            .build(runtimeOptions);
 
         runtimeOptions.addDefaultFormatterIfNotPresent();
         runtimeOptions.addDefaultSummaryPrinterIfNotPresent();

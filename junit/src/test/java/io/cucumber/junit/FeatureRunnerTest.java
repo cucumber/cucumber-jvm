@@ -149,7 +149,7 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 
         final TimeService timeServiceStub = new TimeService() {
             @Override

@@ -1182,7 +1182,7 @@ public class JSONFormatterTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(featurePaths)
-                    .apply(runtimeOptions)
+                    .build(runtimeOptions)
             )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
@@ -1223,7 +1223,7 @@ public class JSONFormatterTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(featurePaths)
-                    .apply()
+                    .build()
             )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)

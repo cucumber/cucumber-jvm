@@ -20,7 +20,7 @@ public class EnvironmentOptionsParser {
         this(new MultiLoader(EnvironmentOptionsParser.class.getClassLoader()));
     }
 
-    public RuntimeOptionsParser.ParsedOptions parse(Env env){
+    public RuntimeOptionsBuilder parse(Env env){
         RerunLoader rerunLoader = new RerunLoader(resourceLoader);
         RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
 

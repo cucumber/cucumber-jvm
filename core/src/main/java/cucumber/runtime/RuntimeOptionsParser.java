@@ -21,14 +21,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,9 +58,9 @@ public class RuntimeOptionsParser {
         this.rerunLoader = rerunLoader;
     }
 
-    ParsedOptions parse(List<String> args) {
+    RuntimeOptionsBuilder parse(List<String> args) {
         args = new ArrayList<>(args);
-        ParsedOptions parsedOptions = new ParsedOptions();
+        RuntimeOptionsBuilder parsedOptions = new RuntimeOptionsBuilder();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -80,10 +75,11 @@ public class RuntimeOptionsParser {
                 String nextArg = args.remove(0);
                 System.exit(printI18n(nextArg));
             } else if (arg.equals("--threads")) {
-                parsedOptions.parsedThreads = Integer.parseInt(args.remove(0));
-                if (parsedOptions.parsedThreads < 1) {
+                int threads = Integer.parseInt(args.remove(0));
+                if (threads < 1) {
                     throw new CucumberException("--threads must be > 0");
                 }
+                parsedOptions.setThreads(threads);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
                 URI parse = GluePath.parse(gluePath);
@@ -95,7 +91,7 @@ public class RuntimeOptionsParser {
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 parsedOptions.setDryRun(!arg.startsWith("--no-"));
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
-                parsedOptions.parsedStrict = !arg.startsWith("--no-");
+                parsedOptions.setStrict(!arg.startsWith("--no-"));
             } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
             } else if (arg.equals("--snippets")) {
@@ -106,36 +102,34 @@ public class RuntimeOptionsParser {
                 Pattern pattern = Pattern.compile(nextArg);
                 parsedOptions.addNameFilter(pattern);
             } else if (arg.startsWith("--junit,")) {
-                parsedOptions.parsedJunitOptions.addAll(asList(arg.substring("--junit,".length()).split(",")));
+                for (String parsedOption : arg.substring("--junit,".length()).split(",")) {
+                    parsedOptions.addJunitOption(parsedOption);
+                }
             } else if (arg.equals("--wip") || arg.equals("-w")) {
-                parsedOptions.parsedWip = true;
+                parsedOptions.setWip(true);
             } else if (arg.equals("--order")) {
-                parsedOptions.parsedPickleOrder = parsePickleOrder(args.remove(0));
+                parsedOptions.setPickleOrder(parsePickleOrder(args.remove(0)));
             } else if (arg.equals("--count")) {
-                parsedOptions.parsedCount = Integer.parseInt(args.remove(0));
-                if (parsedOptions.parsedCount < 1) {
+                int count = Integer.parseInt(args.remove(0));
+                if (count < 1) {
                     throw new CucumberException("--count must be > 0");
                 }
+                parsedOptions.setCount(count);
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
-                parsedOptions.parsedIsRerun = true;
+                parsedOptions.setIsRerun(true);
                 URI rerunFile = FeaturePath.parse(arg.substring(1));
-                processPathWitheLinesFromRerunFile(parsedOptions, rerunFile);
+                for (FeatureWithLines featureWithLines : rerunLoader.load(rerunFile)) {
+                    parsedOptions.addFeature(featureWithLines);
+                }
             } else if (!arg.isEmpty()) {
                 FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
                 parsedOptions.addFeature(featureWithLines);
             }
         }
         return parsedOptions;
-    }
-
-
-    private void processPathWitheLinesFromRerunFile(ParsedOptions parsedOptions, URI rerunPath) {
-        for (FeatureWithLines featureWithLines : rerunLoader.load(rerunPath)) {
-            parsedOptions.addFeature(featureWithLines);
-        }
     }
 
     private static PickleOrder parsePickleOrder(String argument) {
@@ -231,144 +225,6 @@ public class RuntimeOptionsParser {
         table.add(cells);
     }
 
-
-    public static class ParsedOptions {
-        private List<String> parsedTagFilters = new ArrayList<>();
-        private List<Pattern> parsedNameFilters = new ArrayList<>();
-        private Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
-        private List<URI> parsedFeaturePaths = new ArrayList<>();
-        private List<URI> parsedGlue = new ArrayList<>();
-        private ParsedPluginData parsedPluginData = new ParsedPluginData();
-        private List<String> parsedJunitOptions = new ArrayList<>();
-        private boolean parsedIsRerun = false;
-        private Integer parsedThreads = null;
-        private Boolean parsedDryRun = null;
-        private Boolean parsedStrict = null;
-        private Boolean parsedMonochrome = null;
-        private SnippetType parsedSnippetType = null;
-        private Boolean parsedWip = null;
-        private PickleOrder parsedPickleOrder = null;
-        private Integer parsedCount = null;
-
-        public void addFeature(FeatureWithLines featureWithLines) {
-            parsedFeaturePaths.add(featureWithLines.uri());
-            addLineFilters(featureWithLines);
-        }
-
-        public void addGlue(URI glue) {
-            parsedGlue.add(glue);
-        }
-
-        public void addJunitOption(String junitOption) {
-            this.parsedJunitOptions.add(junitOption);
-        }
-
-        private void addLineFilters(FeatureWithLines featureWithLines) {
-            URI key = featureWithLines.uri();
-            Set<Integer> lines = featureWithLines.lines();
-            if (lines.isEmpty()) {
-                return;
-            }
-            if (this.parsedLineFilters.containsKey(key)) {
-                this.parsedLineFilters.get(key).addAll(lines);
-            } else {
-                this.parsedLineFilters.put(key, new TreeSet<>(lines));
-            }
-        }
-
-        public void addNameFilter(Pattern pattern) {
-            this.parsedNameFilters.add(pattern);
-        }
-
-        public void addPluginName(String name, boolean isAddPlugin) {
-            this.parsedPluginData.addPluginName(name, isAddPlugin);
-        }
-
-        public void addTagFilter(String tagExpression) {
-            this.parsedTagFilters.add(tagExpression);
-        }
-
-        public RuntimeOptions apply(){
-            return apply(RuntimeOptions.defaultOptions());
-        }
-
-        public RuntimeOptions apply(RuntimeOptions runtimeOptions) {
-            if (this.parsedThreads != null) {
-                runtimeOptions.setThreads(this.parsedThreads);
-            }
-
-            if (this.parsedDryRun != null) {
-                runtimeOptions.setDryRun(this.parsedDryRun);
-            }
-
-            if (this.parsedStrict != null) {
-                runtimeOptions.setStrict(this.parsedStrict);
-            }
-
-            if (this.parsedMonochrome != null) {
-                runtimeOptions.setMonochrome(this.parsedMonochrome);
-            }
-
-            if (this.parsedSnippetType != null) {
-                runtimeOptions.setSnippetType(this.parsedSnippetType);
-            }
-
-            if (this.parsedWip != null) {
-                runtimeOptions.setWip(this.parsedWip);
-            }
-
-            if (this.parsedPickleOrder != null) {
-                runtimeOptions.setPickleOrder(this.parsedPickleOrder);
-            }
-
-            if (this.parsedCount != null) {
-                runtimeOptions.setCount(this.parsedCount);
-            }
-
-            if (this.parsedIsRerun || !this.parsedFeaturePaths.isEmpty()) {
-                runtimeOptions.setFeaturePaths(Collections.<URI>emptyList());
-                runtimeOptions.setLineFilters(Collections.<URI, Set<Integer>>emptyMap());
-            }
-            if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || !this.parsedLineFilters.isEmpty()) {
-                runtimeOptions.setTagFilters(this.parsedTagFilters);
-                runtimeOptions.setNameFilters(this.parsedNameFilters);
-                runtimeOptions.setLineFilters(this.parsedLineFilters);
-            }
-            if (!this.parsedFeaturePaths.isEmpty()) {
-                runtimeOptions.setFeaturePaths(this.parsedFeaturePaths);
-            }
-
-            if (!this.parsedGlue.isEmpty()) {
-                runtimeOptions.setGlue(this.parsedGlue);
-            }
-            if (!this.parsedJunitOptions.isEmpty()) {
-                runtimeOptions.setJunitOptions(this.parsedJunitOptions);
-            }
-
-            this.parsedPluginData.updatePluginFormatterNames(runtimeOptions.getPluginFormatterNames());
-            this.parsedPluginData.updatePluginStepDefinitionReporterNames(runtimeOptions.getPluginStepDefinitionReporterNames());
-            this.parsedPluginData.updatePluginSummaryPrinterNames(runtimeOptions.getPluginSummaryPrinterNames());
-
-            return runtimeOptions;
-        }
-
-        public void setDryRun(boolean dryRun) {
-            this.parsedDryRun = dryRun;
-        }
-
-        public void setMonochrome(boolean monochrome) {
-            this.parsedMonochrome = monochrome;
-        }
-
-
-        public void setSnippetType(SnippetType snippetType) {
-            this.parsedSnippetType = snippetType;
-        }
-
-        public void setStrict(boolean strict) {
-            this.parsedStrict = true;
-        }
-    }
 
     static class ParsedPluginData {
         ParsedOptionNames formatterNames = new ParsedOptionNames();

@@ -20,13 +20,13 @@ public class CommandlineOptionsParser {
         this.resourceLoader = resourceLoader;
     }
 
-    public RuntimeOptionsParser.ParsedOptions parse(List<String> args) {
+    public RuntimeOptionsBuilder parse(List<String> args) {
         RerunLoader rerunLoader = new RerunLoader(resourceLoader);
         RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
         return parser.parse(args);
     }
 
-    public RuntimeOptionsParser.ParsedOptions parse(String... args) {
+    public RuntimeOptionsBuilder parse(String... args) {
         return parse(Arrays.asList(args));
     }
 }

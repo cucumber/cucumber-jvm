@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class HookOrderTest {
     private final static String ENGLISH = "en";
 
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+    private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("pattern1", new TypeRegistry(Locale.ENGLISH));

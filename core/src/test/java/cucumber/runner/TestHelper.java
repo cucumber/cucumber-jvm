@@ -277,7 +277,7 @@ public class TestHelper {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(runtimeArgs)
-                    .apply()
+                    .build()
             )
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)

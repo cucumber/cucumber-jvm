@@ -282,7 +282,7 @@ public class RuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter")
-                    .apply()
+                    .build()
             )
             .withBackendSupplier(testBackendSupplier)
             .build()
@@ -689,7 +689,7 @@ public class RuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(runtimeArgs)
-                    .apply()
+                    .build()
             )
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
@@ -725,7 +725,7 @@ public class RuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(runtimeArgs)
-                    .apply()
+                    .build()
             )
             .withBackendSupplier(testBackendSupplier)
             .withFeatureSupplier(featureSupplier)

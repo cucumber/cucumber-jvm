@@ -51,7 +51,18 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
      * @param argv the arguments
      */
     public RuntimeOptions(String argv) {
-        this(Shellwords.parse(argv));
+        ResourceLoader resourceLoader = new MultiLoader(RuntimeOptions.class.getClassLoader());
+        List<String> argv1 = Shellwords.parse(argv);
+        RerunLoader rerunLoader = new RerunLoader(resourceLoader);
+        argv1 = new ArrayList<>(argv1); // in case the one passed in is unmodifiable.
+        RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
+        parser.parse(argv1).build(this);
+
+        EnvironmentOptionsParser environmentOptionsParser = new EnvironmentOptionsParser(resourceLoader);
+        environmentOptionsParser.parse(Env.INSTANCE).build(this);
+
+        addDefaultFormatterIfNotPresent();
+        addDefaultSummaryPrinterIfNotPresent();
     }
 
     /**
@@ -62,7 +73,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
      * @param argv the arguments
      */
     public RuntimeOptions(List<String> argv) {
-        this(Env.INSTANCE, argv);
+        this(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, argv);
     }
 
     public RuntimeOptions(Env env, List<String> argv) {
@@ -74,16 +85,16 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
         RerunLoader rerunLoader = new RerunLoader(resourceLoader);
         argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
         RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
-        parser.parse(argv).apply(this);
+        parser.parse(argv).build(this);
 
         EnvironmentOptionsParser environmentOptionsParser = new EnvironmentOptionsParser(resourceLoader);
-        environmentOptionsParser.parse(env).apply(this);
+        environmentOptionsParser.parse(env).build(this);
 
         addDefaultFormatterIfNotPresent();
         addDefaultSummaryPrinterIfNotPresent();
     }
 
-    public RuntimeOptions() {
+    private RuntimeOptions() {
 
     }
 

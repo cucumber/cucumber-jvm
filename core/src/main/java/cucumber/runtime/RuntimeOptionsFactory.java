@@ -17,12 +17,11 @@ public class RuntimeOptionsFactory {
     }
 
     public RuntimeOptions create() {
-        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        buildArgsFromOptions().apply(runtimeOptions);
+        RuntimeOptions runtimeOptions = buildArgsFromOptions().build();
 
         new EnvironmentOptionsParser()
             .parse(Env.INSTANCE)
-            .apply(runtimeOptions);
+            .build(runtimeOptions);
 
         runtimeOptions.addDefaultFormatterIfNotPresent();
         runtimeOptions.addDefaultSummaryPrinterIfNotPresent();
@@ -30,8 +29,8 @@ public class RuntimeOptionsFactory {
         return runtimeOptions;
     }
 
-    private RuntimeOptionsParser.ParsedOptions buildArgsFromOptions() {
-        RuntimeOptionsParser.ParsedOptions args = new RuntimeOptionsParser.ParsedOptions();
+    private RuntimeOptionsBuilder buildArgsFromOptions() {
+        RuntimeOptionsBuilder args = new RuntimeOptionsBuilder();
 
         for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = getOptions(classWithOptions);
@@ -53,42 +52,42 @@ public class RuntimeOptionsFactory {
         return args;
     }
 
-    private void addName(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addName(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String name : options.name()) {
             Pattern pattern = Pattern.compile(name);
             args.addNameFilter(pattern);
         }
     }
 
-    private void addSnippets(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addSnippets(CucumberOptions options, RuntimeOptionsBuilder args) {
         args.setSnippetType(options.snippets());
     }
 
-    private void addDryRun(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addDryRun(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options.dryRun()) {
             args.setDryRun(true);
         }
     }
 
-    private void addMonochrome(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addMonochrome(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options.monochrome() || runningInEnvironmentWithoutAnsiSupport()) {
             args.setMonochrome(true);
         }
     }
 
-    private void addTags(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addTags(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String tags : options.tags()) {
             args.addTagFilter(tags);
         }
     }
 
-    private void addPlugins(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addPlugins(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String plugin : options.plugin()) {
             args.addPluginName(plugin, false);
         }
     }
 
-    private void addFeatures(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addFeatures(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options != null && options.features().length != 0) {
             for (String feature : options.features()) {
                 FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
@@ -98,7 +97,7 @@ public class RuntimeOptionsFactory {
         }
     }
 
-    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsParser.ParsedOptions args, Class clazz) {
+    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsBuilder args, Class clazz) {
         if (!featuresSpecified) {
             String packageName = packagePath(clazz);
             FeatureWithLines featureWithLines = FeatureWithLines.parse(packageName);
@@ -106,7 +105,7 @@ public class RuntimeOptionsFactory {
         }
     }
 
-    private void addGlue(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addGlue(CucumberOptions options, RuntimeOptionsBuilder args) {
         boolean hasExtraGlue = options.extraGlue().length > 0;
         boolean hasGlue = options.glue().length > 0;
 
@@ -128,20 +127,20 @@ public class RuntimeOptionsFactory {
         }
     }
 
-    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsParser.ParsedOptions args, Class clazz) {
+    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsBuilder args, Class clazz) {
         if (!overridingGlueSpecified) {
             args.addGlue(GluePath.parse(packageName(clazz)));
         }
     }
 
 
-    private void addStrict(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options.strict()) {
             args.setStrict(true);
         }
     }
 
-    private void addJunitOptions(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+    private void addJunitOptions(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String junitOption : options.junit()) {
             args.addJunitOption(junitOption);
         }

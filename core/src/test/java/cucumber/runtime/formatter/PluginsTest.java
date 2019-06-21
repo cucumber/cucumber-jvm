@@ -8,9 +8,8 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.CanonicalOrderEventPublisher;
-import cucumber.runtime.Env;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.RuntimeOptionsBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -20,8 +19,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import java.util.Collections;
 
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +41,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetStrictOnPlugin() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--strict");
+        RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setStrict().build();
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         StrictAware plugin = Mockito.mock(StrictAware.class);
         plugins.addPlugin(plugin);
@@ -54,7 +51,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetMonochromeOnPlugin() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--monochrome");
+        RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setMonochrome().build();
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         ColorAware plugin = Mockito.mock(ColorAware.class);
         plugins.addPlugin(plugin);
@@ -64,7 +61,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetConcurrentEventListener() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         ConcurrentEventListener plugin = Mockito.mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
@@ -75,7 +72,8 @@ public class PluginsTest {
 
     @Test
     public void shouldSetConcurrentEventListenerForSingleThread() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
@@ -86,7 +84,8 @@ public class PluginsTest {
 
     @Test
     public void shouldSetNonConcurrentEventListenerForMultiThread() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
@@ -98,7 +97,8 @@ public class PluginsTest {
 
     @Test
     public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);

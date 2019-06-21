@@ -22,7 +22,7 @@ public class JsonParallelRuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse("src/test/resources/cucumber/runtime/formatter/JSONPrettyFormatterTest.feature")
-                    .apply()
+                    .build()
             )
             .withAdditionalPlugins(new JSONFormatter(parallel))
             .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
@@ -37,7 +37,7 @@ public class JsonParallelRuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse("src/test/resources/cucumber/runtime/formatter/JSONPrettyFormatterTest.feature")
-                    .apply(runtimeOptions)
+                    .build(runtimeOptions)
             )
             .withAdditionalPlugins(new JSONFormatter(serial))
             .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
@@ -55,7 +55,7 @@ public class JsonParallelRuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse("src/test/resources/cucumber/runtime/formatter/FormatterInParallel.feature")
-                    .apply()
+                    .build()
             )
             .withAdditionalPlugins(new JSONFormatter(parallel))
             .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
@@ -68,7 +68,7 @@ public class JsonParallelRuntimeTest {
         Runtime.builder()
             .withRuntimeOptions(new CommandlineOptionsParser()
                 .parse("src/test/resources/cucumber/runtime/formatter/FormatterInParallel.feature")
-                .apply())
+                .build())
             .withAdditionalPlugins(new JSONFormatter(serial))
             .withEventBus(new TimeServiceEventBus(new TimeServiceStub(0)))
             .build()
