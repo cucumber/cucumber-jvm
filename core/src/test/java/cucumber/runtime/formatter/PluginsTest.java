@@ -8,7 +8,9 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.CanonicalOrderEventPublisher;
+import cucumber.runtime.Env;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.MultiLoader;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -62,7 +64,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetConcurrentEventListener() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         ConcurrentEventListener plugin = Mockito.mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
@@ -73,7 +75,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetConcurrentEventListenerForSingleThread() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
@@ -84,7 +86,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetNonConcurrentEventListenerForMultiThread() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);
@@ -96,7 +98,7 @@ public class PluginsTest {
 
     @Test
     public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         Plugins plugins = new Plugins(getSystemClassLoader(), pluginFactory, runtimeOptions);
         EventListener plugin = Mockito.mock(EventListener.class);
         plugins.addPlugin(plugin);

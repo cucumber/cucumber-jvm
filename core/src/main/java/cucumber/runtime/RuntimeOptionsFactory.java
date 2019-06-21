@@ -2,12 +2,10 @@ package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
 import io.cucumber.core.model.Classpath;
+import io.cucumber.core.model.FeatureWithLines;
+import io.cucumber.core.model.GluePath;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static java.util.Arrays.asList;
+import java.util.regex.Pattern;
 
 public class RuntimeOptionsFactory {
     private final Class clazz;
@@ -19,12 +17,21 @@ public class RuntimeOptionsFactory {
     }
 
     public RuntimeOptions create() {
-        List<String> args = buildArgsFromOptions();
-        return new RuntimeOptions(args);
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+        buildArgsFromOptions().apply(runtimeOptions);
+
+        new EnvironmentOptionsParser()
+            .parse(Env.INSTANCE)
+            .apply(runtimeOptions);
+
+        runtimeOptions.addDefaultFormatterIfNotPresent();
+        runtimeOptions.addDefaultSummaryPrinterIfNotPresent();
+
+        return runtimeOptions;
     }
 
-    private List<String> buildArgsFromOptions() {
-        List<String> args = new ArrayList<String>();
+    private RuntimeOptionsParser.ParsedOptions buildArgsFromOptions() {
+        RuntimeOptionsParser.ParsedOptions args = new RuntimeOptionsParser.ParsedOptions();
 
         for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = getOptions(classWithOptions);
@@ -46,60 +53,60 @@ public class RuntimeOptionsFactory {
         return args;
     }
 
-    private void addName(CucumberOptions options, List<String> args) {
+    private void addName(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         for (String name : options.name()) {
-            args.add("--name");
-            args.add(name);
+            Pattern pattern = Pattern.compile(name);
+            args.addNameFilter(pattern);
         }
     }
 
-    private void addSnippets(CucumberOptions options, List<String> args) {
-        args.add("--snippets");
-        args.add(options.snippets().toString());
+    private void addSnippets(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+        args.setSnippetType(options.snippets());
     }
 
-    private void addDryRun(CucumberOptions options, List<String> args) {
+    private void addDryRun(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         if (options.dryRun()) {
-            args.add("--dry-run");
+            args.setDryRun(true);
         }
     }
 
-    private void addMonochrome(CucumberOptions options, List<String> args) {
+    private void addMonochrome(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         if (options.monochrome() || runningInEnvironmentWithoutAnsiSupport()) {
-            args.add("--monochrome");
+            args.setMonochrome(true);
         }
     }
 
-    private void addTags(CucumberOptions options, List<String> args) {
+    private void addTags(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         for (String tags : options.tags()) {
-            args.add("--tags");
-            args.add(tags);
+            args.addTagFilter(tags);
         }
     }
 
-    private void addPlugins(CucumberOptions options, List<String> args) {
-        List<String> plugins = new ArrayList<>();
-        plugins.addAll(asList(options.plugin()));
-        for (String plugin : plugins) {
-            args.add("--plugin");
-            args.add(plugin);
+    private void addPlugins(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
+        for (String plugin : options.plugin()) {
+            args.addPluginName(plugin, false);
         }
     }
 
-    private void addFeatures(CucumberOptions options, List<String> args) {
+    private void addFeatures(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         if (options != null && options.features().length != 0) {
-            Collections.addAll(args, options.features());
+            for (String feature : options.features()) {
+                FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
+                args.addFeature(featureWithLines);
+            }
             featuresSpecified = true;
         }
     }
 
-    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(List<String> args, Class clazz) {
+    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsParser.ParsedOptions args, Class clazz) {
         if (!featuresSpecified) {
-            args.add(packagePath(clazz));
+            String packageName = packagePath(clazz);
+            FeatureWithLines featureWithLines = FeatureWithLines.parse(packageName);
+            args.addFeature(featureWithLines);
         }
     }
 
-    private void addGlue(CucumberOptions options, List<String> args) {
+    private void addGlue(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         boolean hasExtraGlue = options.extraGlue().length > 0;
         boolean hasGlue = options.glue().length > 0;
 
@@ -117,28 +124,26 @@ public class RuntimeOptionsFactory {
         }
 
         for (String glue : gluePaths) {
-            args.add("--glue");
-            args.add(glue);
+            args.addGlue(GluePath.parse(glue));
         }
     }
 
-    private void addDefaultGlueIfNoOverridingGlueIsSpecified(List<String> args, Class clazz) {
+    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsParser.ParsedOptions args, Class clazz) {
         if (!overridingGlueSpecified) {
-            args.add("--glue");
-            args.add(packageName(clazz));
+            args.addGlue(GluePath.parse(packageName(clazz)));
         }
     }
 
 
-    private void addStrict(CucumberOptions options, List<String> args) {
+    private void addStrict(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         if (options.strict()) {
-            args.add("--strict");
+            args.setStrict(true);
         }
     }
 
-    private void addJunitOptions(CucumberOptions options, List<String> args) {
+    private void addJunitOptions(CucumberOptions options, RuntimeOptionsParser.ParsedOptions args) {
         for (String junitOption : options.junit()) {
-            args.add("--junit," + junitOption);
+            args.addJunitOption(junitOption);
         }
     }
 

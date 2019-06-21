@@ -160,7 +160,7 @@ public class Runtime {
         }
 
         public Builder withArgs(final List<String> args) {
-            this.runtimeOptions = new RuntimeOptions(args);
+            this.runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, args);
             return this;
         }
 

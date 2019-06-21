@@ -10,6 +10,7 @@ import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 
@@ -84,13 +85,13 @@ public class RuntimeOptionsTest {
 
     @Test
     public void has_version_from_properties_file() {
-        assertTrue(RuntimeOptions.VERSION.matches("\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?"));
+        assertTrue(RuntimeOptionsParser.VERSION.matches("\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?"));
     }
 
     @Test
     public void has_usage() {
-        RuntimeOptions.loadUsageTextIfNeeded();
-        assertThat(RuntimeOptions.usageText, startsWith("Usage"));
+        RuntimeOptionsParser.loadUsageTextIfNeeded();
+        assertThat(RuntimeOptionsParser.usageText, startsWith("Usage"));
     }
 
     @Test
@@ -145,7 +146,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_html_formatter() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -154,7 +155,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_progress_formatter_as_default() {
-        RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
         assertThat(plugins.getPlugins().get(0).getClass().getName(), is("cucumber.runtime.formatter.ProgressFormatter"));
@@ -162,7 +163,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_progress_formatter_when_no_formatter_plugin_is_specified() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "cucumber.runtime.formatter.AnyStepDefinitionReporter", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--plugin", "cucumber.runtime.formatter.AnyStepDefinitionReporter", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -171,7 +172,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "pretty", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--plugin", "pretty", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -180,7 +181,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_null_summary_printer() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "null_summary", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--plugin", "null_summary", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -190,50 +191,50 @@ public class RuntimeOptionsTest {
 
     @Test
     public void assigns_strict() {
-        RuntimeOptions options = new RuntimeOptions(asList("--strict", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--strict", "--glue", "somewhere"));
         assertTrue(options.isStrict());
     }
 
     @Test
     public void assigns_strict_short() {
-        RuntimeOptions options = new RuntimeOptions(asList("-s", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("-s", "--glue", "somewhere"));
         assertTrue(options.isStrict());
     }
 
     @Test
     public void default_strict() {
-        RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--glue", "somewhere"));
         assertThat(options.isStrict(), is(false));
     }
 
     @Test
     public void assigns_wip() {
-        RuntimeOptions options = new RuntimeOptions(asList("--wip", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--wip", "--glue", "somewhere"));
         assertThat(options.isWip(), is(true));
     }
 
     @Test
     public void assigns_wip_short() {
-        RuntimeOptions options = new RuntimeOptions(asList("-w", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("-w", "--glue", "somewhere"));
         assertThat(options.isWip(), is(true));
     }
 
     @Test
     public void default_wip() {
-        RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--glue", "somewhere"));
         assertThat(options.isWip(), is(false));
     }
 
     @Test
     public void name_without_spaces_is_preserved() {
-        RuntimeOptions options = new RuntimeOptions(asList("--name", "someName"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--name", "someName"));
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("someName"));
     }
 
     @Test
     public void name_with_spaces_is_preserved() {
-        RuntimeOptions options = new RuntimeOptions(asList("--name", "some Name"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--name", "some Name"));
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("some Name"));
     }
@@ -241,7 +242,7 @@ public class RuntimeOptionsTest {
     @Test
     public void ensure_name_with_spaces_works_with_cucumber_options() {
         properties.setProperty("cucumber.options", "--name 'some Name'");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), Collections.<String>emptyList());
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("some Name"));
     }
@@ -268,14 +269,14 @@ public class RuntimeOptionsTest {
     @Test
     public void clobbers_junit_options_from_cli_if_junit_options_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--junit,option_from_property");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--junit,option_to_be_clobbered"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--junit,option_to_be_clobbered"));
         assertThat(options.getJunitOptions(), contains("option_from_property"));
     }
 
     @Test
     public void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
         properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--strict", "--glue", "somewhere", "somewhere_else"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--strict", "--glue", "somewhere", "somewhere_else"));
         assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths")));
         assertThat(options.getGlue(), contains(uri("classpath:lookatme")));
         assertTrue(options.isStrict());
@@ -284,28 +285,28 @@ public class RuntimeOptionsTest {
     @Test
     public void ensure_cli_glue_is_preserved_when_cucumber_options_property_defined() {
         properties.setProperty("cucumber.options", "--tags @foo");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--glue", "somewhere"));
         assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
     }
 
     @Test
     public void clobbers_filters_from_cli_if_filters_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--tags @clobber_with_this");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--tags", "@should_be_clobbered"));
         assertThat(options.getTagFilters(), contains("@clobber_with_this"));
     }
 
     @Test
     public void clobbers_tag_and_name_filters_from_cli_if_line_filters_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "path/file.feature:3");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
         assertThat(options.getTagFilters(), emptyCollectionOf(String.class));
     }
 
     @Test
     public void clobbers_tag_and_name_filters_from_cli_if_rerun_file_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "@src/test/resources/cucumber/runtime/runtime-options-rerun.txt");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
         assertThat(options.getTagFilters(), emptyCollectionOf(String.class));
         assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)));
     }
@@ -313,21 +314,21 @@ public class RuntimeOptionsTest {
     @Test
     public void preserves_filters_from_cli_if_filters_not_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--strict");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--tags", "@keep_this"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--tags", "@keep_this"));
         assertThat(options.getTagFilters(), contains("@keep_this"));
     }
 
     @Test
     public void clobbers_features_from_cli_if_features_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "new newer");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("old", "older"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("old", "older"));
         assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer")));
     }
 
     @Test
     public void strips_lines_from_features_from_cli_if_filters_are_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--tags @Tag");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("path/file.feature:3"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("path/file.feature:3"));
         assertThat(options.getFeaturePaths(), contains(uri("file:path/file.feature")));
     }
 
@@ -345,7 +346,7 @@ public class RuntimeOptionsTest {
     @Test
     public void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin pretty");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("old", "older"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("old", "older"));
         assertThat(options.getFeaturePaths(), contains(uri("file:old"), uri("file:older")));
 
     }
@@ -353,7 +354,7 @@ public class RuntimeOptionsTest {
     @Test
     public void clobbers_line_filters_from_cli_if_features_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "new newer");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--tags", "@keep_this", "path/file1.feature:1"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--tags", "@keep_this", "path/file1.feature:1"));
         assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer")));
         assertThat(options.getTagFilters(), contains("@keep_this"));
     }
@@ -361,7 +362,7 @@ public class RuntimeOptionsTest {
     @Test
     public void clobbers_formatter_plugins_from_cli_if_formatters_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin pretty");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -372,7 +373,7 @@ public class RuntimeOptionsTest {
     @Test
     public void adds_to_formatter_plugins_with_add_plugin_option() {
         properties.setProperty("cucumber.options", "--add-plugin pretty");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--plugin", "html:target/some/dir", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -383,7 +384,7 @@ public class RuntimeOptionsTest {
     @Test
     public void clobbers_summary_plugins_from_cli_if_summary_printer_specified_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin default_summary");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -394,7 +395,7 @@ public class RuntimeOptionsTest {
     @Test
     public void adds_to_summary_plugins_with_add_plugin_option() {
         properties.setProperty("cucumber.options", "--add-plugin default_summary");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--plugin", "null_summary", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -405,7 +406,7 @@ public class RuntimeOptionsTest {
     @Test
     public void does_not_clobber_plugins_of_different_type_when_specifying_plugins_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--plugin default_summary");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "pretty", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--plugin", "pretty", "--glue", "somewhere"));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -416,25 +417,25 @@ public class RuntimeOptionsTest {
     @Test
     public void allows_removal_of_strict_in_cucumber_options_property() {
         properties.setProperty("cucumber.options", "--no-strict");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--strict"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), asList("--strict"));
         assertThat(options.isStrict(), is(false));
     }
 
     @Test
     public void fail_on_unsupported_options() {
         expectedException.expectMessage("Unknown option: -concreteUnsupportedOption");
-        new RuntimeOptions(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"));
+        new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"));
     }
 
     @Test
     public void threads_default_1() {
-        RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         assertThat(options.getThreads(), is(1));
     }
 
     @Test
     public void ensure_threads_param_is_used() {
-        RuntimeOptions options = new RuntimeOptions(asList("--threads", "10"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--threads", "10"));
         assertThat(options.getThreads(), is(10));
     }
 
@@ -442,12 +443,12 @@ public class RuntimeOptionsTest {
     public void ensure_less_than_1_thread_is_not_allowed() {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("--threads must be > 0");
-        new RuntimeOptions(asList("--threads", "0"));
+        new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--threads", "0"));
     }
 
     @Test
     public void set_monochrome_on_color_aware_formatters() {
-        RuntimeOptions options = new RuntimeOptions(new Env(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -457,7 +458,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void set_strict_on_strict_aware_formatters() {
-        RuntimeOptions options = new RuntimeOptions(new Env(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
         Plugins plugins = new Plugins(getClass().getClassLoader(), new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(TimeService.SYSTEM));
 
@@ -468,20 +469,20 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_default_snippet_type_is_underscore() {
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), Collections.<String>emptyList());
         assertThat(options.getSnippetType(), is(SnippetType.UNDERSCORE));
     }
 
     @Test
     public void set_snippet_type() {
         properties.setProperty("cucumber.options", "--snippets camelcase");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), Collections.<String>emptyList());
         assertThat(options.getSnippetType(), is(SnippetType.CAMELCASE));
     }
     
     @Test
     public void ordertype_default_none() {
-    	RuntimeOptions options = new RuntimeOptions(Collections.<String>emptyList());
+    	RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
         PickleEvent a = new PickleEvent("a", null);
         PickleEvent b = new PickleEvent("b", null);
         assertThat(options.getPickleOrder()
@@ -490,7 +491,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_ordertype_reverse_is_used() {
-    	RuntimeOptions options = new RuntimeOptions(asList("--order", "reverse"));
+    	RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--order", "reverse"));
         PickleEvent a = new PickleEvent("a", null);
         PickleEvent b = new PickleEvent("b", null);
         assertThat(options.getPickleOrder()
@@ -499,12 +500,12 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_ordertype_random_is_used() {
-    	new RuntimeOptions(asList("--order", "random"));
+    	new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--order", "random"));
     }
     
     @Test
     public void ensure_ordertype_random_with_seed_is_used() {
-    	RuntimeOptions options = new RuntimeOptions(asList("--order", "random:5000"));
+    	RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--order", "random:5000"));
         PickleEvent a = new PickleEvent("a", null);
         PickleEvent b = new PickleEvent("b", null);
         PickleEvent c = new PickleEvent("c", null);
@@ -516,14 +517,14 @@ public class RuntimeOptionsTest {
     public void ensure_invalid_ordertype_is_not_allowed() {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("Invalid order. Must be either reverse, random or random:<long>");
-        new RuntimeOptions(asList("--order", "invalid"));
+        new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--order", "invalid"));
     }
     
     @Test
     public void ensure_less_than_1_count_is_not_allowed() {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("--count must be > 0");
-        new RuntimeOptions(asList("--count", "0"));
+        new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList("--count", "0"));
     }
     
     @Test
@@ -586,7 +587,7 @@ public class RuntimeOptionsTest {
     @Test
     public void loads_no_features_when_rerun_file_specified_in_cucumber_options_property_is_empty() throws Exception {
         properties.setProperty("cucumber.options", "@src/test/resources/cucumber/runtime/runtime-options-empty-rerun.txt");
-        RuntimeOptions options = new RuntimeOptions(new Env(properties), singletonList("src/test/resources/cucumber/runtime/formatter"));
+        RuntimeOptions options = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), new Env(properties), singletonList("src/test/resources/cucumber/runtime/formatter"));
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
     }
 
