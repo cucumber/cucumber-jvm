@@ -78,7 +78,7 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptions build(){
+    public RuntimeOptions build() {
         return build(RuntimeOptions.defaultOptions());
     }
 
@@ -182,6 +182,7 @@ public final class RuntimeOptionsBuilder {
     public RuntimeOptionsBuilder setStrict() {
         return setStrict(true);
     }
+
     public RuntimeOptionsBuilder setStrict(boolean strict) {
         this.parsedStrict = strict;
         return this;
@@ -207,7 +208,7 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    static class ParsedPluginData {
+    private static class ParsedPluginData {
         ParsedOptionNames formatterNames = new ParsedOptionNames();
         ParsedOptionNames stepDefinitionReporterNames = new ParsedOptionNames();
         ParsedOptionNames summaryPrinterNames = new ParsedOptionNames();
@@ -250,7 +251,7 @@ public final class RuntimeOptionsBuilder {
         }
     }
 
-    static class ParsedOptionNames {
+    private static class ParsedOptionNames {
         private List<String> names = new ArrayList<>();
         private boolean clobber = false;
 

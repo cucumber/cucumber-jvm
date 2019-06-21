@@ -18,6 +18,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+
 public final class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
 
     private final List<URI> glue = new ArrayList<>();
@@ -52,15 +55,15 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
         return count;
     }
 
-    public List<String> getPluginFormatterNames() {
+    List<String> getPluginFormatterNames() {
         return pluginFormatterNames;
     }
 
-    public List<String> getPluginStepDefinitionReporterNames() {
+    List<String> getPluginStepDefinitionReporterNames() {
         return pluginStepDefinitionReporterNames;
     }
 
-    public List<String> getPluginSummaryPrinterNames() {
+    List<String> getPluginSummaryPrinterNames() {
         return pluginSummaryPrinterNames;
     }
 
@@ -79,7 +82,7 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
 
     @Override
     public List<URI> getGlue() {
-        return glue;
+        return unmodifiableList(glue);
     }
 
     @Override
@@ -98,24 +101,24 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
 
     @Override
     public List<URI> getFeaturePaths() {
-        return new ArrayList<>(featurePaths);
+        return unmodifiableList(new ArrayList<>(featurePaths));
     }
 
     @Override
     public List<Pattern> getNameFilters() {
-        return nameFilters;
+        return unmodifiableList(nameFilters);
     }
 
     @Override
     public List<String> getTagFilters() {
-        return tagFilters;
+        return unmodifiableList(tagFilters);
     }
 
-    public void setCount(int count) {
+    void setCount(int count) {
         this.count = count;
     }
 
-    public void setFeaturePaths(List<URI> featurePaths) {
+    void setFeaturePaths(List<URI> featurePaths) {
         this.featurePaths.clear();
         this.featurePaths.addAll(featurePaths);
     }
@@ -125,41 +128,41 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
         glue.addAll(parsedGlue);
     }
 
-    public void setJunitOptions(List<String> junitOptions) {
+    void setJunitOptions(List<String> junitOptions) {
         this.junitOptions.clear();
         this.junitOptions.addAll(junitOptions);
     }
 
-    public void setLineFilters(Map<URI, Set<Integer>> lineFilters) {
+    void setLineFilters(Map<URI, Set<Integer>> lineFilters) {
         this.lineFilters.clear();
         for (URI path : lineFilters.keySet()) {
             this.lineFilters.put(path, lineFilters.get(path));
         }
     }
 
-    public void setNameFilters(List<Pattern> nameFilters) {
+    void setNameFilters(List<Pattern> nameFilters) {
         this.nameFilters.clear();
         this.nameFilters.addAll(nameFilters);
     }
 
-    public void setPickleOrder(PickleOrder pickleOrder) {
+    void setPickleOrder(PickleOrder pickleOrder) {
         this.pickleOrder = pickleOrder;
     }
 
-    public void setTagFilters(List<String>  tagFilters) {
+    void setTagFilters(List<String> tagFilters) {
         this.tagFilters.clear();
         this.tagFilters.addAll(tagFilters);
     }
 
     @Override
     public Map<URI, Set<Integer>> getLineFilters() {
-        return lineFilters;
+        return unmodifiableMap(new HashMap<>(lineFilters));
     }
-    
-	@Override
-	public int getLimitCount() {
-		return getCount();
-	}
+
+    @Override
+    public int getLimitCount() {
+        return getCount();
+    }
 
     @Override
     public boolean isMonochrome() {
@@ -172,15 +175,15 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     }
 
     public List<String> getJunitOptions() {
-        return junitOptions;
+        return unmodifiableList(junitOptions);
     }
 
     public int getThreads() {
         return threads;
     }
-    
+
     public PickleOrder getPickleOrder() {
-    	return pickleOrder;
+        return pickleOrder;
     }
 
     void setDryRun(boolean dryRun) {
