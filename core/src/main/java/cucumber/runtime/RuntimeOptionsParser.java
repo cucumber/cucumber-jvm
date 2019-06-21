@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
-import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.order.PickleOrder;
 import cucumber.runtime.order.StandardPickleOrders;
 import cucumber.util.FixJava;
@@ -31,7 +30,7 @@ import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
 
-public class RuntimeOptionsParser {
+class RuntimeOptionsParser {
     private static final Logger log = LoggerFactory.getLogger(RuntimeOptionsParser.class);
 
     static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
@@ -54,7 +53,7 @@ public class RuntimeOptionsParser {
     static String usageText;
     private final RerunLoader rerunLoader;
 
-    public RuntimeOptionsParser(RerunLoader rerunLoader) {
+    RuntimeOptionsParser(RerunLoader rerunLoader) {
         this.rerunLoader = rerunLoader;
     }
 
@@ -188,12 +187,9 @@ public class RuntimeOptionsParser {
         return 1;
     }
 
-
-
-
     private static int printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
-        List<List<String>> table = new ArrayList<List<String>>();
+        List<List<String>> table = new ArrayList<>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
         addKeywordRow(table, "background", dialect.getBackgroundKeywords());
         addKeywordRow(table, "scenario", dialect.getScenarioKeywords());
@@ -215,7 +211,7 @@ public class RuntimeOptionsParser {
     }
 
     private static void addCodeKeywordRow(List<List<String>> table, String key, List<String> keywords) {
-        List<String> codeKeywordList = new ArrayList<String>(keywords);
+        List<String> codeKeywordList = new ArrayList<>(keywords);
         codeKeywordList.remove("* ");
         addKeywordRow(table, key + " (code)", map(codeKeywordList, CODE_KEYWORD_MAPPER));
     }
@@ -226,54 +222,4 @@ public class RuntimeOptionsParser {
     }
 
 
-    static class ParsedPluginData {
-        ParsedOptionNames formatterNames = new ParsedOptionNames();
-        ParsedOptionNames stepDefinitionReporterNames = new ParsedOptionNames();
-        ParsedOptionNames summaryPrinterNames = new ParsedOptionNames();
-
-        void addPluginName(String name, boolean isAddPlugin) {
-            if (PluginFactory.isStepDefinitionReporterName(name)) {
-                stepDefinitionReporterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isSummaryPrinterName(name)) {
-                summaryPrinterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isFormatterName(name)) {
-                formatterNames.addName(name, isAddPlugin);
-            } else {
-                throw new CucumberException("Unrecognized plugin: " + name);
-            }
-        }
-
-        void updatePluginFormatterNames(List<String> pluginFormatterNames) {
-            formatterNames.updateNameList(pluginFormatterNames);
-        }
-
-        void updatePluginStepDefinitionReporterNames(List<String> pluginStepDefinitionReporterNames) {
-            stepDefinitionReporterNames.updateNameList(pluginStepDefinitionReporterNames);
-        }
-
-        void updatePluginSummaryPrinterNames(List<String> pluginSummaryPrinterNames) {
-            summaryPrinterNames.updateNameList(pluginSummaryPrinterNames);
-        }
-    }
-
-    static class ParsedOptionNames {
-        private List<String> names = new ArrayList<>();
-        private boolean clobber = false;
-
-        void addName(String name, boolean isAddOption) {
-            names.add(name);
-            if (!isAddOption) {
-                clobber = true;
-            }
-        }
-
-        void updateNameList(List<String> nameList) {
-            if (!names.isEmpty()) {
-                if (clobber) {
-                    nameList.clear();
-                }
-                nameList.addAll(names);
-            }
-        }
-    }
 }

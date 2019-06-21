@@ -27,14 +27,13 @@ public class Main {
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser(multiLoader)
             .parse(argv)
+            .addDefaultFormatterIfNotPresent()
+            .addDefaultSummaryPrinterIfNotPresent()
             .build();
 
         new EnvironmentOptionsParser(multiLoader)
             .parse(Env.INSTANCE)
             .build(runtimeOptions);
-
-        runtimeOptions.addDefaultFormatterIfNotPresent();
-        runtimeOptions.addDefaultSummaryPrinterIfNotPresent();
 
         final Runtime runtime = Runtime.builder()
             .withRuntimeOptions(runtimeOptions)

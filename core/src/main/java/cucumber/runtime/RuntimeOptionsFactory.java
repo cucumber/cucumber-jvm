@@ -17,14 +17,14 @@ public class RuntimeOptionsFactory {
     }
 
     public RuntimeOptions create() {
-        RuntimeOptions runtimeOptions = buildArgsFromOptions().build();
+        RuntimeOptions runtimeOptions = buildArgsFromOptions()
+            .addDefaultFormatterIfNotPresent()
+            .addDefaultSummaryPrinterIfNotPresent()
+            .build();
 
         new EnvironmentOptionsParser()
             .parse(Env.INSTANCE)
             .build(runtimeOptions);
-
-        runtimeOptions.addDefaultFormatterIfNotPresent();
-        runtimeOptions.addDefaultSummaryPrinterIfNotPresent();
 
         return runtimeOptions;
     }

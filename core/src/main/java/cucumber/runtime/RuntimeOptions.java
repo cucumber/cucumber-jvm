@@ -1,11 +1,8 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
-import cucumber.runtime.io.MultiLoader;
-import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.order.PickleOrder;
 import cucumber.runtime.order.StandardPickleOrders;
-import io.cucumber.core.model.RerunLoader;
 import io.cucumber.core.options.FeatureOptions;
 import io.cucumber.core.options.FilterOptions;
 import io.cucumber.core.options.PluginOptions;
@@ -21,7 +18,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
+public final class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOptions, RunnerOptions {
 
     private final List<URI> glue = new ArrayList<>();
     private final List<String> tagFilters = new ArrayList<>();
@@ -43,75 +40,12 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<>();
     private final List<String> pluginSummaryPrinterNames = new ArrayList<>();
 
-    /**
-     * Create a new instance from a string of options, for example:
-     * <p/>
-     * <pre<{@code "--name 'the fox' --plugin pretty --strict"}</pre>
-     *
-     * @param argv the arguments
-     */
-    public RuntimeOptions(String argv) {
-        ResourceLoader resourceLoader = new MultiLoader(RuntimeOptions.class.getClassLoader());
-        List<String> argv1 = Shellwords.parse(argv);
-        RerunLoader rerunLoader = new RerunLoader(resourceLoader);
-        argv1 = new ArrayList<>(argv1); // in case the one passed in is unmodifiable.
-        RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
-        parser.parse(argv1).build(this);
-
-        EnvironmentOptionsParser environmentOptionsParser = new EnvironmentOptionsParser(resourceLoader);
-        environmentOptionsParser.parse(Env.INSTANCE).build(this);
-
-        addDefaultFormatterIfNotPresent();
-        addDefaultSummaryPrinterIfNotPresent();
-    }
-
-    /**
-     * Create a new instance from a list of options, for example:
-     * <p/>
-     * <pre<{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
-     *
-     * @param argv the arguments
-     */
-    public RuntimeOptions(List<String> argv) {
-        this(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, argv);
-    }
-
-    public RuntimeOptions(Env env, List<String> argv) {
-        this(new MultiLoader(RuntimeOptions.class.getClassLoader()), env, argv);
-    }
-
-
-    public RuntimeOptions(ResourceLoader resourceLoader, Env env, List<String> argv) {
-        RerunLoader rerunLoader = new RerunLoader(resourceLoader);
-        argv = new ArrayList<>(argv); // in case the one passed in is unmodifiable.
-        RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
-        parser.parse(argv).build(this);
-
-        EnvironmentOptionsParser environmentOptionsParser = new EnvironmentOptionsParser(resourceLoader);
-        environmentOptionsParser.parse(env).build(this);
-
-        addDefaultFormatterIfNotPresent();
-        addDefaultSummaryPrinterIfNotPresent();
-    }
-
     private RuntimeOptions() {
 
     }
 
     public static RuntimeOptions defaultOptions() {
         return new RuntimeOptions();
-    }
-
-    public void addDefaultSummaryPrinterIfNotPresent() {
-        if (pluginSummaryPrinterNames.isEmpty()) {
-            pluginSummaryPrinterNames.add("default_summary");
-        }
-    }
-
-    public void addDefaultFormatterIfNotPresent() {
-        if (pluginFormatterNames.isEmpty()) {
-            pluginFormatterNames.add("progress");
-        }
     }
 
     public int getCount() {
@@ -132,11 +66,6 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
 
     public boolean isMultiThreaded() {
         return getThreads() > 1;
-    }
-
-    public RuntimeOptions noSummaryPrinter() {
-        getPluginSummaryPrinterNames().clear();
-        return this;
     }
 
     @Override
