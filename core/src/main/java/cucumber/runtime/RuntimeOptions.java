@@ -162,14 +162,22 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
     }
 
     private void parse(List<String> args) {
-        List<String> parsedTagFilters = new ArrayList<String>();
-        List<Pattern> parsedNameFilters = new ArrayList<Pattern>();
+        List<String> parsedTagFilters = new ArrayList<>();
+        List<Pattern> parsedNameFilters = new ArrayList<>();
         Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
         List<URI> parsedFeaturePaths = new ArrayList<>();
         List<URI> parsedGlue = new ArrayList<>();
         ParsedPluginData parsedPluginData = new ParsedPluginData();
-        List<String> parsedJunitOptions = new ArrayList<String>();
+        List<String> parsedJunitOptions = new ArrayList<>();
         boolean isRerun = false;
+        Integer threads = null;
+        Boolean dryRun = null;
+        Boolean strict = null;
+        Boolean monochrome = null;
+        SnippetType snippetType = null;
+        Boolean wip = null;
+        PickleOrder pickleOrder = null;
+        Integer count = null;
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -184,9 +192,8 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 String nextArg = args.remove(0);
                 System.exit(printI18n(nextArg));
             } else if (arg.equals("--threads")) {
-                String threads = args.remove(0);
-                this.threads = Integer.parseInt(threads);
-                if (this.threads < 1) {
+                threads = Integer.parseInt(args.remove(0));
+                if (threads < 1) {
                     throw new CucumberException("--threads must be > 0");
                 }
             } else if (arg.equals("--glue") || arg.equals("-g")) {
@@ -217,7 +224,7 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 pickleOrder = parsePickleOrder(args.remove(0));
             } else if (arg.equals("--count")) {
             	count = Integer.parseInt(args.remove(0));
-                if (this.count < 1) {
+                if (count < 1) {
                     throw new CucumberException("--count must be > 0");
                 }
             } else if (arg.startsWith("-")) {
@@ -232,6 +239,39 @@ public class RuntimeOptions implements FeatureOptions, FilterOptions, PluginOpti
                 processFeatureWithLines(parsedLineFilters, parsedFeaturePaths, featureWithLines);
             }
         }
+
+        if(threads != null){
+            this.threads = threads;
+        }
+
+        if(dryRun != null){
+            this.dryRun = dryRun;
+        }
+
+        if(strict != null){
+            this.strict = strict;
+        }
+
+        if(monochrome != null){
+            this.monochrome = monochrome;
+        }
+
+        if(snippetType != null){
+            this.snippetType = snippetType;
+        }
+
+        if(wip != null){
+            this.wip = wip;
+        }
+
+        if(pickleOrder != null){
+            this.pickleOrder = pickleOrder;
+        }
+
+        if(count != null){
+            this.count = count;
+        }
+
         if (isRerun || !parsedFeaturePaths.isEmpty()){
             featurePaths.clear();
             lineFilters.clear();
