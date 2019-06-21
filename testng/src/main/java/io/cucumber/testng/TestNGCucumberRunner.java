@@ -40,6 +40,7 @@ public final class TestNGCucumberRunner {
 
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+            .withOptionsProvider(new TestNGCucumberOptionsProvider())
             .parse(clazz)
             .build();
         runtimeOptions = new EnvironmentOptionsParser(resourceLoader)

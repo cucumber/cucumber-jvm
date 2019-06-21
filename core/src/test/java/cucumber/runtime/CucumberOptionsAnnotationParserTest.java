@@ -167,7 +167,9 @@ public class CucumberOptionsAnnotationParserTest {
 
     @Test
     public void create_with_extra_glue_in_subclass_of_extra_glue() {
-        RuntimeOptions runtimeOptions = new CucumberOptionsAnnotationParser().parse(SubClassWithExtraGlueOfExtraGlue.class).build();
+        RuntimeOptions runtimeOptions = new CucumberOptionsAnnotationParser()
+            .parse(SubClassWithExtraGlueOfExtraGlue.class)
+            .build();
 
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/hooks"), uri("classpath:cucumber/runtime")));
     }
