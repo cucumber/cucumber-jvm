@@ -7,14 +7,13 @@ import io.cucumber.core.model.RerunLoader;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandlineOptionsParser {
+public final class CommandlineOptionsParser {
 
     private final ResourceLoader resourceLoader;
 
     public CommandlineOptionsParser() {
         this(new MultiLoader(CommandlineOptionsParser.class.getClassLoader()));
     }
-
 
     public CommandlineOptionsParser(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
