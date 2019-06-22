@@ -4,7 +4,6 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
-import io.cucumber.core.options.FeatureOptions;
 import io.cucumber.core.util.FixJava;
 
 import java.net.URI;
@@ -18,9 +17,9 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
     private static final Logger log = LoggerFactory.getLogger(FeaturePathFeatureSupplier.class);
 
     private final FeatureLoader featureLoader;
-    private final FeatureOptions featureOptions;
+    private final Options featureOptions;
 
-    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, FeatureOptions featureOptions) {
+    public FeaturePathFeatureSupplier(FeatureLoader featureLoader, Options featureOptions) {
         this.featureLoader = featureLoader;
         this.featureOptions = featureOptions;
     }

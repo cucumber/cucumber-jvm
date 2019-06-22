@@ -67,10 +67,10 @@ public class PickleRunnerWithNoStepDescriptionsTest {
     }
 
     private JUnitOptions createJUnitOptions() {
-        return new JUnitOptions(true, Collections.<String>emptyList());
+        return new JUnitOptionsParser().parse(Collections.<String>emptyList()).setStrict(true).build();
     }
 
     private JUnitOptions createJUnitOptions(String option) {
-        return new JUnitOptions(true, Arrays.asList(option));
+        return new JUnitOptionsParser().parse(Collections.singletonList(option)).setStrict(true).build();
     }
 }

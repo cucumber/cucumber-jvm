@@ -16,6 +16,7 @@ import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.stepexpression.Argument;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -49,10 +50,8 @@ public class RunnerTest {
     private static final List<PickleTag> NO_TAGS = Collections.emptyList();
     private static final List<PickleLocation> MOCK_LOCATIONS = asList(mock(PickleLocation.class));
 
-
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
+    private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
-
 
     @Test
     public void hooks_execute_when_world_exist() throws Throwable {
@@ -196,7 +195,7 @@ public class RunnerTest {
     public void steps_are_not_executed_on_dry_run() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
         final PickleEvent pickleEvent = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, singletonList("--dry-run"));
+        RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -210,7 +209,7 @@ public class RunnerTest {
 
     @Test
     public void hooks_not_executed_in_dry_run_mode() throws Throwable {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, singletonList("--dry-run"));
+        RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
 
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();

@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runner.TestHelper;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
@@ -37,7 +40,6 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.Runtime;
@@ -1177,11 +1179,16 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
 
         Appendable stringBuilder = new StringBuilder();
-        
+
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
-            .withArgs(featurePaths)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(featurePaths)
+                    .build(runtimeOptions)
+            )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(new JSONFormatter(stringBuilder))
@@ -1214,11 +1221,15 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
 
         Appendable stringBuilder = new StringBuilder();
-        
+
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
-            .withArgs(featurePaths)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(featurePaths)
+                    .build()
+            )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(new JSONFormatter(stringBuilder))
@@ -1230,7 +1241,7 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatter() {
         final StringBuilder report = new StringBuilder();
-        
+
         TestHelper.builder()
             .withFormatterUnderTest(new JSONFormatter(report))
             .withFeatures(features)

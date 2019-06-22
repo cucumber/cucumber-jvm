@@ -37,7 +37,7 @@ public class ThreadLocalRunnerSupplierTest {
     @Before
     public void before() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();

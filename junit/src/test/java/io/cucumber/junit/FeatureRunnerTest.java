@@ -151,14 +151,13 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
-        JUnitOptions junitOption = new JUnitOptions(false, Arrays.asList(options));
+        JUnitOptions junitOption = new JUnitOptionsParser().parse(Arrays.asList(options)).build();
         return createFeatureRunner(cucumberFeature, junitOption);
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
-
-        final RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
+        final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 
         final Clock clockStub = new Clock() {
             @Override

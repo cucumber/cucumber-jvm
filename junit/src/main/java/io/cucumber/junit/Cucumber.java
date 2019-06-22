@@ -7,6 +7,9 @@ import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.options.EnvironmentOptionsParser;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -18,7 +21,6 @@ import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.options.RuntimeOptionsFactory;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
@@ -87,9 +89,23 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, resourceLoader);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+            .withOptionsProvider(new JUnitCucumberOptionsProvider())
+            .parse(clazz)
+            .build();
+
+        RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
+            .parse(Env.INSTANCE)
+            .build(annotationOptions);
+
+        JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
+            .parse(clazz)
+            .build();
+
+        JUnitOptions junitOptions = new JUnitOptionsParser()
+            .parse(runtimeOptions.getJunitOptions())
+            .setStrict(runtimeOptions.isStrict())
+            .build(junitAnnotationOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);

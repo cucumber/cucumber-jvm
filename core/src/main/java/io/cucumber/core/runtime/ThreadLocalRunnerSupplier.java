@@ -8,7 +8,6 @@ import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.event.AbstractEventBus;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.RunnerOptions;
 import io.cucumber.core.runner.Runner;
 
 /**
@@ -19,14 +18,14 @@ import io.cucumber.core.runner.Runner;
 public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
-    private final RunnerOptions runnerOptions;
+    private final io.cucumber.core.runner.Options runnerOptions;
     private final SynchronizedEventBus sharedEventBus;
     private final ObjectFactorySupplier objectFactory;
 
     private final ThreadLocal<Runner> runners = ThreadLocal.withInitial(this::createRunner);
 
     public ThreadLocalRunnerSupplier(
-        RunnerOptions runnerOptions,
+        io.cucumber.core.runner.Options runnerOptions,
         EventBus sharedEventBus,
         BackendSupplier backendSupplier,
         ObjectFactorySupplier objectFactory) {

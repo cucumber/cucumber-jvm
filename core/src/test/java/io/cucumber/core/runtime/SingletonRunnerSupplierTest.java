@@ -31,7 +31,7 @@ public class SingletonRunnerSupplierTest {
     public void before() {
         ClassLoader classLoader = getClass().getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, INSTANCE, emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);

@@ -1,7 +1,6 @@
 package io.cucumber.core.filter;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.options.FilterOptions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -22,7 +21,7 @@ public class FiltersTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
-    private FilterOptions fomock;
+    private Options fomock;
 
     private Filters filters;
 

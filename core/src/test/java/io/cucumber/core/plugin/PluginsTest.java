@@ -17,8 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -33,8 +31,7 @@ public class PluginsTest {
 
     @Mock
     private EventPublisher rootEventPublisher;
-    @Mock
-    private ResourceLoader resourceLoader;
+
     @Captor
     private ArgumentCaptor<EventPublisher> eventPublisher;
 
@@ -42,25 +39,25 @@ public class PluginsTest {
 
     @Test
     public void shouldSetStrictOnPlugin() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("--strict"));
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         StrictAware plugin = mock(StrictAware.class);
         plugins.addPlugin(plugin);
-        verify(plugin).setStrict(true);
+        verify(plugin).setStrict(false);
     }
 
     @Test
     public void shouldSetMonochromeOnPlugin() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("--monochrome"));
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         ColorAware plugin = mock(ColorAware.class);
         plugins.addPlugin(plugin);
-        verify(plugin).setMonochrome(true);
+        verify(plugin).setMonochrome(false);
     }
 
     @Test
     public void shouldSetConcurrentEventListener() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
@@ -70,7 +67,7 @@ public class PluginsTest {
 
     @Test
     public void shouldSetNonConcurrentEventListener() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         EventListener plugin = mock(EventListener.class);
         plugins.addPlugin(plugin);
@@ -81,7 +78,7 @@ public class PluginsTest {
 
     @Test
     public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         EventListener plugin = mock(EventListener.class);
         plugins.addPlugin(plugin);

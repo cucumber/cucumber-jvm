@@ -35,6 +35,7 @@ public class PluginOption implements Options.Plugin {
         put("json", JSONFormatter.class);
         put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
+        put("summary", DefaultSummaryPrinter.class);
         put("default_summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
         put("unused", UnusedStepsSummaryPrinter.class);

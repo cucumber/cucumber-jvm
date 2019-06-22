@@ -5,7 +5,7 @@ import io.cucumber.core.exception.CucumberException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-class Assertions {
+final class Assertions {
     private Assertions() {
     }
 

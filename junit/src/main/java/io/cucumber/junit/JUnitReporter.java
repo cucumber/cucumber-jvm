@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.SCENARIO;
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.STEP;
 
-class JUnitReporter {
+final class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;

@@ -32,6 +32,7 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.RuntimeOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,7 +150,7 @@ public final class Runtime {
 
         private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        private RuntimeOptions runtimeOptions;
+        private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
         private ClassFinder classFinder;
@@ -158,15 +159,6 @@ public final class Runtime {
         private List<String> runtimeOptionsArgs = emptyList();
 
         private Builder() {
-        }
-
-        public Builder withArgs(final String... args) {
-            return withArgs(Arrays.asList(args));
-        }
-
-        public Builder withArgs(final List<String> args) {
-            this.runtimeOptionsArgs = args;
-            return this;
         }
 
         public Builder withRuntimeOptions(final RuntimeOptions runtimeOptions) {
@@ -213,10 +205,6 @@ public final class Runtime {
             final ResourceLoader resourceLoader = this.resourceLoader != null
                 ? this.resourceLoader
                 : new MultiLoader(this.classLoader);
-
-            final RuntimeOptions runtimeOptions = this.runtimeOptions != null
-                ? this.runtimeOptions
-                : new RuntimeOptions(resourceLoader, Env.INSTANCE, runtimeOptionsArgs);
 
             final ClassFinder classFinder = this.classFinder != null
                 ? this.classFinder

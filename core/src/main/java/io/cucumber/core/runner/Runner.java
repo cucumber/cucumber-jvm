@@ -11,7 +11,6 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.options.RunnerOptions;
 import io.cucumber.core.util.FixJava;
 
 import java.net.URI;
@@ -26,10 +25,10 @@ public final class Runner {
     private final CachingGlue glue;
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
-    private final RunnerOptions runnerOptions;
+    private final Options runnerOptions;
     private final ObjectFactory objectFactory;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, RunnerOptions runnerOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, Options runnerOptions) {
         this.bus = bus;
         this.glue = new CachingGlue(bus);
         this.runnerOptions = runnerOptions;

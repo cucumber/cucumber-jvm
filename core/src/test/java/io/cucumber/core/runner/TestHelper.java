@@ -15,6 +15,7 @@ import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.model.FeatureParser;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubStepDefinition;
@@ -300,7 +301,11 @@ public class TestHelper {
             : new TestFeatureSupplier(bus, features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withArgs(runtimeArgs)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(runtimeArgs)
+                    .build()
+            )
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)

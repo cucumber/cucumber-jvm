@@ -1,10 +1,9 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.options.RunnerOptions;
+import io.cucumber.core.runner.Options;
 import io.cucumber.core.runner.Runner;
 
 /**
@@ -15,14 +14,14 @@ import io.cucumber.core.runner.Runner;
 public final class SingletonRunnerSupplier implements RunnerSupplier {
 
     private final BackendSupplier backendSupplier;
-    private final RunnerOptions runnerOptions;
+    private final Options runnerOptions;
     private final EventBus eventBus;
     private final ObjectFactorySupplier objectFactory;
     private Runner runner;
 
 
     public SingletonRunnerSupplier(
-        RunnerOptions runnerOptions,
+        Options runnerOptions,
         EventBus eventBus,
         BackendSupplier backendSupplier,
         ObjectFactorySupplier objectFactory) {

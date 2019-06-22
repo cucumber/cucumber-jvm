@@ -75,7 +75,7 @@ public class JavaStepDefinitionTest {
         ObjectFactory objectFactory = new SingletonFactory(defs);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(objectFactory, resourceLoader, typeRegistry);
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

@@ -15,8 +15,10 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.model.CucumberFeature;
 import io.cucumber.core.model.FeatureLoader;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.Env;
+import io.cucumber.core.options.EnvironmentOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.options.RuntimeOptionsFactory;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
@@ -55,8 +57,13 @@ public final class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, resourceLoader);
-        runtimeOptions = runtimeOptionsFactory.create();
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+            .withOptionsProvider(new TestNGCucumberOptionsProvider())
+            .parse(clazz)
+            .build();
+        runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
+            .parse(Env.INSTANCE)
+            .build(annotationOptions);
 
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);

@@ -1,23 +1,44 @@
 package io.cucumber.core.runtime;
 
-import static io.cucumber.core.runner.TestHelper.feature;
-import static io.cucumber.core.runner.TestHelper.result;
-import static java.time.Duration.ZERO;
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.HOURS;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.Step;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.event.EventHandler;
+import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.HookType;
+import io.cucumber.core.api.event.Result;
+import io.cucumber.core.api.event.StepDefinedEvent;
+import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.event.EventBus;
+import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.io.Resource;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.TestClasspathResourceLoader;
+import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.plugin.FormatterBuilder;
+import io.cucumber.core.plugin.FormatterSpy;
+import io.cucumber.core.runner.StepDurationTimeService;
+import io.cucumber.core.runner.TestBackendSupplier;
+import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.stepexpression.TypeRegistry;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 
 import java.net.URI;
 import java.time.Clock;
@@ -32,45 +53,23 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.cucumber.core.api.event.StepDefinedEvent;
-import gherkin.pickles.PickleStep;
-import io.cucumber.core.api.event.ConcurrentEventListener;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventListener;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.runner.StepDurationTimeService;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
-
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.Step;
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.api.event.HookType;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.Resource;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.model.CucumberFeature;
-import io.cucumber.core.plugin.FormatterBuilder;
-import io.cucumber.core.plugin.FormatterSpy;
-import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import static io.cucumber.core.runner.TestHelper.feature;
+import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ZERO;
+import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class RuntimeTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
@@ -137,7 +136,7 @@ public class RuntimeTest {
             "        \"name\": \"scenario name\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \"feature-name;scenario-name\",\n" +
-			"        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
             "        \"type\": \"scenario\",\n" +
             "        \"keyword\": \"Scenario\",\n" +
             "        \"steps\": [\n" +
@@ -284,7 +283,6 @@ public class RuntimeTest {
         FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
 
         Runtime runtime = Runtime.builder()
-            .withArgs()
             .withBackendSupplier(testBackendSupplier)
             .withFeatureSupplier(featureSupplier)
             .withEventBus(bus)
@@ -422,7 +420,11 @@ public class RuntimeTest {
         Runtime.builder()
             .withFeatureSupplier(new TestFeatureSupplier(bus, features))
             .withEventBus(bus)
-            .withArgs("--threads", String.valueOf(features.size()))
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse("--threads", String.valueOf(features.size()))
+                    .build()
+            )
             .withAdditionalPlugins(formatterSpy)
             .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
             .build()
@@ -614,7 +616,7 @@ public class RuntimeTest {
         assertThat(stepDefinedEvents, equalTo(definedStepDefinitions));
 
         for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
-            if(stepDefinedEvent instanceof MockedScenarioScopedStepDefinition){
+            if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
                 MockedScenarioScopedStepDefinition mocked = (MockedScenarioScopedStepDefinition) stepDefinedEvent;
                 assertTrue("Scenario scoped step definition should be disposed of", mocked.disposed);
             }
@@ -661,7 +663,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        BackendSupplier backendSupplier = new TestBackendSupplier(){
+        BackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
 
@@ -669,12 +671,51 @@ public class RuntimeTest {
         };
 
         return Runtime.builder()
-            .withArgs(runtimeArgs)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(runtimeArgs)
+                    .build()
+            )
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)
             .withEventBus(bus)
             .build();
+    }
+
+    private Runtime createRuntimeWithMockedGlue(final HookDefinition hook,
+                                                final HookType hookType,
+                                                final CucumberFeature feature,
+                                                String... runtimeArgs) {
+        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
+                    for (Step step : child.getSteps()) {
+                        mockMatch(glue, step.getText());
+                    }
+                }
+                mockHook(glue, hook, hookType);
+            }
+        };
+
+        FeatureSupplier featureSupplier = new FeatureSupplier() {
+            @Override
+            public List<CucumberFeature> get() {
+                return singletonList(feature);
+            }
+        };
+
+        return Runtime.builder()
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(runtimeArgs)
+                    .build()
+            )
+            .withBackendSupplier(testBackendSupplier)
+            .withFeatureSupplier(featureSupplier)
+            .build();
+
     }
 
     private void mockMatch(Glue glue, String text) {

@@ -33,7 +33,9 @@ public class RerunFileTest {
             "file:path/bar.feature:2\n" +
                 "file:path/foo.feature:4\n");
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@file:path/rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), contains(
             URI.create("file:path/bar.feature"),
@@ -50,7 +52,9 @@ public class RerunFileTest {
             ""
         );
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@path/rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
         assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
@@ -63,7 +67,9 @@ public class RerunFileTest {
             "\n"
         );
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@path/rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
         assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
@@ -75,7 +81,9 @@ public class RerunFileTest {
             "file:path/rerun.txt",
             "\r");
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@path/rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
         assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
@@ -87,7 +95,9 @@ public class RerunFileTest {
             "file:path/rerun.txt",
             "\r\n");
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@path/rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
         assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
@@ -99,7 +109,10 @@ public class RerunFileTest {
             "file:path/rerun.txt",
             "file:path/bar.feature:2\npath/foo.feature:4"
         );
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@file:path/rerun.txt"));
+
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:path/bar.feature"), URI.create("file:path/foo.feature")));
         assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2)));
@@ -113,7 +126,9 @@ public class RerunFileTest {
             "file:rerun.txt",
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2\n");
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@file:rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature")));
         assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)));
@@ -125,7 +140,11 @@ public class RerunFileTest {
         ResourceLoader resourceLoader = mockFileResource(
             "file:path/rerun.txt",
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2 file:/home/users/mp/My%20Documents/tests/foo.feature:4");
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@file:path/rerun.txt"));
+
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
+
         assertThat(runtimeOptions.getFeaturePaths(), contains(
             URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
             URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature")
@@ -142,7 +161,9 @@ public class RerunFileTest {
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2file:/home/users/mp/My%20Documents/tests/foo.feature:4"
         );
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, singletonList("@file:path/rerun.txt"));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@file:path/rerun.txt")
+            .build();
 
         assertThat(runtimeOptions.getFeaturePaths(), contains(
             URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
@@ -163,8 +184,14 @@ public class RerunFileTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "@file:path/rerun.txt");
         Env env = new Env(properties);
-        RuntimeOptions runtimeOptions = new RuntimeOptions(resourceLoader, env,
-            asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
+
+        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
+            .parse("--tags", "@should_be_clobbered", "--name", "should_be_clobbered")
+            .build();
+
+        RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
+            .parse(env)
+            .build(options);
 
         assertEquals(Collections.emptyList(), runtimeOptions.getTagExpressions());
     }

@@ -35,9 +35,8 @@ import static org.mockito.Mockito.when;
 
 public class HookTest {
     private final static String ENGLISH = "en";
-    private final MultiLoader resoureceLoader = new MultiLoader(RuntimeOptions.class.getClassLoader());
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions(resoureceLoader, Env.INSTANCE, emptyList());
+    private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final PickleStep pickleStep = new PickleStep("pattern1", Collections.<Argument>emptyList(), singletonList(new PickleLocation(2, 2)));
     private final PickleEvent pickleEvent = new PickleEvent("uri",
         new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.<PickleTag>emptyList(), singletonList(new PickleLocation(1, 1))));

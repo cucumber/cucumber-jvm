@@ -5,19 +5,17 @@ import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Test;
-
-import static java.time.Duration.ZERO;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import java.time.Clock;
 import java.time.Instant;
+
+import static java.time.Duration.ZERO;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class ExitStatusTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
@@ -42,7 +40,9 @@ public class ExitStatusTest {
     }
 
     private void createExitStatus(String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new MultiLoader(RuntimeOptions.class.getClassLoader()), Env.INSTANCE, asList(runtimeArgs));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+            .parse(runtimeArgs)
+            .build();
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         exitStatus = new Runtime.ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);

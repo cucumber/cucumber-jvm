@@ -5,7 +5,6 @@ import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.model.FeatureLoader;
 import io.cucumber.core.model.FeaturePath;
-import io.cucumber.core.options.FeatureOptions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class FeaturePathFeatureSupplierTest {
     public void logs_message_if_no_features_are_found() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(URI.create("file:does/not/exist"), ".feature")).thenReturn(Collections.emptyList());
-        FeatureOptions featureOptions = () -> Collections.singletonList(FeaturePath.parse("does/not/exist"));
+        Options featureOptions = () -> Collections.singletonList(FeaturePath.parse("does/not/exist"));
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), featureOptions);
         supplier.get();
@@ -47,7 +46,7 @@ public class FeaturePathFeatureSupplierTest {
     @Test
     public void logs_message_if_no_feature_paths_are_given() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        FeatureOptions featureOptions = Collections::emptyList;
+        Options featureOptions = Collections::emptyList;
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(new FeatureLoader(resourceLoader), featureOptions);
         supplier.get();
