@@ -3,7 +3,7 @@ package cucumber.runner;
 
 import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.ClassFinder;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;

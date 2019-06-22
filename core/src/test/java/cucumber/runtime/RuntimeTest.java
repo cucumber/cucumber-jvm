@@ -29,6 +29,7 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.TypeRegistry;
 import org.junit.Rule;

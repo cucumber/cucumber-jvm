@@ -2,9 +2,9 @@ package cucumber.runtime.formatter;
 
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
-import cucumber.runtime.CommandlineOptionsParser;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;

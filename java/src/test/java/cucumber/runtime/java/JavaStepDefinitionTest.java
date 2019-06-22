@@ -12,7 +12,7 @@ import cucumber.runner.TimeService;
 import cucumber.runner.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;

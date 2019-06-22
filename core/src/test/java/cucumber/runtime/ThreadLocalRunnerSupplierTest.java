@@ -11,6 +11,7 @@ import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Before;
 import org.junit.Test;
 

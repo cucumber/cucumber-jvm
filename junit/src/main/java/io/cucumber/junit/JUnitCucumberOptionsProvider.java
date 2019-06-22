@@ -1,7 +1,7 @@
 package io.cucumber.junit;
 
 import cucumber.api.SnippetType;
-import cucumber.runtime.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
     @Override

@@ -1,12 +1,8 @@
-package cucumber.runtime;
+package io.cucumber.core.options;
 
 import cucumber.api.SnippetType;
 import cucumber.runtime.order.PickleOrder;
 import cucumber.runtime.order.StandardPickleOrders;
-import io.cucumber.core.options.FeatureOptions;
-import io.cucumber.core.options.FilterOptions;
-import io.cucumber.core.options.PluginOptions;
-import io.cucumber.core.options.RunnerOptions;
 
 import java.net.URI;
 import java.util.ArrayList;

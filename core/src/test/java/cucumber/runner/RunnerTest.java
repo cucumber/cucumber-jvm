@@ -2,10 +2,10 @@ package cucumber.runner;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeOptionsBuilder;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.events.PickleEvent;

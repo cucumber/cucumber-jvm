@@ -1,6 +1,7 @@
-package cucumber.runtime;
+package io.cucumber.core.options;
 
 import cucumber.api.SnippetType;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.order.PickleOrder;
 import cucumber.runtime.order.StandardPickleOrders;
 import cucumber.util.FixJava;
@@ -49,7 +50,7 @@ final class RuntimeOptionsParser {
         }
     };
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
-    private static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
+    private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
     static String usageText;
     private final RerunLoader rerunLoader;
 

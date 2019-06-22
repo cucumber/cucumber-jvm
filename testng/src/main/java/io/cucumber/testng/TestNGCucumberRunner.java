@@ -13,6 +13,9 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.options.EnvironmentOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 import java.util.ArrayList;
 import java.util.List;

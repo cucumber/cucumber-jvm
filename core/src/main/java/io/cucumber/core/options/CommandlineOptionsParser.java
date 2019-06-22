@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package io.cucumber.core.options;
 
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;

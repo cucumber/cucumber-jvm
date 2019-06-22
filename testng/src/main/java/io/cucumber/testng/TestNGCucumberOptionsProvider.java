@@ -1,7 +1,7 @@
 package io.cucumber.testng;
 
 import cucumber.api.SnippetType;
-import cucumber.runtime.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
     @Override

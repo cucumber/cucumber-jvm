@@ -7,7 +7,7 @@ import cucumber.api.Scenario;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventListener;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.CommandlineOptionsParser;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import cucumber.runtime.FeatureSupplier;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;

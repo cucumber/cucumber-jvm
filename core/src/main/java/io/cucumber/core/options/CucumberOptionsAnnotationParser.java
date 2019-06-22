@@ -1,7 +1,7 @@
-package cucumber.runtime;
+package io.cucumber.core.options;
 
-import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import io.cucumber.core.model.Classpath;

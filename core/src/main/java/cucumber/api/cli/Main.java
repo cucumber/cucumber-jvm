@@ -1,10 +1,10 @@
 package cucumber.api.cli;
 
-import cucumber.runtime.CommandlineOptionsParser;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import cucumber.runtime.Env;
-import cucumber.runtime.EnvironmentOptionsParser;
+import io.cucumber.core.options.EnvironmentOptionsParser;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 

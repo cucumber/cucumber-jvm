@@ -7,6 +7,8 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

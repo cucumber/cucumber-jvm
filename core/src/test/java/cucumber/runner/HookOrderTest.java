@@ -1,7 +1,7 @@
 package cucumber.runner;
 
 import cucumber.api.Scenario;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StubStepDefinition;

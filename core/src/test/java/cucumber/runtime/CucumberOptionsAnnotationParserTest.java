@@ -7,6 +7,8 @@ import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import org.junit.Test;
 
 import java.net.URI;

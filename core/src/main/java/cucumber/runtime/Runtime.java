@@ -22,6 +22,7 @@ import cucumber.runtime.order.PickleOrder;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.RuntimeOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;

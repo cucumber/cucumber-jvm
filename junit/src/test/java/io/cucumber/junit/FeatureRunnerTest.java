@@ -5,7 +5,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.model.CucumberFeature;
