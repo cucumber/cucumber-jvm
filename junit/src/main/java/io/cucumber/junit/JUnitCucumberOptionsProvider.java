@@ -3,7 +3,7 @@ package io.cucumber.junit;
 import cucumber.api.SnippetType;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
-class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
+final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
     @Override
     public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);

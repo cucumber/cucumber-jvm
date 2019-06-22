@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 
-class PickleRunners {
+final class PickleRunners {
 
     interface PickleRunner {
         void run(RunNotifier notifier);

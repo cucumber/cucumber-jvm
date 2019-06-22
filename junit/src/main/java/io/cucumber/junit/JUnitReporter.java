@@ -17,7 +17,7 @@ import org.junit.runners.model.MultipleFailureException;
 
 import java.util.ArrayList;
 
-class JUnitReporter {
+final class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;

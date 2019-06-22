@@ -53,14 +53,14 @@ import java.util.List;
  * path as the annotated class. For example, if the annotated class is {@code com.example.RunCucumber} then
  * features and glue are assumed to be located in {@code com.example}.
  * <p>
- * Additional hints can be provided to Cucumber by annotating the class with {@link cucumber.api.CucumberOptions}.
+ * Additional hints can be provided to Cucumber by annotating the class with {@link CucumberOptions}.
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
  * These will be executed before and after all scenarios. Using these is not recommended as it limits the portability
  * between different runners; they may not execute correctly when using the commandline, IntelliJ IDEA or
  * Cucumber-Eclipse. Instead it is recommended to use Cucumbers `Before` and `After` hooks.
  *
- * @see cucumber.api.CucumberOptions
+ * @see CucumberOptions
  */
 @API(status = API.Status.STABLE)
 public class Cucumber extends ParentRunner<FeatureRunner> {
@@ -95,7 +95,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             .parse(Env.INSTANCE)
             .build(annotationOptions);
 
-        JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.isStrict(), runtimeOptions.getJunitOptions());
+        JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
+            .parse(clazz)
+            .build();
+
+        JUnitOptions junitOptions = new JUnitOptionsParser()
+            .parse(runtimeOptions.getJunitOptions())
+            .setStrict(runtimeOptions.isStrict())
+            .build(junitAnnotationOptions);
 
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);

@@ -144,7 +144,7 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
-        JUnitOptions junitOption = new JUnitOptions(false, Arrays.asList(options));
+        JUnitOptions junitOption = new JUnitOptionsParser().parse(Arrays.asList(options)).build();
         return createFeatureRunner(cucumberFeature, junitOption);
     }
 

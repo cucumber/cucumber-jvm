@@ -20,7 +20,7 @@ import java.util.List;
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.PickleRunners.withStepDescriptions;
 
-class FeatureRunner extends ParentRunner<PickleRunner> {
+final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children = new ArrayList<>();
 
     private final CucumberFeature cucumberFeature;

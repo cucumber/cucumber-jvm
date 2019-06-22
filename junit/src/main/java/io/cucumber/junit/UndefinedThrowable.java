@@ -1,6 +1,6 @@
 package io.cucumber.junit;
 
-class UndefinedThrowable extends Throwable {
+final class UndefinedThrowable extends Throwable {
     private static final long serialVersionUID = 1L;
 
     UndefinedThrowable() {
