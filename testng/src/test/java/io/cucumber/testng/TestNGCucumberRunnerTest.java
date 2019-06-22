@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-import cucumber.api.CucumberOptions;
 import cucumber.runtime.CucumberException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

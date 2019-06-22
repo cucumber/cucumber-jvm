@@ -1,6 +1,5 @@
 package io.cucumber.junit;
 
-import cucumber.api.CucumberOptions;
 import cucumber.runtime.CucumberException;
 import gherkin.ParserException.CompositeParserException;
 import org.junit.After;
