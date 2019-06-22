@@ -13,6 +13,9 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.options.EnvironmentOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +41,14 @@ public final class TestNGCucumberRunner {
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        runtimeOptions = runtimeOptionsFactory.create();
+        // Parse the options early to provide fast feedback about invalid options
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+            .withOptionsProvider(new TestNGCucumberOptionsProvider())
+            .parse(clazz)
+            .build();
+        runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
+            .parse(Env.INSTANCE)
+            .build(annotationOptions);
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);

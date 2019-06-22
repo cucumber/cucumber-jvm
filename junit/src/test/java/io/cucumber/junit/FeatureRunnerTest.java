@@ -5,7 +5,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.model.CucumberFeature;
@@ -144,12 +144,12 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
-        JUnitOptions junitOption = new JUnitOptions(false, Arrays.asList(options));
+        JUnitOptions junitOption = new JUnitOptionsParser().parse(Arrays.asList(options)).build();
         return createFeatureRunner(cucumberFeature, junitOption);
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 
         final TimeService timeServiceStub = new TimeService() {
             @Override

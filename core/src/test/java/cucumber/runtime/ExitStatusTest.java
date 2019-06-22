@@ -7,9 +7,10 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -36,7 +37,9 @@ public class ExitStatusTest {
     }
 
     private void createExitStatus(String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+            .parse(runtimeArgs)
+            .build();
         this.bus = new TimeServiceEventBus(TimeService.SYSTEM);
         exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);

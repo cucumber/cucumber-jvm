@@ -23,7 +23,7 @@ Create an empty class that uses the Cucumber JUnit runner.
 ```java
 package com.example;
 
-import cucumber.api.CucumberOptions;
+import io.cucumber.junit.CucumberOptions;
 import io.cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
 

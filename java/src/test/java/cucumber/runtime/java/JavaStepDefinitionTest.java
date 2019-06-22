@@ -12,7 +12,7 @@ import cucumber.runner.TimeService;
 import cucumber.runner.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Backend;
 import cucumber.runtime.BackendSupplier;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
@@ -69,7 +69,7 @@ public class JavaStepDefinitionTest {
         ObjectFactory factory = new SingletonFactory(defs);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, typeRegistry);
-        RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
         BackendSupplier backendSupplier = new BackendSupplier() {
             @Override

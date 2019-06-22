@@ -516,11 +516,11 @@ public class JUnitReporterTest {
     }
 
     private void createStrictReporter(String... options) {
-        jUnitReporter = new JUnitReporter(mock(EventBus.class), new JUnitOptions(true, asList(options)));
+        jUnitReporter = new JUnitReporter(mock(EventBus.class), new JUnitOptionsParser().parse(asList(options)).setStrict(true).build());
     }
 
     private void createNonStrictReporter(String... options) {
-        jUnitReporter = new JUnitReporter(mock(EventBus.class), new JUnitOptions(false, asList(options)));
+        jUnitReporter = new JUnitReporter(mock(EventBus.class), new JUnitOptionsParser().parse(asList(options)).build());
     }
 
     private void setUpStepNotifierAndStepErrors(Description description) {

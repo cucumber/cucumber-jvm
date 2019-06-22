@@ -2,9 +2,10 @@ package cucumber.runner;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.events.PickleEvent;
@@ -44,7 +45,7 @@ public class RunnerTest {
     private static final List<PickleLocation> MOCK_LOCATIONS = asList(mock(PickleLocation.class));
 
 
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+    private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
 
 
@@ -189,7 +190,7 @@ public class RunnerTest {
     public void steps_are_not_executed_on_dry_run() throws Throwable {
         final StepDefinition stepDefinition = mock(StepDefinition.class);
         final PickleEvent pickleEvent = createPickleEventMatchingStepDefinitions(asList(stepDefinition));
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--dry-run");
+        RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions){
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -203,7 +204,7 @@ public class RunnerTest {
 
     @Test
     public void hooks_not_executed_in_dry_run_mode() throws Throwable {
-        RuntimeOptions runtimeOptions = new RuntimeOptions("--dry-run");
+        RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
 
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();

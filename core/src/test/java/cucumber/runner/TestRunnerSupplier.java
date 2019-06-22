@@ -1,7 +1,7 @@
 package cucumber.runner;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;

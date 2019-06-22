@@ -6,8 +6,10 @@ import cucumber.runner.TestBackendSupplier;
 import cucumber.runner.TestHelper;
 import cucumber.runner.TimeServiceEventBus;
 import cucumber.runner.TimeServiceStub;
+import io.cucumber.core.options.CommandlineOptionsParser;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
@@ -1172,11 +1174,16 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
 
         Appendable stringBuilder = new StringBuilder();
-        
+
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
-            .withArgs(featurePaths)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(featurePaths)
+                    .build(runtimeOptions)
+            )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(new JSONFormatter(stringBuilder))
@@ -1209,11 +1216,15 @@ public class JSONFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new TimeServiceStub(1234));
 
         Appendable stringBuilder = new StringBuilder();
-        
+
         Runtime.builder()
             .withClassLoader(classLoader)
             .withResourceLoader(resourceLoader)
-            .withArgs(featurePaths)
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(featurePaths)
+                    .build()
+            )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(new JSONFormatter(stringBuilder))
@@ -1225,7 +1236,7 @@ public class JSONFormatterTest {
 
     private String runFeaturesWithFormatter() {
         final StringBuilder report = new StringBuilder();
-        
+
         TestHelper.builder()
             .withFormatterUnderTest(new JSONFormatter(report))
             .withFeatures(features)

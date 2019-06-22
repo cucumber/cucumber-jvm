@@ -23,11 +23,11 @@ Create an empty class that extends the `AbstractTestNGCucumberTests`.
 ```java
 package io.cucumber.runtime.testng;
 
-import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(plugin = "json:target/cucumber-report.json")
-public class RunCukesTest extends AbstractTestNGCucumberTests {
+public class RunCucumberTest extends AbstractTestNGCucumberTests {
 }
 ```
 

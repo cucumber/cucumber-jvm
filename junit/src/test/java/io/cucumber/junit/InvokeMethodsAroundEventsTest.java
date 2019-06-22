@@ -1,6 +1,5 @@
 package io.cucumber.junit;
 
-import cucumber.api.CucumberOptions;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;

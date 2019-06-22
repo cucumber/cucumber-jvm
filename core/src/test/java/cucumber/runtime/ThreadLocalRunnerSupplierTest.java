@@ -5,16 +5,15 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
+import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runner.TimeService;
 import cucumber.runner.TimeServiceEventBus;
-import cucumber.runner.ThreadLocalRunnerSupplier;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -32,7 +31,7 @@ public class ThreadLocalRunnerSupplierTest {
     @Before
     public void before() {
         ClassLoader classLoader = getClass().getClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);

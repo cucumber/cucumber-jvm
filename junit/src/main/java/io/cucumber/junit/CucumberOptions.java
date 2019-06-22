@@ -1,4 +1,7 @@
-package cucumber.api;
+package io.cucumber.junit;
+
+import cucumber.api.Plugin;
+import cucumber.api.SnippetType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,12 +10,9 @@ import java.lang.annotation.Target;
 
 /**
  * Configure Cucumbers options.
- *
- * @deprecated use either {@code io.cucumber.junit.CucumberOptions} or {@code io.cucumber.testng.CucumberOptions}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-@Deprecated
 public @interface CucumberOptions {
 
     /**
@@ -97,7 +97,33 @@ public @interface CucumberOptions {
 
     /**
      * Pass options to the JUnit runner.
+     *
+     * @deprecated use {@link #useFileNameCompatibleName()} or
+     * {@link #stepNotifications()} instead.
      */
+    @Deprecated
     String[] junit() default {};
+
+    /**
+     * Use filename compatible names.
+     * <p>
+     * Make sure that the names of the test cases only is made up of
+     * [A-Za-Z0-9_] so that the names for certain can be used as file names.
+     * <p>
+     * Gradle for instance will use these names in the file names of
+     * the JUnit xml report files.
+     */
+    boolean useFileNameCompatibleName() default false;
+
+    /**
+     * Provide step notifications.
+     * <p>
+     * By default steps are not included in notifications and descriptions.
+     * This aligns test case in the Cucumber-JVM domain (Scenarios) with the
+     * test case in the JUnit domain (the leafs in the description tree),
+     * and works better with the report files of the notification listeners
+     * like maven surefire or gradle.
+     */
+    boolean stepNotifications() default false;
 
 }

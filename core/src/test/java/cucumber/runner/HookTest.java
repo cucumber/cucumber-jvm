@@ -2,7 +2,7 @@ package cucumber.runner;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
-import cucumber.runtime.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import gherkin.events.PickleEvent;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class HookTest {
     private final static String ENGLISH = "en";
     private final EventBus bus = new TimeServiceEventBus(TimeService.SYSTEM);
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
+    private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final PickleStep pickleStep = new PickleStep("pattern1", Collections.<Argument>emptyList(), singletonList(new PickleLocation(2, 2)));
     private final PickleEvent pickleEvent = new PickleEvent("uri",
         new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.<PickleTag>emptyList(), singletonList(new PickleLocation(1, 1))));

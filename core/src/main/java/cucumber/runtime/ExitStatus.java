@@ -5,6 +5,7 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
+import io.cucumber.core.options.RuntimeOptions;
 
 import java.util.ArrayList;
 import java.util.List;

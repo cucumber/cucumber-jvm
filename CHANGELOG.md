@@ -9,17 +9,25 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld `ObjectFactory` implementations.
     - Removes spurious deprecation warning.
     - Moves `ObjectFactory` implements to `io.cucumber.<module-name>` package.
+ * [JUnit] JUnit will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Add `summary` and/or `progress` plugins to restore output 
+ * [TestNG] TestNG will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Add `summary` and/or `progress` plugins to restore output
 
 ### Deprecated
- *  [JUnit] Deprecate `cucumber.api.junit.Cucumber`
+ * [JUnit] Deprecate `cucumber.api.junit.Cucumber`
     - Use `io.cucumber.junit.Cucumber` instead.
- *  [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
+ * [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
     - Use `io.cucumber.testng.TestNGCucumberRunner` instead.
- *  [Needle] Deprecate `cucumber.api.needle.*` 
+ * [Needle] Deprecate `cucumber.api.needle.*` 
     - Use `io.cucumber.needle.*` instead. 
- *  [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
+ * [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
     - It is recommended to implement your own transaction hooks.
-    - Will allow the dependency on `spring-txn` to be removed. 
+    - Will allow the dependency on `spring-txn` to be removed.
+ * [Core] Deprecate `cucumber.api.CucumberOptions` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Use `io.cucumber.junit.CucumberOptions` or `io.cucumber.testng.CucumberOptions` instead
+ * [Core] Deprecate `cucumber.api.cli.Main` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Use `io.cucumber.core.cli.Main` instead
 
 ### Removed
 
