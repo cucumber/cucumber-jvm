@@ -58,6 +58,7 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -540,7 +541,7 @@ public class RuntimeTest {
         });
         thread.start();
         do {
-            SECONDS.sleep(5);
+            MILLISECONDS.sleep(1);
         } while (!threadBlocked.get());
         thread.interrupt();
         MINUTES.timedJoin(thread, 1);

@@ -1,4 +1,6 @@
-package io.cucumber.core.api.options;
+package io.cucumber.core.options;
+
+import io.cucumber.core.api.options.SnippetType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,13 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation provides the same options as the cucumber command line, {@link io.cucumber.core.api.cli.Main}.
+ * This annotation provides the same options as the cucumber command line, {@link io.cucumber.core.cli.Main}.
  *
  * @deprecated use either {@code io.cucumber.junit.CucumberOptions} or {@code io.cucumber.testng.CucumberOptions}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-@Deprecated
 public @interface CucumberOptions {
 
     /**

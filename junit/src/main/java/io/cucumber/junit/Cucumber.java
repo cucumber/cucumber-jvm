@@ -1,7 +1,6 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.backend.ObjectFactorySupplier;

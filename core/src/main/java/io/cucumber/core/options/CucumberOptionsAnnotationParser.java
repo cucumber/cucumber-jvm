@@ -11,14 +11,16 @@ import io.cucumber.core.model.GluePath;
 import io.cucumber.core.model.RerunLoader;
 
 import java.net.URI;
+import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static java.util.Objects.requireNonNull;
 
 public final class CucumberOptionsAnnotationParser {
     private final RerunLoader rerunLoader;
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
     private OptionsProvider optionsProvider;
-    private CoreCucumberOptionsProvider coreCucumberOptionsProvider = new CoreCucumberOptionsProvider();
 
     public CucumberOptionsAnnotationParser() {
         this(new MultiLoader(CucumberOptionsAnnotationParser.class.getClassLoader()));
@@ -37,13 +39,8 @@ public final class CucumberOptionsAnnotationParser {
         RuntimeOptionsBuilder args = new RuntimeOptionsBuilder();
 
         for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
-            CucumberOptions options = null;
-            if (optionsProvider != null) {
-                options = optionsProvider.getOptions(classWithOptions);
-            }
-            if(options == null){
-                options = coreCucumberOptionsProvider.getOptions(classWithOptions);
-            }
+            CucumberOptions options = requireNonNull(optionsProvider).getOptions(classWithOptions);
+
             if (options != null) {
                 addDryRun(options, args);
                 addMonochrome(options, args);
@@ -217,79 +214,5 @@ public final class CucumberOptionsAnnotationParser {
         SnippetType snippets();
 
         String[] junit();
-    }
-
-    private static class CoreCucumberOptions implements CucumberOptions {
-        private final io.cucumber.core.api.options.CucumberOptions annotation;
-
-        CoreCucumberOptions(io.cucumber.core.api.options.CucumberOptions annotation) {
-            this.annotation = annotation;
-        }
-
-        @Override
-        public boolean dryRun() {
-            return annotation.dryRun();
-        }
-
-        @Override
-        public boolean strict() {
-            return annotation.strict();
-        }
-
-        @Override
-        public String[] features() {
-            return annotation.features();
-        }
-
-        @Override
-        public String[] glue() {
-            return annotation.glue();
-        }
-
-        @Override
-        public String[] extraGlue() {
-            return annotation.extraGlue();
-        }
-
-        @Override
-        public String[] tags() {
-            return annotation.tags();
-        }
-
-        @Override
-        public String[] plugin() {
-            return annotation.plugin();
-        }
-
-        @Override
-        public boolean monochrome() {
-            return annotation.monochrome();
-        }
-
-        @Override
-        public String[] name() {
-            return annotation.name();
-        }
-
-        @Override
-        public SnippetType snippets() {
-            return annotation.snippets();
-        }
-
-        @Override
-        public String[] junit() {
-            return annotation.junit();
-        }
-    }
-
-    private static class CoreCucumberOptionsProvider implements OptionsProvider {
-        @Override
-        public CucumberOptions getOptions(Class<?> clazz) {
-            final io.cucumber.core.api.options.CucumberOptions annotation = clazz.getAnnotation(io.cucumber.core.api.options.CucumberOptions.class);
-            if (annotation == null) {
-                return null;
-            }
-            return new CoreCucumberOptions(annotation);
-        }
     }
 }

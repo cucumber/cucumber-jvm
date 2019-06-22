@@ -1,6 +1,5 @@
 package io.cucumber.core.api.plugin;
 
-import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventListener;
 
@@ -14,7 +13,7 @@ import java.net.URL;
  * A plugin can be added to the runtime to listen in on step definition, summary printing and test
  * execution.
  * <p>
- * Plugins are added to the runtime from the command line or @{@link CucumberOptions} and may be provided with a
+ * Plugins are added to the runtime from the command line or @{@link io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions} and may be provided with a
  * parameter. To accept this parameter the plugin must have a public constructor that accepts one of the following
  * arguments:
  * <ul>

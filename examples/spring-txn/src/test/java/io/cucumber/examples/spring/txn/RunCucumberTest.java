@@ -1,7 +1,7 @@
 package io.cucumber.examples.spring.txn;
 
-import io.cucumber.core.api.options.CucumberOptions;
 import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)

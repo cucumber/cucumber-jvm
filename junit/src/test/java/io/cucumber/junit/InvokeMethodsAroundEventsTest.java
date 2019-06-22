@@ -4,7 +4,6 @@ import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
-import io.cucumber.core.api.options.CucumberOptions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
