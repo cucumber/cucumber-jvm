@@ -67,7 +67,14 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
         @Override
         public SnippetType snippets() {
-            return annotation.snippets();
+            switch (annotation.snippets()) {
+                case UNDERSCORE:
+                    return SnippetType.UNDERSCORE;
+                case CAMELCASE:
+                    return SnippetType.CAMELCASE;
+                default:
+                    throw new IllegalArgumentException("" + annotation.snippets());
+            }
         }
 
         @Override

@@ -126,4 +126,7 @@ public @interface CucumberOptions {
      */
     boolean stepNotifications() default false;
 
+    enum SnippetType {
+        UNDERSCORE, CAMELCASE
+    }
 }

@@ -6,6 +6,10 @@ import cucumber.runtime.snippets.Concatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.UnderscoreConcatenator;
 
+/**
+ * @deprecated use {@link io.cucumber.junit.CucumberOptions} or {@link io.cucumber.testng.CucumberOptions} instead.
+ */
+@Deprecated
 public enum SnippetType {
     UNDERSCORE("underscore", new UnderscoreConcatenator()),
     CAMELCASE("camelcase", new CamelCaseConcatenator());

@@ -95,4 +95,7 @@ public @interface CucumberOptions {
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
+    enum SnippetType {
+        UNDERSCORE, CAMELCASE
+    }
 }
