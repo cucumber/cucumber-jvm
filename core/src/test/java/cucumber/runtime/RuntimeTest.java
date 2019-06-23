@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cucumber.runner.TestHelper.feature;
@@ -521,8 +522,8 @@ public class RuntimeTest {
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        final AtomicBoolean threadBlocked = new AtomicBoolean(false);
-        final AtomicBoolean interruptHit = new AtomicBoolean(false);
+        final CountDownLatch threadBlocked = new CountDownLatch(1);
+        final CountDownLatch interruptHit = new CountDownLatch(1);
 
         final ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
             @Override
@@ -531,16 +532,15 @@ public class RuntimeTest {
                     @Override
                     public void receive(TestStepFinished event) {
                         try {
-                            threadBlocked.set(true);
+                            threadBlocked.countDown();
                             HOURS.sleep(1);
                         } catch (InterruptedException ignored) {
-                            interruptHit.set(true);
+                            interruptHit.countDown();
                         }
                     }
                 });
             }
         };
-
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -555,12 +555,10 @@ public class RuntimeTest {
             }
         });
         thread.start();
-        do {
-            SECONDS.sleep(5);
-        } while (!threadBlocked.get());
+        threadBlocked.await(1, SECONDS);
         thread.interrupt();
-        MINUTES.timedJoin(thread, 1);
-        assertTrue(interruptHit.get());
+        interruptHit.await(1, SECONDS);
+        assertEquals(0, interruptHit.getCount());
     }
 
     @Test
