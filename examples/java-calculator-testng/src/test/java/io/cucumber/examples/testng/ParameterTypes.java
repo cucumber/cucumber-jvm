@@ -1,10 +1,8 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.testng;
 
 import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.api.TypeRegistry;
-import io.cucumber.examples.java.calculator.ShoppingStepdefs.Price;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.examples.java.calculator.ShoppingStepdefs.Grocery;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.text.SimpleDateFormat;
@@ -12,7 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import static io.cucumber.examples.java.calculator.RpnCalculatorStepdefs.Entry;
+import static io.cucumber.examples.testng.RpnCalculatorStepdefs.Entry;
 import static java.text.DateFormat.MEDIUM;
 import static java.text.DateFormat.getDateInstance;
 import static java.util.Locale.ENGLISH;
@@ -46,10 +44,10 @@ public class ParameterTypes implements TypeRegistryConfigurer {
         ));
 
         typeRegistry.defineDataTableType(new DataTableType(
-            Grocery.class,
-            (Map<String, String> row) -> new Grocery(
+            ShoppingStepdefs.Grocery.class,
+            (Map<String, String> row) -> new ShoppingStepdefs.Grocery(
                 row.get("name"),
-                Price.fromString(row.get("price"))
+                ShoppingStepdefs.Price.fromString(row.get("price"))
             )
         ));
 

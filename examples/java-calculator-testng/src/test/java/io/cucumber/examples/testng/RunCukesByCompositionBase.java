@@ -1,4 +1,4 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.testng;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;

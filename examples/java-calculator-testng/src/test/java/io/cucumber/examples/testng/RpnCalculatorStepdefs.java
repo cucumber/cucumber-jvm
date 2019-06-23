@@ -1,6 +1,7 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.testng;
 
 import io.cucumber.core.api.Scenario;
+import io.cucumber.examples.testng.RpnCalculator;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;

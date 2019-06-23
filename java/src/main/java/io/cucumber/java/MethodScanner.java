@@ -79,7 +79,14 @@ final class MethodScanner {
 
     private boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
-        return annotationClass.equals(Before.class) || annotationClass.equals(After.class) || annotationClass.equals(BeforeStep.class) || annotationClass.equals(AfterStep.class);
+        return annotationClass.equals(Before.class)
+            || annotationClass.equals(After.class)
+            || annotationClass.equals(BeforeStep.class)
+            || annotationClass.equals(AfterStep.class)
+            || annotationClass.equals(io.cucumber.java.Before.class)
+            || annotationClass.equals(io.cucumber.java.After.class)
+            || annotationClass.equals(io.cucumber.java.BeforeStep.class)
+            || annotationClass.equals(io.cucumber.java.AfterStep.class);
     }
 
     private boolean isStepdefAnnotation(Annotation annotation) {

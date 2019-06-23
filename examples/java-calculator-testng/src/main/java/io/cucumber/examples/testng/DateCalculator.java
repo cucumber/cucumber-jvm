@@ -1,4 +1,4 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.testng;
 
 import java.util.Date;
 

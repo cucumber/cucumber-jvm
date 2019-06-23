@@ -1,4 +1,4 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.java;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -6,7 +6,7 @@ import io.cucumber.java.en.When;
 
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ShoppingStepdefs {
     private RpnCalculator calc = new RpnCalculator();
@@ -34,10 +34,22 @@ public class ShoppingStepdefs {
         private String name;
         private Price price;
 
-        Grocery(String name, Price price) {
-            this.name = name;
+        public void setPrice(Price price) {
             this.price = price;
         }
+
+        public Price getPrice() {
+            return price;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
 
     static final class Price {

@@ -1,4 +1,4 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.java8;
 
 import java.util.Deque;
 import java.util.LinkedList;

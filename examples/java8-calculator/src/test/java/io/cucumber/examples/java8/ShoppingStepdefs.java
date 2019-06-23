@@ -1,4 +1,4 @@
-package io.cucumber.examples.java.calculator;
+package io.cucumber.examples.java8;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
