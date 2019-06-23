@@ -1,4 +1,4 @@
-package io.cucumber.examples.testng;
+package io.cucumber.examples.java;
 
 import java.util.Deque;
 import java.util.LinkedList;

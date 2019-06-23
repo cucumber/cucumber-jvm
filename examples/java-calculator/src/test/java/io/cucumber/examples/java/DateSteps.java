@@ -1,5 +1,6 @@
-package io.cucumber.examples.testng;
+package io.cucumber.examples.java;
 
+import io.cucumber.examples.java.DateCalculator;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

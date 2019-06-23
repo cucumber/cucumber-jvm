@@ -1,4 +1,4 @@
-package io.cucumber.examples.testng;
+package io.cucumber.examples.java;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.TypeRegistryConfigurer;

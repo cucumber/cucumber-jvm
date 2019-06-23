@@ -1,4 +1,4 @@
-package io.cucumber.examples.testng;
+package io.cucumber.examples.java;
 
 import io.cucumber.junit.CucumberOptions;
 import io.cucumber.junit.Cucumber;
