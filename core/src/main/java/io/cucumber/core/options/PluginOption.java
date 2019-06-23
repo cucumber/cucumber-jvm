@@ -5,6 +5,8 @@ import io.cucumber.core.api.plugin.SummaryPrinter;
 import io.cucumber.core.api.event.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HTMLFormatter;
 import io.cucumber.core.plugin.JSONFormatter;
@@ -25,6 +27,8 @@ import java.util.regex.Pattern;
 
 public class PluginOption implements Options.Plugin {
 
+    private static final Logger log = LoggerFactory.getLogger(PluginOption.class);
+
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
         put("junit", JUnitFormatter.class);
@@ -40,6 +44,13 @@ public class PluginOption implements Options.Plugin {
         put("null_summary", NullSummaryPrinter.class);
         put("unused", UnusedStepsSummaryPrinter.class);
         put("timeline", TimelineFormatter.class);
+    }};
+
+    // Refuse plugins known to implement the old API
+    private static final HashMap<String, Class<? extends Plugin>> OLD_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter", PrettyFormatter.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter", PrettyFormatter.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter", PrettyFormatter.class);
     }};
 
     private final String pluginString;
@@ -86,6 +97,12 @@ public class PluginOption implements Options.Plugin {
     }
 
     private static Class<? extends Plugin> parsePluginName(String pluginName) {
+        Class<? extends Plugin> oldApiPlugin = OLD_INTELLIJ_IDEA_PLUGIN_CLASSES.get(pluginName);
+        if (oldApiPlugin != null) {
+            log.warn("Incompatible IntelliJ IDEA Plugin detected. Falling back to pretty formatter");
+            return oldApiPlugin;
+        }
+
         Class<? extends Plugin> pluginClass = PLUGIN_CLASSES.get(pluginName);
         if (pluginClass == null) {
             pluginClass = loadClass(pluginName);

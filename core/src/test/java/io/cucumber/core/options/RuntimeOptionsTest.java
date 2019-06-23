@@ -206,6 +206,17 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void replaces_incompatible_intellij_idea_plugin() {
+        RuntimeOptions options = new CommandlineOptionsParser()
+            .parse("--plugin", "org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter")
+            .build();
+        Plugins plugins = new Plugins(new PluginFactory(), options);
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+
+        assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.PrettyPrinter"))));
+    }
+
+    @Test
     public void assigns_strict() {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("--strict")
