@@ -1,7 +1,5 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.api.options.SnippetType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -94,4 +92,7 @@ public @interface CucumberOptions {
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
+    enum SnippetType {
+        UNDERSCORE, CAMELCASE
+    }
 }

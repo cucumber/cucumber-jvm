@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 
 import java.net.URI;
 import java.util.List;

@@ -1,6 +1,5 @@
 package io.cucumber.core.snippets;
 
-import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTable;
@@ -36,10 +35,10 @@ public final class SnippetGenerator {
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
         List<GeneratedExpression> generatedExpressions = generator.generateExpressions(step.getText());
         List<String> snippets = new ArrayList<>(generatedExpressions.size());
-
+        FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
             snippets.add(format(
                 snippet.template(),
@@ -55,7 +54,7 @@ public final class SnippetGenerator {
         return snippets;
     }
 
-    private String functionName(String sentence, SnippetType.FunctionNameGenerator functionNameGenerator) {
+    private String functionName(String sentence, FunctionNameGenerator functionNameGenerator) {
         if (functionNameGenerator == null) {
             return null;
         }

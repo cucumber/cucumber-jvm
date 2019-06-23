@@ -4,6 +4,7 @@ import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.snippets.SnippetGenerator;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ public class Java8SnippetTest {
             "\n",
             new SnippetGenerator(
                 new Java8Snippet(),
-                new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, null)
+                new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, SnippetType.UNDERSCORE)
         );
     }
 }

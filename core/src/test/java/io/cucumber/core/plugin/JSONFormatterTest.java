@@ -32,7 +32,7 @@ import org.mockito.stubbing.Answer;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.EventBus;
@@ -1172,7 +1172,7 @@ public class JSONFormatterTest {
             }
 
             @Override
-            public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
+            public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
                 return singletonList("TEST SNIPPET");
             }
         };
@@ -1214,7 +1214,7 @@ public class JSONFormatterTest {
             }
 
             @Override
-            public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
+            public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
                 return singletonList("TEST SNIPPET");
             }
         };

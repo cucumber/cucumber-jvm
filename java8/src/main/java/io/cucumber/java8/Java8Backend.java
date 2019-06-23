@@ -1,7 +1,7 @@
 package io.cucumber.java8;
 
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
@@ -75,8 +75,8 @@ final class Java8Backend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
-        return lambdaSnippetGenerator.getSnippet(step, keyword, functionNameGenerator);
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
+        return lambdaSnippetGenerator.getSnippet(step, keyword, snippetType);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package io.cucumber.core.snippets;
 
-import io.cucumber.core.api.options.SnippetType;
 import org.junit.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -12,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FunctionNameGeneratorTest {
 
-    private SnippetType.FunctionNameGenerator underscore = SnippetType.UNDERSCORE.getFunctionNameGenerator();
-    private SnippetType.FunctionNameGenerator camelCase = SnippetType.CAMELCASE.getFunctionNameGenerator();
+    private FunctionNameGenerator underscore = new FunctionNameGenerator(SnippetType.UNDERSCORE.joiner());
+    private FunctionNameGenerator camelCase = new FunctionNameGenerator(SnippetType.CAMELCASE.joiner());
 
     private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
         assertEquals(expectedUnderscore, underscore.generateFunctionName(sentence));

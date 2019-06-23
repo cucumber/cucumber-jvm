@@ -6,15 +6,13 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.stepexpression.Argument;
@@ -31,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -263,7 +260,7 @@ public class RunnerTest {
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runPickle(createPickleEventWithSteps(asList(step)));
-        verify(backend).getSnippet(ArgumentMatchers.eq(step), anyString(), any(SnippetType.FunctionNameGenerator.class));
+        verify(backend).getSnippet(ArgumentMatchers.eq(step), anyString(), any(SnippetType.class));
     }
 
     private HookDefinition addBeforeHook() {

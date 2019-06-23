@@ -73,7 +73,7 @@ public final class Runner {
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
                     for (Backend backend : backends) {
-                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType().getFunctionNameGenerator());
+                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType());
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {

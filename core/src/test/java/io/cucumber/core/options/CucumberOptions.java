@@ -1,6 +1,6 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -109,7 +109,7 @@ public @interface CucumberOptions {
     /**
      * Format of the generated snippets.
      *
-     * @see io.cucumber.core.api.options.SnippetType
+     * @see SnippetType
      * @return The snippet type to be generated for missing steps.
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;

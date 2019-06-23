@@ -3,7 +3,7 @@ package io.cucumber.core.options;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -96,7 +96,13 @@ final class RuntimeOptionsParser {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
             } else if (arg.equals("--snippets")) {
                 String nextArg = args.remove(0);
-                parsedOptions.setSnippetType(SnippetType.fromString(nextArg));
+                if("underscore".equals(nextArg)){
+                    parsedOptions.setSnippetType(SnippetType.UNDERSCORE);
+                } else if ("camelcase".equals(nextArg)) {
+                    parsedOptions.setSnippetType(SnippetType.CAMELCASE);
+                } else {
+                    throw new CucumberException("Unrecognized SnippetType " + nextArg);
+                }
             } else if (arg.equals("--name") || arg.equals("-n")) {
                 String nextArg = args.remove(0);
                 Pattern pattern = Pattern.compile(nextArg);

@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.ObjectFactory;
@@ -49,7 +49,7 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactor
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
         return emptyList();
     }
 

@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
@@ -59,8 +59,8 @@ final class JavaBackend implements Backend {
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
-        return annotationSnippetGenerator.getSnippet(step, keyword, functionNameGenerator);
+    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
+        return annotationSnippetGenerator.getSnippet(step, keyword, snippetType);
     }
 
     void addStepDefinition(Annotation annotation, Method method) {

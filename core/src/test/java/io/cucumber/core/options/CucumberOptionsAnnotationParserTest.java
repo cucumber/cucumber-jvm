@@ -1,7 +1,7 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.api.options.SnippetType;
 import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;

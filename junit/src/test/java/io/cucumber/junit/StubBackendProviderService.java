@@ -2,7 +2,7 @@ package io.cucumber.junit;
 
 
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
@@ -43,7 +43,7 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public List<String> getSnippet(PickleStep step, String keyword, SnippetType.FunctionNameGenerator functionNameGenerator) {
+        public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
             return singletonList("STUB SNIPPET");
         }
     }

@@ -1,6 +1,6 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
@@ -11,7 +11,6 @@ import io.cucumber.core.model.GluePath;
 import io.cucumber.core.model.RerunLoader;
 
 import java.net.URI;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;

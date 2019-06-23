@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import io.cucumber.core.api.options.SnippetType;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.snippets.SnippetGenerator;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleCell;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class JavaSnippetTest {
 
     private static final String GIVEN_KEYWORD = "Given";
-    private final SnippetType.FunctionNameGenerator functionNameGenerator = SnippetType.UNDERSCORE.getFunctionNameGenerator();
+    private final SnippetType snippetType = SnippetType.UNDERSCORE;
 
     @Test
     public void generatesPlainSnippet() {
@@ -305,7 +305,7 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, snippetType);
         return String.join("\n", snippet);
     }
 
@@ -314,13 +314,13 @@ public class JavaSnippetTest {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, snippetType);
         return String.join("\n", snippet);
     }
 
     private String snippetForDocString(String name, PickleString docString) {
         PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, snippetType);
         return String.join("\n", snippet);
     }
 
@@ -329,14 +329,14 @@ public class JavaSnippetTest {
         PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, snippetType);
         return String.join("\n", snippet);
     }
 
 
     private String snippetForDataTable(String name, PickleTable dataTable) {
         PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, snippetType);
         return String.join("\n", snippet);
     }
 
@@ -345,7 +345,7 @@ public class JavaSnippetTest {
         PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, snippetType);
         return String.join("\n", snippet);
     }
 
