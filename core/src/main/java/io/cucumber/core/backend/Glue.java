@@ -1,8 +1,12 @@
 package io.cucumber.core.backend;
 
+import io.cucumber.core.stepexpression.TypeRegistry;
+
+import java.util.function.Function;
+
 public interface Glue {
 
-    void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
+    void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinition) throws DuplicateStepDefinitionException;
 
     void addBeforeHook(HookDefinition hookDefinition);
 

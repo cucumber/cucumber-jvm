@@ -11,12 +11,15 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.snippets.SnippetGenerator;
+import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.util.FixJava;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Runner {
 
@@ -27,12 +30,17 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
+    private final List<SnippetGenerator> snippetGenerators;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, Options runnerOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, TypeRegistry typeRegistry, Options runnerOptions) {
         this.bus = bus;
-        this.glue = new CachingGlue(bus);
+        this.glue = new CachingGlue(bus, typeRegistry);
         this.runnerOptions = runnerOptions;
         this.backends = backends;
+        this.snippetGenerators = backends.stream()
+            .map(Backend::getSnippet)
+            .map(s -> new SnippetGenerator(s, typeRegistry.parameterTypeRegistry()))
+            .collect(Collectors.toList());
         this.objectFactory = objectFactory;
         List<URI> gluePaths = runnerOptions.getGlue();
         log.debug("Loading glue from " + FixJava.join(gluePaths, ", "));
@@ -72,8 +80,8 @@ public final class Runner {
                 match = glue.stepDefinitionMatch(pickleEvent.uri, step);
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
-                    for (Backend backend : backends) {
-                        List<String> snippet = backend.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType());
+                    for (SnippetGenerator snippetGenerator : snippetGenerators) {
+                        List<String> snippet = snippetGenerator.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType());
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {

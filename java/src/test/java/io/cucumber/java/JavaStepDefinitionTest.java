@@ -72,7 +72,7 @@ public class JavaStepDefinitionTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ObjectFactory objectFactory = new SingletonFactory(defs);
         TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(objectFactory, resourceLoader, typeRegistry);
+        this.backend = new JavaBackend(objectFactory, objectFactory, resourceLoader);
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
         BackendSupplier backendSupplier = new BackendSupplier() {
@@ -81,7 +81,7 @@ public class JavaStepDefinitionTest {
                 return asList(backend);
             }
         };
-        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, () -> objectFactory).get();
+        this.runner = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, () -> objectFactory, () -> typeRegistry).get();
 
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override

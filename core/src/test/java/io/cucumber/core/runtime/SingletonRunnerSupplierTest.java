@@ -30,9 +30,10 @@ public class SingletonRunnerSupplierTest {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
-        runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
+        TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
+        runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory, typeRegistrySupplier);
     }
 
     @Test

@@ -1,9 +1,11 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.snippets.Snippet;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.runtime.BackendSupplier;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.snippets.TestSnippet;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,9 +26,10 @@ public abstract class TestBackendSupplier implements Backend, BackendSupplier {
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-        return emptyList();
+    public Snippet getSnippet() {
+        return new TestSnippet();
     }
+
 
     @Override
     public Collection<? extends Backend> get() {

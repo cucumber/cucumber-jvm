@@ -1,23 +1,18 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.java8.stepdefs.Stepdefs;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
-import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -28,14 +23,11 @@ public class Java8BackendTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    @Captor
-    public ArgumentCaptor<StepDefinition> stepDefinition;
-
     @Mock
     private Glue glue;
 
     @Mock
-    private Container factory;
+    private ObjectFactory factory;
 
     private Java8Backend backend;
 
@@ -43,8 +35,7 @@ public class Java8BackendTest {
     public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new Java8Backend(factory, resourceLoader, typeRegistry);
+        this.backend = new Java8Backend(factory, factory, resourceLoader);
     }
 
     @Test

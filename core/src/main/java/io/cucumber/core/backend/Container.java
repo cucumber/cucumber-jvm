@@ -1,6 +1,6 @@
 package io.cucumber.core.backend;
 
-public interface Container extends Lookup {
+public interface Container {
     /**
      * Collects glue classes in the classpath. Called once on init.
      *

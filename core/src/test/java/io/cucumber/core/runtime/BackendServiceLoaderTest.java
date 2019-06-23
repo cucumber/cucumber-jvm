@@ -27,7 +27,7 @@ public class BackendServiceLoaderTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
-        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
+        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
 
@@ -38,7 +38,7 @@ public class BackendServiceLoaderTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
 
         expectedException.expect(CucumberException.class);
         backendSupplier.get(emptyList()).iterator().next();

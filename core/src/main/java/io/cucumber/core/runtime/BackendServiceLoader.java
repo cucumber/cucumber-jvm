@@ -1,19 +1,14 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.reflection.Reflections;
-import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.ServiceLoader;
 
 /**
@@ -23,14 +18,10 @@ import java.util.ServiceLoader;
 public final class BackendServiceLoader implements BackendSupplier {
 
     private final ResourceLoader resourceLoader;
-    private final ClassFinder classFinder;
-    private final RuntimeOptions runtimeOptions;
     private final ObjectFactorySupplier objectFactorySupplier;
 
-    public BackendServiceLoader(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions, ObjectFactorySupplier objectFactorySupplier) {
+    public BackendServiceLoader(ResourceLoader resourceLoader, ObjectFactorySupplier objectFactorySupplier) {
         this.resourceLoader = resourceLoader;
-        this.classFinder = classFinder;
-        this.runtimeOptions = runtimeOptions;
         this.objectFactorySupplier = objectFactorySupplier;
     }
 
@@ -48,33 +39,13 @@ public final class BackendServiceLoader implements BackendSupplier {
     }
 
     private Collection<? extends Backend> loadBackends(Iterable<BackendProviderService> serviceLoader) {
-        final TypeRegistry typeRegistry = createTypeRegistry();
         List<Backend> backends = new ArrayList<>();
         for (BackendProviderService backendProviderService : serviceLoader) {
-            backends.add(backendProviderService.create(objectFactorySupplier.get(), resourceLoader, typeRegistry));
+            ObjectFactory objectFactory = objectFactorySupplier.get();
+            backends.add(backendProviderService.create(objectFactory, objectFactory, resourceLoader));
         }
         return backends;
     }
 
-    private TypeRegistry createTypeRegistry() {
-        Reflections reflections = new Reflections(classFinder);
-        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, runtimeOptions.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
-        TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
-        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
-        return typeRegistry;
-    }
 
-    private static final class DefaultTypeRegistryConfiguration implements TypeRegistryConfigurer {
-
-        @Override
-        public Locale locale() {
-            return Locale.ENGLISH;
-        }
-
-        @Override
-        public void configureTypeRegistry(io.cucumber.core.api.TypeRegistry typeRegistry) {
-            //noop
-        }
-
-    }
 }

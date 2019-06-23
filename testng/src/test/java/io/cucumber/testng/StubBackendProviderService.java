@@ -2,26 +2,29 @@ package io.cucumber.testng;
 
 
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.TypeRegistry;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 
 public class StubBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public Backend create(Lookup lookup, Container container, ResourceLoader resourceLoader) {
         return new StubBackend();
     }
 
@@ -35,14 +38,14 @@ public class StubBackendProviderService implements BackendProviderService {
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
-            glue.addStepDefinition(createStepDefinition("background step"));
-            glue.addStepDefinition(createStepDefinition("scenario name"));
-            glue.addStepDefinition(createStepDefinition("scenario C"));
-            glue.addStepDefinition(createStepDefinition("scenario D"));
-            glue.addStepDefinition(createStepDefinition("scenario E"));
-            glue.addStepDefinition(createStepDefinition("first step"));
-            glue.addStepDefinition(createStepDefinition("second step"));
-            glue.addStepDefinition(createStepDefinition("third step"));
+            glue.addStepDefinition(t -> createStepDefinition("background step"));
+            glue.addStepDefinition(t -> createStepDefinition("scenario name"));
+            glue.addStepDefinition(t -> createStepDefinition("scenario C"));
+            glue.addStepDefinition(t -> createStepDefinition("scenario D"));
+            glue.addStepDefinition(t -> createStepDefinition("scenario E"));
+            glue.addStepDefinition(t -> createStepDefinition("first step"));
+            glue.addStepDefinition(t -> createStepDefinition("second step"));
+            glue.addStepDefinition(t -> createStepDefinition("third step"));
 
         }
 
@@ -89,8 +92,28 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-            return singletonList("STUB SNIPPET");
+        public Snippet getSnippet() {
+            return new Snippet() {
+                @Override
+                public String template() {
+                    return "";
+                }
+
+                @Override
+                public String tableHint() {
+                    return "";
+                }
+
+                @Override
+                public String arguments(Map<String, Type> arguments) {
+                    return "";
+                }
+
+                @Override
+                public String escapePattern(String pattern) {
+                    return "";
+                }
+            };
         }
     }
 }

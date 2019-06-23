@@ -1,16 +1,15 @@
 package io.cucumber.java8;
 
-import gherkin.pickles.PickleStep;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.snippets.SnippetGenerator;
+import io.cucumber.core.snippets.Snippet;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.net.URI;
@@ -23,20 +22,17 @@ import static java.lang.Thread.currentThread;
 
 final class Java8Backend implements Backend, LambdaGlueRegistry {
 
-    private final TypeRegistry typeRegistry;
-    private final SnippetGenerator lambdaSnippetGenerator;
-
+    private final Lookup lookup;
     private final Container container;
     private final ClassFinder classFinder;
 
     private Glue glue;
     private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
 
-    Java8Backend(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    Java8Backend(Lookup lookup, Container container, ResourceLoader resourceLoader) {
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader());
         this.container = container;
-        this.lambdaSnippetGenerator = new SnippetGenerator(new Java8Snippet(), typeRegistry.parameterTypeRegistry());
-        this.typeRegistry = typeRegistry;
+        this.lookup = lookup;
     }
 
     @Override
@@ -59,29 +55,25 @@ final class Java8Backend implements Backend, LambdaGlueRegistry {
     public void buildWorld() {
         // Instantiate all the stepdef classes for java8 - the stepdef will be initialised
         // in the constructor.
-        try {
-            INSTANCE.set(this);
-            for (Class<? extends LambdaGlue> lambdaGlueClass: lambdaGlueClasses) {
-                container.getInstance(lambdaGlueClass);
-            }
-        } finally {
-            INSTANCE.remove();
+        INSTANCE.set(this);
+        for (Class<? extends LambdaGlue> lambdaGlueClass: lambdaGlueClasses) {
+            lookup.getInstance(lambdaGlueClass);
         }
     }
 
     @Override
     public void disposeWorld() {
-
+        INSTANCE.remove();
     }
 
     @Override
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-        return lambdaSnippetGenerator.getSnippet(step, keyword, snippetType);
+    public Snippet getSnippet() {
+        return new Java8Snippet();
     }
 
     @Override
     public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-        glue.addStepDefinition(stepDefinitionFunction.apply(typeRegistry));
+        glue.addStepDefinition(stepDefinitionFunction);
     }
 
     @Override

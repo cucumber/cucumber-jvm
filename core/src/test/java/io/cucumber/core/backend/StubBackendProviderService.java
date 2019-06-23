@@ -1,18 +1,15 @@
 package io.cucumber.core.backend;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.snippets.SnippetType;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.snippets.TestSnippet;
 
 import java.net.URI;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 public class StubBackendProviderService implements BackendProviderService {
     @Override
-    public Backend create(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public Backend create(Lookup lookup, Container container, ResourceLoader resourceLoader) {
         return new StubBackend();
     }
 
@@ -34,8 +31,10 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-            return emptyList();
+        public Snippet getSnippet(){
+            return new TestSnippet();
         }
+
     }
+
 }

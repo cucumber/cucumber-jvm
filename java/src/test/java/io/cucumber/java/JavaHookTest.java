@@ -1,14 +1,14 @@
 package io.cucumber.java;
 
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,8 +71,7 @@ public class JavaHookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(objectFactory, classFinder, typeRegistry);
+        this.backend = new JavaBackend(objectFactory, objectFactory, classFinder);
         backend.loadGlue(glue, Collections.<URI>emptyList());
     }
 

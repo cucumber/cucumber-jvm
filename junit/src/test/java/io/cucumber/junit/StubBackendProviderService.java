@@ -1,24 +1,23 @@
 package io.cucumber.junit;
 
 
-import gherkin.pickles.PickleStep;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.snippets.Snippet;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.List;
-
-import static java.util.Collections.singletonList;
+import java.util.Map;
 
 public class StubBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(Container container, ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public Backend create(Lookup lookup, Container container, ResourceLoader resourceLoader) {
         return new StubBackend();
     }
 
@@ -43,8 +42,28 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-            return singletonList("STUB SNIPPET");
+        public Snippet getSnippet() {
+            return new Snippet() {
+                @Override
+                public String template() {
+                    return "";
+                }
+
+                @Override
+                public String tableHint() {
+                    return "";
+                }
+
+                @Override
+                public String arguments(Map<String, Type> arguments) {
+                    return "";
+                }
+
+                @Override
+                public String escapePattern(String pattern) {
+                    return "";
+                }
+            };
         }
     }
 

@@ -1,7 +1,6 @@
 package io.cucumber.core.backend;
 
-import gherkin.pickles.PickleStep;
-import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.core.snippets.Snippet;
 
 import java.net.URI;
 import java.util.List;
@@ -26,5 +25,5 @@ public interface Backend {
      */
     void disposeWorld();
 
-    List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType);
+    Snippet getSnippet();
 }

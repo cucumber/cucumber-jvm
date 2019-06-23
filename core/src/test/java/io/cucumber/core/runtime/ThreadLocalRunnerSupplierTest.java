@@ -37,9 +37,10 @@ public class ThreadLocalRunnerSupplierTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC());
-        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
+        TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
+        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory, typeRegistrySupplier);
     }
 
 

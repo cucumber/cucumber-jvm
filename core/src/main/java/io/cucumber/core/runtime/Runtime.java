@@ -201,7 +201,7 @@ public final class Runtime {
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
+                : new BackendServiceLoader(resourceLoader, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
@@ -215,10 +215,11 @@ public final class Runtime {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
 
+            final TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier)
-                : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier);
+                ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier, typeRegistrySupplier)
+                : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier, typeRegistrySupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())

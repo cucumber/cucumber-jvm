@@ -4,6 +4,7 @@ import gherkin.events.PickleEvent;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
@@ -26,6 +27,7 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
+import io.cucumber.core.runtime.TypeRegistrySupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
@@ -47,7 +49,7 @@ public final class TestNGCucumberRunner {
     /**
      * Bootstrap the cucumber runtime
      *
-     * @param clazz Which has the {@link io.cucumber.core.api.options.CucumberOptions}
+     * @param clazz Which has the {@link CucumberOptions}
      *              and {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class clazz) {
@@ -71,9 +73,10 @@ public final class TestNGCucumberRunner {
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, classFinder, runtimeOptions, objectFactorySupplier);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier);
+        TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistrySupplier);
 
     }
 

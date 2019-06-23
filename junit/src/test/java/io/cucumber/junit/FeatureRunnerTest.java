@@ -1,5 +1,10 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.io.ClassFinder;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -21,16 +26,19 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 public class FeatureRunnerTest {
 
@@ -172,16 +180,15 @@ public class FeatureRunnerTest {
                 return null;
             }
         };
-        BackendSupplier backendSupplier = new BackendSupplier() {
-            @Override
-            public Collection<? extends Backend> get() {
-                return asList(mock(Backend.class));
-            }
-        };
+        BackendSupplier backendSupplier = () -> singleton(new StubBackendProviderService.StubBackend());
 
         EventBus bus = new TimeServiceEventBus(clockStub);
         Filters filters = new Filters(runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        ConfiguringTypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory, typeRegistrySupplier);
         return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
     }
 

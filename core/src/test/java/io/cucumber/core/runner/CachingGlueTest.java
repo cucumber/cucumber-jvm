@@ -1,5 +1,10 @@
 package io.cucumber.core.runner;
 
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
@@ -7,11 +12,6 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
@@ -40,20 +40,21 @@ import static org.mockito.Mockito.when;
 
 public class CachingGlueTest {
 
-    private CachingGlue glue = new CachingGlue(mock(EventBus.class));
+    private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    private CachingGlue glue = new CachingGlue(mock(EventBus.class), typeRegistry);
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
         when(a.getLocation(true)).thenReturn("foo.bf:10");
-        glue.addStepDefinition(a);
+        glue.addStepDefinition(typeRegistry -> a);
 
         StepDefinition b = mock(StepDefinition.class);
         when(b.getPattern()).thenReturn("hello");
         when(b.getLocation(true)).thenReturn("bar.bf:90");
         try {
-            glue.addStepDefinition(b);
+            glue.addStepDefinition(typeRegistry -> b);
             fail("should have failed");
         } catch (DuplicateStepDefinitionException expected) {
             assertEquals("Duplicate step definitions in foo.bf:10 and bar.bf:90", expected.getMessage());
@@ -68,7 +69,7 @@ public class CachingGlueTest {
 
         StepDefinition sd = spy(new MockedScenarioScopedStepDefinition());
         when(sd.getPattern()).thenReturn("pattern");
-        glue.addStepDefinition(sd);
+        glue.addStepDefinition(typeRegistry -> sd);
 
         HookDefinition bh = spy(new MockedScenarioScopedHookDefinition());
         glue.addBeforeHook(bh);
@@ -90,7 +91,7 @@ public class CachingGlueTest {
     @Test
     public void removes_scenario_scoped_cache_entries() {
         StepDefinition sd = new MockedScenarioScopedStepDefinition("pattern");
-        glue.addStepDefinition(sd);
+        glue.addStepDefinition(typeRegistry -> sd);
         String featurePath = "someFeature.feature";
 
         String stepText = "pattern";
@@ -107,7 +108,7 @@ public class CachingGlueTest {
     @Test
     public void returns_null_if_no_matching_steps_found() {
         StepDefinition stepDefinition = spy(new MockedStepDefinition("pattern1"));
-        glue.addStepDefinition(stepDefinition);
+        glue.addStepDefinition(typeRegistry -> stepDefinition);
         String featurePath = "someFeature.feature";
 
         PickleStep pickleStep = getPickleStep("pattern");
@@ -119,8 +120,8 @@ public class CachingGlueTest {
     public void returns_match_from_cache_if_single_found() {
         StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
         StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
-        glue.addStepDefinition(stepDefinition1);
-        glue.addStepDefinition(stepDefinition2);
+        glue.addStepDefinition(typeRegistry -> stepDefinition1);
+        glue.addStepDefinition(typeRegistry -> stepDefinition2);
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
@@ -146,8 +147,8 @@ public class CachingGlueTest {
     public void returns_match_from_cache_for_step_with_table() {
         StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
         StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
-        glue.addStepDefinition(stepDefinition1);
-        glue.addStepDefinition(stepDefinition2);
+        glue.addStepDefinition(typeRegistry -> stepDefinition1);
+        glue.addStepDefinition(typeRegistry -> stepDefinition2);
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
@@ -185,8 +186,8 @@ public class CachingGlueTest {
     public void returns_match_from_cache_for_ste_with_doc_string() {
         StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
         StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
-        glue.addStepDefinition(stepDefinition1);
-        glue.addStepDefinition(stepDefinition2);
+        glue.addStepDefinition(typeRegistry -> stepDefinition1);
+        glue.addStepDefinition(typeRegistry -> stepDefinition2);
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
@@ -234,9 +235,9 @@ public class CachingGlueTest {
         StepDefinition stepDefinition1 = new MockedStepDefinition("pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         StepDefinition stepDefinition3 = new MockedStepDefinition("^pattern[1,3]");
-        glue.addStepDefinition(stepDefinition1);
-        glue.addStepDefinition(stepDefinition2);
-        glue.addStepDefinition(stepDefinition3);
+        glue.addStepDefinition(typeRegistry -> stepDefinition1);
+        glue.addStepDefinition(typeRegistry -> stepDefinition2);
+        glue.addStepDefinition(typeRegistry -> stepDefinition3);
         String featurePath = "someFeature.feature";
 
         checkAmbiguousCalled(featurePath);

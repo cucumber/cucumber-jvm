@@ -1,9 +1,8 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.Container;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
@@ -17,12 +16,13 @@ import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class MethodScannerTest {
 
@@ -30,25 +30,24 @@ public class MethodScannerTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    private Container factory;
+    private ObjectFactory factory;
 
     private ResourceLoaderClassFinder classFinder;
     private JavaBackend backend;
 
     @Before
-    public void createBackend(){
+    public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(factory, classFinder, typeRegistry);
+        this.backend = new JavaBackend(factory, factory, classFinder);
     }
 
     @Test
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
         MethodScanner methodScanner = new MethodScanner(classFinder);
         Glue world = Mockito.mock(Glue.class);
-        backend.loadGlue(world,Collections.<URI>emptyList());
+        backend.loadGlue(world, Collections.<URI>emptyList());
 
         // this delegates to methodScanner.scan which we test
         methodScanner.scan(backend, BaseStepDefs.class.getMethod("m"), BaseStepDefs.class);

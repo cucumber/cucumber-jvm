@@ -583,14 +583,14 @@ public class RuntimeTest {
                 this.glue = glue;
                 final io.cucumber.core.backend.StepDefinition mockedStepDefinition = new MockedStepDefinition();
                 definedStepDefinitions.add(mockedStepDefinition);
-                glue.addStepDefinition(mockedStepDefinition);
+                glue.addStepDefinition(typeRegistry -> mockedStepDefinition);
             }
 
             @Override
             public void buildWorld() {
                 final io.cucumber.core.backend.StepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
                 definedStepDefinitions.add(mockedScenarioScopedStepDefinition);
-                glue.addStepDefinition(mockedScenarioScopedStepDefinition);
+                glue.addStepDefinition(typeRegistry -> mockedScenarioScopedStepDefinition);
             }
         };
 
@@ -718,7 +718,7 @@ public class RuntimeTest {
 
     private void mockMatch(Glue glue, String text) {
         io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text, TYPE_REGISTRY);
-        glue.addStepDefinition(stepDefinition);
+        glue.addStepDefinition(typeRegistry -> stepDefinition);
     }
 
     private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {

@@ -184,7 +184,7 @@ public class TestHelper {
                     }
                 };
 
-                glue.addStepDefinition(stepDefinition);
+                glue.addStepDefinition(t -> stepDefinition);
             }
         }
 
@@ -396,7 +396,7 @@ public class TestHelper {
 
         /**
          * Specifies what type of TimeService to be used by the {@link EventBus}
-         * {@link TimeServiceType#REAL_TIME} > {@link TimeService#SYSTEM}
+         * {@link TimeServiceType#REAL_TIME} > {@link Clock#systemUTC()}
          * {@link TimeServiceType#FIXED_INCREMENT} > {@link ClockStub}
          * {@link TimeServiceType#FIXED_INCREMENT_ON_STEP_START} > {@link StepDurationTimeService}
          * <p>

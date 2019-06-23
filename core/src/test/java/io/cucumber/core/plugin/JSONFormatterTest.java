@@ -25,6 +25,8 @@ import java.util.Scanner;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.snippets.TestSnippet;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
@@ -1170,11 +1172,6 @@ public class JSONFormatterTest {
                 glue.addBeforeHook(hook);
 
             }
-
-            @Override
-            public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-                return singletonList("TEST SNIPPET");
-            }
         };
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
 
@@ -1211,11 +1208,6 @@ public class JSONFormatterTest {
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(hook);
 
-            }
-
-            @Override
-            public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
-                return singletonList("TEST SNIPPET");
             }
         };
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));

@@ -15,6 +15,7 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -24,6 +25,7 @@ import org.mockito.stubbing.Answer;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -49,6 +51,7 @@ public class HookTest {
 
         Backend backend = mock(Backend.class);
         ObjectFactory objectFactory = mock(ObjectFactory.class);
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
 
@@ -61,7 +64,7 @@ public class HookTest {
             }
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<URI>anyList());
 
-        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, runtimeOptions);
+        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistry, runtimeOptions);
 
         runner.runPickle(pickleEvent);
 

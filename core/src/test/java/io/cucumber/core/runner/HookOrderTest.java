@@ -1,19 +1,17 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runtime.StubStepDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.event.EventBus;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -26,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -38,6 +35,7 @@ public class HookOrderTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("pattern1", new TypeRegistry(Locale.ENGLISH));
     private final PickleStep pickleStep = new PickleStep("pattern1", Collections.<Argument>emptyList(), singletonList(new PickleLocation(2,2)));
@@ -48,10 +46,10 @@ public class HookOrderTest {
     public void before_hooks_execute_in_order() throws Throwable {
         final List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(new StubStepDefinition("pattern1", new TypeRegistry(Locale.ENGLISH)));
+                glue.addStepDefinition(typeRegistry -> new StubStepDefinition("pattern1", typeRegistry));
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeHook(hook);
                 }
@@ -75,10 +73,10 @@ public class HookOrderTest {
     public void before_step_hooks_execute_in_order() throws Throwable {
         final List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(stepDefinition);
+                glue.addStepDefinition(typeRegistry -> stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeStepHook(hook);
                 }
@@ -102,10 +100,10 @@ public class HookOrderTest {
     public void after_hooks_execute_in_reverse_order() throws Throwable {
         final List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(stepDefinition);
+                glue.addStepDefinition(typeRegistry -> stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterHook(hook);
                 }
@@ -129,10 +127,10 @@ public class HookOrderTest {
     public void after_step_hooks_execute_in_reverse_order() throws Throwable {
         final List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(stepDefinition);
+                glue.addStepDefinition(typeRegistry -> stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterStepHook(hook);
                 }
@@ -158,10 +156,10 @@ public class HookOrderTest {
         final List<HookDefinition> backend2Hooks = mockHooks(2, Integer.MAX_VALUE, 4);
 
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(stepDefinition);
+                glue.addStepDefinition(typeRegistry -> stepDefinition);
 
                 for (HookDefinition hook : backend1Hooks) {
                     glue.addBeforeHook(hook);
@@ -180,12 +178,12 @@ public class HookOrderTest {
         allHooks.addAll(backend2Hooks);
 
         InOrder inOrder = inOrder(allHooks.toArray());
-        inOrder.verify(backend1Hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(backend2Hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(backend1Hooks.get(0)).execute(ArgumentMatchers.<Scenario>any());
-        inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.<Scenario>any());
-        verify(backend2Hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
-        verify(backend1Hooks.get(1)).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(backend1Hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend2Hooks.get(0)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend1Hooks.get(0)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend1Hooks.get(1)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend2Hooks.get(1)).execute(ArgumentMatchers.any());
     }
 
     private List<HookDefinition> mockHooks(int... ordering) {

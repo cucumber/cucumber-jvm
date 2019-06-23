@@ -2,6 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
@@ -21,6 +22,7 @@ import org.mockito.junit.MockitoRule;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -38,13 +40,13 @@ public class JavaBackendTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Captor
-    public ArgumentCaptor<StepDefinition> stepDefinition;
+    public ArgumentCaptor<Function<TypeRegistry, StepDefinition>> stepDefinition;
 
     @Mock
     private Glue glue;
 
     @Mock
-    private Container factory;
+    private ObjectFactory factory;
 
     private JavaBackend backend;
 
@@ -52,8 +54,7 @@ public class JavaBackendTest {
     public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-        this.backend = new JavaBackend(factory, resourceLoader, typeRegistry);
+        this.backend = new JavaBackend(factory, factory, resourceLoader);
     }
 
     @Test
@@ -75,8 +76,11 @@ public class JavaBackendTest {
         backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/repeatable")));
         verify(glue, times(2)).addStepDefinition(stepDefinition.capture());
 
+        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+
         List<String> patterns = stepDefinition.getAllValues()
             .stream()
+            .map(stepDefinitionFunction -> stepDefinitionFunction.apply(typeRegistry))
             .map(StepDefinition::getPattern)
             .collect(toList());
         assertThat(patterns, equalTo(asList("test", "test again")));

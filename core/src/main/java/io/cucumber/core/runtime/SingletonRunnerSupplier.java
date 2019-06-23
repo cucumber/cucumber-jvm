@@ -14,20 +14,23 @@ public final class SingletonRunnerSupplier implements RunnerSupplier {
     private final BackendSupplier backendSupplier;
     private final Options runnerOptions;
     private final EventBus eventBus;
-    private final ObjectFactorySupplier objectFactory;
-    private Runner runner;
+    private final ObjectFactorySupplier objectFactorySupplier;
+    private final TypeRegistrySupplier typeRegistrySupplier;
 
 
     public SingletonRunnerSupplier(
         Options runnerOptions,
         EventBus eventBus,
         BackendSupplier backendSupplier,
-        ObjectFactorySupplier objectFactory) {
+        ObjectFactorySupplier objectFactorySupplier, TypeRegistrySupplier typeRegistrySupplier) {
         this.backendSupplier = backendSupplier;
         this.runnerOptions = runnerOptions;
         this.eventBus = eventBus;
-        this.objectFactory = objectFactory;
+        this.objectFactorySupplier = objectFactorySupplier;
+        this.typeRegistrySupplier = typeRegistrySupplier;
     }
+
+    private Runner runner;
 
     @Override
     public Runner get() {
@@ -38,7 +41,13 @@ public final class SingletonRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(eventBus, backendSupplier.get(), objectFactory.get(), runnerOptions);
+        return new Runner(
+            eventBus,
+            backendSupplier.get(),
+            objectFactorySupplier.get(),
+            typeRegistrySupplier.get(),
+            runnerOptions
+        );
     }
 
 }

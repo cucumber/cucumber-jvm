@@ -8,16 +8,20 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 final class CachingGlue implements Glue {
+    private static final HookComparator ASCENDING = new HookComparator(true);
+    private static final HookComparator DESCENDING = new HookComparator(false);
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<>();
     final Map<String, StepDefinition> stepDefinitionsByStepText = new HashMap<>();
     final List<HookDefinition> beforeHooks = new ArrayList<>();
@@ -26,13 +30,16 @@ final class CachingGlue implements Glue {
     final List<HookDefinition> afterStepHooks = new ArrayList<>();
 
     private final EventBus bus;
+    private final TypeRegistry typeRegistry;
 
-    CachingGlue(EventBus bus) {
+    CachingGlue(EventBus bus, TypeRegistry typeRegistry) {
         this.bus = bus;
+        this.typeRegistry = typeRegistry;
     }
 
     @Override
-    public void addStepDefinition(StepDefinition stepDefinition) {
+    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
+        StepDefinition stepDefinition = stepDefinitionFunction.apply(typeRegistry);
         StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
         if (previous != null) {
             throw new DuplicateStepDefinitionException(previous, stepDefinition);
@@ -44,40 +51,40 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(hookDefinition);
-        Collections.sort(beforeHooks, new HookComparator(true));
+        beforeHooks.sort(ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(hookDefinition);
-        Collections.sort(beforeStepHooks, new HookComparator(true));
+        beforeStepHooks.sort(ASCENDING);
     }
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
-        Collections.sort(afterHooks, new HookComparator(false));
+        afterHooks.sort(DESCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(hookDefinition);
-        Collections.sort(afterStepHooks, new HookComparator(false));
+        afterStepHooks.sort(DESCENDING);
     }
 
     List<HookDefinition> getBeforeHooks() {
-        return beforeHooks;
+        return new ArrayList<>(beforeHooks);
     }
 
     List<HookDefinition> getBeforeStepHooks() {
-        return beforeStepHooks;
+        return new ArrayList<>(beforeStepHooks);
     }
 
     List<HookDefinition> getAfterHooks() {
-        return afterHooks;
+        return new ArrayList<>(afterHooks);
     }
 
     List<HookDefinition> getAfterStepHooks() {
-        return afterStepHooks;
+        return new ArrayList<>(afterStepHooks);
     }
 
     PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {

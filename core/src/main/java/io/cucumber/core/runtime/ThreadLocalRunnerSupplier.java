@@ -6,6 +6,7 @@ import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.event.AbstractEventBus;
 import io.cucumber.core.event.EventBus;
+import io.cucumber.core.runner.Options;
 import io.cucumber.core.runner.Runner;
 
 /**
@@ -18,19 +19,21 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final BackendSupplier backendSupplier;
     private final io.cucumber.core.runner.Options runnerOptions;
     private final SynchronizedEventBus sharedEventBus;
-    private final ObjectFactorySupplier objectFactory;
+    private final ObjectFactorySupplier objectFactorySupplier;
+    private final TypeRegistrySupplier typeRegistrySupplier;
 
     private final ThreadLocal<Runner> runners = ThreadLocal.withInitial(this::createRunner);
 
     public ThreadLocalRunnerSupplier(
-        io.cucumber.core.runner.Options runnerOptions,
+        Options runnerOptions,
         EventBus sharedEventBus,
         BackendSupplier backendSupplier,
-        ObjectFactorySupplier objectFactory) {
+        ObjectFactorySupplier objectFactorySupplier, TypeRegistrySupplier typeRegistrySupplier) {
         this.runnerOptions = runnerOptions;
         this.sharedEventBus = SynchronizedEventBus.synchronize(sharedEventBus);
         this.backendSupplier = backendSupplier;
-        this.objectFactory = objectFactory;
+        this.objectFactorySupplier = objectFactorySupplier;
+        this.typeRegistrySupplier = typeRegistrySupplier;
     }
 
     @Override
@@ -39,7 +42,13 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     }
 
     private Runner createRunner() {
-        return new Runner(new LocalEventBus(sharedEventBus), backendSupplier.get(), objectFactory.get(), runnerOptions);
+        return new Runner(
+            new LocalEventBus(sharedEventBus),
+            backendSupplier.get(),
+            objectFactorySupplier.get(),
+            typeRegistrySupplier.get(),
+            runnerOptions
+        );
     }
 
     private static final class LocalEventBus extends AbstractEventBus {
