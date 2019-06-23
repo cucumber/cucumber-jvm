@@ -15,7 +15,7 @@ final class CanonicalOrderEventPublisher extends AbstractEventPublisher {
     public void handle(final Event event) {
         queue.add(event);
         if (event instanceof TestRunFinished) {
-            Collections.sort(queue, Event.CANONICAL_ORDER);
+            queue.sort(new CanonicalEventOrder());
             sendAll(queue);
             queue.clear();
         }

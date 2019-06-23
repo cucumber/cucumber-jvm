@@ -1,10 +1,42 @@
-package io.cucumber.core.api.event;
+package io.cucumber.core.plugin;
+
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.SnippetsSuggestedEvent;
+import io.cucumber.core.api.event.StepDefinedEvent;
+import io.cucumber.core.api.event.TestCaseEvent;
+import io.cucumber.core.api.event.TestRunFinished;
+import io.cucumber.core.api.event.TestRunStarted;
+import io.cucumber.core.api.event.TestSourceRead;
 
 import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
+/**
+ * When pickles are executed in parallel events can be
+ * produced with a partial ordering.
+ * <p>
+ * The canonical order is the order in which these events
+ * would have been generated had cucumber executed these
+ * pickles in a serial fashion.
+ * <p>
+ * In canonical order events are first ordered by type:
+ * <ol>
+ * <li>TestRunStarted
+ * <li>TestSourceRead
+ * <li>SnippetsSuggestedEvent
+ * <li>TestCaseEvent
+ * <li>TestRunFinished
+ * </ol>
+ * <p>
+ * Then TestCaseEvents are ordered by
+ * <ol>
+ * <li>uri
+ * <li>line
+ * <li>timestamp
+ * </ol>
+ */
 final class CanonicalEventOrder implements Comparator<Event> {
 
     private static final FixedEventOrderComparator fixedOrder = new FixedEventOrderComparator();
@@ -27,8 +59,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
     private static final class FixedEventOrderComparator implements Comparator<Event> {
 
         private final List<Class<? extends Event>> fixedOrder = asList(
-            (Class<? extends Event>)
-                TestRunStarted.class,
+            TestRunStarted.class,
             TestSourceRead.class,
             SnippetsSuggestedEvent.class,
             StepDefinedEvent.class,

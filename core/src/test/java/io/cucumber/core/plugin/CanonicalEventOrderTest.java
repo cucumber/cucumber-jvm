@@ -1,10 +1,9 @@
-package io.cucumber.core.api.event;
+package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.TestCase;
 import gherkin.pickles.PickleLocation;
-import io.cucumber.core.api.event.CanonicalEventOrder;
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.SnippetsSuggestedEvent;
+import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestCaseStarted;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
@@ -32,7 +31,7 @@ public class CanonicalEventOrderTest {
         return Instant.now();
     }
 
-    static Event createTestCaseEvent(final String uri, final int line) {
+    private static Event createTestCaseEvent(final String uri, final int line) {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
         given(testCase.getLine()).willReturn(line);
@@ -41,7 +40,7 @@ public class CanonicalEventOrderTest {
 
     private Event runStarted = new TestRunStarted(getInstant());
     private Event testRead = new TestSourceRead(getInstant(), "uri", "source");
-    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", Collections.<PickleLocation>emptyList(), Collections.<String>emptyList());
+    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", Collections.emptyList(), Collections.emptyList());
     private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
     private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
     private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
