@@ -6,7 +6,6 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.EventBus;
-import io.cucumber.core.runtime.ScenarioScoped;
 import io.cucumber.core.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 

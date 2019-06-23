@@ -1,4 +1,4 @@
-package io.cucumber.core.runtime;
+package io.cucumber.core.feature;
 
 import java.net.URI;
 import java.util.List;

@@ -4,11 +4,11 @@ import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.model.Classpath;
-import io.cucumber.core.model.FeaturePath;
-import io.cucumber.core.model.FeatureWithLines;
-import io.cucumber.core.model.GluePath;
-import io.cucumber.core.model.RerunLoader;
+import io.cucumber.core.io.Classpath;
+import io.cucumber.core.feature.FeaturePath;
+import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.feature.RerunLoader;
 
 import java.net.URI;
 import java.util.regex.Pattern;

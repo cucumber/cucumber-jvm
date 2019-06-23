@@ -2,7 +2,7 @@ package io.cucumber.core.io;
 
 import java.net.URI;
 
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME;
 
 public final class MultiLoader implements ResourceLoader {
     static final String FILE_SCHEME = "file";

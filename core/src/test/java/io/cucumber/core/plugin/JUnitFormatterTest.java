@@ -28,7 +28,7 @@ import org.mockito.stubbing.Answer;
 import org.xml.sax.SAXException;
 
 import io.cucumber.core.api.event.Result;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestHelper;
 
 public class JUnitFormatterTest {

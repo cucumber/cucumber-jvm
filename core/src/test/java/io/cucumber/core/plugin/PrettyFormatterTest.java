@@ -3,7 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import org.junit.Test;

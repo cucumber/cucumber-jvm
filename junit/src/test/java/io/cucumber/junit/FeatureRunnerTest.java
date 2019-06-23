@@ -2,8 +2,6 @@ package io.cucumber.junit;
 
 import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.backend.SingletonObjectFactorySupplier;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.backend.Backend;
@@ -11,7 +9,7 @@ import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -27,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;

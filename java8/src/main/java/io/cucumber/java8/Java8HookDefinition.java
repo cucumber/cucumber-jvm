@@ -5,7 +5,7 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.filter.TagPredicate;
 import io.cucumber.core.runtime.Invoker;
-import io.cucumber.core.runtime.ScenarioScoped;
+import io.cucumber.core.runner.ScenarioScoped;
 
 import java.util.Collection;
 

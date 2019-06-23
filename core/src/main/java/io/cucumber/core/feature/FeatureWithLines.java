@@ -1,4 +1,4 @@
-package io.cucumber.core.model;
+package io.cucumber.core.feature;
 
 import java.io.Serializable;
 import java.net.URI;

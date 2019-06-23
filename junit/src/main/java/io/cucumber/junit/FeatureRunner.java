@@ -5,7 +5,7 @@ import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.junit.PickleRunners.PickleRunner;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;

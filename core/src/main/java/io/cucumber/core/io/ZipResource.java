@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME;
 
 final class ZipResource implements Resource {
     private final ZipFile jarFile;

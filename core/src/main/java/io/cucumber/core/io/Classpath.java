@@ -1,4 +1,4 @@
-package io.cucumber.core.model;
+package io.cucumber.core.io;
 
 import java.net.URI;
 
@@ -17,7 +17,7 @@ public class Classpath {
      * @param uri to resource
      * @return resource name
      */
-    public static String resourceName(URI uri) {
+    static String resourceName(URI uri) {
         if (!CLASSPATH_SCHEME.equals(uri.getScheme())) {
             throw new IllegalArgumentException("uri must have classpath scheme " + uri);
         }

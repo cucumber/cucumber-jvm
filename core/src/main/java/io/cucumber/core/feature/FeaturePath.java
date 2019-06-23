@@ -1,12 +1,12 @@
-package io.cucumber.core.model;
+package io.cucumber.core.feature;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
 import static java.util.Objects.requireNonNull;
 
 /**

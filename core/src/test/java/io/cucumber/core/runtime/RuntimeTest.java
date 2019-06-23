@@ -19,16 +19,17 @@ import io.cucumber.core.api.plugin.Plugin;
 import io.cucumber.core.backend.BackendSupplier;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.api.event.StepDefinition;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
+import io.cucumber.core.runner.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -51,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.cucumber.core.runner.TestHelper.feature;
@@ -506,8 +508,8 @@ public class RuntimeTest {
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        final AtomicBoolean threadBlocked = new AtomicBoolean(false);
-        final AtomicBoolean interruptHit = new AtomicBoolean(false);
+        final CountDownLatch threadBlocked = new CountDownLatch(1);
+        final CountDownLatch interruptHit = new CountDownLatch(1);
 
         final ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
             @Override
@@ -516,10 +518,10 @@ public class RuntimeTest {
                     @Override
                     public void receive(TestStepFinished event) {
                         try {
-                            threadBlocked.set(true);
+                            threadBlocked.countDown();
                             HOURS.sleep(1);
                         } catch (InterruptedException ignored) {
-                            interruptHit.set(true);
+                            interruptHit.countDown();
                         }
                     }
                 });
@@ -539,13 +541,12 @@ public class RuntimeTest {
 
             }
         });
+
         thread.start();
-        do {
-            MILLISECONDS.sleep(1);
-        } while (!threadBlocked.get());
+        threadBlocked.await(1, SECONDS);
         thread.interrupt();
-        MINUTES.timedJoin(thread, 1);
-        assertTrue(interruptHit.get());
+        interruptHit.await(1, SECONDS);
+        assertEquals(0, interruptHit.getCount());
     }
 
     @Test
@@ -584,14 +585,14 @@ public class RuntimeTest {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 this.glue = glue;
-                final StepDefinition mockedStepDefinition = new MockedStepDefinition();
+                final io.cucumber.core.backend.StepDefinition mockedStepDefinition = new MockedStepDefinition();
                 definedStepDefinitions.add(mockedStepDefinition);
                 glue.addStepDefinition(mockedStepDefinition);
             }
 
             @Override
             public void buildWorld() {
-                final StepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
+                final io.cucumber.core.backend.StepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
                 definedStepDefinitions.add(mockedScenarioScopedStepDefinition);
                 glue.addStepDefinition(mockedScenarioScopedStepDefinition);
             }
@@ -720,7 +721,7 @@ public class RuntimeTest {
     }
 
     private void mockMatch(Glue glue, String text) {
-        StepDefinition stepDefinition = new StubStepDefinition(text, TYPE_REGISTRY);
+        io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text, TYPE_REGISTRY);
         glue.addStepDefinition(stepDefinition);
     }
 
@@ -733,7 +734,10 @@ public class RuntimeTest {
                 glue.addAfterHook(hook);
                 return;
             case AfterStep:
-                glue.addBeforeHook(hook);
+                glue.addAfterStepHook(hook);
+                return;
+            case BeforeStep:
+                glue.addBeforeStepHook(hook);
                 return;
             default:
                 throw new IllegalArgumentException(hookType.name());
@@ -744,7 +748,7 @@ public class RuntimeTest {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
-    private static final class MockedStepDefinition implements StepDefinition {
+    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
 
         @Override
         public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
@@ -778,7 +782,7 @@ public class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
+    private static final class MockedScenarioScopedStepDefinition implements io.cucumber.core.backend.StepDefinition, ScenarioScoped {
 
         boolean disposed;
 

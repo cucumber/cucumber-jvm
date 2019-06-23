@@ -8,7 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static io.cucumber.core.io.MultiLoader.FILE_SCHEME;
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME;
 
 
 final class FileResource implements Resource {

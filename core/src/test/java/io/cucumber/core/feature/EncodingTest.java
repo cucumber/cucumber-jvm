@@ -1,4 +1,4 @@
-package io.cucumber.core.model;
+package io.cucumber.core.feature;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.when;
@@ -23,13 +23,13 @@ public class EncodingTest {
 
 	@Test
 	public void test_utf8_bom_encode() throws RuntimeException, IOException {
-		when(resource.getInputStream()).thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/model/UTF_8_BOM_Encoded.feature"));
+		when(resource.getInputStream()).thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/feature/UTF_8_BOM_Encoded.feature"));
 		assertFalse("UTF-8 BOM encoding not removed.", Encoding.readFile(resource).startsWith("\uFEFF"));
 	}
 
 	@Test
 	public void test_utf8_encode() throws RuntimeException, IOException {
-		when(resource.getInputStream()).thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/model/UTF_8_Encoded.feature"));
+		when(resource.getInputStream()).thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/feature/UTF_8_Encoded.feature"));
 		assertFalse("UTF-8 BOM encoding should not be present.", Encoding.readFile(resource).startsWith("\uFEFF"));
 	}
 }

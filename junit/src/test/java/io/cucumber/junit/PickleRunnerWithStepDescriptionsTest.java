@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.junit.PickleRunners.WithStepDescriptions;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
@@ -17,7 +17,6 @@ import org.junit.runner.Description;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class PickleRunnerWithStepDescriptionsTest {

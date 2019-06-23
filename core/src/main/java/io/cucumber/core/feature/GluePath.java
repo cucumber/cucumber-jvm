@@ -1,11 +1,9 @@
-package io.cucumber.core.model;
+package io.cucumber.core.feature;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME;
-import static io.cucumber.core.model.Classpath.CLASSPATH_SCHEME_PREFIX;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.Character.isJavaIdentifierStart;
 import static java.util.Objects.requireNonNull;
@@ -23,6 +21,9 @@ import static java.util.Objects.requireNonNull;
  *
  */
 public class GluePath {
+
+    private static final String CLASSPATH_SCHEME = "classpath";
+    private static final String CLASSPATH_SCHEME_PREFIX = CLASSPATH_SCHEME + ":";
 
     private GluePath(){
 

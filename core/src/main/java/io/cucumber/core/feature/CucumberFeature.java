@@ -1,4 +1,4 @@
-package io.cucumber.core.model;
+package io.cucumber.core.feature;
 
 import gherkin.ast.GherkinDocument;
 import gherkin.events.PickleEvent;

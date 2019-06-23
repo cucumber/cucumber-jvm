@@ -1,7 +1,5 @@
 package io.cucumber.core.io;
 
-import io.cucumber.core.model.Classpath;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;

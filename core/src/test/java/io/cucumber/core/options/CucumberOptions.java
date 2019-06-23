@@ -38,7 +38,7 @@ public @interface CucumberOptions {
      * class. For example, if the annotated class is {@code com.example.RunCucumber}
      * then features are assumed to be located in {@code classpath:com/example}.
      *
-     * @see io.cucumber.core.model.FeatureWithLines
+     * @see io.cucumber.core.feature.FeatureWithLines
      * @return The location(s) of the features.
      */
     String[] features() default {};
@@ -51,7 +51,7 @@ public @interface CucumberOptions {
      * class. For example, if the annotated class is {@code com.example.RunCucumber}
      * then glue is assumed to be located in {@code com.example}.
      *
-     * @see io.cucumber.core.model.GluePath
+     * @see io.cucumber.core.feature.GluePath
      * @return The package(s) that contain glue code.
      */
     String[] glue() default {};

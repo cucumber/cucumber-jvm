@@ -18,7 +18,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 public final class RuntimeOptions implements
-    io.cucumber.core.runtime.Options,
+    io.cucumber.core.feature.Options,
     io.cucumber.core.runner.Options,
     io.cucumber.core.plugin.Options,
     io.cucumber.core.filter.Options {

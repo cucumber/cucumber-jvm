@@ -7,7 +7,7 @@ import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.plugin.StrictAware;
-import io.cucumber.core.model.FeatureWithLines;
+import io.cucumber.core.feature.FeatureWithLines;
 
 import java.util.ArrayList;
 import java.util.Collection;

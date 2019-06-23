@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import static io.cucumber.core.model.Classpath.resourceName;
+import static io.cucumber.core.io.Classpath.resourceName;
 
 final class ClasspathResourceIterable implements Iterable<Resource> {
 

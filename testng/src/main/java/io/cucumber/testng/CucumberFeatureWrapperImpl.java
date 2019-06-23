@@ -1,6 +1,6 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 
 class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
     private final CucumberFeature cucumberFeature;

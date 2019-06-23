@@ -38,7 +38,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.runner.ClockStub;

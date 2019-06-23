@@ -1,6 +1,6 @@
 package io.cucumber.core.io;
 
-import io.cucumber.core.model.FeaturePath;
+import io.cucumber.core.feature.FeaturePath;
 import org.junit.Test;
 
 import java.net.URI;

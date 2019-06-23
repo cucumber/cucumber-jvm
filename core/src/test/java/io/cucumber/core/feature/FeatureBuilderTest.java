@@ -1,4 +1,4 @@
-package io.cucumber.core.model;
+package io.cucumber.core.feature;
 
 import io.cucumber.core.io.Resource;
 import org.junit.Test;

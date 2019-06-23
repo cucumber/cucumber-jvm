@@ -1,11 +1,11 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.model.FeatureParser;
+import io.cucumber.core.feature.FeatureParser;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import io.cucumber.core.io.Resource;
-import io.cucumber.core.model.CucumberFeature;
+import io.cucumber.core.feature.CucumberFeature;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

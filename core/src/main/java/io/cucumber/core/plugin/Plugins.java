@@ -8,7 +8,6 @@ import io.cucumber.core.api.event.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.plugin.ColorAware;
 import io.cucumber.core.api.plugin.StrictAware;
-import io.cucumber.core.options.RuntimeOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +18,9 @@ public final class Plugins {
 
     private final PluginFactory pluginFactory;
     private EventPublisher orderedEventPublisher;
-    private final RuntimeOptions pluginOptions;
+    private final Options pluginOptions;
 
-    public Plugins(PluginFactory pluginFactory, RuntimeOptions pluginOptions) {
+    public Plugins(PluginFactory pluginFactory, Options pluginOptions) {
         this.pluginFactory = pluginFactory;
         this.pluginOptions = pluginOptions;
         this.plugins = createPlugins();

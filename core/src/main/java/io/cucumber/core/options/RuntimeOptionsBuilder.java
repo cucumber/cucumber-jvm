@@ -2,7 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.model.FeatureWithLines;
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.Options;
 
