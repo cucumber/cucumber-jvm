@@ -1,11 +1,11 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
+import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.backend.Backend;
-import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.filter.Filters;

@@ -1,4 +1,6 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.runtime;
+
+import io.cucumber.core.backend.Backend;
 
 import java.util.Collection;
 

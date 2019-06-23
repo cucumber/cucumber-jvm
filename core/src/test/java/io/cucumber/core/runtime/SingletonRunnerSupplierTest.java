@@ -1,8 +1,6 @@
 package io.cucumber.core.runtime;
 
 
-import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
@@ -13,8 +11,6 @@ import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Before;
 import org.junit.Test;
 
-import static io.cucumber.core.options.Env.INSTANCE;
-import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertSame;

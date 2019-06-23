@@ -9,7 +9,7 @@ import io.cucumber.core.api.event.Event;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;

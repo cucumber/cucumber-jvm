@@ -3,8 +3,6 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
-import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.ObjectFactorySupplier;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;

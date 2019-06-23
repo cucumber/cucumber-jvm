@@ -2,7 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
-import io.cucumber.core.backend.BackendSupplier;
+import io.cucumber.core.runtime.BackendSupplier;
 import gherkin.pickles.PickleStep;
 
 import java.util.Collection;

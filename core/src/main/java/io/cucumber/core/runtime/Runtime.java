@@ -10,10 +10,6 @@ import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.backend.BackendSupplier;
-import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
-import io.cucumber.core.backend.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
@@ -151,10 +147,8 @@ public final class Runtime {
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
         private ResourceLoader resourceLoader;
-        private ClassFinder classFinder;
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = emptyList();
-        private List<String> runtimeOptionsArgs = emptyList();
 
         private Builder() {
         }
@@ -171,11 +165,6 @@ public final class Runtime {
 
         public Builder withResourceLoader(final ResourceLoader resourceLoader) {
             this.resourceLoader = resourceLoader;
-            return this;
-        }
-
-        public Builder withClassFinder(final ClassFinder classFinder) {
-            this.classFinder = classFinder;
             return this;
         }
 
@@ -204,9 +193,7 @@ public final class Runtime {
                 ? this.resourceLoader
                 : new MultiLoader(this.classLoader);
 
-            final ClassFinder classFinder = this.classFinder != null
-                ? this.classFinder
-                : new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
+            final ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
 
             final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
                 ? new ThreadLocalObjectFactorySupplier()

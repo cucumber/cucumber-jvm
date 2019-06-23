@@ -3,14 +3,11 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestCaseStarted;
-import io.cucumber.core.backend.ObjectFactorySupplier;
-import io.cucumber.core.backend.SingletonObjectFactorySupplier;
 import io.cucumber.core.event.EventBus;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.options.Env;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.TimeServiceEventBus;
@@ -18,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Clock;
-import java.util.Collections;
 
 import static java.time.Instant.EPOCH;
 import static org.hamcrest.CoreMatchers.is;
