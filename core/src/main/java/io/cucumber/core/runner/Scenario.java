@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EmbedEvent;
+import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.WriteEvent;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.event.EventBus;
@@ -20,7 +21,7 @@ class Scenario implements io.cucumber.core.api.Scenario {
     private final EventBus bus;
     private final TestCase testCase;
 
-    Scenario(EventBus bus, TestCase testCase) {
+    Scenario(EventBus bus, io.cucumber.core.api.event.TestCase testCase) {
         this.bus = bus;
         this.testCase = testCase;
     }
@@ -74,7 +75,7 @@ class Scenario implements io.cucumber.core.api.Scenario {
 
     @Override
     public String getId() {
-        return testCase.getUri() + ":" + testCase.getLine();
+        return testCase.getUri() + ":" + getLine();
     }
 
     @Override
@@ -83,8 +84,8 @@ class Scenario implements io.cucumber.core.api.Scenario {
     }
 
     @Override
-    public List<Integer> getLines() {
-        return testCase.getLines();
+    public Integer getLine() {
+        return testCase.getLine();
     }
 
     public Throwable getError() {

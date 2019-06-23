@@ -29,7 +29,7 @@ public class ScenarioTest {
         List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(3), column(2)));
         Scenario scenario = createScenarioWithScenarioLocations(scenarioLocation);
 
-        assertEquals(asList(3), scenario.getLines());
+        assertEquals((Integer) 3, scenario.getLine());
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ScenarioTest {
         List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(8), column(4)), new PickleLocation(line(3), column(2)));
         Scenario scenario = createScenarioWithScenarioLocations(scenarioLocation);
 
-        assertEquals(asList(8, 3), scenario.getLines());
+        assertEquals((Integer) 8, scenario.getLine());
     }
 
     @Test

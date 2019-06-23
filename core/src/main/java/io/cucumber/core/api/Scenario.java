@@ -3,7 +3,6 @@ package io.cucumber.core.api;
 import io.cucumber.core.api.event.Result;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
@@ -66,8 +65,9 @@ public interface Scenario {
     String getUri();
 
     /**
-     * @return the line(s) in the feature file of the Scenario. Scenarios from Scenario Outlines
-     * return both the line of the example row the the line of the scenario outline.
+     * @return the line in the feature file of the Scenario. If this is a Scenario
+     * from Scenario Outlines this wil return the line of the example row in
+     * the Scenario Outline.
      */
-    List<Integer> getLines();
+    Integer getLine();
 }

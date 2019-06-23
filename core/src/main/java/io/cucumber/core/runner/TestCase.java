@@ -5,7 +5,6 @@ import io.cucumber.core.api.event.TestStep;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestCaseStarted;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.event.EventBus;
 
@@ -75,7 +74,7 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
 
     @Override
     public String getScenarioDesignation() {
-        return fileColonLine(pickleEvent.pickle.getLocations().get(0)) + " # " + getName();
+        return fileColonLine(getLine()) + " # " + getName();
     }
 
     @Override
@@ -83,21 +82,12 @@ final class TestCase implements io.cucumber.core.api.event.TestCase {
         return pickleEvent.uri;
     }
 
-    @Override
-    public int getLine() {
+    public Integer getLine() {
         return pickleEvent.pickle.getLocations().get(0).getLine();
     }
 
-    public List<Integer> getLines() {
-        List<Integer> lines = new ArrayList<>();
-        for (PickleLocation location : pickleEvent.pickle.getLocations()) {
-            lines.add(location.getLine());
-        }
-        return lines;
-    }
-
-    private String fileColonLine(PickleLocation location) {
-        return URI.create(pickleEvent.uri).getSchemeSpecificPart() + ":" + location.getLine();
+    private String fileColonLine(Integer line) {
+        return URI.create(pickleEvent.uri).getSchemeSpecificPart() + ":" + line;
     }
 
     @Override
