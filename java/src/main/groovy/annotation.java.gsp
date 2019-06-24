@@ -2,6 +2,8 @@ package io.cucumber.java.${lang};
 
 import cucumber.runtime.java.StepDefAnnotation;
 
+import org.apiguardian.api.API;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,6 +31,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @StepDefAnnotation
 @Documented
+@API(status = API.Status.STABLE)
 public @interface ${kw} {
     /**
      * A cucumber or regular expression.
