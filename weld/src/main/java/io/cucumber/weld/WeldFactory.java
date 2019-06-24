@@ -4,9 +4,11 @@ import cucumber.runtime.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import org.apiguardian.api.API;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
+@API(status = API.Status.STABLE)
 public final class WeldFactory implements ObjectFactory {
 
     private static final Logger log = LoggerFactory.getLogger(WeldFactory.class);

@@ -24,6 +24,11 @@
             <artifactId>cucumber-java</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
             <version>${cdi-api.version}</version>
