@@ -2,6 +2,7 @@ package io.cucumber.spring;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -24,6 +25,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 import static io.cucumber.spring.FixBootstrapUtils.createBootstrapContext;
 import static io.cucumber.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
 import static java.util.Arrays.asList;
@@ -60,6 +62,7 @@ import static java.util.Arrays.asList;
  * </li>
  * </ul>
  */
+@API(status = API.Status.STABLE)
 public final class SpringFactory implements ObjectFactory {
 
     private ConfigurableListableBeanFactory beanFactory;
@@ -153,7 +156,7 @@ public final class SpringFactory implements ObjectFactory {
         }
         applicationContext.registerShutdownHook();
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-        beanFactory.registerScope(GlueCodeScope.NAME, new GlueCodeScope());
+        beanFactory.registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
         for (Class<?> stepClass : stepClasses) {
             registerStepClassBeanDefinition(beanFactory, stepClass);
         }
@@ -180,9 +183,9 @@ public final class SpringFactory implements ObjectFactory {
     private void registerStepClassBeanDefinition(ConfigurableListableBeanFactory beanFactory, Class<?> stepClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
         BeanDefinition beanDefinition = BeanDefinitionBuilder
-            .genericBeanDefinition(stepClass)
-            .setScope(GlueCodeScope.NAME)
-            .getBeanDefinition();
+                .genericBeanDefinition(stepClass)
+                .setScope(SCOPE_CUCUMBER_GLUE)
+                .getBeanDefinition();
         registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
     }
 
@@ -246,7 +249,7 @@ public final class SpringFactory implements ObjectFactory {
 
         private void registerGlueCodeScope(ConfigurableApplicationContext context) {
             do {
-                context.getBeanFactory().registerScope(GlueCodeScope.NAME, new GlueCodeScope());
+                context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
                 context = (ConfigurableApplicationContext) context.getParent();
             } while (context != null);
         }

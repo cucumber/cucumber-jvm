@@ -1,6 +1,7 @@
 package io.cucumber.cdi2;
 
 import io.cucumber.core.backend.ObjectFactory;
+import org.apiguardian.api.API;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.se.SeContainer;
@@ -9,6 +10,7 @@ import javax.enterprise.inject.spi.Unmanaged;
 import java.util.HashMap;
 import java.util.Map;
 
+@API(status = API.Status.STABLE)
 public final class Cdi2Factory implements ObjectFactory {
 
     private SeContainerInitializer initializer;

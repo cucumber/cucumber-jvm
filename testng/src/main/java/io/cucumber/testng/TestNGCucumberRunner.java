@@ -29,6 +29,8 @@ import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TypeRegistrySupplier;
 import org.apiguardian.api.API;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -118,7 +120,7 @@ public final class TestNGCucumberRunner {
         }
     }
 
-    List<CucumberFeature> getFeatures() {
+    private List<CucumberFeature> getFeatures() {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
         List<CucumberFeature> features = featureSupplier.get();

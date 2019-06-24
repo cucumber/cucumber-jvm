@@ -3,6 +3,7 @@ package io.cucumber.needle;
 import io.cucumber.core.backend.ObjectFactory;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import static java.lang.String.format;
 /**
  * Needle factory for object resolution inside of cucumber tests.
  */
+@API(status = API.Status.STABLE)
 public final class NeedleFactory extends NeedleTestcase implements ObjectFactory {
 
     private final Map<Class<?>, Object> cachedStepsInstances = new LinkedHashMap<>();
