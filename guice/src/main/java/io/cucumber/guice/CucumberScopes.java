@@ -1,6 +1,7 @@
-package io.cucumber.guice.api;
+package io.cucumber.guice;
 
 import com.google.inject.Module;
+import org.apiguardian.api.API;
 
 /**
  * Creates an instance of {@link ScenarioScope} for use when declaring bindings
@@ -11,7 +12,13 @@ import com.google.inject.Module;
  *
  * <code>bind(ScenarioScopedObject.class).in(ScenarioScoped.class);</code>
  */
-public class CucumberScopes {
+@API(status = API.Status.STABLE)
+public final class CucumberScopes {
+
+    private CucumberScopes(){
+
+    }
+
     /**
      * A convenient instance of {@link ScenarioScope}. Should only be used
      * in combination with {@link CucumberModules#SCENARIO}.

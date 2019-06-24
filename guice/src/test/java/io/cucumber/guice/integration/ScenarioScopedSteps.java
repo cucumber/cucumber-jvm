@@ -3,7 +3,7 @@ package io.cucumber.guice.integration;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.guice.api.ScenarioScoped;
+import io.cucumber.guice.ScenarioScoped;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

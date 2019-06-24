@@ -3,12 +3,10 @@ package io.cucumber.guice;
 import com.google.inject.Guice;
 import com.google.inject.Stage;
 import io.cucumber.core.options.Env;
-import io.cucumber.guice.api.CucumberModules;
-import io.cucumber.guice.api.InjectorSource;
 
 import static java.text.MessageFormat.format;
 
-class InjectorSourceFactory {
+final class InjectorSourceFactory {
 
     static final String GUICE_INJECTOR_SOURCE_KEY = "guice.injector-source";
     private final Env env;

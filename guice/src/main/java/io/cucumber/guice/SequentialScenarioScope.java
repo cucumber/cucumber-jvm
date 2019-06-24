@@ -1,9 +1,8 @@
-package io.cucumber.guice.api;
+package io.cucumber.guice;
 
 import com.google.inject.Key;
 import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
-import io.cucumber.guice.api.ScenarioScope;
 
 import java.util.HashMap;
 import java.util.Map;

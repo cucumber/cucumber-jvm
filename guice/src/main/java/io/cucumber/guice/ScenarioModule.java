@@ -1,4 +1,4 @@
-package io.cucumber.guice.api;
+package io.cucumber.guice;
 
 import com.google.inject.AbstractModule;
 

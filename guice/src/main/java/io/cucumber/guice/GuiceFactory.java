@@ -3,12 +3,13 @@ package io.cucumber.guice;
 import com.google.inject.Injector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.Env;
-import io.cucumber.guice.api.ScenarioScope;
+import org.apiguardian.api.API;
 
 /**
  * Guice implementation of the <code>io.cucumber.core.backend.ObjectFactory</code>.
  */
-public class GuiceFactory implements ObjectFactory {
+@API(status = API.Status.STABLE)
+public final class GuiceFactory implements ObjectFactory {
 
     private final Injector injector;
 

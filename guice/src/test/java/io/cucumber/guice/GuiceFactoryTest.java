@@ -6,8 +6,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
-import io.cucumber.guice.api.CucumberModules;
-import io.cucumber.guice.api.ScenarioScoped;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
 import io.cucumber.core.backend.ObjectFactory;
@@ -55,7 +53,7 @@ public class GuiceFactoryTest {
     @Test
     public void factoryStartFailsIfScenarioScopeIsNotBound() {
         factory = new GuiceFactory(Guice.createInjector());
-        expectedException.expectMessage(containsString("No implementation for io.cucumber.guice.api.ScenarioScope was bound"));
+        expectedException.expectMessage(containsString("No implementation for io.cucumber.guice.ScenarioScope was bound"));
         factory.start();
     }
 

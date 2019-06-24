@@ -1,12 +1,19 @@
-package io.cucumber.guice.api;
+package io.cucumber.guice;
 
 import com.google.inject.Module;
+import org.apiguardian.api.API;
 
 /**
  * Provides a convenient {@link Module} instance that contains bindings for
  * {@link ScenarioScoped} annotation and for {@link ScenarioScope}.
  */
-public class CucumberModules {
+@API(status = API.Status.STABLE)
+public final class CucumberModules {
+
+    private CucumberModules(){
+
+    }
+
     /**
      * A convenient instance of {@link Module}. Should only be used
      * in combination with {@link CucumberScopes#SCENARIO}.
