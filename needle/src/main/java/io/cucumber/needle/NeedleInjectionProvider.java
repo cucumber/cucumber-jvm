@@ -1,6 +1,7 @@
 package io.cucumber.needle;
 
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import org.apiguardian.api.API;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,5 +14,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@API(status = API.Status.STABLE)
 public @interface NeedleInjectionProvider {
 }
