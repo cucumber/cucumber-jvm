@@ -15,6 +15,8 @@ import cucumber.runtime.java.LambdaGlueRegistry;
 import cucumber.runtime.java8.Java8StepDefinition;
 import io.cucumber.java8.LambdaGlue;
 
+import org.apiguardian.api.API;
+
 /**
  * ${locale.getDisplayLanguage()}
  * <p>
@@ -34,6 +36,7 @@ import io.cucumber.java8.LambdaGlue;
  * attempt to transform the data table or doc string to the the
  * type of last argument.
  */
+@API(status = API.Status.STABLE)
 public interface ${className} extends LambdaGlue {
 <% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
     /**

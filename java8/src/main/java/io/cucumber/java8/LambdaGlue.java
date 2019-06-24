@@ -5,7 +5,9 @@ import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java8.Java8HookDefinition;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE)
 public interface LambdaGlue extends GlueBase {
 
     String[] EMPTY_TAG_EXPRESSIONS = {};
