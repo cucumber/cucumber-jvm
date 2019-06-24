@@ -16,6 +16,7 @@ import gherkin.events.PickleEvent;
 import io.cucumber.core.options.EnvironmentOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import org.apiguardian.api.API;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * Glue code for running Cucumber via TestNG.
  */
+@API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
     private final EventBus bus;
     private final Filters filters;
@@ -34,7 +36,7 @@ public final class TestNGCucumberRunner {
     /**
      * Bootstrap the cucumber runtime
      *
-     * @param clazz Which has the {@link cucumber.api.CucumberOptions}
+     * @param clazz Which has the {@link CucumberOptions}
      *              and {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class clazz) {
@@ -98,7 +100,7 @@ public final class TestNGCucumberRunner {
         }
     }
 
-    List<CucumberFeature> getFeatures() {
+    private List<CucumberFeature> getFeatures() {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
         List<CucumberFeature> features = featureSupplier.get();
