@@ -1,5 +1,8 @@
 package io.cucumber.java8;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE)
 public interface StepdefBody {
     @FunctionalInterface
     interface A0 extends StepdefBody {

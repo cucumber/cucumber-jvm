@@ -3,6 +3,8 @@ package io.cucumber.java.${lang};
 import io.cucumber.java.StepDefAnnotation;
 import io.cucumber.java.StepDefAnnotations;
 
+import org.apiguardian.api.API;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
@@ -32,6 +34,7 @@ import java.lang.annotation.Target;
 @StepDefAnnotation
 @Documented
 @Repeatable(${kw}.${kw}s.class)
+@API(status = API.Status.STABLE)
 public @interface ${kw} {
     /**
      * A cucumber or regular expression.
