@@ -8,13 +8,14 @@ cache:
 jobs:
   include:
   # 1.1 Semver check
-  - stage: test
-    jdk: openjdk11
-    script: mvn verify -Pcheck-semantic-version -DskipTests=true
-    env: CHECK_SEMANTIC_VERSION=true
+#  - stage: test
+#    jdk: openjdk11
+#    script: mvn verify -Pcheck-semantic-version -DskipTests=true
+#    env: CHECK_SEMANTIC_VERSION=true
 
     # 1.2 Check JDK 8,10,ea
-  - jdk: openjdk8
+  - stage: test
+    jdk: openjdk8
     script: mvn -q verify
     after_success:
     - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
