@@ -3,6 +3,7 @@ package io.cucumber.openejb;
 import cucumber.runtime.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
 import org.apache.openejb.OpenEjbContainer;
+import org.apiguardian.api.API;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+@API(status = API.Status.STABLE)
 public final class OpenEJBObjectFactory implements ObjectFactory {
     private final List<String> classes = new ArrayList<String>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
