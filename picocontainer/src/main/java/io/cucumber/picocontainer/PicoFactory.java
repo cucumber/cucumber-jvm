@@ -2,6 +2,7 @@ package io.cucumber.picocontainer;
 
 import cucumber.runtime.Utils;
 import io.cucumber.core.backend.ObjectFactory;
+import org.apiguardian.api.API;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
@@ -9,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
+@API(status = API.Status.STABLE)
 public final class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
     private final Set<Class<?>> classes = new HashSet<>();
