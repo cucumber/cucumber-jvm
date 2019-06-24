@@ -105,7 +105,7 @@ Changing a Spring bean's scope to `SCOPE_CUCUMBER_GLUE` will bound its lifecycle
 ```java
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
-import static io.cucumber.spring.api.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
 @Component
 @Scope(SCOPE_CUCUMBER_GLUE)

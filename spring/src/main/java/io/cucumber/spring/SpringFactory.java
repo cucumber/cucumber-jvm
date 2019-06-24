@@ -2,6 +2,7 @@ package io.cucumber.spring;
 
 import cucumber.runtime.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
+import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -24,7 +25,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
-import static io.cucumber.spring.api.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 import static io.cucumber.spring.FixBootstrapUtils.createBootstrapContext;
 import static io.cucumber.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
 import static java.util.Arrays.asList;
@@ -61,6 +62,7 @@ import static java.util.Arrays.asList;
  * </li>
  * </ul>
  */
+@API(status = API.Status.STABLE)
 public final class SpringFactory implements ObjectFactory {
 
     private ConfigurableListableBeanFactory beanFactory;
