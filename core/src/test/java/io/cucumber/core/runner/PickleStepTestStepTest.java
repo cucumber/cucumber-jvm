@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.runner.TestPendingException;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCaseEvent;
 import io.cucumber.core.api.event.TestStepFinished;
@@ -8,7 +7,7 @@ import io.cucumber.core.api.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.api.event.Argument;
 import io.cucumber.core.api.event.TestCase;
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 
 import java.util.Collections;
 import java.util.List;

@@ -8,8 +8,7 @@ import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.backend.Backend;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
@@ -25,12 +24,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +34,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 public class FeatureRunnerTest {
 

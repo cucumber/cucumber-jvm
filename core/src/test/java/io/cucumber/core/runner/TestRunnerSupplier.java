@@ -3,7 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.core.snippets.Snippet;

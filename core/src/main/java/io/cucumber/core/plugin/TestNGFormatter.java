@@ -3,7 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.api.event.PickleStepTestStep;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestCaseStarted;

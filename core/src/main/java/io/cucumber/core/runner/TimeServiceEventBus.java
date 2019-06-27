@@ -3,7 +3,7 @@ package io.cucumber.core.runner;
 import java.time.Clock;
 import java.time.Instant;
 
-import io.cucumber.core.event.AbstractEventBus;
+import io.cucumber.core.eventbus.AbstractEventBus;
 
 public final class TimeServiceEventBus extends AbstractEventBus {
     private final Clock clock;

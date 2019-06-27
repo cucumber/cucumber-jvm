@@ -4,7 +4,7 @@ import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EmbedEvent;
 import io.cucumber.core.api.event.WriteEvent;
 import gherkin.events.PickleEvent;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 

@@ -9,7 +9,7 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.stepexpression.TypeRegistry;

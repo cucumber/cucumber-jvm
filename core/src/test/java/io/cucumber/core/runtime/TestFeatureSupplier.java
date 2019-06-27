@@ -2,7 +2,7 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 
 import java.util.Arrays;
 import java.util.List;

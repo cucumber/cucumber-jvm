@@ -5,7 +5,7 @@ import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.stepexpression.TypeRegistry;
@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.function.Function;
 

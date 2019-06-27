@@ -5,7 +5,7 @@ import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonPrimitive;
 import gherkin.deps.com.google.gson.JsonSerializer;
 import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.PickleStepTestStep;
 import io.cucumber.core.api.event.Result;

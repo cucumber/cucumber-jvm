@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.plugin.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestCaseEvent;

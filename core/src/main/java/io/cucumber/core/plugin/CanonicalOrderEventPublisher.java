@@ -2,9 +2,8 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.api.event.Event;
 import io.cucumber.core.api.event.TestRunFinished;
-import io.cucumber.core.event.AbstractEventPublisher;
+import io.cucumber.core.eventbus.AbstractEventPublisher;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 

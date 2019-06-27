@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestStepStarted;
 

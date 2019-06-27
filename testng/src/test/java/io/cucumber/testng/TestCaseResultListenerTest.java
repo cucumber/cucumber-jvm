@@ -1,7 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.api.event.Result;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runner.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;

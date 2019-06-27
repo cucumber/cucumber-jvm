@@ -6,7 +6,7 @@ import io.cucumber.core.api.event.TestCaseFinished;
 import io.cucumber.core.api.event.TestCaseStarted;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleTag;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 
 import java.net.URI;
 import java.time.Duration;

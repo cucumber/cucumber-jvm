@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import gherkin.pickles.PickleLocation;
 import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runner.TimeServiceEventBus;

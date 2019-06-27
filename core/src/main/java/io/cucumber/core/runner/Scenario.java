@@ -5,7 +5,7 @@ import io.cucumber.core.api.event.EmbedEvent;
 import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.WriteEvent;
 import gherkin.pickles.PickleTag;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -8,7 +8,7 @@ import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestStep;
 import io.cucumber.core.api.event.EmbedEvent;
 import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestCaseStarted;
 import io.cucumber.core.api.event.TestRunFinished;

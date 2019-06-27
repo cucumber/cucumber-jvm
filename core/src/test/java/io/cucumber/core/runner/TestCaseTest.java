@@ -8,7 +8,7 @@ import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 
 import org.junit.Before;
 import org.junit.Test;

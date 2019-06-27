@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.api.event.Argument;
-import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.event.PickleStepTestStep;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCase;

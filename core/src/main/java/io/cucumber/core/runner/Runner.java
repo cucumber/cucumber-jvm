@@ -8,7 +8,7 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;

@@ -6,7 +6,7 @@ import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java.en.Given;
 import io.cucumber.core.runner.TimeServiceEventBus;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.AmbiguousStepDefinitionsException;
 import io.cucumber.core.backend.Backend;

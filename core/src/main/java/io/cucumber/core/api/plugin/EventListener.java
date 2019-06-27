@@ -1,6 +1,7 @@
-package io.cucumber.core.api.event;
+package io.cucumber.core.api.plugin;
 
-import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.EventPublisher;
 
 /**
  * Listens to pickle execution events. Can be used to
@@ -9,7 +10,7 @@ import io.cucumber.core.api.plugin.Plugin;
  * When cucumber executes test in parallel or in a framework
  * that supports parallel execution (e.g. JUnit or TestNG)
  * {@link Event}s are stored and published
- * in @{@link Event#CANONICAL_ORDER} after the test run has
+ * in @{@link io.cucumber.core.plugin.CanonicalEventOrder} after the test run has
  * completed.
  *
  * @see Event

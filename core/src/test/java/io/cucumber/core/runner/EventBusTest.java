@@ -18,7 +18,7 @@ import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.TestCase;
 import io.cucumber.core.api.event.TestStepFinished;
 import io.cucumber.core.api.event.TestStepStarted;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 
 public class EventBusTest {
 

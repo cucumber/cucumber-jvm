@@ -3,7 +3,7 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestCaseStarted;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;

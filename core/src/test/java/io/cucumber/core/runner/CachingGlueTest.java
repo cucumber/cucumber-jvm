@@ -12,7 +12,7 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;

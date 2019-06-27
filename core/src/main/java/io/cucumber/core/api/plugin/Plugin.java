@@ -1,8 +1,5 @@
 package io.cucumber.core.api.plugin;
 
-import io.cucumber.core.api.event.ConcurrentEventListener;
-import io.cucumber.core.api.event.EventListener;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URL;

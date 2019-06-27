@@ -1,4 +1,4 @@
-package io.cucumber.core.event;
+package io.cucumber.core.eventbus;
 
 import java.time.Instant;
 

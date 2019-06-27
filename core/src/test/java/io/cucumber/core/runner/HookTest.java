@@ -5,9 +5,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.event.EventBus;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.options.Env;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
@@ -27,7 +25,6 @@ import java.time.Clock;
 import java.util.Collections;
 import java.util.Locale;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;

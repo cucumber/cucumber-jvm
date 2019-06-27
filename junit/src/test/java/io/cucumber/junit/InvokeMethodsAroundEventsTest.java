@@ -1,6 +1,6 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.plugin.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;

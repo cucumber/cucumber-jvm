@@ -7,7 +7,7 @@ import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
@@ -28,8 +28,6 @@ import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TypeRegistrySupplier;
-import org.apiguardian.api.API;
-import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import org.apiguardian.api.API;
 
 import java.time.Clock;

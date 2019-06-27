@@ -1,7 +1,7 @@
 package io.cucumber.core.runtime;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.api.event.ConcurrentEventListener;
+import io.cucumber.core.api.plugin.ConcurrentEventListener;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.event.Result;
@@ -10,7 +10,7 @@ import io.cucumber.core.api.event.TestRunFinished;
 import io.cucumber.core.api.event.TestRunStarted;
 import io.cucumber.core.api.event.TestSourceRead;
 import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.Filters;

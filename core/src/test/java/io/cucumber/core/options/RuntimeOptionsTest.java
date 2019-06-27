@@ -1,7 +1,7 @@
 package io.cucumber.core.options;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.api.event.EventListener;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.event.EventPublisher;
 import io.cucumber.core.api.plugin.ColorAware;
 import io.cucumber.core.api.plugin.Plugin;

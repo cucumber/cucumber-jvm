@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import io.cucumber.core.api.event.*;
 import io.cucumber.core.api.plugin.ColorAware;
+import io.cucumber.core.api.plugin.EventListener;
 import io.cucumber.core.api.plugin.SummaryPrinter;
 
 public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, SummaryPrinter {

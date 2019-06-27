@@ -1,6 +1,8 @@
-package io.cucumber.core.api.event;
+package io.cucumber.core.api.plugin;
 
-import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.api.event.Event;
+import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.api.event.TestCase;
 
 /**
  * Listens to pickle execution events. Can be used to

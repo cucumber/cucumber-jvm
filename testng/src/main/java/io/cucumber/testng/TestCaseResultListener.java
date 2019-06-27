@@ -3,7 +3,7 @@ package io.cucumber.testng;
 import io.cucumber.core.api.event.Result;
 import io.cucumber.core.api.event.EventHandler;
 import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.event.EventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import org.testng.SkipException;
 
