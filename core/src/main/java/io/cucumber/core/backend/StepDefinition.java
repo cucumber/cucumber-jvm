@@ -5,7 +5,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
-public interface StepDefinition extends io.cucumber.core.api.event.StepDefinition {
+public interface StepDefinition extends io.cucumber.core.event.StepDefinition {
     /**
      * Returns a list of arguments. Return null if the step definition
      * doesn't match at all. Return an empty List if it matches with 0 arguments

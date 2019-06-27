@@ -1,12 +1,12 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.PickleStepTestStep;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.event.TestCaseStarted;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.TestCaseFinished;
+import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.core.eventbus.EventBus;
 import org.junit.runner.Description;

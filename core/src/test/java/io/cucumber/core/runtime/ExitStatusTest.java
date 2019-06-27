@@ -1,13 +1,12 @@
 package io.cucumber.core.runtime;
 
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.TestCaseFinished;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Test;
 
 import java.time.Clock;

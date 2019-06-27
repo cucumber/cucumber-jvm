@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
 
 import gherkin.pickles.PickleTag;
-import io.cucumber.core.api.event.Result;
+import io.cucumber.core.event.Result;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
@@ -37,7 +37,7 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.Runtime;
 

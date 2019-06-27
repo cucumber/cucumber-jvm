@@ -1,15 +1,15 @@
 package io.cucumber.core.runtime;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.api.plugin.ConcurrentEventListener;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.event.TestRunFinished;
-import io.cucumber.core.api.event.TestRunStarted;
-import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.plugin.ConcurrentEventListener;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestCaseFinished;
+import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.core.event.TestRunStarted;
+import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
@@ -24,7 +24,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.TimeServiceEventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 
@@ -41,7 +40,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.cucumber.core.api.event.Result.SEVERITY;
+import static io.cucumber.core.event.Result.SEVERITY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;

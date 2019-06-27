@@ -1,14 +1,14 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.event.Argument;
-import io.cucumber.core.api.event.TestCase;
+import io.cucumber.core.event.Argument;
+import io.cucumber.core.event.TestCase;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.eventbus.EventBus;
 
 import java.util.Collections;
 import java.util.List;
 
-final class PickleStepTestStep extends TestStep implements io.cucumber.core.api.event.PickleStepTestStep {
+final class PickleStepTestStep extends TestStep implements io.cucumber.core.event.PickleStepTestStep {
     private final String uri;
     private final PickleStep step;
     private final List<HookTestStep> afterStepHookSteps;

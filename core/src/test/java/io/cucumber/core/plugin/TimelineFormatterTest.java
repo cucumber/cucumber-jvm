@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.Result;
+import io.cucumber.core.event.Result;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.feature.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;

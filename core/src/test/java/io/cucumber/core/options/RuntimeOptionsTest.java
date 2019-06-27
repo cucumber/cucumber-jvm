@@ -1,11 +1,11 @@
 package io.cucumber.core.options;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.api.plugin.EventListener;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.plugin.ColorAware;
-import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.plugin.StrictAware;
+import io.cucumber.core.plugin.EventListener;
+import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.plugin.ColorAware;
+import io.cucumber.core.plugin.Plugin;
+import io.cucumber.core.plugin.StrictAware;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.Resource;
@@ -13,7 +13,7 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;

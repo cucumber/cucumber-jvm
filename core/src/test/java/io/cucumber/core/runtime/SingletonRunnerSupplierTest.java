@@ -7,7 +7,6 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runner.TimeServiceEventBus;
 import org.junit.Before;
 import org.junit.Test;
 

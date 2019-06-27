@@ -1,13 +1,12 @@
 package io.cucumber.core.plugin;
 
-import gherkin.pickles.PickleLocation;
-import io.cucumber.core.api.event.Event;
-import io.cucumber.core.api.event.SnippetsSuggestedEvent;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.TestCaseStarted;
-import io.cucumber.core.api.event.TestRunFinished;
-import io.cucumber.core.api.event.TestRunStarted;
-import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.Event;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.core.event.TestRunStarted;
+import io.cucumber.core.event.TestSourceRead;
 import org.junit.Test;
 
 import java.time.Instant;

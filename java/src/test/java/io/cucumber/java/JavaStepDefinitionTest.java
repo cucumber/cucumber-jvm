@@ -1,11 +1,11 @@
 package io.cucumber.java;
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java.en.Given;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runner.AmbiguousStepDefinitionsException;

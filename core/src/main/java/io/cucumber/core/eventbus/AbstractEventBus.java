@@ -1,6 +1,6 @@
 package io.cucumber.core.eventbus;
 
-import io.cucumber.core.api.event.Event;
+import io.cucumber.core.event.Event;
 
 public abstract class AbstractEventBus extends AbstractEventPublisher implements EventBus {
 

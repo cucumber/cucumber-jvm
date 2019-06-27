@@ -1,11 +1,11 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.api.plugin.Plugin;
+import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.Test;
 
 import java.net.URI;

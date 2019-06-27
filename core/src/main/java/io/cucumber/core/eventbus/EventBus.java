@@ -2,8 +2,8 @@ package io.cucumber.core.eventbus;
 
 import java.time.Instant;
 
-import io.cucumber.core.api.event.Event;
-import io.cucumber.core.api.event.EventPublisher;
+import io.cucumber.core.event.Event;
+import io.cucumber.core.event.EventPublisher;
 
 public interface EventBus extends EventPublisher {
 

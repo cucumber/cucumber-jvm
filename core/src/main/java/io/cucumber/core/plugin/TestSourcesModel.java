@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.TestSourceRead;
 import gherkin.AstBuilder;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.mockito.stubbing.Answer;
 import org.xml.sax.SAXException;
 
-import io.cucumber.core.api.event.Result;
+import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestHelper;
 

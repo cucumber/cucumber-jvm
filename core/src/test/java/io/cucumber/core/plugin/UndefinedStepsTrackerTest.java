@@ -13,11 +13,11 @@ import java.util.List;
 import org.junit.Test;
 
 import gherkin.pickles.PickleLocation;
-import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runner.ClockStub;
 
 public class UndefinedStepsTrackerTest {

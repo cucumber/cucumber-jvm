@@ -1,16 +1,14 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.PickleStepTestStep;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.plugin.EventListener;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.event.TestCaseStarted;
-import io.cucumber.core.api.event.TestRunFinished;
-import io.cucumber.core.api.event.TestSourceRead;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.plugin.StrictAware;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.TestCaseFinished;
+import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.exception.CucumberException;
 
 import org.w3c.dom.Document;
@@ -206,9 +204,9 @@ public final class JUnitFormatter implements EventListener, StrictAware {
 
         private final List<PickleStepTestStep> steps = new ArrayList<>();
         private final List<Result> results = new ArrayList<>();
-        private final io.cucumber.core.api.event.TestCase testCase;
+        private final io.cucumber.core.event.TestCase testCase;
 
-        TestCase(io.cucumber.core.api.event.TestCase testCase) {
+        TestCase(io.cucumber.core.event.TestCase testCase) {
             this.testCase = testCase;
         }
 
@@ -221,7 +219,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
-        private String calculateElementName(io.cucumber.core.api.event.TestCase testCase) {
+        private String calculateElementName(io.cucumber.core.event.TestCase testCase) {
             String testCaseName = testCase.getName();
             if (testCaseName.equals(previousTestCaseName)) {
                 return getUniqueTestNameForScenarioExample(testCaseName, ++exampleNumber);

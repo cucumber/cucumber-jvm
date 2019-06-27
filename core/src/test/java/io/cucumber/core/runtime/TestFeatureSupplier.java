@@ -1,6 +1,6 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.eventbus.EventBus;
 

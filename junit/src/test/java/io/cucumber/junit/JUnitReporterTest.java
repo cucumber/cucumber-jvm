@@ -1,7 +1,7 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.junit.JUnitReporter.EachTestNotifier;
 import io.cucumber.junit.JUnitReporter.NoTestNotifier;

@@ -1,6 +1,6 @@
 package io.cucumber.core.api;
 
-import io.cucumber.core.api.event.Result;
+import io.cucumber.core.event.Result;
 
 import java.util.Collection;
 

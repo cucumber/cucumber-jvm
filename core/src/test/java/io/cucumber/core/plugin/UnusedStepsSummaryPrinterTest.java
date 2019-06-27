@@ -2,12 +2,12 @@ package io.cucumber.core.plugin;
 
 import java.time.Clock;
 
-import io.cucumber.core.api.event.StepDefinedEvent;
-import io.cucumber.core.api.event.TestRunFinished;
-import io.cucumber.core.api.event.TestStep;
-import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.event.StepDefinedEvent;
+import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.core.event.TestStep;
+import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

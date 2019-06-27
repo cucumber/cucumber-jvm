@@ -1,9 +1,9 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.api.plugin.Plugin;
-import io.cucumber.core.api.plugin.SummaryPrinter;
-import io.cucumber.core.api.plugin.ConcurrentEventListener;
-import io.cucumber.core.api.plugin.EventListener;
+import io.cucumber.core.plugin.Plugin;
+import io.cucumber.core.plugin.SummaryPrinter;
+import io.cucumber.core.plugin.ConcurrentEventListener;
+import io.cucumber.core.plugin.EventListener;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;

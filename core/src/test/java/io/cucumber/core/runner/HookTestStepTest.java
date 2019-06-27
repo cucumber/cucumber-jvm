@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.event.HookType;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.eventbus.EventBus;

@@ -12,6 +12,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;

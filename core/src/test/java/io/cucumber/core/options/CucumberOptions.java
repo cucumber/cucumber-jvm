@@ -87,7 +87,7 @@ public @interface CucumberOptions {
      * Plugins can be provided with an argument. For example
      * {@code json:target/cucumber-report.json}
      *
-     * @see io.cucumber.core.api.plugin.Plugin
+     * @see io.cucumber.core.plugin.Plugin
      * @return The plugins that should be added.
      */
     String[] plugin() default {};

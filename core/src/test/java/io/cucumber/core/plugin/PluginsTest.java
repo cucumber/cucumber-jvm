@@ -1,11 +1,7 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.plugin.ConcurrentEventListener;
-import io.cucumber.core.api.event.Event;
-import io.cucumber.core.api.plugin.EventListener;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.plugin.ColorAware;
-import io.cucumber.core.api.plugin.StrictAware;
+import io.cucumber.core.event.Event;
+import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Rule;
 import org.junit.Test;

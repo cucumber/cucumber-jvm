@@ -9,7 +9,7 @@ public interface Options {
 
     interface Plugin {
 
-        Class<? extends io.cucumber.core.api.plugin.Plugin> pluginClass();
+        Class<? extends io.cucumber.core.plugin.Plugin> pluginClass();
 
         String argument();
 

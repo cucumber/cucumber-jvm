@@ -2,7 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.Runtime;
 import org.junit.Test;
 

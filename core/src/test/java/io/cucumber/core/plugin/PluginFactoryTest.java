@@ -1,12 +1,12 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.PickleStepTestStep;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.TestStepFinished;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runner.ClockStub;
 import org.junit.Test;
 

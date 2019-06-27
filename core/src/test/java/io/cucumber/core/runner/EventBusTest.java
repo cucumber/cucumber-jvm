@@ -10,14 +10,15 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.Test;
 
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.event.PickleStepTestStep;
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCase;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 
 public class EventBusTest {

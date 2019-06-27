@@ -1,10 +1,9 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.api.event.EventHandler;
-import io.cucumber.core.api.plugin.EventListener;
-import io.cucumber.core.api.event.EventPublisher;
-import io.cucumber.core.api.event.SnippetsSuggestedEvent;
-import io.cucumber.core.api.event.TestSourceRead;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
+import io.cucumber.core.event.TestSourceRead;
 import gherkin.AstBuilder;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;

@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.event.HookType;
-import io.cucumber.core.api.event.SnippetsSuggestedEvent;
+import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;

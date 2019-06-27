@@ -13,6 +13,7 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;

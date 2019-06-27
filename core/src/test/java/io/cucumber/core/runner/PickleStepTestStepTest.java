@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.event.Result;
-import io.cucumber.core.api.event.TestCaseEvent;
-import io.cucumber.core.api.event.TestStepFinished;
-import io.cucumber.core.api.event.TestStepStarted;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestCaseEvent;
+import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
@@ -20,11 +20,11 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import static io.cucumber.core.api.event.HookType.AfterStep;
-import static io.cucumber.core.api.event.HookType.BeforeStep;
-import static io.cucumber.core.api.event.Result.Type.FAILED;
-import static io.cucumber.core.api.event.Result.Type.PASSED;
-import static io.cucumber.core.api.event.Result.Type.SKIPPED;
+import static io.cucumber.core.event.HookType.AfterStep;
+import static io.cucumber.core.event.HookType.BeforeStep;
+import static io.cucumber.core.event.Result.Type.FAILED;
+import static io.cucumber.core.event.Result.Type.PASSED;
+import static io.cucumber.core.event.Result.Type.SKIPPED;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
 import static java.time.Instant.ofEpochMilli;

@@ -7,7 +7,7 @@ import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
-import io.cucumber.core.runner.TimeServiceEventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.options.RuntimeOptions;

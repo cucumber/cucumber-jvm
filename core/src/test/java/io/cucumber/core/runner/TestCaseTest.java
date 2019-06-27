@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.api.event.TestCaseFinished;
-import io.cucumber.core.api.event.TestCaseStarted;
+import io.cucumber.core.event.TestCaseFinished;
+import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.Collections;
 
-import static io.cucumber.core.api.event.HookType.AfterStep;
-import static io.cucumber.core.api.event.HookType.BeforeStep;
+import static io.cucumber.core.event.HookType.AfterStep;
+import static io.cucumber.core.event.HookType.BeforeStep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.isA;
