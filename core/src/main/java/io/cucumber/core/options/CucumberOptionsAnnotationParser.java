@@ -50,7 +50,6 @@ public final class CucumberOptionsAnnotationParser {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
-                addJunitOptions(options, args);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -154,12 +153,6 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addJunitOptions(CucumberOptions options, RuntimeOptionsBuilder args) {
-        for (String junitOption : options.junit()) {
-            args.addJunitOption(junitOption);
-        }
-    }
-
     private static String packagePath(Class clazz) {
         String packageName = packageName(clazz);
 
@@ -170,7 +163,7 @@ public final class CucumberOptionsAnnotationParser {
         return Classpath.CLASSPATH_SCHEME_PREFIX + packageName.replace('.', '/');
     }
 
-    static String packageName(Class clazz) {
+    private static String packageName(Class clazz) {
         String className = clazz.getName();
         return className.substring(0, Math.max(0, className.lastIndexOf('.')));
     }
@@ -211,7 +204,5 @@ public final class CucumberOptionsAnnotationParser {
         String[] name();
 
         SnippetType snippets();
-
-        String[] junit();
     }
 }

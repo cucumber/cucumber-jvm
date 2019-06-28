@@ -5,8 +5,6 @@ import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -15,41 +13,41 @@ import static org.mockito.Mockito.mock;
 public class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
-    public void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() throws Exception {
+    public void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
-                "feature name",
-                mock(RunnerSupplier.class),
-                pickles.get(0),
-                createJUnitOptions()
+            "feature name",
+            mock(RunnerSupplier.class),
+            pickles.get(0),
+            createJunitOptions()
         );
 
         assertEquals("scenario name(feature name)", runner.getDescription().getDisplayName());
     }
 
     @Test
-    public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() throws Exception {
+    public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
-                "feature name",
-                mock(RunnerSupplier.class),
-                pickles.get(0),
-                createJUnitOptions("--filename-compatible-names")
+            "feature name",
+            mock(RunnerSupplier.class),
+            pickles.get(0),
+            createFileNameCompatibleJUnitOptions()
         );
 
         assertEquals("scenario_name(feature_name)", runner.getDescription().getDisplayName());
     }
 
     @Test
-    public void shouldConvertTextFromFeatureFileWithRussianLanguage() throws Exception {
+    public void shouldConvertTextFromFeatureFileWithRussianLanguage() {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
             "#language:ru\n" +
             "Функция: имя функции\n" +
@@ -60,17 +58,17 @@ public class PickleRunnerWithNoStepDescriptionsTest {
             "имя функции",
             mock(RunnerSupplier.class),
             pickles.get(0),
-            createJUnitOptions("--filename-compatible-names")
+            createFileNameCompatibleJUnitOptions()
         );
 
         assertEquals("____________(___________)", runner.getDescription().getDisplayName());
     }
 
-    private JUnitOptions createJUnitOptions() {
-        return new JUnitOptionsParser().parse(Collections.<String>emptyList()).setStrict(true).build();
+    private JUnitOptions createJunitOptions() {
+        return new JUnitOptionsBuilder().setStrict(true).build();
     }
 
-    private JUnitOptions createJUnitOptions(String option) {
-        return new JUnitOptionsParser().parse(Collections.singletonList(option)).setStrict(true).build();
+    private JUnitOptions createFileNameCompatibleJUnitOptions() {
+        return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).setStrict(true).build();
     }
 }

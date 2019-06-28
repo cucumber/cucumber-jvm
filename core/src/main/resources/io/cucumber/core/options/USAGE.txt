@@ -39,10 +39,6 @@ Options:
       --i18n LANG                          List keywords for in a particular language
                                            Run with "--i18n help" to see all languages
 
-      --junit,OPTION[,OPTION]*             Pass the OPTION(s) to the JUnit module.
-                                           Use --junit,-h or --junit,--help to print the
-                                           options of the JUnit module.
-
   -w, --wip                                Fail if there are any passing scenarios.
   
     

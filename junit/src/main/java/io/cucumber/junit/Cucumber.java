@@ -94,14 +94,14 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptions bundleOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
             .withOptionsProvider(new JUnitCucumberOptionsProvider())
             .parse(clazz)
-            .build(bundleOptions);
+            .build(propertiesFileOptions);
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromEnvironment())
@@ -111,14 +111,23 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
-        JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
-            .parse(clazz)
+        // Next parse the junit options
+        JUnitOptions junitPropertiesFileOptions = new JUnitOptionsParser()
+            .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
-        JUnitOptions junitOptions = new JUnitOptionsParser()
-            .parse(runtimeOptions.getJunitOptions())
-            .setStrict(runtimeOptions.isStrict())
+        JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
+            .parse(clazz)
+            .build(junitPropertiesFileOptions);
+
+        JUnitOptions junitEnvironmentOptions = new JUnitOptionsParser()
+            .parse(CucumberProperties.fromEnvironment())
             .build(junitAnnotationOptions);
+
+        JUnitOptions junitOptions = new JUnitOptionsParser()
+            .parse(CucumberProperties.fromSystemProperties())
+            .setStrict(runtimeOptions.isStrict())
+            .build(junitEnvironmentOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);

@@ -96,15 +96,6 @@ public @interface CucumberOptions {
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
     /**
-     * Pass options to the JUnit runner.
-     *
-     * @deprecated use {@link #useFileNameCompatibleName()} or
-     * {@link #stepNotifications()} instead.
-     */
-    @Deprecated
-    String[] junit() default {};
-
-    /**
      * Use filename compatible names.
      * <p>
      * Make sure that the names of the test cases only is made up of

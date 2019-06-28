@@ -107,10 +107,6 @@ final class RuntimeOptionsParser {
                 String nextArg = args.remove(0);
                 Pattern pattern = Pattern.compile(nextArg);
                 parsedOptions.addNameFilter(pattern);
-            } else if (arg.startsWith("--junit,")) {
-                for (String parsedOption : arg.substring("--junit,".length()).split(",")) {
-                    parsedOptions.addJunitOption(parsedOption);
-                }
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 parsedOptions.setWip(true);
             } else if (arg.equals("--order")) {

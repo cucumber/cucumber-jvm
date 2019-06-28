@@ -23,7 +23,6 @@ import org.mockito.InOrder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,7 +71,7 @@ public class FeatureRunnerTest {
 
         );
 
-        FeatureRunner runner = createFeatureRunner(cucumberFeature);
+        FeatureRunner runner = createFeatureRunner(cucumberFeature, new JUnitOptions());
 
         Description feature = runner.getDescription();
         Description scenarioA = feature.getChildren().get(0);
@@ -104,7 +103,7 @@ public class FeatureRunnerTest {
             "      |   x    |   y   |\n" +
             "      | second | third |\n");
 
-        RunNotifier notifier = runFeatureWithNotifier(feature);
+        RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
         InOrder order = inOrder(notifier);
 
@@ -131,7 +130,7 @@ public class FeatureRunnerTest {
             "  Scenario: scenario_2 name\n" +
             "    Then another second step\n");
 
-        RunNotifier notifier = runFeatureWithNotifier(feature);
+        RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
         InOrder order = inOrder(notifier);
 
@@ -143,16 +142,11 @@ public class FeatureRunnerTest {
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
     }
 
-    private RunNotifier runFeatureWithNotifier(CucumberFeature cucumberFeature, String... options) throws InitializationError {
+    private RunNotifier runFeatureWithNotifier(CucumberFeature cucumberFeature, JUnitOptions options) throws InitializationError {
         FeatureRunner runner = createFeatureRunner(cucumberFeature, options);
         RunNotifier notifier = mock(RunNotifier.class);
         runner.run(notifier);
         return notifier;
-    }
-
-    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
-        JUnitOptions junitOption = new JUnitOptionsParser().parse(Arrays.asList(options)).build();
-        return createFeatureRunner(cucumberFeature, junitOption);
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
@@ -207,10 +201,10 @@ public class FeatureRunnerTest {
 
         );
 
-        FeatureRunner runner = createFeatureRunner(cucumberFeature);
-        FeatureRunner rerunner = createFeatureRunner(cucumberFeature);
+        FeatureRunner runner = createFeatureRunner(cucumberFeature, new JUnitOptions());
+        FeatureRunner rerunner = createFeatureRunner(cucumberFeature, new JUnitOptions());
 
-        Set<Description> descriptions = new HashSet<Description>();
+        Set<Description> descriptions = new HashSet<>();
         assertDescriptionIsUnique(runner.getDescription(), descriptions);
         assertDescriptionIsPredictable(runner.getDescription(), descriptions);
         assertDescriptionIsPredictable(rerunner.getDescription(), descriptions);
@@ -237,7 +231,8 @@ public class FeatureRunnerTest {
 
         );
 
-        FeatureRunner runner = createFeatureRunner(cucumberFeature, "--step-notifications");
+        JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
+        FeatureRunner runner = createFeatureRunner(cucumberFeature, junitOption);
 
         Description feature = runner.getDescription();
         Description scenarioA = feature.getChildren().get(0);
@@ -269,7 +264,8 @@ public class FeatureRunnerTest {
             "      |   x    |   y   |\n" +
             "      | second | third |\n");
 
-        RunNotifier notifier = runFeatureWithNotifier(feature, "--step-notifications");
+        JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
+        RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
 
         InOrder order = inOrder(notifier);
 
@@ -320,7 +316,8 @@ public class FeatureRunnerTest {
             "  Scenario: scenario_2 name\n" +
             "    Then another second step\n");
 
-        RunNotifier notifier = runFeatureWithNotifier(feature, "--step-notifications");
+        JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
+        RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
 
         InOrder order = inOrder(notifier);
 

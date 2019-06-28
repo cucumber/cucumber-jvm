@@ -76,10 +76,5 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
                     throw new IllegalArgumentException("" + annotation.snippets());
             }
         }
-
-        @Override
-        public String[] junit() {
-            return annotation.junit();
-        }
     }
 }

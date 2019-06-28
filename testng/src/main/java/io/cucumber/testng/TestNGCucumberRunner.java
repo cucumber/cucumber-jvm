@@ -64,14 +64,14 @@ public final class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptions bundleOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
             .withOptionsProvider(new TestNGCucumberOptionsProvider())
             .parse(clazz)
-            .build(bundleOptions);
+            .build(propertiesFileOptions);
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromEnvironment())

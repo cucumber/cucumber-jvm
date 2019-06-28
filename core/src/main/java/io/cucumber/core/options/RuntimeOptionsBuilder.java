@@ -23,7 +23,6 @@ public final class RuntimeOptionsBuilder {
     private List<URI> parsedFeaturePaths = new ArrayList<>();
     private List<URI> parsedGlue = new ArrayList<>();
     private ParsedPluginData parsedPluginData = new ParsedPluginData();
-    private List<String> parsedJunitOptions = new ArrayList<>();
     private boolean parsedIsRerun = false;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
@@ -42,11 +41,6 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addGlue(URI glue) {
         parsedGlue.add(glue);
-        return this;
-    }
-
-    public RuntimeOptionsBuilder addJunitOption(String junitOption) {
-        this.parsedJunitOptions.add(junitOption);
         return this;
     }
 
@@ -131,9 +125,6 @@ public final class RuntimeOptionsBuilder {
 
         if (!this.parsedGlue.isEmpty()) {
             runtimeOptions.setGlue(this.parsedGlue);
-        }
-        if (!this.parsedJunitOptions.isEmpty()) {
-            runtimeOptions.setJunitOptions(this.parsedJunitOptions);
         }
 
         this.parsedPluginData.updateFormatters(runtimeOptions.getFormatters());

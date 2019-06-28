@@ -38,7 +38,7 @@ public class JUnitReporterTest {
     @Test
     public void test_case_started_fires_test_started_for_pickle() {
         createNonStrictReporter();
-        PickleRunner pickleRunner = mockPickleRunner(Collections.<PickleStep>emptyList());
+        PickleRunner pickleRunner = mockPickleRunner(Collections.emptyList());
         runNotifier = mock(RunNotifier.class);
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
@@ -62,7 +62,7 @@ public class JUnitReporterTest {
 
     @Test
     public void test_step_started_fires_test_started_for_step_when_using_step_notifications() {
-        createNonStrictReporter("--step-notifications");
+        createReporter(new JUnitOptionsBuilder().setStepNotifications(true).build());
         PickleStep runnerStep = mockStep();
         PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
         runNotifier = mock(RunNotifier.class);
@@ -506,26 +506,30 @@ public class JUnitReporterTest {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
     }
 
-    private void createStrictReporter(String... options) {
-        jUnitReporter = new JUnitReporter(mock(EventBus.class), new JUnitOptionsParser().parse(asList(options)).setStrict(true).build());
+    private void createStrictReporter() {
+        createReporter(new JUnitOptionsBuilder().setStrict(true).build());
     }
 
-    private void createNonStrictReporter(String... options) {
-        jUnitReporter = new JUnitReporter(mock(EventBus.class), new JUnitOptionsParser().parse(asList(options)).build());
+    private void createNonStrictReporter() {
+        createReporter(new JUnitOptions());
+    }
+
+    private void createReporter(JUnitOptions options) {
+        jUnitReporter = new JUnitReporter(mock(EventBus.class), options);
     }
 
     private void setUpStepNotifierAndStepErrors(Description description) {
         jUnitReporter.stepNotifier = new EachTestNotifier(runNotifier, description);
-        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        jUnitReporter.stepErrors = new ArrayList<>();
     }
 
     private void setUpNoStepNotifierAndStepErrors() {
         jUnitReporter.stepNotifier = new NoTestNotifier();
-        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        jUnitReporter.stepErrors = new ArrayList<>();
     }
 
     private void populateStepErrors(List<Throwable> exceptions) {
-        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        jUnitReporter.stepErrors = new ArrayList<>();
         for (Throwable exception : exceptions) {
             jUnitReporter.stepErrors.add(exception);
         }

@@ -76,10 +76,5 @@ class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.O
                     throw new IllegalArgumentException("" + annotation.snippets());
             }
         }
-
-        @Override
-        public String[] junit() {
-            return new String[0];
-        }
     }
 }

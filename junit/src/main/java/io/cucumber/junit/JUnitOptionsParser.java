@@ -1,46 +1,12 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.util.FixJava;
-
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 final class JUnitOptionsParser {
 
-    private static final String OPTIONS_RESOURCE = "/io/cucumber/junit/api/OPTIONS.txt";
-    private static String optionsText;
-
-    /**
-     * Create a new instance from a list of options, for example:
-     * <p/>
-     * <pre<{@code Arrays.asList("--filename-compatible-names", "--step-notifications");}</pre>
-     *
-     * @param args
-     * @return
-     */
-    JUnitOptionsBuilder parse(List<String> args) {
-        args = new ArrayList<>(args);
-        JUnitOptionsBuilder builder = new JUnitOptionsBuilder();
-
-        while (!args.isEmpty()) {
-            String arg = args.remove(0).trim();
-
-            if (arg.equals("--help") || arg.equals("-h")) {
-                printOptions();
-                System.exit(0);
-            } else if (arg.equals("--no-filename-compatible-names") || arg.equals("--filename-compatible-names")) {
-                builder.setFilenameCompatibleNames(!arg.startsWith("--no-"));
-            } else if (arg.equals("--no-step-notifications") || arg.equals("--step-notifications")) {
-                builder.setStepNotifications(!arg.startsWith("--no-"));
-            } else {
-                printOptions();
-                throw new CucumberException("Unknown option: " + arg);
-            }
-        }
-        return builder;
+    JUnitOptionsBuilder parse(Map<String, String> properties) {
+        // TODO: Nothing to parse yet. See https://github.com/cucumber/cucumber-jvm/issues/1675
+        return new JUnitOptionsBuilder();
     }
 
     JUnitOptionsBuilder parse(Class<?> clazz) {
@@ -63,20 +29,5 @@ final class JUnitOptionsParser {
         }
         return args;
     }
-
-    private void printOptions() {
-        loadUsageTextIfNeeded();
-        System.out.println(optionsText);
-    }
-
-    private static void loadUsageTextIfNeeded() {
-        if (optionsText == null) {
-            try {
-                Reader reader = new InputStreamReader(FixJava.class.getResourceAsStream(OPTIONS_RESOURCE), "UTF-8");
-                optionsText = FixJava.readReader(reader);
-            } catch (Exception e) {
-                optionsText = "Could not load usage text: " + e.toString();
-            }
-        }
-    }
 }
+

@@ -138,13 +138,6 @@ public class CucumberOptionsAnnotationParserTest {
         assertTrue(runtimeOptions.isMonochrome());
     }
 
-    @Test
-    public void create_with_junit_options() {
-        RuntimeOptions runtimeOptions = parser().parse(ClassWithJunitOption.class).build();
-
-        assertEquals(asList("option1", "option2=value"), runtimeOptions.getJunitOptions());
-    }
-
     private void assertPluginExists(List<Plugin> plugins, String pluginName) {
         boolean found = false;
         for (Plugin plugin : plugins) {
@@ -343,10 +336,6 @@ public class CucumberOptionsAnnotationParserTest {
             return annotation.snippets();
         }
 
-        @Override
-        public String[] junit() {
-            return annotation.junit();
-        }
     }
 
     private static class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {

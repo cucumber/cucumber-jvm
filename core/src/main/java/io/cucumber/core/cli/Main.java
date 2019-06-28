@@ -33,13 +33,13 @@ public class Main {
     public static byte run(String[] argv, ClassLoader classLoader) {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptions bundleOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromEnvironment())
-            .build(bundleOptions);
+            .build(propertiesFileOptions);
 
         RuntimeOptions systemOptions = new CucumberPropertiesParser(resourceLoader)
             .parse(CucumberProperties.fromSystemProperties())

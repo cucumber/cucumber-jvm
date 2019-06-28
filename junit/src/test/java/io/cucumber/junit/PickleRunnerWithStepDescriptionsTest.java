@@ -1,7 +1,6 @@
 package io.cucumber.junit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import io.cucumber.core.runtime.RunnerSupplier;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.Description;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PickleRunnerWithStepDescriptionsTest {
@@ -39,12 +37,12 @@ public class PickleRunnerWithStepDescriptionsTest {
         List<PickleEvent> pickleEvents = new ArrayList<>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(features.getUri().toString(), pickle));
-        };
+        }
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-                mock(RunnerSupplier.class),
-                pickleEvents.get(0),
-                createJUnitOptions()
+            mock(RunnerSupplier.class),
+            pickleEvents.get(0),
+            createJunitOptions()
         );
 
         // fish out the two occurrences of the same step and check whether we really got them
@@ -58,7 +56,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         Description stepDescription1 = runnerDescription.getChildren().get(0);
         Description stepDescription2 = runnerDescription.getChildren().get(2);
 
-        assertFalse("Descriptions must not be equal.", stepDescription1.equals(stepDescription2));
+        assertNotEquals("Descriptions must not be equal.", stepDescription1, stepDescription2);
     }
 
     @Test
@@ -74,16 +72,16 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-                mock(RunnerSupplier.class),
-                features.getPickles().get(0),
-                createJUnitOptions()
+            mock(RunnerSupplier.class),
+            features.getPickles().get(0),
+            createJunitOptions()
         );
 
         Description runnerDescription = runner.getDescription();
         Description stepDescription1 = runnerDescription.getChildren().get(0);
         Description stepDescription2 = runnerDescription.getChildren().get(1);
 
-        assertFalse("Descriptions must not be equal.", stepDescription1.equals(stepDescription2));
+        assertNotEquals("Descriptions must not be equal.", stepDescription1, stepDescription2);
     }
 
     @Test
@@ -100,9 +98,9 @@ public class PickleRunnerWithStepDescriptionsTest {
         );
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(RunnerSupplier.class),
-                features.getPickles().get(0),
-                createJUnitOptions()
+            mock(RunnerSupplier.class),
+            features.getPickles().get(0),
+            createJunitOptions()
         );
 
         // fish out the data from runner
@@ -118,14 +116,14 @@ public class PickleRunnerWithStepDescriptionsTest {
     @Test
     public void shouldUseScenarioNameForDisplayName() throws Exception {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(RunnerSupplier.class),
-                pickles.get(0),
-                createJUnitOptions()
+            mock(RunnerSupplier.class),
+            pickles.get(0),
+            createJunitOptions()
         );
 
         assertEquals("scenario name", runner.getDescription().getDisplayName());
@@ -134,14 +132,14 @@ public class PickleRunnerWithStepDescriptionsTest {
     @Test
     public void shouldUseStepKeyworkAndNameForChildName() throws Exception {
         List<PickleEvent> pickleEvents = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(RunnerSupplier.class),
-                pickleEvents.get(0),
-                createJUnitOptions()
+            mock(RunnerSupplier.class),
+            pickleEvents.get(0),
+            createJunitOptions()
         );
 
         assertEquals("it works", runner.getDescription().getChildren().get(0).getMethodName());
@@ -150,14 +148,14 @@ public class PickleRunnerWithStepDescriptionsTest {
     @Test
     public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() throws Exception {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-                mock(RunnerSupplier.class),
-                pickles.get(0),
-                createJunitOptions("--filename-compatible-names")
+            mock(RunnerSupplier.class),
+            pickles.get(0),
+            createFileNameCompatibleJunitOptions()
         );
 
         assertEquals("scenario_name", runner.getDescription().getDisplayName());
@@ -165,11 +163,12 @@ public class PickleRunnerWithStepDescriptionsTest {
         assertEquals("it_works", runner.getDescription().getChildren().get(0).getMethodName());
     }
 
-    private JUnitOptions createJUnitOptions() {
+    private JUnitOptions createJunitOptions() {
         return new JUnitOptionsBuilder().setStrict(true).build();
     }
 
-    private JUnitOptions createJunitOptions(String option) {
-        return new JUnitOptionsParser().parse(Arrays.asList(option)).setStrict(true).build();
+    private JUnitOptions createFileNameCompatibleJunitOptions() {
+        return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).setStrict(true).build();
     }
+
 }
