@@ -12,11 +12,6 @@ public interface StepDefinition {
     String getLocation(boolean detail);
 
     /**
-     * @return How many declared parameters this step definition has. Returns null if unknown.
-     */
-    Integer getParameterCount();
-
-    /**
      * @return the pattern associated with this instance. Used for error reporting only.
      */
     String getPattern();

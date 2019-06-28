@@ -32,4 +32,8 @@ public interface StepDefinition extends io.cucumber.core.event.StepDefinition {
      */
     boolean isDefinedAt(StackTraceElement stackTraceElement); // TODO: redundant with getLocation?
 
+    /**
+     * @return How many declared parameters this step definition has. Returns null if unknown.
+     */
+    Integer getParameterCount();
 }
