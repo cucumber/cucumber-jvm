@@ -3,13 +3,11 @@ package io.cucumber.junit;
 import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
+import io.cucumber.core.options.*;
 import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.options.CucumberOptionsAnnotationParser;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.options.EnvironmentOptionsParser;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -20,7 +18,6 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
@@ -42,8 +39,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Cucumber JUnit Runner.
  * <p>
- * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
+ * A class annotated with {@code @RunWith(Cucumber.class)} will run feature files as junit tests.
  * In general, the runner class should be empty without any fields or methods.
  * For example:
  * <blockquote><pre>
@@ -57,7 +55,13 @@ import java.util.List;
  * path as the annotated class. For example, if the annotated class is {@code com.example.RunCucumber} then
  * features and glue are assumed to be located in {@code com.example}.
  * <p>
- * Additional hints can be provided to Cucumber by annotating the class with {@link CucumberOptions}.
+ * Options can be provided in by (order of precedence):
+ * <ol>
+ * <li>Setting {@code cucumber.options} property in {@link System#getProperties()} ()}</li>
+ * <li>Setting {@code cucumber.options} property in {@link System#getenv()}</li>
+ * <li>Annotating the runner class with {@link CucumberOptions}</li>
+ * <li>{Setting @code cucumber.options} property in {@code cucumber.properties}</li>
+ * </ol>
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
  * These will be executed before and after all scenarios. Using these is not recommended as it limits the portability
@@ -90,14 +94,22 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the options early to provide fast feedback about invalid options
+        RuntimeOptions bundleOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(CucumberProperties.fromPropertiesFile())
+            .build();
+
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
             .withOptionsProvider(new JUnitCucumberOptionsProvider())
             .parse(clazz)
-            .build();
+            .build(bundleOptions);
 
-        RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
-            .parse(Env.INSTANCE)
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
+
+        RuntimeOptions runtimeOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(CucumberProperties.fromSystemProperties())
+            .build(environmentOptions);
 
         JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
             .parse(clazz)

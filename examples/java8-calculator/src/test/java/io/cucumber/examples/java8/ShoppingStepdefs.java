@@ -13,7 +13,6 @@ public class ShoppingStepdefs implements En {
 
     public ShoppingStepdefs() {
 
-
         Given("the following groceries:", (DataTable dataTable) -> {
             List<Grocery> groceries = dataTable.asList(Grocery.class);
             for (Grocery grocery : groceries) {

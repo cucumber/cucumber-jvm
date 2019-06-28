@@ -28,11 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -53,7 +49,7 @@ import static org.mockito.Mockito.when;
 
 public class RuntimeOptionsTest {
 
-    private final Properties properties = new Properties();
+    private final Map<String, String> properties = new HashMap<>();
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     @Rule
@@ -284,9 +280,9 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_name_with_spaces_works_with_cucumber_options() {
-        properties.setProperty("cucumber.options", "--name 'some Name'");
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        properties.put("cucumber.options", "--name 'some Name'");
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build();
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("some Name"));
@@ -315,25 +311,25 @@ public class RuntimeOptionsTest {
 
     @Test
     public void clobbers_junit_options_from_cli_if_junit_options_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--junit,option_from_property");
+        properties.put("cucumber.options", "--junit,option_from_property");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--junit,option_to_be_clobbered")
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getJunitOptions(), contains("option_from_property"));
     }
 
     @Test
     public void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
-        properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
+        properties.put("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--strict", "--glue", "somewhere", "somewhere_else")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths")));
         assertThat(options.getGlue(), contains(uri("classpath:lookatme")));
@@ -342,50 +338,50 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_cli_glue_is_preserved_when_cucumber_options_property_defined() {
-        properties.setProperty("cucumber.options", "--tags @foo");
+        properties.put("cucumber.options", "--tags @foo");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("--glue", "somewhere"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
     }
 
     @Test
     public void clobbers_filters_from_cli_if_filters_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--tags @clobber_with_this");
+        properties.put("cucumber.options", "--tags @clobber_with_this");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("--tags", "@should_be_clobbered"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getTagExpressions(), contains("@clobber_with_this"));
     }
 
     @Test
     public void clobbers_tag_and_name_filters_from_cli_if_line_filters_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "path/file.feature:3");
+        properties.put("cucumber.options", "path/file.feature:3");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--tags", "@should_be_clobbered", "--name", "should_be_clobbered")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getTagExpressions(), emptyCollectionOf(String.class));
     }
 
     @Test
     public void clobbers_tag_and_name_filters_from_cli_if_rerun_file_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "@src/test/resources/io/cucumber/core/options/runtime-options-rerun.txt");
+        properties.put("cucumber.options", "@src/test/resources/io/cucumber/core/options/runtime-options-rerun.txt");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--tags", "@should_be_clobbered", "--name", "should_be_clobbered")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
 
         assertThat(options.getTagExpressions(), emptyCollectionOf(String.class));
@@ -394,36 +390,36 @@ public class RuntimeOptionsTest {
 
     @Test
     public void preserves_filters_from_cli_if_filters_not_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--strict");
+        properties.put("cucumber.options", "--strict");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("--tags", "@keep_this"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getTagExpressions(), contains("@keep_this"));
     }
 
     @Test
     public void clobbers_features_from_cli_if_features_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "new newer");
+        properties.put("cucumber.options", "new newer");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("old", "older"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer")));
     }
 
     @Test
     public void strips_lines_from_features_from_cli_if_filters_are_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--tags @Tag");
+        properties.put("cucumber.options", "--tags @Tag");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("path/file.feature:3")
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), contains(uri("file:path/file.feature")));
     }
@@ -431,7 +427,7 @@ public class RuntimeOptionsTest {
     @Test
     public void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property()
         throws IOException {
-        properties.setProperty("cucumber.options", "--tags @Tag");
+        properties.put("cucumber.options", "--tags @Tag");
         String rerunPath = "file:path/rerun.txt";
         String rerunFile = "file:path/file.feature:3\n";
         mockFileResource(resourceLoader, rerunPath, rerunFile);
@@ -443,12 +439,12 @@ public class RuntimeOptionsTest {
 
     @Test
     public void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--plugin pretty");
+        properties.put("cucumber.options", "--plugin pretty");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("old", "older"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), contains(uri("file:old"), uri("file:older")));
 
@@ -456,12 +452,12 @@ public class RuntimeOptionsTest {
 
     @Test
     public void clobbers_line_filters_from_cli_if_features_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "new newer");
+        properties.put("cucumber.options", "new newer");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("--tags", "@keep_this", "path/file1.feature:1"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer")));
         assertThat(options.getTagExpressions(), contains("@keep_this"));
@@ -469,14 +465,14 @@ public class RuntimeOptionsTest {
 
     @Test
     public void clobbers_formatter_plugins_from_cli_if_formatters_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--plugin pretty");
+        properties.put("cucumber.options", "--plugin pretty");
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--plugin", "html:target/some/dir", "--glue", "somewhere")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -488,14 +484,14 @@ public class RuntimeOptionsTest {
 
     @Test
     public void adds_to_formatter_plugins_with_add_plugin_option() {
-        properties.setProperty("cucumber.options", "--add-plugin pretty");
+        properties.put("cucumber.options", "--add-plugin pretty");
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--plugin", "html:target/some/dir", "--glue", "somewhere")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -507,13 +503,13 @@ public class RuntimeOptionsTest {
 
     @Test
     public void clobbers_summary_plugins_from_cli_if_summary_printer_specified_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--plugin default_summary");
+        properties.put("cucumber.options", "--plugin default_summary");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--plugin", "null_summary", "--glue", "somewhere")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -524,13 +520,13 @@ public class RuntimeOptionsTest {
 
     @Test
     public void adds_to_summary_plugins_with_add_plugin_option() {
-        properties.setProperty("cucumber.options", "--add-plugin default_summary");
+        properties.put("cucumber.options", "--add-plugin default_summary");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--plugin", "null_summary", "--glue", "somewhere")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -541,14 +537,14 @@ public class RuntimeOptionsTest {
 
     @Test
     public void does_not_clobber_plugins_of_different_type_when_specifying_plugins_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--plugin default_summary");
+        properties.put("cucumber.options", "--plugin default_summary");
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--plugin", "pretty", "--glue", "somewhere")
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -560,12 +556,12 @@ public class RuntimeOptionsTest {
 
     @Test
     public void allows_removal_of_strict_in_cucumber_options_property() {
-        properties.setProperty("cucumber.options", "--no-strict");
+        properties.put("cucumber.options", "--no-strict");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--strict")
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.isStrict(), is(false));
     }
@@ -581,7 +577,7 @@ public class RuntimeOptionsTest {
     @Test
     public void threads_default_1() {
         RuntimeOptions options = new CommandlineOptionsParser()
-            .parse(Collections.<String>emptyList())
+            .parse(Collections.emptyList())
             .build();
         assertThat(options.getThreads(), is(1));
     }
@@ -631,22 +627,22 @@ public class RuntimeOptionsTest {
     @Test
     public void ensure_default_snippet_type_is_underscore() {
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse(Collections.<String>emptyList())
+            .parse(Collections.emptyList())
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getSnippetType(), is(SnippetType.UNDERSCORE));
     }
 
     @Test
     public void set_snippet_type() {
-        properties.setProperty("cucumber.options", "--snippets camelcase");
+        properties.put("cucumber.options", "--snippets camelcase");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse(Collections.<String>emptyList())
+            .parse(Collections.emptyList())
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getSnippetType(), is(SnippetType.CAMELCASE));
     }
@@ -760,8 +756,8 @@ public class RuntimeOptionsTest {
             .parse("@" + rerunPath)
             .build();
 
-        RuntimeOptions options = new EnvironmentOptionsParser(resourceLoader)
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser(resourceLoader)
+            .parse(properties)
             .build(runtimeOptions);
 
         assertThat(options.getFeaturePaths(), contains(uri("file:path/foo.feature")));
@@ -783,13 +779,13 @@ public class RuntimeOptionsTest {
 
 
     @Test
-    public void loads_no_features_when_rerun_file_specified_in_cucumber_options_property_is_empty() throws Exception {
-        properties.setProperty("cucumber.options", "@src/test/resources/io/cucumber/core/options/runtime-options-empty-rerun.txt");
+    public void loads_no_features_when_rerun_file_specified_in_cucumber_options_property_is_empty() {
+        properties.put("cucumber.options", "@src/test/resources/io/cucumber/core/options/runtime-options-empty-rerun.txt");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(singletonList("src/test/resources/cucumber/runtime/formatter"))
             .build();
-        RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(properties)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
     }

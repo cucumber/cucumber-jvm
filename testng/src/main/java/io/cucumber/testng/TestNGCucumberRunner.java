@@ -4,6 +4,7 @@ import gherkin.events.PickleEvent;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
 import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.options.*;
 import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
@@ -16,10 +17,6 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureLoader;
-import io.cucumber.core.options.CucumberOptionsAnnotationParser;
-import io.cucumber.core.options.Env;
-import io.cucumber.core.options.EnvironmentOptionsParser;
-import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
@@ -36,6 +33,14 @@ import java.util.List;
 
 /**
  * Glue code for running Cucumber via TestNG.
+ * <p>
+ * Options can be provided in order of precedence by:
+ * <ol>
+ * <li>Setting {@code cucumber.options} property in {@link System#getProperties()} ()}</li>
+ * <li>Setting {@code cucumber.options} property in {@link System#getenv()}</li>
+ * <li>Annotating the runner class with {@link CucumberOptions}</li>
+ * <li>{Setting @code cucumber.options} property in {@code cucumber.properties}</li>
+ * </ol>
  */
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
@@ -59,13 +64,22 @@ public final class TestNGCucumberRunner {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
         // Parse the options early to provide fast feedback about invalid options
+        RuntimeOptions bundleOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(CucumberProperties.fromPropertiesFile())
+            .build();
+
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
             .withOptionsProvider(new TestNGCucumberOptionsProvider())
             .parse(clazz)
-            .build();
-        runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
-            .parse(Env.INSTANCE)
+            .build(bundleOptions);
+
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
+
+        runtimeOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(CucumberProperties.fromSystemProperties())
+            .build(environmentOptions);
 
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
@@ -77,7 +91,6 @@ public final class TestNGCucumberRunner {
         this.filters = new Filters(runtimeOptions);
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistrySupplier);
-
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {

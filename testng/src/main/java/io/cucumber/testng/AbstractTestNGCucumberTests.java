@@ -7,7 +7,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Runs each cucumber scenario found in the features as separated test
+ * Abstract TestNG Cucumber Test
+ * <p>
+ * Runs each cucumber scenario found in the features as separated test.
+ *
+ * @see TestNGCucumberRunner
  */
 @API(status = API.Status.STABLE)
 public abstract class AbstractTestNGCucumberTests {

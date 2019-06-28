@@ -8,13 +8,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -181,16 +179,15 @@ public class RerunFileTest {
             "foo.feature:4"
         );
 
-        Properties properties = new Properties();
-        properties.setProperty("cucumber.options", "@file:path/rerun.txt");
-        Env env = new Env(properties);
+        Map<String, String> properties = new HashMap<>();
+        properties.put("cucumber.options", "@file:path/rerun.txt");
 
         RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
             .parse("--tags", "@should_be_clobbered", "--name", "should_be_clobbered")
             .build();
 
-        RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
-            .parse(env)
+        RuntimeOptions runtimeOptions = new CucumberPropertiesParser(resourceLoader)
+            .parse(properties)
             .build(options);
 
         assertEquals(Collections.emptyList(), runtimeOptions.getTagExpressions());

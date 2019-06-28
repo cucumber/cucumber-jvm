@@ -1,18 +1,29 @@
 package io.cucumber.core.options;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class EnvTest {
+public class CucumberPropertiesTest {
 
-    private Env env = new Env("env-test");
+    private CucumberProperties.CucumberPropertiesMap env = new CucumberProperties.CucumberPropertiesMap(Collections.emptyMap());
+
+    @Before
+    public void setup(){
+        env.put("ENV_TEST","from-bundle");
+        env.put("a.b","a.b");
+        env.put("B_C","B_C");
+        env.put("c.D","C_D");
+    }
 
     @Test
     public void looks_up_value_from_environment() {
-        assertNotNull(env.get("PATH"));
+        assertNotNull(CucumberProperties.fromEnvironment().get("PATH"));
     }
 
     @Test
@@ -26,11 +37,6 @@ public class EnvTest {
     }
 
     @Test
-    public void looks_up_dotted_value_from_resource_bundle_with_underscores() {
-        assertEquals("a.b", env.get("A_B"));
-    }
-
-    @Test
     public void looks_up_underscored_value_from_resource_bundle_with_dots() {
         assertEquals("B_C", env.get("b.c"));
     }
@@ -41,7 +47,7 @@ public class EnvTest {
     }
 
     @Test
-    public void looks_up_value_by_exact_case_keuy() {
+    public void looks_up_value_by_exact_case_key() {
         assertEquals("C_D", env.get("c.D"));
     }
 }

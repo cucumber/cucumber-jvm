@@ -2,7 +2,7 @@ package io.cucumber.guice;
 
 import com.google.inject.Injector;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.options.Env;
+import io.cucumber.core.options.CucumberProperties;
 import org.apiguardian.api.API;
 
 /**
@@ -14,7 +14,7 @@ public final class GuiceFactory implements ObjectFactory {
     private final Injector injector;
 
     public GuiceFactory() {
-        this(new InjectorSourceFactory(Env.INSTANCE).create().getInjector());
+        this(new InjectorSourceFactory(CucumberProperties.create()).create().getInjector());
     }
 
     /**
