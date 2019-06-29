@@ -10,7 +10,7 @@ import java.util.List;
  * @deprecated use {@link io.cucumber.core.api.Scenario} instead.
  */
 @Deprecated
-public interface Scenario extends io.cucumber.core.api.Scenario {
+public interface Scenario {
     /**
      * @return source_tag_names. Needed for compatibility with Capybara.
      */

@@ -8,6 +8,7 @@ import cucumber.runtime.MethodFormat;
 import cucumber.runtime.Utils;
 import cucumber.runtime.filter.TagPredicate;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.event.Status;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -49,10 +50,13 @@ public class JavaHookDefinition implements HookDefinition {
                 break;
             case 1:
                 Class<?> parameterType = method.getParameterTypes()[0];
-                if (!Scenario.class.equals(parameterType) && !io.cucumber.core.api.Scenario.class.equals(parameterType)) {
+                if(Scenario.class.equals(parameterType)) {
+                    args = new Object[]{scenario};
+                } else if(io.cucumber.core.api.Scenario.class.equals(parameterType)){
+                    args = new Object[]{new ScenarioAdaptor(scenario)};
+                } else {
                     throw new CucumberException("When a hook declares an argument it must be of type " + io.cucumber.core.api.Scenario.class.getName() + ". " + method.toString());
                 }
-                args = new Object[]{scenario};
                 break;
             default:
                 throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());
@@ -74,5 +78,58 @@ public class JavaHookDefinition implements HookDefinition {
     @Override
     public boolean isScenarioScoped() {
         return false;
+    }
+
+    private static class ScenarioAdaptor implements io.cucumber.core.api.Scenario {
+        private final Scenario scenario;
+
+        ScenarioAdaptor(Scenario scenario) {
+            this.scenario = scenario;
+        }
+
+        @Override
+        public Collection<String> getSourceTagNames() {
+            return scenario.getSourceTagNames();
+        }
+
+        @Override
+        public Status getStatus() {
+            return Status.valueOf(scenario.getStatus().name());
+        }
+
+        @Override
+        public boolean isFailed() {
+            return scenario.isFailed();
+        }
+
+        @Override
+        public void embed(byte[] data, String mimeType) {
+            scenario.embed(data, mimeType);
+        }
+
+        @Override
+        public void write(String text) {
+            scenario.write(text);
+        }
+
+        @Override
+        public String getName() {
+            return scenario.getName();
+        }
+
+        @Override
+        public String getId() {
+            return scenario.getId();
+        }
+
+        @Override
+        public String getUri() {
+            return scenario.getUri();
+        }
+
+        @Override
+        public Integer getLine() {
+            return scenario.getLines().get(0);
+        }
     }
 }

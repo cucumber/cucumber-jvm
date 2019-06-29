@@ -10,6 +10,7 @@ import cucumber.runtime.ScenarioScoped;
 import cucumber.runtime.filter.TagPredicate;
 import cucumber.runtime.Timeout;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.event.Status;
 
 import java.util.Collection;
 
@@ -39,7 +40,7 @@ public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
     }
 
     public Java8HookDefinition(String tagExpression, int order, long timeoutMillis, io.cucumber.java8.HookBody hookBody) {
-        this(new String[]{tagExpression}, order, timeoutMillis, hookBody::accept);
+        this(new String[]{tagExpression}, order, timeoutMillis, scenario -> hookBody.accept(new ScenarioAdaptor(scenario)));
     }
 
     public Java8HookDefinition(String tagExpression, int order, long timeoutMillis, io.cucumber.java8.HookNoArgsBody hookNoArgsBody) {
@@ -82,5 +83,58 @@ public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
     @Override
     public void disposeScenarioScope() {
         this.hookBody = null;
+    }
+
+    private static class ScenarioAdaptor implements io.cucumber.core.api.Scenario {
+        private final Scenario scenario;
+
+        ScenarioAdaptor(Scenario scenario) {
+            this.scenario = scenario;
+        }
+
+        @Override
+        public Collection<String> getSourceTagNames() {
+            return scenario.getSourceTagNames();
+        }
+
+        @Override
+        public Status getStatus() {
+            return Status.valueOf(scenario.getStatus().name());
+        }
+
+        @Override
+        public boolean isFailed() {
+            return scenario.isFailed();
+        }
+
+        @Override
+        public void embed(byte[] data, String mimeType) {
+            scenario.embed(data, mimeType);
+        }
+
+        @Override
+        public void write(String text) {
+            scenario.write(text);
+        }
+
+        @Override
+        public String getName() {
+            return scenario.getName();
+        }
+
+        @Override
+        public String getId() {
+            return scenario.getId();
+        }
+
+        @Override
+        public String getUri() {
+            return scenario.getUri();
+        }
+
+        @Override
+        public Integer getLine() {
+            return scenario.getLines().get(0);
+        }
     }
 }

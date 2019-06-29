@@ -82,11 +82,6 @@ class Scenario implements cucumber.api.Scenario {
     }
 
     @Override
-    public Integer getLine() {
-        return testCase.getLine();
-    }
-
-    @Override
     public List<Integer> getLines() {
         return testCase.getLines();
     }
