@@ -1,17 +1,19 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.util.FixJava;
 import gherkin.deps.com.google.gson.JsonParser;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.runner.TestHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.Duration;
@@ -23,11 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ofMillis;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -49,7 +54,7 @@ public class HTMLFormatterTest {
 
     private URL outputDir;
 
-    public void writeReport() throws Throwable {
+    private void writeReport() throws Throwable {
         outputDir = TempDir.createTempDirectory().toURI().toURL();
         runFeaturesWithFormatter(outputDir);
     }
@@ -58,7 +63,7 @@ public class HTMLFormatterTest {
     public void writes_index_html() throws Throwable {
         writeReport();
         URL indexHtml = new URL(outputDir, "index.html");
-        Document document = Jsoup.parse(new File(indexHtml.getFile()), "UTF-8");
+        Document document = Jsoup.parse(new File(indexHtml.getFile()), UTF_8.name());
         Element reportElement = document.body().getElementsByClass("cucumber-report").first();
         assertEquals("", reportElement.text());
     }
@@ -66,10 +71,9 @@ public class HTMLFormatterTest {
     @Test
     public void writes_valid_report_js() throws Throwable {
         writeReport();
-        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertJsFunctionCallSequence(asList("" +
                 "formatter.uri(\"file:some/path/some.feature\");\n",
-                "formatter.feature({\n" +
+            "formatter.feature({\n" +
                 "  \"name\": \"\",\n" +
                 "  \"description\": \"\",\n" +
                 "  \"keyword\": \"Feature\"\n" +
@@ -97,26 +101,25 @@ public class HTMLFormatterTest {
             "formatter.after({\n" +
                 "  \"status\": \"passed\"\n" +
                 "});\n"),
-            reportJs);
+            readReportJs());
     }
 
     @Test
     public void includes_uri() throws Throwable {
         writeReport();
-        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
-        assertContains("formatter.uri(\"file:some/path/some.feature\");", reportJs);
+        assertContains("formatter.uri(\"file:some/path/some.feature\");", readReportJs());
     }
 
     @Test
     public void included_embedding() throws Throwable {
         writeReport();
-        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
+        String reportJs = readReportJs();
         assertContains("formatter.embedding(\"image/png\", \"embedded0.png\");", reportJs);
         assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\");", reportJs);
     }
 
     @Test
-    public void should_handle_a_single_scenario() throws Throwable {
+    public void should_handle_a_single_scenario() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -167,7 +170,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_backgound() throws Throwable {
+    public void should_handle_backgound() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -252,7 +255,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_scenario_outline() throws Throwable {
+    public void should_handle_scenario_outline() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: outline name\n" +
@@ -369,7 +372,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_before_hooks() throws Throwable {
+    public void should_handle_before_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -405,7 +408,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_after_hooks() throws Throwable {
+    public void should_handle_after_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -441,7 +444,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_after_step_hooks() throws Throwable {
+    public void should_handle_after_step_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -500,7 +503,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_output_from_before_hooks() throws Throwable {
+    public void should_handle_output_from_before_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -538,7 +541,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_output_from_after_hooks() throws Throwable {
+    public void should_handle_output_from_after_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -576,7 +579,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_output_from_after_step_hooks() throws Throwable {
+    public void should_handle_output_from_after_step_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -631,7 +634,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_text_embeddings_from_before_hooks() throws Throwable {
+    public void should_handle_text_embeddings_from_before_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -640,7 +643,7 @@ public class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
-        hookActions.add(createEmbedHookAction("embedded from hook".getBytes("US-ASCII"), "text/ascii"));
+        hookActions.add(createEmbedHookAction("embedded from hook".getBytes(US_ASCII), "text/ascii"));
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -666,6 +669,13 @@ public class HTMLFormatterTest {
                 "  \"status\": \"passed\"\n" +
                 "});\n"),
             formatterOutput);
+    }
+
+    private String readReportJs() throws IOException {
+        InputStream reportJsStream = new URL(outputDir, "report.js").openStream();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(reportJsStream, UTF_8))) {
+            return br.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
     }
 
     private void assertJsFunctionCallSequence(List<String> expectedList, String actual) {
@@ -727,19 +737,19 @@ public class HTMLFormatterTest {
         }
     }
 
-    private void runFeaturesWithFormatter(URL outputDir) throws Throwable {
+    private void runFeaturesWithFormatter(URL outputDir) {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
         CucumberFeature feature = feature("some/path/some.feature", "" +
-                "Feature:\n" +
-                "  Scenario: some cukes\n" +
-                "    Given first step\n");
+            "Feature:\n" +
+            "  Scenario: some cukes\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        hookActions.add(createEmbedHookAction("fakedata".getBytes("US-ASCII"), "image/png"));
-        hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes("US-ASCII"), "text/plain"));
+        hookActions.add(createEmbedHookAction("fakedata".getBytes(US_ASCII), "image/png"));
+        hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes(US_ASCII), "text/plain"));
         stepDuration = ofMillis(1L);
 
         runFeaturesWithFormatter(f);

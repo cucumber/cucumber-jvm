@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,8 +43,6 @@ import org.webbitserver.HttpResponse;
 import org.webbitserver.WebServer;
 import org.webbitserver.netty.NettyWebServer;
 import org.webbitserver.rest.Rest;
-
-import io.cucumber.core.util.FixJava;
 
 public class URLOutputStreamTest {
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
@@ -85,7 +86,7 @@ public class URLOutputStreamTest {
         w.close();
 
         File testFile = new File(urlWithoutParentDirectory.toURI());
-        assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(testFile)));
+        assertEquals("Hellesøy", read(testFile));
     }
 
     @Test
@@ -94,7 +95,7 @@ public class URLOutputStreamTest {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
         w.close();
-        assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(tmp)));
+        assertEquals("Hellesøy", read(tmp));
     }
 
     @Test
@@ -163,8 +164,16 @@ public class URLOutputStreamTest {
         assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty());
     }
 
+    private String read(File testFile) throws IOException {
+        String result;
+        try (BufferedReader br = new BufferedReader(openUTF8FileReader(testFile))) {
+            result = br.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
+        return result;
+    }
+
     private Reader openUTF8FileReader(final File file) throws IOException {
-        return new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"));
+        return new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
     }
 
     private List<Thread> getThreadsWithLatchForFile(final CountDownLatch countDownLatch, int threadsCount) {

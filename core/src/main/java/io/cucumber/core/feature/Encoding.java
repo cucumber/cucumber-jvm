@@ -1,13 +1,15 @@
 package io.cucumber.core.feature;
 
 import io.cucumber.core.io.Resource;
-import io.cucumber.core.util.FixJava;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
 /**
@@ -16,20 +18,26 @@ import static java.util.Locale.ROOT;
 final class Encoding {
     private static final Pattern COMMENT_OR_EMPTY_LINE_PATTERN = Pattern.compile("^\\s*#|^\\s*$");
     private static final Pattern ENCODING_PATTERN = Pattern.compile("^\\s*#\\s*encoding\\s*:\\s*([0-9a-zA-Z\\-]+)", Pattern.CASE_INSENSITIVE);
-    private static final String DEFAULT_ENCODING = "UTF-8";
+    private static final String DEFAULT_ENCODING = UTF_8.name();
     private static final String UTF_8_BOM = "\uFEFF";
 
     static String readFile(Resource resource) throws RuntimeException, IOException {
-        String source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), DEFAULT_ENCODING));
+        String source = read(resource, DEFAULT_ENCODING);
         // Remove UTF8 BOM encoded in first bytes
         if (source.startsWith(UTF_8_BOM)) {
             source = source.replaceFirst(UTF_8_BOM, "");
         }
         String enc = encoding(source);
         if (!enc.equals(DEFAULT_ENCODING)) {
-            source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), enc));
+            source = read(resource, enc);
         }
         return source;
+    }
+
+    private static String read(Resource resource, String encoding) throws IOException {
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), encoding))){
+            return br.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
     }
 
     private static String encoding(String source) {

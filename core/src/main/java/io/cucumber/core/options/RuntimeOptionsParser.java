@@ -13,13 +13,12 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
-import io.cucumber.core.util.FixJava;
 import io.cucumber.datatable.DataTable;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -152,9 +151,9 @@ final class RuntimeOptionsParser {
 
     static void loadUsageTextIfNeeded() {
         if (usageText == null) {
-            try {
-                Reader reader = new InputStreamReader(FixJava.class.getResourceAsStream(USAGE_RESOURCE), UTF_8);
-                usageText = FixJava.readReader(reader);
+            InputStream usageResourceStream = RuntimeOptionsParser.class.getResourceAsStream(USAGE_RESOURCE);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))){
+                usageText = br.lines().collect(joining(System.lineSeparator()));
             } catch (Exception e) {
                 usageText = "Could not load usage text: " + e.toString();
             }
