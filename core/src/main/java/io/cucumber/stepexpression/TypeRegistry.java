@@ -10,7 +10,7 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 
 import java.util.Locale;
 
-public final class TypeRegistry implements cucumber.api.TypeRegistry {
+public final class TypeRegistry implements cucumber.api.TypeRegistry, io.cucumber.core.api.TypeRegistry {
 
     private final ParameterTypeRegistry parameterTypeRegistry;
 

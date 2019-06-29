@@ -1,16 +1,14 @@
-package cucumber.api;
+package io.cucumber.core.api;
+
+import cucumber.api.Result;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
- *
- * @deprecated use {@link io.cucumber.core.api.Scenario} instead.
  */
-@Deprecated
-public interface Scenario extends io.cucumber.core.api.Scenario {
+public interface Scenario {
     /**
      * @return source_tag_names. Needed for compatibility with Capybara.
      */
@@ -67,8 +65,9 @@ public interface Scenario extends io.cucumber.core.api.Scenario {
     String getUri();
 
     /**
-     * @return the line(s) in the feature file of the Scenario. Scenarios from Scenario Outlines
-     * return both the line of the example row the the line of the scenario outline.
+     * @return the line in the feature file of the Scenario. If this is a Scenario
+     * from Scenario Outlines this wil return the line of the example row in
+     * the Scenario Outline.
      */
-    List<Integer> getLines();
+    Integer getLine();
 }

@@ -187,7 +187,7 @@ public class JavaHookTest {
         verify(glue).addAfterHook(javaHookDefinitionArgumentCaptor.capture());
 
         HookDefinition bad = javaHookDefinitionArgumentCaptor.getValue();
-        expectedException.expectMessage("When a hook declares an argument it must be of type cucumber.api.Scenario. public void cucumber.runtime.java.JavaHookTest$BadHook.after(java.lang.String)");
+        expectedException.expectMessage("When a hook declares an argument it must be of type io.cucumber.core.api.Scenario. public void cucumber.runtime.java.JavaHookTest$BadHook.after(java.lang.String)");
         bad.execute(mock(Scenario.class));
     }
 

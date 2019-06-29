@@ -1,7 +1,7 @@
 package io.cucumber.examples.spring.txn;
 
-import cucumber.api.TypeRegistryConfigurer;
-import cucumber.api.TypeRegistry;
+import io.cucumber.core.api.TypeRegistry;
+import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 

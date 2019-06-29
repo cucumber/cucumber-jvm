@@ -1,8 +1,6 @@
 package io.cucumber.java8;
 
 import cucumber.api.java8.GlueBase;
-import cucumber.api.java8.HookBody;
-import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java8.Java8HookDefinition;
 import org.apiguardian.api.API;
@@ -10,7 +8,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface LambdaGlue extends GlueBase {
 
-    String[] EMPTY_TAG_EXPRESSIONS = {};
+    String EMPTY_TAG_EXPRESSIONS = "";
     long NO_TIMEOUT = 0;
     int DEFAULT_BEFORE_ORDER = 1000;
     int DEFAULT_AFTER_ORDER = 1000;

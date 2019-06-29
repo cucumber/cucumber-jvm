@@ -45,9 +45,18 @@ public final class BackendModuleBackendSupplier implements BackendSupplier {
 
     private Collection<? extends Backend> loadBackends() {
         Reflections reflections = new Reflections(classFinder);
-        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, runnerOptions.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
-        TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
-        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
+
+        TypeRegistry typeRegistry;
+
+        io.cucumber.core.api.TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(io.cucumber.core.api.TypeRegistryConfigurer.class, runnerOptions.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+        if (typeRegistryConfigurer.getClass() != DefaultTypeRegistryConfiguration.class) {
+            typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
+            typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
+        } else {
+            TypeRegistryConfigurer typeRegistryConfigurer2 = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, runnerOptions.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
+            typeRegistry = new TypeRegistry(typeRegistryConfigurer2.locale());
+            typeRegistryConfigurer2.configureTypeRegistry(typeRegistry);
+        }
 
         return reflections.instantiateSubclasses(Backend.class, packages, new Class[]{ResourceLoader.class, TypeRegistry.class}, new Object[]{resourceLoader, typeRegistry});
     }

@@ -1,6 +1,6 @@
 package io.cucumber.java8;
 
-import cucumber.api.Scenario;
+import io.cucumber.core.api.Scenario;
 import org.apiguardian.api.API;
 
 

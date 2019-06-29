@@ -1,4 +1,4 @@
-package cucumber.api;
+package io.cucumber.core.api;
 
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -7,13 +7,19 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
 /**
- * @deprecated use {@link io.cucumber.core.api.TypeRegistry} instead.
+ * The type registry records defines parameter types and data table transformers.
  */
-@Deprecated
-public interface TypeRegistry{
-
+public interface TypeRegistry {
+    /**
+     * Defines a new parameter type.
+     * @param parameterType The new parameter type.
+     */
     void defineParameterType(ParameterType<?> parameterType);
 
+    /**
+     * Defines a new data table type.
+     * @param tableType The new table type.
+     */
     void defineDataTableType(DataTableType tableType);
 
     /**
@@ -23,7 +29,6 @@ public interface TypeRegistry{
      * @param defaultParameterByTypeTransformer default transformer
      */
     void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer);
-
     /**
      * Set default transformer for entries which are not defined by
      * {@code defineDataTableType(new DataTableType(Class<T>,TableEntryTransformer<T>))}
