@@ -1,18 +1,14 @@
 package io.cucumber.core.api;
 
 import io.cucumber.core.event.Status;
-
-import java.util.Collection;
+import org.apiguardian.api.API;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
  */
+@API(status = API.Status.STABLE)
 public interface Scenario {
-    /**
-     * @return source_tag_names. Needed for compatibility with Capybara.
-     */
-    Collection<String> getSourceTagNames();
 
     /**
      * @return the <em>most severe</em> status of the Scenario's Steps.

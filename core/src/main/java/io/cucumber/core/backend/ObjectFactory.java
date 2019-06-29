@@ -1,8 +1,11 @@
 package io.cucumber.core.backend;
 
+import org.apiguardian.api.API;
+
 /**
  * Minimal facade for Dependency Injection containers
  */
+@API(status = API.Status.STABLE)
 public interface ObjectFactory {
 
     /**
