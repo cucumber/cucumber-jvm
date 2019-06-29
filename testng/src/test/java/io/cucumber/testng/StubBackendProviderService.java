@@ -10,16 +10,14 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.snippets.Snippet;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.stepexpression.Argument;
 
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.singletonList;
 
 public class StubBackendProviderService implements BackendProviderService {
 
@@ -95,8 +93,8 @@ public class StubBackendProviderService implements BackendProviderService {
         public Snippet getSnippet() {
             return new Snippet() {
                 @Override
-                public String template() {
-                    return "";
+                public MessageFormat template() {
+                    return new MessageFormat("");
                 }
 
                 @Override

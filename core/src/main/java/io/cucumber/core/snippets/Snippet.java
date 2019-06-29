@@ -1,8 +1,12 @@
 package io.cucumber.core.snippets;
 
+import org.apiguardian.api.API;
+
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.Map;
 
+@API(status = API.Status.STABLE)
 public interface Snippet {
     /**
      * @return a {@link java.text.MessageFormat} template used to generate a snippet. The template can access the
@@ -16,7 +20,7 @@ public interface Snippet {
      * <li>{5} : value of {@link #tableHint()} if the step has a table</li>
      * </ul>
      */
-    String template();
+    MessageFormat template();
 
     /**
      * @return a hint about alternative ways to declare a table argument

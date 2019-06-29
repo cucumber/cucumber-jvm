@@ -1,12 +1,13 @@
 package io.cucumber.core.snippets;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.Map;
 
 public class TestSnippet implements Snippet {
     @Override
-    public String template() {
-        return "";
+    public MessageFormat template() {
+        return new MessageFormat("");
     }
 
     @Override

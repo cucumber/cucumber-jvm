@@ -11,6 +11,7 @@ import io.cucumber.core.snippets.Snippet;
 
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,8 @@ public class StubBackendProviderService implements BackendProviderService {
         public Snippet getSnippet() {
             return new Snippet() {
                 @Override
-                public String template() {
-                    return "";
+                public MessageFormat template() {
+                    return new MessageFormat("");
                 }
 
                 @Override

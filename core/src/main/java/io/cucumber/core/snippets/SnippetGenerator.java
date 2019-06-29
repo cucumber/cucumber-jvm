@@ -1,14 +1,14 @@
 package io.cucumber.core.snippets;
 
-import io.cucumber.cucumberexpressions.GeneratedExpression;
-import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.datatable.DataTable;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
+import io.cucumber.cucumberexpressions.GeneratedExpression;
+import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -16,8 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import static java.text.MessageFormat.format;
 
 public final class SnippetGenerator {
     @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped braces.
@@ -40,14 +38,14 @@ public final class SnippetGenerator {
         List<String> snippets = new ArrayList<>(generatedExpressions.size());
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
-            snippets.add(format(
-                snippet.template(),
-                keyword,
-                snippet.escapePattern(expression.getSource()),
-                functionName(expression.getSource(), functionNameGenerator),
-                snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
-                REGEXP_HINT,
-                !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
+            snippets.add(snippet.template().format(new String[]{
+                    keyword,
+                    snippet.escapePattern(expression.getSource()),
+                    functionName(expression.getSource(), functionNameGenerator),
+                    snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
+                    REGEXP_HINT,
+                    !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
+                }
             ));
         }
 
