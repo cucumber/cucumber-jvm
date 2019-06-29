@@ -1,8 +1,11 @@
 package io.cucumber.core.plugin;
 
+import org.apiguardian.api.API;
+
 /**
  * Interface for Plugins that need to know if the Runtime is strict.
  */
+@API(status = API.Status.STABLE)
 public interface StrictAware extends Plugin {
     /**
      * When set to strict the plugin should indicate failure for undefined and pending steps

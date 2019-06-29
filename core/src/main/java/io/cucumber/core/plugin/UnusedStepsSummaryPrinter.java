@@ -13,13 +13,13 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 	private EventHandler<StepDefinedEvent> stepDefinedHandler = new EventHandler<StepDefinedEvent>() {
 		@Override
 		public void receive(StepDefinedEvent event) {
-			unusedSteps.put(event.stepDefinition.getLocation(false), event.stepDefinition.getPattern());
+			unusedSteps.put(event.getStepDefinition().getLocation(false), event.getStepDefinition().getPattern());
 		}
 	};
 	private EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
 		@Override
 		public void receive(TestStepFinished event) {
-			String codeLocation = event.testStep.getCodeLocation();
+			String codeLocation = event.getTestStep().getCodeLocation();
 			if (codeLocation != null) {
 				unusedSteps.remove(codeLocation);
 			}

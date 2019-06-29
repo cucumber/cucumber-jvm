@@ -1,10 +1,13 @@
 package io.cucumber.core.event;
 
+import org.apiguardian.api.API;
+
 import java.util.List;
 
 /**
  * A pickle test step matches a line in a Gherkin scenario or background.
  */
+@API(status = API.Status.STABLE)
 public interface PickleStepTestStep extends TestStep {
 
     /**

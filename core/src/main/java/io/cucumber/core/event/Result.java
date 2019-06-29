@@ -1,10 +1,13 @@
 package io.cucumber.core.event;
 
+import org.apiguardian.api.API;
+
 import java.time.Duration;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
+@API(status = API.Status.STABLE)
 public final class Result{
 
     private final Status status;

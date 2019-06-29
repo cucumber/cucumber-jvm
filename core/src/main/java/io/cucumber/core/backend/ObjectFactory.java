@@ -6,7 +6,7 @@ import org.apiguardian.api.API;
  * Minimal facade for Dependency Injection containers
  */
 @API(status = API.Status.STABLE)
-public interface ObjectFactory {
+public interface ObjectFactory extends Container, Lookup {
 
     /**
      * Instantiate glue code <b>before</b> scenario execution. Called once per scenario.

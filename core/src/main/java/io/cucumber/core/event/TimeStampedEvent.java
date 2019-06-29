@@ -1,18 +1,16 @@
 package io.cucumber.core.event;
 
 import java.time.Instant;
+import java.util.Objects;
+
 
 abstract class TimeStampedEvent implements Event {
 
     private final Instant instant;
 
     TimeStampedEvent(Instant timeInstant) {
-        this.instant = timeInstant;
+        this.instant = Objects.requireNonNull(timeInstant);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
 
     /**
      * {@inheritDoc}

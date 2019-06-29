@@ -2,7 +2,6 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.StepDefinitionMatch;
 
 final class HookDefinitionMatch implements StepDefinitionMatch {
     private final HookDefinition hookDefinition;

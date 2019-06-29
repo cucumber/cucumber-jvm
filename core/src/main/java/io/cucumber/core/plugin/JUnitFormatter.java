@@ -117,16 +117,16 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
-            currentFeatureFile = event.testCase.getUri();
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.getTestCase().getUri())) {
+            currentFeatureFile = event.getTestCase().getUri();
             previousTestCaseName = "";
             exampleNumber = 1;
         }
-        testCase = new TestCase(event.testCase);
+        testCase = new TestCase(event.getTestCase());
         root = testCase.createElement(document);
         testCase.writeElement(root);
         rootElement.appendChild(root);
@@ -135,17 +135,17 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            testCase.steps.add((PickleStepTestStep) event.testStep);
-            testCase.results.add(event.result);
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            testCase.steps.add((PickleStepTestStep) event.getTestStep());
+            testCase.results.add(event.getResult());
         }
     }
 
     private void handleTestCaseFinished(TestCaseFinished event) {
         if (testCase.steps.isEmpty()) {
-            testCase.handleEmptyTestCase(document, root, event.result);
+            testCase.handleEmptyTestCase(document, root, event.getResult());
         } else {
-            testCase.addTestCaseElement(document, root, event.result);
+            testCase.addTestCaseElement(document, root, event.getResult());
         }
     }
 

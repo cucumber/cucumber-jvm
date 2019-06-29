@@ -1,13 +1,21 @@
 package io.cucumber.core.event;
 
 
-import java.time.Instant;
+import org.apiguardian.api.API;
 
-public class StepDefinedEvent extends TimeStampedEvent {
-    public final StepDefinition stepDefinition;
+import java.time.Instant;
+import java.util.Objects;
+
+@API(status = API.Status.STABLE)
+public final class StepDefinedEvent extends TimeStampedEvent {
+    private final StepDefinition stepDefinition;
 
     public StepDefinedEvent(Instant timeInstant, StepDefinition stepDefinition) {
         super(timeInstant);
-        this.stepDefinition = stepDefinition;
+        this.stepDefinition = Objects.requireNonNull(stepDefinition);
+    }
+
+    public StepDefinition getStepDefinition() {
+        return stepDefinition;
     }
 }

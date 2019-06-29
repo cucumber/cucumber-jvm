@@ -60,9 +60,9 @@ public final class UsageFormatter implements Plugin, EventListener {
     }
 
     void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep && event.result.getStatus().is(Status.PASSED)) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
-            addUsageEntry(event.result, testStep);
+        if (event.getTestStep() instanceof PickleStepTestStep && event.getResult().getStatus().is(Status.PASSED)) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+            addUsageEntry(event.getResult(), testStep);
         }
     }
 

@@ -45,11 +45,11 @@ class Stats implements EventListener, ColorAware, StrictAware {
     private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
-            Result result = event.result;
+            Result result = event.getResult();
             if (result.getError() != null) {
                 addError(result.getError());
             }
-            if (event.testStep instanceof PickleStepTestStep) {
+            if (event.getTestStep() instanceof PickleStepTestStep) {
                 addStep(result.getStatus());
             }
         }
@@ -57,7 +57,7 @@ class Stats implements EventListener, ColorAware, StrictAware {
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
         public void receive(TestCaseFinished event) {
-            addScenario(event.result.getStatus(), event.testCase.getScenarioDesignation());
+            addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
         }
     };
     private final EventHandler<TestRunFinished> testRunFinishedHandler = new EventHandler<TestRunFinished>() {

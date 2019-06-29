@@ -1,12 +1,20 @@
 package io.cucumber.core.event;
 
-import java.time.Instant;
+import org.apiguardian.api.API;
 
+import java.time.Instant;
+import java.util.Objects;
+
+@API(status = API.Status.STABLE)
 public final class WriteEvent extends TestCaseEvent {
-    public final String text;
+    private final String text;
 
     public WriteEvent(Instant timeInstant, TestCase testCase, String text) {
         super(timeInstant, testCase);
-        this.text = text;
+        this.text = Objects.requireNonNull(text);
+    }
+
+    public String getText() {
+        return text;
     }
 }

@@ -103,11 +103,11 @@ public final class Runner {
     }
 
     private void addTestStepsForBeforeHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.Before);
+        addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.BEFORE);
     }
 
     private void addTestStepsForAfterHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.After);
+        addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.AFTER);
     }
 
     private void addTestStepsForHooks(List<HookTestStep> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
@@ -121,13 +121,13 @@ public final class Runner {
 
     private List<HookTestStep> getAfterStepHooks(List<PickleTag> tags) {
         List<HookTestStep> hookSteps = new ArrayList<>();
-        addTestStepsForHooks(hookSteps, tags, glue.getAfterStepHooks(), HookType.AfterStep);
+        addTestStepsForHooks(hookSteps, tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
         return hookSteps;
     }
 
     private List<HookTestStep> getBeforeStepHooks(List<PickleTag> tags) {
         List<HookTestStep> hookSteps = new ArrayList<>();
-        addTestStepsForHooks(hookSteps, tags, glue.getBeforeStepHooks(), HookType.BeforeStep);
+        addTestStepsForHooks(hookSteps, tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
         return hookSteps;
     }
 

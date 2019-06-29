@@ -49,7 +49,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
-            testSources.addTestSourceReadEvent(event.uri, event);
+            testSources.addTestSourceReadEvent(event.getUri(), event);
         }
     };
     private final EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
@@ -237,7 +237,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
         public void end(final TestCaseFinished event) {
             this.endTime = event.getInstant();
-            this.className = event.result.getStatus().name().toLowerCase(ROOT);
+            this.className = event.getResult().getStatus().name().toLowerCase(ROOT);
         }
     }
 

@@ -1,19 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.HookTestStep;
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestSourceRead;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
-import io.cucumber.core.event.WriteEvent;
-import io.cucumber.core.exception.CucumberException;
 import gherkin.ast.Background;
 import gherkin.ast.DataTable;
 import gherkin.ast.DocString;
@@ -34,6 +20,21 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.event.EmbedEvent;
+import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.HookTestStep;
+import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.core.event.TestStepStarted;
+import io.cucumber.core.event.WriteEvent;
+import io.cucumber.core.exception.CucumberException;
 
 import java.io.Closeable;
 import java.io.File;
@@ -49,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Locale.ENGLISH;
 import static java.util.Locale.ROOT;
 
 public final class HTMLFormatter implements EventListener {
@@ -56,11 +58,11 @@ public final class HTMLFormatter implements EventListener {
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
     private static final String[] TEXT_ASSETS = new String[]{
-    		"/io/cucumber/formatter/html/formatter.js", 
-    		"/io/cucumber/formatter/html/index.html", 
-    		"/io/cucumber/formatter/html/jquery-1.8.2.min.js", 
-    		"/io/cucumber/formatter/html/style.css"
-    	};
+        "/io/cucumber/formatter/html/formatter.js",
+        "/io/cucumber/formatter/html/index.html",
+        "/io/cucumber/formatter/html/jquery-1.8.2.min.js",
+        "/io/cucumber/formatter/html/style.css"
+    };
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
         {
             put("image/bmp", "bmp");
@@ -89,7 +91,7 @@ public final class HTMLFormatter implements EventListener {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -148,7 +150,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -157,11 +159,11 @@ public final class HTMLFormatter implements EventListener {
                 .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
             firstFeature = false;
         }
-        handleStartOfFeature(event.testCase);
-        handleScenarioOutline(event.testCase);
-        currentTestCaseMap = createTestCase(event.testCase);
-        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
-            jsFunctionCall("background", createBackground(event.testCase));
+        handleStartOfFeature(event.getTestCase());
+        handleScenarioOutline(event.getTestCase());
+        currentTestCaseMap = createTestCase(event.getTestCase());
+        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLine())) {
+            jsFunctionCall("background", createBackground(event.getTestCase()));
         } else {
             jsFunctionCall("scenario", currentTestCaseMap);
             currentTestCaseMap = null;
@@ -169,46 +171,62 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
             if (isFirstStepAfterBackground(testStep)) {
                 jsFunctionCall("scenario", currentTestCaseMap);
                 currentTestCaseMap = null;
             }
             jsFunctionCall("step", createTestStep(testStep));
-            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.testStep));
+            jsFunctionCall("match", createMatchMap((PickleStepTestStep) event.getTestStep()));
         }
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            jsFunctionCall("result", createResultMap(event.result));
-        } else if(event.testStep instanceof HookTestStep) {
-            HookTestStep hookTestStep = (HookTestStep) event.testStep;
-            jsFunctionCall(hookTestStep.getHookType().toString(), createResultMap(event.result));
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            jsFunctionCall("result", createResultMap(event.getResult()));
+        } else if (event.getTestStep() instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) event.getTestStep();
+            jsFunctionCall(getFunctionName(hookTestStep), createResultMap(event.getResult()));
         } else {
             throw new IllegalStateException();
         }
     }
 
+    private String getFunctionName(HookTestStep hookTestStep) {
+        HookType hookType = hookTestStep.getHookType();
+        switch (hookType) {
+            case BEFORE:
+                return "before";
+            case AFTER:
+                return "after";
+            case BEFORE_STEP:
+                return "beforestep";
+            case AFTER_STEP:
+                return "afterstep";
+            default:
+                throw new IllegalArgumentException(hookType.name());
+        }
+    }
+
     private void handleEmbed(EmbedEvent event) {
-        String mimeType = event.mimeType;
-        if(mimeType.startsWith("text/")) {
+        String mimeType = event.getMimeType();
+        if (mimeType.startsWith("text/")) {
             // just pass straight to the plugin to output in the html
-            jsFunctionCall("embedding", mimeType, new String(event.data));
+            jsFunctionCall("embedding", mimeType, new String(event.getData()));
         } else {
             // Creating a file instead of using data urls to not clutter the js file
             String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
             if (extension != null) {
                 StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-                writeBytesToURL(event.data, toUrl(fileName.toString()));
+                writeBytesToURL(event.getData(), toUrl(fileName.toString()));
                 jsFunctionCall("embedding", mimeType, fileName);
             }
         }
     }
 
     private void handleWrite(WriteEvent event) {
-        jsFunctionCall("write", event.text);
+        jsFunctionCall("write", event.getText());
     }
 
     private void finishReport() {
@@ -254,13 +272,13 @@ public final class HTMLFormatter implements EventListener {
     private void handleScenarioOutline(TestCase testCase) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
+            ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
                 currentScenarioOutline = scenarioOutline;
                 jsFunctionCall("scenarioOutline", createScenarioOutline(currentScenarioOutline));
                 addOutlineStepsToReport(scenarioOutline);
             }
-            Examples examples = (Examples)astNode.parent.node;
+            Examples examples = (Examples) astNode.parent.node;
             if (currentExamples == null || !currentExamples.equals(examples)) {
                 currentExamples = examples;
                 jsFunctionCall("examples", createExamples(currentExamples));
@@ -290,9 +308,9 @@ public final class HTMLFormatter implements EventListener {
             if (step.getArgument() != null) {
                 Node argument = step.getArgument();
                 if (argument instanceof DocString) {
-                    stepMap.put("doc_string", createDocStringMap((DocString)argument));
+                    stepMap.put("doc_string", createDocStringMap((DocString) argument));
                 } else if (argument instanceof DataTable) {
-                    stepMap.put("rows", createDataTableList((DataTable)argument));
+                    stepMap.put("rows", createDataTableList((DataTable) argument));
                 }
             }
             jsFunctionCall("step", stepMap);
@@ -394,9 +412,9 @@ public final class HTMLFormatter implements EventListener {
         if (!testStep.getStepArgument().isEmpty()) {
             Argument argument = testStep.getStepArgument().get(0);
             if (argument instanceof PickleString) {
-                stepMap.put("doc_string", createDocStringMap((PickleString)argument));
+                stepMap.put("doc_string", createDocStringMap((PickleString) argument));
             } else if (argument instanceof PickleTable) {
-                stepMap.put("rows", createDataTableList((PickleTable)argument));
+                stepMap.put("rows", createDataTableList((PickleTable) argument));
             }
         }
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());

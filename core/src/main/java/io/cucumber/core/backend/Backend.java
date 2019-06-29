@@ -1,10 +1,12 @@
 package io.cucumber.core.backend;
 
 import io.cucumber.core.snippets.Snippet;
+import org.apiguardian.api.API;
 
 import java.net.URI;
 import java.util.List;
 
+@API(status = API.Status.STABLE)
 public interface Backend {
     /**
      * Invoked once before all features. This is where stepdefs and hooks should be loaded.

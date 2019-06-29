@@ -1,6 +1,9 @@
 package io.cucumber.core.event;
 
+import org.apiguardian.api.API;
+
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * A test step started event is broadcast when ever a step starts.
@@ -19,12 +22,17 @@ import java.time.Instant;
  * @see PickleStepTestStep
  * @see HookTestStep
  */
+
+@API(status = API.Status.STABLE)
 public final class TestStepStarted extends TestCaseEvent {
-    public final TestStep testStep;
+    private final TestStep testStep;
 
     public TestStepStarted(Instant timeInstant, TestCase testCase, TestStep testStep) {
         super(timeInstant, testCase);
-        this.testStep = testStep;
+        this.testStep = Objects.requireNonNull(testStep);
     }
 
+    public TestStep getTestStep() {
+        return testStep;
+    }
 }

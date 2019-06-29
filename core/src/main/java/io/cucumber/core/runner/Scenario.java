@@ -33,16 +33,6 @@ class Scenario implements io.cucumber.core.api.Scenario {
     }
 
     @Override
-    public Collection<String> getSourceTagNames() {
-        Set<String> result = new HashSet<>();
-        for (PickleTag tag : testCase.getTags()) {
-            result.add(tag.getName());
-        }
-        // Has to be a List in order for JRuby to convert to Ruby Array.
-        return new ArrayList<>(result);
-    }
-
-    @Override
     public Status getStatus() {
         if (stepResults.isEmpty()) {
             return Status.UNDEFINED;

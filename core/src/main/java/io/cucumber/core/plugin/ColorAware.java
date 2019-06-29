@@ -1,8 +1,11 @@
 package io.cucumber.core.plugin;
 
+import org.apiguardian.api.API;
+
 /**
  * Interface for Plugins that use ANSI escape codes to print coloured output.
  */
+@API(status = API.Status.STABLE)
 public interface ColorAware extends Plugin {
     /**
      * When set to monochrome the plugin should not use colored output.

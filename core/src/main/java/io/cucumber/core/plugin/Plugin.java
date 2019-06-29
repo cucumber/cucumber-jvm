@@ -1,5 +1,7 @@
 package io.cucumber.core.plugin;
 
+import org.apiguardian.api.API;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -32,5 +34,6 @@ import java.net.URL;
  * <li>{@link SummaryPrinter}</li>
  * </ul>
  */
+@API(status = API.Status.STABLE)
 public interface Plugin {
 }

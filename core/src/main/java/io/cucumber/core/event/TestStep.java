@@ -1,5 +1,7 @@
 package io.cucumber.core.event;
 
+import org.apiguardian.api.API;
+
 /**
  * A test step can either represent the execution of a hook
  * or a pickle step. Each step is tied to some glue code.
@@ -7,6 +9,8 @@ package io.cucumber.core.event;
  * @see TestCaseStarted
  * @see TestCaseFinished
  */
+
+@API(status = API.Status.STABLE)
 public interface TestStep {
 
     /**

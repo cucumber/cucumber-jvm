@@ -2,9 +2,11 @@ package io.cucumber.core.backend;
 
 import io.cucumber.core.api.Scenario;
 import gherkin.pickles.PickleTag;
+import org.apiguardian.api.API;
 
 import java.util.Collection;
 
+@API(status = API.Status.STABLE)
 public interface HookDefinition {
     /**
      * The source line where the step definition is defined.

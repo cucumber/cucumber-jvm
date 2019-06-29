@@ -1,6 +1,9 @@
 package io.cucumber.core.event;
 
+import org.apiguardian.api.API;
+
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * A test step finished event is broadcast when ever a step finishes.
@@ -18,14 +21,23 @@ import java.time.Instant;
  * @see PickleStepTestStep
  * @see HookTestStep
  */
+
+@API(status = API.Status.STABLE)
 public final class TestStepFinished extends TestCaseEvent {
-    public final TestStep testStep;
-    public final Result result;
+    private final TestStep testStep;
+    private final Result result;
 
     public TestStepFinished(Instant timeInstant, TestCase testCase, TestStep testStep, Result result) {
         super(timeInstant, testCase);
-        this.testStep = testStep;
-        this.result = result;
+        this.testStep = Objects.requireNonNull(testStep);
+        this.result = Objects.requireNonNull(result);
     }
 
+    public Result getResult() {
+        return result;
+    }
+
+    public TestStep getTestStep() {
+        return testStep;
+    }
 }

@@ -17,7 +17,7 @@ class TestCaseResultListener {
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
         public void receive(TestCaseFinished event) {
-            receiveResult(event.result);
+            receiveResult(event.getResult());
         }
     };
 

@@ -4,6 +4,7 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.*;
 import io.cucumber.core.runtime.Runtime;
+import org.apiguardian.api.API;
 
 /**
  * Cucumber Main. Runs Cucumber as a CLI.
@@ -16,6 +17,7 @@ import io.cucumber.core.runtime.Runtime;
  * <li>{@code cucumber.options} property in {@code cucumber.properties}</li>
  * </ol>
  */
+@API(status = API.Status.STABLE)
 public class Main {
 
     public static void main(String[] argv) {

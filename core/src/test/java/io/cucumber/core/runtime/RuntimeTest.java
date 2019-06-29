@@ -302,7 +302,7 @@ public class RuntimeTest {
                         mockMatch(glue, step.getText());
                     }
                 }
-                mockHook(glue, beforeHook, HookType.Before);
+                mockHook(glue, beforeHook, HookType.BEFORE);
             }
         };
     }
@@ -565,7 +565,7 @@ public class RuntimeTest {
                 publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
                     @Override
                     public void receive(StepDefinedEvent event) {
-                        stepDefinedEvents.add(event.stepDefinition);
+                        stepDefinedEvents.add(event.getStepDefinition());
                     }
                 });
             }
@@ -723,16 +723,16 @@ public class RuntimeTest {
 
     private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
         switch (hookType) {
-            case Before:
+            case BEFORE:
                 glue.addBeforeHook(hook);
                 return;
-            case After:
+            case AFTER:
                 glue.addAfterHook(hook);
                 return;
-            case AfterStep:
+            case AFTER_STEP:
                 glue.addAfterStepHook(hook);
                 return;
-            case BeforeStep:
+            case BEFORE_STEP:
                 glue.addBeforeStepHook(hook);
                 return;
             default:

@@ -86,7 +86,7 @@ public class JavaStepDefinitionTest {
         bus.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
             public void receive(TestStepFinished event) {
-                latestReceivedResult = event.result;
+                latestReceivedResult = event.getResult();
             }
         });
     }

@@ -6,7 +6,6 @@ import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
-import io.cucumber.core.backend.StepDefinitionMatch;
 import io.cucumber.core.eventbus.EventBus;
 
 import java.time.Duration;

@@ -1,7 +1,6 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.backend.StepDefinitionMatch;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import gherkin.pickles.PickleCell;

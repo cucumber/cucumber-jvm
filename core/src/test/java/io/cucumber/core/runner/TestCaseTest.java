@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.Collections;
 
-import static io.cucumber.core.event.HookType.AfterStep;
-import static io.cucumber.core.event.HookType.BeforeStep;
+import static io.cucumber.core.event.HookType.AFTER_STEP;
+import static io.cucumber.core.event.HookType.BEFORE_STEP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.isA;
@@ -46,8 +46,8 @@ public class TestCaseTest {
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
         "uri",
         mock(PickleStep.class),
-        singletonList(new HookTestStep(BeforeStep, new HookDefinitionMatch(beforeStep1HookDefinition1))),
-        singletonList(new HookTestStep(AfterStep, new HookDefinitionMatch(afterStep1HookDefinition1))),
+        singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
+        singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
         definitionMatch1
     );
 
@@ -58,8 +58,8 @@ public class TestCaseTest {
     private final PickleStepTestStep testStep2 = new PickleStepTestStep(
         "uri",
         mock(PickleStep.class),
-        singletonList(new HookTestStep(BeforeStep, new HookDefinitionMatch(beforeStep1HookDefinition2))),
-        singletonList(new HookTestStep(AfterStep, new HookDefinitionMatch(afterStep1HookDefinition2))),
+        singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
+        singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),
         definitionMatch2
     );
 

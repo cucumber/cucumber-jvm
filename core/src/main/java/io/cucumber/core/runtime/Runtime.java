@@ -297,7 +297,7 @@ public final class Runtime {
         private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
             @Override
             public void receive(TestCaseFinished event) {
-                results.add(event.result);
+                results.add(event.getResult());
             }
         };
 

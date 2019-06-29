@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.event.Event;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.TestCase;
+import org.apiguardian.api.API;
 
 /**
  * Listens to pickle execution events. Can be used to
@@ -31,6 +32,7 @@ import io.cucumber.core.event.TestCase;
  *
  * @see Event
  */
+@API(status = API.Status.STABLE)
 public interface ConcurrentEventListener extends Plugin {
 
     /**

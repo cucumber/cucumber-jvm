@@ -1,14 +1,18 @@
 package io.cucumber.core.event;
 
-import java.time.Instant;
+import org.apiguardian.api.API;
 
+import java.time.Instant;
+import java.util.Objects;
+
+@API(status = API.Status.STABLE)
 public abstract class TestCaseEvent extends TimeStampedEvent {
 
     private final TestCase testCase;
 
     TestCaseEvent(Instant timeInstant, TestCase testCase) {
         super(timeInstant);
-        this.testCase = testCase;
+        this.testCase = Objects.requireNonNull(testCase);
     }
 
     public TestCase getTestCase() {

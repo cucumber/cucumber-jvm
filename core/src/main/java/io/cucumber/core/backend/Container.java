@@ -1,5 +1,8 @@
 package io.cucumber.core.backend;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE)
 public interface Container {
     /**
      * Collects glue classes in the classpath. Called once on init.

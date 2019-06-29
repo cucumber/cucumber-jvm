@@ -50,7 +50,6 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         }
     };
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public ProgressFormatter(Appendable appendable) {
         out = new NiceAppendable(appendable);
     }
@@ -68,11 +67,11 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep || event.result.getStatus().is(Status.FAILED)) {
+        if (event.getTestStep() instanceof PickleStepTestStep || event.getResult().getStatus().is(Status.FAILED)) {
             if (!monochrome) {
-                ANSI_ESCAPES.get(event.result.getStatus()).appendTo(out);
+                ANSI_ESCAPES.get(event.getResult().getStatus()).appendTo(out);
             }
-            out.append(CHARS.get(event.result.getStatus()));
+            out.append(CHARS.get(event.getResult().getStatus()));
             if (!monochrome) {
                 AnsiEscapes.RESET.appendTo(out);
             }
@@ -80,7 +79,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     }
 
     private void handleWrite(WriteEvent event) {
-        out.append(event.text);
+        out.append(event.getText());
     }
 
     private void handleTestRunFinished() {

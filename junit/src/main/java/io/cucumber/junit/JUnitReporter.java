@@ -41,8 +41,8 @@ final class JUnitReporter {
 
         @Override
         public void receive(TestStepStarted event) {
-            if (event.testStep instanceof PickleStepTestStep) {
-                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+            if (event.getTestStep() instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
                 handleStepStarted(testStep.getPickleStep());
             }
         }
@@ -52,11 +52,11 @@ final class JUnitReporter {
 
         @Override
         public void receive(TestStepFinished event) {
-            if (event.testStep instanceof PickleStepTestStep) {
-                PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
-                handleStepResult(testStep, event.result);
+            if (event.getTestStep() instanceof PickleStepTestStep) {
+                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+                handleStepResult(testStep, event.getResult());
             } else {
-                handleHookResult(event.result);
+                handleHookResult(event.getResult());
             }
         }
 
@@ -65,7 +65,7 @@ final class JUnitReporter {
 
         @Override
         public void receive(TestCaseFinished event) {
-            handleTestCaseResult(event.result);
+            handleTestCaseResult(event.getResult());
         }
 
     };

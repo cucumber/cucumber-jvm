@@ -1,12 +1,8 @@
 package io.cucumber.core.event;
 
-import static java.util.Locale.ROOT;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE)
 public enum HookType {
-    Before, After, BeforeStep, AfterStep;
-
-    @Override
-    public String toString() {
-        return super.toString().toLowerCase(ROOT);
-    }
+    BEFORE, AFTER, BEFORE_STEP, AFTER_STEP;
 }

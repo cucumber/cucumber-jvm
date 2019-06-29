@@ -2,9 +2,11 @@ package io.cucumber.core.backend;
 
 import io.cucumber.core.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
+import org.apiguardian.api.API;
 
 import java.util.List;
 
+@API(status = API.Status.STABLE)
 public interface StepDefinition extends io.cucumber.core.event.StepDefinition {
     /**
      * Returns a list of arguments. Return null if the step definition
@@ -30,7 +32,7 @@ public interface StepDefinition extends io.cucumber.core.event.StepDefinition {
      * @return Return true if this matches the location. This is used to filter
      *         stack traces.
      */
-    boolean isDefinedAt(StackTraceElement stackTraceElement); // TODO: redundant with getLocation?
+    boolean isDefinedAt(StackTraceElement stackTraceElement);
 
     /**
      * @return How many declared parameters this step definition has. Returns null if unknown.

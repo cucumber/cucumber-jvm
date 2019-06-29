@@ -121,7 +121,7 @@ final class TestSourcesModel {
         Feature feature = getFeature(uri);
         if (feature != null) {
             TestSourceRead event = getTestSourceReadEvent(uri);
-            String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
+            String trimmedSourceLine = event.getSource().split("\n")[stepLine - 1].trim();
             GherkinDialect dialect = new GherkinDialectProvider(feature.getLanguage()).getDefaultDialect();
             for (String keyword : dialect.getStepKeywords()) {
                 if (trimmedSourceLine.startsWith(keyword)) {
@@ -154,7 +154,7 @@ final class TestSourcesModel {
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
-            GherkinDocument gherkinDocument = parser.parse(pathToReadEventMap.get(path).source, matcher);
+            GherkinDocument gherkinDocument = parser.parse(pathToReadEventMap.get(path).getSource(), matcher);
             pathToAstMap.put(path, gherkinDocument);
             Map<Integer, AstNode> nodeMap = new HashMap<Integer, AstNode>();
             AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);

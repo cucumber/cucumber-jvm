@@ -37,8 +37,8 @@ public final class RerunFormatter implements EventListener, StrictAware {
 
         @Override
         public void receive(TestCaseFinished event) {
-            if (!event.result.getStatus().isOk(isStrict)) {
-                recordTestFailed(event.testCase);
+            if (!event.getResult().getStatus().isOk(isStrict)) {
+                recordTestFailed(event.getTestCase());
             }
         }
 

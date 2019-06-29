@@ -21,8 +21,8 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import static io.cucumber.core.event.HookType.AfterStep;
-import static io.cucumber.core.event.HookType.BeforeStep;
+import static io.cucumber.core.event.HookType.AFTER_STEP;
+import static io.cucumber.core.event.HookType.BEFORE_STEP;
 import static io.cucumber.core.event.Status.FAILED;
 import static io.cucumber.core.event.Status.PASSED;
 import static io.cucumber.core.event.Status.SKIPPED;
@@ -54,8 +54,8 @@ public class PickleStepTestStepTest {
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
     private HookDefinition afterHookDefinition = mock(HookDefinition.class);
     private HookDefinition beforeHookDefinition = mock(HookDefinition.class);
-    private final HookTestStep beforeHook = new HookTestStep(BeforeStep, new HookDefinitionMatch(beforeHookDefinition));
-    private final HookTestStep afterHook = new HookTestStep(AfterStep, new HookDefinitionMatch(afterHookDefinition));
+    private final HookTestStep beforeHook = new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
+    private final HookTestStep afterHook = new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
         "uri",
         mock(PickleStep.class),
@@ -131,7 +131,7 @@ public class PickleStepTestStepTest {
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
         verify(bus, times(6)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertEquals(failure, ((TestStepFinished) allValues.get(1)).result);
+        assertEquals(failure, ((TestStepFinished) allValues.get(1)).getResult());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class PickleStepTestStepTest {
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
         verify(bus, times(6)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertEquals(failure, ((TestStepFinished) allValues.get(3)).result);
+        assertEquals(failure, ((TestStepFinished) allValues.get(3)).getResult());
     }
 
     @Test
@@ -161,7 +161,7 @@ public class PickleStepTestStepTest {
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
         verify(bus, times(6)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertEquals(failure, ((TestStepFinished) allValues.get(5)).result);
+        assertEquals(failure, ((TestStepFinished) allValues.get(5)).getResult());
     }
 
     @Test
@@ -250,7 +250,7 @@ public class PickleStepTestStepTest {
 
         assertEquals(ofEpochMilli(234L), started.getInstant());
         assertEquals(ofEpochMilli(1234L), finished.getInstant());
-        assertEquals(ofMillis(1000L), finished.result.getDuration());
+        assertEquals(ofMillis(1000L), finished.getResult().getDuration());
     }
 
 }

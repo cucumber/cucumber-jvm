@@ -36,7 +36,7 @@ public class HookTestStepTest {
     );
     private final EventBus bus = mock(EventBus.class);
     private final Scenario scenario = new Scenario(bus, testCase);
-    private HookTestStep step = new HookTestStep(HookType.AfterStep, definitionMatch);
+    private HookTestStep step = new HookTestStep(HookType.AFTER_STEP, definitionMatch);
 
     @Before
     public void init() {

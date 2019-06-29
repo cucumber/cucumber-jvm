@@ -2,6 +2,7 @@ package io.cucumber.core.runtime;
 
 
 import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.io.ClassFinder;
@@ -12,6 +13,7 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.time.Clock;
 
@@ -22,6 +24,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 
 public class ThreadLocalRunnerSupplierTest {
@@ -95,6 +98,6 @@ public class ThreadLocalRunnerSupplierTest {
                 fail();
             }
         });
-        eventBus.send(new TestCaseStarted(EPOCH, null));
+        eventBus.send(new TestCaseStarted(EPOCH, mock(TestCase.class)));
     }
 }

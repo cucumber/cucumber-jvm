@@ -1,9 +1,11 @@
 package io.cucumber.core.event;
 
 import gherkin.pickles.PickleTag;
+import org.apiguardian.api.API;
 
 import java.util.List;
 
+@API(status = API.Status.STABLE)
 public interface TestCase {
 
     /**

@@ -1,5 +1,7 @@
 package io.cucumber.core.event;
 
+import org.apiguardian.api.API;
+
 /**
  * Represents an argument in for a step definition.
  * <p>
@@ -8,6 +10,7 @@ package io.cucumber.core.event;
  * one argument with value {@code "4"}, starting at {@code 7} and
  * ending at {@code 8}.
  */
+@API(status = API.Status.STABLE)
 public interface Argument {
     String getValue();
 

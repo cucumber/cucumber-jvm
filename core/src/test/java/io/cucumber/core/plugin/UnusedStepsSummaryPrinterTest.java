@@ -1,8 +1,12 @@
 package io.cucumber.core.plugin;
 
 import java.time.Clock;
+import java.time.Duration;
 
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.StepDefinedEvent;
+import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.TestStepFinished;
@@ -25,7 +29,7 @@ public class UnusedStepsSummaryPrinterTest {
         // Register two steps, use one, then finish the test run
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/belly.feature:3", "a few cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/tummy.feature:5", "some more cukes")));
-        bus.send(new TestStepFinished(bus.getInstant(), null, mockTestStep("my/belly.feature:3"), null));
+        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/belly.feature:3"), new Result(Status.UNUSED, Duration.ZERO, null)));
         bus.send(new TestRunFinished(bus.getInstant()));
 
         // Verify produced output

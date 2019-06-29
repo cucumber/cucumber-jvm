@@ -1,5 +1,9 @@
 package io.cucumber.core.event;
 
+
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE)
 public interface StepDefinition {
 
     /**

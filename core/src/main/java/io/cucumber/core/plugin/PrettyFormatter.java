@@ -119,23 +119,23 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
         handleStartOfFeature(event);
         handleScenarioOutline(event);
-        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
-            printBackground(event.testCase);
-            currentTestCase = event.testCase;
+        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLine())) {
+            printBackground(event.getTestCase());
+            currentTestCase = event.getTestCase();
         } else {
-            printScenarioDefinition(event.testCase);
+            printScenarioDefinition(event.getTestCase());
         }
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            if (isFirstStepAfterBackground((PickleStepTestStep) event.testStep)) {
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            if (isFirstStepAfterBackground((PickleStepTestStep) event.getTestStep())) {
                 printScenarioDefinition(currentTestCase);
                 currentTestCase = null;
             }
@@ -143,14 +143,14 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            printStep((PickleStepTestStep) event.testStep, event.result);
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            printStep((PickleStepTestStep) event.getTestStep(), event.getResult());
         }
-        printError(event.result);
+        printError(event.getResult());
     }
 
     private void handleWrite(WriteEvent event) {
-        out.println(event.text);
+        out.println(event.getText());
     }
 
     private void finishReport() {
@@ -158,17 +158,17 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private void handleStartOfFeature(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.getTestCase().getUri())) {
             if (currentFeatureFile != null) {
                 out.println();
             }
-            currentFeatureFile = event.testCase.getUri();
+            currentFeatureFile = event.getTestCase().getUri();
             printFeature(currentFeatureFile);
         }
     }
 
     private void handleScenarioOutline(TestCaseStarted event) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.getTestCase().getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
             ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {

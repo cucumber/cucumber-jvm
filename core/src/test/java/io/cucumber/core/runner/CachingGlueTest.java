@@ -13,6 +13,7 @@ import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
@@ -21,6 +22,7 @@ import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
 import org.junit.Test;
 
+import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class CachingGlueTest {
 
     private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
-    private CachingGlue glue = new CachingGlue(mock(EventBus.class), typeRegistry);
+    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()), typeRegistry);
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {

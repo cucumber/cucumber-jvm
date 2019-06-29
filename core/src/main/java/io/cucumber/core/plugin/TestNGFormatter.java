@@ -119,30 +119,30 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
-            currentFeatureFile = event.testCase.getUri();
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.getTestCase().getUri())) {
+            currentFeatureFile = event.getTestCase().getUri();
             previousTestCaseName = "";
             exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", testSources.getFeature(event.testCase.getUri()).getName());
+            clazz.setAttribute("name", testSources.getFeature(event.getTestCase().getUri()).getName());
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
         clazz.appendChild(root);
-        testCase = new TestCase(event.testCase);
+        testCase = new TestCase(event.getTestCase());
         testCase.start(root);
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            testCase.steps.add((PickleStepTestStep) event.testStep);
-            testCase.results.add(event.result);
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            testCase.steps.add((PickleStepTestStep) event.getTestStep());
+            testCase.results.add(event.getResult());
         } else {
-            testCase.hooks.add(event.result);
+            testCase.hooks.add(event.getResult());
         }
     }
 

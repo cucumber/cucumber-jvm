@@ -43,6 +43,8 @@ import java.util.Map;
 import static java.util.Locale.ROOT;
 
 public final class JSONFormatter implements EventListener {
+    private static final String before = "before";
+    private static final String after = "after";
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
     private List<Map<String, Object>> currentElementsList;
@@ -115,19 +117,19 @@ public final class JSONFormatter implements EventListener {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.uri, event);
+        testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
-            currentFeatureFile = event.testCase.getUri();
-            Map<String, Object> currentFeatureMap = createFeatureMap(event.testCase);
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.getTestCase().getUri())) {
+            currentFeatureFile = event.getTestCase().getUri();
+            Map<String, Object> currentFeatureMap = createFeatureMap(event.getTestCase());
             featureMaps.add(currentFeatureMap);
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
         currentTestCaseMap = createTestCase(event);
-        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
-            currentElementMap = createBackground(event.testCase);
+        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLine())) {
+            currentElementMap = createBackground(event.getTestCase());
             currentElementsList.add(currentElementMap);
         } else {
             currentElementMap = currentTestCaseMap;
@@ -137,21 +139,21 @@ public final class JSONFormatter implements EventListener {
     }
 
     private void handleTestStepStarted(TestStepStarted event) {
-        if (event.testStep instanceof PickleStepTestStep) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
             if (isFirstStepAfterBackground(testStep)) {
                 currentElementMap = currentTestCaseMap;
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
             }
             currentStepOrHookMap = createTestStep(testStep);
             //add beforeSteps list to current step
-            if (currentBeforeStepHookList.containsKey(HookType.Before.toString())) {
-                currentStepOrHookMap.put(HookType.Before.toString(), currentBeforeStepHookList.get(HookType.Before.toString()));
+            if (currentBeforeStepHookList.containsKey(before)) {
+                currentStepOrHookMap.put(before, currentBeforeStepHookList.get(before));
                 currentBeforeStepHookList.clear();
             }
             currentStepsList.add(currentStepOrHookMap);
-        } else if(event.testStep instanceof HookTestStep) {
-            HookTestStep hookTestStep = (HookTestStep) event.testStep;
+        } else if(event.getTestStep() instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) event.getTestStep();
             currentStepOrHookMap = createHookStep(hookTestStep);
             addHookStepToTestCaseMap(currentStepOrHookMap, hookTestStep.getHookType());
         } else {
@@ -160,16 +162,16 @@ public final class JSONFormatter implements EventListener {
     }
 
     private void handleWrite(WriteEvent event) {
-        addOutputToHookMap(event.text);
+        addOutputToHookMap(event.getText());
     }
 
     private void handleEmbed(EmbedEvent event) {
-        addEmbeddingToHookMap(event.data, event.mimeType);
+        addEmbeddingToHookMap(event.getData(), event.getMimeType());
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        currentStepOrHookMap.put("match", createMatchMap(event.testStep, event.result));
-        currentStepOrHookMap.put("result", createResultMap(event.result));
+        currentStepOrHookMap.put("match", createMatchMap(event.getTestStep(), event.getResult()));
+        currentStepOrHookMap.put("result", createResultMap(event.getResult()));
     }
 
     private void finishReport() {
@@ -304,24 +306,23 @@ public final class JSONFormatter implements EventListener {
 
     private void addHookStepToTestCaseMap(Map<String, Object> currentStepOrHookMap, HookType hookType) {
         String hookName;
-        if (hookType.toString().contains("after"))
-            hookName = "after";
+        if (hookType == HookType.AFTER || hookType == HookType.AFTER_STEP)
+            hookName = after;
         else
-            hookName = "before";
-
+            hookName = before;
 
         Map<String, Object> mapToAddTo;
         switch (hookType) {
-            case Before:
+            case BEFORE:
                 mapToAddTo = currentTestCaseMap;
                 break;
-            case After:
+            case AFTER:
                 mapToAddTo = currentTestCaseMap;
                 break;
-            case BeforeStep:
+            case BEFORE_STEP:
                 mapToAddTo = currentBeforeStepHookList;
                 break;
-            case AfterStep:
+            case AFTER_STEP:
                 mapToAddTo = currentStepsList.get(currentStepsList.size() - 1);
                 break;
             default:
