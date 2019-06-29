@@ -1,4 +1,4 @@
-package io.cucumber.stepexpression;
+package io.cucumber.core.stepexpression;
 
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
