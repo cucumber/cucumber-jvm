@@ -15,7 +15,6 @@ import gherkin.ast.Background;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
-import gherkin.pickles.PickleLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 final class UndefinedStepsTracker implements EventListener {
-    private final List<String> snippets = new ArrayList<String>();
+    private final List<String> snippets = new ArrayList<>();
     private final IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-    private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
-    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
+    private final Map<String, String> pathToSourceMap = new HashMap<>();
+    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<>();
     private boolean hasUndefinedSteps = false;
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
@@ -56,7 +55,7 @@ final class UndefinedStepsTracker implements EventListener {
         return snippets;
     }
 
-    void handleSnippetsSuggested(String uri, List<PickleLocation> stepLocations, List<String> snippets) {
+    void handleSnippetsSuggested(String uri, List<SnippetsSuggestedEvent.Location> stepLocations, List<String> snippets) {
         hasUndefinedSteps = true;
         String keyword = givenWhenThenKeyword(uri, stepLocations);
         for (String rawSnippet : snippets) {
@@ -67,7 +66,7 @@ final class UndefinedStepsTracker implements EventListener {
         }
     }
 
-    private String givenWhenThenKeyword(String uri, List<PickleLocation> stepLocations) {
+    private String givenWhenThenKeyword(String uri, List<SnippetsSuggestedEvent.Location> stepLocations) {
         String keyword = null;
         if (!stepLocations.isEmpty()) {
             if (pathToSourceMap.containsKey(uri)) {
@@ -77,7 +76,7 @@ final class UndefinedStepsTracker implements EventListener {
         return keyword != null ? keyword : getFirstGivenKeyword(dialectProvider.getDefaultDialect());
     }
 
-    private String getKeywordFromSource(String path, List<PickleLocation> stepLocations) {
+    private String getKeywordFromSource(String path, List<SnippetsSuggestedEvent.Location> stepLocations) {
         if (!pathToStepMap.containsKey(path)) {
             createFeatureStepMap(path);
         }
@@ -87,13 +86,13 @@ final class UndefinedStepsTracker implements EventListener {
         GherkinDialect featureDialect = pathToStepMap.get(path).dialect;
         List<String> givenThenWhenKeywords = getGivenWhenThenKeywords(featureDialect);
         Map<Integer, StepNode> stepMap = pathToStepMap.get(path).stepMap;
-        for (PickleLocation stepLocation : stepLocations) {
+        for (SnippetsSuggestedEvent.Location stepLocation : stepLocations) {
             if (!stepMap.containsKey(stepLocation.getLine())) {
                 continue;
             }
             for (StepNode stepNode = stepMap.get(stepLocation.getLine()); stepNode != null; stepNode = stepNode.previous) {
                 for (String keyword : givenThenWhenKeywords) {
-                    if (!keyword.equals("* ") && keyword == stepNode.step.getKeyword()) {
+                    if (!keyword.equals("* ") && keyword.equals(stepNode.step.getKeyword())) {
                         return convertToCodeKeyword(keyword);
                     }
                 }
@@ -106,11 +105,11 @@ final class UndefinedStepsTracker implements EventListener {
         if (!pathToSourceMap.containsKey(path)) {
             return;
         }
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
             GherkinDocument gherkinDocument = parser.parse(pathToSourceMap.get(path), matcher);
-            Map<Integer, StepNode> stepMap = new HashMap<Integer, StepNode>();
+            Map<Integer, StepNode> stepMap = new HashMap<>();
             StepNode initialPreviousNode = null;
             for (ScenarioDefinition child : gherkinDocument.getFeature().getChildren()) {
                 StepNode lastStepNode = processScenarioDefinition(stepMap, initialPreviousNode, child);
@@ -135,7 +134,7 @@ final class UndefinedStepsTracker implements EventListener {
     }
 
     private List<String> getGivenWhenThenKeywords(GherkinDialect dialect) {
-        List<String> keywords = new ArrayList<String>();
+        List<String> keywords = new ArrayList<>();
         keywords.addAll(dialect.getGivenKeywords());
         keywords.addAll(dialect.getWhenKeywords());
         keywords.addAll(dialect.getThenKeywords());

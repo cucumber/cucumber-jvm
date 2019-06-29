@@ -12,7 +12,6 @@ import io.cucumber.core.exception.CucumberException;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
-import gherkin.pickles.PickleTag;
 
 import java.io.Closeable;
 import java.io.File;
@@ -229,8 +228,8 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
         private String buildTagsValue(final TestCase testCase) {
             final StringBuilder tags = new StringBuilder();
-            for (final PickleTag tag : testCase.getTags()) {
-                tags.append(tag.getName().toLowerCase()).append(",");
+            for (final String tag : testCase.getTags()) {
+                tags.append(tag.toLowerCase()).append(",");
             }
             return tags.toString();
         }

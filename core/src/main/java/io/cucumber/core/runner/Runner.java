@@ -85,7 +85,7 @@ public final class Runner {
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {
-                        bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickleEvent.uri, step.getLocations(), snippets));
+                        bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickleEvent.uri, locations(step), snippets));
                     }
                     match = new UndefinedPickleStepDefinitionMatch(step);
                 }
@@ -100,6 +100,12 @@ public final class Runner {
             List<HookTestStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
             testSteps.add(new PickleStepTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
         }
+    }
+
+    private List<SnippetsSuggestedEvent.Location> locations(PickleStep step) {
+        return step.getLocations().stream()
+            .map(p -> new SnippetsSuggestedEvent.Location(p.getLine(), p.getLine()))
+            .collect(Collectors.toList());
     }
 
     private void addTestStepsForBeforeHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {

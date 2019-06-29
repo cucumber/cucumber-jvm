@@ -1,6 +1,5 @@
 package io.cucumber.core.event;
 
-import gherkin.pickles.PickleTag;
 import org.apiguardian.api.API;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public interface TestCase {
 
     String getScenarioDesignation();
 
-    List<PickleTag> getTags();
+    List<String> getTags();
 
     List<TestStep> getTestSteps();
 

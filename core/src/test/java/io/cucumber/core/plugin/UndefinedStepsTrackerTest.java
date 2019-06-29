@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import org.junit.Test;
 
-import gherkin.pickles.PickleLocation;
 import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
@@ -140,11 +140,11 @@ public class UndefinedStepsTrackerTest {
         assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());
     }
 
-    private List<PickleLocation> locations(int line) {
-        return asList(new PickleLocation(line, 0));
+    private List<SnippetsSuggestedEvent.Location> locations(int line) {
+        return asList(new SnippetsSuggestedEvent.Location(line, 0));
     }
 
-    private List<PickleLocation> locations() {
+    private List<SnippetsSuggestedEvent.Location> locations() {
         return Collections.emptyList();
     }
 

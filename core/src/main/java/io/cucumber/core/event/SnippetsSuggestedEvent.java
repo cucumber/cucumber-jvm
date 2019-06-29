@@ -1,6 +1,5 @@
 package io.cucumber.core.event;
 
-import gherkin.pickles.PickleLocation;
 import org.apiguardian.api.API;
 
 import java.time.Instant;
@@ -11,10 +10,10 @@ import java.util.Objects;
 @API(status = API.Status.STABLE)
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
     private final String uri;
-    private final List<PickleLocation> stepLocations;
+    private final List<Location> stepLocations;
     private final List<String> snippets;
 
-    public SnippetsSuggestedEvent(Instant timeInstant, String uri, List<PickleLocation> stepLocations, List<String> snippets) {
+    public SnippetsSuggestedEvent(Instant timeInstant, String uri, List<Location> stepLocations, List<String> snippets) {
         super(timeInstant);
         this.uri = Objects.requireNonNull(uri);
         this.stepLocations = Objects.requireNonNull(stepLocations);
@@ -25,11 +24,30 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
         return uri;
     }
 
-    public List<PickleLocation> getStepLocations() {
+    public List<Location> getStepLocations() {
         return stepLocations;
     }
 
     public List<String> getSnippets() {
         return snippets;
     }
+
+    public static final class Location {
+        private final int line;
+        private final int column;
+
+        public Location(int line, int column) {
+            this.line = line;
+            this.column = column;
+        }
+
+        public int getLine() {
+            return line;
+        }
+
+        public int getColumn() {
+            return column;
+        }
+    }
+
 }

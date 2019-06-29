@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class TestCase implements io.cucumber.core.event.TestCase {
     private final PickleEvent pickleEvent;
@@ -57,7 +58,7 @@ final class TestCase implements io.cucumber.core.event.TestCase {
 
     @Override
     public List<TestStep> getTestSteps() {
-        List<TestStep> testSteps = new ArrayList<TestStep>(beforeHooks);
+        List<TestStep> testSteps = new ArrayList<>(beforeHooks);
         for (PickleStepTestStep step : this.testSteps) {
             testSteps.addAll(step.getBeforeStepHookSteps());
             testSteps.add(step);
@@ -91,7 +92,10 @@ final class TestCase implements io.cucumber.core.event.TestCase {
     }
 
     @Override
-    public List<PickleTag> getTags() {
-        return pickleEvent.pickle.getTags();
+    public List<String> getTags() {
+        return pickleEvent.pickle.getTags()
+            .stream()
+            .map(PickleTag::getName)
+            .collect(Collectors.toList());
     }
 }

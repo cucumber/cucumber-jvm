@@ -19,7 +19,6 @@ import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.event.EmbedEvent;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
@@ -50,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Locale.ENGLISH;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
 public final class HTMLFormatter implements EventListener {
@@ -246,7 +245,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createFeature(TestCase testCase) {
-        Map<String, Object> featureMap = new HashMap<String, Object>();
+        Map<String, Object> featureMap = new HashMap<>();
         Feature feature = testSources.getFeature(testCase.getUri());
         if (feature != null) {
             featureMap.put("keyword", feature.getKeyword());
@@ -260,9 +259,9 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private List<Map<String, Object>> createTagList(List<Tag> tags) {
-        List<Map<String, Object>> tagList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> tagList = new ArrayList<>();
         for (Tag tag : tags) {
-            Map<String, Object> tagMap = new HashMap<String, Object>();
+            Map<String, Object> tagMap = new HashMap<>();
             tagMap.put("name", tag.getName());
             tagList.add(tagMap);
         }
@@ -290,7 +289,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createScenarioOutline(ScenarioOutline scenarioOutline) {
-        Map<String, Object> scenarioOutlineMap = new HashMap<String, Object>();
+        Map<String, Object> scenarioOutlineMap = new HashMap<>();
         scenarioOutlineMap.put("name", scenarioOutline.getName());
         scenarioOutlineMap.put("keyword", scenarioOutline.getKeyword());
         scenarioOutlineMap.put("description", scenarioOutline.getDescription() != null ? scenarioOutline.getDescription() : "");
@@ -302,7 +301,7 @@ public final class HTMLFormatter implements EventListener {
 
     private void addOutlineStepsToReport(ScenarioOutline scenarioOutline) {
         for (Step step : scenarioOutline.getSteps()) {
-            Map<String, Object> stepMap = new HashMap<String, Object>();
+            Map<String, Object> stepMap = new HashMap<>();
             stepMap.put("name", step.getText());
             stepMap.put("keyword", step.getKeyword());
             if (step.getArgument() != null) {
@@ -318,13 +317,13 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createDocStringMap(DocString docString) {
-        Map<String, Object> docStringMap = new HashMap<String, Object>();
+        Map<String, Object> docStringMap = new HashMap<>();
         docStringMap.put("value", docString.getContent());
         return docStringMap;
     }
 
     private List<Map<String, Object>> createDataTableList(DataTable dataTable) {
-        List<Map<String, Object>> rowList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> rowList = new ArrayList<>();
         for (TableRow row : dataTable.getRows()) {
             rowList.add(createRowMap(row));
         }
@@ -332,13 +331,13 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createRowMap(TableRow row) {
-        Map<String, Object> rowMap = new HashMap<String, Object>();
+        Map<String, Object> rowMap = new HashMap<>();
         rowMap.put("cells", createCellList(row));
         return rowMap;
     }
 
     private List<String> createCellList(TableRow row) {
-        List<String> cells = new ArrayList<String>();
+        List<String> cells = new ArrayList<>();
         for (TableCell cell : row.getCells()) {
             cells.add(cell.getValue());
         }
@@ -346,11 +345,11 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createExamples(Examples examples) {
-        Map<String, Object> examplesMap = new HashMap<String, Object>();
+        Map<String, Object> examplesMap = new HashMap<>();
         examplesMap.put("name", examples.getName());
         examplesMap.put("keyword", examples.getKeyword());
         examplesMap.put("description", examples.getDescription() != null ? examples.getDescription() : "");
-        List<Map<String, Object>> rowList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> rowList = new ArrayList<>();
         rowList.add(createRowMap(examples.getTableHeader()));
         for (TableRow row : examples.getTableBody()) {
             rowList.add(createRowMap(row));
@@ -363,7 +362,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createTestCase(TestCase testCase) {
-        Map<String, Object> testCaseMap = new HashMap<String, Object>();
+        Map<String, Object> testCaseMap = new HashMap<>();
         testCaseMap.put("name", testCase.getName());
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (astNode != null) {
@@ -372,10 +371,10 @@ public final class HTMLFormatter implements EventListener {
             testCaseMap.put("description", scenarioDefinition.getDescription() != null ? scenarioDefinition.getDescription() : "");
         }
         if (!testCase.getTags().isEmpty()) {
-            List<Map<String, Object>> tagList = new ArrayList<Map<String, Object>>();
-            for (PickleTag tag : testCase.getTags()) {
-                Map<String, Object> tagMap = new HashMap<String, Object>();
-                tagMap.put("name", tag.getName());
+            List<Map<String, Object>> tagList = new ArrayList<>();
+            for (String tag : testCase.getTags()) {
+                Map<String, Object> tagMap = new HashMap<>();
+                tagMap.put("name", tag);
                 tagList.add(tagMap);
             }
             testCaseMap.put("tags", tagList);
@@ -387,7 +386,7 @@ public final class HTMLFormatter implements EventListener {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (astNode != null) {
             Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
-            Map<String, Object> testCaseMap = new HashMap<String, Object>();
+            Map<String, Object> testCaseMap = new HashMap<>();
             testCaseMap.put("name", background.getName());
             testCaseMap.put("keyword", background.getKeyword());
             testCaseMap.put("description", background.getDescription() != null ? background.getDescription() : "");
@@ -399,15 +398,13 @@ public final class HTMLFormatter implements EventListener {
     private boolean isFirstStepAfterBackground(PickleStepTestStep testStep) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
         if (astNode != null) {
-            if (currentTestCaseMap != null && !TestSourcesModel.isBackgroundStep(astNode)) {
-                return true;
-            }
+            return currentTestCaseMap != null && !TestSourcesModel.isBackgroundStep(astNode);
         }
         return false;
     }
 
     private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
-        Map<String, Object> stepMap = new HashMap<String, Object>();
+        Map<String, Object> stepMap = new HashMap<>();
         stepMap.put("name", testStep.getStepText());
         if (!testStep.getStepArgument().isEmpty()) {
             Argument argument = testStep.getStepArgument().get(0);
@@ -427,13 +424,13 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createDocStringMap(PickleString docString) {
-        Map<String, Object> docStringMap = new HashMap<String, Object>();
+        Map<String, Object> docStringMap = new HashMap<>();
         docStringMap.put("value", docString.getContent());
         return docStringMap;
     }
 
     private List<Map<String, Object>> createDataTableList(PickleTable dataTable) {
-        List<Map<String, Object>> rowList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> rowList = new ArrayList<>();
         for (PickleRow row : dataTable.getRows()) {
             rowList.add(createRowMap(row));
         }
@@ -441,13 +438,13 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createRowMap(PickleRow row) {
-        Map<String, Object> rowMap = new HashMap<String, Object>();
+        Map<String, Object> rowMap = new HashMap<>();
         rowMap.put("cells", createCellList(row));
         return rowMap;
     }
 
     private List<String> createCellList(PickleRow row) {
-        List<String> cells = new ArrayList<String>();
+        List<String> cells = new ArrayList<>();
         for (PickleCell cell : row.getCells()) {
             cells.add(cell.getValue());
         }
@@ -455,7 +452,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createMatchMap(PickleStepTestStep testStep) {
-        Map<String, Object> matchMap = new HashMap<String, Object>();
+        Map<String, Object> matchMap = new HashMap<>();
         String location = testStep.getCodeLocation();
         if (location != null) {
             matchMap.put("location", location);
@@ -464,7 +461,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createResultMap(Result result) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", result.getStatus().name().toLowerCase(ROOT));
         if (result.getError() != null) {
             resultMap.put("error_message", printStackTrace(result.getError()));
@@ -544,7 +541,7 @@ public final class HTMLFormatter implements EventListener {
 
     private static NiceAppendable createJsOut(URL htmlReportDir) {
         try {
-            return new NiceAppendable(new OutputStreamWriter(createReportFileOutputStream(new URL(htmlReportDir, JS_REPORT_FILENAME)), "UTF-8"));
+            return new NiceAppendable(new OutputStreamWriter(createReportFileOutputStream(new URL(htmlReportDir, JS_REPORT_FILENAME)), UTF_8));
         } catch (IOException e) {
             throw new CucumberException(e);
         }

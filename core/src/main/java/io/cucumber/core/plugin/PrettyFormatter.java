@@ -296,9 +296,9 @@ public final class PrettyFormatter implements EventListener, ColorAware {
         }
     }
 
-    private void printPickleTags(List<PickleTag> tags, String indent) {
+    private void printPickleTags(List<String> tags, String indent) {
         if (!tags.isEmpty()) {
-            out.println(indent + FixJava.join(FixJava.map(tags, pickleTagNameMapper), " "));
+            out.println(indent + FixJava.join(tags, " "));
         }
     }
 
@@ -360,7 +360,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private String createPaddingToLocation(String indent, String text) {
-        StringBuffer padding = new StringBuffer();
+        StringBuilder padding = new StringBuilder();
         for (int i = indent.length() + text.length(); i < locationIndentation; ++i) {
             padding.append(' ');
         }
