@@ -41,11 +41,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Locale.ROOT;
 
 public final class HTMLFormatter implements EventListener {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -443,9 +447,9 @@ public final class HTMLFormatter implements EventListener {
 
     private Map<String, Object> createResultMap(Result result) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("status", result.getStatus().lowerCaseName());
-        if (result.getErrorMessage() != null) {
-            resultMap.put("error_message", result.getErrorMessage());
+        resultMap.put("status", result.getStatus().name().toLowerCase(ROOT));
+        if (result.getError() != null) {
+            resultMap.put("error_message", printStackTrace(result.getError()));
         }
         return resultMap;
     }
@@ -475,6 +479,13 @@ public final class HTMLFormatter implements EventListener {
             String fileName = new File(textAsset).getName();
             writeStreamToURL(textAssetStream, toUrl(fileName));
         }
+    }
+
+    private static String printStackTrace(Throwable error) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        error.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 
     private URL toUrl(String fileName) {

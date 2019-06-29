@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.WriteEvent;
@@ -12,21 +12,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
-    private static final Map<Result.Type, Character> CHARS = new HashMap<Result.Type, Character>() {{
-        put(Result.Type.PASSED, '.');
-        put(Result.Type.UNDEFINED, 'U');
-        put(Result.Type.PENDING, 'P');
-        put(Result.Type.SKIPPED, '-');
-        put(Result.Type.FAILED, 'F');
-        put(Result.Type.AMBIGUOUS, 'A');
+    private static final Map<Status, Character> CHARS = new HashMap<Status, Character>() {{
+        put(Status.PASSED, '.');
+        put(Status.UNDEFINED, 'U');
+        put(Status.PENDING, 'P');
+        put(Status.SKIPPED, '-');
+        put(Status.FAILED, 'F');
+        put(Status.AMBIGUOUS, 'A');
     }};
-    private static final Map<Result.Type, AnsiEscapes> ANSI_ESCAPES = new HashMap<Result.Type, AnsiEscapes>() {{
-        put(Result.Type.PASSED, AnsiEscapes.GREEN);
-        put(Result.Type.UNDEFINED, AnsiEscapes.YELLOW);
-        put(Result.Type.PENDING, AnsiEscapes.YELLOW);
-        put(Result.Type.SKIPPED, AnsiEscapes.CYAN);
-        put(Result.Type.FAILED, AnsiEscapes.RED);
-        put(Result.Type.AMBIGUOUS, AnsiEscapes.RED);
+    private static final Map<Status, AnsiEscapes> ANSI_ESCAPES = new HashMap<Status, AnsiEscapes>() {{
+        put(Status.PASSED, AnsiEscapes.GREEN);
+        put(Status.UNDEFINED, AnsiEscapes.YELLOW);
+        put(Status.PENDING, AnsiEscapes.YELLOW);
+        put(Status.SKIPPED, AnsiEscapes.CYAN);
+        put(Status.FAILED, AnsiEscapes.RED);
+        put(Status.AMBIGUOUS, AnsiEscapes.RED);
     }};
 
     private final NiceAppendable out;
@@ -68,7 +68,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep || event.result.is(Result.Type.FAILED)) {
+        if (event.testStep instanceof PickleStepTestStep || event.result.getStatus().is(Status.FAILED)) {
             if (!monochrome) {
                 ANSI_ESCAPES.get(event.result.getStatus()).appendTo(out);
             }

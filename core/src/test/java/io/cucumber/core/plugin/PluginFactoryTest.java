@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
@@ -93,7 +94,7 @@ public class PluginFactoryTest {
             ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
             EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
             plugin.setEventPublisher(bus);
-            Result result = new Result(Result.Type.PASSED, ZERO, null);
+            Result result = new Result(Status.PASSED, ZERO, null);
             TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
             bus.send(event);
 

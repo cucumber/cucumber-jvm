@@ -10,12 +10,13 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.Test;
 
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
@@ -27,7 +28,7 @@ public class EventBusTest {
     public void handlers_receive_the_events_they_registered_for() {
         EventHandler<TestStepFinished> handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        Result result = new Result(Result.Type.PASSED, ZERO, null);
+        Result result = new Result(Status.PASSED, ZERO, null);
         TestCase testCase = mock(TestCase.class);
         TestStepFinished event = new TestStepFinished(EPOCH, testCase, testStep, result);
 

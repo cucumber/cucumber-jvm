@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.util.Locale.ROOT;
+
 public final class TimelineFormatter implements ConcurrentEventListener {
 
     private static final String[] TEXT_ASSETS = new String[]{
@@ -235,7 +237,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
         public void end(final TestCaseFinished event) {
             this.endTime = event.getInstant();
-            this.className = event.result.getStatus().lowerCaseName();
+            this.className = event.result.getStatus().name().toLowerCase(ROOT);
         }
     }
 

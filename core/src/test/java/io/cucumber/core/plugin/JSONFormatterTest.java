@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import io.cucumber.core.event.Result;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.TestHelper;
@@ -29,7 +30,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
 
 import gherkin.pickles.PickleTag;
-import io.cucumber.core.event.Result;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;

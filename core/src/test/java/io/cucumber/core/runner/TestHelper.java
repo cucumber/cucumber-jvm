@@ -1,7 +1,8 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
+import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.plugin.ConcurrentEventListener;
 import io.cucumber.core.plugin.EventListener;
@@ -49,13 +50,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.core.event.Result.Type.FAILED;
-import static io.cucumber.core.event.Result.Type.PASSED;
-import static io.cucumber.core.event.Result.Type.PENDING;
-import static io.cucumber.core.event.Result.Type.SKIPPED;
-import static io.cucumber.core.event.Result.Type.UNDEFINED;
+import static io.cucumber.core.event.Status.FAILED;
+import static io.cucumber.core.event.Status.PASSED;
+import static io.cucumber.core.event.Status.PENDING;
+import static io.cucumber.core.event.Status.SKIPPED;
+import static io.cucumber.core.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.util.Locale.ENGLISH;
+import static java.util.Locale.ROOT;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -71,9 +73,9 @@ public class TestHelper {
     }
 
     private List<CucumberFeature> features = Collections.emptyList();
-    private Map<String, Result> stepsToResult = Collections.emptyMap();
+    private Map<String, io.cucumber.core.event.Result> stepsToResult = Collections.emptyMap();
     private Map<String, String> stepsToLocation = Collections.emptyMap();
-    private List<SimpleEntry<String, Result>> hooks = Collections.emptyList();
+    private List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks = Collections.emptyList();
     private List<String> hookLocations = Collections.emptyList();
     private List<Answer<Object>> hookActions = Collections.emptyList();
     private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
@@ -87,24 +89,24 @@ public class TestHelper {
     public static final class TestHelperBackendSupplier extends TestBackendSupplier {
 
         private final List<CucumberFeature> features;
-        private final Map<String, Result> stepsToResult;
+        private final Map<String, io.cucumber.core.event.Result> stepsToResult;
         private final Map<String, String> stepsToLocation;
-        private final List<SimpleEntry<String, Result>> hooks;
+        private final List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks;
         private final List<String> hookLocations;
         private final List<Answer<Object>> hookActions;
 
         public TestHelperBackendSupplier(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
             this(
-                Collections.<CucumberFeature>emptyList(),
-                Collections.<String, Result>emptyMap(),
-                Collections.<String, String>emptyMap(),
-                Collections.<SimpleEntry<String, Result>>emptyList(),
-                Collections.<String>emptyList(),
-                Collections.<Answer<Object>>emptyList()
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
             );
         }
 
-        public TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
+        public TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, io.cucumber.core.event.Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
             this.features = features;
             this.stepsToResult = stepsToResult;
             this.stepsToLocation = stepsToLocation;
@@ -116,11 +118,11 @@ public class TestHelper {
         public TestHelperBackendSupplier(List<CucumberFeature> features) {
             this(
                 features,
-                Collections.<String, Result>emptyMap(),
-                Collections.<String, String>emptyMap(),
-                Collections.<SimpleEntry<String, Result>>emptyList(),
-                Collections.<String>emptyList(),
-                Collections.<Answer<Object>>emptyList()
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
             );
         }
 
@@ -136,7 +138,7 @@ public class TestHelper {
         }
 
         private static void mockSteps(Glue glue, List<CucumberFeature> features,
-                                      Map<String, Result> stepsToResult,
+                                      Map<String, io.cucumber.core.event.Result> stepsToResult,
                                       final Map<String, String> stepsToLocation) {
             Compiler compiler = new Compiler();
             TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
@@ -153,8 +155,8 @@ public class TestHelper {
             }
 
             for (final PickleStep step : steps) {
-                final Result stepResult = getResultWithDefaultPassed(stepsToResult, step.getText());
-                if (stepResult.is(UNDEFINED)) {
+                final io.cucumber.core.event.Result stepResult = getResultWithDefaultPassed(stepsToResult, step.getText());
+                if (stepResult.getStatus().is(UNDEFINED)) {
                     continue;
                 }
 
@@ -164,13 +166,13 @@ public class TestHelper {
                     @Override
                     public void execute(Object[] args) throws Throwable {
                         super.execute(args);
-                        if (stepResult.is(PENDING)) {
+                        if (stepResult.getStatus().is(PENDING)) {
                             throw new TestPendingException();
-                        } else if (stepResult.is(FAILED)) {
+                        } else if (stepResult.getStatus().is(FAILED)) {
                             throw stepResult.getError();
-                        } else if (stepResult.is(SKIPPED) && (stepResult.getError() != null)) {
+                        } else if (stepResult.getStatus().is(SKIPPED) && (stepResult.getError() != null)) {
                             throw stepResult.getError();
-                        } else if (!stepResult.is(PASSED) && !stepResult.is(SKIPPED)) {
+                        } else if (!stepResult.getStatus().is(PASSED) && !stepResult.getStatus().is(SKIPPED)) {
                             fail("Cannot mock step to the result: " + stepResult.getStatus());
                         }
                     }
@@ -186,7 +188,7 @@ public class TestHelper {
         }
 
 
-        private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
+        private static io.cucumber.core.event.Result getResultWithDefaultPassed(Map<String, io.cucumber.core.event.Result> stepsToResult, String step) {
             return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, ZERO, null);
         }
 
@@ -215,7 +217,7 @@ public class TestHelper {
             return types;
         }
 
-        private static void mockHooks(Glue glue, final List<SimpleEntry<String, Result>> hooks,
+        private static void mockHooks(Glue glue, final List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks,
                                       final List<String> hookLocations,
                                       final List<Answer<Object>> hookActions) throws Throwable {
             List<HookDefinition> beforeHooks = new ArrayList<>();
@@ -241,7 +243,7 @@ public class TestHelper {
             }
         }
 
-        private static void mockHook(final SimpleEntry<String, Result> hookEntry,
+        private static void mockHook(final SimpleEntry<String, io.cucumber.core.event.Result> hookEntry,
                                      final String hookLocation,
                                      final Answer<Object> action,
                                      final List<HookDefinition> beforeHooks,
@@ -256,9 +258,9 @@ public class TestHelper {
             if (action != null) {
                 doAnswer(action).when(hook).execute((Scenario) any());
             }
-            if (hookEntry.getValue().is(FAILED)) {
+            if (hookEntry.getValue().getStatus().is(FAILED)) {
                 doThrow(hookEntry.getValue().getError()).when(hook).execute((Scenario) any());
-            } else if (hookEntry.getValue().is(PENDING)) {
+            } else if (hookEntry.getValue().getStatus().is(PENDING)) {
                 doThrow(new TestPendingException()).when(hook).execute((io.cucumber.core.api.Scenario) any());
             }
             if ("before".equals(hookEntry.getKey())) {
@@ -354,7 +356,7 @@ public class TestHelper {
             return this;
         }
 
-        public Builder withStepsToResult(Map<String, Result> stepsToResult) {
+        public Builder withStepsToResult(Map<String, io.cucumber.core.event.Result> stepsToResult) {
             this.instance.stepsToResult = stepsToResult;
             return this;
         }
@@ -364,7 +366,7 @@ public class TestHelper {
             return this;
         }
 
-        public Builder withHooks(List<SimpleEntry<String, Result>> hooks) {
+        public Builder withHooks(List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks) {
             this.instance.hooks = hooks;
             return this;
         }
@@ -454,15 +456,19 @@ public class TestHelper {
         });
     }
 
-    public static Result result(String status) {
-        return result(Result.Type.fromLowerCaseName(status));
+    public static io.cucumber.core.event.Result result(String status) {
+        return result(fromLowerCaseName(status));
     }
 
-    public static Result result(String status, Throwable error) {
-        return result(Result.Type.fromLowerCaseName(status), error);
+    public static io.cucumber.core.event.Result result(String status, Throwable error) {
+        return result(fromLowerCaseName(status), error);
     }
 
-    public static Result result(Result.Type status) {
+    private static Status fromLowerCaseName(String lowerCaseName) {
+        return Status.valueOf(lowerCaseName.toUpperCase(ROOT));
+    }
+
+    public static io.cucumber.core.event.Result result(Status status) {
         switch (status) {
             case FAILED:
                 return result(status, mockAssertionFailedError());
@@ -475,7 +481,7 @@ public class TestHelper {
         }
     }
 
-    public static Result result(Result.Type status, Throwable error) {
+    public static io.cucumber.core.event.Result result(Status status, Throwable error) {
         return new Result(status, Duration.ZERO, error);
     }
 
@@ -514,6 +520,7 @@ public class TestHelper {
         };
         doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
         when(error.getStackTrace()).thenReturn(new StackTraceElement[0]);
+        when(error.getMessage()).thenReturn("the message");
         return error;
     }
 
@@ -528,10 +535,11 @@ public class TestHelper {
             }
         };
         doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
+        when(exception.getMessage()).thenReturn("the message");
         return exception;
     }
 
-    public static SimpleEntry<String, Result> hookEntry(String type, Result result) {
+    public static SimpleEntry<String, io.cucumber.core.event.Result> hookEntry(String type, io.cucumber.core.event.Result result) {
         return new SimpleEntry<>(type, result);
     }
 

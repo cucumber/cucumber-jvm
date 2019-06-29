@@ -1,9 +1,10 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestRunFinished;
@@ -25,6 +26,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.Closeable;
@@ -236,18 +238,19 @@ public final class JUnitFormatter implements EventListener, StrictAware {
             StringBuilder sb = new StringBuilder();
             addStepAndResultListing(sb);
             Element child;
-            if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
+            Status status = result.getStatus();
+            if (status.is(Status.FAILED) || status.is(Status.AMBIGUOUS)) {
                 addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
-            } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
+                child = createElementWithMessage(doc, sb, "failure", printStackTrace(result.getError()));
+            } else if (status.is(Status.PENDING) || status.is(Status.UNDEFINED)) {
                 if (strict) {
                     child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
                 } else {
                     child = createElement(doc, sb, "skipped");
                 }
-            } else if (result.is(Result.Type.SKIPPED) && result.getError() != null) {
+            } else if (status.is(Status.SKIPPED) && result.getError() != null) {
                 addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "skipped", result.getErrorMessage());
+                child = createElementWithMessage(doc, sb, "skipped", printStackTrace(result.getError()));
             } else {
                 child = createElement(doc, sb, "system-out");
             }
@@ -275,7 +278,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
                 int length = sb.length();
                 String resultStatus = "not executed";
                 if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus().lowerCaseName();
+                    resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
                 sb.append(getKeywordFromSource(steps.get(i).getStepLine()));
                 sb.append(steps.get(i).getStepText());
@@ -293,9 +296,13 @@ public final class JUnitFormatter implements EventListener, StrictAware {
 
         private void addStackTrace(StringBuilder sb, Result failed) {
             sb.append("\nStackTrace:\n");
-            StringWriter sw = new StringWriter();
-            failed.getError().printStackTrace(new PrintWriter(sw));
-            sb.append(sw.toString());
+            sb.append(printStackTrace(failed.getError()));
+        }
+
+        private String printStackTrace(Throwable error) {
+            StringWriter stringWriter = new StringWriter();
+            error.printStackTrace(new PrintWriter(stringWriter));
+            return stringWriter.toString();
         }
 
         private Element createElementWithMessage(Document doc, StringBuilder sb, String elementType, String message) {

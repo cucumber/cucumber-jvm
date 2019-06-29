@@ -9,13 +9,12 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import io.cucumber.core.event.Result;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Locale;
 
+import io.cucumber.core.event.Status;
 import org.junit.Test;
 
 public class StatsTest {
@@ -37,10 +36,10 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(Result.Type.PASSED);
-        counter.addStep(Result.Type.PASSED);
-        counter.addStep(Result.Type.PASSED);
-        counter.addScenario(Result.Type.PASSED, "scenario designation");
+        counter.addStep(Status.PASSED);
+        counter.addStep(Status.PASSED);
+        counter.addStep(Status.PASSED);
+        counter.addScenario(Status.PASSED, "scenario designation");
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -53,12 +52,12 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        addOneStepScenario(counter, Result.Type.PASSED);
-        addOneStepScenario(counter, Result.Type.FAILED);
-        addOneStepScenario(counter, Result.Type.AMBIGUOUS);
-        addOneStepScenario(counter, Result.Type.PENDING);
-        addOneStepScenario(counter, Result.Type.UNDEFINED);
-        addOneStepScenario(counter, Result.Type.SKIPPED);
+        addOneStepScenario(counter, Status.PASSED);
+        addOneStepScenario(counter, Status.FAILED);
+        addOneStepScenario(counter, Status.AMBIGUOUS);
+        addOneStepScenario(counter, Status.PENDING);
+        addOneStepScenario(counter, Status.UNDEFINED);
+        addOneStepScenario(counter, Status.SKIPPED);
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
@@ -71,12 +70,12 @@ public class StatsTest {
         Stats counter = createColorSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        addOneStepScenario(counter, Result.Type.PASSED);
-        addOneStepScenario(counter, Result.Type.FAILED);
-        addOneStepScenario(counter, Result.Type.AMBIGUOUS);
-        addOneStepScenario(counter, Result.Type.PENDING);
-        addOneStepScenario(counter, Result.Type.UNDEFINED);
-        addOneStepScenario(counter, Result.Type.SKIPPED);
+        addOneStepScenario(counter, Status.PASSED);
+        addOneStepScenario(counter, Status.FAILED);
+        addOneStepScenario(counter, Status.AMBIGUOUS);
+        addOneStepScenario(counter, Status.PENDING);
+        addOneStepScenario(counter, Status.UNDEFINED);
+        addOneStepScenario(counter, Status.SKIPPED);
         counter.printStats(new PrintStream(baos));
 
         String colorSubCounts = "" +
@@ -159,14 +158,14 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(Result.Type.FAILED);
-        counter.addScenario(Result.Type.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(Result.Type.AMBIGUOUS);
-        counter.addScenario(Result.Type.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(Result.Type.UNDEFINED);
-        counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(Result.Type.PENDING);
-        counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.FAILED);
+        counter.addScenario(Status.FAILED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.AMBIGUOUS);
+        counter.addScenario(Status.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.UNDEFINED);
+        counter.addScenario(Status.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.PENDING);
+        counter.addScenario(Status.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
@@ -184,14 +183,14 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(Result.Type.FAILED);
-        counter.addScenario(Result.Type.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(Result.Type.AMBIGUOUS);
-        counter.addScenario(Result.Type.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(Result.Type.UNDEFINED);
-        counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(Result.Type.PENDING);
-        counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.FAILED);
+        counter.addScenario(Status.FAILED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.AMBIGUOUS);
+        counter.addScenario(Status.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.UNDEFINED);
+        counter.addScenario(Status.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(Status.PENDING);
+        counter.addScenario(Status.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.setStrict(true);
         counter.printStats(new PrintStream(baos));
 
@@ -211,7 +210,7 @@ public class StatsTest {
                 "4 Scenarios")));
     }
 
-    private void addOneStepScenario(Stats counter, Result.Type status) {
+    private void addOneStepScenario(Stats counter, Status status) {
         counter.addStep(status);
         counter.addScenario(status, "scenario designation");
     }

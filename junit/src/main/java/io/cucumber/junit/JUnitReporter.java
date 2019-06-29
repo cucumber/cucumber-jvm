@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.Result;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestStepFinished;

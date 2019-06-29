@@ -6,6 +6,8 @@ import java.util.TreeMap;
 
 import io.cucumber.core.event.*;
 
+import static java.util.Locale.ROOT;
+
 public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, SummaryPrinter {
 
 	private EventHandler<StepDefinedEvent> stepDefinedHandler = new EventHandler<StepDefinedEvent>() {
@@ -30,7 +32,7 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 				return;
 			}
 
-			Format format = formats.get(Result.Type.UNUSED.lowerCaseName());
+            Format format = formats.get(Status.UNUSED.name().toLowerCase(ROOT));
 			out.println(format.text(unusedSteps.size() + " Unused steps:"));
 
 			// Output results when done

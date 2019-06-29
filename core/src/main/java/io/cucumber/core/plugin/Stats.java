@@ -4,6 +4,7 @@ import io.cucumber.core.event.Result;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 class Stats implements EventListener, ColorAware, StrictAware {
@@ -128,21 +130,21 @@ class Stats implements EventListener, ColorAware, StrictAware {
 
     private void printSubCounts(PrintStream out, SubCounts subCounts) {
         boolean addComma = false;
-        addComma = printSubCount(out, subCounts.failed, Result.Type.FAILED, addComma);
-        addComma = printSubCount(out, subCounts.ambiguous, Result.Type.AMBIGUOUS, addComma);
-        addComma = printSubCount(out, subCounts.skipped, Result.Type.SKIPPED, addComma);
-        addComma = printSubCount(out, subCounts.pending, Result.Type.PENDING, addComma);
-        addComma = printSubCount(out, subCounts.undefined, Result.Type.UNDEFINED, addComma);
-        addComma = printSubCount(out, subCounts.passed, Result.Type.PASSED, addComma);
+        addComma = printSubCount(out, subCounts.failed, Status.FAILED, addComma);
+        addComma = printSubCount(out, subCounts.ambiguous, Status.AMBIGUOUS, addComma);
+        addComma = printSubCount(out, subCounts.skipped, Status.SKIPPED, addComma);
+        addComma = printSubCount(out, subCounts.pending, Status.PENDING, addComma);
+        addComma = printSubCount(out, subCounts.undefined, Status.UNDEFINED, addComma);
+        addComma = printSubCount(out, subCounts.passed, Status.PASSED, addComma);
     }
 
-    private boolean printSubCount(PrintStream out, int count, Result.Type type, boolean addComma) {
+    private boolean printSubCount(PrintStream out, int count, Status type, boolean addComma) {
         if (count != 0) {
             if (addComma) {
                 out.print(", ");
             }
-            Format format = formats.get(type.lowerCaseName());
-            out.print(format.text(count + " " + type.lowerCaseName()));
+            Format format = formats.get(type.name().toLowerCase(ROOT));
+            out.print(format.text(count + " " + type.name().toLowerCase(ROOT)));
             addComma = true;
         }
         return addComma;
@@ -155,18 +157,18 @@ class Stats implements EventListener, ColorAware, StrictAware {
     }
 
     private void printNonZeroResultScenarios(PrintStream out) {
-        printScenarios(out, failedScenarios, Result.Type.FAILED);
-        printScenarios(out, ambiguousScenarios, Result.Type.AMBIGUOUS);
+        printScenarios(out, failedScenarios, Status.FAILED);
+        printScenarios(out, ambiguousScenarios, Status.AMBIGUOUS);
         if (strict) {
-            printScenarios(out, pendingScenarios, Result.Type.PENDING);
-            printScenarios(out, undefinedScenarios, Result.Type.UNDEFINED);
+            printScenarios(out, pendingScenarios, Status.PENDING);
+            printScenarios(out, undefinedScenarios, Status.UNDEFINED);
         }
     }
 
-    private void printScenarios(PrintStream out, List<String> scenarios, Result.Type type) {
-        Format format = formats.get(type.lowerCaseName());
+    private void printScenarios(PrintStream out, List<String> scenarios, Status type) {
+        Format format = formats.get(type.name().toLowerCase(ROOT));
         if (!scenarios.isEmpty()) {
-            out.println(format.text(type.firstLetterCapitalizedName() + " scenarios:"));
+            out.println(format.text(firstLetterCapitalizedName(type) + " scenarios:"));
         }
         for (String scenario : scenarios) {
             String[] parts = scenario.split("#");
@@ -180,7 +182,12 @@ class Stats implements EventListener, ColorAware, StrictAware {
         }
     }
 
-    void addStep(Result.Type resultStatus) {
+    public String firstLetterCapitalizedName(Status status) {
+        String name = status.name();
+        return name.substring(0, 1) + name.substring(1).toLowerCase(ROOT);
+    }
+
+    void addStep(Status resultStatus) {
         addResultToSubCount(stepSubCounts, resultStatus);
     }
 
@@ -196,7 +203,7 @@ class Stats implements EventListener, ColorAware, StrictAware {
         this.totalDuration = Duration.between(startTime, finishTime);
     }
 
-    private void addResultToSubCount(SubCounts subCounts, Result.Type resultStatus) {
+    private void addResultToSubCount(SubCounts subCounts, Status resultStatus) {
         switch (resultStatus) {
         case FAILED:
             subCounts.failed++;
@@ -218,7 +225,7 @@ class Stats implements EventListener, ColorAware, StrictAware {
         }
     }
 
-    void addScenario(Result.Type resultStatus, String scenarioDesignation) {
+    void addScenario(Status resultStatus, String scenarioDesignation) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
         switch (resultStatus) {
         case FAILED:

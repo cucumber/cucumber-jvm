@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.backend.HookDefinition;
@@ -67,13 +67,13 @@ public class HookTestStepTest {
     public void result_is_passed_when_step_definition_does_not_throw_exception() {
         boolean skipNextStep = step.run(testCase, bus,  scenario, false);
         assertFalse(skipNextStep);
-        assertEquals(Result.Type.PASSED, scenario.getStatus());
+        assertEquals(Status.PASSED, scenario.getStatus());
     }
 
     @Test
     public void result_is_skipped_when_skip_step_is_skip_all_skipable() {
         boolean skipNextStep = step.run(testCase, bus,  scenario, true);
         assertTrue(skipNextStep);
-        assertEquals(Result.Type.SKIPPED, scenario.getStatus());
+        assertEquals(Status.SKIPPED, scenario.getStatus());
     }
 }

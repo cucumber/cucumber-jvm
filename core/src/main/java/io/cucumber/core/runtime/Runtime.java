@@ -1,32 +1,34 @@
 package io.cucumber.core.runtime;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.plugin.ConcurrentEventListener;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
 import io.cucumber.core.event.TestSourceRead;
-import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.FeatureLoader;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.plugin.PluginFactory;
-import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.order.PickleOrder;
+import io.cucumber.core.plugin.ConcurrentEventListener;
+import io.cucumber.core.plugin.Plugin;
+import io.cucumber.core.plugin.PluginFactory;
+import io.cucumber.core.plugin.Plugins;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,12 +42,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.cucumber.core.event.Result.SEVERITY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
-
-import java.time.Clock;
+import static java.util.Comparator.comparing;
 
 /**
  * This is the main entry point for running Cucumber features from the CLI.
@@ -98,9 +98,9 @@ public final class Runtime {
         final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
         final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);
 
-         final List<Future<?>> executingPickles = new ArrayList<>();
-        for(final PickleEvent pickleEvent : limitedEvents) {
-        	executingPickles.add(executor.submit(new Runnable() {
+        final List<Future<?>> executingPickles = new ArrayList<>();
+        for (final PickleEvent pickleEvent : limitedEvents) {
+            executingPickles.add(executor.submit(new Runnable() {
                 @Override
                 public void run() {
                     runnerSupplier.get().runPickle(pickleEvent);
@@ -114,17 +114,17 @@ public final class Runtime {
         for (Future executingPickle : executingPickles) {
             try {
                 executingPickle.get();
-            } catch (ExecutionException e){
+            } catch (ExecutionException e) {
                 log.error("Exception while executing pickle", e);
                 thrown.add(e.getCause());
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 executor.shutdownNow();
                 throw new CucumberException(e);
             }
         }
-        if(thrown.size() == 1){
+        if (thrown.size() == 1) {
             throw new CucumberException(thrown.get(0));
-        } else if (thrown.size() > 1){
+        } else if (thrown.size() > 1) {
             throw new CompositeCucumberException(thrown);
         }
 
@@ -316,10 +316,12 @@ public final class Runtime {
             }
 
             if (runtimeOptions.isWip()) {
-                return min(results, SEVERITY).is(Result.Type.PASSED) ? ERRORS : DEFAULT;
+                Result leastSeverResult = min(results, comparing(Result::getStatus));
+                return leastSeverResult.getStatus().is(Status.PASSED) ? ERRORS : DEFAULT;
+            } else {
+                Result mostSevereResult = max(results, comparing(Result::getStatus));
+                return mostSevereResult.getStatus().isOk(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
             }
-
-            return max(results, SEVERITY).isOk(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
         }
     }
 }

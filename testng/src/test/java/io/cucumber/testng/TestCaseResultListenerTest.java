@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.testng.SkipException;
@@ -101,27 +102,27 @@ public class TestCaseResultListenerTest {
     }
 
     private Result mockPassedResult() {
-        return new Result(Result.Type.PASSED, ZERO, null);
+        return new Result(Status.PASSED, ZERO, null);
     }
 
     private Result mockSkippedResult() {
-        return new Result(Result.Type.SKIPPED, ZERO, null);
+        return new Result(Status.SKIPPED, ZERO, null);
     }
 
     private Result mockUndefinedResult() {
-        return new Result(Result.Type.UNDEFINED, ZERO, null);
+        return new Result(Status.UNDEFINED, ZERO, null);
     }
 
     private Result mockFailedResult() {
-        return new Result(Result.Type.FAILED, ZERO, new Exception());
+        return new Result(Status.FAILED, ZERO, new Exception());
     }
 
     private Result mockAmbiguousResult() {
-        return new Result(Result.Type.AMBIGUOUS, ZERO, new Exception());
+        return new Result(Status.AMBIGUOUS, ZERO, new Exception());
     }
 
     private Result mockPendingResult() {
-        return new Result(Result.Type.PENDING, ZERO, new TestPendingException());
+        return new Result(Status.PENDING, ZERO, new TestPendingException());
     }
 
 }

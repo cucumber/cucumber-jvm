@@ -1,7 +1,8 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
@@ -36,7 +37,7 @@ class TestCaseResultListener {
     }
 
     boolean isPassed() {
-        return result == null || result.is(Result.Type.PASSED);
+        return result == null || result.getStatus().is(Status.PASSED);
     }
 
     Throwable getError() {
@@ -51,7 +52,7 @@ class TestCaseResultListener {
             if (strict) {
                 return result.getError();
             } else {
-                return new SkipException(result.getErrorMessage(), result.getError());
+                return new SkipException(result.getError().getMessage(), result.getError());
             }
         case UNDEFINED:
             if (strict) {
@@ -65,7 +66,7 @@ class TestCaseResultListener {
                 if (error instanceof SkipException) {
                     return error;
                 } else {
-                    return new SkipException(result.getErrorMessage(), error);
+                    return new SkipException(result.getError().getMessage(), error);
                 }
             } else {
                 return new SkipException(SKIPPED_MESSAGE);

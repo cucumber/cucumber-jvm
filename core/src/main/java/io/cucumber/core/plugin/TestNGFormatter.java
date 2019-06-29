@@ -1,9 +1,10 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestRunFinished;
@@ -38,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 import static java.time.Duration.ZERO;
+import static java.util.Locale.ROOT;
 
 public final class TestNGFormatter implements EventListener, StrictAware {
 
@@ -247,23 +249,22 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             Result skipped = null;
             Result failed = null;
             for (Result result : results) {
-                if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
+                if (result.getStatus().is(Status.FAILED) || result.getStatus().is(Status.AMBIGUOUS)) {
                     failed = result;
                 }
-                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {
+                if (result.getStatus().is(Status.UNDEFINED) || result.getStatus().is(Status.PENDING)) {
                     skipped = result;
                 }
             }
             for (Result result : hooks) {
-                if (failed == null && result.is(Result.Type.FAILED)) {
+                if (failed == null && result.getStatus().is(Status.FAILED)) {
                     failed = result;
                 }
             }
             if (failed != null) {
                 element.setAttribute("status", "FAIL");
-                StringWriter stringWriter = new StringWriter();
-                failed.getError().printStackTrace(new PrintWriter(stringWriter));
-                Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stringWriter.toString());
+                String stacktrace = printStrackTrace(failed);
+                Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stacktrace);
                 element.appendChild(exception);
             } else if (skipped != null) {
                 if (strict) {
@@ -276,6 +277,12 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             } else {
                 element.setAttribute("status", "PASS");
             }
+        }
+
+        private String printStrackTrace(Result failed) {
+            StringWriter stringWriter = new StringWriter();
+            failed.getError().printStackTrace(new PrintWriter(stringWriter));
+            return stringWriter.toString();
         }
 
         private String calculateTotalDurationString() {
@@ -294,7 +301,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
                 int length = sb.length();
                 String resultStatus = "not executed";
                 if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus().lowerCaseName();
+                    resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
                 sb.append(getKeywordFromSource(steps.get(i).getStepLine()));
                 sb.append(steps.get(i).getStepText());

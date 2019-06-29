@@ -8,6 +8,7 @@ import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestStepFinished;
 
@@ -59,7 +60,7 @@ public final class UsageFormatter implements Plugin, EventListener {
     }
 
     void handleTestStepFinished(TestStepFinished event) {
-        if (event.testStep instanceof PickleStepTestStep && event.result.is(Result.Type.PASSED)) {
+        if (event.testStep instanceof PickleStepTestStep && event.result.getStatus().is(Status.PASSED)) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.testStep;
             addUsageEntry(event.result, testStep);
         }

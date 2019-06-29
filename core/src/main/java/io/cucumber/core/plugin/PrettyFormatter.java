@@ -24,8 +24,12 @@ import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
+
+import static java.util.Locale.ROOT;
 
 public final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
@@ -202,7 +206,8 @@ public final class PrettyFormatter implements EventListener, ColorAware {
         String keyword = getStepKeyword(testStep);
         String stepText = testStep.getStepText();
         String locationPadding = createPaddingToLocation(STEP_INDENT, keyword + stepText);
-        String formattedStepText = formatStepText(keyword, stepText, formats.get(result.getStatus().lowerCaseName()), formats.get(result.getStatus().lowerCaseName() + "_arg"), testStep.getDefinitionArgument());
+        String status = result.getStatus().name().toLowerCase(ROOT);
+        String formattedStepText = formatStepText(keyword, stepText, formats.get(status), formats.get(status + "_arg"), testStep.getDefinitionArgument());
         out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
     }
 
@@ -330,7 +335,8 @@ public final class PrettyFormatter implements EventListener, ColorAware {
 
     private void printError(Result result) {
         if (result.getError() != null) {
-            out.println("      " + formats.get(result.getStatus().lowerCaseName()).text(result.getErrorMessage()));
+            String name = result.getStatus().name().toLowerCase(ROOT);
+            out.println("      " + formats.get(name).text(printStackTrace(result.getError())));
         }
     }
 
@@ -359,5 +365,12 @@ public final class PrettyFormatter implements EventListener, ColorAware {
             padding.append(' ');
         }
         return padding.toString();
+    }
+
+    private static String printStackTrace(Throwable error) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        error.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 }

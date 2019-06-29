@@ -37,7 +37,7 @@ public final class RerunFormatter implements EventListener, StrictAware {
 
         @Override
         public void receive(TestCaseFinished event) {
-            if (!event.result.isOk(isStrict)) {
+            if (!event.result.getStatus().isOk(isStrict)) {
                 recordTestFailed(event.testCase);
             }
         }
@@ -49,12 +49,7 @@ public final class RerunFormatter implements EventListener, StrictAware {
         }
 
         private Collection<Integer> getFailedTestCaseLines(String uri) {
-            Collection<Integer> failedTestCases = featureAndFailedLinesMapping.get(uri);
-            if (failedTestCases == null) {
-                failedTestCases = new ArrayList<>();
-                featureAndFailedLinesMapping.put(uri, failedTestCases);
-            }
-            return failedTestCases;
+            return featureAndFailedLinesMapping.computeIfAbsent(uri, k -> new ArrayList<>());
         }
     };
 

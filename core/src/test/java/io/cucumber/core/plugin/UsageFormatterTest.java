@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.TestStepFinished;
@@ -40,7 +41,7 @@ public class UsageFormatterTest {
     public void resultWithFailedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = new Result(Result.Type.FAILED, Duration.ZERO, null);
+        Result result = new Result(Status.FAILED, Duration.ZERO, null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
@@ -49,7 +50,7 @@ public class UsageFormatterTest {
     public void resultWithSkippedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = new Result(Result.Type.SKIPPED, Duration.ZERO, null);
+        Result result = new Result(Status.SKIPPED, Duration.ZERO, null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
@@ -58,7 +59,7 @@ public class UsageFormatterTest {
     public void resultWithPendingStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = new Result(Result.Type.PENDING, Duration.ZERO, null);
+        Result result = new Result(Status.PENDING, Duration.ZERO, null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
@@ -67,7 +68,7 @@ public class UsageFormatterTest {
     public void resultWithAmbiguousStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = new Result(Result.Type.AMBIGUOUS, Duration.ZERO, null);
+        Result result = new Result(Status.AMBIGUOUS, Duration.ZERO, null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
@@ -76,7 +77,7 @@ public class UsageFormatterTest {
     public void resultWithUndefinedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Result result = new Result(Result.Type.AMBIGUOUS, Duration.ZERO, null);
+        Result result = new Result(Status.AMBIGUOUS, Duration.ZERO, null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), mockTestStep(), result));
         verifyZeroInteractions(out);
     }
@@ -86,7 +87,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, Duration.ofNanos(12345L), null);
+        Result result = new Result(Status.PASSED, Duration.ofNanos(12345L), null);
 
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
@@ -106,10 +107,10 @@ public class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
 
-        Result passed = new Result(Result.Type.PASSED, Duration.ofSeconds(12345L), null);
+        Result passed = new Result(Status.PASSED, Duration.ofSeconds(12345L), null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, passed));
 
-        Result failed = new Result(Result.Type.FAILED, Duration.ZERO, null);
+        Result failed = new Result(Status.FAILED, Duration.ZERO, null);
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, failed));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
@@ -126,7 +127,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, Duration.ZERO, null);
+        Result result = new Result(Status.PASSED, Duration.ZERO, null);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
@@ -145,7 +146,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         PickleStepTestStep testStep = mockTestStep();
-        Result result = new Result(Result.Type.PASSED, Duration.ZERO, null);
+        Result result = new Result(Status.PASSED, Duration.ZERO, null);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 

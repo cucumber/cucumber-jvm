@@ -1,6 +1,6 @@
 package io.cucumber.core.api;
 
-import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 
 import java.util.Collection;
 
@@ -17,7 +17,7 @@ public interface Scenario {
     /**
      * @return the <em>most severe</em> status of the Scenario's Steps.
      */
-    Result.Type getStatus();
+    Status getStatus();
 
     /**
      * @return true if and only if {@link #getStatus()} returns "failed"

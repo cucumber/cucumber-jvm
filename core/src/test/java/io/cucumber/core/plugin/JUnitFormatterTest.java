@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import io.cucumber.core.event.Result;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AssumptionViolatedException;
@@ -27,7 +28,6 @@ import org.junit.Test;
 import org.mockito.stubbing.Answer;
 import org.xml.sax.SAXException;
 
-import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestHelper;
 

@@ -1,7 +1,8 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.EmbedEvent;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.WriteEvent;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.eventbus.EventBus;
@@ -37,50 +38,50 @@ public class ScenarioResultTest {
 
     @Test
     public void no_steps_is_undefined() {
-        assertEquals(Result.Type.UNDEFINED, s.getStatus());
+        assertEquals(Status.UNDEFINED, s.getStatus());
     }
 
     @Test
     public void one_passed_step_is_passed() {
-        s.add(new Result(Result.Type.PASSED, ZERO, null));
-        assertEquals(Result.Type.PASSED, s.getStatus());
+        s.add(new Result(Status.PASSED, ZERO, null));
+        assertEquals(Status.PASSED, s.getStatus());
     }
 
     @Test
     public void passed_failed_pending_undefined_skipped_is_failed() {
-        s.add(new Result(Result.Type.PASSED, ZERO, null));
-        s.add(new Result(Result.Type.FAILED, ZERO, null));
-        s.add(new Result(Result.Type.PENDING, ZERO, null));
-        s.add(new Result(Result.Type.UNDEFINED, ZERO, null));
-        s.add(new Result(Result.Type.SKIPPED, ZERO, null));
-        assertEquals(Result.Type.FAILED, s.getStatus());
+        s.add(new Result(Status.PASSED, ZERO, null));
+        s.add(new Result(Status.FAILED, ZERO, null));
+        s.add(new Result(Status.PENDING, ZERO, null));
+        s.add(new Result(Status.UNDEFINED, ZERO, null));
+        s.add(new Result(Status.SKIPPED, ZERO, null));
+        assertEquals(Status.FAILED, s.getStatus());
         assertTrue(s.isFailed());
     }
 
     @Test
     public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() {
-        s.add(new Result(Result.Type.PASSED, ZERO, null));
-        s.add(new Result(Result.Type.SKIPPED, ZERO, null));
-        assertEquals(Result.Type.SKIPPED, s.getStatus());
+        s.add(new Result(Status.PASSED, ZERO, null));
+        s.add(new Result(Status.SKIPPED, ZERO, null));
+        assertEquals(Status.SKIPPED, s.getStatus());
         assertFalse(s.isFailed());
     }
 
     @Test
     public void passed_pending_undefined_skipped_is_pending() {
-        s.add(new Result(Result.Type.PASSED, ZERO, null));
-        s.add(new Result(Result.Type.UNDEFINED, ZERO, null));
-        s.add(new Result(Result.Type.PENDING, ZERO, null));
-        s.add(new Result(Result.Type.SKIPPED, ZERO, null));
-        assertEquals(Result.Type.UNDEFINED, s.getStatus());
+        s.add(new Result(Status.PASSED, ZERO, null));
+        s.add(new Result(Status.UNDEFINED, ZERO, null));
+        s.add(new Result(Status.PENDING, ZERO, null));
+        s.add(new Result(Status.SKIPPED, ZERO, null));
+        assertEquals(Status.UNDEFINED, s.getStatus());
         assertFalse(s.isFailed());
     }
 
     @Test
     public void passed_undefined_skipped_is_undefined() {
-        s.add(new Result(Result.Type.PASSED, ZERO, null));
-        s.add(new Result(Result.Type.UNDEFINED, ZERO, null));
-        s.add(new Result(Result.Type.SKIPPED, ZERO, null));
-        assertEquals(Result.Type.UNDEFINED, s.getStatus());
+        s.add(new Result(Status.PASSED, ZERO, null));
+        s.add(new Result(Status.UNDEFINED, ZERO, null));
+        s.add(new Result(Status.SKIPPED, ZERO, null));
+        assertEquals(Status.UNDEFINED, s.getStatus());
         assertFalse(s.isFailed());
     }
 
@@ -102,8 +103,8 @@ public class ScenarioResultTest {
         Throwable failedError = mock(Throwable.class);
         Throwable pendingError = mock(Throwable.class);
 
-        s.add(new Result(Result.Type.FAILED, ZERO, failedError));
-        s.add(new Result(Result.Type.PENDING, ZERO, pendingError));
+        s.add(new Result(Status.FAILED, ZERO, failedError));
+        s.add(new Result(Status.PENDING, ZERO, pendingError));
 
         assertThat(s.getError(), sameInstance(failedError));
     }
@@ -113,8 +114,8 @@ public class ScenarioResultTest {
         Throwable pendingError = mock(Throwable.class);
         Throwable failedError = mock(Throwable.class);
 
-        s.add(new Result(Result.Type.PENDING, ZERO, pendingError));
-        s.add(new Result(Result.Type.FAILED, ZERO, failedError));
+        s.add(new Result(Status.PENDING, ZERO, pendingError));
+        s.add(new Result(Status.FAILED, ZERO, failedError));
 
         assertThat(s.getError(), sameInstance(failedError));
     }

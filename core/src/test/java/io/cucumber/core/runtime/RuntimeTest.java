@@ -5,12 +5,13 @@ import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.plugin.ConcurrentEventListener;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.plugin.EventListener;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.StepDefinedEvent;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseFinished;
@@ -164,7 +165,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_passed_scenarios() {
         Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -172,7 +173,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_passed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PASSED));
+        bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -180,21 +181,21 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_undefined_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
     public void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
+        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
     public void strict_with_pending_scenarios() {
         Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
+        bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -202,7 +203,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_pending_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.PENDING));
+        bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -210,7 +211,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -218,7 +219,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
+        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -226,7 +227,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_failed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -234,7 +235,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.FAILED));
+        bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -242,7 +243,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_ambiguous_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -250,7 +251,7 @@ public class RuntimeTest {
     @Test
     public void strict_with_ambiguous_scenarios() {
         Runtime runtime = createStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Result.Type.AMBIGUOUS));
+        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertEquals(0x1, runtime.exitStatus());
     }
@@ -739,7 +740,7 @@ public class RuntimeTest {
         }
     }
 
-    private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
+    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 

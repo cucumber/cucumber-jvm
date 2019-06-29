@@ -4,6 +4,7 @@ import io.cucumber.core.event.HookTestStep;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.EmbedEvent;
@@ -29,6 +30,8 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Locale.ROOT;
 
 public final class JSONFormatter implements EventListener {
     private String currentFeatureFile;
@@ -368,7 +373,7 @@ public final class JSONFormatter implements EventListener {
                 matchMap.put("arguments", argumentList);
             }
         }
-        if (!result.is(Result.Type.UNDEFINED)) {
+        if (!result.getStatus().is(Status.UNDEFINED)) {
             matchMap.put("location", step.getCodeLocation());
         }
         return matchMap;
@@ -376,9 +381,9 @@ public final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createResultMap(Result result) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("status", result.getStatus().lowerCaseName());
-        if (result.getErrorMessage() != null) {
-            resultMap.put("error_message", result.getErrorMessage());
+        resultMap.put("status", result.getStatus().name().toLowerCase(ROOT));
+        if (result.getError() != null) {
+            resultMap.put("error_message", printStackTrace(result.getError()));
         }
         if (!result.getDuration().isZero()) {
             resultMap.put("duration", result.getDuration().toNanos());
@@ -390,5 +395,12 @@ public final class JSONFormatter implements EventListener {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                 .withZone(ZoneOffset.UTC);
         return formatter.format(instant);
+    }
+
+    private static String printStackTrace(Throwable error) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        error.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 }

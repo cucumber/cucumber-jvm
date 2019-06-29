@@ -1,7 +1,8 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.EmbedEvent;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.WriteEvent;
 import gherkin.pickles.PickleTag;
@@ -14,10 +15,11 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.Collections.max;
+import static java.util.Comparator.comparing;
 
 class Scenario implements io.cucumber.core.api.Scenario {
 
-    private final List<Result> stepResults = new ArrayList<Result>();
+    private final List<Result> stepResults = new ArrayList<>();
     private final EventBus bus;
     private final TestCase testCase;
 
@@ -26,7 +28,7 @@ class Scenario implements io.cucumber.core.api.Scenario {
         this.testCase = testCase;
     }
 
-    public void add(Result result) {
+    void add(Result result) {
         stepResults.add(result);
     }
 
@@ -41,17 +43,17 @@ class Scenario implements io.cucumber.core.api.Scenario {
     }
 
     @Override
-    public Result.Type getStatus() {
+    public Status getStatus() {
         if (stepResults.isEmpty()) {
-            return Result.Type.UNDEFINED;
+            return Status.UNDEFINED;
         }
 
-        return max(stepResults, Result.SEVERITY).getStatus();
+        return max(stepResults, comparing(Result::getStatus)).getStatus();
     }
 
     @Override
     public boolean isFailed() {
-        return getStatus() == Result.Type.FAILED;
+        return getStatus() == Status.FAILED;
     }
 
     @Override
@@ -88,11 +90,11 @@ class Scenario implements io.cucumber.core.api.Scenario {
         return testCase.getLine();
     }
 
-    public Throwable getError() {
+    Throwable getError() {
         if (stepResults.isEmpty()) {
             return null;
         }
 
-        return max(stepResults, Result.SEVERITY).getError();
+        return max(stepResults, comparing(Result::getStatus)).getError();
     }
 }

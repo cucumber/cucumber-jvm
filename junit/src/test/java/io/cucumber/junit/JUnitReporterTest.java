@@ -1,7 +1,8 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.Result;
 import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.junit.JUnitReporter.EachTestNotifier;
 import io.cucumber.junit.JUnitReporter.NoTestNotifier;
@@ -79,7 +80,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
-        Result result = mockResult(Result.Type.PASSED);
+        Result result = mockResult(Status.PASSED);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -92,7 +93,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
-        Result result = mockResult(Result.Type.SKIPPED);
+        Result result = mockResult(Status.SKIPPED);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -113,7 +114,7 @@ public class JUnitReporterTest {
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
         Throwable exception = new AssumptionViolatedException("Oops");
-        Result result = mockResult(Result.Type.SKIPPED, exception);
+        Result result = mockResult(Status.SKIPPED, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -131,7 +132,7 @@ public class JUnitReporterTest {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
-        Result result = mockResult(Result.Type.SKIPPED);
+        Result result = mockResult(Status.SKIPPED);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -144,7 +145,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
         Throwable exception = new AssumptionViolatedException("Oops");
-        Result result = mockResult(Result.Type.SKIPPED, exception);
+        Result result = mockResult(Status.SKIPPED, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -158,7 +159,7 @@ public class JUnitReporterTest {
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
         Throwable exception = new TestPendingException();
-        Result result = mockResult(Result.Type.PENDING, exception);
+        Result result = mockResult(Status.PENDING, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -178,7 +179,7 @@ public class JUnitReporterTest {
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
         Throwable exception = new TestPendingException();
-        Result result = mockResult(Result.Type.PENDING, exception);
+        Result result = mockResult(Status.PENDING, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -197,7 +198,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
         Throwable exception = new TestPendingException();
-        Result result = mockResult(Result.Type.PENDING, exception);
+        Result result = mockResult(Status.PENDING, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -210,7 +211,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
-        Result result = mockResult(Result.Type.UNDEFINED);
+        Result result = mockResult(Status.UNDEFINED);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -230,7 +231,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
-        Result result = mockResult(Result.Type.UNDEFINED);
+        Result result = mockResult(Status.UNDEFINED);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -250,7 +251,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
         PickleStepTestStep testStep = mockTestStep("XX");
-        Result result = mockResult(Result.Type.UNDEFINED);
+        Result result = mockResult(Status.UNDEFINED);
 
         jUnitReporter.handleStepResult(testStep, result);
 
@@ -265,7 +266,7 @@ public class JUnitReporterTest {
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
         Throwable exception = mock(Throwable.class);
-        Result result = mockResult(Result.Type.FAILED, exception);
+        Result result = mockResult(Status.FAILED, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -284,7 +285,7 @@ public class JUnitReporterTest {
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
         Throwable exception = new TestPendingException();
-        Result result = mockResult(Result.Type.FAILED, exception);
+        Result result = mockResult(Status.FAILED, exception);
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
@@ -296,7 +297,7 @@ public class JUnitReporterTest {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
-        Result result = mockResult(Result.Type.PASSED);
+        Result result = mockResult(Status.PASSED);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -309,7 +310,7 @@ public class JUnitReporterTest {
         Description description = mock(Description.class);
         createRunNotifier(description);
         populateStepErrors(Collections.<Throwable>emptyList());
-        Result result = mockResult(Result.Type.SKIPPED);
+        Result result = mockResult(Status.SKIPPED);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -330,7 +331,7 @@ public class JUnitReporterTest {
         Throwable exception1 = mock(AssumptionViolatedException.class);
         Throwable exception2 = mock(AssumptionViolatedException.class);
         populateStepErrors(asList(exception1, exception2));
-        Result result = mockResult(Result.Type.SKIPPED);
+        Result result = mockResult(Status.SKIPPED);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -351,7 +352,7 @@ public class JUnitReporterTest {
         Throwable exception1 = mock(Throwable.class);
         Throwable exception2 = mock(Throwable.class);
         populateStepErrors(asList(exception1, exception2));
-        Result result = mockResult(Result.Type.PENDING);
+        Result result = mockResult(Status.PENDING);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -372,7 +373,7 @@ public class JUnitReporterTest {
         Throwable exception1 = mock(Throwable.class);
         Throwable exception2 = mock(Throwable.class);
         populateStepErrors(asList(exception1, exception2));
-        Result result = mockResult(Result.Type.PENDING);
+        Result result = mockResult(Status.PENDING);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -393,7 +394,7 @@ public class JUnitReporterTest {
         Throwable exception1 = mock(Throwable.class);
         Throwable exception2 = mock(Throwable.class);
         populateStepErrors(asList(exception1, exception2));
-        Result result = mockResult(Result.Type.UNDEFINED);
+        Result result = mockResult(Status.UNDEFINED);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -414,7 +415,7 @@ public class JUnitReporterTest {
         Throwable exception1 = mock(Throwable.class);
         Throwable exception2 = mock(Throwable.class);
         populateStepErrors(asList(exception1, exception2));
-        Result result = mockResult(Result.Type.UNDEFINED);
+        Result result = mockResult(Status.UNDEFINED);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -435,7 +436,7 @@ public class JUnitReporterTest {
         Throwable exception1 = mock(Throwable.class);
         Throwable exception2 = mock(Throwable.class);
         populateStepErrors(asList(exception1, exception2));
-        Result result = mockResult(Result.Type.FAILED);
+        Result result = mockResult(Status.FAILED);
 
         jUnitReporter.handleTestCaseResult(result);
 
@@ -450,11 +451,11 @@ public class JUnitReporterTest {
         assertEquals(exception2, failures.get(1).getException());
     }
 
-    private Result mockResult(Result.Type status, Throwable exception) {
+    private Result mockResult(Status status, Throwable exception) {
         return new Result(status, ZERO, exception);
     }
 
-    private Result mockResult(Result.Type status) {
+    private Result mockResult(Status status) {
         return new Result(status, ZERO, null);
     }
 
