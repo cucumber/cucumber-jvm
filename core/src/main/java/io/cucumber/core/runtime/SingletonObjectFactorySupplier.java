@@ -5,7 +5,7 @@ import io.cucumber.core.options.CucumberProperties;
 
 import java.util.Map;
 
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
+import static io.cucumber.core.runtime.ObjectFactoryLoader.loadObjectFactory;
 
 public class SingletonObjectFactorySupplier implements ObjectFactorySupplier {
 

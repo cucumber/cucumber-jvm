@@ -29,7 +29,6 @@ public final class RuntimeOptions implements
     private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
     private final SortedSet<URI> featurePaths = new TreeSet<>();
 
-    private final List<String> junitOptions = new ArrayList<>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -122,11 +121,6 @@ public final class RuntimeOptions implements
         glue.addAll(parsedGlue);
     }
 
-    void setJunitOptions(List<String> junitOptions) {
-        this.junitOptions.clear();
-        this.junitOptions.addAll(junitOptions);
-    }
-
     void setLineFilters(Map<URI, Set<Integer>> lineFilters) {
         this.lineFilters.clear();
         for (URI path : lineFilters.keySet()) {
@@ -166,10 +160,6 @@ public final class RuntimeOptions implements
     @Override
     public SnippetType getSnippetType() {
         return snippetType;
-    }
-
-    public List<String> getJunitOptions() {
-        return unmodifiableList(junitOptions);
     }
 
     public int getThreads() {

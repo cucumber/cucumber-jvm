@@ -1,5 +1,6 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 
 import java.lang.reflect.Constructor;
@@ -8,7 +9,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-public class ObjectFactoryLoader {
+class ObjectFactoryLoader {
+
     private ObjectFactoryLoader() {
     }
 
@@ -26,7 +28,7 @@ public class ObjectFactoryLoader {
      * @param objectFactoryClassName optional object factory to use
      * @return an instance of {@link ObjectFactory}
      */
-    public static ObjectFactory loadObjectFactory(String objectFactoryClassName) {
+    static ObjectFactory loadObjectFactory(String objectFactoryClassName) {
         final ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class);
         if (objectFactoryClassName == null) {
             return loadSingleObjectFactoryOrDefault(loader);

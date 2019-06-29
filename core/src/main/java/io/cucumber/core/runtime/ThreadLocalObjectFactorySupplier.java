@@ -6,12 +6,11 @@ import io.cucumber.core.options.CucumberProperties;
 
 import java.util.Map;
 
-import static io.cucumber.core.backend.ObjectFactoryLoader.loadObjectFactory;
+import static io.cucumber.core.runtime.ObjectFactoryLoader.loadObjectFactory;
 
 public class ThreadLocalObjectFactorySupplier implements ObjectFactorySupplier {
 
-    private final ThreadLocal<ObjectFactory> runners = ThreadLocal.withInitial(
-        () -> {
+    private final ThreadLocal<ObjectFactory> runners = ThreadLocal.withInitial(() -> {
             Map<String, String> properties = CucumberProperties.create();
             return loadObjectFactory(properties.get(ObjectFactory.class.getName()));
         }
