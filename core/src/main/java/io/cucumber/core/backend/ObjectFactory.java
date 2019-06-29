@@ -1,9 +1,12 @@
 package io.cucumber.core.backend;
 
+import org.apiguardian.api.API;
+
 /**
  * Minimal facade for Dependency Injection containers
  */
-public interface ObjectFactory extends Container, Lookup {
+@API(status = API.Status.STABLE)
+public interface ObjectFactory {
 
     /**
      * Instantiate glue code <b>before</b> scenario execution. Called once per scenario.

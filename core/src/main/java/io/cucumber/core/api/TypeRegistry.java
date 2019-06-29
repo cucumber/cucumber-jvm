@@ -5,10 +5,12 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import org.apiguardian.api.API;
 
 /**
  * The type registry records defines parameter types and data table transformers.
  */
+@API(status = API.Status.STABLE)
 public interface TypeRegistry {
     /**
      * Defines a new parameter type.
