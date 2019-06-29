@@ -13,13 +13,14 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.util.FixJava;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 public final class Runner {
 
@@ -43,7 +44,7 @@ public final class Runner {
             .collect(Collectors.toList());
         this.objectFactory = objectFactory;
         List<URI> gluePaths = runnerOptions.getGlue();
-        log.debug("Loading glue from " + FixJava.join(gluePaths, ", "));
+        log.debug("Loading glue from " + gluePaths.stream().map(URI::toString).collect(joining(", ")));
         for (Backend backend : backends) {
             log.debug("Loading glue for backend " + backend.getClass().getName());
             backend.loadGlue(this.glue, gluePaths);

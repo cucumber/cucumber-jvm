@@ -13,8 +13,6 @@ import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.event.WriteEvent;
-import io.cucumber.core.util.FixJava;
-import io.cucumber.core.util.Mapper;
 import gherkin.ast.Background;
 import gherkin.ast.Examples;
 import gherkin.ast.Feature;
@@ -22,7 +20,6 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.Tag;
-import gherkin.pickles.PickleTag;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,6 +27,7 @@ import java.net.URI;
 import java.util.List;
 
 import static java.util.Locale.ROOT;
+import static java.util.stream.Collectors.joining;
 
 public final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
@@ -43,18 +41,6 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private ScenarioOutline currentScenarioOutline;
     private Examples currentExamples;
     private int locationIndentation;
-    private Mapper<Tag, String> tagNameMapper = new Mapper<Tag, String>() {
-        @Override
-        public String map(Tag tag) {
-            return tag.getName();
-        }
-    };
-    private Mapper<PickleTag, String> pickleTagNameMapper = new Mapper<PickleTag, String>() {
-        @Override
-        public String map(PickleTag pickleTag) {
-            return pickleTag.getName();
-        }
-    };
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -234,7 +220,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
             }
         }
         if (beginIndex != stepText.length()) {
-            String text = stepText.substring(beginIndex, stepText.length());
+            String text = stepText.substring(beginIndex);
             result.append(textFormat.text(text));
         }
         return result.toString();
@@ -292,13 +278,13 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
-            out.println(indent + FixJava.join(FixJava.map(tags, tagNameMapper), " "));
+            out.println(indent + tags.stream().map(Tag::getName).collect(joining(" ")));
         }
     }
 
     private void printPickleTags(List<String> tags, String indent) {
         if (!tags.isEmpty()) {
-            out.println(indent + FixJava.join(tags, " "));
+            out.println(indent + String.join(" ", tags));
         }
     }
 
