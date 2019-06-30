@@ -1,5 +1,7 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.event.StepDefinedEvent;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.Glue;
@@ -16,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 final class CachingGlue implements Glue {
     private static final HookComparator ASCENDING = new HookComparator(true);
@@ -26,6 +29,7 @@ final class CachingGlue implements Glue {
     final List<HookDefinition> beforeStepHooks = new ArrayList<>();
     final List<HookDefinition> afterHooks = new ArrayList<>();
     final List<HookDefinition> afterStepHooks = new ArrayList<>();
+    final List<Function<TypeRegistry, StepDefinition>> stepDefinitionFunctions = new ArrayList<>();
 
     private final EventBus bus;
     private final TypeRegistry typeRegistry;
@@ -36,9 +40,18 @@ final class CachingGlue implements Glue {
     }
 
     @Override
-    public void addStepDefinition(StepDefinition stepDefinition) {
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
-        CoreStepDefinition previous = stepDefinitionsByPattern.get(coreStepDefinition.getPattern());
+    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
+        stepDefinitionFunctions.add(stepDefinitionFunction);
+    }
+
+    void applyStepDefinitions() {
+        stepDefinitionFunctions.forEach(this::applyStepDefinition);
+        stepDefinitionFunctions.clear();
+    }
+
+    private void applyStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
+        StepDefinition stepDefinition = stepDefinitionFunction.apply(typeRegistry);
+        StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
         if (previous != null) {
             throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
         }
@@ -68,6 +81,11 @@ final class CachingGlue implements Glue {
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(hookDefinition);
         afterStepHooks.sort(DESCENDING);
+    }
+
+    @Override
+    public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
+        typeRegistry.defineParameterType(parameterTypeDefinition.parameterType());
     }
 
     List<HookDefinition> getBeforeHooks() {

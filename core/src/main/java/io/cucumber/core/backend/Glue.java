@@ -15,4 +15,6 @@ public interface Glue {
 
     void addAfterStepHook(HookDefinition hookDefinition);
 
+    void addParameterType(ParameterTypeDefinition parameterTypeDefinition);
+
 }

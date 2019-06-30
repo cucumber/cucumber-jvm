@@ -87,6 +87,13 @@ final class JavaBackend implements Backend {
                 String tagExpression = afterStep.value();
                 long timeout = afterStep.timeout();
                 glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, afterStep.order(), timeout, lookup));
+            } else if (annotation.annotationType().equals(ParameterType.class)) {
+                ParameterType parameterType = (ParameterType) annotation;
+                String pattern = parameterType.value();
+                String name = parameterType.name();
+                boolean useForSnippets = parameterType.useForSnippets();
+                boolean preferForRegexMatch = parameterType.preferForRegexMatch();
+                glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, lookup));
             }
         }
     }

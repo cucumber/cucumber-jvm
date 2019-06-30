@@ -83,10 +83,8 @@ final class MethodScanner {
             || annotationClass.equals(After.class)
             || annotationClass.equals(BeforeStep.class)
             || annotationClass.equals(AfterStep.class)
-            || annotationClass.equals(io.cucumber.java.Before.class)
-            || annotationClass.equals(io.cucumber.java.After.class)
-            || annotationClass.equals(io.cucumber.java.BeforeStep.class)
-            || annotationClass.equals(io.cucumber.java.AfterStep.class);
+            || annotationClass.equals(ParameterType.class)
+            ;
     }
 
     private boolean isStepdefAnnotation(Annotation annotation) {

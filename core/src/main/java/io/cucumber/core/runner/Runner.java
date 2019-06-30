@@ -48,6 +48,7 @@ public final class Runner {
         for (Backend backend : backends) {
             log.debug("Loading glue for backend " + backend.getClass().getName());
             backend.loadGlue(this.glue, gluePaths);
+            glue.applyStepDefinitions();
         }
     }
 
@@ -143,6 +144,7 @@ public final class Runner {
         for (Backend backend : backends) {
             backend.buildWorld();
         }
+        glue.applyStepDefinitions();
     }
 
     private void disposeBackendWorlds() {
