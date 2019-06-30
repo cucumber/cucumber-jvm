@@ -7,7 +7,6 @@ import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.runner.ScenarioScoped;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.TypeRegistry;
@@ -38,12 +37,11 @@ final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
 
     private final long timeoutMillis;
     private StepdefBody body;
-
-    private final StepExpression expression;
     private final StackTraceElement location;
-
-    private final List<ParameterInfo> parameterInfos;
     private final Method method;
+    private final List<ParameterInfo> parameterInfos;
+    private final StepExpression expression;
+    private final ArgumentMatcher argumentMatcher;
 
     private <T extends StepdefBody> Java8StepDefinition(String expression,
                                                         long timeoutMillis,
@@ -57,6 +55,7 @@ final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
         this.method = getAcceptMethod(body.getClass());
         this.parameterInfos = fromTypes(resolveRawArguments(bodyClass, body.getClass()));
         this.expression = createExpression(expression, typeRegistry);
+        this.argumentMatcher = new ArgumentMatcher(this.expression);
     }
 
     private StepExpression createExpression(String expression, TypeRegistry typeRegistry) {
@@ -89,7 +88,6 @@ final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
-        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         Type[] types = new Type[parameterInfos.size()];
         for (int i = 0; i < types.length; i++) {
             types[i] = parameterInfos.get(i).getType();

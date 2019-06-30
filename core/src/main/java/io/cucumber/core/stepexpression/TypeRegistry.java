@@ -7,9 +7,11 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTableTypeRegistry;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import org.apiguardian.api.API;
 
 import java.util.Locale;
 
+@API(status = API.Status.STABLE)
 public final class TypeRegistry implements io.cucumber.core.api.TypeRegistry {
 
     private final ParameterTypeRegistry parameterTypeRegistry;

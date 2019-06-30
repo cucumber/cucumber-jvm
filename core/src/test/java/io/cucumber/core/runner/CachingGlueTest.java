@@ -12,10 +12,8 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.TypeRegistry;
@@ -278,7 +276,7 @@ public class CachingGlueTest {
         @Override
         public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
             StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
-            final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+            final ArgumentMatcher argumentMatcher = new ArgumentMatcher(expression);
             return argumentMatcher.argumentsFrom(step);
         }
 
@@ -357,7 +355,7 @@ public class CachingGlueTest {
         @Override
         public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
             StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
-            final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+            final ArgumentMatcher argumentMatcher = new ArgumentMatcher(expression);
             return argumentMatcher.argumentsFrom(step);
         }
 

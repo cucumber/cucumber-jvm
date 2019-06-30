@@ -5,7 +5,6 @@ import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.stepexpression.StepExpression;
@@ -40,7 +39,7 @@ final class JavaStepDefinition implements StepDefinition {
         List<ParameterInfo> parameterInfos = ParameterInfo.fromMethod(method);
         this.parameterTypes = getTypes(parameterInfos);
         this.expression = createExpression(parameterInfos, expression, typeRegistry);
-        this.argumentMatcher = new ExpressionArgumentMatcher(this.expression);
+        this.argumentMatcher = new ArgumentMatcher(this.expression);
         this.shortFormat = MethodFormat.SHORT.format(method);
         this.fullFormat = MethodFormat.FULL.format(method);
     }

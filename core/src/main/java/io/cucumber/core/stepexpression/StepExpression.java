@@ -1,11 +1,13 @@
 package io.cucumber.core.stepexpression;
 
 import io.cucumber.cucumberexpressions.Expression;
+import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+@API(status = API.Status.STABLE)
 public final class StepExpression {
 
     private final Expression expression;

@@ -5,7 +5,6 @@ import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.stepexpression.ExpressionArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 
@@ -16,8 +15,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class StubStepDefinition implements StepDefinition {
+    private final List<Type> parameters;
     private final StepExpression expression;
-    private List<Type> parameters;
+    private final ArgumentMatcher argumentMatcher;
 
     public StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
         this.parameters = Arrays.asList(types);
@@ -27,11 +27,11 @@ public class StubStepDefinition implements StepDefinition {
             Type lastParameter = parameters.get(parameters.size() - 1);
             this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern, lastParameter);
         }
+        this.argumentMatcher = new ArgumentMatcher(expression);
     }
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
-        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step);
     }
 

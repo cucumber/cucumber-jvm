@@ -6,12 +6,14 @@ import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.datatable.DataTable;
 
 import io.cucumber.cucumberexpressions.Expression;
+import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 
+@API(status = API.Status.STABLE)
 public final class StepExpressionFactory {
 
     private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
