@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.5.0</version>
     </parent>
 
     <artifactId>cucumber-java8</artifactId>
@@ -58,7 +58,7 @@
                         <configuration>
                             <target>
                                 <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
-                                <groovy src="src/main/groovy/generate-interfaces.groovy"/>
+                                <groovy src="src/main/groovy/generate-interfaces.groovy" />
                             </target>
                         </configuration>
                     </execution>
