@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>4.5.1</version>
+        <version>4.5.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>java-calculator-testng</artifactId>
