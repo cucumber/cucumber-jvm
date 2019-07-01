@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * attempt to transform the data table or doc string to the type
  * of the last argument.
  *
- * @deprecated use {@link io.cucumber.java.api.${lang}.${kw}} instead.
+ * @deprecated use {@link io.cucumber.java.${lang}.${kw}} instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
