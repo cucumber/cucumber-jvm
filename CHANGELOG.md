@@ -1,7 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.5.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...master) (In Git)
+## [4.5.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...master) (In Git)
 
 ### Added
 
@@ -13,9 +13,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Fixed
 
-## [4.5.0](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...v4.5.0) (2019-06-30)
+## [4.5.1](https://github.com/cucumber/cucumber-jvm/compare/v4.5.0...v4.5.1) (2019-07-01)
 
-### Added
+### Fixed
+ * [Java] Fix link to new steps in generated Java doc ([#1681](https://github.com/cucumber/cucumber-jvm/pull/1681) M.P. Korstanje)
+
+## [4.5.0](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...v4.5.0) (2019-06-30)
 
 ### Changed
  * [JUnit] JUnit will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
