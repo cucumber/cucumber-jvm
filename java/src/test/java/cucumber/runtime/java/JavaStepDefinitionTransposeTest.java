@@ -55,6 +55,10 @@ public class JavaStepDefinitionTransposeTest {
             this.dataTable = dataTable;
         }
 
+        public void newtransposedAnnotationDataTable(@io.cucumber.java.Transpose DataTable dataTable) {
+            this.dataTable = dataTable;
+        }
+
         public void mapOfDoubleToDouble(Map<Double, Double> mapOfDoubleToDouble) {
             this.mapOfDoubleToDouble = mapOfDoubleToDouble;
         }
@@ -105,6 +109,14 @@ public class JavaStepDefinitionTransposeTest {
     @Test
     public void passes_transposed_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("transposedDataTable", DataTable.class);
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
+        assertEquals("Birth Date", stepDefs.dataTable.cell(0, 0));
+        assertEquals("1957-05-10", stepDefs.dataTable.cell(0, 1));
+    }
+
+    @Test
+    public void passes_newtransposedAnnotation_data_table() throws Throwable {
+        Method m = StepDefs.class.getMethod("newtransposedAnnotationDataTable", DataTable.class);
         StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals("Birth Date", stepDefs.dataTable.cell(0, 0));
         assertEquals("1957-05-10", stepDefs.dataTable.cell(0, 1));
