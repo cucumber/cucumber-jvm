@@ -38,6 +38,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Use `io.cucumber.junit.Cucumber` instead. 
  * [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
     - Use `io.cucumber.testng.TestNGCucumberRunner` instead.
+ * [TestNG] Deprecate `cucumber.api.testng.AbstractTestNGCucumberTests`
+    - Use `io.cucumber.testng.AbstractTestNGCucumberTests` instead.
  * [Needle] Deprecate `cucumber.api.needle.*` 
     - Use `io.cucumber.needle.*` instead. 
  * [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
