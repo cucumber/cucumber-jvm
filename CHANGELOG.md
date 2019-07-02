@@ -1,7 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.5.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...master) (In Git)
+## [4.5.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...master) (In Git)
 
 ### Added
 
@@ -12,6 +12,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.5.2](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...v4.5.2) (2019-07-02)
+
+### Fixed
+ * [Java] Fix ClassCastException on new Transpose annotation ([#1683](https://github.com/cucumber/cucumber-jvm/pull/1683)  Geoffroy Van Elsuve)
+
 
 ## [4.5.1](https://github.com/cucumber/cucumber-jvm/compare/v4.5.0...v4.5.1) (2019-07-01)
 
