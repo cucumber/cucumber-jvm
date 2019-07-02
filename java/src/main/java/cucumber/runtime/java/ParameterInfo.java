@@ -22,8 +22,10 @@ class ParameterInfo {
         for (int i = 0; i < genericParameterTypes.length; i++) {
             boolean transposed = false;
             for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof Transpose || annotation instanceof io.cucumber.java.Transpose) {
+                if (annotation instanceof Transpose ) {
                     transposed = ((Transpose) annotation).value();
+                } else if (annotation instanceof io.cucumber.java.Transpose) {
+                    transposed = ((io.cucumber.java.Transpose) annotation).value();
                 }
             }
             result.add(new ParameterInfo(genericParameterTypes[i], transposed));
