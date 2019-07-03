@@ -1,7 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.5.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...master) (In Git)
+## [4.5.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...master) (In Git)
 
 ### Added
 
