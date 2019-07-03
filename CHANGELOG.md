@@ -1,37 +1,58 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.4.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...master) (In Git)
+## [4.5.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...master) (In Git)
 
 ### Added
 
 ### Changed
- * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld `ObjectFactory` implementations.
-    - Removes spurious deprecation warning.
-    - Moves `ObjectFactory` implements to `io.cucumber.<module-name>` package.
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [4.5.2](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...v4.5.2) (2019-07-02)
+
+### Fixed
+ * [Java] Fix ClassCastException on new Transpose annotation ([#1683](https://github.com/cucumber/cucumber-jvm/pull/1683)  Geoffroy Van Elsuve)
+
+
+## [4.5.1](https://github.com/cucumber/cucumber-jvm/compare/v4.5.0...v4.5.1) (2019-07-01)
+
+### Fixed
+ * [Java] Fix link to new steps in generated Java doc ([#1681](https://github.com/cucumber/cucumber-jvm/pull/1681) M.P. Korstanje)
+
+## [4.5.0](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...v4.5.0) (2019-06-30)
+
+### Changed
  * [JUnit] JUnit will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
     - Add `summary` and/or `progress` plugins to restore output 
  * [TestNG] TestNG will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
     - Add `summary` and/or `progress` plugins to restore output
+ * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld `ObjectFactory` implementations.
+    - Removes spurious deprecation warning.
+    - Moves `ObjectFactory` implements to `io.cucumber.<module-name>` package.
 
 ### Deprecated
+ * [Core] Deprecate `cucumber.api.CucumberOptions` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Use `io.cucumber.junit.CucumberOptions` or `io.cucumber.testng.CucumberOptions` instead
+ * [Core] Deprecate `cucumber.api.cli.Main` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Use `io.cucumber.core.cli.Main` instead
+ * [Core] Deprecate `cucumber.api.Scenario`
+    - Use `io.cucumber.core.api.Scenario` instead
  * [JUnit] Deprecate `cucumber.api.junit.Cucumber`
-    - Use `io.cucumber.junit.Cucumber` instead.
+    - Use `io.cucumber.junit.Cucumber` instead. 
  * [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
     - Use `io.cucumber.testng.TestNGCucumberRunner` instead.
+ * [TestNG] Deprecate `cucumber.api.testng.AbstractTestNGCucumberTests`
+    - Use `io.cucumber.testng.AbstractTestNGCucumberTests` instead.
  * [Needle] Deprecate `cucumber.api.needle.*` 
     - Use `io.cucumber.needle.*` instead. 
  * [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
     - It is recommended to implement your own transaction hooks.
     - Will allow the dependency on `spring-txn` to be removed.
- * [Core] Deprecate `cucumber.api.CucumberOptions` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
-    - Use `io.cucumber.junit.CucumberOptions` or `io.cucumber.testng.CucumberOptions` instead
- * [Core] Deprecate `cucumber.api.cli.Main` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
-    - Use `io.cucumber.core.cli.Main` instead
-
-### Removed
-
-### Fixed
 
 ## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.0.0) (2019-06-15)
 
