@@ -12,6 +12,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+ * [Core] Reference correct main class in deprecation warning (M.P. Korstanje)
 
 ## [4.5.2](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...v4.5.2) (2019-07-02)
 
