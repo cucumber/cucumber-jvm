@@ -93,6 +93,11 @@ public class Java8HookDefinition implements HookDefinition, ScenarioScoped {
         }
 
         @Override
+        public Collection<String> getSourceTagNames() {
+            return scenario.getSourceTagNames();
+        }
+
+        @Override
         public Status getStatus() {
             return Status.valueOf(scenario.getStatus().name());
         }
