@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.DataTableTypeTypeDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.event.StepDefinedEvent;
 import gherkin.pickles.PickleStep;
@@ -88,6 +89,11 @@ final class CachingGlue implements Glue {
         typeRegistry.defineParameterType(parameterTypeDefinition.parameterType());
     }
 
+    @Override
+    public void addDataTableType(DataTableTypeTypeDefinition dataTableTypeTypeDefinition) {
+        typeRegistry.defineDataTableType(dataTableTypeTypeDefinition.dataTableType());
+    }
+
     List<HookDefinition> getBeforeHooks() {
         return new ArrayList<>(beforeHooks);
     }
@@ -133,7 +139,7 @@ final class CachingGlue implements Glue {
     }
 
     private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
-        List<PickleStepDefinitionMatch> result = new ArrayList<PickleStepDefinitionMatch>();
+        List<PickleStepDefinitionMatch> result = new ArrayList<>();
         for (CoreStepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {

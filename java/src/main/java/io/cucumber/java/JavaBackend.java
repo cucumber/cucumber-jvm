@@ -94,6 +94,8 @@ final class JavaBackend implements Backend {
                 boolean useForSnippets = parameterType.useForSnippets();
                 boolean preferForRegexMatch = parameterType.preferForRegexMatch();
                 glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, lookup));
+            } else if (annotation.annotationType().equals(DataTableType.class)) {
+                glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup));
             }
         }
     }

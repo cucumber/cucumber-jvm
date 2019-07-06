@@ -1,13 +1,13 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -57,10 +57,13 @@ public final class Runner {
     }
 
     public void runPickle(PickleEvent pickle) {
-        buildBackendWorlds(); // Java8 step definitions will be added to the glue here
-        TestCase testCase = createTestCaseForPickle(pickle);
-        testCase.run(bus);
-        disposeBackendWorlds();
+        try {
+            buildBackendWorlds(); // Java8 step definitions will be added to the glue here
+            TestCase testCase = createTestCaseForPickle(pickle);
+            testCase.run(bus);
+        } finally {
+            disposeBackendWorlds();
+        }
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {

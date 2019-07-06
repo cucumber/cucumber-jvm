@@ -8,21 +8,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines a parameter type.
+ * Allows a DataTableType to be registered.
  *
- * Method signature must have a String argument for each capture group
- *
+ * Supports TableCellTransformer: String -> T
+ * Supports TableEntryTransformer: Map<String, String> -> T
+ * Supports TableRowTransformer: List<String> -> T
+ * Supports TableTransformer: DataTable -> T
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
-public @interface ParameterType {
+public @interface DataTableType {
 
-    String value();
-
-    String name() default "";
-
-    boolean preferForRegexMatch() default false;
-
-    boolean useForSnippets() default false;
 }

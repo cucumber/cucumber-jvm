@@ -8,58 +8,60 @@ import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
 
-public class JavaParameterTypeDefinition implements ParameterTypeDefinition {
+class JavaParameterTypeDefinition implements ParameterTypeDefinition {
 
-    private final String name;
-    private final List<String> patterns;
     private final Method method;
 
     private final Lookup lookup;
-    private final boolean preferForRegexpMatch;
-    private final boolean useForSnippets;
+    private final ParameterType<Object> parameterType;
 
     JavaParameterTypeDefinition(String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch, Lookup lookup) {
-        this.name = name.isEmpty() ? method.getName() : name;
-        this.patterns = Collections.singletonList(pattern);
         this.method = requireValidMethod(method);
         this.lookup = lookup;
-        this.useForSnippets = useForSnippets;
-        this.preferForRegexpMatch = preferForRegexpMatch;
+        this.parameterType = new ParameterType<>(
+            name.isEmpty() ? method.getName() : name,
+            Collections.singletonList(pattern),
+            this.method.getReturnType(),
+            this::execute,
+            useForSnippets,
+            preferForRegexpMatch
+        );
     }
 
     private Method requireValidMethod(Method method) {
         Class<?> returnType = method.getReturnType();
         if (Void.class.equals(returnType)) {
-            throw new CucumberException("TODO");
+            throw createInvalidSignatureException();
         }
 
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length < 1) {
-            throw new CucumberException("TODO");
+            throw createInvalidSignatureException();
         }
 
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> parameterType = parameterTypes[i];
+        for (Class<?> parameterType : parameterTypes) {
             if (!String.class.equals(parameterType)) {
-                throw new CucumberException("TODO" + i);
+                throw createInvalidSignatureException();
             }
         }
 
         return method;
     }
 
+    private CucumberException createInvalidSignatureException() {
+        return new CucumberException("" +
+            "A @ParameterType annotated method must have one of these signatures:\n" +
+            " * public Author parameterName(String all)\n" +
+            " * public Author parameterName(String captureGroup1, String captureGroup2, ...ect )\n" +
+            " * public Author parameterName(String... captureGroups)\n" +
+            "Note: Author is an example of the class you want to convert parameter name"
+        );
+    }
+
     @Override
     public ParameterType<?> parameterType() {
-        return new ParameterType<>(
-            name,
-            patterns,
-            method.getReturnType(),
-            this::execute,
-            useForSnippets,
-            preferForRegexpMatch
-        );
+        return parameterType;
     }
 
     private Object execute(Object[] args) throws Throwable {

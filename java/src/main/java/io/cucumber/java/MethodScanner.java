@@ -84,6 +84,7 @@ final class MethodScanner {
             || annotationClass.equals(BeforeStep.class)
             || annotationClass.equals(AfterStep.class)
             || annotationClass.equals(ParameterType.class)
+            || annotationClass.equals(DataTableType.class)
             ;
     }
 

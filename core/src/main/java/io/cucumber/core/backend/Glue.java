@@ -17,4 +17,6 @@ public interface Glue {
 
     void addParameterType(ParameterTypeDefinition parameterTypeDefinition);
 
+    void addDataTableType(DataTableTypeTypeDefinition dataTableTypeTypeDefinition);
+
 }
