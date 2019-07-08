@@ -88,6 +88,11 @@ public class JavaHookDefinition implements HookDefinition {
         }
 
         @Override
+        public Collection<String> getSourceTagNames() {
+            return scenario.getSourceTagNames();
+        }
+
+        @Override
         public Status getStatus() {
             return Status.valueOf(scenario.getStatus().name());
         }
