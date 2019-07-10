@@ -1,7 +1,6 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
-
-## [4.5.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.3...master) (In Git)
+## [4.5.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...master) (In Git)
 
 ### Added
 
@@ -12,6 +11,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.5.4](https://github.com/cucumber/cucumber-jvm/compare/v4.5.3...v4.5.4) (2019-07-10)
+
+### Fixed
+ * [Core] Restore Scenario#getSourceTagNames() ([#1689](https://github.com/cucumber/cucumber-jvm/pull/1689)  Tommy Wo)
 
 ## [4.5.3](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...v4.5.3) (2019-07-07)
 
