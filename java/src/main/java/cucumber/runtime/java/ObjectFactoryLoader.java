@@ -1,11 +1,11 @@
 package cucumber.runtime.java;
 
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.NoInstancesException;
 import cucumber.runtime.Reflections;
 import cucumber.runtime.TooManyInstancesException;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 
@@ -13,8 +13,8 @@ import java.net.URI;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import java.util.Collection;
-import java.util.HashSet;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -27,20 +27,25 @@ public final class ObjectFactoryLoader {
     }
 
     /**
-     * Loads an instance of {@link ObjectFactory}. The class name can be explicit, or it can be null.
-     * When it's null, the implementation is searched for in the <pre>cucumber.runtime</pre> packahe.
+     * Loads an instance of {@link io.cucumber.core.backend.ObjectFactory}.
+     * The class name can be explicit, or it can be null.
+     * When it's null, the implementation is searched for using the ServiceLoader
+     * or via a specification of the deprecated {@link cucumber.api.java.ObjectFactory} in cucumber.properties.
      *
      * @param classFinder            where to load classes from
      * @param objectFactoryClassName specific class name of {@link ObjectFactory} implementation. May be null.
+     * 
      * @return an instance of {@link ObjectFactory}
      */
-    public static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName) {
+    public static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName, String deprecatedObjectFactoryClassName) {
         try {
             final Reflections reflections = new Reflections(classFinder);
-            if (objectFactoryClassName == null) {
+            if ((objectFactoryClassName == null) && (deprecatedObjectFactoryClassName == null)) {
                 return loadSingleObjectFactory(reflections);
-            } else {
+            } else if (objectFactoryClassName != null) {
                 return loadSelectedObjectFactory(reflections, classFinder, objectFactoryClassName);
+            } else {
+                return loadSelectedDeprecatedObjectFactory(reflections, classFinder, deprecatedObjectFactoryClassName);
             }
         } catch (TooManyInstancesException e) {
             LOG.warn(e.getMessage());
@@ -54,34 +59,37 @@ public final class ObjectFactoryLoader {
     }
 
     private static ObjectFactory loadSingleObjectFactory(final Reflections reflections) {
-        Iterator<io.cucumber.core.backend.ObjectFactory> serviceLoaderObjectFactories = ServiceLoader.load(io.cucumber.core.backend.ObjectFactory.class).iterator();
-        if (serviceLoaderObjectFactories.hasNext()) {
-            final Collection<io.cucumber.core.backend.ObjectFactory> instances = new HashSet<>();
+        Iterator<ObjectFactory> availableObjectFactoriesIt = ServiceLoader.load(ObjectFactory.class).iterator();
+        if (availableObjectFactoriesIt.hasNext()) {
+            final List<ObjectFactory> instances = new ArrayList<>();
             do {
-                instances.add(serviceLoaderObjectFactories.next());
-            } while (serviceLoaderObjectFactories.hasNext());
+                instances.add(availableObjectFactoriesIt.next());
+            } while (availableObjectFactoriesIt.hasNext());
             if (instances.size() > 1) {
                 throw new TooManyInstancesException(instances);
             }
-            return new ObjectFactoryAdapter(instances.iterator().next());
+            return instances.get(0);
         } else {
-            final List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
-            ObjectFactory objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
-            if(objectFactory != null){
-                LOG.warn("Used deprecated reflections to load ObjectFactory " + objectFactory.getClass().getSimpleName());
-            }
-            return objectFactory;
+            return loadDefaultRuntimeObjectFactory(reflections);
         }
     }
 
     private static ObjectFactory loadSelectedObjectFactory(final Reflections reflections, final ClassFinder classFinder, final String objectFactoryClassName) throws ClassNotFoundException {
-        final Iterator<? extends io.cucumber.core.backend.ObjectFactory> serviceLoaderObjectFactories = ServiceLoader.load(classFinder.<io.cucumber.core.backend.ObjectFactory>loadClass(objectFactoryClassName)).iterator();
-        if (serviceLoaderObjectFactories.hasNext()) {
-            return new ObjectFactoryAdapter(serviceLoaderObjectFactories.next());
+        final Iterator<? extends ObjectFactory> availableObjectFactoriesIt = ServiceLoader.load(classFinder.<ObjectFactory>loadClass(objectFactoryClassName)).iterator();
+        if (availableObjectFactoriesIt.hasNext()) {
+            return availableObjectFactoriesIt.next();
         } else {
-            LOG.warn("Use deprecated reflections to load requested ObjectFactory.");
-            return reflections.newInstance(new Class[0], new Object[0], classFinder.<ObjectFactory>loadClass(objectFactoryClassName));
+            return loadDefaultRuntimeObjectFactory(reflections);
         }
+    }
+
+    private static ObjectFactory loadDefaultRuntimeObjectFactory(final Reflections reflections) {
+        final List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
+        ObjectFactory objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
+        if (objectFactory != null) {
+            LOG.warn("ObjectFactory " + objectFactory.getClass().getSimpleName() + " loaded by reflection.");
+        }
+        return objectFactory;
     }
 
     private static String getMultipleObjectFactoryLogMessage() {
@@ -94,11 +102,23 @@ public final class ObjectFactoryLoader {
         return sb.toString();
     }
 
+    @Deprecated
+    private static ObjectFactory loadSelectedDeprecatedObjectFactory(final Reflections reflections, final ClassFinder classFinder, final String objectFactoryClassName) throws ClassNotFoundException {
+        final Iterator<? extends cucumber.api.java.ObjectFactory> availableObjectFactoriesIt = ServiceLoader.load(classFinder.<cucumber.api.java.ObjectFactory>loadClass(objectFactoryClassName)).iterator();
+        if (availableObjectFactoriesIt.hasNext()) {
+            return new ObjectFactoryAdapter(availableObjectFactoriesIt.next());
+        } else {
+            LOG.warn("Deprecated cucumber.api.java.ObjectFactory " + objectFactoryClassName + " loaded by reflection.");
+            return new ObjectFactoryAdapter(reflections.newInstance(new Class[0], new Object[0], classFinder.<cucumber.api.java.ObjectFactory>loadClass(objectFactoryClassName)));
+        }
+    }
+
+    @Deprecated
     private static class ObjectFactoryAdapter implements ObjectFactory {
 
-        private final io.cucumber.core.backend.ObjectFactory delegate;
+        private final cucumber.api.java.ObjectFactory delegate;
 
-        public ObjectFactoryAdapter(final io.cucumber.core.backend.ObjectFactory delegate) {
+        public ObjectFactoryAdapter(final cucumber.api.java.ObjectFactory delegate) {
             this.delegate = Objects.requireNonNull(delegate);
         }
 

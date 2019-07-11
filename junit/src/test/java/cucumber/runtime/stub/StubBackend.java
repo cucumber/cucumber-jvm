@@ -1,6 +1,8 @@
 package cucumber.runtime.stub;
 
 import cucumber.runtime.StepDefinition;
+import io.cucumber.core.options.RunnerOptions;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.TypeRegistry;
 import cucumber.runtime.Backend;
@@ -20,7 +22,7 @@ import static java.util.Collections.singletonList;
  */
 @SuppressWarnings("unused")
 public class StubBackend implements Backend {
-    public StubBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public StubBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry, RuntimeOptions runtimeOptions) {
 
     }
 

@@ -1,6 +1,9 @@
 package io.cucumber.junit;
 
+import java.util.Objects;
+
 import cucumber.api.SnippetType;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
@@ -74,6 +77,17 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
                     return SnippetType.CAMELCASE;
                 default:
                     throw new IllegalArgumentException("" + annotation.snippets());
+            }
+        }
+
+        @Override
+        public Class<? extends ObjectFactory> objectFactory() {
+            if ((annotation.objectFactory() != null)
+                    && (Objects.equals(annotation.objectFactory(), NoObjectFactory.class) == false)) {
+                return annotation.objectFactory();
+            }
+            else {
+                return null;
             }
         }
 

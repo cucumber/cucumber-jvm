@@ -1,6 +1,9 @@
 package io.cucumber.testng;
 
+import java.util.Objects;
+
 import cucumber.api.SnippetType;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
@@ -75,6 +78,11 @@ class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.O
                 default:
                     throw new IllegalArgumentException("" + annotation.snippets());
             }
+        }
+
+        @Override
+        public Class<? extends ObjectFactory> objectFactory() {
+            return null;
         }
 
         @Override

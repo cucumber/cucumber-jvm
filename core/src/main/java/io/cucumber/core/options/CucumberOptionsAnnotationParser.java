@@ -4,6 +4,7 @@ import cucumber.api.SnippetType;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.model.Classpath;
 import io.cucumber.core.model.FeaturePath;
 import io.cucumber.core.model.FeatureWithLines;
@@ -11,6 +12,7 @@ import io.cucumber.core.model.GluePath;
 import io.cucumber.core.model.RerunLoader;
 
 import java.net.URI;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public final class CucumberOptionsAnnotationParser {
@@ -54,6 +56,7 @@ public final class CucumberOptionsAnnotationParser {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
+                addObjectFactory(options, args);
                 addJunitOptions(options, args);
             }
         }
@@ -158,6 +161,12 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
+    private void addObjectFactory(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options.objectFactory() != null) {
+            args.setObjectFactory(options.objectFactory());
+        }
+    }
+
     private void addJunitOptions(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String junitOption : options.junit()) {
             args.addJunitOption(junitOption);
@@ -215,6 +224,8 @@ public final class CucumberOptionsAnnotationParser {
         String[] name();
 
         SnippetType snippets();
+        
+        Class<? extends ObjectFactory> objectFactory();
 
         String[] junit();
     }
@@ -274,6 +285,11 @@ public final class CucumberOptionsAnnotationParser {
         @Override
         public SnippetType snippets() {
             return annotation.snippets();
+        }
+
+        @Override
+        public Class<? extends ObjectFactory> objectFactory() {
+            return null;
         }
 
         @Override

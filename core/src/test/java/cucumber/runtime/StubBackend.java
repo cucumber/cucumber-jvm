@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.stepexpression.TypeRegistry;
 
 import java.net.URI;
@@ -13,7 +14,7 @@ import static java.util.Collections.emptyList;
 public class StubBackend implements Backend {
 
     @SuppressWarnings("unused") // reflection to create backend
-    public StubBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
+    public StubBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry, RuntimeOptions runtimeOptions) {
 
     }
 

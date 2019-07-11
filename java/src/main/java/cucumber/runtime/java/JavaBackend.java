@@ -4,7 +4,6 @@ import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.api.java.BeforeStep;
-import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
@@ -20,6 +19,8 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.stepexpression.TypeRegistry;
 
 import java.lang.annotation.Annotation;
@@ -59,15 +60,20 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
      *
      * @param resourceLoader
      */
-    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
-        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
+    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry, RuntimeOptions runtimeOptions) {
+        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry, runtimeOptions.getObjectFactory());
     }
 
-    private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
-        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
+    private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry, Class<? extends ObjectFactory> objectFactoryClass) {
+        this(loadObjectFactory(
+                classFinder,
+                (objectFactoryClass != null) ? objectFactoryClass.getName() : Env.INSTANCE.get(ObjectFactory.class.getName()),
+                Env.INSTANCE.get(cucumber.api.java.ObjectFactory.class.getName())), 
+             classFinder,
+             typeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
+    JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);

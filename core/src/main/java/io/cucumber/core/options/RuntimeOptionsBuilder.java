@@ -4,6 +4,7 @@ import cucumber.api.SnippetType;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.order.PickleOrder;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.model.FeatureWithLines;
 
 import java.net.URI;
@@ -33,6 +34,7 @@ public final class RuntimeOptionsBuilder {
     private Boolean parsedWip = null;
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
+    private Class<? extends ObjectFactory> parsedObjectFactory = null;
 
     public RuntimeOptionsBuilder addFeature(FeatureWithLines featureWithLines) {
         parsedFeaturePaths.add(featureWithLines.uri());
@@ -120,11 +122,13 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setFeaturePaths(Collections.<URI>emptyList());
             runtimeOptions.setLineFilters(Collections.<URI, Set<Integer>>emptyMap());
         }
+
         if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || !this.parsedLineFilters.isEmpty()) {
             runtimeOptions.setTagFilters(this.parsedTagFilters);
             runtimeOptions.setNameFilters(this.parsedNameFilters);
             runtimeOptions.setLineFilters(this.parsedLineFilters);
         }
+
         if (!this.parsedFeaturePaths.isEmpty()) {
             runtimeOptions.setFeaturePaths(this.parsedFeaturePaths);
         }
@@ -132,6 +136,11 @@ public final class RuntimeOptionsBuilder {
         if (!this.parsedGlue.isEmpty()) {
             runtimeOptions.setGlue(this.parsedGlue);
         }
+        
+        if (this.parsedObjectFactory != null) {
+            runtimeOptions.setObjectFactory(this.parsedObjectFactory);
+        }
+
         if (!this.parsedJunitOptions.isEmpty()) {
             runtimeOptions.setJunitOptions(this.parsedJunitOptions);
         }
@@ -168,6 +177,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setMonochrome() {
         return setMonochrome(true);
+    }
+    
+    public RuntimeOptionsBuilder setObjectFactory(Class<? extends ObjectFactory> objectFactory) {
+        this.parsedObjectFactory = objectFactory;
+        return this;
     }
 
     public RuntimeOptionsBuilder setPickleOrder(PickleOrder pickleOrder) {

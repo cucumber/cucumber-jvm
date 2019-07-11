@@ -1,7 +1,8 @@
 package cucumber.runtime.java;
 
-import cucumber.api.java.ObjectFactory;
 import org.junit.Test;
+
+import io.cucumber.core.backend.ObjectFactory;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;

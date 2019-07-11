@@ -3,6 +3,7 @@ package io.cucumber.core.options;
 import cucumber.api.SnippetType;
 import cucumber.runtime.order.PickleOrder;
 import cucumber.runtime.order.StandardPickleOrders;
+import io.cucumber.core.backend.ObjectFactory;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
+    private Class<? extends ObjectFactory> objectFactory;
 
     private final List<String> pluginFormatterNames = new ArrayList<>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<>();
@@ -204,5 +206,13 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
 
     void setWip(boolean wip) {
         this.wip = wip;
+    }
+    
+    public Class<? extends ObjectFactory> getObjectFactory() {
+        return this.objectFactory;
+    }
+    
+    void setObjectFactory(Class<? extends ObjectFactory> objectFactory) {
+        this.objectFactory = objectFactory;
     }
 }

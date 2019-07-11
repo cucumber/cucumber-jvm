@@ -1,10 +1,10 @@
 package cucumber.runtime.java;
 
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.ArgumentMatcher;
 import io.cucumber.stepexpression.ExpressionArgumentMatcher;

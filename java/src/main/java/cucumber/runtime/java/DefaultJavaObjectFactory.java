@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
+import io.cucumber.core.backend.ObjectFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

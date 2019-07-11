@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.stepexpression.TypeRegistry;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.io.MultiLoader;

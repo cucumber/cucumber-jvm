@@ -1,13 +1,13 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
-import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.StepDefinition;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.stepexpression.Argument;
 import io.cucumber.stepexpression.TypeRegistry;
