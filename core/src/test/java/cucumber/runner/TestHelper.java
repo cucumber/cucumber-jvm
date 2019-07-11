@@ -465,16 +465,23 @@ public class TestHelper {
     }
 
     public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType) {
+        return createEmbedHookAction(data, mimeType, null);
+    }
+
+    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
         return new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) {
                 Scenario scenario = (Scenario) invocation.getArguments()[0];
-                scenario.embed(data, mimeType);
+                if (name != null) {
+                    scenario.embed(data, mimeType, name);
+                } else {
+                    scenario.embed(data, mimeType);
+                }
                 return null;
             }
         };
     }
-
 
     private static AssertionFailedError mockAssertionFailedError() {
         AssertionFailedError error = mock(AssertionFailedError.class);
