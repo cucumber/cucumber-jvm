@@ -161,7 +161,7 @@ final class JSONFormatter implements EventListener {
     }
 
     private void handleEmbed(EmbedEvent event) {
-        addEmbeddingToHookMap(event.data, event.mimeType);
+        addEmbeddingToHookMap(event.data, event.mimeType, event.name);
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -338,18 +338,21 @@ final class JSONFormatter implements EventListener {
         ((List<String>)currentStepOrHookMap.get("output")).add(text);
     }
 
-    private void addEmbeddingToHookMap(byte[] data, String mimeType) {
+    private void addEmbeddingToHookMap(byte[] data, String mimeType, String name) {
         if (!currentStepOrHookMap.containsKey("embeddings")) {
             currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
         }
-        Map<String, Object> embedMap = createEmbeddingMap(data, mimeType);
+        Map<String, Object> embedMap = createEmbeddingMap(data, mimeType, name);
         ((List<Map<String, Object>>)currentStepOrHookMap.get("embeddings")).add(embedMap);
     }
 
-    private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType) {
+    private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType, String name) {
         Map<String, Object> embedMap = new HashMap<String, Object>();
         embedMap.put("mime_type", mimeType);
         embedMap.put("data", Base64.encodeBytes(data));
+        if (name != null) {
+            embedMap.put("name", name);
+        }
         return embedMap;
     }
 

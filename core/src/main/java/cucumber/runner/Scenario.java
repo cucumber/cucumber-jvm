@@ -54,9 +54,12 @@ class Scenario implements cucumber.api.Scenario {
 
     @Override
     public void embed(byte[] data, String mimeType) {
-        if (bus != null) {
-            bus.send(new EmbedEvent(bus.getTime(), bus.getTimeMillis(), testCase, data, mimeType));
-        }
+        busSend(new EmbedEvent(bus.getTime(), bus.getTimeMillis(), testCase, data, mimeType));
+    }
+
+    @Override
+    public void embed(byte[] data, String mimeType, String name) {
+        busSend(new EmbedEvent(bus.getTime(), bus.getTimeMillis(), testCase, data, mimeType, name));
     }
 
     @Override
@@ -92,5 +95,11 @@ class Scenario implements cucumber.api.Scenario {
         }
 
         return max(stepResults, Result.SEVERITY).getError();
+    }
+
+    private void busSend(EmbedEvent embedEvent) {
+        if (bus != null) {
+            bus.send(embedEvent);
+        }
     }
 }
