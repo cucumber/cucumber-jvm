@@ -63,7 +63,10 @@ public interface ${className} extends LambdaGlue {
      * @param expression    the cucumber expression
      * @param timeoutMillis timeout in milliseconds. 0 (default) means no restriction.
      * @param body          a lambda expression with no parameters
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A0 body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
             Java8StepDefinition.create(expression, timeoutMillis, A0.class, body, typeRegistry)
@@ -101,7 +104,10 @@ public interface ${className} extends LambdaGlue {
      * @param body          a lambda expression with ${arity} parameters
      * <% (1..arity).each { i -> %>
      * @param <T${i}> type of argument ${i} <% } %>
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A${arity}<${genericSignature}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
             Java8StepDefinition.create(expression, timeoutMillis, A${arity}.class, body, typeRegistry)
