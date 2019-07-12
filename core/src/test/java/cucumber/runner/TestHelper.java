@@ -475,6 +475,16 @@ public class TestHelper {
         };
     }
 
+    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
+        return new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                Scenario scenario = (Scenario) invocation.getArguments()[0];
+                scenario.embed(data, mimeType, name);
+                return null;
+            }
+        };
+    }
 
     private static AssertionFailedError mockAssertionFailedError() {
         AssertionFailedError error = mock(AssertionFailedError.class);
