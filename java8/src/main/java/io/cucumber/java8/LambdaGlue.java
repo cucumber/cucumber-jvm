@@ -37,7 +37,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void Before(long timeoutMillis, final HookBody body) {
         JavaBackend.INSTANCE.get().addBeforeHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, timeoutMillis, body));
     }
@@ -59,7 +62,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void Before(String tagExpression, long timeoutMillis, int order, final HookBody body) {
         JavaBackend.INSTANCE.get().addBeforeHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -88,7 +94,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void Before(long timeoutMillis, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addBeforeHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, timeoutMillis, body));
     }
@@ -110,7 +119,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void Before(String tagExpression, long timeoutMillis, int order, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addBeforeHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -139,7 +151,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void BeforeStep(long timeoutMillis, final HookBody body) {
         JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, timeoutMillis, body));
     }
@@ -161,7 +176,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void BeforeStep(String tagExpression, long timeoutMillis, int order, final HookBody body) {
         JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -192,7 +210,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void BeforeStep(long timeoutMillis, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_BEFORE_ORDER, timeoutMillis, body));
     }
@@ -214,7 +235,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void BeforeStep(String tagExpression, long timeoutMillis, int order, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addBeforeStepHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -243,7 +267,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void After(long timeoutMillis, final HookBody body) {
         JavaBackend.INSTANCE.get().addAfterHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, timeoutMillis, body));
     }
@@ -265,7 +292,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void After(String tagExpression, long timeoutMillis, int order, final HookBody body) {
         JavaBackend.INSTANCE.get().addAfterHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -294,7 +324,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void After(long timeoutMillis, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addAfterHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, timeoutMillis, body));
     }
@@ -316,7 +349,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void After(String tagExpression, long timeoutMillis, int order, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addAfterHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -345,7 +381,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void AfterStep(long timeoutMillis, final HookBody body) {
         JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, timeoutMillis, body));
     }
@@ -367,7 +406,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute, takes {@link cucumber.api.Scenario} as an argument
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void AfterStep(String tagExpression, long timeoutMillis, int order, final HookBody body) {
         JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
@@ -386,7 +428,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param tagExpression a tag expression, if the expression applies to the current scenario this hook will be executed
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void AfterStep(String tagExpression, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_AFTER_ORDER, NO_TIMEOUT, body));
     }
@@ -396,7 +441,10 @@ public interface LambdaGlue extends GlueBase {
      *
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void AfterStep(long timeoutMillis, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSIONS, DEFAULT_AFTER_ORDER, timeoutMillis, body));
     }
@@ -418,7 +466,10 @@ public interface LambdaGlue extends GlueBase {
      * @param timeoutMillis max amount of milliseconds this is allowed to run for
      * @param order         the order in which this hook should run. Higher numbers are run first
      * @param body          lambda to execute
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     default void AfterStep(String tagExpression, long timeoutMillis, int order, final HookNoArgsBody body) {
         JavaBackend.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }

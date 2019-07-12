@@ -28,7 +28,10 @@ public @interface After {
      * Cucumber will wait for the this hook to finish.
      *
      * @return timeout in milliseconds. 0 (default) means no restriction.
+     * @deprecated use a library based solution instead. E.g. Awaitility
+     * or JUnit 5s Assertions.assertTimeout.
      */
+    @Deprecated
     long timeout() default 0;
 
     /**
