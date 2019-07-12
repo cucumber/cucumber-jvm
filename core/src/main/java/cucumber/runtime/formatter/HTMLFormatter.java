@@ -193,14 +193,22 @@ final class HTMLFormatter implements EventListener {
         String mimeType = event.mimeType;
         if(mimeType.startsWith("text/")) {
             // just pass straight to the formatter to output in the html
-            jsFunctionCall("embedding", mimeType, new String(event.data));
+            if (event.name != null) {
+                jsFunctionCall("embedding", mimeType, new String(event.data), event.name);
+            } else {
+                jsFunctionCall("embedding", mimeType, new String(event.data));
+            }
         } else {
             // Creating a file instead of using data urls to not clutter the js file
             String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
             if (extension != null) {
                 StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
                 writeBytesToURL(event.data, toUrl(fileName.toString()));
-                jsFunctionCall("embedding", mimeType, fileName);
+                if (event.name != null) {
+                    jsFunctionCall("embedding", mimeType, fileName, event.name);
+                } else {
+                    jsFunctionCall("embedding", mimeType, fileName);
+                }
             }
         }
     }

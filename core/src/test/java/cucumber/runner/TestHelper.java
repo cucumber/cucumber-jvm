@@ -465,14 +465,7 @@ public class TestHelper {
     }
 
     public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType) {
-        return new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Scenario scenario = (Scenario) invocation.getArguments()[0];
-                scenario.embed(data, mimeType);
-                return null;
-            }
-        };
+        return createEmbedHookAction(data, mimeType, null);
     }
 
     public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
@@ -480,7 +473,11 @@ public class TestHelper {
             @Override
             public Object answer(InvocationOnMock invocation) {
                 Scenario scenario = (Scenario) invocation.getArguments()[0];
-                scenario.embed(data, mimeType, name);
+                if (name != null) {
+                    scenario.embed(data, mimeType, name);
+                } else {
+                    scenario.embed(data, mimeType);
+                }
                 return null;
             }
         };

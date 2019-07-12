@@ -49,8 +49,11 @@ public class HTMLFormatterTest {
     private URL outputDir;
 
     public void writeReport() throws Throwable {
-        outputDir = Utils.toURL(TempDir.createTempDirectory().getAbsolutePath());
-        runFeaturesWithFormatter(outputDir);
+        writeReport(false);
+    }
+
+    public void writeReportWithNamedEmbedding() throws Throwable {
+        writeReport(true);
     }
 
     @Test
@@ -112,6 +115,14 @@ public class HTMLFormatterTest {
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertContains("formatter.embedding(\"image/png\", \"embedded0.png\");", reportJs);
         assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\");", reportJs);
+    }
+
+    @Test
+    public void included_embedding_with_name() throws Throwable {
+        writeReportWithNamedEmbedding();
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
+        assertContains("formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");", reportJs);
+        assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\", \"Some text\");", reportJs);
     }
 
     @Test
@@ -726,7 +737,12 @@ public class HTMLFormatterTest {
         }
     }
 
-    private void runFeaturesWithFormatter(URL outputDir) throws Throwable {
+    private void writeReport(boolean isNamedEmbedding) throws Throwable {
+        outputDir = Utils.toURL(TempDir.createTempDirectory().getAbsolutePath());
+        runFeaturesWithFormatter(outputDir, isNamedEmbedding);
+    }
+
+    private void runFeaturesWithFormatter(URL outputDir, boolean isNamedEmbedding) throws Throwable {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
         CucumberFeature feature = feature("some/path/some.feature", "" +
                 "Feature:\n" +
@@ -737,8 +753,13 @@ public class HTMLFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        hookActions.add(createEmbedHookAction("fakedata".getBytes("US-ASCII"), "image/png"));
-        hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes("US-ASCII"), "text/plain"));
+        if (isNamedEmbedding) {
+            hookActions.add(createEmbedHookAction("fakedata".getBytes("US-ASCII"), "image/png", "Fake image"));
+            hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes("US-ASCII"), "text/plain", "Some text"));
+        } else {
+            hookActions.add(createEmbedHookAction("fakedata".getBytes("US-ASCII"), "image/png"));
+            hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes("US-ASCII"), "text/plain"));
+        }
         stepDuration = 1L;
 
         runFeaturesWithFormatter(f);
