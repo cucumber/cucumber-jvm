@@ -57,8 +57,10 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     /**
      * The constructor called by reflection by default.
-     *
-     * @param resourceLoader
+     * 
+     * The given runtimeOptions may specify the class name of an ObjectFactory to use.
+     * An ObjectFactory can also be specified in cucumber.properties using the property name io.cucumber.core.backend.ObjectFactory
+     * or using the deprecated cucumber.api.java.ObjectFactory property.
      */
     public JavaBackend(ResourceLoader resourceLoader, TypeRegistry typeRegistry, RuntimeOptions runtimeOptions) {
         this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry, runtimeOptions.getObjectFactory());

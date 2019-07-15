@@ -28,14 +28,22 @@ public final class ObjectFactoryLoader {
 
     /**
      * Loads an instance of {@link io.cucumber.core.backend.ObjectFactory}.
-     * The class name can be explicit, or it can be null.
-     * When it's null, the implementation is searched for using the ServiceLoader
-     * or via a specification of the deprecated {@link cucumber.api.java.ObjectFactory} in cucumber.properties.
-     *
-     * @param classFinder            where to load classes from
-     * @param objectFactoryClassName specific class name of {@link ObjectFactory} implementation. May be null.
+     * The class name of the {@link io.cucumber.core.backend.ObjectFactory} can be specified.
+     * Also a class name specifying an old deprecated {@link cucumber.api.java.ObjectFactory} can be specified.
      * 
-     * @return an instance of {@link ObjectFactory}
+     * When a class name for {@link io.cucumber.core.backend.ObjectFactory} is specified, it will be instantiated and returned.
+     * When a class name for {@link cucumber.api.java.ObjectFactory} is specified instead of a regular objectFactoryClassName,
+     * it will be instantiated, wrapped in an adapter (turning it into a {@link io.cucumber.core.backend.ObjectFactory}) and returned.
+     * 
+     * When no class names are specified, an instance of {@link io.cucumber.core.backend.ObjectFactory} is searched for in the services
+     * and instantiated using a ServiceLoader. When the ServiceLoader cannot find an ObjectFactory, a default ObjectFactory implementation
+     * is searched for and instantiated in the Cucumber runtime.
+     *
+     * @param classFinder                      where to load classes from
+     * @param objectFactoryClassName           specific class name of the {@link io.cucumber.core.backend.ObjectFactory} implementation. May be null.
+     * @param deprecatedObjectFactoryClassName specific class name of the deprecated {@link cucumber.api.java.ObjectFactory} implementation. May be null.
+     * 
+     * @return an instance of {@link io.cucumber.core.backend.ObjectFactory}
      */
     public static ObjectFactory loadObjectFactory(ClassFinder classFinder, String objectFactoryClassName, String deprecatedObjectFactoryClassName) {
         try {
@@ -75,19 +83,16 @@ public final class ObjectFactoryLoader {
     }
 
     private static ObjectFactory loadSelectedObjectFactory(final Reflections reflections, final ClassFinder classFinder, final String objectFactoryClassName) throws ClassNotFoundException {
-        final Iterator<? extends ObjectFactory> availableObjectFactoriesIt = ServiceLoader.load(classFinder.<ObjectFactory>loadClass(objectFactoryClassName)).iterator();
-        if (availableObjectFactoriesIt.hasNext()) {
-            return availableObjectFactoriesIt.next();
-        } else {
-            return loadDefaultRuntimeObjectFactory(reflections);
-        }
+        ObjectFactory objectFactory = reflections.newInstance(new Class[0], new Object[0], classFinder.<ObjectFactory>loadClass(objectFactoryClassName));
+        LOG.info("Using ObjectFactory " + objectFactory.getClass().getSimpleName());
+        return objectFactory;
     }
 
     private static ObjectFactory loadDefaultRuntimeObjectFactory(final Reflections reflections) {
         final List<URI> packages = asList(URI.create("classpath:cucumber/runtime"));
         ObjectFactory objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, packages, new Class[0], new Object[0], null);
         if (objectFactory != null) {
-            LOG.warn("ObjectFactory " + objectFactory.getClass().getSimpleName() + " loaded by reflection.");
+            LOG.info("Default ObjectFactory " + objectFactory.getClass().getSimpleName() + " loaded by reflection.");
         }
         return objectFactory;
     }
