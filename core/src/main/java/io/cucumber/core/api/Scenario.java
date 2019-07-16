@@ -34,8 +34,20 @@ public interface Scenario {
      *
      * @param data     what to embed, for example an image.
      * @param mimeType what is the data?
+     *
+     * @deprecated use {@link Scenario#embed(byte[], String, String)} instead.
      */
+    @Deprecated
     void embed(byte[] data, String mimeType);
+
+    /**
+     * Like {@link Scenario#embed(byte[], String)}, but with name for the embedding.
+     *
+     * @param data     what to embed, for example an image.
+     * @param mimeType what is the data?
+     * @param name     embedding name
+     */
+    void embed(byte[] data, String mimeType, String name);
 
     /**
      * Outputs some text into the report.
