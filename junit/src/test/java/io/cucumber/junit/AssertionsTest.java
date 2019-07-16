@@ -15,7 +15,7 @@ public class AssertionsTest {
     }
 
     @RunWith(Cucumber.class)
-    final static class WithCucumberMethod {
+    public static final class WithCucumberMethod {
 
         @StubCucumberAnnotation
         public void before() {
