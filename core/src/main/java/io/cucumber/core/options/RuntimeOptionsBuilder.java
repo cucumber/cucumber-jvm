@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -32,6 +33,7 @@ public final class RuntimeOptionsBuilder {
     private Boolean parsedWip = null;
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
+    private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
 
     public RuntimeOptionsBuilder addFeature(FeatureWithLines featureWithLines) {
         parsedFeaturePaths.add(featureWithLines.uri());
@@ -130,6 +132,10 @@ public final class RuntimeOptionsBuilder {
         this.parsedPluginData.updateFormatters(runtimeOptions.getFormatters());
         this.parsedPluginData.updateSummaryPrinters(runtimeOptions.getSummaryPrinter());
 
+        if (parsedObjectFactoryClass != null) {
+            runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
+        }
+
         return runtimeOptions;
     }
 
@@ -197,6 +203,10 @@ public final class RuntimeOptionsBuilder {
     public RuntimeOptionsBuilder addDefaultFormatterIfNotPresent() {
         parsedPluginData.addDefaultFormatterIfNotPresent();
         return this;
+    }
+
+    public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
+        this.parsedObjectFactoryClass = objectFactoryClass;
     }
 
     static final class ParsedPluginData {

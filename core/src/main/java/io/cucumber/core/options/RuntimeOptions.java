@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
@@ -40,6 +41,7 @@ public final class RuntimeOptions implements
 
     private final List<Plugin> formatters = new ArrayList<>();
     private final List<Plugin> summaryPrinters = new ArrayList<>();
+    private Class<? extends ObjectFactory> objectFactoryClass;
 
     private RuntimeOptions() {
 
@@ -162,6 +164,11 @@ public final class RuntimeOptions implements
         return snippetType;
     }
 
+    @Override
+    public Class<? extends ObjectFactory> getObjectFactoryClass() {
+        return objectFactoryClass;
+    }
+
     public int getThreads() {
         return threads;
     }
@@ -192,5 +199,9 @@ public final class RuntimeOptions implements
 
     void setWip(boolean wip) {
         this.wip = wip;
+    }
+
+    void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
+        this.objectFactoryClass = objectFactoryClass;
     }
 }

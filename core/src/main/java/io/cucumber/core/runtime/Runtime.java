@@ -195,8 +195,8 @@ public final class Runtime {
             final ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
 
             final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalObjectFactorySupplier()
-                : new SingletonObjectFactorySupplier();
+                ? new ThreadLocalObjectFactorySupplier(runtimeOptions)
+                : new SingletonObjectFactorySupplier(runtimeOptions);
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier

@@ -150,7 +150,7 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(RuntimeOptions.defaultOptions());
         final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 
         final Clock clockStub = new Clock() {

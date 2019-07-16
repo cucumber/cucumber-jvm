@@ -2,19 +2,24 @@ package io.cucumber.core.runtime;
 
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.options.CucumberProperties;
+import io.cucumber.core.runner.Options;
 
-import java.util.Map;
+import java.util.function.Supplier;
 
 import static io.cucumber.core.runtime.ObjectFactoryLoader.loadObjectFactory;
 
 public class ThreadLocalObjectFactorySupplier implements ObjectFactorySupplier {
 
-    private final ThreadLocal<ObjectFactory> runners = ThreadLocal.withInitial(() -> {
-            Map<String, String> properties = CucumberProperties.create();
-            return loadObjectFactory(properties.get(ObjectFactory.class.getName()));
-        }
-    );
+    private final Options options;
+    private final ThreadLocal<ObjectFactory> runners = ThreadLocal.withInitial(objectFactorySupplier());
+
+    private Supplier<ObjectFactory> objectFactorySupplier() {
+        return () -> loadObjectFactory(options.getObjectFactoryClass());
+    }
+
+    public ThreadLocalObjectFactorySupplier(Options options) {
+        this.options = options;
+    }
 
     @Override
     public ObjectFactory get() {

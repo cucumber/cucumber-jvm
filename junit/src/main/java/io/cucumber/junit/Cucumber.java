@@ -138,7 +138,7 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
 
-        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
+        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(runtimeOptions);
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistrySupplier);

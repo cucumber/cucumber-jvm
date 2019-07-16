@@ -10,12 +10,12 @@ import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Clock;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
-
-import java.time.Clock;
 
 
 public class SingletonRunnerSupplierTest {
@@ -28,7 +28,7 @@ public class SingletonRunnerSupplierTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(runtimeOptions);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);

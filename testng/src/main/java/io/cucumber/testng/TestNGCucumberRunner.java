@@ -86,7 +86,7 @@ public final class TestNGCucumberRunner {
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier();
+        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(runtimeOptions);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);

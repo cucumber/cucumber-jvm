@@ -13,7 +13,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.time.Clock;
 
@@ -38,7 +37,7 @@ public class ThreadLocalRunnerSupplierTest {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier();
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(runtimeOptions);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC());
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);

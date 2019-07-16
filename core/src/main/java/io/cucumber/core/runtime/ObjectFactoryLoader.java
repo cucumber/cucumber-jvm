@@ -25,27 +25,27 @@ class ObjectFactoryLoader {
      * Otherwise a default object factory with no Dependency Injection capabilities
      * will be used.
      *
-     * @param objectFactoryClassName optional object factory to use
+     * @param objectFactoryClass optional object factory to use
      * @return an instance of {@link ObjectFactory}
      */
-    static ObjectFactory loadObjectFactory(String objectFactoryClassName) {
+    static ObjectFactory loadObjectFactory(Class<? extends ObjectFactory> objectFactoryClass) {
         final ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class);
-        if (objectFactoryClassName == null) {
+        if (objectFactoryClass == null) {
             return loadSingleObjectFactoryOrDefault(loader);
 
         }
 
-        return loadSelectedObjectFactory(loader, objectFactoryClassName);
+        return loadSelectedObjectFactory(loader, objectFactoryClass);
     }
 
-    private static ObjectFactory loadSelectedObjectFactory(ServiceLoader<ObjectFactory> loader, String objectFactoryClassName) {
+    private static ObjectFactory loadSelectedObjectFactory(ServiceLoader<ObjectFactory> loader, Class<? extends ObjectFactory> objectFactoryClass) {
         for (ObjectFactory objectFactory : loader) {
-            if (objectFactoryClassName.equals(objectFactory.getClass().getName())) {
+            if (objectFactoryClass.equals(objectFactory.getClass())) {
                 return objectFactory;
             }
         }
 
-        throw new CucumberException("Could not find object factory " + objectFactoryClassName);
+        throw new CucumberException("Could not find object factory " + objectFactoryClass);
     }
 
     private static ObjectFactory loadSingleObjectFactoryOrDefault(ServiceLoader<ObjectFactory> loader) {
