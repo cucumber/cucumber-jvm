@@ -108,6 +108,11 @@ public class JavaHookDefinition implements HookDefinition {
         }
 
         @Override
+        public void embed(byte[] data, String mimeType, String name) {
+            scenario.embed(data, mimeType, name);
+        }
+
+        @Override
         public void write(String text) {
             scenario.write(text);
         }
