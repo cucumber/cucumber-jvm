@@ -33,6 +33,28 @@ import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
 public class JavaBackend implements Backend, LambdaGlueRegistry {
+    
+    static final String OBJECT_FACTORY_KEY = "cucumber.object-factory";
+
+    /**
+     * Returns a specified class name for an {@link io.cucumber.core.backend.ObjectFactory} or null.
+     * An ObjectFactory might be specified in the options using the cucumber.object-factory key.
+     */
+    static String getObjectFactoryClassName(Env env)
+    {
+        return env.get(OBJECT_FACTORY_KEY);
+    }
+
+    /**
+     * Returns a specified class name for an {@link cucumber.api.java.ObjectFactory} or null.
+     * An ObjectFactory might be specified in the options using the classname of {@link cucumber.api.java.ObjectFactory} as key.
+     */
+    @Deprecated
+    static String getDeprecatedObjectFactoryClassName(Env env)
+    {
+        return env.get(ObjectFactory.class.getName());
+    }
+
 
     private final SnippetGenerator snippetGenerator;
     private final TypeRegistry typeRegistry;
@@ -63,11 +85,18 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
         this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), typeRegistry);
     }
 
-    private JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
-        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, typeRegistry);
+    /**
+     * This constructor will create an object factory.
+     * The default object factory will be used unless an object factory of type {@link io.cucumber.core.backend.ObjectFactory} is specified
+     * by its class name in the cucumber.properties under the JavaBackend.OBJECT_FACTORY_KEY key.
+     * Alternatively a deprecated object factory of type {@link cucumber.api.java.ObjectFactory} can be specified  in cucumber.properties
+     * under the key ObjectFactory.class.getName().
+     */
+    JavaBackend(ClassFinder classFinder, TypeRegistry typeRegistry) {
+        this(loadObjectFactory(classFinder, getObjectFactoryClassName(Env.INSTANCE),getDeprecatedObjectFactoryClassName(Env.INSTANCE)), classFinder, typeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
+    JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
