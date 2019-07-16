@@ -1,6 +1,6 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
-## [4.5.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...master) (In Git)
+## [4.6.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...master) (In Git)
 
 ### Added
 
@@ -11,6 +11,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.6.0](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...v4.6.0) (2019-07-16)
+
+### Added
+ * [Core] Allow to add names for embeddings ([#1692](https://github.com/cucumber/cucumber-jvm/pull/1693)  Dzieciak)
 
 ## [4.5.4](https://github.com/cucumber/cucumber-jvm/compare/v4.5.3...v4.5.4) (2019-07-10)
 
