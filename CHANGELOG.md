@@ -3,6 +3,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.6.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...master) (In Git)
 
 ### Added
+ - [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
 
 ### Changed
 

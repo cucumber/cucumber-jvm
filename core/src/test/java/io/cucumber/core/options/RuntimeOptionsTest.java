@@ -329,13 +329,17 @@ public class RuntimeOptionsTest {
 
     @Test
     public void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
+
+        Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
+        Env env = new Env(properties);
+
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--strict", "--glue", "somewhere", "somewhere_else")
             .build();
 
         RuntimeOptions options = new EnvironmentOptionsParser()
-            .parse(new Env(properties))
+            .parse(env)
             .build(runtimeOptions);
         assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths")));
         assertThat(options.getGlue(), contains(uri("classpath:lookatme")));
