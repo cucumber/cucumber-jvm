@@ -856,6 +856,81 @@ public class JSONFormatterTest {
     }
 
     @Test
+    public void should_handle_embed_with_name_from_a_hook() {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+            "Feature: Banana party\n" +
+            "\n" +
+            "  Scenario: Monkey eats bananas\n" +
+            "    Given there are bananas\n");
+        features.add(feature);
+        stepsToResult.put("there are bananas", result("passed"));
+        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
+        hooks.add(TestHelper.hookEntry("before", result("passed")));
+        hookLocations.add("Hooks.before_hook_1()");
+        hookActions.add(createEmbedHookAction(new byte[]{1, 2, 3}, "mime-type;base64", "someEmbedding"));
+        stepDurationMillis = 1L;
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        String expected = "" +
+            "[\n" +
+            "  {\n" +
+            "    \"id\": \"banana-party\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
+            "    \"keyword\": \"Feature\",\n" +
+            "    \"name\": \"Banana party\",\n" +
+            "    \"line\": 1,\n" +
+            "    \"description\": \"\",\n" +
+            "    \"elements\": [\n" +
+            "      {\n" +
+            "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
+            "        \"keyword\": \"Scenario\",\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
+            "        \"name\": \"Monkey eats bananas\",\n" +
+            "        \"line\": 3,\n" +
+            "        \"description\": \"\",\n" +
+            "        \"type\": \"scenario\",\n" +
+            "        \"before\": [\n" +
+            "          {\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"Hooks.before_hook_1()\"\n" +
+            "            },\n" +
+            "            \"embeddings\": [\n" +
+            "              {\n" +
+            "                \"mime_type\": \"mime-type;base64\",\n" +
+            "                \"data\": \"AQID\",\n" +
+            "                \"name\": \"someEmbedding\"\n" +
+            "              }\n" +
+            "            ],\n" +
+            "            \"result\": {\n" +
+            "              \"status\": \"passed\",\n" +
+            "              \"duration\": 1000000\n" +
+            "            }\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"keyword\": \"Given \",\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"line\": 4,\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"result\": {\n" +
+            "              \"status\": \"passed\",\n" +
+            "              \"duration\": 1000000\n" +
+            "            }\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"tags\": []\n" +
+            "  }\n" +
+            "]";
+        assertThat(formatterOutput, sameJSONAs(expected));
+    }
+
+    @Test
     public void should_format_scenario_with_a_step_with_a_doc_string() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: Banana party\n" +

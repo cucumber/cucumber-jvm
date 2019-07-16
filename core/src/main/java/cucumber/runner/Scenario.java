@@ -54,16 +54,17 @@ class Scenario implements cucumber.api.Scenario {
 
     @Override
     public void embed(byte[] data, String mimeType) {
-        if (bus != null) {
-            bus.send(new EmbedEvent(bus.getTime(), bus.getTimeMillis(), testCase, data, mimeType));
-        }
+        bus.send(new EmbedEvent(bus.getTime(), bus.getTimeMillis(), testCase, data, mimeType));
+    }
+
+    @Override
+    public void embed(byte[] data, String mimeType, String name) {
+        bus.send(new EmbedEvent(bus.getTime(), bus.getTimeMillis(), testCase, data, mimeType, name));
     }
 
     @Override
     public void write(String text) {
-        if (bus != null) {
-            bus.send(new WriteEvent(bus.getTime(), bus.getTimeMillis(), testCase, text));
-        }
+        bus.send(new WriteEvent(bus.getTime(), bus.getTimeMillis(), testCase, text));
     }
 
     @Override
