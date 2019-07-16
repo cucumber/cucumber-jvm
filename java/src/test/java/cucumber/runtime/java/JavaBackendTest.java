@@ -1,7 +1,11 @@
 package cucumber.runtime.java;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Env;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
@@ -18,7 +22,7 @@ import java.util.Locale;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class JavaBackendTest {
 
@@ -50,6 +54,28 @@ public class JavaBackendTest {
             URI.create("classpath:cucumber/runtime/java/stepdefs"),
             URI.create("classpath:cucumber/runtime/java/incorrectlysubclassedstepdefs"))
         );
+    }
+
+    @Test
+    public void testObjectFactoryClassNameWhenNotSpecified() {
+        assertNull(JavaBackend.getObjectFactoryClassName(mock(Env.class)));
+    }
+
+    @Test
+    public void testGetObjectFactoryClassName() {
+        Env env = when(mock(Env.class).get(JavaBackend.OBJECT_FACTORY_KEY)).thenReturn("AN_OBJECT_FACTORY").getMock();
+        assertEquals("AN_OBJECT_FACTORY", JavaBackend.getObjectFactoryClassName(env));
+    }
+
+    @Test
+    public void testDeprecatedObjectFactoryClassNameWhenNotSpecified() {
+        assertNull(JavaBackend.getDeprecatedObjectFactoryClassName(mock(Env.class)));
+    }
+
+    @Test
+    public void testGetDeprecatedObjectFactoryClassName() {
+        Env env = when(mock(Env.class).get(ObjectFactory.class.getName())).thenReturn("DEPRECATED_OBJECT_FACTORY").getMock();
+        assertEquals("DEPRECATED_OBJECT_FACTORY", JavaBackend.getDeprecatedObjectFactoryClassName(env));
     }
 
     private class GlueStub implements Glue {
