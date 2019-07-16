@@ -1,9 +1,9 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
-
-## [4.5.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...master) (In Git)
+## [4.6.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...master) (In Git)
 
 ### Added
+ - [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
 
 ### Changed
 
@@ -12,13 +12,26 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.6.0](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...v4.6.0) (2019-07-16)
+
+### Added
+ * [Core] Allow to add names for embeddings ([#1692](https://github.com/cucumber/cucumber-jvm/pull/1693)  Dzieciak)
+
+## [4.5.4](https://github.com/cucumber/cucumber-jvm/compare/v4.5.3...v4.5.4) (2019-07-10)
+
+### Fixed
+ * [Core] Restore Scenario#getSourceTagNames() ([#1689](https://github.com/cucumber/cucumber-jvm/pull/1689)  Tommy Wo)
+
+## [4.5.3](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...v4.5.3) (2019-07-07)
+
+### Fixed
  * [Core] Reference correct main class in deprecation warning (M.P. Korstanje)
 
 ## [4.5.2](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...v4.5.2) (2019-07-02)
 
 ### Fixed
  * [Java] Fix ClassCastException on new Transpose annotation ([#1683](https://github.com/cucumber/cucumber-jvm/pull/1683)  Geoffroy Van Elsuve)
-
 
 ## [4.5.1](https://github.com/cucumber/cucumber-jvm/compare/v4.5.0...v4.5.1) (2019-07-01)
 

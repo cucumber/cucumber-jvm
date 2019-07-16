@@ -1,21 +1,16 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.WriteEvent;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.event.*;
 import io.cucumber.core.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Collections.max;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
 
 class Scenario implements io.cucumber.core.api.Scenario {
 
@@ -24,12 +19,17 @@ class Scenario implements io.cucumber.core.api.Scenario {
     private final TestCase testCase;
 
     Scenario(EventBus bus, io.cucumber.core.event.TestCase testCase) {
-        this.bus = bus;
-        this.testCase = testCase;
+        this.bus = requireNonNull(bus);
+        this.testCase = requireNonNull(testCase);
     }
 
     void add(Result result) {
         stepResults.add(result);
+    }
+
+    @Override
+    public Collection<String> getSourceTagNames() {
+        return testCase.getTags();
     }
 
     @Override

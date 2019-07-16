@@ -1,6 +1,7 @@
 package io.cucumber.core.api;
 
 import io.cucumber.core.event.Status;
+import java.util.Collection;
 import org.apiguardian.api.API;
 
 /**
@@ -9,6 +10,10 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface Scenario {
+    /**
+     * @return source_tag_names.
+     */
+    Collection<String> getSourceTagNames();
 
     /**
      * @return the <em>most severe</em> status of the Scenario's Steps.
