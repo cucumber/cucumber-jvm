@@ -60,7 +60,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -573,7 +573,8 @@ public class RuntimeTest {
         };
 
 
-        final List<StepDefinition> definedStepDefinitions = new ArrayList<>();
+        final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
+        final MockedScenarioScopedStepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
 
         BackendSupplier backendSupplier = new TestBackendSupplier() {
 
@@ -582,15 +583,11 @@ public class RuntimeTest {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 this.glue = glue;
-                final io.cucumber.core.backend.StepDefinition mockedStepDefinition = new MockedStepDefinition();
-                definedStepDefinitions.add(mockedStepDefinition);
                 glue.addStepDefinition(mockedStepDefinition);
             }
 
             @Override
             public void buildWorld() {
-                final io.cucumber.core.backend.StepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
-                definedStepDefinitions.add(mockedScenarioScopedStepDefinition);
                 glue.addStepDefinition(mockedScenarioScopedStepDefinition);
             }
         };
@@ -612,7 +609,14 @@ public class RuntimeTest {
             .build()
             .run();
 
-        assertThat(stepDefinedEvents, equalTo(definedStepDefinitions));
+
+        assertThat(stepDefinedEvents, contains(
+            mockedStepDefinition,
+            mockedScenarioScopedStepDefinition,
+            // Twice, once for each scenario
+            mockedStepDefinition,
+            mockedScenarioScopedStepDefinition
+        ));
 
         for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
             if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {

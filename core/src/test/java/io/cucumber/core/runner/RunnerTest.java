@@ -6,6 +6,7 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
+import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -15,7 +16,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -26,7 +26,6 @@ import java.net.URI;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -52,7 +51,7 @@ public class RunnerTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
-    private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+    private final TypeRegistryConfigurer typeRegistryConfigurer = typeRegistry -> {};
 
     @Test
     public void hooks_execute_when_world_exist() throws Throwable {
@@ -70,13 +69,13 @@ public class RunnerTest {
                 glue.addBeforeHook(beforeHook);
                 return null;
             }
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<URI>anyList());
+        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
 
         PickleStep step = mock(PickleStep.class);
         when(step.getText()).thenReturn("some step");
 
-        new Runner(bus, singletonList(backend), objectFactory, typeRegistry, runtimeOptions).runPickle(createPickleEventWithSteps(asList(step)));
+        new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions).runPickle(createPickleEventWithSteps(asList(step)));
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
@@ -91,8 +90,8 @@ public class RunnerTest {
         PickleEvent pickleEventMatchingStepDefinitions = createPickleEventMatchingStepDefinitions(stepDefinition);
 
         final HookDefinition failingBeforeHook = addBeforeHook();
-        doThrow(RuntimeException.class).when(failingBeforeHook).execute(ArgumentMatchers.<Scenario>any());
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        doThrow(RuntimeException.class).when(failingBeforeHook).execute(ArgumentMatchers.any());
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(failingBeforeHook);
@@ -112,7 +111,7 @@ public class RunnerTest {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step") {
 
             @Override
-            public void execute(Object[] args) throws Throwable {
+            public void execute(Object[] args) {
                 throw new RuntimeException();
             }
         });
@@ -121,7 +120,7 @@ public class RunnerTest {
 
         final HookDefinition afteStepHook = addAfterStepHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addAfterHook(afteStepHook);
@@ -144,7 +143,7 @@ public class RunnerTest {
         HookDefinition afteStepHook1 = addAfterStepHook();
         HookDefinition afteStepHook2 = addAfterStepHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addAfterHook(afteStepHook1);
@@ -168,7 +167,7 @@ public class RunnerTest {
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(failingBeforeHook);
@@ -188,10 +187,10 @@ public class RunnerTest {
     }
 
     @Test
-    public void steps_are_executed() throws Throwable {
+    public void steps_are_executed() {
         StubStepDefinition stepDefinition = new StubStepDefinition("some step");
         PickleEvent pickleEventMatchingStepDefinitions = createPickleEventMatchingStepDefinitions(stepDefinition);
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
@@ -206,7 +205,7 @@ public class RunnerTest {
         StubStepDefinition stepDefinition = new StubStepDefinition("some step");
         PickleEvent pickleEvent = createPickleEventMatchingStepDefinitions(stepDefinition);
         RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addStepDefinition(stepDefinition);
@@ -225,7 +224,7 @@ public class RunnerTest {
         final HookDefinition afterHook = addAfterHook();
         final HookDefinition afterStepHook = addAfterStepHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -250,7 +249,7 @@ public class RunnerTest {
         final HookDefinition afterHook = addAfterHook();
         final HookDefinition afterStepHook = addAfterStepHook();
 
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -274,7 +273,7 @@ public class RunnerTest {
         Backend backend = mock(Backend.class);
         when(backend.getSnippet()).thenReturn(new TestSnippet());
         ObjectFactory objectFactory = mock(ObjectFactory.class);
-        Runner runner = new Runner(bus, singletonList(backend), objectFactory, typeRegistry, runtimeOptions);
+        Runner runner = new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions);
         runner.runPickle(createPickleEventWithSteps(asList(step)));
         verify(backend).getSnippet();
     }
@@ -293,7 +292,7 @@ public class RunnerTest {
 
     private HookDefinition addHook() {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(ArgumentMatchers.<PickleTag>anyList())).thenReturn(true);
+        when(hook.matches(ArgumentMatchers.anyList())).thenReturn(true);
         return hook;
     }
 

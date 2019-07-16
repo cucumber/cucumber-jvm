@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.DataTableTypeTypeDefinition;
+import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-class JavaDataTableTypeDefinition implements DataTableTypeTypeDefinition {
+class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
 
     private final Method method;
     private final Lookup lookup;

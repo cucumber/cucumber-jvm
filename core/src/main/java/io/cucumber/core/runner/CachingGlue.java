@@ -1,12 +1,10 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.backend.DataTableTypeTypeDefinition;
-import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.event.StepDefinedEvent;
 import gherkin.pickles.PickleStep;
-import io.cucumber.core.backend.DuplicateStepDefinitionException;
+import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
@@ -19,45 +17,38 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Function;
 
 final class CachingGlue implements Glue {
     private static final HookComparator ASCENDING = new HookComparator(true);
     private static final HookComparator DESCENDING = new HookComparator(false);
-    final Map<String, CoreStepDefinition> stepDefinitionsByPattern = new TreeMap<>();
-    final Map<String, CoreStepDefinition> stepDefinitionsByStepText = new HashMap<>();
-    final List<HookDefinition> beforeHooks = new ArrayList<>();
-    final List<HookDefinition> beforeStepHooks = new ArrayList<>();
-    final List<HookDefinition> afterHooks = new ArrayList<>();
-    final List<HookDefinition> afterStepHooks = new ArrayList<>();
-    final List<Function<TypeRegistry, StepDefinition>> stepDefinitionFunctions = new ArrayList<>();
+
+    private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
+    private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
+
+    private final List<HookDefinition> beforeHooks = new ArrayList<>();
+    private final List<HookDefinition> beforeStepHooks = new ArrayList<>();
+    private final List<StepDefinition> stepDefinitions = new ArrayList<>();
+    private final List<HookDefinition> afterStepHooks = new ArrayList<>();
+    private final List<HookDefinition> afterHooks = new ArrayList<>();
+
+    /*
+     * Storing the pattern that matches the step text allows us to cache the rather slow
+     * regex comparisons in `stepDefinitionMatches`.
+     * This cache does not need to be cleaned. The matching pattern be will used to look
+     * up a pickle specific step definition from `stepDefinitionsByPattern`.
+     */
+    private final Map<String, String> stepPatternByStepText = new HashMap<>();
+    private final Map<String, CoreStepDefinition> stepDefinitionsByPattern = new TreeMap<>();
 
     private final EventBus bus;
-    private final TypeRegistry typeRegistry;
 
-    CachingGlue(EventBus bus, TypeRegistry typeRegistry) {
+    CachingGlue(EventBus bus) {
         this.bus = bus;
-        this.typeRegistry = typeRegistry;
     }
 
     @Override
-    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-        stepDefinitionFunctions.add(stepDefinitionFunction);
-    }
-
-    void applyStepDefinitions() {
-        stepDefinitionFunctions.forEach(this::applyStepDefinition);
-        stepDefinitionFunctions.clear();
-    }
-
-    private void applyStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-        StepDefinition stepDefinition = stepDefinitionFunction.apply(typeRegistry);
-        StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
-        if (previous != null) {
-            throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
-        }
-        stepDefinitionsByPattern.put(stepDefinition.getPattern(), coreStepDefinition);
-        bus.send(new StepDefinedEvent(bus.getInstant(), stepDefinition));
+    public void addStepDefinition(StepDefinition stepDefinition) {
+        stepDefinitions.add(stepDefinition);
     }
 
     @Override
@@ -86,12 +77,12 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
-        typeRegistry.defineParameterType(parameterTypeDefinition.parameterType());
+        parameterTypeDefinitions.add(parameterTypeDefinition);
     }
 
     @Override
-    public void addDataTableType(DataTableTypeTypeDefinition dataTableTypeTypeDefinition) {
-        typeRegistry.defineDataTableType(dataTableTypeTypeDefinition.dataTableType());
+    public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+        dataTableTypeDefinitions.add(dataTableTypeDefinition);
     }
 
     List<HookDefinition> getBeforeHooks() {
@@ -110,19 +101,70 @@ final class CachingGlue implements Glue {
         return new ArrayList<>(afterStepHooks);
     }
 
-    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
-        String stepText = step.getText();
+    List<ParameterTypeDefinition> getParameterTypeDefinitions() {
+        return parameterTypeDefinitions;
+    }
 
-        CoreStepDefinition stepDefinition = stepDefinitionsByStepText.get(stepText);
-        if (stepDefinition != null) {
-            // Step definition arguments consists of parameters included in the step text and
-            // gherkin step arguments (doc string and data table) which are not included in
-            // the step text. As such the step definition arguments can not be cached and
-            // must be recreated each time.
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
-            return new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step);
+    List<DataTableTypeDefinition> getDataTableTypeDefinitions() {
+        return dataTableTypeDefinitions;
+    }
+
+    List<StepDefinition> getStepDefinitions() {
+        return stepDefinitions;
+    }
+
+    Map<String, String> getStepPatternByStepText() {
+        return stepPatternByStepText;
+    }
+
+    Map<String, CoreStepDefinition> getStepDefinitionsByPattern() {
+        return stepDefinitionsByPattern;
+    }
+
+    void prepareGlue(TypeRegistry typeRegistry) throws DuplicateStepDefinitionException {
+        parameterTypeDefinitions.forEach(ptd -> typeRegistry.defineParameterType(ptd.parameterType()));
+        dataTableTypeDefinitions.forEach(dtd -> typeRegistry.defineDataTableType(dtd.dataTableType()));
+
+        stepDefinitions.forEach(stepDefinition -> {
+            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+            CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
+            if (previous != null) {
+                throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
+            }
+            stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
+            bus.send(new StepDefinedEvent(bus.getInstant(), stepDefinition));
+        });
+    }
+
+    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+        PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(featurePath, step);
+        if (cachedMatch != null) {
+            return cachedMatch;
+        }
+        return findStepDefinitionMatch(featurePath, step);
+    }
+
+
+    private PickleStepDefinitionMatch cachedStepDefinitionMatch(String featurePath, PickleStep step) {
+        String stepDefinitionPattern = stepPatternByStepText.get(step.getText());
+        if (stepDefinitionPattern == null) {
+            return null;
         }
 
+        CoreStepDefinition coreStepDefinition = stepDefinitionsByPattern.get(stepDefinitionPattern);
+        if (coreStepDefinition == null) {
+            return null;
+        }
+
+        // Step definition arguments consists of parameters included in the step text and
+        // gherkin step arguments (doc string and data table) which are not included in
+        // the step text. As such the step definition arguments can not be cached and
+        // must be recreated each time.
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
+        return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step);
+    }
+
+    private PickleStepDefinitionMatch findStepDefinitionMatch(String featurePath, PickleStep step) {
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
@@ -133,35 +175,37 @@ final class CachingGlue implements Glue {
 
         PickleStepDefinitionMatch match = matches.get(0);
 
-        stepDefinitionsByStepText.put(stepText, (CoreStepDefinition) match.getStepDefinition());
+        stepPatternByStepText.put(step.getText(), match.getPattern());
 
         return match;
     }
 
     private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<PickleStepDefinitionMatch> result = new ArrayList<>();
-        for (CoreStepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
+        for (CoreStepDefinition coreStepDefinition : stepDefinitionsByPattern.values()) {
+            List<Argument> arguments = coreStepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step));
+                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step));
             }
         }
         return result;
     }
 
     void removeScenarioScopedGlue() {
-        removeScenarioScopedHooks(beforeHooks);
-        removeScenarioScopedHooks(beforeStepHooks);
-        removeScenarioScopedHooks(afterHooks);
-        removeScenarioScopedHooks(afterStepHooks);
-        removeScenariosScopedStepDefinitions(stepDefinitionsByPattern);
-        removeScenariosScopedStepDefinitions(stepDefinitionsByStepText);
+        stepDefinitionsByPattern.clear();
+        removeScenarioScopedGlue(beforeHooks);
+        removeScenarioScopedGlue(beforeStepHooks);
+        removeScenarioScopedGlue(afterHooks);
+        removeScenarioScopedGlue(afterStepHooks);
+        removeScenarioScopedGlue(stepDefinitions);
+        removeScenarioScopedGlue(dataTableTypeDefinitions);
+        removeScenarioScopedGlue(parameterTypeDefinitions);
     }
 
-    private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks) {
-        Iterator<HookDefinition> hookIterator = beforeHooks.iterator();
+    private void removeScenarioScopedGlue(List<?> glue) {
+        Iterator<?> hookIterator = glue.iterator();
         while (hookIterator.hasNext()) {
-            HookDefinition hook = hookIterator.next();
+            Object hook = hookIterator.next();
             if (hook instanceof ScenarioScoped) {
                 ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) hook;
                 scenarioScopedHookDefinition.disposeScenarioScope();
@@ -170,16 +214,4 @@ final class CachingGlue implements Glue {
         }
     }
 
-    private void removeScenariosScopedStepDefinitions(Map<String, CoreStepDefinition> stepDefinitions) {
-        Iterator<Map.Entry<String, CoreStepDefinition>> stepDefinitionIterator = stepDefinitions.entrySet().iterator();
-        while (stepDefinitionIterator.hasNext()) {
-            CoreStepDefinition coreStepDefinition = stepDefinitionIterator.next().getValue();
-            StepDefinition stepDefinition = coreStepDefinition.getStepDefinition();
-            if (stepDefinition instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScopedStepDefinition = (ScenarioScoped) stepDefinition;
-                scenarioScopedStepDefinition.disposeScenarioScope();
-                stepDefinitionIterator.remove();
-            }
-        }
-    }
 }

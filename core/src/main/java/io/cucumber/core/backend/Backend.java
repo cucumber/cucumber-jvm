@@ -10,15 +10,17 @@ import java.util.List;
 public interface Backend {
     /**
      * Invoked once before all features. This is where stepdefs and hooks should be loaded.
-     * 
-     * @param glue Glue that provides the stepdefs to be executed.
+     *
+     * @param glue      Glue that provides the stepdefs to be executed.
      * @param gluePaths The locations for the glue to be loaded.
      */
     void loadGlue(Glue glue, List<URI> gluePaths);
 
     /**
      * Invoked before a new scenario starts. Implementations should do any necessary
-     * setup of new, isolated state here.
+     * setup of new, isolated state here. Additional scenario scoped step definitions
+     * can be loaded here. These step definitions should implement
+     * {@link io.cucumber.core.runner.ScenarioScoped}
      */
     void buildWorld();
 

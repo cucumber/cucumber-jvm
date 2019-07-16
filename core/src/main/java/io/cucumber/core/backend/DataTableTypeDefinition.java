@@ -4,7 +4,7 @@ import io.cucumber.datatable.DataTableType;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.EXPERIMENTAL)
-public interface DataTableTypeTypeDefinition {
+public interface DataTableTypeDefinition {
 
     DataTableType dataTableType();
 

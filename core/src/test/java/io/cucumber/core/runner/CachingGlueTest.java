@@ -9,13 +9,16 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.DuplicateStepDefinitionException;
+import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableType;
 import org.junit.Test;
 
 import java.time.Clock;
@@ -30,13 +33,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class CachingGlueTest {
 
     private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
-    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()), typeRegistry);
+    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
 
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
@@ -48,9 +50,10 @@ public class CachingGlueTest {
         StepDefinition b = mock(StepDefinition.class);
         when(b.getPattern()).thenReturn("hello");
         when(b.getLocation(true)).thenReturn("bar.bf:90");
+        glue.addStepDefinition(b);
+
         try {
-            glue.addStepDefinition(b);
-            glue.applyStepDefinitions();
+            glue.prepareGlue(typeRegistry);
             fail("should have failed");
         } catch (DuplicateStepDefinitionException expected) {
             assertEquals("Duplicate step definitions in foo.bf:10 and bar.bf:90", expected.getMessage());
@@ -63,54 +66,34 @@ public class CachingGlueTest {
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
 
-        StepDefinition sd = spy(new MockedScenarioScopedStepDefinition());
-        when(sd.getPattern()).thenReturn("pattern");
-        glue.addStepDefinition(sd);
-        glue.applyStepDefinitions();
+        glue.addStepDefinition(new MockedScenarioScopedStepDefinition("pattern"));
+        glue.addBeforeHook(new MockedScenarioScopedHookDefinition());
+        glue.addAfterHook(new MockedScenarioScopedHookDefinition());
+        glue.addDataTableType(new MockedDataTableTypeDefinition());
+        glue.addParameterType(new MockedParemterTypeDefinition());
 
-        HookDefinition bh = spy(new MockedScenarioScopedHookDefinition());
-        glue.addBeforeHook(bh);
+        glue.prepareGlue(typeRegistry);
 
-        HookDefinition ah = spy(new MockedScenarioScopedHookDefinition());
-        glue.addAfterHook(ah);
-
-        assertEquals(1, glue.stepDefinitionsByPattern.size());
-        assertEquals(1, glue.beforeHooks.size());
-        assertEquals(1, glue.afterHooks.size());
-
-        glue.removeScenarioScopedGlue();
-
-        assertEquals(0, glue.stepDefinitionsByPattern.size());
-        assertEquals(0, glue.beforeHooks.size());
-        assertEquals(0, glue.afterHooks.size());
-    }
-
-    @Test
-    public void removes_scenario_scoped_cache_entries() {
-        StepDefinition sd = new MockedScenarioScopedStepDefinition("pattern");
-        glue.addStepDefinition(sd);
-        glue.applyStepDefinitions();
-
-        String featurePath = "someFeature.feature";
-
-        String stepText = "pattern";
-        PickleStep pickleStep1 = getPickleStep(stepText);
-        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        CoreStepDefinition coreStepDefinition = (CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition();
-        assertEquals(sd, coreStepDefinition.getStepDefinition());
-
-        assertEquals(1, glue.stepDefinitionsByStepText.size());
+        assertEquals(1, glue.getStepDefinitions().size());
+        assertEquals(1, glue.getBeforeHooks().size());
+        assertEquals(1, glue.getAfterHooks().size());
+        assertEquals(1, glue.getDataTableTypeDefinitions().size());
+        assertEquals(1, glue.getParameterTypeDefinitions().size());
 
         glue.removeScenarioScopedGlue();
 
-        assertEquals(0, glue.stepDefinitionsByStepText.size());
+        assertEquals(0, glue.getStepDefinitions().size());
+        assertEquals(0, glue.getBeforeHooks().size());
+        assertEquals(0, glue.getAfterHooks().size());
+        assertEquals(0, glue.getDataTableTypeDefinitions().size());
+        assertEquals(0, glue.getParameterTypeDefinitions().size());
     }
 
     @Test
     public void returns_null_if_no_matching_steps_found() {
-        StepDefinition stepDefinition = spy(new MockedStepDefinition("pattern1"));
+        StepDefinition stepDefinition = new MockedStepDefinition("pattern1");
         glue.addStepDefinition(stepDefinition);
-        glue.applyStepDefinitions();
+
         String featurePath = "someFeature.feature";
 
         PickleStep pickleStep = getPickleStep("pattern");
@@ -119,50 +102,50 @@ public class CachingGlueTest {
 
     @Test
     public void returns_match_from_cache_if_single_found() {
-        StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
-        StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
+        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
+        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.applyStepDefinitions();
+        glue.prepareGlue(typeRegistry);
+
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
         PickleStep pickleStep1 = getPickleStep(stepText);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        CoreStepDefinition coreStepDefinition = (CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition();
-        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
+        assertEquals(stepDefinition1, pickleStepDefinitionMatch.getStepDefinition());
 
 
         //check cache
-        CoreStepDefinition entry = glue.stepDefinitionsByStepText.get(stepText);
-        assertEquals(stepDefinition1, entry.getStepDefinition());
+        assertEquals(stepDefinition1.getPattern(), glue.getStepPatternByStepText().get(stepText));
+        CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
+        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
 
         PickleStep pickleStep2 = getPickleStep(stepText);
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
-        CoreStepDefinition coreStepDefinition2 = (CoreStepDefinition) pickleStepDefinitionMatch2.getStepDefinition();
-        assertEquals(stepDefinition1, coreStepDefinition2.getStepDefinition());
+        assertEquals(stepDefinition1, pickleStepDefinitionMatch2.getStepDefinition());
     }
 
     @Test
     public void returns_match_from_cache_for_step_with_table() {
-        StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
-        StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
+        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
+        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.applyStepDefinitions();
+        glue.prepareGlue(typeRegistry);
+
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
         PickleStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        CoreStepDefinition coreStepDefinition = (CoreStepDefinition) match1.getStepDefinition();
-
-        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
+        assertEquals(stepDefinition1, match1.getStepDefinition());
 
         //check cache
-        CoreStepDefinition entry = glue.stepDefinitionsByStepText.get(stepText);
-        assertEquals(stepDefinition1, entry.getStepDefinition());
+        assertEquals(stepDefinition1.getPattern(), glue.getStepPatternByStepText().get(stepText));
+        CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
+        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
 
         //check arguments
         assertEquals("cell 1", ((DataTable) match1.getArguments().get(0).getValue()).cell(0, 0));
@@ -177,24 +160,24 @@ public class CachingGlueTest {
 
     @Test
     public void returns_match_from_cache_for_ste_with_doc_string() {
-        StepDefinition stepDefinition1 = spy(new MockedStepDefinition("^pattern1"));
-        StepDefinition stepDefinition2 = spy(new MockedStepDefinition("^pattern2"));
+        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
+        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.applyStepDefinitions();
+        glue.prepareGlue(typeRegistry);
+
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
         PickleStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
 
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        CoreStepDefinition coreStepDefinition = (CoreStepDefinition) match1.getStepDefinition();
-
-        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
+        assertEquals(stepDefinition1, match1.getStepDefinition());
 
         //check cache
-        CoreStepDefinition entry = glue.stepDefinitionsByStepText.get(stepText);
-        assertEquals(stepDefinition1, entry.getStepDefinition());
+        assertEquals(stepDefinition1.getPattern(), glue.getStepPatternByStepText().get(stepText));
+        CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
+        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
 
         //check arguments
         assertEquals("doc string 1", match1.getArguments().get(0).getValue());
@@ -225,7 +208,8 @@ public class CachingGlueTest {
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.addStepDefinition(stepDefinition3);
-        glue.applyStepDefinitions();
+        glue.prepareGlue(typeRegistry);
+
         String featurePath = "someFeature.feature";
 
         checkAmbiguousCalled(featurePath);
@@ -294,6 +278,37 @@ public class CachingGlueTest {
         }
 
     }
+
+    private static class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
+
+        boolean disposed;
+
+        @Override
+        public DataTableType dataTableType() {
+            return new DataTableType(Object.class, (DataTable table) -> new Object());
+        }
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+    }
+    private static class MockedParemterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
+
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public ParameterType<?> parameterType() {
+            return new ParameterType<>("mock", "[ab]", Object.class, (String arg) -> new Object());
+        }
+    }
+
 
     private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
