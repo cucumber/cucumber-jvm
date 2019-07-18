@@ -20,7 +20,8 @@ final class CucumberPropertiesParserTest {
     @Test
     void testParse() {
         TestObjectFactory factory = new TestObjectFactory();
-        Class<? extends ObjectFactory> objectFactoryClass = this.parser.parse(factory.getClass().getName());
+        Class<? extends ObjectFactory> objectFactoryClass =
+                CucumberPropertiesParser.parseObjectFactory(factory.getClass().getName());
         assertEquals(factory.getClass(), objectFactoryClass);
     }
 
