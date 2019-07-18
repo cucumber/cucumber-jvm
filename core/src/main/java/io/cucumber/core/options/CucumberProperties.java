@@ -22,7 +22,7 @@ public final class CucumberProperties {
     }
 
     public static Map<String, String> fromPropertiesFile() {
-        InputStream resourceAsStream = CucumberProperties.class.getResourceAsStream("cucumber.properties");
+        InputStream resourceAsStream = CucumberProperties.class.getResourceAsStream("/cucumber.properties");
         if (resourceAsStream == null) {
             log.debug("cucumber.properties file did not exist");
             return Collections.emptyMap();
