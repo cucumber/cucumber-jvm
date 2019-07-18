@@ -10,13 +10,13 @@ class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.O
         if (annotation == null) {
             return null;
         }
-        return new JunitCucumberOptions(annotation);
+        return new TestNGCucumberOptions(annotation);
     }
 
-    private static class JunitCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
+    private static class TestNGCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
         private final CucumberOptions annotation;
 
-        JunitCucumberOptions(CucumberOptions annotation) {
+        TestNGCucumberOptions(CucumberOptions annotation) {
             this.annotation = annotation;
         }
 
