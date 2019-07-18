@@ -43,14 +43,14 @@ public final class CucumberPropertiesParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends ObjectFactory> parse(String cucumberObjectFactory) {
+    Class<? extends ObjectFactory> parse(String cucumberObjectFactory) {
         Class<?> objectFactoryClass;
         try {
             objectFactoryClass = Class.forName(cucumberObjectFactory);
         } catch (ClassNotFoundException e) {
             throw new CucumberException("Could not load object factory class for " + cucumberObjectFactory, e);
         }
-        if (!objectFactoryClass.isAssignableFrom(ObjectFactory.class)) {
+        if (!ObjectFactory.class.isAssignableFrom(objectFactoryClass)) {
             throw new CucumberException("Object factory class " + objectFactoryClass + " was not a subclass of " + ObjectFactory.class);
         }
         return (Class<? extends ObjectFactory>) objectFactoryClass;
