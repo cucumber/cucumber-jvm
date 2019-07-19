@@ -1,6 +1,7 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
@@ -67,14 +68,12 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
         @Override
         public SnippetType snippets() {
-            switch (annotation.snippets()) {
-                case UNDERSCORE:
-                    return SnippetType.UNDERSCORE;
-                case CAMELCASE:
-                    return SnippetType.CAMELCASE;
-                default:
-                    throw new IllegalArgumentException("" + annotation.snippets());
-            }
+            return annotation.snippets();
+        }
+
+        @Override
+        public Class<? extends ObjectFactory> objectFactory() {
+            return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
     }
 }

@@ -2,6 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
@@ -19,6 +20,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -48,6 +50,7 @@ public class CucumberOptionsAnnotationParserTest {
             .addDefaultFormatterIfNotPresent()
             .build();
         assertFalse(runtimeOptions.isStrict());
+        assertNull(runtimeOptions.getObjectFactoryClass());
         assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options")));
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")));
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
@@ -98,6 +101,12 @@ public class CucumberOptionsAnnotationParserTest {
         Iterator<Pattern> iterator = filters.iterator();
         assertEquals("name1", getRegexpPattern(iterator.next()));
         assertEquals("name2", getRegexpPattern(iterator.next()));
+    }
+
+    @Test
+    public void testObjectFactory() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithCustomObjectFactory.class).build();
+        assertEquals(TestObjectFactory.class, runtimeOptions.getObjectFactoryClass());
     }
 
     @Test
@@ -238,6 +247,11 @@ public class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
+    @CucumberOptions(objectFactory = TestObjectFactory.class)
+    private static class ClassWithCustomObjectFactory {
+        // empty
+    }
+
     @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
     private static class ClassWithNoFormatterPlugin {
         // empty
@@ -336,6 +350,10 @@ public class CucumberOptionsAnnotationParserTest {
             return annotation.snippets();
         }
 
+        @Override
+        public Class<? extends ObjectFactory> objectFactory() {
+            return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
+        }
     }
 
     private static class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
@@ -347,5 +365,25 @@ public class CucumberOptionsAnnotationParserTest {
             }
             return new CoreCucumberOptions(annotation);
         }
+    }
+    
+    private static final class TestObjectFactory implements ObjectFactory {
+
+        @Override
+        public boolean addClass(Class<?> glueClass) {
+            return false;
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> glueClass) {
+            return null;
+        }
+
+        @Override
+        public void start() {}
+
+        @Override
+        public void stop() {}
+        
     }
 }

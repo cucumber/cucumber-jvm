@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 
 class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
@@ -67,14 +68,12 @@ class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.O
 
         @Override
         public SnippetType snippets() {
-            switch (annotation.snippets()) {
-                case UNDERSCORE:
-                    return SnippetType.UNDERSCORE;
-                case CAMELCASE:
-                    return SnippetType.CAMELCASE;
-                default:
-                    throw new IllegalArgumentException("" + annotation.snippets());
-            }
+            return annotation.snippets();
+        }
+
+        @Override
+        public Class<? extends ObjectFactory> objectFactory() {
+            return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
     }
 }
