@@ -1,10 +1,10 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
-## [4.6.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...master) (In Git)
+
+## [4.7.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...master) (In Git)
 
 ### Added
- - [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
-
+ 
 ### Changed
 
 ### Deprecated
@@ -12,6 +12,13 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.7.0](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...v4.7.0) (2019-07-20)
+
+### Added
+ * [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
+    - Use `cucumber.object-factory=com.example.CustomObjectFactory` in either `cucucmber.properties`, 
+      environment variables, or system properties  
 
 ## [4.6.0](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...v4.6.0) (2019-07-16)
 
