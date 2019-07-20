@@ -6,7 +6,7 @@
         <version>1.0.4</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>4.6.1-SNAPSHOT</version>
+    <version>4.7.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
