@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static io.cucumber.core.options.Constants.CUCUMBER_PROPERTIES_FILE_NAME;
+
 public final class CucumberProperties {
 
     private static final Logger log = LoggerFactory.getLogger(CucumberProperties.class);
@@ -22,18 +24,18 @@ public final class CucumberProperties {
     }
 
     public static Map<String, String> fromPropertiesFile() {
-        InputStream resourceAsStream = CucumberProperties.class.getResourceAsStream("cucumber.properties");
+        InputStream resourceAsStream = CucumberProperties.class.getResourceAsStream("/" + CUCUMBER_PROPERTIES_FILE_NAME);
         if (resourceAsStream == null) {
-            log.debug("cucumber.properties file did not exist");
+            log.debug(CUCUMBER_PROPERTIES_FILE_NAME + " file did not exist");
             return Collections.emptyMap();
         }
 
         try {
-            Properties properties1 = new Properties();
-            properties1.load(resourceAsStream);
-            return CucumberPropertiesMap.create(properties1);
+            Properties properties = new Properties();
+            properties.load(resourceAsStream);
+            return CucumberPropertiesMap.create(properties);
         } catch (IOException e) {
-            log.error("cucumber.properties could not be loaded", e);
+            log.error(CUCUMBER_PROPERTIES_FILE_NAME + " could not be loaded", e);
             throw new RuntimeException(e);
         }
     }

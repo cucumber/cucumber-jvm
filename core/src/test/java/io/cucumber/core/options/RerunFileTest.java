@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.cucumber.core.options.Constants.CUCUMBER_OPTIONS_PROPERTY_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -180,7 +181,7 @@ public class RerunFileTest {
         );
 
         Map<String, String> properties = new HashMap<>();
-        properties.put("cucumber.options", "@file:path/rerun.txt");
+        properties.put(CUCUMBER_OPTIONS_PROPERTY_NAME, "@file:path/rerun.txt");
 
         RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
             .parse("--tags", "@should_be_clobbered", "--name", "should_be_clobbered")

@@ -4,26 +4,30 @@ import gherkin.events.PickleEvent;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
 import io.cucumber.core.event.TestSourceRead;
-import io.cucumber.core.options.*;
-import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
-import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.FeatureLoader;
+import io.cucumber.core.options.Constants;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.CucumberProperties;
+import io.cucumber.core.options.CucumberPropertiesParser;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.BackendServiceLoader;
+import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
+import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistrySupplier;
 import org.apiguardian.api.API;
 
@@ -36,10 +40,10 @@ import java.util.List;
  * <p>
  * Options can be provided in order of precedence by:
  * <ol>
- * <li>Setting {@code cucumber.options} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@code cucumber.options} property in {@link System#getenv()}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>{Setting @code cucumber.options} property in {@code cucumber.properties}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
  */
 @API(status = API.Status.STABLE)
@@ -115,7 +119,7 @@ public final class TestNGCucumberRunner {
      */
     public Object[][] provideScenarios() {
         try {
-            List<Object[]> scenarios = new ArrayList<Object[]>();
+            List<Object[]> scenarios = new ArrayList<>();
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {
                 for (PickleEvent pickle : feature.getPickles()) {

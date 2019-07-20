@@ -144,9 +144,10 @@
  * </pre>
  * <p>
  * Cucumber needs to know where to find the <code>io.cucumber.guice.api.InjectorSource</code> that it will use.
- * You should create a properties file called <code>cucumber.properties</code> and place it in the root of the
- * classpath. The file should contain a single property key called <code>guice.injector-source</code> with a value
- * equal to the fully qualified name of the <code>io.cucumber.guice.api.InjectorSource</code>. For example:
+ * You should create a properties file called {@value io.cucumber.core.options.Constants#CUCUMBER_PROPERTIES_FILE_NAME}
+ * and place it in the root of the classpath. The file should contain a single property key called
+ * <code>guice.injector-source</code> with a value equal to the fully qualified name of the
+ * <code>io.cucumber.guice.api.InjectorSource</code>. For example:
  * </p>
  * <pre>
  * guice.injector-source=com.company.YourInjectorSource

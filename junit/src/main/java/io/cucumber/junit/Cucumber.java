@@ -3,7 +3,11 @@ package io.cucumber.junit;
 import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.options.*;
+import io.cucumber.core.options.Constants;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.CucumberProperties;
+import io.cucumber.core.options.CucumberPropertiesParser;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
@@ -57,10 +61,10 @@ import java.util.List;
  * <p>
  * Options can be provided in by (order of precedence):
  * <ol>
- * <li>Setting {@code cucumber.options} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@code cucumber.options} property in {@link System#getenv()}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>{Setting @code cucumber.options} property in {@code cucumber.properties}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@code cucumber.properties}</li>
  * </ol>
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.

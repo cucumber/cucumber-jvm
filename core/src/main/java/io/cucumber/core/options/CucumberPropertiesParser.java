@@ -9,6 +9,9 @@ import io.cucumber.core.feature.RerunLoader;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.options.Constants.CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.CUCUMBER_OPTIONS_PROPERTY_NAME;
+
 public final class CucumberPropertiesParser {
 
     private final ResourceLoader resourceLoader;
@@ -23,7 +26,7 @@ public final class CucumberPropertiesParser {
 
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         final RuntimeOptionsBuilder builder;
-        String cucumberOptions = properties.get("cucumber.options");
+        String cucumberOptions = properties.get(CUCUMBER_OPTIONS_PROPERTY_NAME);
         if (cucumberOptions != null) {
             RerunLoader rerunLoader = new RerunLoader(resourceLoader);
             RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
@@ -33,7 +36,7 @@ public final class CucumberPropertiesParser {
             builder = new RuntimeOptionsBuilder();
         }
 
-        String cucumberObjectFactory = properties.get("cucumber.object-factory");
+        String cucumberObjectFactory = properties.get(CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME);
         if (cucumberObjectFactory != null) {
             Class<? extends ObjectFactory> objectFactoryClass = parse(cucumberObjectFactory);
             builder.setObjectFactoryClass(objectFactoryClass);
@@ -50,7 +53,7 @@ public final class CucumberPropertiesParser {
         } catch (ClassNotFoundException e) {
             throw new CucumberException("Could not load object factory class for " + cucumberObjectFactory, e);
         }
-        if (!objectFactoryClass.isAssignableFrom(ObjectFactory.class)) {
+        if (!ObjectFactory.class.isAssignableFrom(objectFactoryClass)) {
             throw new CucumberException("Object factory class " + objectFactoryClass + " was not a subclass of " + ObjectFactory.class);
         }
         return (Class<? extends ObjectFactory>) objectFactoryClass;
