@@ -28,7 +28,6 @@ import java.util.Locale;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class HookOrderTest {
@@ -38,7 +37,7 @@ public class HookOrderTest {
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
     private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
 
-    private final StubStepDefinition stepDefinition = new StubStepDefinition("pattern1", new TypeRegistry(Locale.ENGLISH));
+    private final StubStepDefinition stepDefinition = new StubStepDefinition("pattern1");
     private final PickleStep pickleStep = new PickleStep("pattern1", Collections.<Argument>emptyList(), singletonList(new PickleLocation(2,2)));
     private final PickleEvent pickleEvent = new PickleEvent("uri",
         new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.<PickleTag>emptyList(), singletonList(new PickleLocation(1,1))));
@@ -50,7 +49,7 @@ public class HookOrderTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(typeRegistry -> new StubStepDefinition("pattern1", typeRegistry));
+                glue.addStepDefinition(new StubStepDefinition("pattern1"));
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeHook(hook);
                 }
@@ -77,7 +76,7 @@ public class HookOrderTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(typeRegistry -> stepDefinition);
+                glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeStepHook(hook);
                 }
@@ -104,7 +103,7 @@ public class HookOrderTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(typeRegistry -> stepDefinition);
+                glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterHook(hook);
                 }
@@ -131,7 +130,7 @@ public class HookOrderTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(typeRegistry -> stepDefinition);
+                glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterStepHook(hook);
                 }
@@ -160,7 +159,7 @@ public class HookOrderTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, typeRegistry, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addStepDefinition(typeRegistry -> stepDefinition);
+                glue.addStepDefinition(stepDefinition);
 
                 for (HookDefinition hook : backend1Hooks) {
                     glue.addBeforeHook(hook);

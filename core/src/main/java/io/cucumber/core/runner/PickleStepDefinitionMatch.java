@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 import gherkin.pickles.PickleStep;
@@ -30,9 +31,9 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     public void runStep(Scenario scenario) throws Throwable {
         int argumentCount = getArguments().size();
 
-        Integer parameterCount = stepDefinition.getParameterCount();
-        if (parameterCount != null && argumentCount != parameterCount) {
-            throw arityMismatch(parameterCount);
+        List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
+        if (parameterInfos != null && argumentCount != parameterInfos.size()) {
+            throw arityMismatch(parameterInfos.size());
         }
         List<Object> result = new ArrayList<>();
         try {

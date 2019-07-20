@@ -1,6 +1,5 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
@@ -40,7 +39,7 @@ public class JavaBackendTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Captor
-    public ArgumentCaptor<Function<TypeRegistry, StepDefinition>> stepDefinition;
+    public ArgumentCaptor<StepDefinition> stepDefinition;
 
     @Mock
     private Glue glue;
@@ -76,11 +75,8 @@ public class JavaBackendTest {
         backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/repeatable")));
         verify(glue, times(2)).addStepDefinition(stepDefinition.capture());
 
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
-
         List<String> patterns = stepDefinition.getAllValues()
             .stream()
-            .map(stepDefinitionFunction -> stepDefinitionFunction.apply(typeRegistry))
             .map(StepDefinition::getPattern)
             .collect(toList());
         assertThat(patterns, equalTo(asList("test", "test again")));

@@ -72,8 +72,8 @@ final class Java8Backend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-        glue.addStepDefinition(stepDefinitionFunction);
+    public void addStepDefinition(StepDefinition stepDefinition) {
+        glue.addStepDefinition(stepDefinition);
     }
 
     @Override

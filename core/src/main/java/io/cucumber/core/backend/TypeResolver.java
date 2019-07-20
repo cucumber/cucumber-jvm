@@ -1,10 +1,13 @@
-package io.cucumber.core.stepexpression;
+package io.cucumber.core.backend;
+
+import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
 
 /**
  * Allows lazy resolution of the type of a data table or doc string.
  */
+@API(status = API.Status.STABLE)
 public interface TypeResolver {
 
     /**

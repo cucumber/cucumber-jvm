@@ -1,14 +1,11 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.stepexpression.TypeRegistry;
 import org.apiguardian.api.API;
-
-import java.util.function.Function;
 
 @API(status = API.Status.STABLE)
 public interface Glue {
 
-    void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinition) throws DuplicateStepDefinitionException;
+    void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
     void addBeforeHook(HookDefinition hookDefinition);
 

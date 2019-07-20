@@ -1,38 +1,28 @@
 package io.cucumber.java8;
 
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.core.runner.ScenarioScoped;
-import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.stepexpression.StepExpression;
-import io.cucumber.core.stepexpression.StepExpressionFactory;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.stepexpression.TypeResolver;
-import net.jodah.typetools.TypeResolver.Unknown;
+import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static io.cucumber.java8.Java8StepDefinition.ParameterInfo.fromTypes;
 import static java.lang.String.format;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
 
     public static <T extends StepdefBody> Java8StepDefinition create(
-        String expression, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
-        return new Java8StepDefinition(expression, 0, bodyClass, body, typeRegistry);
+        String expression, Class<T> bodyClass, T body) {
+        return new Java8StepDefinition(expression, 0, bodyClass, body);
     }
 
     public static <T extends StepdefBody> StepDefinition create(
-        String expression, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry typeRegistry) {
-        return new Java8StepDefinition(expression, timeoutMillis, bodyClass, body, typeRegistry);
+        String expression, long timeoutMillis, Class<T> bodyClass, T body) {
+        return new Java8StepDefinition(expression, timeoutMillis, bodyClass, body);
     }
 
     private final long timeoutMillis;
@@ -40,31 +30,18 @@ final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
     private final StackTraceElement location;
     private final Method method;
     private final List<ParameterInfo> parameterInfos;
-    private final StepExpression expression;
-    private final ArgumentMatcher argumentMatcher;
+    private final String expression;
 
     private <T extends StepdefBody> Java8StepDefinition(String expression,
                                                         long timeoutMillis,
                                                         Class<T> bodyClass,
-                                                        T body,
-                                                        TypeRegistry typeRegistry) {
+                                                        T body) {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
-
-        this.location = new Exception().getStackTrace()[5];
+        this.location = new Exception().getStackTrace()[3];
         this.method = getAcceptMethod(body.getClass());
-        this.parameterInfos = fromTypes(resolveRawArguments(bodyClass, body.getClass()));
-        this.expression = createExpression(expression, typeRegistry);
-        this.argumentMatcher = new ArgumentMatcher(this.expression);
-    }
-
-    private StepExpression createExpression(String expression, TypeRegistry typeRegistry) {
-        if (parameterInfos.isEmpty()) {
-            return new StepExpressionFactory(typeRegistry).createExpression(expression);
-        } else {
-            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            return new StepExpressionFactory(typeRegistry).createExpression(expression, new LambdaTypeResolver(parameterInfo));
-        }
+        this.expression = expression;
+        this.parameterInfos = fromTypes(expression, location, resolveRawArguments(bodyClass, body.getClass()));
     }
 
     private Method getAcceptMethod(Class<? extends StepdefBody> bodyClass) {
@@ -81,28 +58,10 @@ final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
         return acceptMethods.get(0);
     }
 
-    private CucumberException withLocation(CucumberException exception) {
-        exception.setStackTrace(new StackTraceElement[]{this.location});
-        return exception;
-    }
-
-    @Override
-    public List<Argument> matchedArguments(PickleStep step) {
-        Type[] types = new Type[parameterInfos.size()];
-        for (int i = 0; i < types.length; i++) {
-            types[i] = parameterInfos.get(i).getType();
-        }
-        return argumentMatcher.argumentsFrom(step, types);
-    }
 
     @Override
     public String getLocation(boolean detail) {
         return location.getFileName() + ":" + location.getLineNumber();
-    }
-
-    @Override
-    public Integer getParameterCount() {
-        return parameterInfos.size();
     }
 
     @Override
@@ -116,73 +75,28 @@ final class Java8StepDefinition implements StepDefinition, ScenarioScoped {
     }
 
     @Override
+    public List<ParameterInfo> parameterInfos() {
+        return parameterInfos;
+    }
+
+    @Override
     public String getPattern() {
-        return expression.getSource();
+        return expression;
     }
 
-    private final class LambdaTypeResolver implements TypeResolver {
-
-
-        private final ParameterInfo parameterInfo;
-
-        LambdaTypeResolver(ParameterInfo parameterInfo) {
-            this.parameterInfo = parameterInfo;
-        }
-
-        @Override
-        public Type resolve() {
-            Type type = parameterInfo.getType();
-            if (Unknown.class.equals(type)) {
-                return Object.class;
-            }
-
-            return requireNonMapOrListType(type);
-        }
-
-        private Type requireNonMapOrListType(Type argumentType) {
-            if (argumentType instanceof Class) {
-                Class<?> argumentClass = (Class<?>) argumentType;
-                if (List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
-                    throw withLocation(
-                        new CucumberException(
-                            format("Can't use %s in lambda step definition \"%s\". " +
-                                    "Declare a DataTable argument instead and convert " +
-                                    "manually with asList/asLists/asMap/asMaps",
-                                argumentClass.getName(), expression.getSource())));
-                }
-            }
-            return argumentType;
-        }
-    }
 
     @Override
     public void disposeScenarioScope() {
         this.body = null;
     }
 
-    static class ParameterInfo {
-        private final Type type;
-
-        static List<ParameterInfo> fromTypes(Type[] genericParameterTypes) {
-            List<ParameterInfo> result = new ArrayList<>();
-            for (Type genericParameterType : genericParameterTypes) {
-                result.add(new ParameterInfo(genericParameterType));
-            }
-            return result;
+    private static List<ParameterInfo> fromTypes(String expression, StackTraceElement location, Type[] genericParameterTypes) {
+        List<ParameterInfo> result = new ArrayList<>();
+        for (Type type : genericParameterTypes) {
+            LambdaTypeResolver typeResolver = new LambdaTypeResolver(type, expression, location);
+            result.add(new Java8ParameterInfo(type, typeResolver));
         }
-
-        private ParameterInfo(Type type) {
-            this.type = type;
-        }
-
-        Type getType() {
-            return type;
-        }
-
-        @Override
-        public String toString() {
-            return type.toString();
-        }
-
+        return result;
     }
+
 }

@@ -1,23 +1,32 @@
-package io.cucumber.core.runtime;
+package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TypeResolver;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
-public class StubStepDefinition implements StepDefinition {
+class StubStepDefinition implements StepDefinition {
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
+    private final boolean transposed;
 
-    public StubStepDefinition(String pattern, Type... types) {
+    private List<Object> args;
+
+    StubStepDefinition(String pattern, Type... types) {
+        this(pattern, false, types);
+    }
+
+    StubStepDefinition(String pattern, boolean transposed, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
+        this.transposed = transposed;
     }
 
     @Override
@@ -26,11 +35,13 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Object[] args) {
+    public void execute(Object[] args) throws Throwable {
         assertEquals(parameterInfos.size(), args.length);
-        for (int i = 0; i < args.length; i++) {
-            assertEquals(parameterInfos.get(i).getType(), args[i].getClass());
-        }
+        this.args = Arrays.asList(args);
+    }
+
+    public List<Object> getArgs() {
+        return args;
     }
 
     @Override
@@ -63,7 +74,7 @@ public class StubStepDefinition implements StepDefinition {
 
         @Override
         public boolean isTransposed() {
-            return false;
+            return transposed;
         }
 
         @Override

@@ -62,8 +62,7 @@ final class JavaBackend implements Backend {
         String expression = expression(annotation);
         long timeoutMillis = timeoutMillis(annotation);
         container.addClass(method.getDeclaringClass());
-        glue.addStepDefinition(typeRegistry ->
-            new JavaStepDefinition(method, expression, timeoutMillis, lookup, typeRegistry));
+        glue.addStepDefinition(new JavaStepDefinition(method, expression, timeoutMillis, lookup));
     }
 
     void addHook(Annotation annotation, Method method) {

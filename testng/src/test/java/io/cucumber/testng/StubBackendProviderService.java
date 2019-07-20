@@ -1,16 +1,15 @@
 package io.cucumber.testng;
 
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.snippets.Snippet;
-import io.cucumber.core.stepexpression.Argument;
 
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -36,32 +35,23 @@ public class StubBackendProviderService implements BackendProviderService {
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
-            glue.addStepDefinition(t -> createStepDefinition("background step"));
-            glue.addStepDefinition(t -> createStepDefinition("scenario name"));
-            glue.addStepDefinition(t -> createStepDefinition("scenario C"));
-            glue.addStepDefinition(t -> createStepDefinition("scenario D"));
-            glue.addStepDefinition(t -> createStepDefinition("scenario E"));
-            glue.addStepDefinition(t -> createStepDefinition("first step"));
-            glue.addStepDefinition(t -> createStepDefinition("second step"));
-            glue.addStepDefinition(t -> createStepDefinition("third step"));
+            glue.addStepDefinition(createStepDefinition("background step"));
+            glue.addStepDefinition(createStepDefinition("scenario name"));
+            glue.addStepDefinition(createStepDefinition("scenario C"));
+            glue.addStepDefinition(createStepDefinition("scenario D"));
+            glue.addStepDefinition(createStepDefinition("scenario E"));
+            glue.addStepDefinition(createStepDefinition("first step"));
+            glue.addStepDefinition(createStepDefinition("second step"));
+            glue.addStepDefinition(createStepDefinition("third step"));
 
         }
 
         private StepDefinition createStepDefinition(final String pattern) {
             return new StepDefinition() {
-                @Override
-                public List<Argument> matchedArguments(PickleStep step) {
-                    return pattern.equals(step.getText()) ? Collections.<Argument>emptyList() : null;
-                }
 
                 @Override
                 public String getLocation(boolean detail) {
                     return null;
-                }
-
-                @Override
-                public Integer getParameterCount() {
-                    return 0;
                 }
 
                 @Override
@@ -72,6 +62,11 @@ public class StubBackendProviderService implements BackendProviderService {
                 @Override
                 public boolean isDefinedAt(StackTraceElement stackTraceElement) {
                     return false;
+                }
+
+                @Override
+                public List<ParameterInfo> parameterInfos() {
+                    return Collections.emptyList();
                 }
 
                 @Override

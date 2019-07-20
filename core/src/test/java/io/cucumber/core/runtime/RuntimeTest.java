@@ -2,33 +2,33 @@ package io.cucumber.core.runtime;
 
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
-import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.plugin.ConcurrentEventListener;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.plugin.EventListener;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.event.StepDefinedEvent;
+import io.cucumber.core.event.StepDefinition;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.plugin.Plugin;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.event.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.plugin.ConcurrentEventListener;
+import io.cucumber.core.plugin.EventListener;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
+import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.runner.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
@@ -56,6 +56,7 @@ import java.util.concurrent.CountDownLatch;
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -583,14 +584,14 @@ public class RuntimeTest {
                 this.glue = glue;
                 final io.cucumber.core.backend.StepDefinition mockedStepDefinition = new MockedStepDefinition();
                 definedStepDefinitions.add(mockedStepDefinition);
-                glue.addStepDefinition(typeRegistry -> mockedStepDefinition);
+                glue.addStepDefinition(mockedStepDefinition);
             }
 
             @Override
             public void buildWorld() {
                 final io.cucumber.core.backend.StepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
                 definedStepDefinitions.add(mockedScenarioScopedStepDefinition);
-                glue.addStepDefinition(typeRegistry -> mockedScenarioScopedStepDefinition);
+                glue.addStepDefinition(mockedScenarioScopedStepDefinition);
             }
         };
 
@@ -717,8 +718,8 @@ public class RuntimeTest {
     }
 
     private void mockMatch(Glue glue, String text) {
-        io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text, TYPE_REGISTRY);
-        glue.addStepDefinition(typeRegistry -> stepDefinition);
+        io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text);
+        glue.addStepDefinition(stepDefinition);
     }
 
     private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
@@ -747,18 +748,13 @@ public class RuntimeTest {
     private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
 
         @Override
-        public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
-            return step.getText().equals(getPattern()) ? new ArrayList<>() : null;
-        }
-
-        @Override
         public String getLocation(boolean detail) {
             return "mocked step definition";
         }
 
         @Override
-        public Integer getParameterCount() {
-            return 0;
+        public List<ParameterInfo> parameterInfos() {
+            return emptyList();
         }
 
         @Override
@@ -788,18 +784,13 @@ public class RuntimeTest {
         }
 
         @Override
-        public List<io.cucumber.core.stepexpression.Argument> matchedArguments(PickleStep step) {
-            return step.getText().equals(getPattern()) ? new ArrayList<>() : null;
-        }
-
-        @Override
         public String getLocation(boolean detail) {
             return "mocked scenario scoped step definition";
         }
 
         @Override
-        public Integer getParameterCount() {
-            return 0;
+        public List<ParameterInfo> parameterInfos() {
+            return emptyList();
         }
 
         @Override

@@ -1,13 +1,13 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.StepDefinedEvent;
+import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.DuplicateStepDefinitionException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.stepexpression.Argument;
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.ArrayList;
@@ -16,13 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Function;
 
 final class CachingGlue implements Glue {
     private static final HookComparator ASCENDING = new HookComparator(true);
     private static final HookComparator DESCENDING = new HookComparator(false);
-    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<>();
-    final Map<String, StepDefinition> stepDefinitionsByStepText = new HashMap<>();
+    final Map<String, CoreStepDefinition> stepDefinitionsByPattern = new TreeMap<>();
+    final Map<String, CoreStepDefinition> stepDefinitionsByStepText = new HashMap<>();
     final List<HookDefinition> beforeHooks = new ArrayList<>();
     final List<HookDefinition> beforeStepHooks = new ArrayList<>();
     final List<HookDefinition> afterHooks = new ArrayList<>();
@@ -37,13 +36,13 @@ final class CachingGlue implements Glue {
     }
 
     @Override
-    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-        StepDefinition stepDefinition = stepDefinitionFunction.apply(typeRegistry);
-        StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
+    public void addStepDefinition(StepDefinition stepDefinition) {
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition previous = stepDefinitionsByPattern.get(coreStepDefinition.getPattern());
         if (previous != null) {
-            throw new DuplicateStepDefinitionException(previous, stepDefinition);
+            throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
         }
-        stepDefinitionsByPattern.put(stepDefinition.getPattern(), stepDefinition);
+        stepDefinitionsByPattern.put(stepDefinition.getPattern(), coreStepDefinition);
         bus.send(new StepDefinedEvent(bus.getInstant(), stepDefinition));
     }
 
@@ -58,6 +57,7 @@ final class CachingGlue implements Glue {
         beforeStepHooks.add(hookDefinition);
         beforeStepHooks.sort(ASCENDING);
     }
+
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
@@ -89,7 +89,7 @@ final class CachingGlue implements Glue {
     PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         String stepText = step.getText();
 
-        StepDefinition stepDefinition = stepDefinitionsByStepText.get(stepText);
+        CoreStepDefinition stepDefinition = stepDefinitionsByStepText.get(stepText);
         if (stepDefinition != null) {
             // Step definition arguments consists of parameters included in the step text and
             // gherkin step arguments (doc string and data table) which are not included in
@@ -109,14 +109,14 @@ final class CachingGlue implements Glue {
 
         PickleStepDefinitionMatch match = matches.get(0);
 
-        stepDefinitionsByStepText.put(stepText, match.getStepDefinition());
+        stepDefinitionsByStepText.put(stepText, (CoreStepDefinition) match.getStepDefinition());
 
         return match;
     }
 
     private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<PickleStepDefinitionMatch> result = new ArrayList<PickleStepDefinitionMatch>();
-        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
+        for (CoreStepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
                 result.add(new PickleStepDefinitionMatch(arguments, stepDefinition, featurePath, step));
@@ -146,10 +146,11 @@ final class CachingGlue implements Glue {
         }
     }
 
-    private void removeScenariosScopedStepDefinitions(Map<String, StepDefinition> stepDefinitions) {
-        Iterator<Map.Entry<String, StepDefinition>> stepDefinitionIterator = stepDefinitions.entrySet().iterator();
-        while(stepDefinitionIterator.hasNext()){
-            StepDefinition stepDefinition = stepDefinitionIterator.next().getValue();
+    private void removeScenariosScopedStepDefinitions(Map<String, CoreStepDefinition> stepDefinitions) {
+        Iterator<Map.Entry<String, CoreStepDefinition>> stepDefinitionIterator = stepDefinitions.entrySet().iterator();
+        while (stepDefinitionIterator.hasNext()) {
+            CoreStepDefinition coreStepDefinition = stepDefinitionIterator.next().getValue();
+            StepDefinition stepDefinition = coreStepDefinition.getStepDefinition();
             if (stepDefinition instanceof ScenarioScoped) {
                 ScenarioScoped scenarioScopedStepDefinition = (ScenarioScoped) stepDefinition;
                 scenarioScopedStepDefinition.disposeScenarioScope();
