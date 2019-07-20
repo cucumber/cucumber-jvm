@@ -1,10 +1,9 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +24,8 @@ public class BackendServiceLoaderTest {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
@@ -35,7 +35,8 @@ public class BackendServiceLoaderTest {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
 
         expectedException.expect(CucumberException.class);

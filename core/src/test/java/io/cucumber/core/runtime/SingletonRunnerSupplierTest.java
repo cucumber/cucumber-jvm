@@ -1,6 +1,7 @@
 package io.cucumber.core.runtime;
 
 
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
@@ -28,7 +29,8 @@ public class SingletonRunnerSupplierTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);

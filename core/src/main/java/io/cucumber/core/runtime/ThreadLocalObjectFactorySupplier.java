@@ -2,23 +2,17 @@ package io.cucumber.core.runtime;
 
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.runner.Options;
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 
-import java.util.function.Supplier;
+import static java.lang.ThreadLocal.withInitial;
+import static java.util.Objects.requireNonNull;
 
-import static io.cucumber.core.runtime.ObjectFactoryLoader.loadObjectFactory;
+public final class ThreadLocalObjectFactorySupplier implements ObjectFactorySupplier {
 
-public class ThreadLocalObjectFactorySupplier implements ObjectFactorySupplier {
+    private final ThreadLocal<ObjectFactory> runners;
 
-    private final Options options;
-    private final ThreadLocal<ObjectFactory> runners = ThreadLocal.withInitial(objectFactorySupplier());
-
-    private Supplier<ObjectFactory> objectFactorySupplier() {
-        return () -> loadObjectFactory(options.getObjectFactoryClass());
-    }
-
-    public ThreadLocalObjectFactorySupplier(Options options) {
-        this.options = options;
+    public ThreadLocalObjectFactorySupplier(ObjectFactoryServiceLoader objectFactoryServiceLoader) {
+        this.runners = withInitial(requireNonNull(objectFactoryServiceLoader)::loadObjectFactory);
     }
 
     @Override

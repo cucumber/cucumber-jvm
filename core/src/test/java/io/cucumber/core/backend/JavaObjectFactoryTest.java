@@ -1,7 +1,6 @@
-package io.cucumber.core.runtime;
+package io.cucumber.core.backend;
 
-import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.runtime.ObjectFactoryLoader.DefaultJavaObjectFactory;
+import io.cucumber.core.backend.ObjectFactoryServiceLoader.DefaultJavaObjectFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

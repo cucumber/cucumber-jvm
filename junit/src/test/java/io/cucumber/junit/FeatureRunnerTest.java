@@ -1,5 +1,6 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
@@ -150,7 +151,8 @@ public class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(RuntimeOptions.defaultOptions());
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(RuntimeOptions.defaultOptions());
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 
         final Clock clockStub = new Clock() {

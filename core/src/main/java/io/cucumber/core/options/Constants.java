@@ -17,6 +17,8 @@ public final class Constants {
     public static final String CUCUMBER_OPTIONS_PROPERTY_NAME = "cucumber.options";
     /**
      * Property name used to select a specific object factory implementation: {@value}
+     *
+     * @see io.cucumber.core.backend.ObjectFactoryServiceLoader
      */
     public static final String CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME = "cucumber.object-factory";
 

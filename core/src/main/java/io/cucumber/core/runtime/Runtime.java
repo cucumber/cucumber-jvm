@@ -1,6 +1,7 @@
 package io.cucumber.core.runtime;
 
 import gherkin.events.PickleEvent;
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.Result;
@@ -194,9 +195,11 @@ public final class Runtime {
 
             final ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
 
+            final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+
             final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalObjectFactorySupplier(runtimeOptions)
-                : new SingletonObjectFactorySupplier(runtimeOptions);
+                ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
+                : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier

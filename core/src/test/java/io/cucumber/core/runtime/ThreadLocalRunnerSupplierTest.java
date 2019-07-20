@@ -1,6 +1,7 @@
 package io.cucumber.core.runtime;
 
 
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseStarted;
@@ -37,7 +38,8 @@ public class ThreadLocalRunnerSupplierTest {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC());
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);

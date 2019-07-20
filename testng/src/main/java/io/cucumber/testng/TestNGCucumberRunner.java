@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import gherkin.events.PickleEvent;
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
 import io.cucumber.core.event.TestSourceRead;
@@ -90,7 +91,8 @@ public final class TestNGCucumberRunner {
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
         TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);

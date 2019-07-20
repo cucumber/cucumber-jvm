@@ -1,26 +1,21 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.options.CucumberProperties;
-import io.cucumber.core.runner.Options;
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 
-import java.util.Map;
+public final class SingletonObjectFactorySupplier implements ObjectFactorySupplier {
 
-import static io.cucumber.core.runtime.ObjectFactoryLoader.loadObjectFactory;
-
-public class SingletonObjectFactorySupplier implements ObjectFactorySupplier {
-
-    private final Options options;
+    private final ObjectFactoryServiceLoader objectFactoryServiceLoader;
     private ObjectFactory objectFactory;
 
-    public SingletonObjectFactorySupplier(Options options) {
-        this.options = options;
+    public SingletonObjectFactorySupplier(ObjectFactoryServiceLoader objectFactoryServiceLoader) {
+        this.objectFactoryServiceLoader = objectFactoryServiceLoader;
     }
 
     @Override
     public ObjectFactory get() {
-        if(objectFactory == null){
-            objectFactory = loadObjectFactory(options.getObjectFactoryClass());
+        if (objectFactory == null) {
+            objectFactory = objectFactoryServiceLoader.loadObjectFactory();
         }
         return objectFactory;
     }

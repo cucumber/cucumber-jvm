@@ -1,6 +1,5 @@
-package io.cucumber.core.runtime;
+package io.cucumber.core.backend;
 
-import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 
 import java.lang.reflect.Constructor;
@@ -9,26 +8,31 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-class ObjectFactoryLoader {
+import static java.util.Objects.requireNonNull;
 
-    private ObjectFactoryLoader() {
+public final class ObjectFactoryServiceLoader {
+
+    private final Options options;
+
+    public ObjectFactoryServiceLoader(Options options) {
+        this.options = requireNonNull(options);
     }
 
     /**
-     * Loads an instance of {@link ObjectFactory} using the {@link ServiceLoader}.
-     * When <code>objectFactoryClassName</code> is provided that object factory
-     * will be used if present.
+     * Loads an instance of {@link ObjectFactory} using the {@link ServiceLoader} mechanism.
      * <p>
-     * If <code>objectFactoryClassName</code> is not provided and there exactly one
-     * instance present that instance will be used.
+     * Will load an instance of the class provided by {@link Options#getObjectFactoryClass()}.
      * <p>
-     * Otherwise a default object factory with no Dependency Injection capabilities
-     * will be used.
+     * If {@link Options#getObjectFactoryClass()} does not provide a class and there is exactly
+     * one {@code ObjectFactory} instance available that instance will be used.
+     * <p>
+     * Otherwise a default object factory with no dependency injection capabilities will be used.
      *
-     * @param objectFactoryClass optional object factory to use
      * @return an instance of {@link ObjectFactory}
      */
-    static ObjectFactory loadObjectFactory(Class<? extends ObjectFactory> objectFactoryClass) {
+    public ObjectFactory loadObjectFactory() {
+        Class<? extends ObjectFactory> objectFactoryClass = this.options.getObjectFactoryClass();
+
         final ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class);
         if (objectFactoryClass == null) {
             return loadSingleObjectFactoryOrDefault(loader);

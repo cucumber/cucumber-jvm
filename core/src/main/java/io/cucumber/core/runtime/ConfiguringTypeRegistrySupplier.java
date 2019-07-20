@@ -8,7 +8,7 @@ import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.Locale;
 
-public class ConfiguringTypeRegistrySupplier implements TypeRegistrySupplier {
+public final class ConfiguringTypeRegistrySupplier implements TypeRegistrySupplier {
 
     private final ClassFinder classFinder;
     private final Options options;
