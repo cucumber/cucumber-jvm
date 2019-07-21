@@ -1,9 +1,7 @@
 Cucumber JUnit 
 ==============
 
-Use JUnit to execute cucumber scenarios.
-
-Add the `cucumber-junit` dependency to your pom.xml:
+Use JUnit to execute cucumber scenarios. To use add the `cucumber-junit` dependency to your pom.xml:
 
 ```xml
 <dependencies>
