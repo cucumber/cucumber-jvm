@@ -3,11 +3,12 @@ package io.cucumber.junit;
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.filter.Filters;
-import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
+import io.cucumber.core.filter.Filters;
+import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -26,7 +27,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
+    FeatureRunner(CucumberFeature cucumberFeature, Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
         buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
@@ -65,10 +66,18 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     @Override
     protected void runChild(PickleRunner child, RunNotifier notifier) {
-        child.run(notifier);
+        notifier.fireTestStarted(getDescription());
+        try {
+            child.run(notifier);
+        } catch (Throwable e) {
+            notifier.fireTestFailure(new Failure(getDescription(), e));
+            notifier.pleaseStop();
+        } finally {
+            notifier.fireTestFinished(getDescription());
+        }
     }
 
-    private void buildFeatureElementRunners(Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
+    private void buildFeatureElementRunners(Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
         for (PickleEvent pickleEvent : cucumberFeature.getPickles()) {
             if (filters.matchesFilters(pickleEvent)) {
                 try {

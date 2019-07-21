@@ -1,24 +1,27 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.runtime.BackendSupplier;
-import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.core.filter.Filters;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
 import java.time.Clock;
@@ -342,6 +345,38 @@ public class FeatureRunnerTest {
         order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("another second step(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("another second step(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name")));
+    }
+
+    @Test
+    public void should_notify_of_failure_to_create_runners_and_request_test_execution_to_stop() throws InitializationError {
+        CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario_1 name\n" +
+            "    Given first step\n"
+        );
+
+        Filters filters = new Filters(RuntimeOptions.defaultOptions());
+
+        IllegalStateException illegalStateException = new IllegalStateException();
+        RunnerSupplier runnerSupplier = () -> {
+            throw illegalStateException;
+        };
+
+        FeatureRunner featureRunner = new FeatureRunner(feature, filters, runnerSupplier, new JUnitOptions());
+
+        RunNotifier notifier = mock(RunNotifier.class);
+        featureRunner.runChild(featureRunner.getChildren().get(0), notifier);
+
+        Description description = featureRunner.getDescription();
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+
+        InOrder order = inOrder(notifier);
+        order.verify(notifier).fireTestStarted(description);
+        order.verify(notifier).fireTestFailure(failureArgumentCaptor.capture());
+        assertEquals(illegalStateException, failureArgumentCaptor.getValue().getException());
+        assertEquals(description, failureArgumentCaptor.getValue().getDescription());
+        order.verify(notifier).pleaseStop();
+        order.verify(notifier).fireTestFinished(description);
     }
 
 }
