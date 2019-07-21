@@ -1,37 +1,30 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
-import gherkin.pickles.PickleTag;
+import gherkin.pickles.*;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.DataTableTypeDefinition;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.ParameterInfo;
-import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.*;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.TableCellByTypeTransformer;
+import io.cucumber.datatable.TableEntryByTypeTransformer;
 import org.junit.Test;
 
 import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,13 +45,61 @@ public class CachingGlueTest {
         when(b.getLocation(true)).thenReturn("bar.bf:90");
         glue.addStepDefinition(b);
 
-        try {
-            glue.prepareGlue(typeRegistry);
-            fail("should have failed");
-        } catch (DuplicateStepDefinitionException expected) {
-            assertEquals("Duplicate step definitions in foo.bf:10 and bar.bf:90", expected.getMessage());
-        }
+        DuplicateStepDefinitionException exception = assertThrows(
+            DuplicateStepDefinitionException.class,
+            () -> glue.prepareGlue(typeRegistry)
+        );
+        assertThat(exception.getMessage(), equalTo("Duplicate step definitions in foo.bf:10 and bar.bf:90"));
     }
+
+    @Test
+    public void throws_on_duplicate_default_parameter_transformer() {
+        glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
+        glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
+
+        DuplicateDefaultParameterTransformers exception = assertThrows(
+            DuplicateDefaultParameterTransformers.class,
+            () -> glue.prepareGlue(typeRegistry)
+        );
+        assertThat(exception.getMessage(), equalTo("" +
+            "There may not be more then one default parameter transformer. Found:\n" +
+            " - mocked default parameter transformer\n" +
+            " - mocked default parameter transformer\n"
+        ));
+    }
+
+    @Test
+    public void throws_on_duplicate_default_table_entry_transformer() {
+        glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
+        glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
+
+        DuplicateDefaultDataTableEntryTransformers exception = assertThrows(
+            DuplicateDefaultDataTableEntryTransformers.class,
+            () -> glue.prepareGlue(typeRegistry)
+        );
+        assertThat(exception.getMessage(), equalTo("" +
+            "There may not be more then one default data table entry. Found:\n" +
+            " - mocked default data table entry transformer\n" +
+            " - mocked default data table entry transformer\n"
+        ));
+    }
+
+    @Test
+    public void throws_on_duplicate_default_table_cell_transformer() {
+        glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
+        glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
+
+        DuplicateDefaultDataTableCellTransformers exception = assertThrows(
+            DuplicateDefaultDataTableCellTransformers.class,
+            () -> glue.prepareGlue(typeRegistry)
+        );
+        assertThat(exception.getMessage(), equalTo("" +
+            "There may not be more then one default table cell transformers. Found:\n" +
+            " - mocked default data table cell transformer\n" +
+            " - mocked default data table cell transformer\n"
+        ));
+    }
+
 
     @Test
     public void removes_glue_that_is_scenario_scoped() {
@@ -69,24 +110,39 @@ public class CachingGlueTest {
         glue.addStepDefinition(new MockedScenarioScopedStepDefinition("pattern"));
         glue.addBeforeHook(new MockedScenarioScopedHookDefinition());
         glue.addAfterHook(new MockedScenarioScopedHookDefinition());
+        glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition());
+        glue.addAfterStepHook(new MockedScenarioScopedHookDefinition());
         glue.addDataTableType(new MockedDataTableTypeDefinition());
-        glue.addParameterType(new MockedParemterTypeDefinition());
+        glue.addParameterType(new MockedParameterTypeDefinition());
+        glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
+        glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
+        glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
 
         glue.prepareGlue(typeRegistry);
 
         assertEquals(1, glue.getStepDefinitions().size());
         assertEquals(1, glue.getBeforeHooks().size());
         assertEquals(1, glue.getAfterHooks().size());
+        assertEquals(1, glue.getBeforeStepHooks().size());
+        assertEquals(1, glue.getAfterStepHooks().size());
         assertEquals(1, glue.getDataTableTypeDefinitions().size());
         assertEquals(1, glue.getParameterTypeDefinitions().size());
+        assertEquals(1, glue.getDefaultParameterTransformers().size());
+        assertEquals(1, glue.getDefaultDataTableCellTransformers().size());
+        assertEquals(1, glue.getDefaultDataTableEntryTransformers().size());
 
         glue.removeScenarioScopedGlue();
 
         assertEquals(0, glue.getStepDefinitions().size());
         assertEquals(0, glue.getBeforeHooks().size());
         assertEquals(0, glue.getAfterHooks().size());
+        assertEquals(0, glue.getBeforeStepHooks().size());
+        assertEquals(0, glue.getAfterStepHooks().size());
         assertEquals(0, glue.getDataTableTypeDefinitions().size());
         assertEquals(0, glue.getParameterTypeDefinitions().size());
+        assertEquals(0, glue.getDefaultParameterTransformers().size());
+        assertEquals(0, glue.getDefaultDataTableCellTransformers().size());
+        assertEquals(0, glue.getDefaultDataTableEntryTransformers().size());
     }
 
     @Test
@@ -187,17 +243,63 @@ public class CachingGlueTest {
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
         //check arguments
         assertEquals("doc string 2", match2.getArguments().get(0).getValue());
+    }
+
+    @Test
+    public void returns_fresh_match_from_cache_after_evicting_scenario_scoped() {
+        String featurePath = "someFeature.feature";
+        String stepText = "pattern1";
+        PickleStep pickleStep1 = getPickleStep(stepText);
 
 
+        StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
+        glue.addStepDefinition(stepDefinition1);
+        glue.prepareGlue(typeRegistry);
+
+
+        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        assertEquals(stepDefinition1, pickleStepDefinitionMatch.getStepDefinition());
+
+        glue.removeScenarioScopedGlue();
+
+        StepDefinition stepDefinition2 = new MockedScenarioScopedStepDefinition("^pattern1");
+        glue.addStepDefinition(stepDefinition2);
+        glue.prepareGlue(typeRegistry);
+
+        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        assertEquals(stepDefinition2, pickleStepDefinitionMatch2.getStepDefinition());
     }
 
 
+    @Test
+    public void returns_no_match_after_evicting_scenario_scoped() {
+        String featurePath = "someFeature.feature";
+        String stepText = "pattern1";
+        PickleStep pickleStep1 = getPickleStep(stepText);
+
+
+        StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
+        glue.addStepDefinition(stepDefinition1);
+        glue.prepareGlue(typeRegistry);
+
+
+        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        assertEquals(stepDefinition1, pickleStepDefinitionMatch.getStepDefinition());
+
+        glue.removeScenarioScopedGlue();
+
+        glue.prepareGlue(typeRegistry);
+
+        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        assertThat(pickleStepDefinitionMatch2, nullValue());
+    }
+
     private static PickleStep getPickleStepWithSingleCellTable(String stepText, String cell) {
-        return new PickleStep(stepText, Collections.<Argument>singletonList(new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), cell)))))), Collections.<PickleLocation>emptyList());
+        return new PickleStep(stepText, Collections.singletonList(new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), cell)))))), Collections.emptyList());
     }
 
     private static PickleStep getPickleStepWithDocString(String stepText, String doc) {
-        return new PickleStep(stepText, Collections.<Argument>singletonList(new PickleString(mock(PickleLocation.class), doc)), Collections.<PickleLocation>emptyList());
+        return new PickleStep(stepText, Collections.singletonList(new PickleString(mock(PickleLocation.class), doc)), Collections.emptyList());
     }
 
     @Test
@@ -230,7 +332,7 @@ public class CachingGlueTest {
     }
 
     private static PickleStep getPickleStep(String text) {
-        return new PickleStep(text, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
+        return new PickleStep(text, Collections.emptyList(), Collections.emptyList());
     }
 
     private static class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
@@ -289,12 +391,18 @@ public class CachingGlueTest {
         }
 
         @Override
+        public String getLocation(boolean detail) {
+            return "mocked data table type definition";
+        }
+
+        @Override
         public void disposeScenarioScope() {
             this.disposed = true;
         }
 
     }
-    private static class MockedParemterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
+
+    private static class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
 
         boolean disposed;
 
@@ -306,6 +414,11 @@ public class CachingGlueTest {
         @Override
         public ParameterType<?> parameterType() {
             return new ParameterType<>("mock", "[ab]", Object.class, (String arg) -> new Object());
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked parameter type location";
         }
     }
 
@@ -371,6 +484,76 @@ public class CachingGlueTest {
         @Override
         public String getPattern() {
             return pattern;
+        }
+    }
+
+    private static class MockedDefaultParameterTransformer implements DefaultParameterTransformerDefinition, ScenarioScoped {
+
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public ParameterByTypeTransformer parameterByTypeTransformer() {
+            return (fromValue, toValueType) -> new Object();
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked default parameter transformer";
+        }
+    }
+
+    private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
+
+
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public TableCellByTypeTransformer tableCellByTypeTransformer() {
+            return new TableCellByTypeTransformer() {
+                @Override
+                public <T> T transform(String value, Class<T> cellType) {
+                    return (T) new Object();
+                }
+            };
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked default data table cell transformer";
+        }
+    }
+
+    private static class MockedDefaultDataTableEntryTransformer implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
+        boolean disposed;
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
+        }
+
+        @Override
+        public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
+            return new TableEntryByTypeTransformer() {
+                @Override
+                public <T> T transform(Map<String, String> entry, Class<T> type, TableCellByTypeTransformer cellTransformer) {
+                    return (T) new Object();
+                }
+            };
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked default data table entry transformer";
         }
     }
 }

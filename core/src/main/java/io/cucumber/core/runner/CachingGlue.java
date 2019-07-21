@@ -2,6 +2,9 @@ package io.cucumber.core.runner;
 
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
@@ -10,6 +13,9 @@ import io.cucumber.core.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import io.cucumber.datatable.TableCellByTypeTransformer;
+import io.cucumber.datatable.TableEntryByTypeTransformer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +30,9 @@ final class CachingGlue implements Glue {
 
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
+    private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
+    private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
+    private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
 
     private final List<HookDefinition> beforeHooks = new ArrayList<>();
     private final List<HookDefinition> beforeStepHooks = new ArrayList<>();
@@ -41,6 +50,7 @@ final class CachingGlue implements Glue {
     private final Map<String, CoreStepDefinition> stepDefinitionsByPattern = new TreeMap<>();
 
     private final EventBus bus;
+
 
     CachingGlue(EventBus bus) {
         this.bus = bus;
@@ -85,6 +95,21 @@ final class CachingGlue implements Glue {
         dataTableTypeDefinitions.add(dataTableTypeDefinition);
     }
 
+    @Override
+    public void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer) {
+        defaultParameterTransformers.add(defaultParameterTransformer);
+    }
+
+    @Override
+    public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
+        defaultDataTableEntryTransformers.add(defaultDataTableEntryTransformer);
+    }
+
+    @Override
+    public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+        defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
+    }
+
     List<HookDefinition> getBeforeHooks() {
         return new ArrayList<>(beforeHooks);
     }
@@ -121,9 +146,46 @@ final class CachingGlue implements Glue {
         return stepDefinitionsByPattern;
     }
 
+    List<DefaultParameterTransformerDefinition> getDefaultParameterTransformers() {
+        return defaultParameterTransformers;
+    }
+
+    List<DefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
+        return defaultDataTableEntryTransformers;
+    }
+
+    List<DefaultDataTableCellTransformerDefinition> getDefaultDataTableCellTransformers() {
+        return defaultDataTableCellTransformers;
+    }
+
     void prepareGlue(TypeRegistry typeRegistry) throws DuplicateStepDefinitionException {
         parameterTypeDefinitions.forEach(ptd -> typeRegistry.defineParameterType(ptd.parameterType()));
         dataTableTypeDefinitions.forEach(dtd -> typeRegistry.defineDataTableType(dtd.dataTableType()));
+
+        if (defaultParameterTransformers.size() == 1) {
+            DefaultParameterTransformerDefinition definition = defaultParameterTransformers.get(0);
+            ParameterByTypeTransformer transformer = definition.parameterByTypeTransformer();
+            typeRegistry.setDefaultParameterTransformer(transformer);
+        } else if (defaultParameterTransformers.size() > 1) {
+            throw new DuplicateDefaultParameterTransformers(defaultParameterTransformers);
+        }
+
+        if (defaultDataTableEntryTransformers.size() == 1) {
+            DefaultDataTableEntryTransformerDefinition definition = defaultDataTableEntryTransformers.get(0);
+            TableEntryByTypeTransformer transformer = definition.tableEntryByTypeTransformer();
+            typeRegistry.setDefaultDataTableEntryTransformer(transformer);
+        } else if (defaultDataTableEntryTransformers.size() > 1) {
+            throw new DuplicateDefaultDataTableEntryTransformers(defaultDataTableEntryTransformers);
+        }
+
+
+        if (defaultDataTableCellTransformers.size() == 1) {
+            DefaultDataTableCellTransformerDefinition definition = defaultDataTableCellTransformers.get(0);
+            TableCellByTypeTransformer transformer = definition.tableCellByTypeTransformer();
+            typeRegistry.setDefaultDataTableCellTransformer(transformer);
+        } else if (defaultDataTableCellTransformers.size() > 1) {
+            throw new DuplicateDefaultDataTableCellTransformers(defaultDataTableCellTransformers);
+        }
 
         stepDefinitions.forEach(stepDefinition -> {
             CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
@@ -200,6 +262,9 @@ final class CachingGlue implements Glue {
         removeScenarioScopedGlue(stepDefinitions);
         removeScenarioScopedGlue(dataTableTypeDefinitions);
         removeScenarioScopedGlue(parameterTypeDefinitions);
+        removeScenarioScopedGlue(defaultParameterTransformers);
+        removeScenarioScopedGlue(defaultDataTableEntryTransformers);
+        removeScenarioScopedGlue(defaultDataTableCellTransformers);
     }
 
     private void removeScenarioScopedGlue(List<?> glue) {
