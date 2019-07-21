@@ -3,11 +3,14 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+
+import static java.util.Collections.singletonList;
 
 class JavaParameterTypeDefinition implements ParameterTypeDefinition {
 
@@ -15,13 +18,17 @@ class JavaParameterTypeDefinition implements ParameterTypeDefinition {
 
     private final Lookup lookup;
     private final ParameterType<Object> parameterType;
+    private final String shortFormat;
+    private final String fullFormat;
 
     JavaParameterTypeDefinition(String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch, Lookup lookup) {
         this.method = requireValidMethod(method);
         this.lookup = lookup;
+        this.shortFormat = MethodFormat.SHORT.format(method);
+        this.fullFormat = MethodFormat.FULL.format(method);
         this.parameterType = new ParameterType<>(
             name.isEmpty() ? method.getName() : name,
-            Collections.singletonList(pattern),
+            singletonList(pattern),
             this.method.getReturnType(),
             this::execute,
             useForSnippets,
@@ -62,6 +69,11 @@ class JavaParameterTypeDefinition implements ParameterTypeDefinition {
     @Override
     public ParameterType<?> parameterType() {
         return parameterType;
+    }
+
+    @Override
+    public String getLocation(boolean detail) {
+        return detail ? fullFormat : shortFormat;
     }
 
     private Object execute(Object[] args) throws Throwable {

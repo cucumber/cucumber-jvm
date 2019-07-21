@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
@@ -22,11 +23,15 @@ class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
     private final Method method;
     private final Lookup lookup;
     private final DataTableType dataTableType;
+    private final String shortFormat;
+    private final String fullFormat;
 
     JavaDataTableTypeDefinition(Method method, Lookup lookup) {
         this.method = method;
         this.lookup = lookup;
         this.dataTableType = createDataTableType(method);
+        this.shortFormat = MethodFormat.SHORT.format(method);
+        this.fullFormat = MethodFormat.FULL.format(method);
     }
 
     @SuppressWarnings("unchecked")
@@ -114,6 +119,10 @@ class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
         return dataTableType;
     }
 
+    @Override
+    public String getLocation(boolean detail) {
+        return detail ? fullFormat : shortFormat;
+    }
 
     private Object execute(Object arg) throws Throwable {
         return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, 0, arg);
