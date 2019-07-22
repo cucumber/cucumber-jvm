@@ -17,12 +17,7 @@ import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 final class CachingGlue implements Glue {
     private static final HookComparator ASCENDING = new HookComparator(true);
@@ -34,11 +29,11 @@ final class CachingGlue implements Glue {
     private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
 
-    private final List<HookDefinition> beforeHooks = new ArrayList<>();
-    private final List<HookDefinition> beforeStepHooks = new ArrayList<>();
+    private final SortedSet<HookDefinition> beforeHooks = new TreeSet<>(ASCENDING);
+    private final SortedSet<HookDefinition> beforeStepHooks = new TreeSet<>(ASCENDING);
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
-    private final List<HookDefinition> afterStepHooks = new ArrayList<>();
-    private final List<HookDefinition> afterHooks = new ArrayList<>();
+    private final SortedSet<HookDefinition> afterStepHooks = new TreeSet<>(DESCENDING);
+    private final SortedSet<HookDefinition> afterHooks = new TreeSet<>(DESCENDING);
 
     /*
      * Storing the pattern that matches the step text allows us to cache the rather slow
@@ -64,25 +59,21 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(hookDefinition);
-        beforeHooks.sort(ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(hookDefinition);
-        beforeStepHooks.sort(ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(hookDefinition);
-        afterHooks.sort(DESCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(hookDefinition);
-        afterStepHooks.sort(DESCENDING);
     }
 
     @Override
@@ -110,31 +101,31 @@ final class CachingGlue implements Glue {
         defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
     }
 
-    List<HookDefinition> getBeforeHooks() {
-        return new ArrayList<>(beforeHooks);
+    Collection<HookDefinition> getBeforeHooks() {
+        return beforeHooks;
     }
 
-    List<HookDefinition> getBeforeStepHooks() {
-        return new ArrayList<>(beforeStepHooks);
+    Collection<HookDefinition> getBeforeStepHooks() {
+        return beforeStepHooks;
     }
 
-    List<HookDefinition> getAfterHooks() {
-        return new ArrayList<>(afterHooks);
+    Collection<HookDefinition> getAfterHooks() {
+        return afterHooks;
     }
 
-    List<HookDefinition> getAfterStepHooks() {
-        return new ArrayList<>(afterStepHooks);
+    Collection<HookDefinition> getAfterStepHooks() {
+        return afterStepHooks;
     }
 
-    List<ParameterTypeDefinition> getParameterTypeDefinitions() {
+    Collection<ParameterTypeDefinition> getParameterTypeDefinitions() {
         return parameterTypeDefinitions;
     }
 
-    List<DataTableTypeDefinition> getDataTableTypeDefinitions() {
+    Collection<DataTableTypeDefinition> getDataTableTypeDefinitions() {
         return dataTableTypeDefinitions;
     }
 
-    List<StepDefinition> getStepDefinitions() {
+    Collection<StepDefinition> getStepDefinitions() {
         return stepDefinitions;
     }
 
@@ -146,15 +137,15 @@ final class CachingGlue implements Glue {
         return stepDefinitionsByPattern;
     }
 
-    List<DefaultParameterTransformerDefinition> getDefaultParameterTransformers() {
+    Collection<DefaultParameterTransformerDefinition> getDefaultParameterTransformers() {
         return defaultParameterTransformers;
     }
 
-    List<DefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
+    Collection<DefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
         return defaultDataTableEntryTransformers;
     }
 
-    List<DefaultDataTableCellTransformerDefinition> getDefaultDataTableCellTransformers() {
+    Collection<DefaultDataTableCellTransformerDefinition> getDefaultDataTableCellTransformers() {
         return defaultDataTableCellTransformers;
     }
 
@@ -267,14 +258,14 @@ final class CachingGlue implements Glue {
         removeScenarioScopedGlue(defaultDataTableCellTransformers);
     }
 
-    private void removeScenarioScopedGlue(List<?> glue) {
-        Iterator<?> hookIterator = glue.iterator();
-        while (hookIterator.hasNext()) {
-            Object hook = hookIterator.next();
-            if (hook instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) hook;
+    private void removeScenarioScopedGlue(Iterable<?> glues) {
+        Iterator<?> glueIterator = glues.iterator();
+        while (glueIterator.hasNext()) {
+            Object glue = glueIterator.next();
+            if (glue instanceof ScenarioScoped) {
+                ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) glue;
                 scenarioScopedHookDefinition.disposeScenarioScope();
-                hookIterator.remove();
+                glueIterator.remove();
             }
         }
     }
