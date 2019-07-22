@@ -94,13 +94,13 @@ public final class Runner {
             return new TestCase(emptyList(), emptyList(), emptyList(), pickleEvent, runnerOptions.isDryRun());
         }
 
-        List<PickleStepTestStep> testSteps = addTestStepsForPickleSteps(pickleEvent);
-        List<HookTestStep> beforeHooks = addTestStepsForBeforeHooks(pickleEvent.pickle.getTags());
-        List<HookTestStep> afterHooks = addTestStepsForAfterHooks(pickleEvent.pickle.getTags());
+        List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickleEvent);
+        List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickleEvent.pickle.getTags());
+        List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickleEvent.pickle.getTags());
         return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runnerOptions.isDryRun());
     }
 
-    private List<PickleStepTestStep> addTestStepsForPickleSteps(PickleEvent pickleEvent) {
+    private List<PickleStepTestStep> createTestStepsForPickleSteps(PickleEvent pickleEvent) {
         List<PickleStepTestStep> testSteps = new ArrayList<>();
 
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
@@ -125,8 +125,8 @@ public final class Runner {
             }
 
 
-            List<HookTestStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
-            List<HookTestStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
+            List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickleEvent.pickle.getTags());
+            List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickleEvent.pickle.getTags());
             testSteps.add(new PickleStepTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
         }
 
@@ -139,27 +139,27 @@ public final class Runner {
             .collect(Collectors.toList());
     }
 
-    private List<HookTestStep> addTestStepsForBeforeHooks(List<PickleTag> tags) {
-        return addTestStepsForHooks(tags, glue.getBeforeHooks(), HookType.BEFORE);
+    private List<HookTestStep> createTestStepsForBeforeHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getBeforeHooks(), HookType.BEFORE);
     }
 
-    private List<HookTestStep> addTestStepsForAfterHooks(List<PickleTag> tags) {
-        return addTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
+    private List<HookTestStep> createTestStepsForAfterHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
     }
 
-    private List<HookTestStep> addTestStepsForHooks(List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
+    private List<HookTestStep> createTestStepsForHooks(List<PickleTag> tags, Collection<HookDefinition> hooks, HookType hookType) {
         return hooks.stream()
             .filter(hook -> hook.matches(tags))
             .map(hook -> new HookTestStep(hookType, new HookDefinitionMatch(hook)))
             .collect(Collectors.toList());
     }
 
-    private List<HookTestStep> getAfterStepHooks(List<PickleTag> tags) {
-        return addTestStepsForHooks(tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
+    private List<HookTestStep> createAfterStepHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
     }
 
-    private List<HookTestStep> getBeforeStepHooks(List<PickleTag> tags) {
-        return addTestStepsForHooks(tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
+    private List<HookTestStep> createBeforeStepHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
     }
 
     private void buildBackendWorlds() {
