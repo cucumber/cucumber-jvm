@@ -8,14 +8,14 @@
 [![Coverage Status](https://coveralls.io/repos/github/cucumber/cucumber-jvm/badge.svg?branch=master)](https://coveralls.io/github/cucumber/cucumber-jvm?branch=master)
 
 Cucumber-JVM is a pure Java implementation of Cucumber. 
-You can [run](https://docs.cucumber.io/cucumber/api/#running-cucumber) it with 
+You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with 
 the tool of your choice.
 
 Cucumber-JVM also integrates with all the popular 
-[Dependency Injection containers](https://docs.cucumber.io/installation/java/#dependency-injection).
+[Dependency Injection containers](https://cucumber.io/docs/installation/java/#dependency-injection).
 
 ## Getting started
- * [Installation](https://docs.cucumber.io/installation/java/)
+ * [Installation](https://cucumber.io/docs/installation/java/)
  * [Documentation](https://cucumber.io/docs)
  * [Hello World project](https://github.com/cucumber/cucumber-java-skeleton)
 
