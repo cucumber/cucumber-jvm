@@ -3,14 +3,9 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
-import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.TableCellTransformer;
-import io.cucumber.datatable.TableEntryTransformer;
-import io.cucumber.datatable.TableRowTransformer;
-import io.cucumber.datatable.TableTransformer;
+import io.cucumber.datatable.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -20,20 +15,15 @@ import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
-class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
+class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements DataTableTypeDefinition {
 
-    private final Method method;
     private final Lookup lookup;
     private final DataTableType dataTableType;
-    private final String shortFormat;
-    private final String fullFormat;
 
     JavaDataTableTypeDefinition(Method method, Lookup lookup) {
-        this.method = method;
+        super(method);
         this.lookup = lookup;
         this.dataTableType = createDataTableType(method);
-        this.shortFormat = MethodFormat.SHORT.format(method);
-        this.fullFormat = MethodFormat.FULL.format(method);
     }
 
     @SuppressWarnings("unchecked")
@@ -119,11 +109,6 @@ class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
     @Override
     public DataTableType dataTableType() {
         return dataTableType;
-    }
-
-    @Override
-    public String getLocation(boolean detail) {
-        return detail ? fullFormat : shortFormat;
     }
 
     private Object execute(Object arg) throws Throwable {

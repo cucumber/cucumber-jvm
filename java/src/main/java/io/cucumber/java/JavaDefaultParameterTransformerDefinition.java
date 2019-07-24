@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 
@@ -12,20 +11,14 @@ import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
-class JavaDefaultParameterTransformerDefinition implements DefaultParameterTransformerDefinition {
-
-    private final Method method;
+class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition implements DefaultParameterTransformerDefinition {
 
     private final Lookup lookup;
     private final ParameterByTypeTransformer transformer;
-    private final String shortFormat;
-    private final String fullFormat;
 
     JavaDefaultParameterTransformerDefinition(Method method, Lookup lookup) {
-        this.method = requireValidMethod(method);
+        super(requireValidMethod(method));
         this.lookup = lookup;
-        this.shortFormat = MethodFormat.SHORT.format(method);
-        this.fullFormat = MethodFormat.FULL.format(method);
         this.transformer = this::execute;
     }
 
@@ -62,11 +55,6 @@ class JavaDefaultParameterTransformerDefinition implements DefaultParameterTrans
     @Override
     public ParameterByTypeTransformer parameterByTypeTransformer() {
         return transformer;
-    }
-
-    @Override
-    public String getLocation(boolean detail) {
-        return detail ? fullFormat : shortFormat;
     }
 
     private Object execute(String fromValue, Type toValueType) throws Throwable {

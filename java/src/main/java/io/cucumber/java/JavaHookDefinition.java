@@ -6,7 +6,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.TagPredicate;
-import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
@@ -14,16 +13,15 @@ import java.util.Collection;
 
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
-final class JavaHookDefinition implements HookDefinition {
+final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
-    private final Method method;
     private final long timeoutMillis;
     private final TagPredicate tagPredicate;
     private final int order;
     private final Lookup lookup;
 
     JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
-        this.method = requireValidMethod(method);
+        super(requireValidMethod(method));
         this.timeoutMillis = timeoutMillis;
         this.tagPredicate = new TagPredicate(tagExpression);
         this.order = order;
@@ -33,13 +31,6 @@ final class JavaHookDefinition implements HookDefinition {
     Method getMethod() {
         return method;
     }
-
-    @Override
-    public String getLocation(boolean detail) {
-        MethodFormat format = detail ? MethodFormat.FULL : MethodFormat.SHORT;
-        return format.format(method);
-    }
-
 
     private static Method requireValidMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();

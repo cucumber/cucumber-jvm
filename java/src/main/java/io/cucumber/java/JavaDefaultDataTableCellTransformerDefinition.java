@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 
@@ -12,20 +11,15 @@ import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
-class JavaDefaultDataTableCellTransformerDefinition implements DefaultDataTableCellTransformerDefinition {
+class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableCellTransformerDefinition {
 
-    private final Method method;
 
     private final Lookup lookup;
     private final TableCellByTypeTransformer transformer;
-    private final String shortFormat;
-    private final String fullFormat;
 
     JavaDefaultDataTableCellTransformerDefinition(Method method, Lookup lookup) {
-        this.method = requireValidMethod(method);
+        super(requireValidMethod(method));
         this.lookup = lookup;
-        this.shortFormat = MethodFormat.SHORT.format(method);
-        this.fullFormat = MethodFormat.FULL.format(method);
         this.transformer = this::execute;
     }
 
@@ -64,10 +58,6 @@ class JavaDefaultDataTableCellTransformerDefinition implements DefaultDataTableC
         return transformer;
     }
 
-    @Override
-    public String getLocation(boolean detail) {
-        return detail ? fullFormat : shortFormat;
-    }
 
     @SuppressWarnings("unchecked")
     private <T> T execute(String fromValue, Class<T> toValueType) throws Throwable {

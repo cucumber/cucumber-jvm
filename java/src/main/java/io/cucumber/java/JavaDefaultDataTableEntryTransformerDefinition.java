@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
@@ -15,23 +14,17 @@ import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
-class JavaDefaultDataTableEntryTransformerDefinition implements DefaultDataTableEntryTransformerDefinition {
+class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
 
     private static final Type mapStringStringType = new TypeReference<Map<String, String>>() {
     }.getType();
 
-    private final Method method;
-
     private final Lookup lookup;
     private final TableEntryByTypeTransformer transformer;
-    private final String shortFormat;
-    private final String fullFormat;
 
     JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup) {
-        this.method = requireValidMethod(method);
+        super(requireValidMethod(method));
         this.lookup = lookup;
-        this.shortFormat = MethodFormat.SHORT.format(method);
-        this.fullFormat = MethodFormat.FULL.format(method);
         this.transformer = this::execute;
     }
 
@@ -76,11 +69,6 @@ class JavaDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
     @Override
     public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
         return transformer;
-    }
-
-    @Override
-    public String getLocation(boolean detail) {
-        return detail ? fullFormat : shortFormat;
     }
 
     @SuppressWarnings("unchecked")
