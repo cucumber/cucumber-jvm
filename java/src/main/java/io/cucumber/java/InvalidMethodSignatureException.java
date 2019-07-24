@@ -41,7 +41,7 @@ final class InvalidMethodSignatureExceptionBuilder {
     public CucumberException build() {
         return new CucumberException("" +
             describeAnnotations() + " must have one of these signatures:\n" +
-            " *" + describeAvailableSignature() + "\n" +
+            " * " + describeAvailableSignature() + "\n" +
             "at " + describeLocation() + "\n" +
             describeNote() + "\n"
         );

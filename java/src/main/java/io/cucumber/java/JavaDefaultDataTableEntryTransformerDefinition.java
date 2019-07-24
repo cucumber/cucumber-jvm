@@ -6,7 +6,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
-import io.cucumber.datatable.TypeReference;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -15,9 +14,6 @@ import java.util.Map;
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
 class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
-
-    private static final Type mapStringStringType = new TypeReference<Map<String, String>>() {
-    }.getType();
 
     private final Lookup lookup;
     private final TableEntryByTypeTransformer transformer;
@@ -30,7 +26,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
 
     private static Method requireValidMethod(Method method) {
         Class<?> returnType = method.getReturnType();
-        if (Void.class.equals(returnType)) {
+        if (Void.class.equals(returnType) || void.class.equals(returnType)) {
             throw createInvalidSignatureException(method);
         }
 
@@ -39,11 +35,11 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
             throw createInvalidSignatureException(method);
         }
 
-        if (!(Object.class.equals(parameterTypes[0]) || mapStringStringType.equals(parameterTypes[0]))) {
+        if (!(Object.class.equals(parameterTypes[0]) || Map.class.equals(parameterTypes[0]))) {
             throw createInvalidSignatureException(method);
         }
 
-        if (!(Object.class.equals(parameterTypes[1]) || Type.class.equals(parameterTypes[1]))) {
+        if (!(Object.class.equals(parameterTypes[1]) || Type.class.equals(parameterTypes[1]) || Class.class.equals(parameterTypes[1]))) {
             throw createInvalidSignatureException(method);
         }
 
@@ -59,10 +55,8 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
     private static CucumberException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultDataTableEntryTransformer.class)
-            .addSignature("public Object defaultDataTableEntry(Map<String, String> fromValue, Type toValueType)")
-            .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
-            .addSignature("public Object defaultDataTableCell(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer)")
-            .addSignature("public Object defaultDataTableCell(Object fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer)")
+            .addSignature("public T defaultDataTableEntry(Map<String, String> fromValue, Class<T> toValueType)")
+            .addSignature("public T defaultDataTableCell(Map<String, String> fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer)")
             .build();
     }
 
