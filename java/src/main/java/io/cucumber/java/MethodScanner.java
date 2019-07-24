@@ -21,7 +21,7 @@ final class MethodScanner {
     /**
      * Registers step definitions and hooks.
      *
-     * @param javaBackend the backend where stepdefs and hooks will be registered
+     * @param javaBackend the backend where steps and hooks will be registered
      * @param gluePaths   where to look
      */
     void scan(JavaBackend javaBackend, List<URI> gluePaths) {
@@ -46,7 +46,7 @@ final class MethodScanner {
     /**
      * Registers step definitions and hooks.
      *
-     * @param javaBackend   the backend where stepdefs and hooks will be registered.
+     * @param javaBackend   the backend where steps and hooks will be registered.
      * @param method        a candidate for being a stepdef or hook.
      * @param glueCodeClass the class where the method is declared.
      */
@@ -86,6 +86,8 @@ final class MethodScanner {
             || annotationClass.equals(ParameterType.class)
             || annotationClass.equals(DataTableType.class)
             || annotationClass.equals(DefaultParameterTransformer.class)
+            || annotationClass.equals(DefaultDataTableEntryTransformer.class)
+            || annotationClass.equals(DefaultDataTableCellTransformer.class)
             ;
     }
 

@@ -8,8 +8,8 @@ import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
 
+import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 import static java.util.Collections.singletonList;
 
 class JavaParameterTypeDefinition implements ParameterTypeDefinition {
@@ -36,34 +36,34 @@ class JavaParameterTypeDefinition implements ParameterTypeDefinition {
         );
     }
 
-    private Method requireValidMethod(Method method) {
+    private static Method requireValidMethod(Method method) {
         Class<?> returnType = method.getReturnType();
         if (Void.class.equals(returnType)) {
-            throw createInvalidSignatureException();
+            throw createInvalidSignatureException(method);
         }
 
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length < 1) {
-            throw createInvalidSignatureException();
+            throw createInvalidSignatureException(method);
         }
 
         for (Class<?> parameterType : parameterTypes) {
             if (!String.class.equals(parameterType)) {
-                throw createInvalidSignatureException();
+                throw createInvalidSignatureException(method);
             }
         }
 
         return method;
     }
 
-    private CucumberException createInvalidSignatureException() {
-        return new CucumberException("" +
-            "A @ParameterType annotated method must have one of these signatures:\n" +
-            " * public Author parameterName(String all)\n" +
-            " * public Author parameterName(String captureGroup1, String captureGroup2, ...ect )\n" +
-            " * public Author parameterName(String... captureGroups)\n" +
-            "Note: Author is an example of the class you want to convert parameter name"
-        );
+    private static CucumberException createInvalidSignatureException(Method method) {
+        return builder(method)
+            .addAnnotation(ParameterType.class)
+            .addSignature("public Author parameterName(String all)")
+            .addSignature("public Author parameterName(String captureGroup1, String captureGroup2, ...ect )")
+            .addSignature("public Author parameterName(String... captureGroups)")
+            .addNote("Note: Author is an example of the class you want to convert captureGroups to")
+            .build();
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 
-public class ParameterTypeStepdefs {
+public class ParameterTypeSteps {
 
     private final LocalDate expected = LocalDate.of(1907, 11, 14);
 

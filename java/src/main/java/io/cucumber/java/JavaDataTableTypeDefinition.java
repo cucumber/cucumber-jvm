@@ -18,6 +18,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+
 class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
 
     private final Method method;
@@ -67,26 +69,26 @@ class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
             );
         }
 
-        throw createInvalidSignatureException();
+        throw createInvalidSignatureException(method);
 
     }
 
-    private static CucumberException createInvalidSignatureException() {
-        return new CucumberException("" +
-            "A @DataTableType annotated method must have one of these signatures:\n" +
-            " * public Author author(DataTable table)\n" +
-            " * public Author author(List<String> row)\n" +
-            " * public Author author(Map<String, String> entry)\n" +
-            " * public Author author(String cell)\n" +
-            "Note: Author is an example of the class you want to convert the table to"
-        );
+    private static CucumberException createInvalidSignatureException(Method method) {
+        return builder(method)
+            .addAnnotation(DataTableType.class)
+            .addSignature("public Author author(DataTable table)")
+            .addSignature("public Author author(List<String> row)")
+            .addSignature("public Author author(Map<String, String> entry)")
+            .addSignature("public Author author(String cell)")
+            .addNote("Note: Author is an example of the class you want to convert the table to")
+            .build();
     }
 
 
     private static Type requireValidParameterType(Method method) {
         Type[] parameterTypes = method.getGenericParameterTypes();
         if (parameterTypes.length != 1) {
-            throw createInvalidSignatureException();
+            throw createInvalidSignatureException(method);
         }
 
         Type parameterType = parameterTypes[0];
@@ -98,7 +100,7 @@ class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
         Type[] typeParameters = parameterizedType.getActualTypeArguments();
         for (Type typeParameter : typeParameters) {
             if (!String.class.equals(typeParameter)) {
-                throw createInvalidSignatureException();
+                throw createInvalidSignatureException(method);
             }
         }
 
@@ -108,7 +110,7 @@ class JavaDataTableTypeDefinition implements DataTableTypeDefinition {
     private static Class requireValidReturnType(Method method) {
         Class returnType = method.getReturnType();
         if (Void.class.equals(returnType)) {
-            throw createInvalidSignatureException();
+            throw createInvalidSignatureException(method);
         }
         return returnType;
     }

@@ -8,7 +8,7 @@ import io.cucumber.java.en.When;
 
 import static org.junit.Assert.assertEquals;
 
-public class ScenarioStepDefs {
+public class ScenarioSteps {
 
     private String scenarioName = "";
 

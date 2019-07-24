@@ -1,5 +1,6 @@
 package io.cucumber.java.annotation;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Given;
@@ -9,13 +10,25 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DataTableStepdefs {
+public class DataTableSteps {
 
     private final Author expectedAuthor = new Author("Annie M. G.", "Schmidt", "1911-03-20");
     private final Person expectedPerson = new Person("Astrid", "Lindgren");
+
+    @DataTableType
+    public Author authorEntryTransformer(Map<String, String> entry) {
+        return new DataTableSteps.Author(
+            entry.get("firstName"),
+            entry.get("lastName"),
+            entry.get("birthDate"));
+    }
+
+    @DataTableType
+    public Author singleAuthorTransformer(DataTable table) {
+        return authorEntryTransformer(table.asMaps().get(0));
+    }
 
     @Given("a list of authors in a table")
     public void aListOfAuthorsInATable(List<Author> authors) {
@@ -79,12 +92,12 @@ public class DataTableStepdefs {
     }
 
     @Given("a list of people in a table")
-    public void this_table_of_authors(List<DataTableStepdefs.Person> persons) {
+    public void this_table_of_authors(List<DataTableSteps.Person> persons) {
         assertTrue(persons.contains(expectedPerson));
     }
 
     @DataTableType
-    public DataTableStepdefs.Person transform(Map<String, String> tableEntry) {
+    public DataTableSteps.Person transform(Map<String, String> tableEntry) {
         return new Person(tableEntry.get("first"), tableEntry.get("last"));
     }
 

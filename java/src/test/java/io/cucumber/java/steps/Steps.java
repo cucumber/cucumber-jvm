@@ -1,11 +1,10 @@
-package io.cucumber.java.repeatable;
+package io.cucumber.java.steps;
 
 import io.cucumber.java.en.Given;
 
-public class Stepdefs {
+public class Steps {
 
     @Given("test")
-    @Given("test again")
     public void test() {
 
     }

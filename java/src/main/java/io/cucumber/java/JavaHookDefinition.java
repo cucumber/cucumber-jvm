@@ -1,16 +1,18 @@
 package io.cucumber.java;
 
+import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.filter.TagPredicate;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.reflection.MethodFormat;
 import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+
+import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
 final class JavaHookDefinition implements HookDefinition {
 
@@ -21,7 +23,7 @@ final class JavaHookDefinition implements HookDefinition {
     private final Lookup lookup;
 
     JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
-        this.method = method;
+        this.method = requireValidMethod(method);
         this.timeoutMillis = timeoutMillis;
         this.tagPredicate = new TagPredicate(tagExpression);
         this.order = order;
@@ -38,21 +40,40 @@ final class JavaHookDefinition implements HookDefinition {
         return format.format(method);
     }
 
+
+    private static Method requireValidMethod(Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length > 2) {
+            throw createInvalidSignatureException(method);
+        }
+
+        if (parameterTypes.length == 1) {
+            if (!(Object.class.equals(parameterTypes[0]) || Scenario.class.equals(parameterTypes[0]))) {
+                throw createInvalidSignatureException(method);
+            }
+        }
+
+        return method;
+    }
+
+    private static CucumberException createInvalidSignatureException(Method method) {
+        return builder(method)
+            .addAnnotation(Before.class)
+            .addAnnotation(After.class)
+            .addAnnotation(BeforeStep.class)
+            .addAnnotation(AfterStep.class)
+            .addSignature("public void before_or_after(Scenario scenario)")
+            .addSignature("public void before_or_after()")
+            .build();
+    }
+
     @Override
     public void execute(Scenario scenario) throws Throwable {
         Object[] args;
-        switch (method.getParameterTypes().length) {
-            case 0:
-                args = new Object[0];
-                break;
-            case 1:
-                if (!Scenario.class.equals(method.getParameterTypes()[0])) {
-                    throw new CucumberException("When a hook declares an argument it must be of type " + Scenario.class.getName() + ". " + method.toString());
-                }
-                args = new Object[]{scenario};
-                break;
-            default:
-                throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());
+        if (method.getParameterTypes().length == 1) {
+            args = new Object[]{scenario};
+        } else {
+            args = new Object[0];
         }
 
         Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);

@@ -96,8 +96,12 @@ final class JavaBackend implements Backend {
                 glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, lookup));
             } else if (annotation.annotationType().equals(DataTableType.class)) {
                 glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup));
-            }else if (annotation.annotationType().equals(DefaultParameterTransformer.class)) {
+            } else if (annotation.annotationType().equals(DefaultParameterTransformer.class)) {
                 glue.addDefaultParameterTransformer(new JavaDefaultParameterTransformerDefinition(method, lookup));
+            } else if (annotation.annotationType().equals(DefaultDataTableEntryTransformer.class)) {
+                glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+            } else if (annotation.annotationType().equals(DefaultDataTableCellTransformer.class)) {
+                glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup));
             }
         }
     }
