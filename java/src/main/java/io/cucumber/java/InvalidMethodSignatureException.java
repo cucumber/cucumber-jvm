@@ -61,12 +61,12 @@ final class InvalidMethodSignatureExceptionBuilder {
 
     private String describeAnnotations() {
         if (annotations.size() == 1) {
-            return "A @" + annotations.get(0).getName() + " annotated method";
+            return "A @" + annotations.get(0).getSimpleName() + " annotated method";
         }
 
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < annotations.size(); i++) {
-            builder.append(annotations.get(i).getName());
+            builder.append(annotations.get(i).getSimpleName());
 
             if (i < annotations.size() - 2) {
                 builder.append(", ");

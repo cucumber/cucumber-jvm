@@ -99,7 +99,7 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
 
     private static Class requireValidReturnType(Method method) {
         Class returnType = method.getReturnType();
-        if (Void.class.equals(returnType)) {
+        if (Void.class.equals(returnType) || void.class.equals(returnType)) {
             throw createInvalidSignatureException(method);
         }
         return returnType;

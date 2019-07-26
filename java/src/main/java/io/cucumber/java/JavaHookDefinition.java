@@ -34,7 +34,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private static Method requireValidMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length > 2) {
+        if (parameterTypes.length > 1) {
             throw createInvalidSignatureException(method);
         }
 
