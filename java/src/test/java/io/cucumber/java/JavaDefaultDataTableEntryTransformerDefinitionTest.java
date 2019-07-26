@@ -41,13 +41,11 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
         assertThat(definition.tableEntryByTypeTransformer()
             .transform(fromValue, String.class, cellTransformer), is("key=value"));
-
     }
 
     public <T> T correct_method(Map<String, String> fromValue, Class<T> toValue) {
         return join(fromValue);
     }
-
 
     @Test
     public void transforms_with_correct_method_with_cell_transformer() throws Throwable {
@@ -57,7 +55,6 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
         assertThat(definition.tableEntryByTypeTransformer()
             .transform(fromValue, String.class, cellTransformer), is("key=value"));
-
     }
 
 
@@ -82,7 +79,6 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
         return null;
     }
 
-
     @Test
     public void method_must_have_return_type() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("void_return_type", Map.class, Class.class);
@@ -92,18 +88,25 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     public void void_return_type(Map<String, String> fromValue, Class<?> toValue) {
     }
 
-
     @Test
     public void method_must_have_map_as_first_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", String.class, Class.class);
         assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
-
     public <T> T invalid_first_type(String fromValue, Class<T> toValue) {
         return null;
     }
 
+    @Test
+    public void method_must_have_map_of_string_to_string_as_first_argument() throws Throwable {
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", Map.class, Class.class);
+        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+    }
+
+    public <T> T invalid_first_type(Map<Object,Object> fromValue, Class<T> toValue) {
+        return null;
+    }
 
     @Test
     public void method_must_have_class_as_second_argument() throws Throwable {
@@ -115,13 +118,11 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
         return null;
     }
 
-
     @Test
-    public void method_must_have_cell_tranformer_as_optional_third_argument() throws Throwable {
+    public void method_must_have_cell_transformer_as_optional_third_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_optional_third_type", Map.class, Class.class, String.class);
         assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
-
 
     public <T> T invalid_optional_third_type(Map<String, String> fromValue, Class<T> toValue, String cellTransformer) {
         return null;
@@ -131,6 +132,4 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
         //noinspection unchecked
         return (T) fromValue.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining());
     }
-
-
 }

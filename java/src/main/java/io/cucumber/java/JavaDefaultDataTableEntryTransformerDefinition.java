@@ -8,6 +8,7 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -30,16 +31,30 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
             throw createInvalidSignatureException(method);
         }
 
-        Class<?>[] parameterTypes = method.getParameterTypes();
+        Type[] parameterTypes = method.getParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+
         if (parameterTypes.length < 2 || parameterTypes.length > 3) {
             throw createInvalidSignatureException(method);
         }
 
-        if (!(Object.class.equals(parameterTypes[0]) || Map.class.equals(parameterTypes[0]))) {
+        Type parameterType = genericParameterTypes[0];
+        if (!(parameterType instanceof ParameterizedType)) {
             throw createInvalidSignatureException(method);
         }
+        ParameterizedType parameterizedType = (ParameterizedType) parameterType;
+        Type rawType = parameterizedType.getRawType();
+        if (!(Object.class.equals(rawType) || Map.class.equals(rawType))) {
+            throw createInvalidSignatureException(method);
+        }
+        Type[] typeParameters = parameterizedType.getActualTypeArguments();
+        for (Type typeParameter : typeParameters) {
+            if (!String.class.equals(typeParameter)) {
+                throw createInvalidSignatureException(method);
+            }
+        }
 
-        if (!(Object.class.equals(parameterTypes[1]) || Type.class.equals(parameterTypes[1]) || Class.class.equals(parameterTypes[1]))) {
+        if (!(Object.class.equals(parameterTypes[1]) || Class.class.equals(parameterTypes[1]))) {
             throw createInvalidSignatureException(method);
         }
 
