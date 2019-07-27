@@ -7,6 +7,7 @@ import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 import static java.util.Collections.singletonList;
@@ -30,17 +31,27 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
     }
 
     private static Method requireValidMethod(Method method) {
-        Class<?> returnType = method.getReturnType();
-        if (Void.class.equals(returnType)) {
+        Type returnType = method.getGenericReturnType();
+        if (Void.class.equals(returnType) || void.class.equals(returnType)) {
+            throw createInvalidSignatureException(method);
+        }
+        if (!(returnType instanceof Class)) {
             throw createInvalidSignatureException(method);
         }
 
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length < 1) {
+        Type[] parameterTypes = method.getGenericParameterTypes();
+        if (parameterTypes.length == 0) {
             throw createInvalidSignatureException(method);
         }
 
-        for (Class<?> parameterType : parameterTypes) {
+        if (parameterTypes.length == 1) {
+            if (!(String.class.equals(parameterTypes[0]) || String[].class.equals(parameterTypes[0]))) {
+                throw createInvalidSignatureException(method);
+            }
+            return method;
+        }
+
+        for (Type parameterType : parameterTypes) {
             if (!String.class.equals(parameterType)) {
                 throw createInvalidSignatureException(method);
             }
@@ -64,7 +75,15 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         return parameterType;
     }
 
-    private Object execute(Object[] args) throws Throwable {
+    private Object execute(String[] captureGroups) throws Throwable {
+        Object[] args;
+
+        if (String[].class.equals(method.getParameterTypes()[0])) {
+            args = new Object[][]{captureGroups};
+        } else {
+            args = captureGroups;
+        }
+
         return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, 0, args);
     }
 
