@@ -39,18 +39,21 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         }
 
         Type parameterType = genericParameterTypes[0];
-        if (!(parameterType instanceof ParameterizedType)) {
-            throw createInvalidSignatureException(method);
-        }
-        ParameterizedType parameterizedType = (ParameterizedType) parameterType;
-        Type rawType = parameterizedType.getRawType();
-        if (!(Object.class.equals(rawType) || Map.class.equals(rawType))) {
-            throw createInvalidSignatureException(method);
-        }
-        Type[] typeParameters = parameterizedType.getActualTypeArguments();
-        for (Type typeParameter : typeParameters) {
-            if (!String.class.equals(typeParameter)) {
+
+        if (!Object.class.equals(parameterType)) {
+            if (!(parameterType instanceof ParameterizedType)) {
                 throw createInvalidSignatureException(method);
+            }
+            ParameterizedType parameterizedType = (ParameterizedType) parameterType;
+            Type rawType = parameterizedType.getRawType();
+            if (!Map.class.equals(rawType)) {
+                throw createInvalidSignatureException(method);
+            }
+            Type[] typeParameters = parameterizedType.getActualTypeArguments();
+            for (Type typeParameter : typeParameters) {
+                if (!String.class.equals(typeParameter)) {
+                    throw createInvalidSignatureException(method);
+                }
             }
         }
 
@@ -71,7 +74,9 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return builder(method)
             .addAnnotation(DefaultDataTableEntryTransformer.class)
             .addSignature("public T defaultDataTableEntry(Map<String, String> fromValue, Class<T> toValueType)")
+            .addSignature("public T defaultDataTableEntry(Object fromValue, Class<T> toValueType)")
             .addSignature("public T defaultDataTableCell(Map<String, String> fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer)")
+            .addSignature("public T defaultDataTableCell(Object fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer)")
             .build();
     }
 
