@@ -17,7 +17,7 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
     private final ParameterByTypeTransformer transformer;
 
     JavaDefaultParameterTransformerDefinition(Method method, Lookup lookup) {
-        super(requireValidMethod(method));
+        super(requireValidMethod(method), lookup);
         this.lookup = lookup;
         this.transformer = this::execute;
     }

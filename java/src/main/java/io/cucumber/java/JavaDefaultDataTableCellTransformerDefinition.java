@@ -13,13 +13,10 @@ import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
 class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableCellTransformerDefinition {
 
-
-    private final Lookup lookup;
     private final TableCellByTypeTransformer transformer;
 
     JavaDefaultDataTableCellTransformerDefinition(Method method, Lookup lookup) {
-        super(requireValidMethod(method));
-        this.lookup = lookup;
+        super(requireValidMethod(method), lookup);
         this.transformer = this::execute;
     }
 

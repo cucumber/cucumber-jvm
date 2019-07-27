@@ -14,12 +14,10 @@ import static java.util.Collections.singletonList;
 
 class JavaParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
 
-    private final Lookup lookup;
     private final ParameterType<Object> parameterType;
 
     JavaParameterTypeDefinition(String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch, Lookup lookup) {
-        super(requireValidMethod(method));
-        this.lookup = lookup;
+        super(requireValidMethod(method), lookup);
         this.parameterType = new ParameterType<>(
             name.isEmpty() ? method.getName() : name,
             singletonList(pattern),

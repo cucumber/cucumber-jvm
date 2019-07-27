@@ -17,12 +17,10 @@ import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
 
 class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements DataTableTypeDefinition {
 
-    private final Lookup lookup;
     private final DataTableType dataTableType;
 
     JavaDataTableTypeDefinition(Method method, Lookup lookup) {
-        super(method);
-        this.lookup = lookup;
+        super(method, lookup);
         this.dataTableType = createDataTableType(method);
     }
 

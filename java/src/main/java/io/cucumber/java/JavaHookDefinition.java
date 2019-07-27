@@ -21,7 +21,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     private final Lookup lookup;
 
     JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
-        super(requireValidMethod(method));
+        super(requireValidMethod(method), lookup);
         this.timeoutMillis = timeoutMillis;
         this.tagPredicate = new TagPredicate(tagExpression);
         this.order = order;

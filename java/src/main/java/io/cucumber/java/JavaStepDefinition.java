@@ -11,7 +11,6 @@ import java.util.List;
 final class JavaStepDefinition extends AbstractGlueDefinition implements StepDefinition {
     private final String expression;
     private final long timeoutMillis;
-    private final Lookup lookup;
 
     private final List<ParameterInfo> parameterInfos;
 
@@ -19,9 +18,8 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
                        String expression,
                        long timeoutMillis,
                        Lookup lookup) {
-        super(method);
+        super(method, lookup);
         this.timeoutMillis = timeoutMillis;
-        this.lookup = lookup;
         this.parameterInfos = JavaParameterInfo.fromMethod(method);
         this.expression = expression;
     }
