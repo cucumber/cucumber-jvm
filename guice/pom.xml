@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: Guice</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
         <guice.version>4.2.0</guice.version>
     </properties>
 
