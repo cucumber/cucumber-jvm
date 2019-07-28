@@ -63,6 +63,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Use `io.cucumber.core.cli.Main` instead
  * [Core] Deprecate `cucumber.api.Scenario`
     - Use `io.cucumber.core.api.Scenario` instead
+ * [Java] Deprecate `cucumber.api.java.*`
+    - Use `io.cucumber.java.*` instead
+ * [Java] Deprecate `cucumber.api.java8.*`
+    - Use `io.cucumber.java8.*` instead
  * [JUnit] Deprecate `cucumber.api.junit.Cucumber`
     - Use `io.cucumber.junit.Cucumber` instead. 
  * [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
