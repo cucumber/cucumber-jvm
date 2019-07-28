@@ -1,7 +1,7 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [4.7.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...master) (In Git)
+## [4.7.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
 ### Added
  
@@ -12,6 +12,14 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.7.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...v4.7.1) (2019-07-28)
+
+### Fixed
+  *  [All] Add missing JPMS config ([#1709](https://github.com/cucumber/cucumber-jvm/pull/1709)  John Patrick)
+    - Add automatic module name for `core`
+    - Add automatic module name for `cd2`
+    - Add automatic module name for `guice`
 
 ## [4.7.0](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...v4.7.0) (2019-07-20)
 
