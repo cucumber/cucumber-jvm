@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows a DataTableType to be registered.
+ * Register a data table type.
  *
  * Supports TableCellTransformer: String -> T
  * Supports TableEntryTransformer: Map<String, String> -> T
