@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: Core</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
         <!-- version 2.4.0 does not work on Java 7 -->
         <jsoup.version>1.12.1</jsoup.version>
         <xmlunit.version>1.6</xmlunit.version>
