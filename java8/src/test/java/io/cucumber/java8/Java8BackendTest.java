@@ -4,7 +4,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.java8.stepdefs.Stepdefs;
+import io.cucumber.java8.steps.Stepdefs;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

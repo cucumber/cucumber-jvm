@@ -5,7 +5,7 @@ import io.cucumber.core.reflection.MethodFormat;
 
 import java.lang.reflect.Method;
 
-class AbstractGlueDefinition {
+abstract class AbstractGlueDefinition {
 
     protected final Method method;
     protected final Lookup lookup;

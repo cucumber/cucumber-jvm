@@ -1,9 +1,15 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.Pending;
+import org.apiguardian.api.API;
 
-// We're deliberately not extending CucumberException (which is used to signal fatal errors)
+/**
+ * When thrown from a step marks it as not yet implemented.
+ *
+ * @see Java8Snippet
+ */
 @Pending
+@API(status = API.Status.STABLE)
 public final class PendingException extends RuntimeException {
     public PendingException() {
         this("TODO: implement me");

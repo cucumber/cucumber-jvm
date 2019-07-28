@@ -1,4 +1,4 @@
-package io.cucumber.java8.stepdefs;
+package io.cucumber.java8.steps;
 
 import io.cucumber.java8.En;
 
