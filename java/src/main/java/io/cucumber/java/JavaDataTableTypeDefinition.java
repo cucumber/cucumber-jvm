@@ -67,7 +67,7 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
             .addSignature("public Author author(List<String> row)")
             .addSignature("public Author author(Map<String, String> entry)")
             .addSignature("public Author author(String cell)")
-            .addNote("Note: Author is an example of the class you want to convert the table to")
+            .addNote("Note: Author is an example of the class you want to convert the table to.")
             .build();
     }
 

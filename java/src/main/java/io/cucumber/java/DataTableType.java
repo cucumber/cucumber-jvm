@@ -9,11 +9,18 @@ import java.lang.annotation.Target;
 
 /**
  * Register a data table type.
+ * <p>
+ * The signature of the method is used to determine which data table type is registered:
  *
- * Supports TableCellTransformer: String -> T
- * Supports TableEntryTransformer: Map<String, String> -> T
- * Supports TableRowTransformer: List<String> -> T
- * Supports TableTransformer: DataTable -> T
+ * <ul>
+ * <li>{@code String -> Author} will register a {@link io.cucumber.datatable.TableCellTransformer}</li>
+ * <li>{@code Map<String, String> -> Author} will register a {@link io.cucumber.datatable.TableEntryTransformer}</li>
+ * <li>{@code List<String> -> Author} will register a {@link io.cucumber.datatable.TableRowTransformer}</li>
+ * <li>{@code DataTable -> Author} will register a {@link io.cucumber.datatable.TableTransformer}</li>
+ * </ul>
+ * NOTE: {@code Author} is an example of the class you want to convert the table to.
+ *
+ * @see io.cucumber.datatable.DataTableType
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

@@ -7,12 +7,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * Allows a default transformer for all parameters to be registered.
+ * Register default parameter type transformer.
  * <p>
- * Supports ParameterByTypeTransformer: String,Type -> T
- * Supports ParameterByTypeTransformer: Object,Type -> T
+ * Valid method signatures are:
+ * <ul>
+ * <li>{@code String, Type -> Object}</li>
+ * <li>{@code Object, Type -> Object}</li>
+ * </ul>
+ *
+ * @see io.cucumber.cucumberexpressions.ParameterByTypeTransformer
+ * @see io.cucumber.cucumberexpressions.ParameterType
  */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)

@@ -8,10 +8,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows a default transformer for all parameters to be registered.
+ * Register default data table cell transformer.
  * <p>
- * Supports TableCellByTypeTransformer: String, Type -> T
- * Supports TableCellByTypeTransformer: Object, Type -> T
+ * Valid method signatures are:
+ * <ul>
+ * <li>{@code String, Type -> Object}</li>
+ * <li>{@code Object, Type -> Object}</li>
+ * </ul>
+ *
+ * @see io.cucumber.datatable.TableCellByTypeTransformer
+ * @see io.cucumber.datatable.DataTableType
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

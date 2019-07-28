@@ -8,12 +8,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows a default transformer for all parameters to be registered.
+ * Register default data table entry transformer.
  * <p>
- * Supports TableEntryByTypeTransformer: Map<String,String>>, Type -> T
- * Supports TableEntryByTypeTransformer: Object, Type -> T
- * Supports TableEntryByTypeTransformer: Map<String,String>>, Type,TableCellByTypeTransformer -> T
- * Supports TableEntryByTypeTransformer: Object, Type,TableCellByTypeTransformer -> T
+ * Valid method signatures are:
+ * <ul>
+ * <li>{@code Map<String,String>, Type -> Object}</li>
+ * <li>{@code Object, Type -> Object}</li>
+ * <li>{@code Map<String,String>, Type, TableCellByTypeTransformer -> Object}</li>
+ * <li>{@code Object, Type, TableCellByTypeTransformer -> Object}</li>
+ * </ul>
+ *
+ * @see io.cucumber.datatable.TableEntryByTypeTransformer
+ * @see io.cucumber.datatable.DataTableType
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
