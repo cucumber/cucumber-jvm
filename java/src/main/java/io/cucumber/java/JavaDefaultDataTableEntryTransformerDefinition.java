@@ -55,7 +55,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
             }
         }
 
-        if (!(Object.class.equals(parameterTypes[1]) || Class.class.equals(parameterTypes[1]))) {
+        if (!(Type.class.equals(parameterTypes[1]) || Class.class.equals(parameterTypes[1]))) {
             throw createInvalidSignatureException(method);
         }
 
@@ -72,9 +72,9 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return builder(method)
             .addAnnotation(DefaultDataTableEntryTransformer.class)
             .addSignature("public T defaultDataTableEntry(Map<String, String> fromValue, Class<T> toValueType)")
-            .addSignature("public T defaultDataTableEntry(Object fromValue, Class<T> toValueType)")
             .addSignature("public T defaultDataTableCell(Map<String, String> fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer)")
-            .addSignature("public T defaultDataTableCell(Object fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer)")
+            .addSignature("public Object defaultDataTableEntry(Map<String, String> fromValue, Type toValueType)")
+            .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
             .build();
     }
 

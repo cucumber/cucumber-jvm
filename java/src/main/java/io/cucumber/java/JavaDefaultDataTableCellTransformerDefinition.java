@@ -22,7 +22,7 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefiniti
 
     private static Method requireValidMethod(Method method) {
         Class<?> returnType = method.getReturnType();
-        if (Void.class.equals(returnType)) {
+        if (Void.class.equals(returnType) || void.class.equals(returnType)) {
             throw createInvalidSignatureException(method);
         }
 
@@ -35,7 +35,7 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefiniti
             throw createInvalidSignatureException(method);
         }
 
-        if (!(Object.class.equals(parameterTypes[1]) || Type.class.equals(parameterTypes[1]))) {
+        if (!Type.class.equals(parameterTypes[1])) {
             throw createInvalidSignatureException(method);
         }
 

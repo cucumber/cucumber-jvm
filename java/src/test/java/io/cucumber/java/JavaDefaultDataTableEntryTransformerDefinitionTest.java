@@ -129,7 +129,7 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
 
     @Test
-    public void method_must_have_cell_tranformer_as_optional_third_argument() throws Throwable {
+    public void method_must_have_cell_transformer_as_optional_third_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_optional_third_type", Map.class, Class.class, String.class);
         assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
