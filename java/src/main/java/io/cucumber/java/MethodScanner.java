@@ -10,6 +10,9 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 
+import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
+import static io.cucumber.java.InvalidMethodException.createMethodDeclaringClassNotAssignableFromGlue;
+
 final class MethodScanner {
 
     private final ClassFinder classFinder;
@@ -70,10 +73,10 @@ final class MethodScanner {
 
     private void validateMethod(Method method, Class<?> glueCodeClass) {
         if (!method.getDeclaringClass().isAssignableFrom(glueCodeClass)) {
-            throw new CucumberException(String.format("%s isn't assignable from %s", method.getDeclaringClass(), glueCodeClass));
+            throw createMethodDeclaringClassNotAssignableFromGlue(method, glueCodeClass);
         }
         if (!glueCodeClass.equals(method.getDeclaringClass())) {
-            throw new CucumberException(String.format("You're not allowed to extend classes that define Step Definitions or hooks. %s extends %s", glueCodeClass, method.getDeclaringClass()));
+            throw createInvalidMethodException(method, glueCodeClass);
         }
     }
 
@@ -102,10 +105,10 @@ final class MethodScanner {
         return annotationClass.getAnnotation(StepDefAnnotations.class) != null;
     }
 
-    private Annotation[] repeatedAnnotations(Annotation annotation)   {
+    private Annotation[] repeatedAnnotations(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
-            return ( Annotation[]) Invoker.invoke(annotation, expressionMethod, 0);
+            return (Annotation[]) Invoker.invoke(annotation, expressionMethod, 0);
         } catch (Throwable e) {
             throw new CucumberException(e);
         }

@@ -1,7 +1,6 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
@@ -85,7 +84,7 @@ public class JavaParameterTypeDefinitionTest {
     @Test
     public void converter_must_have_return_type() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_capture_group_to_void", String.class);
-        assertThrows(CucumberException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
     }
 
     public void convert_capture_group_to_void(String all) {
@@ -94,7 +93,7 @@ public class JavaParameterTypeDefinitionTest {
     @Test
     public void converter_must_have_non_generic_return_type() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_capture_group_to_optional_string", String.class);
-        assertThrows(CucumberException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
     }
 
     public Optional<String> convert_capture_group_to_optional_string(String all) {
@@ -104,7 +103,7 @@ public class JavaParameterTypeDefinitionTest {
     @Test
     public void converter_must_have_at_least_one_argument() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_nothing_to_string");
-        assertThrows(CucumberException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
     }
 
     public String convert_nothing_to_string() {
@@ -114,7 +113,7 @@ public class JavaParameterTypeDefinitionTest {
     @Test
     public void converter_must_have_string_arguments() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("converts_object_to_string", Object.class);
-        assertThrows(CucumberException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
     }
 
     public String converts_object_to_string(Object other) {
@@ -124,7 +123,7 @@ public class JavaParameterTypeDefinitionTest {
     @Test
     public void converter_must_have_all_string_arguments() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("converts_objects_to_string", String.class, Object.class);
-        assertThrows(CucumberException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
     }
 
     public String converts_objects_to_string(String all, Object other) {

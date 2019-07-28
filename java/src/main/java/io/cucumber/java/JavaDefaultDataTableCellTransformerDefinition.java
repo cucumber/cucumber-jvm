@@ -2,14 +2,13 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableCellTransformerDefinition {
 
@@ -42,7 +41,7 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefiniti
         return method;
     }
 
-    private static CucumberException createInvalidSignatureException(Method method) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultDataTableCellTransformer.class)
             .addSignature("public Object defaultDataTableCell(String fromValue, Type toValueType)")

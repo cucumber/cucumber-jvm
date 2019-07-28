@@ -4,14 +4,13 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.filter.TagPredicate;
 import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
@@ -47,7 +46,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         return method;
     }
 
-    private static CucumberException createInvalidSignatureException(Method method) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(Before.class)
             .addAnnotation(After.class)

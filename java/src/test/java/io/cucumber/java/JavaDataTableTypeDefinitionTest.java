@@ -1,7 +1,6 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.datatable.DataTable;
 import org.junit.Test;
 
@@ -84,7 +83,7 @@ public class JavaDataTableTypeDefinitionTest {
     @Test
     public void target_type_must_class_type() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_datatable_to_optional_string", DataTable.class);
-        CucumberException exception = assertThrows(CucumberException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
+        InvalidMethodSignatureException exception = assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
         assertThat(exception.getMessage(), startsWith("" +
             "A @DataTableType annotated method must have one of these signatures:\n" +
             " * public Author author(DataTable table)\n" +
@@ -101,7 +100,7 @@ public class JavaDataTableTypeDefinitionTest {
     @Test
     public void target_type_must_not_be_void() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_data_table_to_void", DataTable.class);
-        assertThrows(CucumberException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
     }
 
     public void converts_data_table_to_void(DataTable table) {
@@ -110,9 +109,9 @@ public class JavaDataTableTypeDefinitionTest {
     @Test
     public void must_have_exactly_one_argument() throws NoSuchMethodException {
         Method noArgs = JavaDataTableTypeDefinitionTest.class.getMethod("converts_nothing_to_string");
-        assertThrows(CucumberException.class, () -> new JavaDataTableTypeDefinition(noArgs, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(noArgs, lookup));
         Method twoArgs = JavaDataTableTypeDefinitionTest.class.getMethod("converts_two_strings_to_string", String.class, String.class);
-        assertThrows(CucumberException.class, () -> new JavaDataTableTypeDefinition(twoArgs, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(twoArgs, lookup));
     }
 
     public String converts_nothing_to_string() {
@@ -126,7 +125,7 @@ public class JavaDataTableTypeDefinitionTest {
     @Test
     public void argument_must_match_existing_transformer() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_object_to_string", Object.class);
-        assertThrows(CucumberException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
     }
 
     public String converts_object_to_string(Object string) {
@@ -136,7 +135,7 @@ public class JavaDataTableTypeDefinitionTest {
     @Test
     public void table_entry_transformer_must_have_map_of_strings() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_map_of_objects_to_string", Map.class);
-        assertThrows(CucumberException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup));
     }
 
     public String converts_map_of_objects_to_string(Map<Object, Object> entry) {

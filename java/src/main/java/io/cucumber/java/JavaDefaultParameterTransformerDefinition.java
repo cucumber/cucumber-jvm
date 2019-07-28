@@ -2,14 +2,13 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition implements DefaultParameterTransformerDefinition {
 
@@ -44,7 +43,7 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
         return method;
     }
 
-    private static CucumberException createInvalidSignatureException(Method method) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultParameterTransformer.class)
             .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")

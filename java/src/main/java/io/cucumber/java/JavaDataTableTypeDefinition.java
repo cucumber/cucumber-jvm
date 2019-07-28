@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.*;
@@ -13,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements DataTableTypeDefinition {
 
@@ -61,7 +60,7 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
 
     }
 
-    private static CucumberException createInvalidSignatureException(Method method) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DataTableType.class)
             .addSignature("public Author author(DataTable table)")

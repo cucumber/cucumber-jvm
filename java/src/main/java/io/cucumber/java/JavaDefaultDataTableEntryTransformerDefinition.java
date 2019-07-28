@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
@@ -12,7 +11,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
 
@@ -68,7 +67,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return method;
     }
 
-    private static CucumberException createInvalidSignatureException(Method method) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultDataTableEntryTransformer.class)
             .addSignature("public T defaultDataTableEntry(Map<String, String> fromValue, Class<T> toValueType)")

@@ -1,7 +1,6 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -51,7 +50,7 @@ public class JavaDefaultDataTableCellTransformerDefinitionTest {
     @Test
     public void must_have_non_void_return() throws Throwable {
         Method method = JavaDefaultDataTableCellTransformerDefinitionTest.class.getMethod("transforms_string_to_void", String.class, Type.class);
-        CucumberException exception = assertThrows(CucumberException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(method, lookup));
+        InvalidMethodSignatureException exception = assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(method, lookup));
         assertThat(exception.getMessage(), startsWith("" +
             "A @DefaultDataTableCellTransformer annotated method must have one of these signatures:\n" +
             " * public Object defaultDataTableCell(String fromValue, Type toValueType)\n" +
@@ -66,9 +65,9 @@ public class JavaDefaultDataTableCellTransformerDefinitionTest {
     @Test
     public void must_have_two_arguments() throws Throwable {
         Method oneArg = JavaDefaultDataTableCellTransformerDefinitionTest.class.getMethod("one_argument", String.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(oneArg, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(oneArg, lookup));
         Method threeArg = JavaDefaultDataTableCellTransformerDefinitionTest.class.getMethod("three_arguments", String.class, Type.class, Object.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(threeArg, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(threeArg, lookup));
     }
 
     public Object one_argument(String fromValue) {
@@ -82,7 +81,7 @@ public class JavaDefaultDataTableCellTransformerDefinitionTest {
     @Test
     public void must_have_string_or_object_as_from_value() throws Throwable {
         Method threeArg = JavaDefaultDataTableCellTransformerDefinitionTest.class.getMethod("map_as_from_value", Map.class, Type.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(threeArg, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(threeArg, lookup));
     }
 
 
@@ -93,7 +92,7 @@ public class JavaDefaultDataTableCellTransformerDefinitionTest {
     @Test
     public void must_have_type_as_to_value_type() throws Throwable {
         Method threeArg = JavaDefaultDataTableCellTransformerDefinitionTest.class.getMethod("object_as_to_value_type", String.class, Object.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(threeArg, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableCellTransformerDefinition(threeArg, lookup));
     }
 
     public Object object_as_to_value_type(String fromValue, Object toValueType) {

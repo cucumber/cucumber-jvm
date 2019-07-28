@@ -2,14 +2,13 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureExceptionBuilder.builder;
+import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Collections.singletonList;
 
 class JavaParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
@@ -58,7 +57,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         return method;
     }
 
-    private static CucumberException createInvalidSignatureException(Method method) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(ParameterType.class)
             .addSignature("public Author parameterName(String all)")

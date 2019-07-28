@@ -1,11 +1,7 @@
 package io.cucumber.java;
 
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Argument;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
+import gherkin.pickles.*;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.TestStepFinished;
@@ -16,11 +12,7 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.AmbiguousStepDefinitionsException;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runtime.BackendSupplier;
-import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.core.runtime.*;
 import io.cucumber.java.en.Given;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,10 +27,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
@@ -53,7 +42,7 @@ public class JavaStepDefinitionTest {
             THREE_DISABLED_MICE = Defs.class.getMethod("threeDisabledMice", String.class);
             THREE_BLIND_ANIMALS = Defs.class.getMethod("threeBlindAnimals", String.class);
         } catch (NoSuchMethodException e) {
-            throw new InternalError("dang");
+            throw new IllegalStateException(e);
         }
     }
 

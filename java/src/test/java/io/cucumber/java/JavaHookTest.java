@@ -4,7 +4,6 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
@@ -65,8 +64,8 @@ public class JavaHookTest {
             BAD_MULTIPLE = BadHookMultipleArgs.class.getMethod("after", Scenario.class, String.class);
             SINGLE_ARG = SingleArg.class.getMethod("after", Scenario.class);
             ZERO_ARG = ZeroArg.class.getMethod("after");
-        } catch (NoSuchMethodException note) {
-            throw new InternalError("dang");
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -184,8 +183,8 @@ public class JavaHookTest {
     @Test
     public void fails_if_hook_argument_is_not_scenario_result() {
         objectFactory.setInstance(new BadHook());
-        CucumberException cucumberException = assertThrows(
-            CucumberException.class,
+        InvalidMethodSignatureException cucumberException = assertThrows(
+            InvalidMethodSignatureException.class,
             () -> backend.addHook(BAD_AFTER.getAnnotation(After.class), BAD_AFTER)
         );
         assertThat(cucumberException.getMessage(), startsWith("" +
@@ -205,11 +204,11 @@ public class JavaHookTest {
     @Test
     public void fails_if_generic_hook_argument_is_not_scenario_result() {
         objectFactory.setInstance(new BadGenericHook());
-        CucumberException cucumberException = assertThrows(
-            CucumberException.class,
+        InvalidMethodSignatureException exception = assertThrows(
+            InvalidMethodSignatureException.class,
             () -> backend.addHook(BAD_GENERIC_AFTER.getAnnotation(After.class), BAD_GENERIC_AFTER)
         );
-        assertThat(cucumberException.getMessage(), startsWith("" +
+        assertThat(exception.getMessage(), startsWith("" +
             "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
             " * public void before_or_after(Scenario scenario)\n" +
             " * public void before_or_after()\n" +
@@ -226,11 +225,11 @@ public class JavaHookTest {
     @Test
     public void fails_if_too_many_arguments() {
         objectFactory.setInstance(new BadGenericHook());
-        CucumberException cucumberException = assertThrows(
-            CucumberException.class,
+        InvalidMethodSignatureException exception = assertThrows(
+            InvalidMethodSignatureException.class,
             () -> backend.addHook(BAD_MULTIPLE.getAnnotation(After.class), BAD_MULTIPLE)
         );
-        assertThat(cucumberException.getMessage(), startsWith("" +
+        assertThat(exception.getMessage(), startsWith("" +
             "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
             " * public void before_or_after(Scenario scenario)\n" +
             " * public void before_or_after()\n" +

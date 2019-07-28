@@ -1,7 +1,6 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import org.junit.Test;
 
@@ -69,9 +68,9 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     @Test
     public void method_must_have_2_or_3_arguments() throws Throwable {
         Method toFew = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("one_argument", Map.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(toFew, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(toFew, lookup));
         Method toMany = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("four_arguments", Map.class, String.class, String.class, String.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(toMany, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(toMany, lookup));
     }
 
     public <T> T one_argument(Map<String, String> fromValue) {
@@ -87,7 +86,7 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     @Test
     public void method_must_have_return_type() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("void_return_type", Map.class, Class.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
     public void void_return_type(Map<String, String> fromValue, Class<?> toValue) {
@@ -97,11 +96,11 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     @Test
     public void method_must_have_map_as_first_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", String.class, Class.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
         Method method2 = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", List.class, Class.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method2, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method2, lookup));
         Method method3 = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", Map.class, Class.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method3, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method3, lookup));
     }
 
 
@@ -120,7 +119,7 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     @Test
     public void method_must_have_class_as_second_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_second_type", Map.class, String.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
     public <T> T invalid_second_type(Map<String, String> fromValue, String toValue) {
@@ -131,7 +130,7 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     @Test
     public void method_must_have_cell_transformer_as_optional_third_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_optional_third_type", Map.class, Class.class, String.class);
-        assertThrows(CucumberException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
 

@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.java.steps.Steps;
@@ -63,7 +62,7 @@ public class JavaBackendTest {
     @Test
     public void detects_subclassed_glue_and_throws_exception() {
         final Executable testMethod = () -> backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/steps"), URI.create("classpath:io/cucumber/java/incorrectlysubclassedsteps")));
-        final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+        final InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps extends class io.cucumber.java.steps.Steps")));
     }
 
