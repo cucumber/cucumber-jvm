@@ -15,7 +15,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-class CoreStepDefinition implements StepDefinition {
+class CoreStepDefinition {
 
     private final StepExpression expression;
     private final ArgumentMatcher argumentMatcher;
@@ -39,26 +39,6 @@ class CoreStepDefinition implements StepDefinition {
             boolean transposed = parameterInfo.isTransposed();
             return new StepExpressionFactory(typeRegistry).createExpression(expression, typeResolver, transposed);
         }
-    }
-
-    @Override
-    public void execute(Object[] args) throws Throwable {
-        stepDefinition.execute(args);
-    }
-
-    @Override
-    public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        return stepDefinition.isDefinedAt(stackTraceElement);
-    }
-
-    @Override
-    public List<ParameterInfo> parameterInfos() {
-        return stepDefinition.parameterInfos();
-    }
-
-    @Override
-    public String getLocation(boolean detail) {
-        return stepDefinition.getLocation(detail);
     }
 
     public String getPattern() {

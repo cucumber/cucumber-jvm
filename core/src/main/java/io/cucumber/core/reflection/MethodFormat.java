@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public final class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile("[^,]*\\.");
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("[^,<>]*\\.");
     private final MessageFormat format;
 
     public static final MethodFormat SHORT = new MethodFormat("%c.%m(%a)");

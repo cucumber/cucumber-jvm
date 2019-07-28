@@ -1,30 +1,25 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.Backend;
-import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.options.RuntimeOptions;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.TypeRegistryConfigurer;
+import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.net.URI;
 import java.time.Clock;
 import java.util.Collections;
-import java.util.Locale;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,38 +32,34 @@ public class HookTest {
     private final static String ENGLISH = "en";
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-    private final PickleStep pickleStep = new PickleStep("pattern1", Collections.<Argument>emptyList(), singletonList(new PickleLocation(2, 2)));
+    private final PickleStep pickleStep = new PickleStep("pattern1", Collections.emptyList(), singletonList(new PickleLocation(2, 2)));
     private final PickleEvent pickleEvent = new PickleEvent("uri",
-        new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.<PickleTag>emptyList(), singletonList(new PickleLocation(1, 1))));
+        new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.emptyList(), singletonList(new PickleLocation(1, 1))));
 
     /**
      * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
      */
     @Test
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
-
         Backend backend = mock(Backend.class);
         ObjectFactory objectFactory = mock(ObjectFactory.class);
-        TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
+        TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
+        when(hook.matches(ArgumentMatchers.anyCollection())).thenReturn(true);
 
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Glue glue = invocation.getArgument(0);
-                glue.addBeforeHook(hook);
-                return null;
-            }
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.<URI>anyList());
+        doAnswer(invocation -> {
+            Glue glue = invocation.getArgument(0);
+            glue.addBeforeHook(hook);
+            return null;
+        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
-        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistry, runtimeOptions);
+        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer, runtimeOptions);
 
         runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(backend).buildWorld();
-        inOrder.verify(hook).execute(ArgumentMatchers.<Scenario>any());
+        inOrder.verify(hook).execute(ArgumentMatchers.any());
         inOrder.verify(backend).disposeWorld();
     }
 }

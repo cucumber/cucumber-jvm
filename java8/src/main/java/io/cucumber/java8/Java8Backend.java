@@ -10,24 +10,22 @@ import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.snippets.Snippet;
-import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 import static java.lang.Thread.currentThread;
 
-final class Java8Backend implements Backend, LambdaGlueRegistry {
+final class Java8Backend implements Backend {
 
     private final Lookup lookup;
     private final Container container;
     private final ClassFinder classFinder;
 
-    private Glue glue;
     private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
+    private Glue glue;
 
     Java8Backend(Lookup lookup, Container container, ResourceLoader resourceLoader) {
         this.classFinder = new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader());
@@ -55,15 +53,15 @@ final class Java8Backend implements Backend, LambdaGlueRegistry {
     public void buildWorld() {
         // Instantiate all the stepdef classes for java8 - the stepdef will be initialised
         // in the constructor.
-        INSTANCE.set(this);
-        for (Class<? extends LambdaGlue> lambdaGlueClass: lambdaGlueClasses) {
+        LambdaGlueRegistry.INSTANCE.set(new GlueAdaptor(glue));
+        for (Class<? extends LambdaGlue> lambdaGlueClass : lambdaGlueClasses) {
             lookup.getInstance(lambdaGlueClass);
         }
     }
 
     @Override
     public void disposeWorld() {
-        INSTANCE.remove();
+        LambdaGlueRegistry.INSTANCE.remove();
     }
 
     @Override
@@ -71,29 +69,42 @@ final class Java8Backend implements Backend, LambdaGlueRegistry {
         return new Java8Snippet();
     }
 
-    @Override
-    public void addStepDefinition(StepDefinition stepDefinition) {
-        glue.addStepDefinition(stepDefinition);
-    }
 
-    @Override
-    public void addBeforeHookDefinition(HookDefinition beforeHook) {
-        glue.addBeforeHook(beforeHook);
-    }
+    private static final class GlueAdaptor implements LambdaGlueRegistry {
 
-    @Override
-    public void addAfterHookDefinition(HookDefinition afterHook) {
-        glue.addAfterHook(afterHook);
-    }
+        private final Glue glue;
 
-    @Override
-    public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
-        glue.addAfterStepHook(afterStepHook);
-    }
+        private GlueAdaptor(Glue glue) {
+            this.glue = glue;
+        }
 
-    @Override
-    public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
-        glue.addBeforeStepHook(beforeStepHook);
+        @Override
+        public void addStepDefinition(StepDefinition stepDefinition) {
+            glue.addStepDefinition(stepDefinition);
+        }
 
+        @Override
+        public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
+            glue.addBeforeStepHook(beforeStepHook);
+
+        }
+
+        @Override
+        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+            glue.addAfterStepHook(afterStepHook);
+
+        }
+
+        @Override
+        public void addBeforeHookDefinition(HookDefinition beforeHook) {
+            glue.addBeforeHook(beforeHook);
+
+        }
+
+        @Override
+        public void addAfterHookDefinition(HookDefinition afterHook) {
+            glue.addAfterHook(afterHook);
+
+        }
     }
 }

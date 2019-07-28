@@ -87,6 +87,21 @@ final class JavaBackend implements Backend {
                 String tagExpression = afterStep.value();
                 long timeout = afterStep.timeout();
                 glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, afterStep.order(), timeout, lookup));
+            } else if (annotation.annotationType().equals(ParameterType.class)) {
+                ParameterType parameterType = (ParameterType) annotation;
+                String pattern = parameterType.value();
+                String name = parameterType.name();
+                boolean useForSnippets = parameterType.useForSnippets();
+                boolean preferForRegexMatch = parameterType.preferForRegexMatch();
+                glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, lookup));
+            } else if (annotation.annotationType().equals(DataTableType.class)) {
+                glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup));
+            } else if (annotation.annotationType().equals(DefaultParameterTransformer.class)) {
+                glue.addDefaultParameterTransformer(new JavaDefaultParameterTransformerDefinition(method, lookup));
+            } else if (annotation.annotationType().equals(DefaultDataTableEntryTransformer.class)) {
+                glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
+            } else if (annotation.annotationType().equals(DefaultDataTableCellTransformer.class)) {
+                glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup));
             }
         }
     }

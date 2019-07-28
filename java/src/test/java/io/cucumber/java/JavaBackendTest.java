@@ -3,11 +3,9 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.java.stepdefs.Stepdefs;
+import io.cucumber.java.steps.Steps;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,8 +18,6 @@ import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Locale;
-import java.util.function.Function;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
@@ -58,16 +54,16 @@ public class JavaBackendTest {
 
     @Test
     public void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/stepdefs")));
+        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/steps")));
         backend.buildWorld();
-        verify(factory).addClass(Stepdefs.class);
+        verify(factory).addClass(Steps.class);
     }
 
     @Test
     public void detects_subclassed_glue_and_throws_exception() {
-        final Executable testMethod = () -> backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/stepdefs"), URI.create("classpath:io/cucumber/java/incorrectlysubclassedstepdefs")));
-        final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedstepdefs.SubclassesStepdefs extends class io.cucumber.java.stepdefs.Stepdefs")));
+        final Executable testMethod = () -> backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/steps"), URI.create("classpath:io/cucumber/java/incorrectlysubclassedsteps")));
+        final InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
+        assertThat(expectedThrown.getMessage(), is(equalTo("You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps extends class io.cucumber.java.steps.Steps")));
     }
 
     @Test

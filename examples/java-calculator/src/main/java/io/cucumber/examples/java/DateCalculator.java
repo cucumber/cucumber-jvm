@@ -1,15 +1,15 @@
 package io.cucumber.examples.java;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class DateCalculator {
-    private Date now;
+    private LocalDate now;
 
-    public DateCalculator(Date now) {
+    public DateCalculator(LocalDate now) {
         this.now = now;
     }
 
-    public String isDateInThePast(Date date) {
-        return (date.before(now)) ? "yes" : "no";
+    public String isDateInThePast(LocalDate date) {
+        return (date.isBefore(now)) ? "yes" : "no";
     }
 }

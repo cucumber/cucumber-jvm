@@ -40,7 +40,7 @@ public class Java8BackendTest {
 
     @Test
     public void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java8/stepdefs")));
+        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java8/steps")));
         backend.buildWorld();
         verify(factory).addClass(Stepdefs.class);
     }

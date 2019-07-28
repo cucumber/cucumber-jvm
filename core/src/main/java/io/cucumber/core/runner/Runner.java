@@ -1,13 +1,14 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -18,9 +19,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.joining;
+import static java.util.Collections.emptyList;
 
 public final class Runner {
 
@@ -31,20 +33,18 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
-    private final List<SnippetGenerator> snippetGenerators;
+    private final TypeRegistryConfigurer typeRegistryConfigurer;
+    private List<SnippetGenerator> snippetGenerators;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, TypeRegistry typeRegistry, Options runnerOptions) {
+    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, TypeRegistryConfigurer typeRegistryConfigurer, Options runnerOptions) {
         this.bus = bus;
-        this.glue = new CachingGlue(bus, typeRegistry);
         this.runnerOptions = runnerOptions;
         this.backends = backends;
-        this.snippetGenerators = backends.stream()
-            .map(Backend::getSnippet)
-            .map(s -> new SnippetGenerator(s, typeRegistry.parameterTypeRegistry()))
-            .collect(Collectors.toList());
+        this.glue = new CachingGlue(bus);
         this.objectFactory = objectFactory;
+        this.typeRegistryConfigurer = typeRegistryConfigurer;
         List<URI> gluePaths = runnerOptions.getGlue();
-        log.debug("Loading glue from " + gluePaths.stream().map(URI::toString).collect(joining(", ")));
+        log.debug("Loading glue from " + gluePaths);
         for (Backend backend : backends) {
             log.debug("Loading glue for backend " + backend.getClass().getName());
             backend.loadGlue(this.glue, gluePaths);
@@ -56,25 +56,53 @@ public final class Runner {
     }
 
     public void runPickle(PickleEvent pickle) {
-        buildBackendWorlds(); // Java8 step definitions will be added to the glue here
-        TestCase testCase = createTestCaseForPickle(pickle);
-        testCase.run(bus);
-        disposeBackendWorlds();
+        try {
+            TypeRegistry typeRegistry = createTypeRegistryForPickle(pickle);
+            snippetGenerators = createSnippetGeneratorsForPickle(typeRegistry);
+
+            buildBackendWorlds(); // Java8 step definitions will be added to the glue here
+
+            glue.prepareGlue(typeRegistry);
+
+            TestCase testCase = createTestCaseForPickle(pickle);
+            testCase.run(bus);
+        } finally {
+            glue.removeScenarioScopedGlue();
+            disposeBackendWorlds();
+        }
+    }
+
+    private List<SnippetGenerator> createSnippetGeneratorsForPickle(TypeRegistry typeRegistry) {
+        return backends.stream()
+            .map(Backend::getSnippet)
+            .map(s -> new SnippetGenerator(s, typeRegistry.parameterTypeRegistry()))
+            .collect(Collectors.toList());
+    }
+
+    private TypeRegistry createTypeRegistryForPickle(PickleEvent pickle) {
+        Locale locale = typeRegistryConfigurer.locale();
+        if(locale == null){
+            locale = new Locale(pickle.pickle.getLanguage());
+        }
+        TypeRegistry typeRegistry = new TypeRegistry(locale);
+        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
+        return typeRegistry;
     }
 
     private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
-        List<PickleStepTestStep> testSteps = new ArrayList<>();
-        List<HookTestStep> beforeHooks = new ArrayList<>();
-        List<HookTestStep> afterHooks = new ArrayList<>();
-        if (!pickleEvent.pickle.getSteps().isEmpty()) {
-            addTestStepsForBeforeHooks(beforeHooks, pickleEvent.pickle.getTags());
-            addTestStepsForPickleSteps(testSteps, pickleEvent);
-            addTestStepsForAfterHooks(afterHooks, pickleEvent.pickle.getTags());
+        if (pickleEvent.pickle.getSteps().isEmpty()) {
+            return new TestCase(emptyList(), emptyList(), emptyList(), pickleEvent, runnerOptions.isDryRun());
         }
+
+        List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickleEvent);
+        List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickleEvent.pickle.getTags());
+        List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickleEvent.pickle.getTags());
         return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runnerOptions.isDryRun());
     }
 
-    private void addTestStepsForPickleSteps(List<PickleStepTestStep> testSteps, PickleEvent pickleEvent) {
+    private List<PickleStepTestStep> createTestStepsForPickleSteps(PickleEvent pickleEvent) {
+        List<PickleStepTestStep> testSteps = new ArrayList<>();
+
         for (PickleStep step : pickleEvent.pickle.getSteps()) {
             PickleStepDefinitionMatch match;
             try {
@@ -97,10 +125,12 @@ public final class Runner {
             }
 
 
-            List<HookTestStep> afterStepHookSteps = getAfterStepHooks(pickleEvent.pickle.getTags());
-            List<HookTestStep> beforeStepHookSteps = getBeforeStepHooks(pickleEvent.pickle.getTags());
+            List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickleEvent.pickle.getTags());
+            List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickleEvent.pickle.getTags());
             testSteps.add(new PickleStepTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
         }
+
+        return testSteps;
     }
 
     private List<SnippetsSuggestedEvent.Location> locations(PickleStep step) {
@@ -109,33 +139,27 @@ public final class Runner {
             .collect(Collectors.toList());
     }
 
-    private void addTestStepsForBeforeHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getBeforeHooks(), HookType.BEFORE);
+    private List<HookTestStep> createTestStepsForBeforeHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getBeforeHooks(), HookType.BEFORE);
     }
 
-    private void addTestStepsForAfterHooks(List<HookTestStep> testSteps, List<PickleTag> tags) {
-        addTestStepsForHooks(testSteps, tags, glue.getAfterHooks(), HookType.AFTER);
+    private List<HookTestStep> createTestStepsForAfterHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
     }
 
-    private void addTestStepsForHooks(List<HookTestStep> testSteps, List<PickleTag> tags, List<HookDefinition> hooks, HookType hookType) {
-        for (HookDefinition hook : hooks) {
-            if (hook.matches(tags)) {
-                HookTestStep testStep = new HookTestStep(hookType, new HookDefinitionMatch(hook));
-                testSteps.add(testStep);
-            }
-        }
+    private List<HookTestStep> createTestStepsForHooks(List<PickleTag> tags, Collection<HookDefinition> hooks, HookType hookType) {
+        return hooks.stream()
+            .filter(hook -> hook.matches(tags))
+            .map(hook -> new HookTestStep(hookType, new HookDefinitionMatch(hook)))
+            .collect(Collectors.toList());
     }
 
-    private List<HookTestStep> getAfterStepHooks(List<PickleTag> tags) {
-        List<HookTestStep> hookSteps = new ArrayList<>();
-        addTestStepsForHooks(hookSteps, tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
-        return hookSteps;
+    private List<HookTestStep> createAfterStepHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
     }
 
-    private List<HookTestStep> getBeforeStepHooks(List<PickleTag> tags) {
-        List<HookTestStep> hookSteps = new ArrayList<>();
-        addTestStepsForHooks(hookSteps, tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
-        return hookSteps;
+    private List<HookTestStep> createBeforeStepHooks(List<PickleTag> tags) {
+        return createTestStepsForHooks(tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
     }
 
     private void buildBackendWorlds() {
@@ -150,6 +174,5 @@ public final class Runner {
             backend.disposeWorld();
         }
         objectFactory.stop();
-        glue.removeScenarioScopedGlue();
     }
 }

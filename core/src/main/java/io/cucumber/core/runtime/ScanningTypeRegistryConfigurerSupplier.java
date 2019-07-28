@@ -4,27 +4,23 @@ import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.reflection.Reflections;
 import io.cucumber.core.runner.Options;
-import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.util.Locale;
 
-public final class ConfiguringTypeRegistrySupplier implements TypeRegistrySupplier {
+public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistryConfigurerSupplier {
 
     private final ClassFinder classFinder;
     private final Options options;
 
-    public ConfiguringTypeRegistrySupplier(ClassFinder classFinder, Options options) {
+    public ScanningTypeRegistryConfigurerSupplier(ClassFinder classFinder, Options options) {
         this.classFinder = classFinder;
         this.options = options;
     }
 
     @Override
-    public TypeRegistry get() {
+    public TypeRegistryConfigurer get() {
         Reflections reflections = new Reflections(classFinder);
-        TypeRegistryConfigurer typeRegistryConfigurer = reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, options.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
-        TypeRegistry typeRegistry = new TypeRegistry(typeRegistryConfigurer.locale());
-        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
-        return typeRegistry;
+        return reflections.instantiateExactlyOneSubclass(TypeRegistryConfigurer.class, options.getGlue(), new Class[0], new Object[0], new DefaultTypeRegistryConfiguration());
     }
 
     private static final class DefaultTypeRegistryConfiguration implements TypeRegistryConfigurer {

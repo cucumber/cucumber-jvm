@@ -128,7 +128,7 @@ public class CoreStepDefinitionTest {
         for (Argument argument : arguments) {
             result.add(argument.getValue());
         }
-        coreStepDefinition.execute(result.toArray(new Object[0]));
+        coreStepDefinition.getStepDefinition().execute(result.toArray(new Object[0]));
 
         return (T) stub.getArgs().get(0);
     }

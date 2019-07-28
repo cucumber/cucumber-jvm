@@ -7,6 +7,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Execute method after each scenario.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
@@ -22,7 +25,7 @@ public @interface After {
     /**
      * Duration in milliseconds this hook is allowed to run. Cucumber
      * will mark the hook as failed when exceeded.
-     *
+     * <p>
      * When the maximum duration is exceeded the thread will
      * receive an interrupt. Note: if the interrupt is ignored
      * Cucumber will wait for the this hook to finish.

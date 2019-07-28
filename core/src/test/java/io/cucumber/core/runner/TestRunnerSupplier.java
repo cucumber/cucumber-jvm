@@ -8,21 +8,19 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.core.snippets.Snippet;
 import io.cucumber.core.snippets.TestSnippet;
-import io.cucumber.core.stepexpression.TypeRegistry;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.singleton;
 
 public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
 
     private final EventBus bus;
     private final RuntimeOptions runtimeOptions;
-    private final TypeRegistry typeRegistry;
 
-    protected TestRunnerSupplier(EventBus bus, TypeRegistry typeRegistry, RuntimeOptions runtimeOptions) {
+    protected TestRunnerSupplier(EventBus bus, RuntimeOptions runtimeOptions) {
         this.bus = bus;
-        this.typeRegistry = typeRegistry;
         this.runtimeOptions = runtimeOptions;
     }
 
@@ -48,7 +46,7 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactor
 
     @Override
     public Runner get() {
-        return new Runner(bus, Collections.singleton(this), this, typeRegistry, runtimeOptions);
+        return new Runner(bus, singleton(this), this, typeRegistry -> {}, runtimeOptions);
     }
 
     @Override

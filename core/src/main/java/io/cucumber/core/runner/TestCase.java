@@ -22,7 +22,7 @@ final class TestCase implements io.cucumber.core.event.TestCase {
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
 
-    public TestCase(List<PickleStepTestStep> testSteps,
+    TestCase(List<PickleStepTestStep> testSteps,
                     List<HookTestStep> beforeHooks,
                     List<HookTestStep> afterHooks,
                     PickleEvent pickleEvent,

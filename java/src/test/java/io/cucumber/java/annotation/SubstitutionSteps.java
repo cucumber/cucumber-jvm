@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class SubstitutionStepdefs {
+public class SubstitutionSteps {
     private static final Map<String, String> ROLES = new HashMap<String, String>() {{
         put("Manager", "now able to manage your employee accounts");
         put("Admin", "able to manage any user account on the system");

@@ -1,13 +1,13 @@
 package io.cucumber.core.runtime;
 
-import java.time.Instant;
-
 import io.cucumber.core.event.Event;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.eventbus.AbstractEventBus;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runner.Options;
 import io.cucumber.core.runner.Runner;
+
+import java.time.Instant;
 
 /**
  * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.
@@ -20,7 +20,7 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final io.cucumber.core.runner.Options runnerOptions;
     private final SynchronizedEventBus sharedEventBus;
     private final ObjectFactorySupplier objectFactorySupplier;
-    private final TypeRegistrySupplier typeRegistrySupplier;
+    private final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier;
 
     private final ThreadLocal<Runner> runners = ThreadLocal.withInitial(this::createRunner);
 
@@ -28,12 +28,14 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         Options runnerOptions,
         EventBus sharedEventBus,
         BackendSupplier backendSupplier,
-        ObjectFactorySupplier objectFactorySupplier, TypeRegistrySupplier typeRegistrySupplier) {
+        ObjectFactorySupplier objectFactorySupplier,
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier
+    ) {
         this.runnerOptions = runnerOptions;
         this.sharedEventBus = SynchronizedEventBus.synchronize(sharedEventBus);
         this.backendSupplier = backendSupplier;
         this.objectFactorySupplier = objectFactorySupplier;
-        this.typeRegistrySupplier = typeRegistrySupplier;
+        this.typeRegistryConfigurerSupplier = typeRegistryConfigurerSupplier;
     }
 
     @Override
@@ -46,7 +48,7 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
             new LocalEventBus(sharedEventBus),
             backendSupplier.get(),
             objectFactorySupplier.get(),
-            typeRegistrySupplier.get(),
+            typeRegistryConfigurerSupplier.get(),
             runnerOptions
         );
     }
