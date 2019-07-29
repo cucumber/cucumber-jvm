@@ -1,10 +1,10 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
-## [4.6.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...master) (In Git)
+
+## [4.7.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
 ### Added
- - [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
-
+ 
 ### Changed
 
 ### Deprecated
@@ -12,6 +12,21 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+
+## [4.7.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...v4.7.1) (2019-07-28)
+
+### Fixed
+  *  [All] Add missing JPMS config ([#1709](https://github.com/cucumber/cucumber-jvm/pull/1709)  John Patrick)
+    - Add automatic module name for `core`
+    - Add automatic module name for `cd2`
+    - Add automatic module name for `guice`
+
+## [4.7.0](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...v4.7.0) (2019-07-20)
+
+### Added
+ * [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
+    - Use `cucumber.object-factory=com.example.CustomObjectFactory` in either `cucucmber.properties`, 
+      environment variables, or system properties  
 
 ## [4.6.0](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...v4.6.0) (2019-07-16)
 
@@ -56,6 +71,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Use `io.cucumber.core.cli.Main` instead
  * [Core] Deprecate `cucumber.api.Scenario`
     - Use `io.cucumber.core.api.Scenario` instead
+ * [Java] Deprecate `cucumber.api.java.*`
+    - Use `io.cucumber.java.*` instead
+ * [Java] Deprecate `cucumber.api.java8.*`
+    - Use `io.cucumber.java8.*` instead
  * [JUnit] Deprecate `cucumber.api.junit.Cucumber`
     - Use `io.cucumber.junit.Cucumber` instead. 
  * [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`

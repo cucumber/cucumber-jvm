@@ -1,10 +1,15 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.options.*;
-import io.cucumber.core.runtime.ConfiguringTypeRegistrySupplier;
+import io.cucumber.core.options.Constants;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.CucumberProperties;
+import io.cucumber.core.options.CucumberPropertiesParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.eventbus.EventBus;
@@ -22,7 +27,7 @@ import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.runtime.TypeRegistrySupplier;
+import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -57,10 +62,10 @@ import java.util.List;
  * <p>
  * Options can be provided in by (order of precedence):
  * <ol>
- * <li>Setting {@code cucumber.options} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@code cucumber.options} property in {@link System#getenv()}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>{Setting @code cucumber.options} property in {@code cucumber.properties}</li>
+ * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@code cucumber.properties}</li>
  * </ol>
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
@@ -138,10 +143,11 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
 
-        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
-        TypeRegistrySupplier typeRegistrySupplier = new ConfiguringTypeRegistrySupplier(classFinder, runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistrySupplier);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Filters filters = new Filters(runtimeOptions);
         for (CucumberFeature cucumberFeature : features) {
             FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);

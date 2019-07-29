@@ -3,12 +3,10 @@ package io.cucumber.core.stepexpression;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
-import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-@API(status = API.Status.STABLE)
 public final class ArgumentMatcher {
 
     private final StepExpression expression;

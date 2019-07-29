@@ -1,9 +1,9 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.snippets.SnippetType;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,7 +22,8 @@ public final class RuntimeOptions implements
     io.cucumber.core.feature.Options,
     io.cucumber.core.runner.Options,
     io.cucumber.core.plugin.Options,
-    io.cucumber.core.filter.Options {
+    io.cucumber.core.filter.Options,
+    io.cucumber.core.backend.Options {
 
     private final List<URI> glue = new ArrayList<>();
     private final List<String> tagExpressions = new ArrayList<>();

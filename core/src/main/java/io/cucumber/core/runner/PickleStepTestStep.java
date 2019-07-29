@@ -65,7 +65,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.core.even
 
     @Override
     public String getStepLocation() {
-        return uri + ":" + Integer.toString(getStepLine());
+        return uri + ":" + getStepLine();
     }
 
     @Override

@@ -10,12 +10,15 @@ import java.util.Locale;
 @API(status = API.Status.STABLE)
 public interface TypeRegistryConfigurer {
     /**
-     * @return The locale to use.
+     * @return The locale to use, or null when language from feature file should be used.
      */
-    Locale locale();
+    default Locale locale() {
+        return null;
+    }
 
     /**
      * Configures the type registry.
+     *
      * @param typeRegistry The new type registry.
      */
     void configureTypeRegistry(TypeRegistry typeRegistry);

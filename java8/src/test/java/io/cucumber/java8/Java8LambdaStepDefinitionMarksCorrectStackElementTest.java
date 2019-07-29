@@ -1,17 +1,11 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.java8.En;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.util.function.Function;
-
-import static java.util.Locale.ENGLISH;
 
 public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
@@ -48,8 +42,8 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         private StepDefinition stepDefinition;
 
         @Override
-        public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
-            stepDefinition = stepDefinitionFunction.apply(new TypeRegistry(ENGLISH));
+        public void addStepDefinition(StepDefinition stepDefinition) {
+            this.stepDefinition = stepDefinition;
         }
 
         @Override

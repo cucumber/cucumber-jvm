@@ -46,9 +46,7 @@ public interface ${className} extends LambdaGlue {
      * @param body       a lambda expression with no parameters
      */
     default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A0 body) {
-        LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
-            Java8StepDefinition.create(expression, A0.class, body, typeRegistry)
-        );
+        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A0.class, body));
     }
 
     /**
@@ -68,9 +66,7 @@ public interface ${className} extends LambdaGlue {
      */
     @Deprecated
     default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A0 body) {
-        LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
-            Java8StepDefinition.create(expression, timeoutMillis, A0.class, body, typeRegistry)
-        );
+        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, timeoutMillis, A0.class, body));
     }
 
     <% (1..9).each { arity ->
@@ -85,9 +81,7 @@ public interface ${className} extends LambdaGlue {
      * @param <T${i}> type of argument ${i} <% } %>
      */
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A${arity}<${genericSignature}> body) {
-        LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
-            Java8StepDefinition.create(expression, A${arity}.class, body, typeRegistry)
-        );
+        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A${arity}.class, body));
     }
 
     /**
@@ -109,9 +103,7 @@ public interface ${className} extends LambdaGlue {
      */
     @Deprecated
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A${arity}<${genericSignature}> body) {
-        LambdaGlueRegistry.INSTANCE.get().addStepDefinition((typeRegistry) ->
-            Java8StepDefinition.create(expression, timeoutMillis, A${arity}.class, body, typeRegistry)
-        );
+        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, timeoutMillis, A${arity}.class, body));
     }
 
     <% } %>

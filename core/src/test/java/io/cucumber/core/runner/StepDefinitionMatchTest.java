@@ -1,18 +1,18 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.runtime.StubStepDefinition;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.stepexpression.Argument;
+import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.Transformer;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellTransformer;
-import io.cucumber.core.stepexpression.Argument;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -35,8 +35,9 @@ public class StepDefinitionMatchTest {
     public void executes_a_step() throws Throwable {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
-        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.class);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         stepDefinitionMatch.runStep(null);
     }
@@ -45,8 +46,9 @@ public class StepDefinitionMatchTest {
     public void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments() throws Throwable {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
 
-        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -70,8 +72,9 @@ public class StepDefinitionMatchTest {
 
         PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
 
-        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         expectedException.expectMessage(
@@ -90,8 +93,9 @@ public class StepDefinitionMatchTest {
     @Test
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() throws Throwable {
         PickleStep step = new PickleStep("I have 4 cukes in my belly", asList((gherkin.pickles.Argument) mock(PickleTable.class)), asList(mock(PickleLocation.class)));
-        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Step [I have {int} cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
@@ -107,8 +111,9 @@ public class StepDefinitionMatchTest {
     @Test
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_and_no_arguments() throws Throwable {
         PickleStep step = new PickleStep("I have cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
-        StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", typeRegistry, Integer.TYPE, Short.TYPE, List.class);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
             "Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
@@ -123,8 +128,9 @@ public class StepDefinitionMatchTest {
         PickleTable table = new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "A")))));
 
         PickleStep step = new PickleStep("I have a datatable", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
-        StepDefinition stepDefinition = new StubStepDefinition("I have a datatable", typeRegistry, UndefinedDataTableType.class);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have a datatable", UndefinedDataTableType.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
@@ -148,8 +154,9 @@ public class StepDefinitionMatchTest {
             }));
 
         PickleStep step = new PickleStep("I have some cukes in my belly", Collections.<gherkin.pickles.Argument>emptyList(), asList(mock(PickleLocation.class)));
-        StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", typeRegistry, ItemQuantity.class);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +
@@ -181,8 +188,9 @@ public class StepDefinitionMatchTest {
         ));
 
         PickleStep step = new PickleStep("I have some cukes in my belly", singletonList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
-        StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", typeRegistry, ItemQuantity.class);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         expectedException.expectMessage("" +

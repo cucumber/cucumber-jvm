@@ -1,83 +1,60 @@
 package io.cucumber.java8;
 
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.datatable.DataTable;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.List;
-import java.util.Locale;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
 public class Java8LambdaStepDefinitionTest {
 
-    private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() {
         StepdefBody.A1<String> body = p1 -> {
         };
-        Java8StepDefinition def = Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, typeRegistry);
-        assertEquals(Integer.valueOf(1), def.getParameterCount());
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        assertEquals(1, stepDefinition.parameterInfos().size());
     }
 
     @Test
     public void should_calculate_parameters_count_from_body_with_two_params() {
         StepdefBody.A2<String, String> body = (p1, p2) -> {
         };
-        Java8StepDefinition def = Java8StepDefinition.create("I have some step", StepdefBody.A2.class, body, typeRegistry);
-        assertEquals(Integer.valueOf(2), def.getParameterCount());
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A2.class, body);
+        assertEquals(2, stepDefinition.parameterInfos().size());
     }
 
     @Test
-    public void should_apply_identity_transform_to_doc_string_when_target_type_is_object() {
+    public void should_resolve_type_to_object() {
         StepdefBody.A1 body = (p1) -> {
         };
-        Java8StepDefinition def = Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, typeRegistry);
-        PickleString pickleString = new PickleString(null, "content", "text");
-        List<Argument> arguments = def.matchedArguments(new PickleStep("I have some step", singletonList(pickleString), emptyList()));
-        assertEquals("content", arguments.get(0).getValue());
-    }
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
 
-    @Test
-    public void should_apply_identity_transform_to_data_table_when_target_type_is_object() {
-        StepdefBody.A1 body = (p1) -> {
-        };
-        Java8StepDefinition def = Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, typeRegistry);
-        PickleTable table = new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(null, "content")))));
-        List<Argument> arguments = def.matchedArguments(new PickleStep("I have some step", singletonList(table), emptyList()));
-        assertEquals(DataTable.create(singletonList(singletonList("content"))), arguments.get(0).getValue());
+        assertEquals(Object.class, stepDefinition.parameterInfos().get(0).getType());
     }
-
 
     @Test
     public void should_fail_for_param_with_non_generic_list() {
-        try {
-            StepdefBody.A1<List> body = p1 -> {
-            };
-            Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, typeRegistry);
-        } catch (CucumberException expected) {
-            assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
-        }
+        expectedException.expectMessage("Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps");
+
+        StepdefBody.A1<List> body = p1 -> {
+        };
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
     }
 
     @Test
     public void should_fail_for_param_with_generic_list() {
-        try {
-            StepdefBody.A1<List<String>> body = p1 -> {
-            };
-            Java8StepDefinition.create("I have some step", StepdefBody.A1.class, body, typeRegistry);
-        } catch (CucumberException expected) {
-            assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
-        }
+        expectedException.expectMessage("Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps");
+
+        StepdefBody.A1<List<String>> body = p1 -> {
+        };
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
     }
 }

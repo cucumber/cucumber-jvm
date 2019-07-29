@@ -1,38 +1,23 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.stepexpression.Argument;
-import gherkin.pickles.PickleStep;
-import io.cucumber.core.stepexpression.ArgumentMatcher;
-import io.cucumber.core.stepexpression.StepExpression;
-import io.cucumber.core.stepexpression.StepExpressionFactory;
+import io.cucumber.core.backend.TypeResolver;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
 public class StubStepDefinition implements StepDefinition {
-    private final List<Type> parameters;
-    private final StepExpression expression;
-    private final ArgumentMatcher argumentMatcher;
+    private final List<ParameterInfo> parameterInfos;
+    private final String expression;
 
-    public StubStepDefinition(String pattern, TypeRegistry typeRegistry, Type... types) {
-        this.parameters = Arrays.asList(types);
-        if (parameters.isEmpty()) {
-            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern);
-        } else {
-            Type lastParameter = parameters.get(parameters.size() - 1);
-            this.expression = new StepExpressionFactory(typeRegistry).createExpression(pattern, lastParameter);
-        }
-        this.argumentMatcher = new ArgumentMatcher(expression);
-    }
-
-    @Override
-    public List<Argument> matchedArguments(PickleStep step) {
-        return argumentMatcher.argumentsFrom(step);
+    public StubStepDefinition(String pattern, Type... types) {
+        this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
+        this.expression = pattern;
     }
 
     @Override
@@ -41,15 +26,10 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Integer getParameterCount() {
-        return parameters.size();
-    }
-
-    @Override
-    public void execute(Object[] args) throws Throwable {
-        assertEquals(parameters.size(), args.length);
+    public void execute(Object[] args) {
+        assertEquals(parameterInfos.size(), args.length);
         for (int i = 0; i < args.length; i++) {
-            assertEquals(parameters.get(i), args[i].getClass());
+            assertEquals(parameterInfos.get(i).getType(), args[i].getClass());
         }
     }
 
@@ -59,8 +39,37 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
+    public List<ParameterInfo> parameterInfos() {
+        return parameterInfos;
+    }
+
+    @Override
     public String getPattern() {
-        return expression.getSource();
+        return expression;
+    }
+
+    private final class StubParameterInfo implements ParameterInfo {
+
+        private final Type type;
+
+        private StubParameterInfo(Type type) {
+            this.type = type;
+        }
+
+        @Override
+        public Type getType() {
+            return type;
+        }
+
+        @Override
+        public boolean isTransposed() {
+            return false;
+        }
+
+        @Override
+        public TypeResolver getTypeResolver() {
+            return () -> type;
+        }
     }
 
 }

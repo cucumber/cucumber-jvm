@@ -1,32 +1,37 @@
 package io.cucumber.core.options;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import io.cucumber.core.backend.ObjectFactory;
+import org.junit.Test;
 
-final class CucumberPropertiesParserTest {
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
-    private CucumberPropertiesParser parser;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
-    @BeforeEach
-    void setUp() {
-        this.parser = new CucumberPropertiesParser();
-    }
-    
-    
+public class CucumberPropertiesParserTest {
+
+    private final CucumberPropertiesParser cucumberPropertiesParser = new CucumberPropertiesParser();
+    private final Map<String, String> properties = new HashMap<>();
+
     @Test
-    void testParse() {
-        TestObjectFactory factory = new TestObjectFactory();
-        Class<? extends ObjectFactory> objectFactoryClass =
-                CucumberPropertiesParser.parseObjectFactory(factory.getClass().getName());
-        assertEquals(factory.getClass(), objectFactoryClass);
+    public void should_parse_cucumber_options(){
+        properties.put(Constants.CUCUMBER_OPTIONS_PROPERTY_NAME, "--glue com.example");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getGlue(), equalTo(singletonList(URI.create("classpath:com/example"))));
     }
 
-    public static final class TestObjectFactory implements ObjectFactory {
+    @Test
+    public void should_parse_cucumber_object_factory(){
+        properties.put(Constants.CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME, CustomObjectFactory.class.getName());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getObjectFactoryClass(), equalTo(CustomObjectFactory.class));
+    }
 
+
+    private static final class CustomObjectFactory implements ObjectFactory {
         @Override
         public boolean addClass(Class<?> glueClass) {
             return false;

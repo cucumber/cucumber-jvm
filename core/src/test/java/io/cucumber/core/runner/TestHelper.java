@@ -161,7 +161,7 @@ public class TestHelper {
                 }
 
                 Type[] types = mapArgumentToTypes(step);
-                StepDefinition stepDefinition = new StubStepDefinition(step.getText(), typeRegistry, types) {
+                StepDefinition stepDefinition = new StubStepDefinition(step.getText(), types) {
 
                     @Override
                     public void execute(Object[] args) throws Throwable {
@@ -183,7 +183,7 @@ public class TestHelper {
                     }
                 };
 
-                glue.addStepDefinition(t -> stepDefinition);
+                glue.addStepDefinition(stepDefinition);
             }
         }
 
