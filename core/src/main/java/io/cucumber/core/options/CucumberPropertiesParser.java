@@ -38,7 +38,7 @@ public final class CucumberPropertiesParser {
 
         String cucumberObjectFactory = properties.get(CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME);
         if (cucumberObjectFactory != null) {
-            Class<? extends ObjectFactory> objectFactoryClass = parse(cucumberObjectFactory);
+            Class<? extends ObjectFactory> objectFactoryClass = parseObjectFactory(cucumberObjectFactory);
             builder.setObjectFactoryClass(objectFactoryClass);
         }
 
@@ -46,7 +46,7 @@ public final class CucumberPropertiesParser {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends ObjectFactory> parse(String cucumberObjectFactory) {
+    static Class<? extends ObjectFactory> parseObjectFactory(String cucumberObjectFactory) {
         Class<?> objectFactoryClass;
         try {
             objectFactoryClass = Class.forName(cucumberObjectFactory);

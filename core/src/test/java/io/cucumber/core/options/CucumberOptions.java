@@ -115,6 +115,13 @@ public @interface CucumberOptions {
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
     /**
+     * A custom ObjectFactory.
+     *
+     * @return The class of the custim ObjectFactory to use.
+     */
+    Class<? extends io.cucumber.core.backend.ObjectFactory> objectFactory() default NoObjectFactory.class;
+
+    /**
      * Pass options to the JUnit runner.
      *
      * @return The JUnit options to pass on.

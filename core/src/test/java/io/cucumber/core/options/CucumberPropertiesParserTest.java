@@ -23,7 +23,6 @@ public class CucumberPropertiesParserTest {
         assertThat(options.getGlue(), equalTo(singletonList(URI.create("classpath:com/example"))));
     }
 
-
     @Test
     public void should_parse_cucumber_object_factory(){
         properties.put(Constants.CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME, CustomObjectFactory.class.getName());
@@ -31,8 +30,8 @@ public class CucumberPropertiesParserTest {
         assertThat(options.getObjectFactoryClass(), equalTo(CustomObjectFactory.class));
     }
 
-    private static final class CustomObjectFactory implements ObjectFactory {
 
+    private static final class CustomObjectFactory implements ObjectFactory {
         @Override
         public boolean addClass(Class<?> glueClass) {
             return false;
@@ -53,5 +52,4 @@ public class CucumberPropertiesParserTest {
 
         }
     }
-
 }

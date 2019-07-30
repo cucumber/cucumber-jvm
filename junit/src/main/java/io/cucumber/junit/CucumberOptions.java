@@ -117,6 +117,16 @@ public @interface CucumberOptions {
      */
     boolean stepNotifications() default false;
 
+    /**
+     * Specify a custom ObjectFactory.
+     * <p>
+     * In case a custom ObjectFactory is needed, the class can be specified here.
+     * A custom ObjectFactory might be needed when more granular control is needed
+     * over the dependency injection mechanism. 
+     */
+    Class<? extends io.cucumber.core.backend.ObjectFactory> objectFactory() default NoObjectFactory.class;
+
+
     enum SnippetType {
         UNDERSCORE, CAMELCASE
     }

@@ -1,4 +1,4 @@
-Usage: java cucumber.api.cli.Main [options] [ [DIR|DIR URI] | [ [FILE|FILE URI][:LINE]* ] | @[FILE|FILE URI] ]+
+Usage: java io.cucumber.core.cli.Main [options] [ [DIR|DIR URI] | [ [FILE|FILE URI][:LINE]* ] | @[FILE|FILE URI] ]+
 
 Options:
 
@@ -49,6 +49,12 @@ Options:
 
       --count                              Number of scenarios to be executed. If not 
                                            specified all scenarios are run.
+
+      --object-factory CLASSNAME           Uses the class specified by CLASSNAME as
+                                           object factory. Be aware that the class is
+                                           loaded through a service loader and therefore
+                                           also needs to be specified in:
+                                           META-INF/services/io.cucumber.core.backend.ObjectFactory
 
 Feature path examples:
 

@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
@@ -50,6 +51,7 @@ public final class CucumberOptionsAnnotationParser {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
+                addObjectFactory(options, args);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -146,10 +148,15 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-
     private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options.strict()) {
             args.setStrict(true);
+        }
+    }
+
+    private void addObjectFactory(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options.objectFactory() != null) {
+            args.setObjectFactoryClass(options.objectFactory());
         }
     }
 
@@ -204,5 +211,7 @@ public final class CucumberOptionsAnnotationParser {
         String[] name();
 
         SnippetType snippets();
+        
+        Class<? extends ObjectFactory> objectFactory();
     }
 }
