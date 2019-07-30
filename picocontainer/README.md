@@ -1,12 +1,98 @@
-# Step dependencies
+Cucumber PicoContainer
+======================
 
-The picocontainer will create singleton instances of any Step class dependencies which are constructor parameters and inject them into the Step class instances when constructing them.
+Use PicoContainer to provide dependency injection to steps.
 
-# Step scope and lifecycle
+Add the `cucumber-picocontainer` dependency to your pom.xml:
 
-All step classes and their dependencies will be recreated fresh for each scenario, even if the scenario in question does not use any steps from that particular class.
+```xml
+<dependencies>
+  [...]
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-picocontainer</artifactId>
+        <version>${cucumber.version}</version>
+        <scope>test</scope>
+    </dependency>
+  [...]
+</dependencies>
+```
 
-If any step classes or dependencies use expensive resources (such as database connections), you should create them lazily on-demand, rather than eagerly, to improve performance.
+## Step dependencies
 
-Step classes or their dependencies which own resources which need cleanup should implement org.picocontainer.Disposable as described at http://picocontainer.com/lifecycle.html . These callbacks will run after any cucumber.api.java.After callbacks.
+PicoContainer will create singleton instances of any step definition class
+constructor parameters. When instantiating a step definition these
+instances are injected.
 
+
+```java
+package com.example.app;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+public class StepDefinition {
+
+    private final Belly belly;
+
+    public StepDefinitions(Belly belly) {
+        this.belly = belly;
+    }
+
+    @Given("I have {int} {word} in my belly")
+    public void I_have_n_things_in_my_belly(int n, String what) {
+        belly.setContents(Collections.nCopies(n, what));
+    }
+
+    @Then("there are {int} cukes in my belly")
+    public void checkCukes(int n) {
+        assertEquals(belly.getContents(), Collections.nCopies(n, "cukes"));
+    }
+}
+```
+
+## Step scope and lifecycle
+
+All step classes and their dependencies will be recreated for each
+scenario, even if the scenario in question does not use any steps from
+that particular class.
+
+To improve performance it recommended to lazily create expensive 
+resources.
+
+```java
+public class LazyWebDriver implements Webdriver {
+
+    private final Webdriver delegate;
+
+    private Webdriver getDelegate() {
+        if (delegate == null) {
+            delegate = new ChromeWebDriver();
+        } 
+        return webdriver;
+    }
+
+    @Override
+    public void doThing() {
+        getDelegate().doThing();
+    }
+   
+   ...
+}
+```
+
+Step classes or their dependencies which own resources which need cleanup
+should implement `org.picocontainer.Disposable` as described in
+[PicoContainer - Component Lifecycle](http://picocontainer.com/lifecycle.html).
+These hooks will run after any Cucumber after hooks hooks.
+
+## Customizing PicoContainer
+
+Cucumber `PicoFactory` is intentionally not open for extension or
+customization. If you want to customize your dependency injection context
+it is recommended to provide your own implementation of 
+`io.cucumber.core.backend.ObjectFactory` and make it available through
+SPI.
