@@ -106,7 +106,7 @@ final class RuntimeOptionsParser {
                 }
                 parsedOptions.setCount(count);
             } else if (arg.equals("--object-factory")) {
-                String objectFactoryClassName = args.remove(0).trim();
+                String objectFactoryClassName = args.remove(0);
                 parsedOptions.setObjectFactoryClass(CucumberPropertiesParser.parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {
                 printUsage();
