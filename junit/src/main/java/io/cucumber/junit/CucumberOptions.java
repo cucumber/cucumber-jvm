@@ -2,8 +2,6 @@ package io.cucumber.junit;
 
 import org.apiguardian.api.API;
 
-import io.cucumber.core.snippets.SnippetType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -127,4 +125,9 @@ public @interface CucumberOptions {
      * over the dependency injection mechanism. 
      */
     Class<? extends io.cucumber.core.backend.ObjectFactory> objectFactory() default NoObjectFactory.class;
+
+
+    enum SnippetType {
+        UNDERSCORE, CAMELCASE
+    }
 }
