@@ -1,86 +1,59 @@
 package io.cucumber.java;
 
-import io.cucumber.core.reflection.Reflections;
 import io.cucumber.core.runtime.Invoker;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.exception.CucumberException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.List;
+import java.util.function.BiConsumer;
 
+import static io.cucumber.core.reflection.Reflections.isInstantiable;
 import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
-import static io.cucumber.java.InvalidMethodException.createMethodDeclaringClassNotAssignableFromGlue;
 
 final class MethodScanner {
 
-    private final ClassFinder classFinder;
-
-    MethodScanner(ClassFinder classFinder) {
-        this.classFinder = classFinder;
+    private MethodScanner() {
     }
 
-    /**
-     * Registers step definitions and hooks.
-     *
-     * @param javaBackend the backend where steps and hooks will be registered
-     * @param gluePaths   where to look
-     */
-    void scan(JavaBackend javaBackend, List<URI> gluePaths) {
-        for (URI gluePath : gluePaths) {
-            for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, gluePath)) {
-                while (glueCodeClass != null && glueCodeClass != Object.class && !Reflections.isInstantiable(glueCodeClass)) {
-                    // those can't be instantiated without container class present.
-                    glueCodeClass = glueCodeClass.getSuperclass();
-                }
-                //prevent unnecessary checking of Object methods
-                if (glueCodeClass != null && glueCodeClass != Object.class) {
-                    for (Method method : glueCodeClass.getMethods()) {
-                        if (method.getDeclaringClass() != Object.class) {
-                            scan(javaBackend, method, glueCodeClass);
-                        }
-                    }
-                }
-            }
+    static void scan(Class<?> aClass, BiConsumer<Method, Annotation> consumer) {
+        // prevent unnecessary checking of Object methods
+        if (Object.class.equals(aClass)) {
+            return;
+        }
+
+        if (!isInstantiable(aClass)) {
+            return;
+        }
+        for (Method method : aClass.getMethods()) {
+            scan(consumer, aClass, method);
         }
     }
 
-    /**
-     * Registers step definitions and hooks.
-     *
-     * @param javaBackend   the backend where steps and hooks will be registered.
-     * @param method        a candidate for being a stepdef or hook.
-     * @param glueCodeClass the class where the method is declared.
-     */
-    void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
-        scan(javaBackend, method, glueCodeClass, method.getAnnotations());
+    private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
+        //prevent unnecessary checking of Object methods
+        if (Object.class.equals(method.getDeclaringClass())) {
+            return;
+        }
+        scan(consumer, aClass, method, method.getAnnotations());
     }
 
-    private void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass, Annotation[] methodAnnotations) {
+    private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method, Annotation[] methodAnnotations) {
         for (Annotation annotation : methodAnnotations) {
-            if (isHookAnnotation(annotation)) {
-                validateMethod(method, glueCodeClass);
-                javaBackend.addHook(annotation, method);
-            } else if (isStepdefAnnotation(annotation)) {
-                validateMethod(method, glueCodeClass);
-                javaBackend.addStepDefinition(annotation, method);
-            } else if (isRepeatedStepdefAnnotation(annotation)) {
-                scan(javaBackend, method, glueCodeClass, repeatedAnnotations(annotation));
+            if (isHookAnnotation(annotation) || isStepDefinitionAnnotation(annotation)) {
+                validateMethod(aClass, method);
+                consumer.accept(method, annotation);
+            } else if (isRepeatedStepDefinitionAnnotation(annotation)) {
+                scan(consumer, aClass, method, repeatedAnnotations(annotation));
             }
         }
     }
 
-    private void validateMethod(Method method, Class<?> glueCodeClass) {
-        if (!method.getDeclaringClass().isAssignableFrom(glueCodeClass)) {
-            throw createMethodDeclaringClassNotAssignableFromGlue(method, glueCodeClass);
-        }
+    private static void validateMethod(Class<?> glueCodeClass, Method method) {
         if (!glueCodeClass.equals(method.getDeclaringClass())) {
             throw createInvalidMethodException(method, glueCodeClass);
         }
     }
 
-    private boolean isHookAnnotation(Annotation annotation) {
+    private static boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.equals(Before.class)
             || annotationClass.equals(After.class)
@@ -94,23 +67,23 @@ final class MethodScanner {
             ;
     }
 
-    private boolean isStepdefAnnotation(Annotation annotation) {
+    private static boolean isStepDefinitionAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
-        return annotationClass.getAnnotation(StepDefAnnotation.class) != null;
+        return annotationClass.getAnnotation(StepDefinitionAnnotation.class) != null;
     }
 
 
-    private boolean isRepeatedStepdefAnnotation(Annotation annotation) {
+    private static boolean isRepeatedStepDefinitionAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
-        return annotationClass.getAnnotation(StepDefAnnotations.class) != null;
+        return annotationClass.getAnnotation(StepDefinitionAnnotations.class) != null;
     }
 
-    private Annotation[] repeatedAnnotations(Annotation annotation) {
+    private static Annotation[] repeatedAnnotations(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
             return (Annotation[]) Invoker.invoke(annotation, expressionMethod, 0);
         } catch (Throwable e) {
-            throw new CucumberException(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 @API(status = API.Status.INTERNAL)
-public @interface StepDefAnnotations {
+public @interface StepDefinitionAnnotations {
 }

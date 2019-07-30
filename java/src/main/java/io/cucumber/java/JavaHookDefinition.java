@@ -27,10 +27,6 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         this.lookup = lookup;
     }
 
-    Method getMethod() {
-        return method;
-    }
-
     private static Method requireValidMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length > 1) {

@@ -16,8 +16,4 @@ final class InvalidMethodException extends CucumberException {
                 + glueCodeClass + " extends " + method.getDeclaringClass());
     }
 
-    static InvalidMethodException createMethodDeclaringClassNotAssignableFromGlue(Method method, Class<?> glueCodeClass) {
-        return new InvalidMethodException(method.getDeclaringClass() + " isn't assignable from " + glueCodeClass);
-    }
-
 }

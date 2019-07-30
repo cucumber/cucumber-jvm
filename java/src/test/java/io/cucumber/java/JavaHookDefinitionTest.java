@@ -74,7 +74,7 @@ public class JavaHookDefinitionTest {
             "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
             " * public void before_or_after(Scenario scenario)\n" +
             " * public void before_or_after()\n" +
-            "at io.cucumber.java.JavaHookTest.invalid_parameter(String) in file:"));
+            "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(String) in file:"));
     }
 
 

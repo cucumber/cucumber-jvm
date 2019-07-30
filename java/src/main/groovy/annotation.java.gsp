@@ -1,7 +1,7 @@
 package io.cucumber.java.${lang};
 
-import io.cucumber.java.StepDefAnnotation;
-import io.cucumber.java.StepDefAnnotations;
+import io.cucumber.java.StepDefinitionAnnotations;
+import io.cucumber.java.StepDefinitionAnnotation;
 
 import org.apiguardian.api.API;
 
@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@StepDefAnnotation
+@StepDefinitionAnnotation
 @Documented
 @Repeatable(${kw}.${kw}s.class)
 @API(status = API.Status.STABLE)
@@ -63,7 +63,7 @@ public @interface ${kw} {
      */
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    @StepDefAnnotations
+    @StepDefinitionAnnotations
     @Documented
     @interface ${kw}s {
         ${kw}[] value();

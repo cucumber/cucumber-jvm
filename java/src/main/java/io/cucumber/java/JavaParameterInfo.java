@@ -50,9 +50,4 @@ class JavaParameterInfo implements ParameterInfo {
         return () -> type;
     }
 
-    @Override
-    public String toString() {
-        return type.toString();
-    }
-
 }
