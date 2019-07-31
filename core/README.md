@@ -37,17 +37,14 @@ the application components into the step definitions.
 ```java
 package com.example.app;
 
-import com.example.app.service.AppService;
-
-import java.util.Objects;
-
-import javax.inject.Inject;
+import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.cucumber.guice.ScenarioScoped;
-
-import static org.junit.Assert.assertTrue;
+import com.example.app.service.AppService;
+import java.util.Objects;
+import javax.inject.Inject;
 
 @ScenarioScoped
 public final class StepDefinition {
@@ -80,8 +77,8 @@ has to be provided by a Guice module. Guice modules are used to configure an inj
 ```java
 package com.example.app.service.impl;
 
-import com.google.inject.AbstractModule;
 import com.example.app.service.AppService;
+import com.google.inject.AbstractModule;
 
 public final class ServiceModule extends AbstractModule {
     @Override
@@ -107,15 +104,13 @@ In case we want to customize this injector we need to provide our own object fac
 ```java
 package com.example.app;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-
-import com.example.app.service.impl.ServiceModule;
-
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.guice.CucumberModules;
 import io.cucumber.guice.ScenarioScope;
+import com.example.app.service.impl.ServiceModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
 
 public final class CustomObjectFactory implements ObjectFactory {
 
