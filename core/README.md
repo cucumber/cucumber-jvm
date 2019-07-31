@@ -77,7 +77,7 @@ In order for Guice to create the step definition, an instance of AppService is n
 The implementation of the AppService may need further arguments and configuration that typically
 has to be provided by a Guice module. Guice modules are used to configure an injector and might look like this: 
 
-````java
+```java
 package com.example.app.service.impl;
 
 import com.google.inject.AbstractModule;
