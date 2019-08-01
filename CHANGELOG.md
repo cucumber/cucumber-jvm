@@ -13,6 +13,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Add `@DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
  * [Java] Support repeatable step definition annotations ([#1341](https://github.com/cucumber/cucumber-jvm/issues/1341), [#1467](https://github.com/cucumber/cucumber-jvm/pull/1467) M.P. Korstanje)
  * [Core] Add name to `EmbedEvent` ([#1698](https://github.com/cucumber/cucumber-jvm/pull/1698) Konrad M.) 
+ 
 ### Changed
  * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449) M.P. Korstanje)
    - Adds `Automatic-Module-Name` to each module
@@ -27,8 +28,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Use feature file language to parse numbers in the type registry
    - Unless explicitly set using the `TypeRegistryConfigurer`
  * [Core] Use Java Time API in Events ([#1620](https://github.com/cucumber/cucumber-jvm/pull/1620) Yatharth Zutshi)
- 
- 
+
 ### Deprecated
  * [Core] Deprecate `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
    - Prefer using library based solutions
