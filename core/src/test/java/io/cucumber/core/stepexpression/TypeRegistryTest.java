@@ -42,24 +42,14 @@ public class TypeRegistryTest {
 
     @Test
     public void should_define_data_table_parameter_type() {
-        DataTableType expected = new DataTableType(Date.class, new TableTransformer<Date>() {
-            @Override
-            public Date transform(DataTable dataTable) {
-                return null;
-            }
-        });
+        DataTableType expected = new DataTableType(Date.class, (TableTransformer<Date>) dataTable -> null);
         registry.defineDataTableType(expected);
         assertEquals(expected, registry.dataTableTypeRegistry().lookupTableTypeByType(Date.class));
     }
 
     @Test
     public void should_set_default_parameter_transformer() {
-        ParameterByTypeTransformer expected = new ParameterByTypeTransformer() {
-            @Override
-            public Object transform(String fromValue, Type toValueType) {
-                return null;
-            }
-        };
+        ParameterByTypeTransformer expected = (fromValue, toValueType) -> null;
         registry.setDefaultParameterTransformer(expected);
         assertEquals(expected, registry.parameterTypeRegistry().getDefaultParameterTransformer());
     }

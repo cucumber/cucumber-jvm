@@ -31,24 +31,9 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
 
     private final NiceAppendable out;
     private boolean monochrome = false;
-    private EventHandler<TestStepFinished> stepFinishedhandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<WriteEvent> writeHandler = new EventHandler<WriteEvent>() {
-        @Override
-        public void receive(WriteEvent event) {
-            handleWrite(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            handleTestRunFinished();
-        }
-    };
+    private EventHandler<TestStepFinished> stepFinishedhandler = this::handleTestStepFinished;
+    private EventHandler<WriteEvent> writeHandler = this::handleWrite;
+    private EventHandler<TestRunFinished> runFinishHandler = event -> handleTestRunFinished();
 
     public ProgressFormatter(Appendable appendable) {
         out = new NiceAppendable(appendable);

@@ -36,36 +36,18 @@ class Stats implements EventListener, ColorAware, StrictAware {
     private final List<String> pendingScenarios = new ArrayList<String>();
     private final List<String> undefinedScenarios = new ArrayList<String>();
     private final List<Throwable> errors = new ArrayList<Throwable>();
-    private final EventHandler<TestRunStarted> testRunStartedHandler = new EventHandler<TestRunStarted>() {
-        @Override
-        public void receive(TestRunStarted event) {
-            setStartTime(event.getInstant());
+    private final EventHandler<TestRunStarted> testRunStartedHandler = event -> setStartTime(event.getInstant());
+    private final EventHandler<TestStepFinished> stepFinishedHandler = event -> {
+        Result result = event.getResult();
+        if (result.getError() != null) {
+            addError(result.getError());
+        }
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            addStep(result.getStatus());
         }
     };
-    private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            Result result = event.getResult();
-            if (result.getError() != null) {
-                addError(result.getError());
-            }
-            if (event.getTestStep() instanceof PickleStepTestStep) {
-                addStep(result.getStatus());
-            }
-        }
-    };
-    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
-        @Override
-        public void receive(TestCaseFinished event) {
-            addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
-        }
-    };
-    private final EventHandler<TestRunFinished> testRunFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            setFinishTime(event.getInstant());
-        }
-    };
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
+    private final EventHandler<TestRunFinished> testRunFinishedHandler = event -> setFinishTime(event.getInstant());
     private boolean strict;
 
     Stats() {

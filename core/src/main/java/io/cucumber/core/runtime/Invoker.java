@@ -34,13 +34,10 @@ public final class Invoker {
         final AtomicBoolean done = new AtomicBoolean();
 
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        ScheduledFuture<?> timer = executorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (monitor) {
-                    if (!done.get()) {
-                        executionThread.interrupt();
-                    }
+        ScheduledFuture<?> timer = executorService.schedule(() -> {
+            synchronized (monitor) {
+                if (!done.get()) {
+                    executionThread.interrupt();
                 }
             }
         }, timeoutMillis, TimeUnit.MILLISECONDS);

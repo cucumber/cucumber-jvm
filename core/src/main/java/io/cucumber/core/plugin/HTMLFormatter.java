@@ -84,48 +84,13 @@ public final class HTMLFormatter implements EventListener {
     private Examples currentExamples;
     private int embeddedIndex;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            handleTestSourceRead(event);
-        }
-    };
-    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
-        @Override
-        public void receive(TestStepStarted event) {
-            handleTestStepStarted(event);
-        }
-    };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<EmbedEvent> embedEventhandler = new EventHandler<EmbedEvent>() {
-        @Override
-        public void receive(EmbedEvent event) {
-            handleEmbed(event);
-        }
-    };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
-        @Override
-        public void receive(WriteEvent event) {
-            handleWrite(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
+    private EventHandler<TestSourceRead> testSourceReadHandler = this::handleTestSourceRead;
+    private EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
+    private EventHandler<TestStepStarted> stepStartedHandler = this::handleTestStepStarted;
+    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
+    private EventHandler<EmbedEvent> embedEventhandler = this::handleEmbed;
+    private EventHandler<WriteEvent> writeEventhandler = this::handleWrite;
+    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HTMLFormatter(URL htmlReportDir) {

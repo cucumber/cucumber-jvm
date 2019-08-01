@@ -55,36 +55,11 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            handleTestSourceRead(event);
-        }
-    };
-    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
-        @Override
-        public void receive(TestCaseFinished event) {
-            handleTestCaseFinished(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
+    private EventHandler<TestSourceRead> testSourceReadHandler = this::handleTestSourceRead;
+    private EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
+    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
+    private EventHandler<TestCaseFinished> caseFinishedHandler = this::handleTestCaseFinished;
+    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {

@@ -14,33 +14,24 @@ public final class StandardPickleOrders {
     }
 
     public static PickleOrder lexicalUriOrder() {
-        return new PickleOrder() {
-            @Override
-            public List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents) {
-                Collections.sort(pickleEvents, new PickleUriComparator());
-                return pickleEvents;
-            }
+        return pickleEvents -> {
+            Collections.sort(pickleEvents, new PickleUriComparator());
+            return pickleEvents;
         };
     }
 
     public static PickleOrder reverseLexicalUriOrder() {
-        return new PickleOrder() {
-            @Override
-            public List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents) {
-                Collections.sort(pickleEvents, new PickleUriComparator());
-                Collections.reverse(pickleEvents);
-                return pickleEvents;
-            }
+        return pickleEvents -> {
+            Collections.sort(pickleEvents, new PickleUriComparator());
+            Collections.reverse(pickleEvents);
+            return pickleEvents;
         };
     }
 
     public static PickleOrder random(final long seed) {
-        return new PickleOrder() {
-            @Override
-            public List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents) {
-                Collections.shuffle(pickleEvents, new Random(seed));
-                return pickleEvents;
-            }
+        return pickleEvents -> {
+            Collections.shuffle(pickleEvents, new Random(seed));
+            return pickleEvents;
         };
     }
 

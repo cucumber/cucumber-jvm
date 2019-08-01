@@ -29,46 +29,22 @@ final class JUnitReporter {
     private RunNotifier runNotifier;
     TestNotifier pickleRunnerNotifier; // package-private for testing
     ArrayList<Throwable> stepErrors; // package-private for testing
-    private final EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
-
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted();
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = event -> handleTestCaseStarted();
+    private final EventHandler<TestStepStarted> testStepStartedHandler = event -> {
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+            handleStepStarted(testStep.getPickleStep());
         }
-
     };
-    private final EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
-
-        @Override
-        public void receive(TestStepStarted event) {
-            if (event.getTestStep() instanceof PickleStepTestStep) {
-                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-                handleStepStarted(testStep.getPickleStep());
-            }
+    private final EventHandler<TestStepFinished> testStepFinishedHandler = event -> {
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+            handleStepResult(testStep, event.getResult());
+        } else {
+            handleHookResult(event.getResult());
         }
-
     };
-    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
-
-        @Override
-        public void receive(TestStepFinished event) {
-            if (event.getTestStep() instanceof PickleStepTestStep) {
-                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-                handleStepResult(testStep, event.getResult());
-            } else {
-                handleHookResult(event.getResult());
-            }
-        }
-
-    };
-    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
-
-        @Override
-        public void receive(TestCaseFinished event) {
-            handleTestCaseResult(event.getResult());
-        }
-
-    };
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> handleTestCaseResult(event.getResult());
 
     JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;

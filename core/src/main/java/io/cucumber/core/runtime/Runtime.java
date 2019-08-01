@@ -101,12 +101,7 @@ public final class Runtime {
 
         final List<Future<?>> executingPickles = new ArrayList<>();
         for (final PickleEvent pickleEvent : limitedEvents) {
-            executingPickles.add(executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    runnerSupplier.get().runPickle(pickleEvent);
-                }
-            }));
+            executingPickles.add(executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)));
         }
 
         executor.shutdown();
@@ -297,12 +292,7 @@ public final class Runtime {
         private final List<Result> results = new ArrayList<>();
         private final RuntimeOptions runtimeOptions;
 
-        private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
-            @Override
-            public void receive(TestCaseFinished event) {
-                results.add(event.getResult());
-            }
-        };
+        private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> results.add(event.getResult());
 
         ExitStatus(RuntimeOptions runtimeOptions) {
             this.runtimeOptions = runtimeOptions;
