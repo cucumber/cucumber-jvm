@@ -2,8 +2,9 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class JavaParameterTypeDefinitionTest {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_one_capture_group_to_string", String.class);
         JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
-        CucumberExpression cucumberExpression = new CucumberExpression("{convert_one_capture_group_to_string}", registry);
+        Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_one_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test");
         assertThat(test.get(0).getValue(), equalTo("convert_one_capture_group_to_string"));
     }
@@ -47,7 +48,7 @@ public class JavaParameterTypeDefinitionTest {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_two_capture_group_to_string", String.class, String.class);
         JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "([^ ]*) ([^ ]*)", method, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
-        CucumberExpression cucumberExpression = new CucumberExpression("{convert_two_capture_group_to_string}", registry);
+        Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_two_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test test");
         assertThat(test.get(0).getValue(), equalTo("convert_two_capture_group_to_string"));
     }
@@ -61,7 +62,7 @@ public class JavaParameterTypeDefinitionTest {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_varargs_capture_group_to_string", String[].class);
         JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "([^ ]*) ([^ ]*)", method, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
-        CucumberExpression cucumberExpression = new CucumberExpression("{convert_varargs_capture_group_to_string}", registry);
+        Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_varargs_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test test");
         assertThat(test.get(0).getValue(), equalTo("convert_varargs_capture_group_to_string"));
     }
@@ -75,7 +76,7 @@ public class JavaParameterTypeDefinitionTest {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_two_capture_group_to_string", String.class, String.class);
         JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", ".*", method, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
-        CucumberExpression cucumberExpression = new CucumberExpression("{convert_two_capture_group_to_string}", registry);
+        Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_two_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test");
         assertThrows(CucumberExpressionException.class, () -> test.get(0).getValue());
     }
