@@ -23,12 +23,9 @@ public class RpnCalculatorStepdefs implements En {
         });
 
 
-        Given("I press (.+)", (String what) -> calc.push(what));
+        Given("^I press (.+)$", (String what) -> calc.push(what));
 
-        Then("the result is {double}", (Integer expected) -> assertEquals(expected, calc.value()));
-
-        Then("the result is {int}", (Integer expected) -> assertEquals(expected.doubleValue(), calc.value()));
-
+        Then("the result is {double}", (Double expected) -> assertEquals(expected, calc.value()));
 
         Before("not @foo", (Scenario scenario) -> {
             scenario.write("Runs before scenarios *not* tagged with @foo");

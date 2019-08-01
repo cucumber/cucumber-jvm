@@ -1,27 +1,27 @@
 package io.cucumber.core.stepexpression;
 
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.cucumberexpressions.Transformer;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
-import io.cucumber.datatable.TableTransformer;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 public class TypeRegistryTest {
 
     private final TypeRegistry registry = new TypeRegistry(ENGLISH);
+    private final ExpressionFactory expressionFactory = new ExpressionFactory(registry.parameterTypeRegistry());
 
     @Test
     public void should_define_parameter_type() {
@@ -29,29 +29,23 @@ public class TypeRegistryTest {
             "example",
             ".*",
             Object.class,
-            new Transformer<Object>() {
-                @Override
-                public Object transform(String s) {
-                    return null;
-                }
-            }
+            (String s) -> null
         );
         registry.defineParameterType(expected);
-        assertThat(registry.parameterTypeRegistry().lookupByTypeName("example"), is(equalTo(expected)));
+        Expression expresion = expressionFactory.createExpression("{example}");
+        assertThat(expresion.getRegexp().pattern(), is("^(.*)$"));
     }
 
     @Test
     public void should_define_data_table_parameter_type() {
         DataTableType expected = new DataTableType(Date.class, (DataTable dataTable) -> null);
         registry.defineDataTableType(expected);
-        assertThat(registry.dataTableTypeRegistry().lookupTableTypeByType(Date.class), is(equalTo(expected)));
     }
 
     @Test
     public void should_set_default_parameter_transformer() {
         ParameterByTypeTransformer expected = (fromValue, toValueType) -> null;
         registry.setDefaultParameterTransformer(expected);
-        assertThat(registry.parameterTypeRegistry().getDefaultParameterTransformer(), is(equalTo(expected)));
     }
 
     @Test
