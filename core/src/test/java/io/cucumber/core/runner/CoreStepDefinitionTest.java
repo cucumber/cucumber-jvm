@@ -51,6 +51,16 @@ public class CoreStepDefinitionTest {
         assertThat(arguments.get(0).getValue(), is(equalTo(DataTable.create(singletonList(singletonList("content"))))));
     }
 
+    @Test
+    public void should_convert_empty_pickle_table_cells_to_null_values() {
+        StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, typeRegistry);
+
+        PickleTable table = new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(null, "")))));
+        List<Argument> arguments = stepDefinition.matchedArguments(new PickleStep("I have some step", singletonList(table), emptyList()));
+        assertEquals(DataTable.create(singletonList(singletonList(null))), arguments.get(0).getValue());
+    }
+
 
     public static class StepDefs {
         public void listOfListOfDoubles(List<List<Double>> listOfListOfDoubles) {
