@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.java8</project.Automatic-Module-Name>
-        <typetools.version>0.5.0</typetools.version>
+        <typetools.version>0.6.1</typetools.version>
     </properties>
 
     <dependencies>

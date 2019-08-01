@@ -8,8 +8,8 @@
     <artifactId>java-wicket-test</artifactId>
     <name>Examples: Wicket application tested with Selenium</name>
 
-
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.examples.java.wicket</project.Automatic-Module-Name>
         <htmlunit.version>2.34.0</htmlunit.version>
     </properties>
 

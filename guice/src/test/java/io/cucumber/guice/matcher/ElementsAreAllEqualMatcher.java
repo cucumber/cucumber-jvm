@@ -1,7 +1,6 @@
 package io.cucumber.guice.matcher;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
@@ -21,14 +20,6 @@ public class ElementsAreAllEqualMatcher<E> extends ElementsAreAllMatcher<E> {
      * For example:
      * <pre>assertThat(Arrays.asList("foo", "foo", "foo"), elementsAreAllEqual())</pre>
      */
-    /**
-     * Creates a matcher for {@link java.util.Collection}s that matches when every element is the same. Elements are
-     * tested for equality using java.lang.Object.equals().
-     * <p/>
-     * For example:
-     * <pre>assertThat(Arrays.asList("foo", "foo", "foo"), elementsAreAllEqual())</pre>
-     */
-    @Factory
     public static <E> Matcher<Collection<? extends E>> elementsAreAllEqual() {
         return new ElementsAreAllEqualMatcher<E>();
     }

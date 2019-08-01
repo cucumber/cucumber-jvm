@@ -14,6 +14,7 @@
     </build>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.examples.java.wicket</project.Automatic-Module-Name>
         <wicket.version>8.2.0</wicket.version>
         <jetty.version>9.4.14.v20181114</jetty.version>
         <jcl-over-slf4.version>1.7.25</jcl-over-slf4.version>

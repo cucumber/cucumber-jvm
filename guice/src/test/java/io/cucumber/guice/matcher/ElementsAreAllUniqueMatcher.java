@@ -1,7 +1,6 @@
 package io.cucumber.guice.matcher;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
@@ -20,7 +19,6 @@ public class ElementsAreAllUniqueMatcher<E> extends ElementsAreAllMatcher<E> {
      * For example:
      * <pre>assertThat(Arrays.asList("foo", "bar", "baz"), elementsAreAllUnique())</pre>
      */
-    @Factory
     public static <E> Matcher<Collection<? extends E>> elementsAreAllUnique() {
         return new ElementsAreAllUniqueMatcher<E>();
     }

@@ -11,6 +11,10 @@
     <packaging>jar</packaging>
     <name>Examples: Java Calculator</name>
 
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.examples.java</project.Automatic-Module-Name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
