@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
@@ -36,15 +35,6 @@ class Stats implements EventListener, ColorAware, StrictAware {
     private final List<String> pendingScenarios = new ArrayList<>();
     private final List<String> undefinedScenarios = new ArrayList<>();
     private final List<Throwable> errors = new ArrayList<>();
-    private final EventHandler<TestStepFinished> stepFinishedHandler = event -> {
-        Result result = event.getResult();
-        if (result.getError() != null) {
-            addError(result.getError());
-        }
-        if (event.getTestStep() instanceof PickleStepTestStep) {
-            addStep(result.getStatus());
-        }
-    };
     private boolean strict;
 
     Stats() {
@@ -72,7 +62,7 @@ class Stats implements EventListener, ColorAware, StrictAware {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestRunStarted.class, this::setStartTime);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, this::addStepResult);
         publisher.registerHandlerFor(TestCaseFinished.class, this::addScenario);
         publisher.registerHandlerFor(TestRunFinished.class, this::setFinishTime);
     }
@@ -161,7 +151,7 @@ class Stats implements EventListener, ColorAware, StrictAware {
         }
     }
 
-    public String firstLetterCapitalizedName(Status status) {
+    private String firstLetterCapitalizedName(Status status) {
         String name = status.name();
         return name.substring(0, 1) + name.substring(1).toLowerCase(ROOT);
     }
@@ -178,61 +168,71 @@ class Stats implements EventListener, ColorAware, StrictAware {
         this.startTime = startTime;
     }
 
-    void setStartTime(TestRunStarted event) {
-       setStartTime(event.getInstant());
+    private void setStartTime(TestRunStarted event) {
+        setStartTime(event.getInstant());
     }
 
     void setFinishTime(Instant finishTime) {
         this.totalDuration = Duration.between(startTime, finishTime);
     }
 
-    void setFinishTime(TestRunFinished event) {
-       setFinishTime(event.getInstant());
+    private void setFinishTime(TestRunFinished event) {
+        setFinishTime(event.getInstant());
     }
 
     private void addResultToSubCount(SubCounts subCounts, Status resultStatus) {
         switch (resultStatus) {
-        case FAILED:
-            subCounts.failed++;
-            break;
-        case AMBIGUOUS:
-            subCounts.ambiguous++;
-            break;
-        case PENDING:
-            subCounts.pending++;
-            break;
-        case UNDEFINED:
-            subCounts.undefined++;
-            break;
-        case SKIPPED:
-            subCounts.skipped++;
-            break;
-        default:
-            subCounts.passed++;
+            case FAILED:
+                subCounts.failed++;
+                break;
+            case AMBIGUOUS:
+                subCounts.ambiguous++;
+                break;
+            case PENDING:
+                subCounts.pending++;
+                break;
+            case UNDEFINED:
+                subCounts.undefined++;
+                break;
+            case SKIPPED:
+                subCounts.skipped++;
+                break;
+            default:
+                subCounts.passed++;
         }
     }
 
     void addScenario(Status resultStatus, String scenarioDesignation) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
         switch (resultStatus) {
-        case FAILED:
-            failedScenarios.add(scenarioDesignation);
-            break;
-        case AMBIGUOUS:
-            ambiguousScenarios.add(scenarioDesignation);
-            break;
-        case PENDING:
-            pendingScenarios.add(scenarioDesignation);
-            break;
-        case UNDEFINED:
-            undefinedScenarios.add(scenarioDesignation);
-            break;
-        default:
-            // intentionally left blank
+            case FAILED:
+                failedScenarios.add(scenarioDesignation);
+                break;
+            case AMBIGUOUS:
+                ambiguousScenarios.add(scenarioDesignation);
+                break;
+            case PENDING:
+                pendingScenarios.add(scenarioDesignation);
+                break;
+            case UNDEFINED:
+                undefinedScenarios.add(scenarioDesignation);
+                break;
+            default:
+                // intentionally left blank
         }
     }
 
-    void addScenario(TestCaseFinished event) {
+    private void addStepResult(TestStepFinished event) {
+        Result result = event.getResult();
+        if (result.getError() != null) {
+            addError(result.getError());
+        }
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            addStep(result.getStatus());
+        }
+    }
+
+    private void addScenario(TestCaseFinished event) {
         addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
     }
 

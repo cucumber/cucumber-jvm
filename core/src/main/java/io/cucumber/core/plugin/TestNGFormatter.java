@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
@@ -57,12 +56,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = this::handleTestSourceRead;
-    private EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
-    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
-    private EventHandler<TestCaseFinished> caseFinishedHandler = event -> handleTestCaseFinished();
-    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
-
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(url));
@@ -81,11 +74,11 @@ public final class TestNGFormatter implements EventListener, StrictAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     @Override
@@ -121,7 +114,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         }
     }
 
-    private void handleTestCaseFinished() {
+    private void handleTestCaseFinished(TestCaseFinished event) {
         testCase.finish(document, root);
     }
 
