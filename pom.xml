@@ -372,10 +372,7 @@
                     <version>4.3.0</version>
                     <configuration>
                         <sourceDirectories>
-                            <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java
-                            </sourceDirectory>
-                            <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8
-                            </sourceDirectory>
+                            <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java</sourceDirectory>
                         </sourceDirectories>
                     </configuration>
                 </plugin>
