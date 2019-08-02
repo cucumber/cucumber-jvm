@@ -31,12 +31,11 @@ class Stats implements EventListener, ColorAware, StrictAware {
     private Duration totalDuration = Duration.ZERO;
     private Formats formats = new AnsiFormats();
     private Locale locale;
-    private final List<String> failedScenarios = new ArrayList<String>();
-    private List<String> ambiguousScenarios = new ArrayList<String>();
-    private final List<String> pendingScenarios = new ArrayList<String>();
-    private final List<String> undefinedScenarios = new ArrayList<String>();
-    private final List<Throwable> errors = new ArrayList<Throwable>();
-    private final EventHandler<TestRunStarted> testRunStartedHandler = event -> setStartTime(event.getInstant());
+    private final List<String> failedScenarios = new ArrayList<>();
+    private List<String> ambiguousScenarios = new ArrayList<>();
+    private final List<String> pendingScenarios = new ArrayList<>();
+    private final List<String> undefinedScenarios = new ArrayList<>();
+    private final List<Throwable> errors = new ArrayList<>();
     private final EventHandler<TestStepFinished> stepFinishedHandler = event -> {
         Result result = event.getResult();
         if (result.getError() != null) {
@@ -46,8 +45,6 @@ class Stats implements EventListener, ColorAware, StrictAware {
             addStep(result.getStatus());
         }
     };
-    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
-    private final EventHandler<TestRunFinished> testRunFinishedHandler = event -> setFinishTime(event.getInstant());
     private boolean strict;
 
     Stats() {
@@ -74,10 +71,10 @@ class Stats implements EventListener, ColorAware, StrictAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestRunStarted.class, testRunStartedHandler);
+        publisher.registerHandlerFor(TestRunStarted.class, this::setStartTime);
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, testRunFinishedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, this::addScenario);
+        publisher.registerHandlerFor(TestRunFinished.class, this::setFinishTime);
     }
 
     public List<Throwable> getErrors() {
@@ -181,8 +178,16 @@ class Stats implements EventListener, ColorAware, StrictAware {
         this.startTime = startTime;
     }
 
+    void setStartTime(TestRunStarted event) {
+       setStartTime(event.getInstant());
+    }
+
     void setFinishTime(Instant finishTime) {
         this.totalDuration = Duration.between(startTime, finishTime);
+    }
+
+    void setFinishTime(TestRunFinished event) {
+       setFinishTime(event.getInstant());
     }
 
     private void addResultToSubCount(SubCounts subCounts, Status resultStatus) {
@@ -226,6 +231,11 @@ class Stats implements EventListener, ColorAware, StrictAware {
             // intentionally left blank
         }
     }
+
+    void addScenario(TestCaseFinished event) {
+        addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
+    }
+
 
     static class SubCounts {
         public int passed = 0;

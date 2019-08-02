@@ -42,7 +42,7 @@ public class TypeRegistryTest {
 
     @Test
     public void should_define_data_table_parameter_type() {
-        DataTableType expected = new DataTableType(Date.class, (TableTransformer<Date>) dataTable -> null);
+        DataTableType expected = new DataTableType(Date.class, (DataTable dataTable) -> null);
         registry.defineDataTableType(expected);
         assertEquals(expected, registry.dataTableTypeRegistry().lookupTableTypeByType(Date.class));
     }

@@ -20,7 +20,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookTestStep;
 import io.cucumber.core.event.HookType;
@@ -84,14 +83,6 @@ public final class HTMLFormatter implements EventListener {
     private Examples currentExamples;
     private int embeddedIndex;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = this::handleTestSourceRead;
-    private EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
-    private EventHandler<TestStepStarted> stepStartedHandler = this::handleTestStepStarted;
-    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
-    private EventHandler<EmbedEvent> embedEventhandler = this::handleEmbed;
-    private EventHandler<WriteEvent> writeEventhandler = this::handleWrite;
-    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
-
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HTMLFormatter(URL htmlReportDir) {
         this(htmlReportDir, createJsOut(htmlReportDir));
@@ -104,13 +95,13 @@ public final class HTMLFormatter implements EventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
+        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     private void handleTestSourceRead(TestSourceRead event) {

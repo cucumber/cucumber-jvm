@@ -466,7 +466,7 @@ public class RuntimeTest {
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (EventHandler<TestStepFinished>) event -> {
+        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
             throw new RuntimeException("boom");
         });
 

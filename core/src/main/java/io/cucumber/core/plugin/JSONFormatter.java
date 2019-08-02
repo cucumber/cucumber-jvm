@@ -56,14 +56,6 @@ public final class JSONFormatter implements EventListener {
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
     
-    private EventHandler<TestSourceRead> testSourceReadHandler = this::handleTestSourceRead;
-    private EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
-    private EventHandler<TestStepStarted> stepStartedHandler = this::handleTestStepStarted;
-    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
-    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
-    private EventHandler<WriteEvent> writeEventhandler = this::handleWrite;
-    private EventHandler<EmbedEvent> embedEventhandler = this::handleEmbed;
-
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -71,13 +63,13 @@ public final class JSONFormatter implements EventListener {
     
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
-        publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
+        publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     private void handleTestSourceRead(TestSourceRead event) {

@@ -55,12 +55,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = this::handleTestSourceRead;
-    private EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
-    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
-    private EventHandler<TestCaseFinished> caseFinishedHandler = this::handleTestCaseFinished;
-    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
-
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(writer));
@@ -79,11 +73,11 @@ public final class JUnitFormatter implements EventListener, StrictAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     @Override
