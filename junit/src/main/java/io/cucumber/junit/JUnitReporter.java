@@ -29,6 +29,7 @@ final class JUnitReporter {
     private RunNotifier runNotifier;
     private TestNotifier pickleRunnerNotifier;
     ArrayList<Throwable> stepErrors; // package-private for testing
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
     private final EventHandler<TestStepStarted> testStepStartedHandler = this::handTestStepStarted;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = this::handleTestCaseResult;
@@ -37,14 +38,14 @@ final class JUnitReporter {
     JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
         this.bus = bus;
-        bus.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        bus.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         bus.registerHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
     void finishExecutionUnit() {
-        bus.removeHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        bus.removeHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         bus.removeHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.removeHandlerFor(TestStepFinished.class, testStepFinishedHandler);
         bus.removeHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);

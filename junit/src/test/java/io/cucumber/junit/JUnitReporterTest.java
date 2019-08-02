@@ -1,8 +1,6 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
+import io.cucumber.core.event.*;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.junit.JUnitReporter.EachTestNotifier;
 import io.cucumber.junit.JUnitReporter.NoTestNotifier;
@@ -15,6 +13,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +42,7 @@ public class JUnitReporterTest {
         runNotifier = mock(RunNotifier.class);
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        jUnitReporter.handleTestCaseStarted();
+        jUnitReporter.handleTestCaseStarted(new TestCaseStarted(Instant.now(), mock(TestCase.class)));
 
         verify(runNotifier).fireTestStarted(pickleRunner.getDescription());
     }
@@ -299,7 +298,7 @@ public class JUnitReporterTest {
         createRunNotifier(description);
         Result result = mockResult(Status.PASSED);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         verify(runNotifier).fireTestFinished(description);
     }
@@ -312,7 +311,7 @@ public class JUnitReporterTest {
         populateStepErrors(Collections.<Throwable>emptyList());
         Result result = mockResult(Status.SKIPPED);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -333,7 +332,7 @@ public class JUnitReporterTest {
         populateStepErrors(asList(exception1, exception2));
         Result result = mockResult(Status.SKIPPED);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier, times(1)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -354,7 +353,7 @@ public class JUnitReporterTest {
         populateStepErrors(asList(exception1, exception2));
         Result result = mockResult(Status.PENDING);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier, times(1)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -375,7 +374,7 @@ public class JUnitReporterTest {
         populateStepErrors(asList(exception1, exception2));
         Result result = mockResult(Status.PENDING);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier, times(1)).fireTestFailure(failureArgumentCaptor.capture());
@@ -396,7 +395,7 @@ public class JUnitReporterTest {
         populateStepErrors(asList(exception1, exception2));
         Result result = mockResult(Status.UNDEFINED);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier, times(1)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -417,7 +416,7 @@ public class JUnitReporterTest {
         populateStepErrors(asList(exception1, exception2));
         Result result = mockResult(Status.UNDEFINED);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier, times(1)).fireTestFailure(failureArgumentCaptor.capture());
@@ -438,7 +437,7 @@ public class JUnitReporterTest {
         populateStepErrors(asList(exception1, exception2));
         Result result = mockResult(Status.FAILED);
 
-        jUnitReporter.handleTestCaseResult(result);
+        jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
