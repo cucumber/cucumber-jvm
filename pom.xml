@@ -236,29 +236,6 @@
         </profile>
 
         <profile>
-            <id>coveralls.io</id>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.eluder.coveralls</groupId>
-                            <artifactId>coveralls-maven-plugin</artifactId>
-                            <version>4.3.0</version>
-                            <configuration>
-                                <sourceDirectories>
-                                    <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java
-                                    </sourceDirectory>
-                                    <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8
-                                    </sourceDirectory>
-                                </sourceDirectories>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-
-        <profile>
             <id>check-semantic-version</id>
             <build>
                 <plugins>
@@ -351,6 +328,7 @@
                     <version>3.0.0</version>
                 </plugin>
 
+                <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
@@ -385,6 +363,20 @@
                                 </filter>
                             </revapi.java>
                         </analysisConfiguration>
+                    </configuration>
+                </plugin>
+                <!--  Code coverage reporting -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>4.3.0</version>
+                    <configuration>
+                        <sourceDirectories>
+                            <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java
+                            </sourceDirectory>
+                            <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8
+                            </sourceDirectory>
+                        </sourceDirectories>
                     </configuration>
                 </plugin>
             </plugins>
