@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -107,7 +108,7 @@ final class RuntimeOptionsParser {
                 parsedOptions.setCount(count);
             } else if (arg.equals("--object-factory")) {
                 String objectFactoryClassName = args.remove(0);
-                parsedOptions.setObjectFactoryClass(CucumberPropertiesParser.parseObjectFactory(objectFactoryClassName));
+                parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);

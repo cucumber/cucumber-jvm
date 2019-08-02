@@ -1,7 +1,6 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.feature.RerunLoader;
@@ -38,25 +37,11 @@ public final class CucumberPropertiesParser {
 
         String cucumberObjectFactory = properties.get(CUCUMBER_OBJECT_FACTORY_PROPERTY_NAME);
         if (cucumberObjectFactory != null) {
-            Class<? extends ObjectFactory> objectFactoryClass = parseObjectFactory(cucumberObjectFactory);
+            Class<? extends ObjectFactory> objectFactoryClass = ObjectFactoryParser.parseObjectFactory(cucumberObjectFactory);
             builder.setObjectFactoryClass(objectFactoryClass);
         }
 
         return builder;
-    }
-
-    @SuppressWarnings("unchecked")
-    static Class<? extends ObjectFactory> parseObjectFactory(String cucumberObjectFactory) {
-        Class<?> objectFactoryClass;
-        try {
-            objectFactoryClass = Class.forName(cucumberObjectFactory);
-        } catch (ClassNotFoundException e) {
-            throw new CucumberException("Could not load object factory class for " + cucumberObjectFactory, e);
-        }
-        if (!ObjectFactory.class.isAssignableFrom(objectFactoryClass)) {
-            throw new CucumberException("Object factory class " + objectFactoryClass + " was not a subclass of " + ObjectFactory.class);
-        }
-        return (Class<? extends ObjectFactory>) objectFactoryClass;
     }
 
 }
