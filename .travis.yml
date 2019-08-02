@@ -16,9 +16,9 @@ jobs:
     # 1.2 Check JDK 8,10,ea
   - stage: test
     jdk: openjdk8
-    script: mvn -q verify
+    script: mvn clean verify
     after_success:
-    -  mvn clean jacoco:prepare-agent test coveralls:report -P coveralls.io
+      - mvn clean jacoco:prepare-agent test jacoco:report coveralls:report
   - jdk: openjdk10
     script: mvn -q verify
   - jdk: openjdk11
