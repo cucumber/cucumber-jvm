@@ -25,7 +25,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -70,7 +69,8 @@ public class SpringFactoryTest {
 
         assertThat(o1, is(notNullValue()));
         assertThat(o2, is(notNullValue()));
-        assertSame(o1, o2);
+        assertThat(o1, is(equalTo(o1)));
+        assertThat(o2, is(equalTo(o2)));
     }
 
     @Test
@@ -91,7 +91,8 @@ public class SpringFactoryTest {
 
         assertThat(o1, is(notNullValue()));
         assertThat(o2, is(notNullValue()));
-        assertSame(o1, o2);
+        assertThat(o1, is(equalTo(o1)));
+        assertThat(o2, is(equalTo(o2)));
     }
 
     @Test
@@ -108,7 +109,8 @@ public class SpringFactoryTest {
 
         assertThat(o1.getThirdStepDef(), is(notNullValue()));
         assertThat(o2, is(notNullValue()));
-        assertSame(o1.getThirdStepDef(), o2);
+        assertThat(o1.getThirdStepDef(), is(equalTo(o2)));
+        assertThat(o2, is(equalTo(o1.getThirdStepDef())));
     }
 
     @Test
@@ -125,7 +127,8 @@ public class SpringFactoryTest {
 
         assertThat(o1.getThirdStepDef(), is(notNullValue()));
         assertThat(o3.getThirdStepDef(), is(notNullValue()));
-        assertSame(o1.getThirdStepDef(), o3.getThirdStepDef());
+        assertThat(o1.getThirdStepDef(), is(equalTo(o3.getThirdStepDef())));
+        assertThat(o3.getThirdStepDef(), is(equalTo(o1.getThirdStepDef())));
     }
 
     @Test
@@ -273,7 +276,8 @@ public class SpringFactoryTest {
         assertThat(glue1, is(not(equalTo(glue2))));
         assertThat(glue2, is(not(equalTo(glue1))));
 
-        assertSame(belly1, belly2);
+        assertThat(belly1, is(equalTo(belly2)));
+        assertThat(belly2, is(equalTo(belly1)));
     }
 
 }
