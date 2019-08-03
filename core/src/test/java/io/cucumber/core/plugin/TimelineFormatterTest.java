@@ -27,8 +27,8 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TimelineFormatterTest {
@@ -125,7 +125,7 @@ public class TimelineFormatterTest {
             assertTrue(e + ": did not exist in output dir", actualFile.exists());
             final String actual = readFileContents(actualFile.getAbsolutePath());
             final String expected = readFileContents(new File(REPORT_TEMPLATE_RESOURCE_DIR, e).getAbsolutePath());
-            assertEquals(e + " differs", expected, actual);
+            assertThat(e + " differs", actual, is(equalTo(expected)));
         }
     }
 
@@ -280,25 +280,25 @@ public class TimelineFormatterTest {
                                                     final List<TimelineFormatter.TestData> actualOutput,
                                                     final boolean checkActualThreadData,
                                                     final boolean checkActualTimeStamps) {
-        assertEquals("Number of tests was not as expected", expectedTests.length, actualOutput.size());
+        assertThat("Number of tests was not as expected", actualOutput.size(), is(equalTo(expectedTests.length)));
         for (int i = 0; i < expectedTests.length; i++) {
             final TimelineFormatter.TestData expected = expectedTests[i];
             final TimelineFormatter.TestData actual = actualOutput.get(i);
 
-            assertEquals(String.format("id on item %s, was not as expected", i), expected.id, actual.id);
-            assertEquals(String.format("feature on item %s, was not as expected", i), expected.feature, actual.feature);
-            assertEquals(String.format("className on item %s, was not as expected", i), expected.className, actual.className);
-            assertEquals(String.format("content on item %s, was not as expected", i), expected.content, actual.content);
-            assertEquals(String.format("tags on item %s, was not as expected", i), expected.tags, actual.tags);
+            assertThat(String.format("id on item %s, was not as expected", i), actual.id, is(equalTo(expected.id)));
+            assertThat(String.format("feature on item %s, was not as expected", i), actual.feature, is(equalTo(expected.feature)));
+            assertThat(String.format("className on item %s, was not as expected", i), actual.className, is(equalTo(expected.className)));
+            assertThat(String.format("content on item %s, was not as expected", i), actual.content, is(equalTo(expected.content)));
+            assertThat(String.format("tags on item %s, was not as expected", i), actual.tags, is(equalTo(expected.tags)));
             if (checkActualTimeStamps) {
-                assertEquals(String.format("startTime on item %s, was not as expected", i), expected.startTime, actual.startTime);
-                assertEquals(String.format("endTime on item %s, was not as expected", i), expected.endTime, actual.endTime);
+                assertThat(String.format("startTime on item %s, was not as expected", i), actual.startTime, is(equalTo(expected.startTime)));
+                assertThat(String.format("endTime on item %s, was not as expected", i), actual.endTime, is(equalTo(expected.endTime)));
             } else {
                 assertThat(String.format("startTime on item %s, was not as expected", i), actual.startTime, is(notNullValue()));
                 assertThat(String.format("endTime on item %s, was not as expected", i), actual.endTime, is(notNullValue()));
             }
             if (checkActualThreadData) {
-                assertEquals(String.format("threadId on item %s, was not as expected", i), expected.threadId, actual.threadId);
+                assertThat(String.format("threadId on item %s, was not as expected", i), actual.threadId, is(equalTo(expected.threadId)));
             } else {
                 assertThat(String.format("threadId on item %s, was not as expected", i), actual.threadId, is(notNullValue()));
             }
@@ -307,13 +307,13 @@ public class TimelineFormatterTest {
 
     private void assertTimelineGroupDataIsAsExpected(final TimelineFormatter.GroupData[] expectedGroups,
                                                      final List<TimelineFormatter.GroupData> actualOutput) {
-        assertEquals("Number of groups was not as expected", expectedGroups.length, actualOutput.size());
+        assertThat("Number of groups was not as expected", actualOutput.size(), is(equalTo(expectedGroups.length)));
         for (int i = 0; i < expectedGroups.length; i++) {
             final TimelineFormatter.GroupData expected = expectedGroups[i];
             final TimelineFormatter.GroupData actual = actualOutput.get(i);
 
-            assertEquals(String.format("id on group %s, was not as expected", i), expected.id, actual.id);
-            assertEquals(String.format("content on group %s, was not as expected", i), expected.content, actual.content);
+            assertThat(String.format("id on group %s, was not as expected", i), actual.id, is(equalTo(expected.id)));
+            assertThat(String.format("content on group %s, was not as expected", i), actual.content, is(equalTo(expected.content)));
         }
     }
 

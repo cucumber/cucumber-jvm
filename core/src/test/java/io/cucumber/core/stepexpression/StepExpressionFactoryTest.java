@@ -13,7 +13,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class StepExpressionFactoryTest {
 
@@ -74,7 +76,7 @@ public class StepExpressionFactoryTest {
         List<Argument> match = expression.match("Given some stuff:", table);
 
         DataTable dataTable = (DataTable) match.get(0).getValue();
-        assertEquals(table, dataTable.cells());
+        assertThat(dataTable.cells(), is(equalTo(table)));
     }
 
     @Test
@@ -86,7 +88,7 @@ public class StepExpressionFactoryTest {
 
 
         Ingredient ingredient = (Ingredient) match.get(0).getValue();
-        assertEquals(ingredient.name, "chocolate");
+        assertThat(ingredient.name, is(equalTo("chocolate")));
     }
 
     @Test
@@ -99,14 +101,14 @@ public class StepExpressionFactoryTest {
 
         List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
         Ingredient ingredient = ingredients.get(0);
-        assertEquals(ingredient.name, "chocolate");
+        assertThat(ingredient.name, is(equalTo("chocolate")));
     }
 
     @Test
     public void unknown_target_type_does_no_transform_data_table() {
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
         List<Argument> match = expression.match("Given some stuff:", table);
-        assertEquals(DataTable.create(table), match.get(0).getValue());
+        assertThat(match.get(0).getValue(), is(equalTo(DataTable.create(table))));
     }
 
     @Test
@@ -114,7 +116,7 @@ public class StepExpressionFactoryTest {
         String docString = "A rather long and boring string of documentation";
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
         List<Argument> match = expression.match("Given some stuff:", docString);
-        assertEquals(docString, match.get(0).getValue());
+        assertThat(match.get(0).getValue(), is(equalTo(docString)));
     }
 
 

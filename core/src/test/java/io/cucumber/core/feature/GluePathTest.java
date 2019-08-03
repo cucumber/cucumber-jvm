@@ -9,7 +9,6 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -89,7 +88,7 @@ public class GluePathTest {
 
         URI uri = GluePath.parse("com\\example\\app");
         assertThat(uri.getScheme(), is("classpath"));
-        assertEquals("com/example/app", uri.getSchemeSpecificPart());
+        assertThat(uri.getSchemeSpecificPart(), is(equalTo("com/example/app")));
     }
 
     @Test

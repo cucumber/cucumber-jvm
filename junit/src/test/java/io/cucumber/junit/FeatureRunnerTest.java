@@ -31,7 +31,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Collections.singleton;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
@@ -241,15 +243,15 @@ public class FeatureRunnerTest {
 
         Description feature = runner.getDescription();
         Description scenarioA = feature.getChildren().get(0);
-        assertEquals(2, scenarioA.getChildren().size());
+        assertThat(scenarioA.getChildren().size(), is(equalTo(2)));
         Description scenarioB = feature.getChildren().get(1);
-        assertEquals(2, scenarioB.getChildren().size());
+        assertThat(scenarioB.getChildren().size(), is(equalTo(2)));
         Description scenarioC0 = feature.getChildren().get(2);
-        assertEquals(2, scenarioC0.getChildren().size());
+        assertThat(scenarioC0.getChildren().size(), is(equalTo(2)));
         Description scenarioC1 = feature.getChildren().get(3);
-        assertEquals(2, scenarioC1.getChildren().size());
+        assertThat(scenarioC1.getChildren().size(), is(equalTo(2)));
         Description scenarioC2 = feature.getChildren().get(4);
-        assertEquals(2, scenarioC2.getChildren().size());
+        assertThat(scenarioC2.getChildren().size(), is(equalTo(2)));
     }
 
     @Test
@@ -373,11 +375,10 @@ public class FeatureRunnerTest {
         InOrder order = inOrder(notifier);
         order.verify(notifier).fireTestStarted(description);
         order.verify(notifier).fireTestFailure(failureArgumentCaptor.capture());
-        assertEquals(illegalStateException, failureArgumentCaptor.getValue().getException());
-        assertEquals(description, failureArgumentCaptor.getValue().getDescription());
+        assertThat(failureArgumentCaptor.getValue().getException(), is(equalTo(illegalStateException)));
+        assertThat(failureArgumentCaptor.getValue().getDescription(), is(equalTo(description)));
         order.verify(notifier).pleaseStop();
         order.verify(notifier).fireTestFinished(description);
     }
 
 }
-

@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class Java8SnippetTest {
 
@@ -25,7 +27,7 @@ public class Java8SnippetTest {
             "    throw new io.cucumber.java8.PendingException();\n" +
             "});\n";
         System.out.println(expected);
-        assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
+        assertThat(snippetFor("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 
     private String snippetFor(String name) {

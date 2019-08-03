@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
@@ -14,7 +13,9 @@ import java.time.Clock;
 import java.time.Instant;
 
 import static java.time.Duration.ZERO;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
 public class ExitStatusTest {
@@ -29,7 +30,7 @@ public class ExitStatusTest {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     private void createNonStrictWipExitStatus() {
@@ -54,7 +55,7 @@ public class ExitStatusTest {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -62,7 +63,7 @@ public class ExitStatusTest {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -70,7 +71,7 @@ public class ExitStatusTest {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -78,14 +79,14 @@ public class ExitStatusTest {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void non_strict_wip_with_undefined_scenarios() {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class ExitStatusTest {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     private void createNonStrictExitStatus() {
@@ -105,7 +106,7 @@ public class ExitStatusTest {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class ExitStatusTest {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class ExitStatusTest {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -129,20 +130,20 @@ public class ExitStatusTest {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void non_strict_with_undefined_scenarios() {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void should_pass_if_no_features_are_found() {
         createStrictRuntime();
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -150,7 +151,7 @@ public class ExitStatusTest {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     private void createStrictWipRuntime() {
@@ -163,7 +164,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -172,7 +173,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -180,7 +181,7 @@ public class ExitStatusTest {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -189,7 +190,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -197,7 +198,7 @@ public class ExitStatusTest {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -205,7 +206,7 @@ public class ExitStatusTest {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -213,14 +214,14 @@ public class ExitStatusTest {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void strict_wip_with_undefined_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -228,7 +229,7 @@ public class ExitStatusTest {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     private void createStrictRuntime() {
@@ -241,7 +242,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -250,7 +251,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -258,7 +259,7 @@ public class ExitStatusTest {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -267,7 +268,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -276,7 +277,7 @@ public class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -284,7 +285,7 @@ public class ExitStatusTest {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -292,7 +293,7 @@ public class ExitStatusTest {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -300,14 +301,14 @@ public class ExitStatusTest {
         createNonStrictExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
-        assertEquals(0x0, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void strict_with_undefined_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertEquals(0x1, exitStatus.exitStatus());
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
 }

@@ -15,7 +15,9 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
@@ -67,14 +69,14 @@ public class HookTestStepTest {
     public void result_is_passed_when_step_definition_does_not_throw_exception() {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertFalse(skipNextStep);
-        assertEquals(Status.PASSED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(Status.PASSED)));
     }
 
     @Test
     public void result_is_skipped_when_skip_step_is_skip_all_skipable() {
         boolean skipNextStep = step.run(testCase, bus, scenario, true);
         assertTrue(skipNextStep);
-        assertEquals(Status.SKIPPED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(Status.SKIPPED)));
     }
 
 }

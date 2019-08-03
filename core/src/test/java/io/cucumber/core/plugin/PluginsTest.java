@@ -12,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -68,7 +70,7 @@ public class PluginsTest {
         plugins.addPlugin(plugin);
         plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(plugin, times(1)).setEventPublisher(eventPublisher.capture());
-        assertEquals(CanonicalOrderEventPublisher.class, eventPublisher.getValue().getClass());
+        assertThat(eventPublisher.getValue().getClass(), is(equalTo(CanonicalOrderEventPublisher.class)));
     }
 
     @Test
