@@ -22,10 +22,8 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-
 
 public class ThreadLocalRunnerSupplierTest {
 
@@ -81,7 +79,7 @@ public class ThreadLocalRunnerSupplierTest {
 
     @Test
     public void should_return_the_same_runner_on_subsequent_calls() {
-        assertSame(runnerSupplier.get(), runnerSupplier.get());
+        assertThat(runnerSupplier.get(), is(equalTo(runnerSupplier.get())));
     }
 
     @Test
