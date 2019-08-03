@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Iterator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.assertTrue;
 
 public class DelegatingResourceIteratorFactoryTest {
@@ -20,7 +22,7 @@ public class DelegatingResourceIteratorFactoryTest {
 
         Iterator<Resource> iterator = factory.createIterator(url, "test", "test");
 
-        assertTrue(iterator instanceof TestResourceIterator);
+        assertThat(iterator, isA(TestResourceIterator.class));
     }
 
 }
