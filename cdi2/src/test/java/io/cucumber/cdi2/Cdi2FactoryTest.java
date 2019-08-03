@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class Cdi2FactoryTest {
 
@@ -24,7 +24,7 @@ public class Cdi2FactoryTest {
         factory.start();
         final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
         final CDIBellyStepdefs cdiStep = factory.getInstance(CDIBellyStepdefs.class);
-        assertNotEquals(CDIBellyStepdefs.class, cdiStep.getClass()); // it is a CDI proxy
+        assertThat(cdiStep.getClass(), not(isA(CDIBellyStepdefs.class))); // it is a CDI proxy
         assertEquals(CDIBellyStepdefs.class, cdiStep.getClass().getSuperclass());
         factory.stop();
 
