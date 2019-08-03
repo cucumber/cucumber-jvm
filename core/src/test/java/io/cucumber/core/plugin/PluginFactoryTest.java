@@ -10,6 +10,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,7 +29,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class PluginFactoryTest {
@@ -48,15 +49,12 @@ public class PluginFactoryTest {
     }
 
     @Test
-    public void fails_to_instantiate_html_plugin_without_dir_arg() throws IOException {
-        try {
-            fc.create(parse("html"));
-            fail();
-        } catch (CucumberException e) {
-            assertThat(e.getMessage(),
-                is(equalTo("" +
-                    "You must supply an output argument to html. Like so: html:output")));
-        }
+    public void fails_to_instantiate_html_plugin_without_dir_arg() {
+        final Executable testMethod = () -> fc.create(parse("html"));
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "You must supply an output argument to html. Like so: html:output"
+        )));
     }
 
     @Test
@@ -111,16 +109,14 @@ public class PluginFactoryTest {
     public void instantiates_single_custom_appendable_plugin_with_stdout() {
         WantsAppendable plugin = (WantsAppendable) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
         assertThat(plugin.out, is(instanceOf(PrintStream.class)));
-        try {
-            fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
-            fail();
-        } catch (CucumberException expected) {
-            assertThat(expected.getMessage(),
-                is(equalTo("" +
-                    "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable " +
-                    "and io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable use it. " +
-                    "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL")));
-        }
+
+        final Executable testMethod = () -> fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable " +
+                "and io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable use it. " +
+                "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL"
+        )));
     }
 
     @Test

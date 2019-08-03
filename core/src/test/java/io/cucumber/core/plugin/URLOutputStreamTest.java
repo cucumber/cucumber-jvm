@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.rules.TemporaryFolder;
 import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
@@ -43,7 +44,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class URLOutputStreamTest {
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
@@ -123,11 +124,10 @@ public class URLOutputStreamTest {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
-        try {
-            w.close();
-            fail();
-        } catch (FileNotFoundException expected) {
-        }
+
+        final Executable testMethod = () -> w.close();
+        final FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
     }
 
     @Test
@@ -145,14 +145,13 @@ public class URLOutputStreamTest {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
-        try {
-            w.close();
-            fail();
-        } catch (IOException expected) {
-            assertThat(expected.getMessage(), is(equalTo(
-                "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
-                    "HTTP 500\nsomething went wrong")));
-        }
+
+        final Executable testMethod = () -> w.close();
+        final IOException actualThrown = assertThrows(IOException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
+                "HTTP 500\nsomething went wrong"
+        )));
     }
 
     @Test

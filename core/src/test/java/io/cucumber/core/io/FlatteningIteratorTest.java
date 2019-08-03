@@ -1,6 +1,7 @@
 package io.cucumber.core.io;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,8 +12,9 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FlatteningIteratorTest {
 
@@ -25,11 +27,9 @@ public class FlatteningIteratorTest {
         assertThat(toList(fi), is(equalTo(asList(1, 2, 3, 4))));
         assertFalse(fi.hasNext());
 
-        try {
-            fi.next();
-            fail();
-        } catch (NoSuchElementException expected) {
-        }
+        final Executable testMethod = () -> fi.next();
+        final NoSuchElementException actualThrown = assertThrows(NoSuchElementException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(nullValue()));
     }
 
     private <T> List<T> toList(final Iterator<T> fi) {

@@ -2,6 +2,7 @@ package io.cucumber.guice;
 
 import com.google.inject.Injector;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,7 +14,10 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.fail;
+import static org.hamcrest.core.Is.isA;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InjectorSourceFactoryTest {
 
@@ -47,12 +51,13 @@ public class InjectorSourceFactoryTest {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, "some.bogus.Class");
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
-        try {
-            injectorSourceFactory.create();
-            fail();
-        } catch (InjectorSourceInstantiationFailed exception) {
-            assertThat(exception.getCause(), instanceOf(ClassNotFoundException.class));
-        }
+
+        final Executable testMethod = () -> injectorSourceFactory.create();
+        final InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
+        assertAll("Checking Exception including cause",
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(ClassNotFoundException.class))
+        );
     }
 
     @Test
@@ -60,12 +65,13 @@ public class InjectorSourceFactoryTest {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, String.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
-        try {
-            injectorSourceFactory.create();
-            fail();
-        } catch (InjectorSourceInstantiationFailed exception) {
-            assertThat(exception.getCause(), instanceOf(ClassCastException.class));
-        }
+
+        final Executable testMethod = () -> injectorSourceFactory.create();
+        final InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
+        assertAll("Checking Exception including cause",
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(ClassCastException.class))
+        );
     }
 
     static class PrivateConstructor implements InjectorSource {
@@ -83,12 +89,13 @@ public class InjectorSourceFactoryTest {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, PrivateConstructor.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
-        try {
-            injectorSourceFactory.create();
-            fail();
-        } catch (InjectorSourceInstantiationFailed exception) {
-            assertThat(exception.getCause(), instanceOf(IllegalAccessException.class));
-        }
+
+        final Executable testMethod = () -> injectorSourceFactory.create();
+        final InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
+        assertAll("Checking Exception including cause",
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(IllegalAccessException.class))
+        );
     }
 
     static class NoDefaultConstructor implements InjectorSource {
@@ -106,12 +113,13 @@ public class InjectorSourceFactoryTest {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, NoDefaultConstructor.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
-        try {
-            injectorSourceFactory.create();
-            fail();
-        } catch (InjectorSourceInstantiationFailed exception) {
-            assertThat(exception.getCause(), instanceOf(InstantiationException.class));
-        }
+
+        final Executable testMethod = () -> injectorSourceFactory.create();
+        final InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
+        assertAll("Checking Exception including cause",
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(InstantiationException.class))
+        );
     }
 
     /**
