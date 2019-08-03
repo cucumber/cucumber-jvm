@@ -8,8 +8,8 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class CucumberPropertiesTest {
 
@@ -30,7 +30,7 @@ public class CucumberPropertiesTest {
 
     @Test
     public void returns_null_for_absent_key() {
-        assertNull(env.get("pxfj54#"));
+        assertThat(env.get("pxfj54#"), is(nullValue()));
     }
 
     @Test
