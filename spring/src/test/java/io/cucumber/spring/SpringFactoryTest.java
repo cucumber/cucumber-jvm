@@ -22,9 +22,9 @@ import org.junit.jupiter.api.function.Executable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +48,8 @@ public class SpringFactoryTest {
 
         assertThat(o1, is(notNullValue()));
         assertThat(o2, is(notNullValue()));
-        assertNotSame(o1, o2);
+        assertThat(o1, is(not(equalTo(o2))));
+        assertThat(o2, is(not(equalTo(o1))));
     }
 
     @Test
@@ -169,7 +170,8 @@ public class SpringFactoryTest {
 
         assertThat(o1, is(notNullValue()));
         assertThat(o2, is(notNullValue()));
-        assertNotSame(o1, o2);
+        assertThat(o1, is(not(equalTo(o2))));
+        assertThat(o2, is(not(equalTo(o1))));
     }
 
     @Test
@@ -190,7 +192,8 @@ public class SpringFactoryTest {
 
         assertThat(o1, is(notNullValue()));
         assertThat(o2, is(notNullValue()));
-        assertNotSame(o1, o2);
+        assertThat(o1, is(not(equalTo(o2))));
+        assertThat(o2, is(not(equalTo(o1))));
     }
 
     @Test
@@ -267,7 +270,9 @@ public class SpringFactoryTest {
         final GlueScopedComponent glue2 = factory.getInstance(GlueScopedComponent.class);
         assertThat(belly2, is(notNullValue()));
         assertThat(glue2, is(notNullValue()));
-        assertNotSame(glue1, glue2);
+        assertThat(glue1, is(not(equalTo(glue2))));
+        assertThat(glue2, is(not(equalTo(glue1))));
+
         assertSame(belly1, belly2);
     }
 
