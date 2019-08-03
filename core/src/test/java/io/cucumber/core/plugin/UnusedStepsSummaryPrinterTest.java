@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.Duration;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,7 +36,7 @@ public class UnusedStepsSummaryPrinterTest {
         bus.send(new TestRunFinished(bus.getInstant()));
 
         // Verify produced output
-        assertEquals("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n", out.toString());
+        assertThat(out.toString(), is(equalTo("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n")));
     }
 
     private static StepDefinition mockStepDef(String location, String pattern) {

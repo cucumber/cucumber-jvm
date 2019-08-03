@@ -13,7 +13,9 @@ import java.util.Map;
 
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class RerunFormatterTest {
 
@@ -38,7 +40,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("")));
     }
 
     @Test
@@ -58,7 +60,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(true);
 
-        assertEquals("file:path/test.feature:2:4:6\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2:4:6\n")));
     }
 
     @Test
@@ -76,7 +78,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/test.feature:2\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2\n")));
     }
 
     @Test
@@ -95,7 +97,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/test.feature:4\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:4\n")));
     }
 
     @Test
@@ -116,7 +118,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/test.feature:8\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:8\n")));
     }
 
     @Test
@@ -135,7 +137,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/test.feature:2\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2\n")));
     }
 
     @Test
@@ -154,7 +156,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/test.feature:2\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2\n")));
     }
 
     @Test
@@ -175,7 +177,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/test.feature:2:5\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2:5\n")));
     }
 
     @Test
@@ -199,7 +201,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertEquals("file:path/first.feature:2\nfile:path/second.feature:2\n", formatterOutput);
+        assertThat(formatterOutput, is(equalTo("file:path/first.feature:2\nfile:path/second.feature:2\n")));
     }
 
     private String runFeaturesWithFormatter(boolean isStrict) {

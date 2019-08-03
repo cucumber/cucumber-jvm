@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -29,7 +31,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
-
 
 public class JUnitReporterTest {
 
@@ -102,9 +103,9 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
+        assertThat(failure.getDescription(), is(equalTo(description)));
         assertTrue(failure.getException() instanceof SkippedThrowable);
-        assertEquals("This step is skipped", failure.getException().getMessage());
+        assertThat(failure.getException().getMessage(), is(equalTo("This step is skipped")));
     }
 
     @Test
@@ -123,8 +124,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
-        assertEquals(exception, failure.getException());
+        assertThat(failure.getDescription(), is(equalTo(description)));
+        assertThat(failure.getException(), is(equalTo(exception)));
     }
 
     @Test
@@ -149,7 +150,7 @@ public class JUnitReporterTest {
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
-        assertEquals(asList(exception), jUnitReporter.stepErrors);
+        assertThat(jUnitReporter.stepErrors, is(equalTo(asList(exception))));
     }
 
     @Test
@@ -168,8 +169,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
-        assertEquals(exception, failure.getException());
+        assertThat(failure.getDescription(), is(equalTo(description)));
+        assertThat(failure.getException(), is(equalTo(exception)));
     }
 
     @Test
@@ -188,8 +189,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
-        assertEquals(exception, failure.getException());
+        assertThat(failure.getDescription(), is(equalTo(description)));
+        assertThat(failure.getException(), is(equalTo(exception)));
     }
 
     @Test
@@ -202,7 +203,7 @@ public class JUnitReporterTest {
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
-        assertEquals(asList(exception), jUnitReporter.stepErrors);
+        assertThat(jUnitReporter.stepErrors, is(equalTo(asList(exception))));
     }
 
     @Test
@@ -220,9 +221,9 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
+        assertThat(failure.getDescription(), is(equalTo(description)));
         assertTrue(failure.getException() instanceof UndefinedThrowable);
-        assertEquals("This step is undefined", failure.getException().getMessage());
+        assertThat(failure.getException().getMessage(), is(equalTo("This step is undefined")));
     }
 
     @Test
@@ -240,9 +241,9 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
+        assertThat(failure.getDescription(), is(equalTo(description)));
         assertTrue(failure.getException() instanceof UndefinedThrowable);
-        assertEquals("This step is undefined", failure.getException().getMessage());
+        assertThat(failure.getException().getMessage(), is(equalTo("This step is undefined")));
     }
 
     @Test
@@ -256,7 +257,7 @@ public class JUnitReporterTest {
         jUnitReporter.handleStepResult(testStep, result);
 
         assertFalse(jUnitReporter.stepErrors.isEmpty());
-        assertEquals("The step \"XX\" is undefined", jUnitReporter.stepErrors.get(0).getMessage());
+        assertThat(jUnitReporter.stepErrors.get(0).getMessage(), is(equalTo("The step \"XX\" is undefined")));
     }
 
     @Test
@@ -275,8 +276,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
-        assertEquals(exception, failure.getException());
+        assertThat(failure.getDescription(), is(equalTo(description)));
+        assertThat(failure.getException(), is(equalTo(exception)));
     }
 
     @Test
@@ -289,7 +290,7 @@ public class JUnitReporterTest {
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
-        assertEquals(asList(exception), jUnitReporter.stepErrors);
+        assertThat(jUnitReporter.stepErrors, is(equalTo(asList(exception))));
     }
 
     @Test
@@ -319,7 +320,7 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
-        assertEquals(description, failure.getDescription());
+        assertThat(failure.getDescription(), is(equalTo(description)));
         assertTrue(failure.getException() instanceof SkippedThrowable);
     }
 
@@ -340,8 +341,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
-        assertEquals(description, failures.get(0).getDescription());
-        assertEquals(exception1, failures.get(0).getException());
+        assertThat(failures.get(0).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(0).getException(), is(equalTo(exception1)));
     }
 
     @Test
@@ -361,8 +362,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
-        assertEquals(description, failures.get(0).getDescription());
-        assertEquals(exception1, failures.get(0).getException());
+        assertThat(failures.get(0).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(0).getException(), is(equalTo(exception1)));
     }
 
     @Test
@@ -382,8 +383,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
-        assertEquals(description, failures.get(0).getDescription());
-        assertEquals(exception1, failures.get(0).getException());
+        assertThat(failures.get(0).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(0).getException(), is(equalTo(exception1)));
     }
 
     @Test
@@ -403,8 +404,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
-        assertEquals(description, failures.get(0).getDescription());
-        assertEquals(exception1, failures.get(0).getException());
+        assertThat(failures.get(0).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(0).getException(), is(equalTo(exception1)));
     }
 
     @Test
@@ -424,8 +425,8 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
-        assertEquals(description, failures.get(0).getDescription());
-        assertEquals(exception1, failures.get(0).getException());
+        assertThat(failures.get(0).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(0).getException(), is(equalTo(exception1)));
     }
 
     @Test
@@ -445,10 +446,10 @@ public class JUnitReporterTest {
         verify(runNotifier).fireTestFinished(description);
 
         List<Failure> failures = failureArgumentCaptor.getAllValues();
-        assertEquals(description, failures.get(0).getDescription());
-        assertEquals(exception1, failures.get(0).getException());
-        assertEquals(description, failures.get(1).getDescription());
-        assertEquals(exception2, failures.get(1).getException());
+        assertThat(failures.get(0).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(0).getException(), is(equalTo(exception1)));
+        assertThat(failures.get(1).getDescription(), is(equalTo(description)));
+        assertThat(failures.get(1).getException(), is(equalTo(exception2)));
     }
 
     private Result mockResult(Status status, Throwable exception) {
@@ -535,4 +536,5 @@ public class JUnitReporterTest {
             jUnitReporter.stepErrors.add(exception);
         }
     }
+
 }

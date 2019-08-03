@@ -24,7 +24,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -207,7 +206,7 @@ public class SpringFactoryTest {
         WithSpringAnnotations stepdef = factory.getInstance(WithSpringAnnotations.class);
         factory.stop();
 
-        assertEquals("property value", stepdef.getProperty());
+        assertThat(stepdef.getProperty(), is(equalTo("property value")));
     }
 
     @Test

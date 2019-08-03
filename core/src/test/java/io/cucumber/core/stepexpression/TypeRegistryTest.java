@@ -15,8 +15,9 @@ import java.util.Date;
 import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
-import static org.junit.Assert.assertEquals;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class TypeRegistryTest {
 
@@ -36,7 +37,7 @@ public class TypeRegistryTest {
             }
         );
         registry.defineParameterType(expected);
-        assertEquals(expected, registry.parameterTypeRegistry().lookupByTypeName("example"));
+        assertThat(registry.parameterTypeRegistry().lookupByTypeName("example"), is(equalTo(expected)));
     }
 
     @Test
@@ -48,7 +49,7 @@ public class TypeRegistryTest {
             }
         });
         registry.defineDataTableType(expected);
-        assertEquals(expected, registry.dataTableTypeRegistry().lookupTableTypeByType(Date.class));
+        assertThat(registry.dataTableTypeRegistry().lookupTableTypeByType(Date.class), is(equalTo(expected)));
     }
 
     @Test
@@ -60,7 +61,7 @@ public class TypeRegistryTest {
             }
         };
         registry.setDefaultParameterTransformer(expected);
-        assertEquals(expected, registry.parameterTypeRegistry().getDefaultParameterTransformer());
+        assertThat(registry.parameterTypeRegistry().getDefaultParameterTransformer(), is(equalTo(expected)));
     }
 
     @Test

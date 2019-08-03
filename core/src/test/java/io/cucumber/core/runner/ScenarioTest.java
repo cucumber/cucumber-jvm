@@ -12,7 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
 public class ScenarioTest {
@@ -21,7 +23,7 @@ public class ScenarioTest {
     public void provides_the_uri_of_the_feature_file() {
         Scenario scenario = createScenarioWithFeatureFileUri(uri("path/file.feature"));
 
-        assertEquals("path/file.feature", scenario.getUri());
+        assertThat(scenario.getUri(), is(equalTo("path/file.feature")));
     }
 
     @Test
@@ -29,7 +31,7 @@ public class ScenarioTest {
         List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(3), column(2)));
         Scenario scenario = createScenarioWithScenarioLocations(scenarioLocation);
 
-        assertEquals((Integer) 3, scenario.getLine());
+        assertThat(scenario.getLine(), is(equalTo((Integer) 3)));
     }
 
     @Test
@@ -37,7 +39,7 @@ public class ScenarioTest {
         List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(8), column(4)), new PickleLocation(line(3), column(2)));
         Scenario scenario = createScenarioWithScenarioLocations(scenarioLocation);
 
-        assertEquals((Integer) 8, scenario.getLine());
+        assertThat(scenario.getLine(), is(equalTo((Integer) 8)));
     }
 
     @Test
@@ -45,7 +47,7 @@ public class ScenarioTest {
         List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(3), column(2)));
         Scenario scenario = createScenarioWithFeatureFileUriAndScenarioLocations(uri("path/file.feature"), scenarioLocation);
 
-        assertEquals("path/file.feature:3", scenario.getId());
+        assertThat(scenario.getId(), is(equalTo("path/file.feature:3")));
     }
 
     @Test
@@ -53,7 +55,7 @@ public class ScenarioTest {
         List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(8), column(4)), new PickleLocation(line(3), column(2)));
         Scenario scenario = createScenarioWithFeatureFileUriAndScenarioLocations(uri("path/file.feature"), scenarioLocation);
 
-        assertEquals("path/file.feature:8", scenario.getId());
+        assertThat(scenario.getId(), is(equalTo("path/file.feature:8")));
     }
 
     private Scenario createScenarioWithFeatureFileUri(String uri) {

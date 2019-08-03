@@ -10,7 +10,6 @@ import static java.lang.Thread.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,7 +24,7 @@ public class InvokerTest {
                 return slow.slow(10);
             }
         }, 50);
-        assertEquals("slept 10ms", what);
+        assertThat(what, is(equalTo("slept 10ms")));
     }
 
     @Test

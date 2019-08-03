@@ -9,7 +9,6 @@ import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertEquals;
 
 public class Cdi2FactoryTest {
 
@@ -25,7 +24,7 @@ public class Cdi2FactoryTest {
         final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
         final CDIBellyStepdefs cdiStep = factory.getInstance(CDIBellyStepdefs.class);
         assertThat(cdiStep.getClass(), not(isA(CDIBellyStepdefs.class))); // it is a CDI proxy
-        assertEquals(CDIBellyStepdefs.class, cdiStep.getClass().getSuperclass());
+        assertThat(cdiStep.getClass().getSuperclass(), isA(CDIBellyStepdefs.class));
         factory.stop();
 
         // Scenario 2

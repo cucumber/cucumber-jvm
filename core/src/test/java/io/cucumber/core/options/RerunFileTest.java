@@ -20,8 +20,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -120,7 +120,6 @@ public class RerunFileTest {
         assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)));
     }
 
-
     @Test
     public void understands_whitespace_in_rerun_filepath() throws Exception {
         ResourceLoader resourceLoader = mockFileResource(
@@ -134,7 +133,6 @@ public class RerunFileTest {
         assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature")));
         assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)));
     }
-
 
     @Test
     public void understands_rerun_files_separated_by_with_whitespace() throws Exception {
@@ -193,7 +191,7 @@ public class RerunFileTest {
             .parse(properties)
             .build(options);
 
-        assertEquals(Collections.emptyList(), runtimeOptions.getTagExpressions());
+        assertThat(runtimeOptions.getTagExpressions(), is(equalTo(Collections.emptyList())));
     }
 
     private ResourceLoader mockFileResource(String path, String contents) throws IOException {

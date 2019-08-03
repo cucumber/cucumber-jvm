@@ -22,7 +22,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
 public class CoreStepDefinitionTest {
@@ -36,7 +37,7 @@ public class CoreStepDefinitionTest {
 
         PickleString pickleString = new PickleString(null, "content", "text");
         List<Argument> arguments = stepDefinition.matchedArguments(new PickleStep("I have some step", singletonList(pickleString), emptyList()));
-        assertEquals("content", arguments.get(0).getValue());
+        assertThat(arguments.get(0).getValue(), is(equalTo("content")));
     }
 
     @Test
@@ -46,7 +47,7 @@ public class CoreStepDefinitionTest {
 
         PickleTable table = new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(null, "content")))));
         List<Argument> arguments = stepDefinition.matchedArguments(new PickleStep("I have some step", singletonList(table), emptyList()));
-        assertEquals(DataTable.create(singletonList(singletonList("content"))), arguments.get(0).getValue());
+        assertThat(arguments.get(0).getValue(), is(equalTo(DataTable.create(singletonList(singletonList("content"))))));
     }
 
 
@@ -86,30 +87,30 @@ public class CoreStepDefinitionTest {
     public void transforms_to_list_of_single_values() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
         List<List<Double>> stepDefs = runStepDef(m, false, new PickleTable(listOfDoublesWithoutHeader()));
-        assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.toString());
+        assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
     }
 
     @Test
     public void transforms_to_list_of_single_values_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
         List<List<Double>> stepDefs = runStepDef(m, true, new PickleTable(transposedListOfDoublesWithoutHeader()));
-        assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.toString());
+        assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
     }
 
     @Test
     public void passes_plain_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
         DataTable stepDefs = runStepDef(m, false, new PickleTable(listOfDatesWithHeader()));
-        assertEquals("Birth Date", stepDefs.cell(0, 0));
-        assertEquals("1957-05-10", stepDefs.cell(1, 0));
+        assertThat(stepDefs.cell(0, 0), is(equalTo("Birth Date")));
+        assertThat(stepDefs.cell(1, 0), is(equalTo("1957-05-10")));
     }
 
     @Test
     public void passes_transposed_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
         DataTable stepDefs = runStepDef(m, true, new PickleTable(listOfDatesWithHeader()));
-        assertEquals("Birth Date", stepDefs.cell(0, 0));
-        assertEquals("1957-05-10", stepDefs.cell(0, 1));
+        assertThat(stepDefs.cell(0, 0), is(equalTo("Birth Date")));
+        assertThat(stepDefs.cell(0, 1), is(equalTo("1957-05-10")));
     }
 
     private <T> T runStepDef(Method method, boolean transposed, PickleTable table) throws Throwable {

@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -20,7 +22,7 @@ public class FlatteningIteratorTest {
         fi.push(asList(3, 4).iterator());
         fi.push(asList(1, 2).iterator());
 
-        assertEquals(asList(1, 2, 3, 4), toList(fi));
+        assertThat(toList(fi), is(equalTo(asList(1, 2, 3, 4))));
         assertFalse(fi.hasNext());
 
         try {

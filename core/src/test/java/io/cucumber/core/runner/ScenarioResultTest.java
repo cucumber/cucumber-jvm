@@ -17,7 +17,8 @@ import java.util.Collections;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -46,13 +47,13 @@ public class ScenarioResultTest {
 
     @Test
     public void no_steps_is_undefined() {
-        assertEquals(Status.UNDEFINED, s.getStatus());
+        assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED)));
     }
 
     @Test
     public void one_passed_step_is_passed() {
         s.add(new Result(Status.PASSED, ZERO, null));
-        assertEquals(Status.PASSED, s.getStatus());
+        assertThat(s.getStatus(), is(equalTo(Status.PASSED)));
     }
 
     @Test
@@ -62,7 +63,7 @@ public class ScenarioResultTest {
         s.add(new Result(Status.PENDING, ZERO, null));
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
-        assertEquals(Status.FAILED, s.getStatus());
+        assertThat(s.getStatus(), is(equalTo(Status.FAILED)));
         assertTrue(s.isFailed());
     }
 
@@ -70,7 +71,7 @@ public class ScenarioResultTest {
     public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
-        assertEquals(Status.SKIPPED, s.getStatus());
+        assertThat(s.getStatus(), is(equalTo(Status.SKIPPED)));
         assertFalse(s.isFailed());
     }
 
@@ -80,7 +81,7 @@ public class ScenarioResultTest {
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.PENDING, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
-        assertEquals(Status.UNDEFINED, s.getStatus());
+        assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED)));
         assertFalse(s.isFailed());
     }
 
@@ -89,7 +90,7 @@ public class ScenarioResultTest {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
-        assertEquals(Status.UNDEFINED, s.getStatus());
+        assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED)));
         assertFalse(s.isFailed());
     }
 

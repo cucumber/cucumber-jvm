@@ -22,7 +22,6 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -100,22 +99,22 @@ public class CucumberOptionsAnnotationParserTest {
         RuntimeOptions runtimeOptions = parser().parse(MultipleNames.class).build();
 
         List<Pattern> filters = runtimeOptions.getNameFilters();
-        assertEquals(2, filters.size());
+        assertThat(filters.size(), is(equalTo(2)));
         Iterator<Pattern> iterator = filters.iterator();
-        assertEquals("name1", getRegexpPattern(iterator.next()));
-        assertEquals("name2", getRegexpPattern(iterator.next()));
+        assertThat(getRegexpPattern(iterator.next()), is(equalTo("name1")));
+        assertThat(getRegexpPattern(iterator.next()), is(equalTo("name2")));
     }
 
     @Test
     public void testObjectFactory() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithCustomObjectFactory.class).build();
-        assertEquals(TestObjectFactory.class, runtimeOptions.getObjectFactoryClass());
+        assertThat(runtimeOptions.getObjectFactoryClass(), is(equalTo(TestObjectFactory.class)));
     }
 
     @Test
     public void create_with_snippets() {
         RuntimeOptions runtimeOptions = parser().parse(Snippets.class).build();
-        assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
+        assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
     }
 
     private String getRegexpPattern(Object pattern) {
@@ -296,7 +295,6 @@ public class CucumberOptionsAnnotationParserTest {
     private static class ClassWithGlueAndExtraGlue {
         // empty
     }
-
 
     private static class CoreCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
         private final CucumberOptions annotation;
