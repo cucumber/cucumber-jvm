@@ -1,30 +1,18 @@
 package io.cucumber.weld;
 
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
-
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
-import org.jboss.weld.environment.se.Weld;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class WeldFactoryTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private LogRecordListener logRecordListener;
 
@@ -35,7 +23,7 @@ public class WeldFactoryTest {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         LoggerFactory.removeListener(logRecordListener);
     }
 
@@ -66,4 +54,5 @@ public class WeldFactoryTest {
         assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
             containsString("your weld container didn't shut down properly"));
     }
+
 }

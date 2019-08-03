@@ -1,22 +1,21 @@
 package io.cucumber.core.runner;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.Collections;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.Scenario;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+
+import java.util.Collections;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class AmbiguousStepDefinitionMatchsTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private final PickleStep pickleStep = new PickleStep("", Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
     private final AmbiguousStepDefinitionsException e = new AmbiguousStepDefinitionsException(pickleStep, Collections.<PickleStepDefinitionMatch>emptyList());
@@ -24,13 +23,20 @@ public class AmbiguousStepDefinitionMatchsTest {
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {
-        expectedException.expect(AmbiguousStepDefinitionsException.class);
-        match.runStep(mock(Scenario.class));
+        final Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        final AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "\"\" matches more than one step definition:\n"
+        )));
     }
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_dry_run() {
-        expectedException.expect(AmbiguousStepDefinitionsException.class);
-        match.dryRunStep(mock(Scenario.class));
+        final Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        final AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "\"\" matches more than one step definition:\n"
+        )));
     }
+
 }

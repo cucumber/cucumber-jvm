@@ -29,9 +29,6 @@ import static org.mockito.Mockito.mock;
 
 public class CoreStepDefinitionTest {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
 
     @Test

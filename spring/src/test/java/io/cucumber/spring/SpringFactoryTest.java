@@ -1,35 +1,35 @@
 package io.cucumber.spring;
 
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.spring.beans.Belly;
-import io.cucumber.spring.beans.GlueScopedComponent;
 import io.cucumber.spring.beans.BellyBean;
+import io.cucumber.spring.beans.GlueScopedComponent;
 import io.cucumber.spring.commonglue.AutowiresThirdStepDef;
 import io.cucumber.spring.commonglue.OneStepDef;
 import io.cucumber.spring.commonglue.ThirdStepDef;
 import io.cucumber.spring.componentannotation.WithComponentAnnotation;
 import io.cucumber.spring.componentannotation.WithControllerAnnotation;
-import io.cucumber.spring.metaconfig.general.BellyMetaStepdefs;
 import io.cucumber.spring.contextconfig.BellyStepdefs;
 import io.cucumber.spring.contextconfig.WithSpringAnnotations;
 import io.cucumber.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
 import io.cucumber.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import io.cucumber.spring.metaconfig.general.BellyMetaStepdefs;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringFactoryTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void shouldGiveUsNewStepInstancesForEachScenario() {
@@ -217,30 +217,36 @@ public class SpringFactoryTest {
 
     @Test
     public void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context");
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
-        factory.addClass(BellyStepdefs.class);
+
+        final Executable testMethod = () -> factory.addClass(BellyStepdefs.class);
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
+        )));
     }
 
     @Test
     public void shouldFailIfClassWithSpringComponentAnnotationsIsFound() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component");
-        expectedException.expectMessage("Please remove the @Component annotation");
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithComponentAnnotation.class);
+
+        final Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation"
+        )));
     }
 
     @Test
     public void shouldFailIfClassWithAnnotationAnnotatedWithSpringComponentAnnotationsIsFound() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller");
-        expectedException.expectMessage("Please remove the @Controller annotation");
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithControllerAnnotation.class);
 
+        final Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation"
+        )));
     }
 
     @Test
@@ -264,4 +270,5 @@ public class SpringFactoryTest {
         assertNotSame(glue1, glue2);
         assertSame(belly1, belly2);
     }
+
 }

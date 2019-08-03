@@ -1,17 +1,18 @@
 package io.cucumber.java8;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import io.cucumber.core.exception.CucumberException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Java8LambdaStepDefinitionTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() {
@@ -40,21 +41,28 @@ public class Java8LambdaStepDefinitionTest {
 
     @Test
     public void should_fail_for_param_with_non_generic_list() {
-        expectedException.expectMessage("Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps");
-
         StepdefBody.A1<List> body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
-        stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
+
+        final Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
+        )));
     }
 
     @Test
     public void should_fail_for_param_with_generic_list() {
-        expectedException.expectMessage("Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps");
-
         StepdefBody.A1<List<String>> body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
-        stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
+
+        final Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
+        )));
     }
+
 }
