@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CucumberNeedleConfigurationTest {
@@ -19,7 +19,7 @@ public class CucumberNeedleConfigurationTest {
     public void shouldReturnEmptyInstances() {
         final InjectionProvider<?>[] allInjectionProviders = new CucumberNeedleConfiguration("resource-bundles/empty")
             .getInjectionProviders();
-        assertNotNull(allInjectionProviders);
+        assertThat(allInjectionProviders, is(notNullValue()));
         assertThat(allInjectionProviders.length, is(0));
     }
 

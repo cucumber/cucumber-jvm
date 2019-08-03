@@ -22,8 +22,8 @@ import org.junit.jupiter.api.function.Executable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -46,8 +46,8 @@ public class SpringFactoryTest {
         final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
         factory.stop();
 
-        assertNotNull(o1);
-        assertNotNull(o2);
+        assertThat(o1, is(notNullValue()));
+        assertThat(o2, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 
@@ -67,8 +67,8 @@ public class SpringFactoryTest {
         final BellyBean o2 = factory2.getInstance(BellyStepdefs.class).getBellyBean();
         factory2.stop();
 
-        assertNotNull(o1);
-        assertNotNull(o2);
+        assertThat(o1, is(notNullValue()));
+        assertThat(o2, is(notNullValue()));
         assertSame(o1, o2);
     }
 
@@ -88,8 +88,8 @@ public class SpringFactoryTest {
         final BellyBean o2 = factory2.getInstance(BellyMetaStepdefs.class).getBellyBean();
         factory2.stop();
 
-        assertNotNull(o1);
-        assertNotNull(o2);
+        assertThat(o1, is(notNullValue()));
+        assertThat(o2, is(notNullValue()));
         assertSame(o1, o2);
     }
 
@@ -105,8 +105,8 @@ public class SpringFactoryTest {
         final ThirdStepDef o2 = factory1.getInstance(ThirdStepDef.class);
         factory1.stop();
 
-        assertNotNull(o1.getThirdStepDef());
-        assertNotNull(o2);
+        assertThat(o1.getThirdStepDef(), is(notNullValue()));
+        assertThat(o2, is(notNullValue()));
         assertSame(o1.getThirdStepDef(), o2);
     }
 
@@ -122,8 +122,8 @@ public class SpringFactoryTest {
         final AutowiresThirdStepDef o3 = factory1.getInstance(AutowiresThirdStepDef.class);
         factory1.stop();
 
-        assertNotNull(o1.getThirdStepDef());
-        assertNotNull(o3.getThirdStepDef());
+        assertThat(o1.getThirdStepDef(), is(notNullValue()));
+        assertThat(o3.getThirdStepDef(), is(notNullValue()));
         assertSame(o1.getThirdStepDef(), o3.getThirdStepDef());
     }
 
@@ -135,7 +135,7 @@ public class SpringFactoryTest {
         WithSpringAnnotations stepdef = factory.getInstance(WithSpringAnnotations.class);
         factory.stop();
 
-        assertNotNull(stepdef);
+        assertThat(stepdef, is(notNullValue()));
         assertTrue(stepdef.isAutowired());
     }
 
@@ -147,7 +147,7 @@ public class SpringFactoryTest {
         WithContextHierarchyAnnotation stepdef = factory.getInstance(WithContextHierarchyAnnotation.class);
         factory.stop();
 
-        assertNotNull(stepdef);
+        assertThat(stepdef, is(notNullValue()));
         assertTrue(stepdef.isAutowired());
     }
 
@@ -167,8 +167,8 @@ public class SpringFactoryTest {
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefs.class).getBellyBean();
         factory.stop();
 
-        assertNotNull(o1);
-        assertNotNull(o2);
+        assertThat(o1, is(notNullValue()));
+        assertThat(o2, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 
@@ -188,8 +188,8 @@ public class SpringFactoryTest {
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyMetaStepDefs.class).getBellyBean();
         factory.stop();
 
-        assertNotNull(o1);
-        assertNotNull(o2);
+        assertThat(o1, is(notNullValue()));
+        assertThat(o2, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 
@@ -212,7 +212,7 @@ public class SpringFactoryTest {
         final BellyBean o1 = factory.getInstance(BellyBean.class);
         factory.stop();
 
-        assertNotNull(o1);
+        assertThat(o1, is(notNullValue()));
     }
 
     @Test
@@ -258,15 +258,15 @@ public class SpringFactoryTest {
         factory.start();
         final Belly belly1 = factory.getInstance(Belly.class);
         final GlueScopedComponent glue1 = factory.getInstance(GlueScopedComponent.class);
-        assertNotNull(belly1);
-        assertNotNull(glue1);
+        assertThat(belly1, is(notNullValue()));
+        assertThat(glue1, is(notNullValue()));
         factory.stop();
 
         // Scenario 2
         final Belly belly2 = factory.getInstance(Belly.class);
         final GlueScopedComponent glue2 = factory.getInstance(GlueScopedComponent.class);
-        assertNotNull(belly2);
-        assertNotNull(glue2);
+        assertThat(belly2, is(notNullValue()));
+        assertThat(glue2, is(notNullValue()));
         assertNotSame(glue1, glue2);
         assertSame(belly1, belly2);
     }

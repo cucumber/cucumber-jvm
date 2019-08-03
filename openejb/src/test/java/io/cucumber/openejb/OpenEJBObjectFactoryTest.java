@@ -3,7 +3,9 @@ package io.cucumber.openejb;
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotSame;
 
 public class OpenEJBObjectFactoryTest {
@@ -23,7 +25,7 @@ public class OpenEJBObjectFactoryTest {
         BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
         factory.stop();
 
-        assertNotNull(o1);
+        assertThat(o1, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 

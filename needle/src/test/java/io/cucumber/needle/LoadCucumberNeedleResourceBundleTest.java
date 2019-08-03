@@ -9,8 +9,8 @@ import java.util.ResourceBundle;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -21,14 +21,14 @@ public class LoadCucumberNeedleResourceBundleTest {
     @Test
     public void shouldReturnEmptyResourceBundleWhenResourceDoesNotExist() throws Exception {
         final ResourceBundle resourceBundle = function.apply("does-not-exist");
-        assertNotNull(resourceBundle);
+        assertThat(resourceBundle, is(notNullValue()));
         assertThat(resourceBundle, CoreMatchers.is(LoadResourceBundle.EMPTY_RESOURCE_BUNDLE));
     }
 
     @Test
     public void shouldReturnExistingResourceBundle() {
         final ResourceBundle resourceBundle = function.apply("empty");
-        assertNotNull(resourceBundle);
+        assertThat(resourceBundle, is(notNullValue()));
         assertTrue(resourceBundle.keySet().isEmpty());
     }
 
@@ -36,7 +36,7 @@ public class LoadCucumberNeedleResourceBundleTest {
     public void shouldAlwaysReturnEmptyForEmptyResourceBundle() {
         final ResourceBundle resourceBundle = LoadResourceBundle.EMPTY_RESOURCE_BUNDLE;
 
-        assertNotNull(resourceBundle.getObject("foo"));
+        assertThat(resourceBundle.getObject("foo"), is(notNullValue()));
         assertThat(resourceBundle.getString("foo"), is(""));
         assertFalse(resourceBundle.getKeys().hasMoreElements());
     }

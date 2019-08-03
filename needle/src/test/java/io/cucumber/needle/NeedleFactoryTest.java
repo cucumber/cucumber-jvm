@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 public class NeedleFactoryTest {
 
@@ -16,7 +16,7 @@ public class NeedleFactoryTest {
         final InjectionProvider<?>[] injectionProviders = NeedleFactory
             .setUpInjectionProviders();
 
-        assertNotNull(injectionProviders);
+        assertThat(injectionProviders, is(notNullValue()));
         assertThat(injectionProviders.length, is(1));
         assertThat(injectionProviders[0].getClass().getCanonicalName(),
             is(SimpleNameGetterProvider.class.getCanonicalName()));

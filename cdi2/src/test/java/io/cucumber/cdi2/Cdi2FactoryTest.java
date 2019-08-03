@@ -3,9 +3,11 @@ package io.cucumber.cdi2;
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 public class Cdi2FactoryTest {
@@ -30,7 +32,7 @@ public class Cdi2FactoryTest {
         final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
         factory.stop();
 
-        assertNotNull(o1);
+        assertThat(o1, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 

@@ -9,7 +9,7 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 public class ReadInjectionProviderClassNamesTest {
 
@@ -18,7 +18,7 @@ public class ReadInjectionProviderClassNamesTest {
     @Test
     public void shouldReturnProviderFromCucumberNeedleProperties() {
         final Set<String> classNames = function.apply(loadBundle(CucumberNeedleConfiguration.RESOURCE_CUCUMBER_NEEDLE));
-        assertNotNull(classNames);
+        assertThat(classNames, is(notNullValue()));
         assertThat(classNames.size(), is(1));
         assertThat(classNames.iterator().next(), is(SimpleNameGetterProvider.class.getCanonicalName()));
     }
@@ -26,21 +26,21 @@ public class ReadInjectionProviderClassNamesTest {
     @Test
     public void shouldReturnEmptySetWhenResourceBundleIsNull() {
         final Set<String> classNames = function.apply(null);
-        assertNotNull(classNames);
+        assertThat(classNames, is(notNullValue()));
         assertThat(classNames.isEmpty(), is(true));
     }
 
     @Test
     public void shouldReturnEmptySetWhenPropertyIsNotSet() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/empty"));
-        assertNotNull(classNames);
+        assertThat(classNames, is(notNullValue()));
         assertThat(classNames.isEmpty(), is(true));
     }
 
     @Test
     public void shouldReturnEmptySetWhenPropertyIsEmpty() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/no-classname"));
-        assertNotNull(classNames);
+        assertThat(classNames, is(notNullValue()));
         assertThat(classNames.isEmpty(), is(true));
     }
 
