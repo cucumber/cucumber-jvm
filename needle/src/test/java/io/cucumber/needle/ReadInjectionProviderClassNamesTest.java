@@ -1,15 +1,15 @@
 package io.cucumber.needle;
 
 import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 public class ReadInjectionProviderClassNamesTest {
 
@@ -62,4 +62,5 @@ public class ReadInjectionProviderClassNamesTest {
     private ResourceBundle loadBundle(final String resourceName) {
         return LoadResourceBundle.INSTANCE.apply(resourceName);
     }
+
 }

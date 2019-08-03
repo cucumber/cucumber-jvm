@@ -7,7 +7,7 @@ import io.cucumber.core.runner.TestHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import java.io.BufferedReader;
@@ -39,8 +39,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 public class HTMLFormatterTest {
+
     private final static String jsFunctionCallRegexString = "formatter.(\\w*)\\(([^)]*)\\);";
     private final static Pattern jsFunctionCallRegex = Pattern.compile(jsFunctionCallRegexString);
 
@@ -775,4 +775,5 @@ public class HTMLFormatterTest {
             .build()
             .run();
     }
+
 }

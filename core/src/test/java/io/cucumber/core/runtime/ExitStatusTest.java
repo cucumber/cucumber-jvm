@@ -8,7 +8,7 @@ import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class ExitStatusTest {
+
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private EventBus bus;

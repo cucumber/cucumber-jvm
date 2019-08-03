@@ -5,15 +5,15 @@ import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JavaParameterTypeDefinitionTest {

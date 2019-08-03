@@ -1,6 +1,6 @@
 package io.cucumber.core.io;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
@@ -18,4 +18,5 @@ public class HelpersTest {
         assertEquals("foo bar+zap/cucumber-core.jar", jarFilePath(URI.create("zip:file:foo%20bar+zap/cucumber-core.jar!/")).getSchemeSpecificPart());
         assertEquals("foo bar+zap/cucumber-core.jar", jarFilePath(URI.create("wsjar:file:foo%20bar+zap/cucumber-core.jar!/")).getSchemeSpecificPart());
     }
+
 }

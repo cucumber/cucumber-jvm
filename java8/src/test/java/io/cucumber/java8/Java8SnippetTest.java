@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -14,6 +14,7 @@ import java.util.Locale;
 import static org.junit.Assert.assertEquals;
 
 public class Java8SnippetTest {
+
     private static final String GIVEN_KEYWORD = "Given";
 
     @Test
@@ -36,4 +37,5 @@ public class Java8SnippetTest {
                 new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, SnippetType.UNDERSCORE)
         );
     }
+
 }

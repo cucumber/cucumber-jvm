@@ -1,14 +1,15 @@
 package io.cucumber.picocontainer;
 
 import io.cucumber.core.backend.ObjectFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class PicoFactoryTest {
+
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new PicoFactory();
@@ -47,4 +48,5 @@ public class PicoFactoryTest {
         // Then
         assertTrue(steps.getBelly().isDisposed());
     }
+
 }

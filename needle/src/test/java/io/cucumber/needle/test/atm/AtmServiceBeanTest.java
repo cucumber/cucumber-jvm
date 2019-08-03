@@ -1,16 +1,16 @@
 package io.cucumber.needle.test.atm;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class AtmServiceBeanTest {
 
     private final AtmServiceBean bean = new AtmServiceBean();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         assertThat(bean.getAmount(), is(0));
     }

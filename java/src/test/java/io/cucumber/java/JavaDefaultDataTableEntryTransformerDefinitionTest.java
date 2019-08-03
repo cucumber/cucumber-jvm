@@ -2,7 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.TableCellByTypeTransformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JavaDefaultDataTableEntryTransformerDefinitionTest {
@@ -142,6 +142,5 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
         //noinspection unchecked
         return (T) fromValue.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining());
     }
-
 
 }

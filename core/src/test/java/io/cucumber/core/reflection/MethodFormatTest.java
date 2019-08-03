@@ -1,7 +1,7 @@
 package io.cucumber.core.reflection;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MethodFormatTest {
+
     private Method methodWithArgsAndException;
     private Method methodWithoutArgs;
 
@@ -22,7 +23,7 @@ public class MethodFormatTest {
         return null;
     }
 
-    @Before
+    @BeforeEach
     public void lookupMethod() throws NoSuchMethodException {
         this.methodWithoutArgs = this.getClass().getMethod("methodWithoutArgs");
         this.methodWithArgsAndException = this.getClass().getMethod("methodWithArgsAndException", String.class, Map.class);
@@ -43,4 +44,5 @@ public class MethodFormatTest {
         String format = MethodFormat.FULL.format(methodWithoutArgs);
         assertTrue(format.startsWith("io.cucumber.core.reflection.MethodFormatTest.methodWithoutArgs() in file:"));
     }
+
 }

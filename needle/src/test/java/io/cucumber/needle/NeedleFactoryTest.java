@@ -1,13 +1,12 @@
 package io.cucumber.needle;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
-import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
+import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 
 public class NeedleFactoryTest {
 
@@ -15,12 +14,12 @@ public class NeedleFactoryTest {
     public void shouldSetUpInjectionProviders() {
 
         final InjectionProvider<?>[] injectionProviders = NeedleFactory
-                .setUpInjectionProviders();
+            .setUpInjectionProviders();
 
         assertNotNull(injectionProviders);
         assertThat(injectionProviders.length, is(1));
         assertThat(injectionProviders[0].getClass().getCanonicalName(),
-                is(SimpleNameGetterProvider.class.getCanonicalName()));
+            is(SimpleNameGetterProvider.class.getCanonicalName()));
     }
 
 }

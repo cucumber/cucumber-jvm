@@ -1,12 +1,12 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.Result;
-import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
-import org.junit.Test;
+import io.cucumber.core.stepexpression.TypeRegistry;
+import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -21,8 +21,8 @@ import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class PrettyFormatterTest {
 
@@ -36,11 +36,11 @@ public class PrettyFormatterTest {
     @Test
     public void should_align_the_indentation_of_location_strings() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n" +
+            "    Then third step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
@@ -49,24 +49,24 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, equalTo("" +
-                "Feature: feature name\n" +
-                "\n" +
-                "  Scenario: scenario name # path/test.feature:2\n" +
-                "    Given first step      # path/step_definitions.java:3\n" +
-                "    When second step      # path/step_definitions.java:7\n" +
-                "    Then third step       # path/step_definitions.java:11\n"));
+            "Feature: feature name\n" +
+            "\n" +
+            "  Scenario: scenario name # path/test.feature:2\n" +
+            "    Given first step      # path/step_definitions.java:3\n" +
+            "    When second step      # path/step_definitions.java:7\n" +
+            "    Then third step       # path/step_definitions.java:11\n"));
     }
 
     @Test
     public void should_handle_background() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background name\n" +
-                "    Given first step\n" +
-                "  Scenario: s1\n" +
-                "    Then second step\n" +
-                "  Scenario: s2\n" +
-                "    Then third step\n");
+            "Feature: feature name\n" +
+            "  Background: background name\n" +
+            "    Given first step\n" +
+            "  Scenario: s1\n" +
+            "    Then second step\n" +
+            "  Scenario: s2\n" +
+            "    Then third step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
@@ -75,30 +75,30 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("\n" +
-                "  Background: background name # path/test.feature:2\n" +
-                "    Given first step          # path/step_definitions.java:3\n" +
-                "\n" +
-                "  Scenario: s1       # path/test.feature:4\n" +
-                "    Then second step # path/step_definitions.java:7\n" +
-                "\n" +
-                "  Background: background name # path/test.feature:2\n" +
-                "    Given first step          # path/step_definitions.java:3\n" +
-                "\n" +
-                "  Scenario: s2      # path/test.feature:6\n" +
-                "    Then third step # path/step_definitions.java:11\n"));
+            "  Background: background name # path/test.feature:2\n" +
+            "    Given first step          # path/step_definitions.java:3\n" +
+            "\n" +
+            "  Scenario: s1       # path/test.feature:4\n" +
+            "    Then second step # path/step_definitions.java:7\n" +
+            "\n" +
+            "  Background: background name # path/test.feature:2\n" +
+            "    Given first step          # path/step_definitions.java:3\n" +
+            "\n" +
+            "  Scenario: s2      # path/test.feature:6\n" +
+            "    Then third step # path/step_definitions.java:11\n"));
     }
 
     @Test
     public void should_handle_scenario_outline() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario Outline: <name>\n" +
-                "    Given first step\n" +
-                "    Then <arg> step\n" +
-                "    Examples: examples name\n" +
-                "      |  name  |  arg   |\n" +
-                "      | name 1 | second |\n" +
-                "      | name 2 | third  |\n");
+            "Feature: feature name\n" +
+            "  Scenario Outline: <name>\n" +
+            "    Given first step\n" +
+            "    Then <arg> step\n" +
+            "    Examples: examples name\n" +
+            "      |  name  |  arg   |\n" +
+            "      | name 1 | second |\n" +
+            "      | name 2 | third  |\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
@@ -107,40 +107,40 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("\n" +
-                "  Scenario Outline: <name> # path/test.feature:2\n" +
-                "    Given first step\n" +
-                "    Then <arg> step\n" +
-                "\n" +
-                "    Examples: examples name\n" +
-                "\n" +
-                "  Scenario Outline: name 1 # path/test.feature:7\n" +
-                "    Given first step       # path/step_definitions.java:3\n" +
-                "    Then second step       # path/step_definitions.java:7\n" +
-                "\n" +
-                "  Scenario Outline: name 2 # path/test.feature:8\n" +
-                "    Given first step       # path/step_definitions.java:3\n" +
-                "    Then third step        # path/step_definitions.java:11\n"));
+            "  Scenario Outline: <name> # path/test.feature:2\n" +
+            "    Given first step\n" +
+            "    Then <arg> step\n" +
+            "\n" +
+            "    Examples: examples name\n" +
+            "\n" +
+            "  Scenario Outline: name 1 # path/test.feature:7\n" +
+            "    Given first step       # path/step_definitions.java:3\n" +
+            "    Then second step       # path/step_definitions.java:7\n" +
+            "\n" +
+            "  Scenario Outline: name 2 # path/test.feature:8\n" +
+            "    Given first step       # path/step_definitions.java:3\n" +
+            "    Then third step        # path/step_definitions.java:11\n"));
     }
 
     @Test
     public void should_print_descriptions() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "    feature description\n" +
-                "    ...\n" +
-                "  Background: background name\n" +
-                "      background description\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario name\n" +
-                "      scenario description\n" +
-                "    Then second step\n" +
-                "  Scenario Outline: scenario outline name\n" +
-                "      scenario outline description\n" +
-                "    Then <arg> step\n" +
-                "    Examples: examples name\n" +
-                "      examples description\n" +
-                "      |  arg   |\n" +
-                "      | third  |\n");
+            "Feature: feature name\n" +
+            "    feature description\n" +
+            "    ...\n" +
+            "  Background: background name\n" +
+            "      background description\n" +
+            "    Given first step\n" +
+            "  Scenario: scenario name\n" +
+            "      scenario description\n" +
+            "    Then second step\n" +
+            "  Scenario Outline: scenario outline name\n" +
+            "      scenario outline description\n" +
+            "    Then <arg> step\n" +
+            "    Examples: examples name\n" +
+            "      examples description\n" +
+            "      |  arg   |\n" +
+            "      | third  |\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
@@ -149,49 +149,49 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, equalTo("" +
-                "Feature: feature name\n" +
-                "    feature description\n" +
-                "    ...\n" +
-                "\n" +
-                "  Background: background name # path/test.feature:4\n" +
-                "      background description\n" +
-                "    Given first step          # path/step_definitions.java:3\n" +
-                "\n" +
-                "  Scenario: scenario name # path/test.feature:7\n" +
-                "      scenario description\n" +
-                "    Then second step      # path/step_definitions.java:7\n" +
-                "\n" +
-                "  Scenario Outline: scenario outline name # path/test.feature:10\n" +
-                "      scenario outline description\n" +
-                "    Then <arg> step\n" +
-                "\n" +
-                "    Examples: examples name\n" +
-                "      examples description\n" +
-                "\n" +
-                "  Background: background name # path/test.feature:4\n" +
-                "      background description\n" +
-                "    Given first step          # path/step_definitions.java:3\n" +
-                "\n" +
-                "  Scenario Outline: scenario outline name # path/test.feature:16\n" +
-                "      scenario outline description\n" +
-                "    Then third step                       # path/step_definitions.java:11\n"));
+            "Feature: feature name\n" +
+            "    feature description\n" +
+            "    ...\n" +
+            "\n" +
+            "  Background: background name # path/test.feature:4\n" +
+            "      background description\n" +
+            "    Given first step          # path/step_definitions.java:3\n" +
+            "\n" +
+            "  Scenario: scenario name # path/test.feature:7\n" +
+            "      scenario description\n" +
+            "    Then second step      # path/step_definitions.java:7\n" +
+            "\n" +
+            "  Scenario Outline: scenario outline name # path/test.feature:10\n" +
+            "      scenario outline description\n" +
+            "    Then <arg> step\n" +
+            "\n" +
+            "    Examples: examples name\n" +
+            "      examples description\n" +
+            "\n" +
+            "  Background: background name # path/test.feature:4\n" +
+            "      background description\n" +
+            "    Given first step          # path/step_definitions.java:3\n" +
+            "\n" +
+            "  Scenario Outline: scenario outline name # path/test.feature:16\n" +
+            "      scenario outline description\n" +
+            "    Then third step                       # path/step_definitions.java:11\n"));
     }
 
     @Test
     public void should_print_tags() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "@feature_tag\n" +
-                "Feature: feature name\n" +
-                "  @scenario_tag\n" +
-                "  Scenario: scenario name\n" +
-                "    Then second step\n" +
-                "  @scenario_outline_tag\n" +
-                "  Scenario Outline: scenario outline name\n" +
-                "    Then <arg> step\n" +
-                "    @examples_tag\n" +
-                "    Examples: examples name\n" +
-                "      |  arg   |\n" +
-                "      | third  |\n");
+            "@feature_tag\n" +
+            "Feature: feature name\n" +
+            "  @scenario_tag\n" +
+            "  Scenario: scenario name\n" +
+            "    Then second step\n" +
+            "  @scenario_outline_tag\n" +
+            "  Scenario Outline: scenario outline name\n" +
+            "    Then <arg> step\n" +
+            "    @examples_tag\n" +
+            "    Examples: examples name\n" +
+            "      |  arg   |\n" +
+            "      | third  |\n");
         features.add(feature);
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
@@ -199,31 +199,31 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, equalTo("" +
-                "@feature_tag\n" +
-                "Feature: feature name\n" +
-                "\n" +
-                "  @feature_tag @scenario_tag\n" +
-                "  Scenario: scenario name # path/test.feature:4\n" +
-                "    Then second step      # path/step_definitions.java:7\n" +
-                "\n" +
-                "  @scenario_outline_tag\n" +
-                "  Scenario Outline: scenario outline name # path/test.feature:7\n" +
-                "    Then <arg> step\n" +
-                "\n" +
-                "    @examples_tag\n" +
-                "    Examples: examples name\n" +
-                "\n" +
-                "  @feature_tag @scenario_outline_tag @examples_tag\n" +
-                "  Scenario Outline: scenario outline name # path/test.feature:12\n" +
-                "    Then third step                       # path/step_definitions.java:11\n"));
+            "@feature_tag\n" +
+            "Feature: feature name\n" +
+            "\n" +
+            "  @feature_tag @scenario_tag\n" +
+            "  Scenario: scenario name # path/test.feature:4\n" +
+            "    Then second step      # path/step_definitions.java:7\n" +
+            "\n" +
+            "  @scenario_outline_tag\n" +
+            "  Scenario Outline: scenario outline name # path/test.feature:7\n" +
+            "    Then <arg> step\n" +
+            "\n" +
+            "    @examples_tag\n" +
+            "    Examples: examples name\n" +
+            "\n" +
+            "  @feature_tag @scenario_outline_tag @examples_tag\n" +
+            "  Scenario Outline: scenario outline name # path/test.feature:12\n" +
+            "    Then third step                       # path/step_definitions.java:11\n"));
     }
 
     @Test
     public void should_print_error_message_for_failed_steps() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("failed"));
@@ -231,16 +231,16 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
-                "    Given first step      # path/step_definitions.java:3\n" +
-                "      the stack trace\n"));
+            "    Given first step      # path/step_definitions.java:3\n" +
+            "      the stack trace\n"));
     }
 
     @Test
     public void should_print_error_message_for_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -249,17 +249,17 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
-                "  Scenario: scenario name # path/test.feature:2\n" +
-                "      the stack trace\n" +
-                "    Given first step      # path/step_definitions.java:3\n"));
+            "  Scenario: scenario name # path/test.feature:2\n" +
+            "      the stack trace\n" +
+            "    Given first step      # path/step_definitions.java:3\n"));
     }
 
     @Test
     public void should_print_error_message_for_after_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -268,16 +268,16 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
-                "    Given first step      # path/step_definitions.java:3\n" +
-                "      the stack trace\n"));
+            "    Given first step      # path/step_definitions.java:3\n" +
+            "      the stack trace\n"));
     }
 
     @Test
     public void should_print_output_from_before_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -287,17 +287,17 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
-                "  Scenario: scenario name # path/test.feature:2\n" +
-                "printed from hook\n" +
-                "    Given first step      # path/step_definitions.java:3\n"));
+            "  Scenario: scenario name # path/test.feature:2\n" +
+            "printed from hook\n" +
+            "    Given first step      # path/step_definitions.java:3\n"));
     }
 
     @Test
     public void should_print_output_from_after_hooks() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -307,8 +307,8 @@ public class PrettyFormatterTest {
         String formatterOutput = runFeaturesWithFormatter(true);
 
         assertThat(formatterOutput, containsString("" +
-                "    Given first step      # path/step_definitions.java:3\n" +
-                "printed from hook\n"));
+            "    Given first step      # path/step_definitions.java:3\n" +
+            "printed from hook\n"));
     }
 
     @Test
@@ -338,9 +338,9 @@ public class PrettyFormatterTest {
     @Test
     public void should_color_code_steps_according_to_the_result() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -354,9 +354,9 @@ public class PrettyFormatterTest {
     @Test
     public void should_color_code_locations_as_comments() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -370,9 +370,9 @@ public class PrettyFormatterTest {
     @Test
     public void should_color_code_error_message_according_to_the_result() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("failed"));

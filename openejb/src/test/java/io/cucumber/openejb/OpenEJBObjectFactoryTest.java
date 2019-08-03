@@ -1,12 +1,13 @@
 package io.cucumber.openejb;
 
 import io.cucumber.core.backend.ObjectFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 public class OpenEJBObjectFactoryTest {
+
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new OpenEJBObjectFactory();

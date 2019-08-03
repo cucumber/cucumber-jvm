@@ -1,19 +1,16 @@
 package io.cucumber.core.runner;
 
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
@@ -29,15 +26,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HookOrderTest {
+
     private final static String ENGLISH = "en";
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("pattern1");
-    private final PickleStep pickleStep = new PickleStep("pattern1", Collections.emptyList(), singletonList(new PickleLocation(2,2)));
+    private final PickleStep pickleStep = new PickleStep("pattern1", Collections.emptyList(), singletonList(new PickleLocation(2, 2)));
     private final PickleEvent pickleEvent = new PickleEvent("uri",
-        new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.emptyList(), singletonList(new PickleLocation(1,1))));
+        new Pickle("scenario1", ENGLISH, singletonList(pickleStep), Collections.emptyList(), singletonList(new PickleLocation(1, 1))));
 
     @Test
     public void before_hooks_execute_in_order() throws Throwable {
@@ -53,7 +51,7 @@ public class HookOrderTest {
 
             }
         };
-        
+
         runnerSupplier.get().runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
@@ -193,4 +191,5 @@ public class HookOrderTest {
         }
         return hooks;
     }
+
 }

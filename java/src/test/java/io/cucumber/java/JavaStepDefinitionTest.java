@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -50,6 +50,5 @@ public class JavaStepDefinitionTest {
     public void method_throws() {
         throw new PendingException();
     }
-
 
 }

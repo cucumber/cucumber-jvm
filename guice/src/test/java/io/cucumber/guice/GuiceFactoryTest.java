@@ -10,7 +10,7 @@ import com.google.inject.Stage;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -30,7 +30,7 @@ public class GuiceFactoryTest {
     private List<?> instancesFromSameScenario;
     private List<?> instancesFromDifferentScenarios;
 
-    @After
+    @AfterEach
     public void tearDown() {
         // If factory is left in start state it can cause cascading failures due to scope being left open
         try {

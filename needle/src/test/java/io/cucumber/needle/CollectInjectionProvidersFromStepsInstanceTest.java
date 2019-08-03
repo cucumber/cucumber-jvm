@@ -1,19 +1,17 @@
 package io.cucumber.needle;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.junit.Test;
-
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class CollectInjectionProvidersFromStepsInstanceTest {
 

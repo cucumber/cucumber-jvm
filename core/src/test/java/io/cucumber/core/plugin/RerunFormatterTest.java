@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.Result;
-import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.feature.CucumberFeature;
-import org.junit.Test;
+import io.cucumber.core.runner.TestHelper;
+import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -24,13 +24,13 @@ public class RerunFormatterTest {
     @Test
     public void should_leave_report_empty_when_exit_code_is_zero() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: passed scenario\n" +
-                "    Given passed step\n" +
-                "  Scenario: pending scenario\n" +
-                "    Given pending step\n" +
-                "  Scenario: undefined scenario\n" +
-                "    Given undefined step\n");
+            "Feature: feature name\n" +
+            "  Scenario: passed scenario\n" +
+            "    Given passed step\n" +
+            "  Scenario: pending scenario\n" +
+            "    Given pending step\n" +
+            "  Scenario: undefined scenario\n" +
+            "    Given undefined step\n");
         features.add(feature);
         stepsToResult.put("passed step", result("passed"));
         stepsToResult.put("pending step", result("pending"));
@@ -44,13 +44,13 @@ public class RerunFormatterTest {
     @Test
     public void should_put_data_in_report_when_exit_code_is_non_zero() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: failed scenario\n" +
-                "    Given failed step\n" +
-                "  Scenario: pending scenario\n" +
-                "    Given pending step\n" +
-                "  Scenario: undefined scenario\n" +
-                "    Given undefined step\n");
+            "Feature: feature name\n" +
+            "  Scenario: failed scenario\n" +
+            "    Given failed step\n" +
+            "  Scenario: pending scenario\n" +
+            "    Given pending step\n" +
+            "  Scenario: undefined scenario\n" +
+            "    Given undefined step\n");
         features.add(feature);
         stepsToResult.put("failed step", result("failed"));
         stepsToResult.put("pending step", result("pending"));
@@ -64,11 +64,11 @@ public class RerunFormatterTest {
     @Test
     public void should_use_scenario_location_when_scenario_step_fails() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n" +
+            "    Then third step\n");
         features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -82,12 +82,12 @@ public class RerunFormatterTest {
     @Test
     public void should_use_scenario_location_when_background_step_fails() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: the background\n" +
-                "    Given background step\n" +
-                "  Scenario: scenario name\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+            "Feature: feature name\n" +
+            "  Background: the background\n" +
+            "    Given background step\n" +
+            "  Scenario: scenario name\n" +
+            "    When second step\n" +
+            "    Then third step\n");
         features.add(feature);
         stepsToResult.put("background step", result("failed"));
         stepsToResult.put("second step", result("passed"));
@@ -101,14 +101,14 @@ public class RerunFormatterTest {
     @Test
     public void should_use_example_row_location_when_scenario_outline_fails() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario Outline: scenario name\n" +
-                "    When executing <row> row\n" +
-                "    Then everything is ok\n" +
-                "    Examples:\n" +
-                "    |  row   |\n" +
-                "    | first  |\n" +
-                "    | second |");
+            "Feature: feature name\n" +
+            "  Scenario Outline: scenario name\n" +
+            "    When executing <row> row\n" +
+            "    Then everything is ok\n" +
+            "    Examples:\n" +
+            "    |  row   |\n" +
+            "    | first  |\n" +
+            "    | second |");
         features.add(feature);
         stepsToResult.put("executing first row", result("passed"));
         stepsToResult.put("executing second row", result("failed"));
@@ -122,11 +122,11 @@ public class RerunFormatterTest {
     @Test
     public void should_use_scenario_location_when_before_hook_fails() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n" +
+            "    Then third step\n");
         features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -141,11 +141,11 @@ public class RerunFormatterTest {
     @Test
     public void should_use_scenario_location_when_after_hook_fails() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n" +
+            "    When second step\n" +
+            "    Then third step\n");
         features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -160,13 +160,13 @@ public class RerunFormatterTest {
     @Test
     public void should_one_entry_for_feature_with_many_failing_scenarios() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario 1 name\n" +
-                "    When first step\n" +
-                "    Then second step\n" +
-                "  Scenario: scenario 2 name\n" +
-                "    When third step\n" +
-                "    Then forth step\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario 1 name\n" +
+            "    When first step\n" +
+            "    Then second step\n" +
+            "  Scenario: scenario 2 name\n" +
+            "    When third step\n" +
+            "    Then forth step\n");
         features.add(feature);
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("failed"));
@@ -181,15 +181,15 @@ public class RerunFormatterTest {
     @Test
     public void should_one_entry_for_each_failing_feature() throws Throwable {
         CucumberFeature feature1 = TestHelper.feature("path/first.feature", "" +
-                "Feature: feature 1 name\n" +
-                "  Scenario: scenario 1 name\n" +
-                "    When first step\n" +
-                "    Then second step\n");
+            "Feature: feature 1 name\n" +
+            "  Scenario: scenario 1 name\n" +
+            "    When first step\n" +
+            "    Then second step\n");
         CucumberFeature feature2 = TestHelper.feature("path/second.feature", "" +
-                "Feature: feature 2 name\n" +
-                "  Scenario: scenario 2 name\n" +
-                "    When third step\n" +
-                "    Then forth step\n");
+            "Feature: feature 2 name\n" +
+            "  Scenario: scenario 2 name\n" +
+            "    When third step\n" +
+            "    Then forth step\n");
         features.add(feature1);
         features.add(feature2);
         stepsToResult.put("first step", result("passed"));

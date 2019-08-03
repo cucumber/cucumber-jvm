@@ -1,12 +1,9 @@
 package io.cucumber.core.io;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,4 +21,5 @@ public class ZipResourceIteratorFactoryTest {
         assertFalse(factory.isFactoryFor(URI.create("file:cucumber-core")));
         assertFalse(factory.isFactoryFor(URI.create("http://http://cukes.info/cucumber-core.jar")));
     }
+
 }

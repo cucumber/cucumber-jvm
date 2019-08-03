@@ -1,14 +1,23 @@
 package io.cucumber.core.plugin;
 
-import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
-import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
-import static io.cucumber.core.runner.TestHelper.result;
-import static java.time.Duration.ofMillis;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import gherkin.pickles.PickleTag;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.TestClasspathResourceLoader;
+import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.runner.ClockStub;
+import io.cucumber.core.runner.TestBackendSupplier;
+import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.TimeServiceEventBus;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,25 +30,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runner.TestHelper;
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.stubbing.Answer;
-
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runtime.Runtime;
+import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
+import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
+import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Duration.ofMillis;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class JSONFormatterTest {
 

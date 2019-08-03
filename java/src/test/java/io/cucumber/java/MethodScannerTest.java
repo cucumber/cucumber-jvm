@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MethodScannerTest {
@@ -23,7 +23,7 @@ public class MethodScannerTest {
     private BiConsumer<Method, Annotation> backend = (method, annotation) ->
         scanResult.add(new SimpleEntry<>(method, annotation));
 
-    @Before
+    @BeforeEach
     public void createBackend() {
 
     }
@@ -56,8 +56,9 @@ public class MethodScannerTest {
     }
 
     public static class BaseStepDefs {
-        @io.cucumber.java.Before
+        @Before
         public void m() {
         }
     }
+
 }

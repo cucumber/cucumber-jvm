@@ -1,7 +1,7 @@
 package io.cucumber.core.io;
 
 import io.cucumber.core.feature.FeaturePath;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -39,4 +39,5 @@ public class ResourceLoaderTest {
         }
         return result;
     }
+
 }

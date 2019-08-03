@@ -1,20 +1,20 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.Options;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,14 +22,14 @@ public class FeaturePathFeatureSupplierTest {
 
     private LogRecordListener logRecordListener;
 
-    @Before
+    @BeforeEach
     public void setup() {
         logRecordListener = new LogRecordListener();
         LoggerFactory.addListener(logRecordListener);
     }
 
-    @After
-    public void tearDown(){
+    @AfterEach
+    public void tearDown() {
         LoggerFactory.removeListener(logRecordListener);
     }
 

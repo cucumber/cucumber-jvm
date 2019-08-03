@@ -2,7 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,13 +13,15 @@ import java.util.Map;
 
 import static io.cucumber.core.options.Constants.CUCUMBER_OPTIONS_PROPERTY_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.*;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

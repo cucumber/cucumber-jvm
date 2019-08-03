@@ -7,7 +7,7 @@ import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
 import io.cucumber.core.event.TestSourceRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -117,4 +117,5 @@ public class CanonicalEventOrderTest {
         assertThat(comparator.compare(runFinished, feature2Case1Started)).isEqualTo(GREATER_THAN);
         assertThat(comparator.compare(runFinished, runFinished)).isEqualTo(EQUAL_TO);
     }
+
 }

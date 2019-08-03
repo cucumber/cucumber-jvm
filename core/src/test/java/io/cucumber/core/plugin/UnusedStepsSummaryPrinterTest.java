@@ -1,8 +1,6 @@
 package io.cucumber.core.plugin;
 
-import java.time.Clock;
-import java.time.Duration;
-
+import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.StepDefinedEvent;
@@ -10,15 +8,18 @@ import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import java.time.Clock;
+import java.time.Duration;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UnusedStepsSummaryPrinterTest {
+
     @Test
     public void verifyUnusedStepsPrinted() {
         StringBuilder out = new StringBuilder();
@@ -48,4 +49,5 @@ public class UnusedStepsSummaryPrinterTest {
         when(testStep.getCodeLocation()).thenReturn(location);
         return testStep;
     }
+
 }

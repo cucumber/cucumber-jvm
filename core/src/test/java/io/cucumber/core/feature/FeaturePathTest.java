@@ -23,7 +23,7 @@ public class FeaturePathTest {
         final Executable testMethod = () -> FeaturePath.parse("");
         final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("featureIdentifier may not be empty")));
-   }
+    }
 
     @Test
     public void can_parse_root_package() {

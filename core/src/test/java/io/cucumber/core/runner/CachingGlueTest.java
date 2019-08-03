@@ -1,8 +1,21 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.*;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleString;
+import gherkin.pickles.PickleTable;
+import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.*;
+import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
@@ -11,7 +24,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.util.Collection;
@@ -21,9 +34,12 @@ import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -556,4 +572,5 @@ public class CachingGlueTest {
             return "mocked default data table entry transformer";
         }
     }
+
 }

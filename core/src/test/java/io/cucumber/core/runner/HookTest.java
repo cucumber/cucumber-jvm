@@ -12,11 +12,9 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.time.Clock;
 import java.util.Collections;
@@ -29,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HookTest {
+
     private final static String ENGLISH = "en";
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
@@ -62,4 +61,5 @@ public class HookTest {
         inOrder.verify(hook).execute(ArgumentMatchers.any());
         inOrder.verify(backend).disposeWorld();
     }
+
 }

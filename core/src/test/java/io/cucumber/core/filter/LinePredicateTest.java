@@ -5,7 +5,7 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class LinePredicateTest {
+
     private static final String NAME = "pickle_name";
     private static final String LANGUAGE = "en";
     private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
@@ -64,6 +65,5 @@ public class LinePredicateTest {
     private PickleLocation pickleLocation(int line) {
         return new PickleLocation(line, 0);
     }
-
 
 }
