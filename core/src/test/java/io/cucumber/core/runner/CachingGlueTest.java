@@ -36,9 +36,9 @@ import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -169,7 +169,7 @@ public class CachingGlueTest {
         String featurePath = "someFeature.feature";
 
         PickleStep pickleStep = getPickleStep("pattern");
-        assertNull(glue.stepDefinitionMatch(featurePath, pickleStep));
+        assertThat(glue.stepDefinitionMatch(featurePath, pickleStep), is(nullValue()));
     }
 
     @Test

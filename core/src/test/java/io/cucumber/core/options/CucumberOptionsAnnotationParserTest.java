@@ -21,9 +21,9 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -53,7 +53,7 @@ public class CucumberOptionsAnnotationParserTest {
             .addDefaultFormatterIfNotPresent()
             .build();
         assertFalse(runtimeOptions.isStrict());
-        assertNull(runtimeOptions.getObjectFactoryClass());
+        assertThat(runtimeOptions.getObjectFactoryClass(), is(nullValue()));
         assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options")));
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")));
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
