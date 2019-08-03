@@ -1,32 +1,30 @@
 package io.cucumber.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
-import io.cucumber.core.backend.ObjectFactory;
 import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.rules.ExpectedException.none;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GuiceFactoryTest {
-
-    @Rule
-    public ExpectedException expectedException = none();
 
     private ObjectFactory factory;
     private List<?> instancesFromSameScenario;
@@ -35,7 +33,10 @@ public class GuiceFactoryTest {
     @After
     public void tearDown() {
         // If factory is left in start state it can cause cascading failures due to scope being left open
-        try { factory.stop(); } catch (Exception e) {}
+        try {
+            factory.stop();
+        } catch (Exception e) {
+        }
     }
 
     @Test
@@ -53,8 +54,15 @@ public class GuiceFactoryTest {
     @Test
     public void factoryStartFailsIfScenarioScopeIsNotBound() {
         factory = new GuiceFactory(Guice.createInjector());
-        expectedException.expectMessage(containsString("No implementation for io.cucumber.guice.ScenarioScope was bound"));
-        factory.start();
+
+        final Executable testMethod = () -> factory.start();
+        final ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Guice configuration errors:\n\n" +
+                "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
+                "  while locating io.cucumber.guice.ScenarioScope\n\n" +
+                "1 error"
+        )));
     }
 
     static class UnscopedClass {

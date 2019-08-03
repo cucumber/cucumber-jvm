@@ -1,22 +1,22 @@
 package io.cucumber.core.feature;
 
 import io.cucumber.core.io.ResourceLoader;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.net.URI;
 import java.util.Collections;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CucumberFeatureTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void succeeds_if_no_features_are_found() {
@@ -31,8 +31,11 @@ public class CucumberFeatureTest {
         URI featurePath = URI.create("path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + "path/bar.feature"));
-        expectedException.expectMessage("Not a file or directory: path/bar.feature");
-        new FeatureLoader(resourceLoader).load(singletonList(featurePath));
+        final Executable testMethod = () -> new FeatureLoader(resourceLoader).load(singletonList(featurePath));
+        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Not a file or directory: path/bar.feature"
+        )));
     }
 
     @Test
@@ -40,7 +43,12 @@ public class CucumberFeatureTest {
         URI featurePath = URI.create("classpath:path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(emptyList());
-        expectedException.expectMessage("Feature not found: classpath:path/bar.feature");
-        new FeatureLoader(resourceLoader).load(singletonList(featurePath));
+        final Executable testMethod = () -> new FeatureLoader(resourceLoader).load(singletonList(featurePath));
+        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Feature not found: classpath:path/bar.feature"
+        )));
+
     }
+
 }

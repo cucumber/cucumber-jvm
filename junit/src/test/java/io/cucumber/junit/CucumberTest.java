@@ -4,11 +4,9 @@ import gherkin.ParserException.CompositeParserException;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
@@ -26,20 +24,19 @@ import java.lang.annotation.Target;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 
 public class CucumberTest {
 
-    @Rule
-    public ExpectedException thrownException = ExpectedException.none();
     private String dir;
 
     @Before
@@ -70,18 +67,22 @@ public class CucumberTest {
         assertEquals("Feature: Feature A", cucumber.getChildren().get(0).getName());
     }
 
-	@Test
-	public void testThatParsingErrorsIsNicelyReported() throws Exception {
-		thrownException.expectCause(isA(CompositeParserException.class));
-		new Cucumber(LexerErrorFeature.class);
-	}
+    @Test
+    public void testThatParsingErrorsIsNicelyReported() throws Exception {
+        final Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertAll("Checking Exception including cause",
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(CompositeParserException.class))
+        );
+    }
 
     @Test
     public void testThatFileIsNotCreatedOnParsingError() throws Exception {
         try {
             new Cucumber(FormatterWithLexerErrorFeature.class);
             fail("Expecting error");
-        } catch (CucumberException e){
+        } catch (CucumberException e) {
             assertFalse("File is created despite Lexor Error", new File("target/lexor_error_feature.json").exists());
         }
     }
@@ -215,4 +216,5 @@ public class CucumberTest {
     public static @interface DummyWhen {
 
     }
+
 }
