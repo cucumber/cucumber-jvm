@@ -3,7 +3,9 @@ package io.cucumber.core.backend;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader.DefaultJavaObjectFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotSame;
 
 public class JavaObjectFactoryTest {
@@ -23,7 +25,7 @@ public class JavaObjectFactoryTest {
         SteDef o2 = factory.getInstance(SteDef.class);
         factory.stop();
 
-        assertNotNull(o1);
+        assertThat(o1, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 

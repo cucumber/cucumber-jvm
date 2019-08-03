@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class CucumberPropertiesTest {
@@ -23,7 +25,7 @@ public class CucumberPropertiesTest {
 
     @Test
     public void looks_up_value_from_environment() {
-        assertNotNull(CucumberProperties.fromEnvironment().get("PATH"));
+        assertThat(CucumberProperties.fromEnvironment().get("PATH"), is(notNullValue()));
     }
 
     @Test

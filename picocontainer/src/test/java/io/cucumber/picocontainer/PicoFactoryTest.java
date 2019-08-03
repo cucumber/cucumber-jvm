@@ -3,8 +3,10 @@ package io.cucumber.picocontainer;
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
@@ -25,7 +27,7 @@ public class PicoFactoryTest {
         StepDefs o2 = factory.getInstance(StepDefs.class);
         factory.stop();
 
-        assertNotNull(o1);
+        assertThat(o1, is(notNullValue()));
         assertNotSame(o1, o2);
     }
 

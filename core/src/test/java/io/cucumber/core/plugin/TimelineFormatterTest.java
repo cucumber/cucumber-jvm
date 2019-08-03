@@ -25,8 +25,10 @@ import java.util.Scanner;
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TimelineFormatterTest {
@@ -147,7 +149,7 @@ public class TimelineFormatterTest {
         for (int i = 0; i < actualOutput.groups.size(); i++) {
             final TimelineFormatter.GroupData actual = actualOutput.groups.get(i);
             assertTrue(String.format("id on group %s, was not as expected", i), actual.id > 0);
-            assertNotNull(String.format("content on group %s, was not as expected", i), actual.content);
+            assertThat(String.format("content on group %s, was not as expected", i), actual.content, is(notNullValue()));
         }
 
         //Sort the tests, output order is not a problem but obviously asserting it is
@@ -292,13 +294,13 @@ public class TimelineFormatterTest {
                 assertEquals(String.format("startTime on item %s, was not as expected", i), expected.startTime, actual.startTime);
                 assertEquals(String.format("endTime on item %s, was not as expected", i), expected.endTime, actual.endTime);
             } else {
-                assertNotNull(String.format("startTime on item %s, was not as expected", i), actual.startTime);
-                assertNotNull(String.format("endTime on item %s, was not as expected", i), actual.endTime);
+                assertThat(String.format("startTime on item %s, was not as expected", i), actual.startTime, is(notNullValue()));
+                assertThat(String.format("endTime on item %s, was not as expected", i), actual.endTime, is(notNullValue()));
             }
             if (checkActualThreadData) {
                 assertEquals(String.format("threadId on item %s, was not as expected", i), expected.threadId, actual.threadId);
             } else {
-                assertNotNull(String.format("threadId on item %s, was not as expected", i), actual.threadId);
+                assertThat(String.format("threadId on item %s, was not as expected", i), actual.threadId, is(notNullValue()));
             }
         }
     }
