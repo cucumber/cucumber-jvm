@@ -1,13 +1,14 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.plugin.Plugin;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.junit.Test;
+import io.cucumber.core.snippets.SnippetType;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.net.URI;
 import java.time.Clock;
@@ -15,14 +16,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CucumberOptionsAnnotationParserTest {
     @Test
@@ -189,11 +192,12 @@ public class CucumberOptionsAnnotationParserTest {
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
     }
 
-    @Test(expected = CucumberException.class)
+    @Test
     public void cannot_create_with_glue_and_extra_glue() {
-        parser().parse(ClassWithGlueAndExtraGlue.class).build();
+        final Executable testMethod = () -> parser().parse(ClassWithGlueAndExtraGlue.class).build();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("glue and extraGlue cannot be specified at the same time")));
     }
-
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
     private static class Snippets {
@@ -386,4 +390,5 @@ public class CucumberOptionsAnnotationParserTest {
         public void stop() {}
         
     }
+
 }
