@@ -67,7 +67,7 @@ public class CucumberTest {
     }
 
     @Test
-    public void testThatParsingErrorsIsNicelyReported() throws Exception {
+    public void testThatParsingErrorsIsNicelyReported() {
         final Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
         final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertAll("Checking Exception including cause",
