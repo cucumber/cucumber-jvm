@@ -1,16 +1,16 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import org.junit.Before;
-import org.junit.Test;
+import io.cucumber.core.api.Scenario;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,7 +19,7 @@ public class FailedStepInstantiationMatchTest {
 
     private FailedPickleStepInstantiationMatch match;
 
-    @Before
+    @BeforeEach
     public void create_match() {
         PickleLocation location = mock(PickleLocation.class);
         when(location.getLine()).thenReturn(1);

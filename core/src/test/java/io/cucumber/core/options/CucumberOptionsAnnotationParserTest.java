@@ -181,7 +181,7 @@ public class CucumberOptionsAnnotationParserTest {
             .parse(SubClassWithExtraGlueOfExtraGlue.class)
             .build();
 
-        assertThat(runtimeOptions.getGlue(), 
+        assertThat(runtimeOptions.getGlue(),
             contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/hooks"), uri("classpath:io/cucumber/core/options")));
     }
 
@@ -223,6 +223,7 @@ public class CucumberOptionsAnnotationParserTest {
     private static class NoName {
         // empty
     }
+
     private static class WithoutOptions {
         // empty
     }
@@ -370,7 +371,7 @@ public class CucumberOptionsAnnotationParserTest {
             return new CoreCucumberOptions(annotation);
         }
     }
-    
+
     private static final class TestObjectFactory implements ObjectFactory {
 
         @Override
@@ -384,11 +385,13 @@ public class CucumberOptionsAnnotationParserTest {
         }
 
         @Override
-        public void start() {}
+        public void start() {
+        }
 
         @Override
-        public void stop() {}
-        
+        public void stop() {
+        }
+
     }
 
 }

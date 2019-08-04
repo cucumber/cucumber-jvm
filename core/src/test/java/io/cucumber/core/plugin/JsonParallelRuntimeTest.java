@@ -2,14 +2,13 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.Runtime;
-import org.junit.Test;
+import io.cucumber.core.runtime.TimeServiceEventBus;
+import org.junit.jupiter.api.Test;
 
 import static java.time.Duration.ZERO;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
-
 
 //TODO: Merge with the existing test
 public class JsonParallelRuntimeTest {
@@ -82,4 +81,5 @@ public class JsonParallelRuntimeTest {
 
         assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
     }
+
 }

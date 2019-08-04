@@ -1,24 +1,23 @@
 package io.cucumber.core.plugin;
 
-import static java.time.Duration.ZERO;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
+import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.runner.ClockStub;
+import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runtime.TimeServiceEventBus;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import io.cucumber.core.event.SnippetsSuggestedEvent;
-import org.junit.Test;
-
-import io.cucumber.core.event.TestSourceRead;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runner.ClockStub;
+import static java.time.Duration.ZERO;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UndefinedStepsTrackerTest {
 
@@ -49,10 +48,10 @@ public class UndefinedStepsTrackerTest {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given A\n" +
-                "    Then B\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given A\n" +
+            "    Then B\n");
         sendTestSourceRead(bus, feature);
         tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(4)), asList("**KEYWORD** ^B$"));
         assertEquals("[Then ^B$]", tracker.getSnippets().toString());
@@ -64,11 +63,11 @@ public class UndefinedStepsTrackerTest {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    When A\n" +
-                "    And B\n" +
-                "    But C\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    When A\n" +
+            "    And B\n" +
+            "    But C\n");
         sendTestSourceRead(bus, feature);
         tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
@@ -80,12 +79,12 @@ public class UndefinedStepsTrackerTest {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background:\n" +
-                "    When A\n" +
-                "  Scenario: scenario name\n" +
-                "    And B\n" +
-                "    But C\n");
+            "Feature: feature name\n" +
+            "  Background:\n" +
+            "    When A\n" +
+            "  Scenario: scenario name\n" +
+            "    And B\n" +
+            "    But C\n");
         sendTestSourceRead(bus, feature);
         tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
@@ -101,11 +100,11 @@ public class UndefinedStepsTrackerTest {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    When A\n" +
-                "    And B\n" +
-                "    * C\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    When A\n" +
+            "    And B\n" +
+            "    * C\n");
         sendTestSourceRead(bus, feature);
         tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
@@ -117,9 +116,9 @@ public class UndefinedStepsTrackerTest {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    * A\n");
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    * A\n");
         sendTestSourceRead(bus, feature);
         tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(3)), asList("**KEYWORD** ^A$"));
         assertEquals("[Given ^A$]", tracker.getSnippets().toString());
@@ -131,10 +130,10 @@ public class UndefinedStepsTrackerTest {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "#language:ru\n" +
-                "Функция:\n" +
-                "  Сценарий: \n" +
-                "    * Б\n");
+            "#language:ru\n" +
+            "Функция:\n" +
+            "  Сценарий: \n" +
+            "    * Б\n");
         sendTestSourceRead(bus, feature);
         tracker.handleSnippetsSuggested(uri("file:path/test.feature"), locations(line(4)), asList("**KEYWORD** ^Б$"));
         assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());

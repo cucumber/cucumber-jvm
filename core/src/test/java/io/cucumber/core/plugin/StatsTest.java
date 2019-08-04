@@ -1,23 +1,24 @@
 package io.cucumber.core.plugin;
 
-import static java.time.Duration.ofHours;
-import static java.time.Duration.ofMillis;
-import static java.time.Duration.ofMinutes;
-import static java.time.Duration.ofSeconds;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
+import io.cucumber.core.event.Status;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Locale;
 
-import io.cucumber.core.event.Status;
-import org.junit.Test;
+import static java.time.Duration.ofHours;
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofSeconds;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class StatsTest {
+
     private static final Instant ANY_TIME = Instant.ofEpochMilli(1234567890);
 
     @Test
@@ -27,7 +28,7 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
-                "0 Scenarios%n" +
+            "0 Scenarios%n" +
                 "0 Steps%n")));
     }
 
@@ -43,7 +44,7 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
-                "1 Scenarios (1 passed)%n" +
+            "1 Scenarios (1 passed)%n" +
                 "3 Steps (3 passed)%n")));
     }
 
@@ -61,8 +62,8 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
-                "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
-                "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
+            "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
+            "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
     }
 
     @Test
@@ -79,15 +80,15 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         String colorSubCounts = "" +
-                AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
-                AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
-                AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
-                AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
-                AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
-                AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
+            AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
+            AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
+            AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
+            AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
+            AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
+            AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
         assertThat(baos.toString(), containsString(String.format("" +
-                "6 Scenarios (" + colorSubCounts + ")%n" +
-                "6 Steps (" + colorSubCounts + ")%n")));
+            "6 Scenarios (" + colorSubCounts + ")%n" +
+            "6 Steps (" + colorSubCounts + ")%n")));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
-                "0m0.000s%n")));
+            "0m0.000s%n")));
     }
 
     @Test
@@ -111,7 +112,7 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
-                "0m0.004s%n")));
+            "0m0.004s%n")));
     }
 
     @Test
@@ -124,7 +125,7 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
-                "1m1.001s%n")));
+            "1m1.001s%n")));
     }
 
     @Test
@@ -137,7 +138,7 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), endsWith(String.format(
-                "61m0.000s%n")));
+            "61m0.000s%n")));
     }
 
     @Test
@@ -169,13 +170,13 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
-                "Failed scenarios:%n" +
-                "path/file.feature:3 # Scenario: scenario_name%n" +
-                "%n" +
-                "Ambiguous scenarios:%n" +
-                "path/file.feature:3 # Scenario: scenario_name%n" +
-                "%n" +
-                "4 Scenarios")));
+            "Failed scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "Ambiguous scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "4 Scenarios")));
     }
 
     @Test
@@ -195,19 +196,19 @@ public class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
-                "Failed scenarios:%n" +
-                "path/file.feature:3 # Scenario: scenario_name%n" +
-                "%n" +
-                "Ambiguous scenarios:%n" +
-                "path/file.feature:3 # Scenario: scenario_name%n" +
-                "%n" +
-                "Pending scenarios:%n" +
-                "path/file.feature:3 # Scenario: scenario_name%n" +
-                "%n" +
-                "Undefined scenarios:%n" +
-                "path/file.feature:3 # Scenario: scenario_name%n" +
-                "%n" +
-                "4 Scenarios")));
+            "Failed scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "Ambiguous scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "Pending scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "Undefined scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "4 Scenarios")));
     }
 
     private void addOneStepScenario(Stats counter, Status status) {

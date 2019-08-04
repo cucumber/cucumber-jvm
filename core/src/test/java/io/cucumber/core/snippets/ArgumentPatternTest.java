@@ -1,12 +1,13 @@
 package io.cucumber.core.snippets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 
 public class ArgumentPatternTest {
+
     private Pattern singleDigit = Pattern.compile("(\\d)");
     private ArgumentPattern argumentPattern = new ArgumentPattern(singleDigit);
 
@@ -24,4 +25,5 @@ public class ArgumentPatternTest {
     public void replaceMatchWithSpace() throws Exception {
         assertEquals(" ", argumentPattern.replaceMatchesWithSpace("4"));
     }
+
 }

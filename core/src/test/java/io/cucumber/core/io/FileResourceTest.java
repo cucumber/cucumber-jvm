@@ -1,6 +1,6 @@
 package io.cucumber.core.io;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URI;
@@ -28,4 +28,5 @@ public class FileResourceTest {
         assertEquals(URI.create("file:test.feature"), toTest1.getPath());
         assertEquals(new File("test1/test.feature").toURI(), toTest2.getPath());
     }
+
 }

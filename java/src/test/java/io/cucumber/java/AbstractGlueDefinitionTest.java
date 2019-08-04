@@ -1,15 +1,16 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class AbstractGlueDefinitionTest {
+
     private final Lookup lookup = new Lookup() {
 
         @Override
@@ -34,4 +35,5 @@ public class AbstractGlueDefinitionTest {
     public void method() {
 
     }
+
 }

@@ -1,6 +1,5 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.Transformer;
@@ -9,7 +8,7 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.datatable.TableTransformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -85,4 +84,5 @@ public class TypeRegistryTest {
         };
         registry.setDefaultDataTableEntryTransformer(expected);
     }
+
 }

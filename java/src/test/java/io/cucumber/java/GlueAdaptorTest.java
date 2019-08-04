@@ -1,10 +1,18 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.*;
+import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.java.en.Given;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -12,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class GlueAdaptorTest {
 

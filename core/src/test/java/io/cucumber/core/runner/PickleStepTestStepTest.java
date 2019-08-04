@@ -1,17 +1,17 @@
 package io.cucumber.core.runner;
 
+import gherkin.events.PickleEvent;
+import gherkin.pickles.PickleStep;
+import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseEvent;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
-import io.cucumber.core.backend.HookDefinition;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.eventbus.EventBus;
 import org.junit.AssumptionViolatedException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
@@ -30,10 +30,10 @@ import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
 import static java.time.Instant.ofEpochMilli;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +47,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PickleStepTestStepTest {
+
     private PickleEvent pickle = mock(PickleEvent.class);
     private final TestCase testCase = new TestCase(Collections.<PickleStepTestStep>emptyList(), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickle, false);
     private final EventBus bus = mock(EventBus.class);
@@ -64,11 +65,11 @@ public class PickleStepTestStepTest {
         definitionMatch
     );
 
-    @Before
+    @BeforeEach
     public void init() {
         Mockito.when(bus.getInstant()).thenReturn(Instant.now());
     }
-    
+
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
         step.run(testCase, bus, scenario, false);

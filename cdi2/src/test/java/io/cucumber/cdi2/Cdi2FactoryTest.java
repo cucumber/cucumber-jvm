@@ -1,7 +1,7 @@
 package io.cucumber.cdi2;
 
 import io.cucumber.core.backend.ObjectFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -33,4 +33,5 @@ public class Cdi2FactoryTest {
         assertNotNull(o1);
         assertNotSame(o1, o2);
     }
+
 }

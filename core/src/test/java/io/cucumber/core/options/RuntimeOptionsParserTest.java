@@ -1,15 +1,15 @@
 package io.cucumber.core.options;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Arrays;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.RerunLoader;
 import io.cucumber.core.io.MultiLoader;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 final class RuntimeOptionsParserTest {
 
@@ -17,7 +17,7 @@ final class RuntimeOptionsParserTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        this.parser = new RuntimeOptionsParser(new RerunLoader( new MultiLoader(this.getClass().getClassLoader())));
+        this.parser = new RuntimeOptionsParser(new RerunLoader(new MultiLoader(this.getClass().getClassLoader())));
     }
 
     @Test
@@ -43,10 +43,12 @@ final class RuntimeOptionsParserTest {
         }
 
         @Override
-        public void start() {}
+        public void start() {
+        }
 
         @Override
-        public void stop() {}
-        
+        public void stop() {
+        }
+
     }
 }

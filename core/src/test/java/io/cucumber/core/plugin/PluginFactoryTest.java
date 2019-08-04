@@ -7,9 +7,9 @@ import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runner.ClockStub;
-import org.junit.Test;
+import io.cucumber.core.runtime.TimeServiceEventBus;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,14 +24,15 @@ import java.net.URL;
 import static io.cucumber.core.options.TestPluginOption.parse;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class PluginFactoryTest {
+
     private PluginFactory fc = new PluginFactory();
 
     @Test
@@ -113,8 +114,8 @@ public class PluginFactoryTest {
             fail();
         } catch (CucumberException expected) {
             assertEquals("Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable " +
-                    "and io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable use it. " +
-                    "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL", expected.getMessage());
+                "and io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable use it. " +
+                "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL", expected.getMessage());
         }
     }
 
@@ -189,6 +190,7 @@ public class PluginFactoryTest {
         public WantsAppendable(Appendable out) {
             this.out = out;
         }
+
         public WantsAppendable() {
             this.out = null;
         }
@@ -232,8 +234,10 @@ public class PluginFactoryTest {
         public WantsStringOrDefault(String arg) {
             this.arg = arg;
         }
+
         public WantsStringOrDefault() {
             this("defaultValue");
         }
     }
+
 }

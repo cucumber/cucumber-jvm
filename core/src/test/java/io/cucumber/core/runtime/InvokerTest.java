@@ -1,6 +1,6 @@
 package io.cucumber.core.runtime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.util.concurrent.CountDownLatch;
@@ -92,8 +92,8 @@ public class InvokerTest {
             }
         }
         assertTrue(String.format("Threads weren't cleaned up, initial count: %d current count: %d",
-                        initialNumberOfThreads, currentNumberOfThreads),
-                cleanedUp);
+            initialNumberOfThreads, currentNumberOfThreads),
+            cleanedUp);
     }
 
     public static class Slow {

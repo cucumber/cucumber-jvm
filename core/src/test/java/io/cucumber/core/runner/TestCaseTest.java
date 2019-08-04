@@ -1,17 +1,16 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.backend.HookDefinition;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.event.TestCaseFinished;
+import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -38,11 +37,11 @@ public class TestCaseTest {
     private HookDefinition beforeStep1HookDefinition1 = mock(HookDefinition.class);
     private HookDefinition afterStep1HookDefinition1 = mock(HookDefinition.class);
 
-    @Before
+    @BeforeEach
     public void init() {
         Mockito.when(bus.getInstant()).thenReturn(Instant.now());
     }
-    
+
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
         "uri",
         mock(PickleStep.class),

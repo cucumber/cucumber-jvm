@@ -1,6 +1,6 @@
 package io.cucumber.core.io;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 public class FlatteningIteratorTest {
+
     @Test
     public void flattens_iterators() {
         final FlatteningIterator<Integer> fi = new FlatteningIterator<Integer>();
@@ -41,4 +44,5 @@ public class FlatteningIteratorTest {
         }
         return l;
     }
+
 }

@@ -4,7 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -132,6 +132,5 @@ public class StepExpressionFactoryTest {
     public void fake_step_definition(List<Ingredient> ingredients) {
 
     }
-
 
 }

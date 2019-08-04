@@ -1,7 +1,5 @@
 package io.cucumber.java;
 
-import io.cucumber.core.snippets.SnippetType;
-import io.cucumber.core.snippets.SnippetGenerator;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
@@ -9,12 +7,14 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.snippets.SnippetGenerator;
+import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.cucumberexpressions.CaptureGroupTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.TypeReference;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
@@ -218,8 +218,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore
-    // TODO issue tracked to within io.cucumber.cucumberexpressions.CucumberExpressionGenerator
+    @Disabled("TODO issue tracked to within io.cucumber.cucumberexpressions.CucumberExpressionGenerator")
     public void recognisesWordWithNumbers() {
         String expected = "" +
             "@Given(\"Then it responds ([\\\"]*)\")\n" +

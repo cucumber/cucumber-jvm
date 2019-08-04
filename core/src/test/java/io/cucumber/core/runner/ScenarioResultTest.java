@@ -1,13 +1,13 @@
 package io.cucumber.core.runner;
 
+import gherkin.events.PickleEvent;
 import io.cucumber.core.event.EmbedEvent;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.WriteEvent;
-import gherkin.events.PickleEvent;
 import io.cucumber.core.eventbus.EventBus;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 
 import java.time.Instant;
@@ -16,9 +16,9 @@ import java.util.Collections;
 
 import static java.time.Duration.ZERO;
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -39,8 +39,8 @@ public class ScenarioResultTest {
         )
     );
 
-    @Before
-    public void setup(){
+    @BeforeEach
+    public void setup() {
         when(bus.getInstant()).thenReturn(Instant.now());
     }
 
@@ -156,4 +156,5 @@ public class ScenarioResultTest {
             return (argument != null && argument.getText().equals(text));
         }
     }
+
 }

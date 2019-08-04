@@ -3,26 +3,26 @@ package io.cucumber.weld;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertThat;
 
 public class WeldFactoryTest {
 
     private LogRecordListener logRecordListener;
 
-    @Before
+    @BeforeEach
     public void setup() {
         logRecordListener = new LogRecordListener();
         LoggerFactory.addListener(logRecordListener);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         LoggerFactory.removeListener(logRecordListener);
     }

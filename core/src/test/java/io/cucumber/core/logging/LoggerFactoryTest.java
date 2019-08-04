@@ -3,15 +3,15 @@ package io.cucumber.core.logging;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class LoggerFactoryTest {
@@ -49,7 +49,7 @@ public class LoggerFactoryTest {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         Handler handler = new Handler() {
             @Override

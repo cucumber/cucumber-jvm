@@ -16,7 +16,7 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
@@ -43,6 +43,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RunnerTest {
+
     private static final String ENGLISH = "en";
     private static final String NAME = "name";
     private static final List<PickleStep> NO_STEPS = Collections.emptyList();
@@ -51,7 +52,8 @@ public class RunnerTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
-    private final TypeRegistryConfigurer typeRegistryConfigurer = typeRegistry -> {};
+    private final TypeRegistryConfigurer typeRegistryConfigurer = typeRegistry -> {
+    };
 
     @Test
     public void hooks_execute_when_world_exist() throws Throwable {
@@ -310,4 +312,5 @@ public class RunnerTest {
     private PickleEvent createPickleEventWithSteps(List<PickleStep> steps) {
         return new PickleEvent("uri", new Pickle(NAME, ENGLISH, steps, NO_TAGS, MOCK_LOCATIONS));
     }
+
 }

@@ -9,9 +9,7 @@ import gherkin.pickles.PickleTable;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -22,9 +20,9 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class CoreStepDefinitionTest {

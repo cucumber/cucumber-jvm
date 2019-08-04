@@ -1,7 +1,7 @@
 package io.cucumber.core.options;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
@@ -13,12 +13,12 @@ public class CucumberPropertiesTest {
 
     private CucumberProperties.CucumberPropertiesMap env = new CucumberProperties.CucumberPropertiesMap(Collections.emptyMap());
 
-    @Before
-    public void setup(){
-        env.put("ENV_TEST","from-bundle");
-        env.put("a.b","a.b");
-        env.put("B_C","B_C");
-        env.put("c.D","C_D");
+    @BeforeEach
+    public void setup() {
+        env.put("ENV_TEST", "from-bundle");
+        env.put("a.b", "a.b");
+        env.put("B_C", "B_C");
+        env.put("c.D", "C_D");
     }
 
     @Test
@@ -50,4 +50,5 @@ public class CucumberPropertiesTest {
     public void looks_up_value_by_exact_case_key() {
         assertEquals("C_D", env.get("c.D"));
     }
+
 }

@@ -2,7 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,9 +16,9 @@ import static io.cucumber.core.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ResultTest {
@@ -109,4 +109,5 @@ public class ResultTest {
     private boolean isStrict(boolean value) {
         return value;
     }
+
 }

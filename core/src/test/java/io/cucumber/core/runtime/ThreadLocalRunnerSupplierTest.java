@@ -12,17 +12,17 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 
 import static java.time.Instant.EPOCH;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
@@ -32,7 +32,7 @@ public class ThreadLocalRunnerSupplierTest {
     private ThreadLocalRunnerSupplier runnerSupplier;
     private TimeServiceEventBus eventBus;
 
-    @Before
+    @BeforeEach
     public void before() {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
@@ -101,4 +101,5 @@ public class ThreadLocalRunnerSupplierTest {
         });
         eventBus.send(new TestCaseStarted(EPOCH, mock(TestCase.class)));
     }
+
 }

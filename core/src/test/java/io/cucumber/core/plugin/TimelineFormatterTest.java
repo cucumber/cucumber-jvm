@@ -1,14 +1,13 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.feature.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonDeserializer;
-
-import org.junit.Before;
-import org.junit.Test;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.runner.TestHelper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,10 +43,10 @@ public class TimelineFormatterTest {
     private static final Duration STEP_DURATION = Duration.ofMillis(1000);
 
     private final Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json,
-            type, jsonDeserializationContext) -> {
-                    return json.isJsonObject() ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong()) : Instant.ofEpochMilli(json.getAsLong());
-            }).create();
-    
+                                                                                                                type, jsonDeserializationContext) -> {
+        return json.isJsonObject() ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong()) : Instant.ofEpochMilli(json.getAsLong());
+    }).create();
+
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
@@ -93,7 +92,7 @@ public class TimelineFormatterTest {
     private File reportDir;
     private File reportJsFile;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         reportDir = TempDir.createTempDirectory();
         reportJsFile = new File(reportDir, REPORT_JS);
@@ -254,11 +253,9 @@ public class TimelineFormatterTest {
         for (final String line : actualLines) {
             if (line.startsWith("CucumberHTML.timelineItems")) {
                 addTo = itemLines;
-            }
-            else if (line.startsWith("CucumberHTML.timelineGroups")) {
+            } else if (line.startsWith("CucumberHTML.timelineGroups")) {
                 addTo = groupLines;
-            }
-            else if (!line.startsWith("]") && !line.startsWith("$") && !line.startsWith("}")) {
+            } else if (!line.startsWith("]") && !line.startsWith("$") && !line.startsWith("}")) {
                 addTo.append(line);
             }
         }
@@ -300,8 +297,7 @@ public class TimelineFormatterTest {
             }
             if (checkActualThreadData) {
                 assertEquals(String.format("threadId on item %s, was not as expected", i), expected.threadId, actual.threadId);
-            }
-            else {
+            } else {
                 assertNotNull(String.format("threadId on item %s, was not as expected", i), actual.threadId);
             }
         }

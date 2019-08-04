@@ -6,7 +6,7 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import io.cucumber.core.eventbus.EventBus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
@@ -91,4 +91,5 @@ public class ScenarioTest {
     private int column(int column) {
         return column;
     }
+
 }

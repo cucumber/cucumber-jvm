@@ -1,15 +1,15 @@
 package io.cucumber.spring.threading;
 
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.junit.Assert.assertEquals;
-
 import io.cucumber.core.cli.Main;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.junit.Assert.assertEquals;
 
 
 public class RunParallelCukesTest {
@@ -35,4 +35,5 @@ public class RunParallelCukesTest {
         assertEquals(result1.get().byteValue(), 0x0);
         assertEquals(result2.get().byteValue(), 0x0);
     }
+
 }

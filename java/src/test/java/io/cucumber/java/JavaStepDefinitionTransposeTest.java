@@ -2,7 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.StepDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -42,4 +42,5 @@ public class JavaStepDefinitionTransposeTest {
 
         return stepDefinition.parameterInfos().get(0).isTransposed();
     }
+
 }

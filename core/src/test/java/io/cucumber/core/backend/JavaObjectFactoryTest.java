@@ -1,12 +1,13 @@
 package io.cucumber.core.backend;
 
 import io.cucumber.core.backend.ObjectFactoryServiceLoader.DefaultJavaObjectFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 public class JavaObjectFactoryTest {
+
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
@@ -29,4 +30,5 @@ public class JavaObjectFactoryTest {
     public static class SteDef {
         // we just test the instances
     }
+
 }

@@ -5,7 +5,7 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class NamePredicateTest {
+
     private static final List<PickleStep> NO_STEPS = Collections.emptyList();
     private static final List<PickleTag> NO_TAGS = Collections.emptyList();
     private static final PickleLocation MOCK_LOCATION = mock(PickleLocation.class);
@@ -56,4 +57,5 @@ public class NamePredicateTest {
     private PickleEvent createPickleWithName(String pickleName) {
         return new PickleEvent("uri", new Pickle(pickleName, "en", NO_STEPS, NO_TAGS, asList(MOCK_LOCATION)));
     }
+
 }

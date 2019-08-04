@@ -6,7 +6,7 @@ import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.TestStepFinished;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.Closeable;
@@ -19,8 +19,8 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -29,6 +29,7 @@ import static org.mockito.Mockito.withSettings;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class UsageFormatterTest {
+
     @Test
     public void close() throws IOException {
         Appendable out = mock(Appendable.class, withSettings().extraInterfaces(Closeable.class));
@@ -296,4 +297,5 @@ public class UsageFormatterTest {
         when(testStep.getStepText()).thenReturn("step");
         return testStep;
     }
+
 }
