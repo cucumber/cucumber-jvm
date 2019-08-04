@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -71,8 +72,9 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
-                                <groovy src="src/main/groovy/generate-annotations.groovy" />
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
+                                <groovy src="src/main/groovy/generate-annotations.groovy"/>
                             </target>
                         </configuration>
                     </execution>
@@ -100,10 +102,24 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
+                    <!-- Use very specific exclusions to avoid excluding non-generated sources by accident -->
                     <excludes>
+                        <!-- ISO 639-1 Language -->
                         <exclude>**/io/cucumber/java/??/*</exclude>
+                        <!-- ISO 639-1 Language variants -->
                         <exclude>**/io/cucumber/java/??_*/*</exclude>
+                        <!-- ISO 639-3 Language -->
+                        <exclude>**/io/cucumber/java/???/*</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.outputDirectory}/generated-sources/i18n/java</sourceDirectory>
+                    </sourceDirectories>
                 </configuration>
             </plugin>
         </plugins>
