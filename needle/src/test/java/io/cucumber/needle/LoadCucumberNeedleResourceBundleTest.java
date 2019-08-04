@@ -20,7 +20,7 @@ public class LoadCucumberNeedleResourceBundleTest {
     private final LoadResourceBundle function = LoadResourceBundle.INSTANCE;
 
     @Test
-    public void shouldReturnEmptyResourceBundleWhenResourceDoesNotExist() throws Exception {
+    public void shouldReturnEmptyResourceBundleWhenResourceDoesNotExist() {
         final ResourceBundle resourceBundle = function.apply("does-not-exist");
 
         assertAll("Checking LoadResourceBundle",

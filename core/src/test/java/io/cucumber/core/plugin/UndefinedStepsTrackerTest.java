@@ -9,7 +9,6 @@ import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     @Test
-    public void uses_given_when_then_keywords() throws IOException {
+    public void uses_given_when_then_keywords() {
         EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
@@ -60,7 +59,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     @Test
-    public void converts_and_to_previous_step_keyword() throws IOException {
+    public void converts_and_to_previous_step_keyword() {
         EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
@@ -76,7 +75,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     @Test
-    public void backtrack_into_background_to_find_step_keyword() throws IOException {
+    public void backtrack_into_background_to_find_step_keyword() {
         EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
@@ -97,7 +96,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     @Test
-    public void doesnt_try_to_use_star_keyword() throws IOException {
+    public void doesnt_try_to_use_star_keyword() {
         EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
@@ -113,7 +112,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     @Test
-    public void star_keyword_becomes_given_when_no_previous_step() throws IOException {
+    public void star_keyword_becomes_given_when_no_previous_step() {
         EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
@@ -127,7 +126,7 @@ public class UndefinedStepsTrackerTest {
     }
 
     @Test
-    public void snippets_are_generated_for_correct_locale() throws Exception {
+    public void snippets_are_generated_for_correct_locale() {
         EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);

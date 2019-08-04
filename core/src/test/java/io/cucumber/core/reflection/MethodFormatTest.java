@@ -3,7 +3,6 @@ package io.cucumber.core.reflection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class MethodFormatTest {
     public void methodWithoutArgs() {
     }
 
-    public List methodWithArgsAndException(String foo, Map bar) throws IllegalArgumentException, IOException {
+    public List methodWithArgsAndException(String foo, Map bar) throws IllegalArgumentException {
         return null;
     }
 
