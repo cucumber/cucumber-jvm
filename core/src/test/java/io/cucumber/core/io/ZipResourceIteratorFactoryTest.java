@@ -2,7 +2,6 @@ package io.cucumber.core.io;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.URI;
 
 import static org.junit.Assert.assertFalse;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class ZipResourceIteratorFactoryTest {
 
     @Test
-    public void is_factory_for_jar_protocols() throws IOException {
+    public void is_factory_for_jar_protocols() {
         ZipResourceIteratorFactory factory = new ZipResourceIteratorFactory();
 
         assertAll("Checking ZipResourceIteratorFactory",

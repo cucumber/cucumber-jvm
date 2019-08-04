@@ -141,31 +141,31 @@ public class PluginFactoryTest {
     }
 
     @Test
-    public void instantiates_custom_uri_plugin_with_ws() throws IOException, URISyntaxException {
+    public void instantiates_custom_uri_plugin_with_ws() throws URISyntaxException {
         WantsUri plugin = (WantsUri) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsUri:ws://halp/"));
         assertThat(plugin.out, is(equalTo(new URI("ws://halp/"))));
     }
 
     @Test
-    public void instantiates_custom_file_plugin() throws IOException {
+    public void instantiates_custom_file_plugin() {
         WantsFile plugin = (WantsFile) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsFile:halp.txt"));
         assertThat(plugin.out, is(equalTo(new File("halp.txt"))));
     }
 
     @Test
-    public void instantiates_custom_string_arg_plugin() throws IOException {
+    public void instantiates_custom_string_arg_plugin() {
         WantsString plugin = (WantsString) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsString:hello"));
         assertThat(plugin.arg, is(equalTo("hello")));
     }
 
     @Test
-    public void instantiates_plugin_using_empty_constructor_when_unspecified() throws IOException {
+    public void instantiates_plugin_using_empty_constructor_when_unspecified() {
         WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsStringOrDefault"));
         assertThat(plugin.arg, is(equalTo("defaultValue")));
     }
 
     @Test
-    public void instantiates_plugin_using_arg_constructor_when_specified() throws IOException {
+    public void instantiates_plugin_using_arg_constructor_when_specified() {
         WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsStringOrDefault:hello"));
         assertThat(plugin.arg, is(equalTo("hello")));
     }

@@ -34,7 +34,7 @@ public class PrettyFormatterTest {
     private final List<Answer<Object>> hookActions = new ArrayList<>();
 
     @Test
-    public void should_align_the_indentation_of_location_strings() throws Throwable {
+    public void should_align_the_indentation_of_location_strings() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -58,7 +58,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_background() throws Throwable {
+    public void should_handle_background() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -89,7 +89,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_scenario_outline() throws Throwable {
+    public void should_handle_scenario_outline() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: <name>\n" +
@@ -123,7 +123,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_descriptions() throws Throwable {
+    public void should_print_descriptions() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "    feature description\n" +
@@ -178,7 +178,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_tags() throws Throwable {
+    public void should_print_tags() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "@feature_tag\n" +
             "Feature: feature name\n" +
@@ -219,7 +219,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_error_message_for_failed_steps() throws Throwable {
+    public void should_print_error_message_for_failed_steps() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -236,7 +236,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_error_message_for_before_hooks() throws Throwable {
+    public void should_print_error_message_for_before_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -255,7 +255,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_error_message_for_after_hooks() throws Throwable {
+    public void should_print_error_message_for_after_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -273,7 +273,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_output_from_before_hooks() throws Throwable {
+    public void should_print_output_from_before_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -293,7 +293,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_output_from_after_hooks() throws Throwable {
+    public void should_print_output_from_after_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -312,7 +312,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_output_from_afterStep_hooks() throws Throwable {
+    public void should_print_output_from_afterStep_hooks() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -336,7 +336,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_color_code_steps_according_to_the_result() throws Throwable {
+    public void should_color_code_steps_according_to_the_result() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -352,7 +352,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_color_code_locations_as_comments() throws Throwable {
+    public void should_color_code_locations_as_comments() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -368,7 +368,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_color_code_error_message_according_to_the_result() throws Throwable {
+    public void should_color_code_error_message_according_to_the_result() {
         CucumberFeature feature = feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -384,7 +384,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_mark_subsequent_arguments_in_steps() throws Throwable {
+    public void should_mark_subsequent_arguments_in_steps() {
         Formats formats = new AnsiFormats();
 
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);

@@ -1,6 +1,5 @@
 package io.cucumber.junit;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -8,13 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import io.cucumber.core.backend.ObjectFactory;
 
-
 final class JUnitCucumberOptionsProviderTest {
 
     private JUnitCucumberOptionsProvider optionsProvider;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.optionsProvider = new JUnitCucumberOptionsProvider();
     }
 

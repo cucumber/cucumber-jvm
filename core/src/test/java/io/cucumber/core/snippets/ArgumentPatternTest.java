@@ -24,7 +24,7 @@ public class ArgumentPatternTest {
     }
 
     @Test
-    public void replaceMatchWithSpace() throws Exception {
+    public void replaceMatchWithSpace() {
         assertThat(argumentPattern.replaceMatchesWithSpace("4"), is(equalTo(" ")));
     }
 

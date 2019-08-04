@@ -24,7 +24,7 @@ public class RerunFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
 
     @Test
-    public void should_leave_report_empty_when_exit_code_is_zero() throws Throwable {
+    public void should_leave_report_empty_when_exit_code_is_zero() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: passed scenario\n" +
@@ -44,7 +44,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_put_data_in_report_when_exit_code_is_non_zero() throws Throwable {
+    public void should_put_data_in_report_when_exit_code_is_non_zero() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: failed scenario\n" +
@@ -64,7 +64,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_use_scenario_location_when_scenario_step_fails() throws Throwable {
+    public void should_use_scenario_location_when_scenario_step_fails() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -82,7 +82,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_use_scenario_location_when_background_step_fails() throws Throwable {
+    public void should_use_scenario_location_when_background_step_fails() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: the background\n" +
@@ -101,7 +101,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_use_example_row_location_when_scenario_outline_fails() throws Throwable {
+    public void should_use_example_row_location_when_scenario_outline_fails() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: scenario name\n" +
@@ -122,7 +122,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_use_scenario_location_when_before_hook_fails() throws Throwable {
+    public void should_use_scenario_location_when_before_hook_fails() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -141,7 +141,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_use_scenario_location_when_after_hook_fails() throws Throwable {
+    public void should_use_scenario_location_when_after_hook_fails() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -160,7 +160,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_one_entry_for_feature_with_many_failing_scenarios() throws Throwable {
+    public void should_one_entry_for_feature_with_many_failing_scenarios() {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario 1 name\n" +
@@ -181,7 +181,7 @@ public class RerunFormatterTest {
     }
 
     @Test
-    public void should_one_entry_for_each_failing_feature() throws Throwable {
+    public void should_one_entry_for_each_failing_feature() {
         CucumberFeature feature1 = TestHelper.feature("path/first.feature", "" +
             "Feature: feature 1 name\n" +
             "  Scenario: scenario 1 name\n" +

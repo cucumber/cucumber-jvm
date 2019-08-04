@@ -36,7 +36,7 @@ public class MethodScannerTest {
     }
 
     @Test
-    public void scan_ignores_object() throws NoSuchMethodException {
+    public void scan_ignores_object() {
         MethodScanner.scan(Object.class, backend);
         assertThat(scanResult, empty());
     }

@@ -18,7 +18,7 @@ final class RuntimeOptionsParserTest {
     private RuntimeOptionsParser parser;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.parser = new RuntimeOptionsParser(new RerunLoader(new MultiLoader(this.getClass().getClassLoader())));
     }
 
