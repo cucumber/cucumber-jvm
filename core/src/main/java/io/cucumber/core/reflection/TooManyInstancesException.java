@@ -4,8 +4,7 @@ import io.cucumber.core.exception.CucumberException;
 
 import java.util.Collection;
 
-public final class TooManyInstancesException
-    extends CucumberException {
+public final class TooManyInstancesException extends CucumberException {
 
     TooManyInstancesException(final Collection instances) {
         super(createMessage(instances));

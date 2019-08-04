@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-final class InvalidMethodSignatureException
-    extends CucumberException {
+final class InvalidMethodSignatureException extends CucumberException {
 
     private InvalidMethodSignatureException(final String message) {
         super(message);

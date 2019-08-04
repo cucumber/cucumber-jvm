@@ -1,7 +1,6 @@
 package io.cucumber.core.exception;
 
-public class CucumberException
-    extends RuntimeException {
+public class CucumberException extends RuntimeException {
 
     public CucumberException(final String message) {
         super(message);

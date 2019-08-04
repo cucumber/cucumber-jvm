@@ -5,8 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class CompositeCucumberException
-    extends CucumberException {
+public class CompositeCucumberException extends CucumberException {
 
     private final List<Throwable> causes;
 

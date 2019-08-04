@@ -5,8 +5,7 @@ import io.cucumber.core.exception.CucumberException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-final class InvalidMethodException
-    extends CucumberException {
+final class InvalidMethodException extends CucumberException {
 
     private InvalidMethodException(final String message) {
         super(message);

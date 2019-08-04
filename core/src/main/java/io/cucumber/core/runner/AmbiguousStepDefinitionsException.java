@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-final public class AmbiguousStepDefinitionsException
-    extends CucumberException {
+final public class AmbiguousStepDefinitionsException extends CucumberException {
 
     private final List<PickleStepDefinitionMatch> matches;
 

@@ -5,8 +5,7 @@ import io.cucumber.core.exception.CucumberException;
 
 import java.util.Objects;
 
-final class DuplicateStepDefinitionException
-    extends CucumberException {
+final class DuplicateStepDefinitionException extends CucumberException {
 
     DuplicateStepDefinitionException(final StepDefinition a, final StepDefinition b) {
         super(createMessage(a, b));
