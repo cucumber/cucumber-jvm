@@ -9,7 +9,7 @@ public final class TestPendingException extends RuntimeException {
         this("TODO: implement me");
     }
 
-    public TestPendingException(final String message) {
+    public TestPendingException(String message) {
         super(message);
     }
 

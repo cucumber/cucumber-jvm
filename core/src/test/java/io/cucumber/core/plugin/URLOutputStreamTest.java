@@ -188,7 +188,7 @@ public class URLOutputStreamTest {
             final int curThreadNo = i;
             // It useful when 2-3 threads (not more) tries to create the same directory for the report
             final File tmp = (i % 3 == 0 || i % 3 == 2) ?
-                new File(tempDir.toAbsolutePath() + "/cuce" + ballast + i + "/tmpFile.tmp") :
+                new File(tempDir.toAbsolutePath().toString() + "/cuce" + ballast + i + "/tmpFile.tmp") :
                 new File(tempDir.toAbsolutePath().toString() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
             tmpFiles.add(tmp);
             result.add(new Thread() {

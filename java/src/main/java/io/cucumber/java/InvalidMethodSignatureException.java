@@ -10,11 +10,11 @@ import java.util.Objects;
 
 final class InvalidMethodSignatureException extends CucumberException {
 
-    private InvalidMethodSignatureException(final String message) {
+    private InvalidMethodSignatureException(String message) {
         super(message);
     }
 
-    static InvalidMethodSignatureExceptionBuilder builder(final Method method) {
+    static InvalidMethodSignatureExceptionBuilder builder(Method method) {
         if (Objects.isNull(method)) {
             throw new IllegalArgumentException("Supplied Method can't be null for InvalidMethodSignatureException");
         }
@@ -28,21 +28,21 @@ final class InvalidMethodSignatureException extends CucumberException {
         private final List<String> signatures = new ArrayList<>();
         private final List<String> notes = new ArrayList<>();
 
-        private InvalidMethodSignatureExceptionBuilder(final Method method) {
+        private InvalidMethodSignatureExceptionBuilder(Method method) {
             this.method = method;
         }
 
-        InvalidMethodSignatureExceptionBuilder addAnnotation(final Class<?> annotation) {
+        InvalidMethodSignatureExceptionBuilder addAnnotation(Class<?> annotation) {
             this.annotations.add(annotation);
             return this;
         }
 
-        InvalidMethodSignatureExceptionBuilder addSignature(final String signature) {
+        InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
             this.signatures.add(signature);
             return this;
         }
 
-        InvalidMethodSignatureExceptionBuilder addNote(final String note) {
+        InvalidMethodSignatureExceptionBuilder addNote(String note) {
             this.notes.add(note);
             return this;
         }

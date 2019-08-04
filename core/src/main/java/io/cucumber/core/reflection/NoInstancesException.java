@@ -4,11 +4,11 @@ import io.cucumber.core.exception.CucumberException;
 
 public final class NoInstancesException extends CucumberException {
 
-    NoInstancesException(final Class parentType) {
+    NoInstancesException(Class parentType) {
         super(createMessage(parentType));
     }
 
-    private static String createMessage(final Class parentType) {
+    private static String createMessage(Class parentType) {
         return String.format("Couldn't find a single implementation of %s", parentType);
     }
 

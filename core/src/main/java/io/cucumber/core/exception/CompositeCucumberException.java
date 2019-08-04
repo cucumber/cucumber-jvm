@@ -9,7 +9,7 @@ public class CompositeCucumberException extends CucumberException {
 
     private final List<Throwable> causes;
 
-    public CompositeCucumberException(final List<Throwable> causes) {
+    public CompositeCucumberException(List<Throwable> causes) {
         super(String.format("There were %d exceptions:",
             Objects.isNull(causes) ? 0 : causes.size()
         ));
@@ -21,8 +21,8 @@ public class CompositeCucumberException extends CucumberException {
     }
 
     public String getMessage() {
-        final StringBuilder sb = new StringBuilder(super.getMessage());
-        for (final Throwable e : this.causes) {
+        StringBuilder sb = new StringBuilder(super.getMessage());
+        for (Throwable e : this.causes) {
             sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
         }
         return sb.toString();

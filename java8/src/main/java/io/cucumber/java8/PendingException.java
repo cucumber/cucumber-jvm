@@ -16,7 +16,7 @@ public final class PendingException extends RuntimeException {
         this("TODO: implement me");
     }
 
-    public PendingException(final String message) {
+    public PendingException(String message) {
         super(message);
     }
 

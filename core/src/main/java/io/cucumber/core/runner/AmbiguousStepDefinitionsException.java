@@ -11,12 +11,12 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
 
     private final List<PickleStepDefinitionMatch> matches;
 
-    AmbiguousStepDefinitionsException(final PickleStep step, final List<PickleStepDefinitionMatch> matches) {
+    AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {
         super(createMessage(step, matches));
         this.matches = matches;
     }
 
-    private static String createMessage(final PickleStep step, final List<PickleStepDefinitionMatch> matches) {
+    private static String createMessage(PickleStep step, List<PickleStepDefinitionMatch> matches) {
         if (Objects.isNull(step)) {
             throw new IllegalArgumentException("Supplied PickleStep can't be null for AmbiguousStepDefinitionsException");
         }
@@ -36,7 +36,7 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
         return msg.toString();
     }
 
-    private static String quoteText(final String text) {
+    private static String quoteText(String text) {
         return "\"" + text + "\"";
     }
 

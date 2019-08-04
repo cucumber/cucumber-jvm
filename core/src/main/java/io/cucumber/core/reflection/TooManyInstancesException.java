@@ -6,11 +6,11 @@ import java.util.Collection;
 
 public final class TooManyInstancesException extends CucumberException {
 
-    TooManyInstancesException(final Collection instances) {
+    TooManyInstancesException(Collection instances) {
         super(createMessage(instances));
     }
 
-    private static String createMessage(final Collection instances) {
+    private static String createMessage(Collection instances) {
         return String.format("Expected only one instance, but found too many: %s", instances);
     }
 

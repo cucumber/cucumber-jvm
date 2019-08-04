@@ -29,7 +29,7 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
             () -> assertThat("Unexpected exception StackTrace", actualThrown,
                 new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
                     @Override
-                    protected boolean matchesSafely(final Throwable item) {
+                    protected boolean matchesSafely(Throwable item) {
                         for (final StackTraceElement stackTraceElement : item.getStackTrace()) {
                             if (stepDefinition.isDefinedAt(stackTraceElement)) {
                                 return SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName());

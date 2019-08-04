@@ -7,11 +7,11 @@ import java.util.Objects;
 
 final class DuplicateStepDefinitionException extends CucumberException {
 
-    DuplicateStepDefinitionException(final StepDefinition a, final StepDefinition b) {
+    DuplicateStepDefinitionException(StepDefinition a, StepDefinition b) {
         super(createMessage(a, b));
     }
 
-    private static String createMessage(final StepDefinition a, final StepDefinition b) {
+    private static String createMessage(StepDefinition a, StepDefinition b) {
         return String.format("Duplicate step definitions in %s and %s",
             Objects.isNull(a) ? "\"null step definition\"" : a.getLocation(true),
             Objects.isNull(a) ? "\"null step definition\"" : b.getLocation(true)
