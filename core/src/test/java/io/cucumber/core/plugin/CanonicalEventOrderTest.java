@@ -14,7 +14,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.number.OrderingComparison.lessThan;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -50,42 +52,42 @@ public class CanonicalEventOrderTest {
     @Test
     public void verifyTestRunStartedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
-            () -> assertThat(comparator.compare(runStarted, runStarted)).isEqualTo(EQUAL_TO),
-            () -> assertThat(comparator.compare(runStarted, testRead)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(runStarted, suggested)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(runStarted, feature1Case1Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(runStarted, feature1Case2Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(runStarted, feature1Case3Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(runStarted, feature2Case1Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(runStarted, runFinished)).isEqualTo(LESS_THAN)
+            () -> assertThat(comparator.compare(runStarted, runStarted), equalTo(EQUAL_TO)),
+            () -> assertThat(comparator.compare(runStarted, testRead), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, suggested), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, feature1Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, feature1Case2Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, feature1Case3Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, feature2Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, runFinished), equalTo(LESS_THAN))
         );
     }
 
     @Test
     public void verifyTestSourceReadSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
-            () -> assertThat(comparator.compare(testRead, runStarted)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(testRead, testRead)).isEqualTo(EQUAL_TO),
-            () -> assertThat(comparator.compare(testRead, suggested)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(testRead, feature1Case1Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(testRead, feature1Case2Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(testRead, feature1Case3Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(testRead, feature2Case1Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(testRead, runFinished)).isEqualTo(LESS_THAN)
+            () -> assertThat(comparator.compare(testRead, runStarted), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(testRead, testRead), equalTo(EQUAL_TO)),
+            () -> assertThat(comparator.compare(testRead, suggested), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testRead, feature1Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testRead, feature1Case2Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testRead, feature1Case3Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testRead, feature2Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testRead, runFinished), equalTo(LESS_THAN))
         );
     }
 
     @Test
     public void verifySnippetsSuggestedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
-            () -> assertThat(comparator.compare(suggested, runStarted)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(suggested, testRead)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(suggested, suggested)).isEqualTo(EQUAL_TO),
-            () -> assertThat(comparator.compare(suggested, feature1Case1Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(suggested, feature1Case2Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(suggested, feature1Case3Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(suggested, feature2Case1Started)).isEqualTo(LESS_THAN),
-            () -> assertThat(comparator.compare(suggested, runFinished)).isEqualTo(LESS_THAN)
+            () -> assertThat(comparator.compare(suggested, runStarted), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(suggested, testRead), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(suggested, suggested), equalTo(EQUAL_TO)),
+            () -> assertThat(comparator.compare(suggested, feature1Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(suggested, feature1Case2Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(suggested, feature1Case3Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(suggested, feature2Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(suggested, runFinished), equalTo(LESS_THAN))
         );
     }
 
@@ -94,41 +96,41 @@ public class CanonicalEventOrderTest {
         final List<Event> greaterThan = Arrays.asList(runStarted, testRead, suggested);
         for (final Event e : greaterThan) {
             assertAll("comparator CanonicalEventOrder",
-                () -> assertThat(comparator.compare(feature1Case1Started, e)).isEqualTo(GREATER_THAN),
-                () -> assertThat(comparator.compare(feature1Case2Started, e)).isEqualTo(GREATER_THAN),
-                () -> assertThat(comparator.compare(feature1Case3Started, e)).isEqualTo(GREATER_THAN),
-                () -> assertThat(comparator.compare(feature2Case1Started, e)).isEqualTo(GREATER_THAN)
+                () -> assertThat(comparator.compare(feature1Case1Started, e), equalTo(GREATER_THAN)),
+                () -> assertThat(comparator.compare(feature1Case2Started, e), equalTo(GREATER_THAN)),
+                () -> assertThat(comparator.compare(feature1Case3Started, e), equalTo(GREATER_THAN)),
+                () -> assertThat(comparator.compare(feature2Case1Started, e), equalTo(GREATER_THAN))
             );
         }
 
         final List<Event> lessThan = Collections.singletonList(runFinished);
         for (final Event e : lessThan) {
             assertAll("comparator CanonicalEventOrder",
-                () -> assertThat(comparator.compare(feature1Case1Started, e)).isEqualTo(LESS_THAN),
-                () -> assertThat(comparator.compare(feature1Case2Started, e)).isEqualTo(LESS_THAN),
-                () -> assertThat(comparator.compare(feature1Case3Started, e)).isEqualTo(LESS_THAN),
-                () -> assertThat(comparator.compare(feature2Case1Started, e)).isEqualTo(LESS_THAN)
+                () -> assertThat(comparator.compare(feature1Case1Started, e), equalTo(LESS_THAN)),
+                () -> assertThat(comparator.compare(feature1Case2Started, e), equalTo(LESS_THAN)),
+                () -> assertThat(comparator.compare(feature1Case3Started, e), equalTo(LESS_THAN)),
+                () -> assertThat(comparator.compare(feature2Case1Started, e), equalTo(LESS_THAN))
             );
         }
 
         assertAll("comparator CanonicalEventOrder",
-            () -> assertThat(comparator.compare(feature1Case1Started, feature1Case2Started)).isLessThan(EQUAL_TO),
-            () -> assertThat(comparator.compare(feature1Case2Started, feature1Case3Started)).isLessThan(EQUAL_TO),
-            () -> assertThat(comparator.compare(feature1Case3Started, feature2Case1Started)).isLessThan(EQUAL_TO)
+            () -> assertThat(comparator.compare(feature1Case1Started, feature1Case2Started), lessThan(EQUAL_TO)),
+            () -> assertThat(comparator.compare(feature1Case2Started, feature1Case3Started), lessThan(EQUAL_TO)),
+            () -> assertThat(comparator.compare(feature1Case3Started, feature2Case1Started), lessThan(EQUAL_TO))
         );
     }
 
     @Test
     public void verifyTestRunFinishedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
-            () -> assertThat(comparator.compare(runFinished, runStarted)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, suggested)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, testRead)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, feature1Case1Started)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, feature1Case2Started)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, feature1Case3Started)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, feature2Case1Started)).isEqualTo(GREATER_THAN),
-            () -> assertThat(comparator.compare(runFinished, runFinished)).isEqualTo(EQUAL_TO)
+            () -> assertThat(comparator.compare(runFinished, runStarted), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, suggested), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, testRead), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, feature1Case1Started), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, feature1Case2Started), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, feature1Case3Started), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, feature2Case1Started), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, runFinished), equalTo(EQUAL_TO))
         );
     }
 

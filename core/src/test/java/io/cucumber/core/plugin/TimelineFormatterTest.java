@@ -6,6 +6,7 @@ import gherkin.deps.com.google.gson.JsonDeserializer;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.runner.TestHelper;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,9 @@ import java.util.Scanner;
 
 import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -145,7 +147,7 @@ public class TimelineFormatterTest {
         final ActualReportOutput actualOutput = readReport();
 
         //Cannot verify size / contents of Groups as multi threading not guaranteed in Travis CI
-        assertThat(actualOutput.groups).isNotEmpty();
+        assertThat(actualOutput.groups, not(empty()));
         for (int i = 0; i < actualOutput.groups.size(); i++) {
             final TimelineFormatter.GroupData actual = actualOutput.groups.get(i);
 
