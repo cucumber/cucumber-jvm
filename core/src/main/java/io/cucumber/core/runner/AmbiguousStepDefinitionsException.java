@@ -41,7 +41,7 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
     }
 
     public List<PickleStepDefinitionMatch> getMatches() {
-        return this.matches;
+        return matches;
     }
 
 }

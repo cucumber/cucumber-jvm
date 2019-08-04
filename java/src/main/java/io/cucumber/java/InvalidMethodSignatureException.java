@@ -33,17 +33,17 @@ final class InvalidMethodSignatureException extends CucumberException {
         }
 
         InvalidMethodSignatureExceptionBuilder addAnnotation(Class<?> annotation) {
-            this.annotations.add(annotation);
+            annotations.add(annotation);
             return this;
         }
 
         InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
-            this.signatures.add(signature);
+            signatures.add(signature);
             return this;
         }
 
         InvalidMethodSignatureExceptionBuilder addNote(String note) {
-            this.notes.add(note);
+            notes.add(note);
             return this;
         }
 
@@ -57,29 +57,29 @@ final class InvalidMethodSignatureException extends CucumberException {
         }
 
         private String describeNote() {
-            return String.join("\n", this.notes);
+            return String.join("\n", notes);
         }
 
         private Object describeLocation() {
-            return MethodFormat.FULL.format(this.method);
+            return MethodFormat.FULL.format(method);
         }
 
         private String describeAvailableSignature() {
-            return String.join("\n * ", this.signatures);
+            return String.join("\n * ", signatures);
         }
 
         private String describeAnnotations() {
-            if (this.annotations.size() == 1) {
-                return "A @" + this.annotations.get(0).getSimpleName() + " annotated method";
+            if (annotations.size() == 1) {
+                return "A @" + annotations.get(0).getSimpleName() + " annotated method";
             }
 
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < this.annotations.size(); i++) {
-                builder.append(this.annotations.get(i).getSimpleName());
+            for (int i = 0; i < annotations.size(); i++) {
+                builder.append(annotations.get(i).getSimpleName());
 
-                if (i < this.annotations.size() - 2) {
+                if (i < annotations.size() - 2) {
                     builder.append(", ");
-                } else if (i < this.annotations.size() - 1) {
+                } else if (i < annotations.size() - 1) {
                     builder.append(" or ");
                 }
             }
