@@ -22,12 +22,13 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CucumberOptionsAnnotationParserTest {
+
     @Test
     public void create_strict() {
         RuntimeOptions runtimeOptions = parser().parse(Strict.class).build();
@@ -173,7 +174,7 @@ public class CucumberOptionsAnnotationParserTest {
                 found = true;
             }
         }
-        assertTrue(pluginName + " not found among the plugins", found);
+        assertThat(pluginName + " not found among the plugins", found, is(equalTo(true)));
     }
 
     @Test

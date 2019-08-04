@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StubStepDefinition implements StepDefinition {
+
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
     private final boolean transposed;

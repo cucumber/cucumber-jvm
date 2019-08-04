@@ -43,11 +43,12 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class URLOutputStreamTest {
+
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
 
     private static URL createUrl(String s) {
@@ -164,8 +165,8 @@ public class URLOutputStreamTest {
         waitAllThreadsFromList(testThreads);
 
         assertAll("Checking CountDownLatch",
-            () -> assertTrue("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated()),
-            () -> assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty())
+            () -> assertThat("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated(), is(equalTo(true))),
+            () -> assertThat("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty(), is(equalTo(true)))
         );
     }
 
@@ -220,7 +221,7 @@ public class URLOutputStreamTest {
         do {
             // Protection from forever loop
             if (System.currentTimeMillis() - timeStart > waitTimeoutMillis) {
-                assertTrue("Some threads are still alive", false);
+                fail("Some threads are still alive");
             }
         } while (hasListAliveThreads(threads));
     }
@@ -242,4 +243,5 @@ public class URLOutputStreamTest {
         }
         return true;
     }
+
 }

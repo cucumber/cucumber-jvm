@@ -29,7 +29,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class TimelineFormatterTest {
@@ -118,12 +117,12 @@ public class TimelineFormatterTest {
     public void shouldWriteAllRequiredFilesToOutputDirectory() throws IOException {
         runFormatterWithPlugin();
 
-        assertTrue(REPORT_JS + ": did not exist in output dir", reportJsFile.exists());
+        assertThat(REPORT_JS + ": did not exist in output dir", reportJsFile.exists(), is(equalTo(true)));
 
         final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.3.1.min.js", "vis.min.css", "vis.min.js", "vis.override.css");
         for (final String e : files) {
             final File actualFile = new File(reportDir, e);
-            assertTrue(e + ": did not exist in output dir", actualFile.exists());
+            assertThat(e + ": did not exist in output dir", actualFile.exists(), is(equalTo(true)));
             final String actual = readFileContents(actualFile.getAbsolutePath());
             final String expected = readFileContents(new File(REPORT_TEMPLATE_RESOURCE_DIR, e).getAbsolutePath());
             assertThat(e + " differs", actual, is(equalTo(expected)));
@@ -152,7 +151,7 @@ public class TimelineFormatterTest {
 
             final int idx = i;
             assertAll("Checking TimelineFormatter.GroupData",
-                () -> assertTrue(String.format("id on group %s, was not as expected", idx), actual.id > 0),
+                () -> assertThat(String.format("id on group %s, was not as expected", idx), actual.id > 0, is(equalTo(true))),
                 () -> assertThat(String.format("content on group %s, was not as expected", idx), actual.content, is(notNullValue()))
             );
         }
@@ -166,7 +165,7 @@ public class TimelineFormatterTest {
     public void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
         runFormatterWithPlugin();
 
-        assertTrue(REPORT_JS + " was not found", reportJsFile.exists());
+        assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
 
         final Long groupId = Thread.currentThread().getId();
         final String groupName = Thread.currentThread().toString();

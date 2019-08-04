@@ -38,9 +38,8 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HTMLFormatterTest {
 
@@ -688,7 +687,7 @@ public class HTMLFormatterTest {
         String expected = expectedIterator.next();
         Matcher expectedMatcher = jsFunctionCallRegex.matcher(expected);
         Matcher actualMatcher = jsFunctionCallRegex.matcher(actual);
-        assertTrue(jsFunctionCallMatchFailure(expected), expectedMatcher.find());
+        assertThat(jsFunctionCallMatchFailure(expected), expectedMatcher.find(), is(equalTo(true)));
         boolean found = false;
         while (actualMatcher.find()) {
             if (matchFound(expectedMatcher, actualMatcher)) {
@@ -696,12 +695,12 @@ public class HTMLFormatterTest {
                 break;
             }
         }
-        assertTrue(jsFunctionCallNotFoundMessage(actual, expected), found);
+        assertThat(jsFunctionCallNotFoundMessage(actual, expected), found, is(equalTo(true)));
         while (expectedIterator.hasNext()) {
             expected = expectedIterator.next();
             expectedMatcher = jsFunctionCallRegex.matcher(expected);
-            assertTrue(jsFunctionCallMatchFailure(expected), expectedMatcher.find());
-            assertTrue(jsFunctionCallNotFoundMessage(actual, expected), actualMatcher.find());
+            assertThat(jsFunctionCallMatchFailure(expected), expectedMatcher.find(), is(equalTo(true)));
+            assertThat(jsFunctionCallNotFoundMessage(actual, expected), actualMatcher.find(), is(equalTo(true)));
             if (!matchFound(expectedMatcher, actualMatcher)) {
                 fail(jsFunctionCallNotFoundMessage(actual, expected));
             }
