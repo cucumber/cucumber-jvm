@@ -10,12 +10,15 @@ import org.apiguardian.api.API;
  */
 @Pending
 @API(status = API.Status.STABLE)
-public final class PendingException extends RuntimeException {
+public final class PendingException
+    extends RuntimeException {
+
     public PendingException() {
         this("TODO: implement me");
     }
 
-    public PendingException(String message) {
+    public PendingException(final String message) {
         super(message);
     }
+
 }

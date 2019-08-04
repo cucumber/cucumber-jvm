@@ -7,13 +7,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-final class InvalidMethodSignatureException extends CucumberException {
+final class InvalidMethodSignatureException
+    extends CucumberException {
 
-    private InvalidMethodSignatureException(String message) {
+    private InvalidMethodSignatureException(final String message) {
         super(message);
     }
 
-    static InvalidMethodSignatureExceptionBuilder builder(Method method) {
+    static InvalidMethodSignatureExceptionBuilder builder(final Method method) {
         return new InvalidMethodSignatureExceptionBuilder(method);
     }
 
@@ -24,22 +25,21 @@ final class InvalidMethodSignatureException extends CucumberException {
         private final List<String> signatures = new ArrayList<>();
         private final List<String> notes = new ArrayList<>();
 
-        private InvalidMethodSignatureExceptionBuilder(Method method) {
+        private InvalidMethodSignatureExceptionBuilder(final Method method) {
             this.method = method;
         }
 
-        InvalidMethodSignatureExceptionBuilder addAnnotation(Class<?> annotation) {
-            annotations.add(annotation);
+        InvalidMethodSignatureExceptionBuilder addAnnotation(final Class<?> annotation) {
+            this.annotations.add(annotation);
             return this;
         }
 
-
-        InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
-            signatures.add(signature);
+        InvalidMethodSignatureExceptionBuilder addSignature(final String signature) {
+            this.signatures.add(signature);
             return this;
         }
 
-        InvalidMethodSignatureExceptionBuilder addNote(String note) {
+        InvalidMethodSignatureExceptionBuilder addNote(final String note) {
             this.notes.add(note);
             return this;
         }
@@ -54,29 +54,29 @@ final class InvalidMethodSignatureException extends CucumberException {
         }
 
         private String describeNote() {
-            return String.join("\n", notes);
+            return String.join("\n", this.notes);
         }
 
         private Object describeLocation() {
-            return MethodFormat.FULL.format(method);
+            return MethodFormat.FULL.format(this.method);
         }
 
         private String describeAvailableSignature() {
-            return String.join("\n * ", signatures);
+            return String.join("\n * ", this.signatures);
         }
 
         private String describeAnnotations() {
-            if (annotations.size() == 1) {
-                return "A @" + annotations.get(0).getSimpleName() + " annotated method";
+            if (this.annotations.size() == 1) {
+                return "A @" + this.annotations.get(0).getSimpleName() + " annotated method";
             }
 
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < annotations.size(); i++) {
-                builder.append(annotations.get(i).getSimpleName());
+            for (int i = 0; i < this.annotations.size(); i++) {
+                builder.append(this.annotations.get(i).getSimpleName());
 
-                if (i < annotations.size() - 2) {
+                if (i < this.annotations.size() - 2) {
                     builder.append(", ");
-                } else if (i < annotations.size() - 1) {
+                } else if (i < this.annotations.size() - 1) {
                     builder.append(" or ");
                 }
             }
@@ -84,4 +84,5 @@ final class InvalidMethodSignatureException extends CucumberException {
             return "A method annotated with " + builder.toString();
         }
     }
+
 }

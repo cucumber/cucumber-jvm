@@ -1,15 +1,18 @@
 package io.cucumber.core.exception;
 
-public class CucumberException extends RuntimeException {
-    public CucumberException(String message) {
+public class CucumberException
+    extends RuntimeException {
+
+    public CucumberException(final String message) {
         super(message);
     }
 
-    public CucumberException(String message, Throwable e) {
-        super(message, e);
+    public CucumberException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
-    public CucumberException(Throwable e) {
-        super(e);
+    public CucumberException(final Throwable cause) {
+        super(cause);
     }
+
 }
