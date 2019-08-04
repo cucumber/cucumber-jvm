@@ -34,9 +34,8 @@ import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 
@@ -65,6 +64,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -73,13 +73,11 @@ import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class RuntimeTest {
+
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void runs_feature_with_json_formatter() {
@@ -482,17 +480,17 @@ public class RuntimeTest {
             }
         };
 
-        expectedException.expect(CompositeCucumberException.class);
-        expectedException.expectMessage("There were 3 exceptions");
-
-        TestHelper.builder()
+        final Executable testMethod = () -> TestHelper.builder()
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
             .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
             .withRuntimeArgs("--threads", "2")
             .build()
             .run();
-
+        final CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "There were 3 exceptions:\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)"
+        )));
     }
 
     @Test
@@ -817,4 +815,5 @@ public class RuntimeTest {
         }
 
     }
+
 }

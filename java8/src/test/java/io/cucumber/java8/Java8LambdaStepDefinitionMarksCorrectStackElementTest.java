@@ -3,37 +3,43 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private final MyLambdaGlueRegistry myLambdaGlueRegistry = new MyLambdaGlueRegistry();
 
     @Test
-    public void exception_from_step_should_be_defined_at_step_definition_class() throws Throwable {
+    public void exception_from_step_should_be_defined_at_step_definition_class() {
         LambdaGlueRegistry.INSTANCE.set(myLambdaGlueRegistry);
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        expectedException.expect(new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
-            @Override
-            protected boolean matchesSafely(Throwable item) {
-                for (StackTraceElement stackTraceElement : item.getStackTrace()) {
-                    if(stepDefinition.isDefinedAt(stackTraceElement)){
-                        return SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName());
+        final Executable testMethod = () -> stepDefinition.execute(new Object[0]);
+        final Exception actualThrown = assertThrows(Exception.class, testMethod);
+        assertAll("Checking Exception including cause",
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(nullValue())),
+            () -> assertThat("Unexpected exception StackTrace", actualThrown,
+                new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
+                    @Override
+                    protected boolean matchesSafely(final Throwable item) {
+                        for (final StackTraceElement stackTraceElement : item.getStackTrace()) {
+                            if (stepDefinition.isDefinedAt(stackTraceElement)) {
+                                return SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName());
+                            }
+
+                        }
+                        return false;
                     }
-
-                }
-                return false;
-            }
-        });
-
-        stepDefinition.execute(new Object[0]);
+                })
+        );
     }
 
 
@@ -80,4 +86,5 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
     }
+
 }
