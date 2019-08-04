@@ -9,6 +9,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class CucumberNeedleConfigurationTest {
 
@@ -24,11 +25,13 @@ public class CucumberNeedleConfigurationTest {
     }
 
     @Test
-    public void shouldEvaluateIfTypeIsInjectionProviderOrSupplier() throws Exception {
-        assertTrue(CucumberNeedleConfiguration.isInjectionProvider(SimpleNameGetterProvider.class));
-        assertFalse(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(SimpleNameGetterProvider.class));
-        assertFalse(CucumberNeedleConfiguration.isInjectionProvider(A.class));
-        assertTrue(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(A.class));
+    public void shouldEvaluateIfTypeIsInjectionProviderOrSupplier() {
+        assertAll("Checking Needle Configuration",
+            () -> assertTrue(CucumberNeedleConfiguration.isInjectionProvider(SimpleNameGetterProvider.class)),
+            () -> assertFalse(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(SimpleNameGetterProvider.class)),
+            () -> assertFalse(CucumberNeedleConfiguration.isInjectionProvider(A.class)),
+            () -> assertTrue(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(A.class))
+        );
     }
 
 }

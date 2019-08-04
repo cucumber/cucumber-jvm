@@ -35,6 +35,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -249,9 +250,11 @@ public class PickleStepTestStepTest {
         TestStepStarted started = (TestStepStarted) allValues.get(0);
         TestStepFinished finished = (TestStepFinished) allValues.get(1);
 
-        assertThat(started.getInstant(), is(equalTo(ofEpochMilli(234L))));
-        assertThat(finished.getInstant(), is(equalTo(ofEpochMilli(1234L))));
-        assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L))));
+        assertAll("CHecking TestStep",
+            () -> assertThat(started.getInstant(), is(equalTo(ofEpochMilli(234L)))),
+            () -> assertThat(finished.getInstant(), is(equalTo(ofEpochMilli(1234L)))),
+            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L))))
+        );
     }
 
 }

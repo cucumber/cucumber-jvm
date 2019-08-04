@@ -40,6 +40,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class HTMLFormatterTest {
 
@@ -116,8 +117,10 @@ public class HTMLFormatterTest {
     public void included_embedding() throws Throwable {
         writeReport();
         String reportJs = readReportJs();
-        assertContains("formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");", reportJs);
-        assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\", null);", reportJs);
+        assertAll("Checking ReportJs",
+            () -> assertContains("formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");", reportJs),
+            () -> assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\", null);", reportJs)
+        );
     }
 
     @Test

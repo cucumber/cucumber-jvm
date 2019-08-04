@@ -1,19 +1,19 @@
 package io.cucumber.core.options;
 
 import gherkin.events.PickleEvent;
-import io.cucumber.core.plugin.EventListener;
 import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.plugin.ColorAware;
-import io.cucumber.core.plugin.Plugin;
-import io.cucumber.core.plugin.StrictAware;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.plugin.ColorAware;
+import io.cucumber.core.plugin.EventListener;
+import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.plugin.StrictAware;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.core.snippets.SnippetType;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -28,7 +28,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.CUCUMBER_OPTIONS_PROPERTY_NAME;
@@ -45,6 +50,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -108,8 +114,11 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("somewhere_else.feature:3")
             .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), singleton(3)));
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature"))),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), singleton(3)))
+        );
     }
 
     @Test
@@ -198,8 +207,10 @@ public class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter")));
-        assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))));
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
+            () -> assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))))
+        );
     }
 
     @Test
@@ -304,9 +315,12 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths")));
-        assertThat(options.getGlue(), contains(uri("classpath:lookatme")));
-        assertTrue(options.isStrict());
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths"))),
+            () -> assertThat(options.getGlue(), contains(uri("classpath:lookatme"))),
+            () -> assertTrue(options.isStrict())
+        );
     }
 
     @Test
@@ -357,8 +371,10 @@ public class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
 
-        assertThat(options.getTagExpressions(), emptyCollectionOf(String.class));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getTagExpressions(), emptyCollectionOf(String.class)),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)))
+        );
     }
 
     @Test
@@ -432,8 +448,11 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer")));
-        assertThat(options.getTagExpressions(), contains("@keep_this"));
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer"))),
+            () -> assertThat(options.getTagExpressions(), contains("@keep_this"))
+        );
     }
 
     @Test
@@ -450,9 +469,10 @@ public class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")));
-        assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))));
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter"))),
+            () -> assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))))
+        );
     }
 
     @Test
@@ -469,9 +489,10 @@ public class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter")));
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")));
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))),
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")))
+        );
     }
 
     @Test
@@ -487,8 +508,10 @@ public class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
-        assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))));
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))),
+            () -> assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))))
+        );
     }
 
     @Test
@@ -504,8 +527,10 @@ public class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter")));
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")))
+        );
     }
 
     @Test
@@ -522,9 +547,10 @@ public class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")));
-        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter"))),
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")))
+        );
     }
 
     @Test
@@ -700,8 +726,10 @@ public class RuntimeOptionsTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature"))),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)))
+        );
     }
 
     @Test
@@ -714,8 +742,10 @@ public class RuntimeOptionsTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature"))),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)))
+        );
     }
 
     @Test
@@ -733,8 +763,10 @@ public class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
 
-        assertThat(options.getFeaturePaths(), contains(uri("file:path/foo.feature")));
-        assertThat(options.getLineFilters().size(), is(0));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/foo.feature"))),
+            () -> assertThat(options.getLineFilters().size(), is(0))
+        );
     }
 
     @Test
@@ -770,7 +802,7 @@ public class RuntimeOptionsTest {
         mockFileResource(resourceLoader, rerunPath, rerunFile);
 
         RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" +  rerunPath)
+            .parse("@" + rerunPath)
             .build();
 
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
@@ -798,8 +830,11 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
             .parse("@" + rerunPath)
             .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)));
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature"))),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)))
+        );
     }
 
     @Test
@@ -814,8 +849,10 @@ public class RuntimeOptionsTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertThat(options.getFeaturePaths(), contains(featureUri));
-        assertThat(options.getLineFilters(), hasEntry(featureUri, singleton(2)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(featureUri)),
+            () -> assertThat(options.getLineFilters(), hasEntry(featureUri, singleton(2)))
+        );
     }
 
     @Test
@@ -828,8 +865,11 @@ public class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
             .parse("@" + rerunPath)
             .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:My%20Documents/tests/bar.feature")));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:My%20Documents/tests/bar.feature"), singleton(2)));
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getFeaturePaths(), contains(uri("file:My%20Documents/tests/bar.feature"))),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:My%20Documents/tests/bar.feature"), singleton(2)))
+        );
     }
 
     @Test

@@ -23,6 +23,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
 public class ThreadLocalRunnerSupplierTest {
@@ -73,8 +74,10 @@ public class ThreadLocalRunnerSupplierTest {
         thread0.join();
         thread1.join();
 
-        assertThat(runners[0], is(not(equalTo(runners[1]))));
-        assertThat(runners[1], is(not(equalTo(runners[0]))));
+        assertAll("Checking Runner",
+            () -> assertThat(runners[0], is(not(equalTo(runners[1])))),
+            () -> assertThat(runners[1], is(not(equalTo(runners[0]))))
+        );
     }
 
     @Test
@@ -87,8 +90,10 @@ public class ThreadLocalRunnerSupplierTest {
         //This avoids problems with JUnit which listens to individual runners
         EventBus runnerBus = runnerSupplier.get().getBus();
 
-        assertThat(eventBus, is(not(equalTo(runnerBus))));
-        assertThat(runnerBus, is(not(equalTo(eventBus))));
+        assertAll("Checking EventBus",
+            () -> assertThat(eventBus, is(not(equalTo(runnerBus)))),
+            () -> assertThat(runnerBus, is(not(equalTo(eventBus))))
+        );
     }
 
     @Test

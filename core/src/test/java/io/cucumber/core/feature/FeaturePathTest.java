@@ -13,6 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assume.assumeThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FeaturePathTest {
@@ -27,51 +28,72 @@ public class FeaturePathTest {
     @Test
     public void can_parse_root_package() {
         URI uri = FeaturePath.parse("classpath:/");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("/"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
+        );
     }
 
     @Test
     public void can_parse_eclipse_plugin_default_glue() {
         // The eclipse plugin uses `classpath:` as the default
         URI uri = FeaturePath.parse("classpath:");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("/"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
+        );
     }
 
     @Test
     public void can_parse_classpath_form() {
         URI uri = FeaturePath.parse("classpath:/path/to/file.feature");
-        assertThat(uri.getScheme(), is(equalTo("classpath")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("classpath"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to/file.feature")))
+        );
     }
 
     @Test
     public void can_parse_classpath_directory_form() {
         URI uri = FeaturePath.parse("classpath:/path/to");
-        assertThat(uri.getScheme(), is(equalTo("classpath")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("classpath"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to")))
+        );
     }
 
     @Test
     public void can_parse_absolute_file_form() {
         URI uri = FeaturePath.parse("file:/path/to/file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to/file.feature")))
+        );
     }
 
     @Test
     public void can_parse_absolute_directory_form() {
         URI uri = FeaturePath.parse("file:/path/to");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to")))
+        );
     }
 
     @Test
     public void can_parse_relative_file_form() {
         URI uri = FeaturePath.parse("file:path/to/file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to/file.feature")))
+        );
     }
 
     @Test
@@ -86,8 +108,11 @@ public class FeaturePathTest {
     @Test
     public void can_parse_relative_path_form() {
         URI uri = FeaturePath.parse("path/to/file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to/file.feature")))
+        );
     }
 
     @Test
@@ -95,8 +120,11 @@ public class FeaturePathTest {
         assumeThat(File.separatorChar, is('\\')); //Requires windows
 
         URI uri = FeaturePath.parse("path\\to\\file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to/file.feature")))
+        );
     }
 
     @Test
@@ -104,15 +132,21 @@ public class FeaturePathTest {
         assumeThat(File.separatorChar, is('\\')); //Requires windows
 
         URI uri = FeaturePath.parse("C:\\path\\to\\file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("/C:/path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/C:/path/to/file.feature")))
+        );
     }
 
     @Test
     public void can_parse_whitespace_in_path() {
         URI uri = FeaturePath.parse("path/to the/file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to the/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("path/to the/file.feature")))
+        );
     }
 
     @Test
@@ -120,8 +154,11 @@ public class FeaturePathTest {
         assumeThat(System.getProperty("os.name"), isWindows());
 
         URI uri = FeaturePath.parse("C:/path/to/file.feature");
-        assertThat(uri.getScheme(), is(equalTo("file")));
-        assertThat(uri.getSchemeSpecificPart(), is(equalTo("/C:/path/to/file.feature")));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is(equalTo("file"))),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/C:/path/to/file.feature")))
+        );
     }
 
     private static Matcher<String> isWindows() {

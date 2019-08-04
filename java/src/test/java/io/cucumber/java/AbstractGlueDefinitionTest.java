@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AbstractGlueDefinitionTest {
 
@@ -27,9 +28,10 @@ public class AbstractGlueDefinitionTest {
         AbstractGlueDefinition definition = new AbstractGlueDefinition(method, lookup) {
         };
 
-        assertThat(definition.getLocation(false), is("AbstractGlueDefinitionTest.method()"));
-        assertThat(definition.getLocation(true), startsWith("io.cucumber.java.AbstractGlueDefinitionTest.method() in "));
-
+        assertAll("Checking AbstractGlueDefinition",
+            () -> assertThat(definition.getLocation(false), is("AbstractGlueDefinitionTest.method()")),
+            () -> assertThat(definition.getLocation(true), startsWith("io.cucumber.java.AbstractGlueDefinitionTest.method() in "))
+        );
     }
 
     public void method() {

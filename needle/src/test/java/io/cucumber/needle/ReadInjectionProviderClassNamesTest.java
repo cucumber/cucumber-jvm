@@ -10,6 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class ReadInjectionProviderClassNamesTest {
 
@@ -55,8 +56,11 @@ public class ReadInjectionProviderClassNamesTest {
     @Test
     public void shouldReturnTwoTrimmedClassNames() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/two-classname"));
-        assertThat(classNames.size(), is(2));
-        assertThat(classNames, hasItems("java.lang.String", "java.util.Set"));
+
+        assertAll("Checking function",
+            () -> assertThat(classNames.size(), is(2)),
+            () -> assertThat(classNames, hasItems("java.lang.String", "java.util.Set"))
+        );
     }
 
     private ResourceBundle loadBundle(final String resourceName) {

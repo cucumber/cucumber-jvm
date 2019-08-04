@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class ResultTest {
 
@@ -43,40 +44,50 @@ public class ResultTest {
     public void passed_result_is_always_ok() {
         Result passedResult = new Result(PASSED, ZERO, null);
 
-        assertTrue(passedResult.getStatus().isOk(isStrict(false)));
-        assertTrue(passedResult.getStatus().isOk(isStrict(true)));
+        assertAll("Checking Result",
+            () -> assertTrue(passedResult.getStatus().isOk(isStrict(false))),
+            () -> assertTrue(passedResult.getStatus().isOk(isStrict(true)))
+        );
     }
 
     @Test
     public void skipped_result_is_always_ok() {
         Result skippedResult = new Result(SKIPPED, ZERO, null);
 
-        assertTrue(skippedResult.getStatus().isOk(isStrict(false)));
-        assertTrue(skippedResult.getStatus().isOk(isStrict(true)));
+        assertAll("Checking Result",
+            () -> assertTrue(skippedResult.getStatus().isOk(isStrict(false))),
+            () -> assertTrue(skippedResult.getStatus().isOk(isStrict(true)))
+        );
     }
 
     @Test
     public void failed_result_is_never_ok() {
         Result failedResult = new Result(FAILED, ZERO, null);
 
-        assertFalse(failedResult.getStatus().isOk(isStrict(false)));
-        assertFalse(failedResult.getStatus().isOk(isStrict(true)));
+        assertAll("Checking Result",
+            () -> assertFalse(failedResult.getStatus().isOk(isStrict(false))),
+            () -> assertFalse(failedResult.getStatus().isOk(isStrict(true)))
+        );
     }
 
     @Test
     public void undefined_result_is_only_ok_when_not_strict() {
         Result undefinedResult = new Result(UNDEFINED, ZERO, null);
 
-        assertTrue(undefinedResult.getStatus().isOk(isStrict(false)));
-        assertFalse(undefinedResult.getStatus().isOk(isStrict(true)));
+        assertAll("Checking Result",
+            () -> assertTrue(undefinedResult.getStatus().isOk(isStrict(false))),
+            () -> assertFalse(undefinedResult.getStatus().isOk(isStrict(true)))
+        );
     }
 
     @Test
     public void pending_result_is_only_ok_when_not_strict() {
         Result pendingResult = new Result(PENDING, ZERO, null);
 
-        assertTrue(pendingResult.getStatus().isOk(isStrict(false)));
-        assertFalse(pendingResult.getStatus().isOk(isStrict(true)));
+        assertAll("Checking Result",
+            () -> assertTrue(pendingResult.getStatus().isOk(isStrict(false))),
+            () -> assertFalse(pendingResult.getStatus().isOk(isStrict(true)))
+        );
     }
 
     @Test
