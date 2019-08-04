@@ -7,7 +7,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ResourceLoaderTest {
 
@@ -15,21 +17,21 @@ public class ResourceLoaderTest {
     public void loads_resources_from_filesystem_dir() {
         URI uri = FeaturePath.parse("src/test/resources/io/cucumber/core");
         Iterable<Resource> files = new FileResourceLoader().resources(uri, ".properties");
-        assertEquals(3, toList(files).size());
+        assertThat(toList(files).size(), is(equalTo(3)));
     }
 
     @Test
     public void loads_resource_from_filesystem_file() {
         URI uri = FeaturePath.parse("src/test/resources/io/cucumber/core/bar.properties");
         Iterable<Resource> files = new FileResourceLoader().resources(uri, ".doesntmatter");
-        assertEquals(1, toList(files).size());
+        assertThat(toList(files).size(), is(equalTo(1)));
     }
 
     @Test
     public void loads_resources_from_jar_on_classpath() {
         URI uri = FeaturePath.parse("classpath:io/cucumber");
         Iterable<Resource> files = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader()).resources(uri, ".properties");
-        assertEquals(4, toList(files).size());
+        assertThat(toList(files).size(), is(equalTo(4)));
     }
 
     private <T> List<T> toList(Iterable<T> it) {

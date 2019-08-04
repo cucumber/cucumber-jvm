@@ -37,7 +37,7 @@ public class TestNGCucumberRunnerTest {
     }
 
     @Test
-    public void parse_error_propagated_to_testng_test_execution() throws Exception {
+    public void parse_error_propagated_to_testng_test_execution() {
         testNGCucumberRunner = new TestNGCucumberRunner(ParseError.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios(); // a CucumberException is caught
         try {

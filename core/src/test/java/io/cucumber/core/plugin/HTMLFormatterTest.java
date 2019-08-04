@@ -35,9 +35,12 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ofMillis;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class HTMLFormatterTest {
 
@@ -65,7 +68,7 @@ public class HTMLFormatterTest {
         URL indexHtml = new URL(outputDir, "index.html");
         Document document = Jsoup.parse(new File(indexHtml.getFile()), UTF_8.name());
         Element reportElement = document.body().getElementsByClass("cucumber-report").first();
-        assertEquals("", reportElement.text());
+        assertThat(reportElement.text(), is(equalTo("")));
     }
 
     @Test
@@ -114,8 +117,10 @@ public class HTMLFormatterTest {
     public void included_embedding() throws Throwable {
         writeReport();
         String reportJs = readReportJs();
-        assertContains("formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");", reportJs);
-        assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\", null);", reportJs);
+        assertAll("Checking ReportJs",
+            () -> assertContains("formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");", reportJs),
+            () -> assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\", null);", reportJs)
+        );
     }
 
     @Test

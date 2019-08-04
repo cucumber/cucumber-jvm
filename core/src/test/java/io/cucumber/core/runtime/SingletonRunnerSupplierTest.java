@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.io.ClassFinder;
@@ -13,10 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertSame;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 public class SingletonRunnerSupplierTest {
 
@@ -43,7 +42,7 @@ public class SingletonRunnerSupplierTest {
 
     @Test
     public void should_return_the_same_runner_on_subsequent_calls() {
-        assertSame(runnerSupplier.get(), runnerSupplier.get());
+        assertThat(runnerSupplier.get(), is(equalTo(runnerSupplier.get())));
     }
 
 }

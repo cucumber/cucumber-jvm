@@ -14,7 +14,7 @@ final class TestNGCucumberOptionsProviderTest {
     private TestNGCucumberOptionsProvider optionsProvider;
 
     @BeforeTest
-    void setUp() throws Exception {
+    void setUp() {
         this.optionsProvider = new TestNGCucumberOptionsProvider();
     }
     @Test

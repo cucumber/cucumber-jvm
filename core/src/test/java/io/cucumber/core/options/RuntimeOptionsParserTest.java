@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 final class RuntimeOptionsParserTest {
@@ -16,7 +18,7 @@ final class RuntimeOptionsParserTest {
     private RuntimeOptionsParser parser;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.parser = new RuntimeOptionsParser(new RerunLoader(new MultiLoader(this.getClass().getClassLoader())));
     }
 
@@ -26,9 +28,8 @@ final class RuntimeOptionsParserTest {
         assertNotNull(optionsBuilder);
         RuntimeOptions options = optionsBuilder.build();
         assertNotNull(options);
-        assertEquals(TestObjectFactory.class, options.getObjectFactoryClass());
+        assertThat(options.getObjectFactoryClass(), is(equalTo(TestObjectFactory.class)));
     }
-
 
     private static final class TestObjectFactory implements ObjectFactory {
 

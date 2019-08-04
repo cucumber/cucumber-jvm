@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ArgumentPatternTest {
 
@@ -13,17 +15,17 @@ public class ArgumentPatternTest {
 
     @Test
     public void replacesMatchWithoutEscapedNumberClass() {
-        assertEquals("(\\d)", argumentPattern.replaceMatchesWithGroups("1"));
+        assertThat(argumentPattern.replaceMatchesWithGroups("1"), is(equalTo("(\\d)")));
     }
 
     @Test
     public void replacesMultipleMatchesWithPattern() {
-        assertEquals("(\\d)(\\d)", argumentPattern.replaceMatchesWithGroups("13"));
+        assertThat(argumentPattern.replaceMatchesWithGroups("13"), is(equalTo("(\\d)(\\d)")));
     }
 
     @Test
-    public void replaceMatchWithSpace() throws Exception {
-        assertEquals(" ", argumentPattern.replaceMatchesWithSpace("4"));
+    public void replaceMatchWithSpace() {
+        assertThat(argumentPattern.replaceMatchesWithSpace("4"), is(equalTo(" ")));
     }
 
 }

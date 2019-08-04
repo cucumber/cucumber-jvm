@@ -9,8 +9,8 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GluePathTest {
@@ -18,51 +18,72 @@ public class GluePathTest {
     @Test
     public void can_parse_empty_glue_path() {
         URI uri = GluePath.parse("");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("/"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
+        );
     }
 
     @Test
     public void can_parse_root_package() {
         URI uri = GluePath.parse("classpath:/");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("/"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
+        );
     }
 
     @Test
     public void can_parse_eclipse_plugin_default_glue() {
         // The eclipse plugin uses `classpath:` as the default
         URI uri = GluePath.parse("classpath:");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("/"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
+        );
     }
 
     @Test
     public void can_parse_classpath_form() {
         URI uri = GluePath.parse("classpath:com/example/app");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("com/example/app"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("com/example/app"))
+        );
     }
 
     @Test
     public void can_parse_relative_path_form() {
         URI uri = GluePath.parse("com/example/app");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("com/example/app"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("com/example/app"))
+        );
     }
 
     @Test
     public void can_parse_absolute_path_form() {
         URI uri = GluePath.parse("/com/example/app");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("/com/example/app"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/com/example/app"))
+        );
     }
 
     @Test
     public void can_parse_package_form() {
         URI uri = GluePath.parse("com.example.app");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertThat(uri.getSchemeSpecificPart(), is("com/example/app"));
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("com/example/app"))
+        );
     }
 
     @Test
@@ -88,8 +109,11 @@ public class GluePathTest {
         assumeThat(File.separatorChar, is('\\')); //Requires windows
 
         URI uri = GluePath.parse("com\\example\\app");
-        assertThat(uri.getScheme(), is("classpath"));
-        assertEquals("com/example/app", uri.getSchemeSpecificPart());
+
+        assertAll("Checking uri",
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("com/example/app")))
+        );
     }
 
     @Test

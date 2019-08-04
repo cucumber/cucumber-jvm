@@ -32,9 +32,10 @@ import static java.time.Instant.ofEpochMilli;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -94,7 +95,7 @@ public class PickleStepTestStepTest {
     public void result_is_passed_when_step_definition_does_not_throw_exception() {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertFalse(skipNextStep);
-        assertEquals(PASSED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
@@ -102,7 +103,7 @@ public class PickleStepTestStepTest {
         boolean skipNextStep = step.run(testCase, bus, scenario, true);
 
         assertTrue(skipNextStep);
-        assertEquals(SKIPPED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(SKIPPED)));
     }
 
     @Test
@@ -110,7 +111,7 @@ public class PickleStepTestStepTest {
         doThrow(AssumptionViolatedException.class).when(beforeHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
-        assertEquals(SKIPPED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(SKIPPED)));
     }
 
     @Test
@@ -127,12 +128,12 @@ public class PickleStepTestStepTest {
         Result failure = new Result(Status.FAILED, ZERO, exception);
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
-        assertEquals(FAILED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(FAILED)));
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
         verify(bus, times(6)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertEquals(failure, ((TestStepFinished) allValues.get(1)).getResult());
+        assertThat(((TestStepFinished) allValues.get(1)).getResult(), is(equalTo(failure)));
     }
 
     @Test
@@ -142,12 +143,12 @@ public class PickleStepTestStepTest {
         doThrow(runtimeException).when(definitionMatch).runStep(any(Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
-        assertEquals(FAILED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(FAILED)));
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
         verify(bus, times(6)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertEquals(failure, ((TestStepFinished) allValues.get(3)).getResult());
+        assertThat(((TestStepFinished) allValues.get(3)).getResult(), is(equalTo(failure)));
     }
 
     @Test
@@ -157,12 +158,12 @@ public class PickleStepTestStepTest {
         doThrow(exception).when(afterHookDefinition).execute(any(io.cucumber.core.api.Scenario.class));
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
-        assertEquals(FAILED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(FAILED)));
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
         verify(bus, times(6)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertEquals(failure, ((TestStepFinished) allValues.get(5)).getResult());
+        assertThat(((TestStepFinished) allValues.get(5)).getResult(), is(equalTo(failure)));
     }
 
     @Test
@@ -213,7 +214,7 @@ public class PickleStepTestStepTest {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
 
-        assertEquals(SKIPPED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(SKIPPED)));
     }
 
     @Test
@@ -223,7 +224,7 @@ public class PickleStepTestStepTest {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
 
-        assertEquals(Status.FAILED, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(Status.FAILED)));
     }
 
     @Test
@@ -233,7 +234,7 @@ public class PickleStepTestStepTest {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
 
-        assertEquals(Status.PENDING, scenario.getStatus());
+        assertThat(scenario.getStatus(), is(equalTo(Status.PENDING)));
     }
 
     @Test
@@ -249,9 +250,11 @@ public class PickleStepTestStepTest {
         TestStepStarted started = (TestStepStarted) allValues.get(0);
         TestStepFinished finished = (TestStepFinished) allValues.get(1);
 
-        assertEquals(ofEpochMilli(234L), started.getInstant());
-        assertEquals(ofEpochMilli(1234L), finished.getInstant());
-        assertEquals(ofMillis(1000L), finished.getResult().getDuration());
+        assertAll("CHecking TestStep",
+            () -> assertThat(started.getInstant(), is(equalTo(ofEpochMilli(234L)))),
+            () -> assertThat(finished.getInstant(), is(equalTo(ofEpochMilli(1234L)))),
+            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L))))
+        );
     }
 
 }

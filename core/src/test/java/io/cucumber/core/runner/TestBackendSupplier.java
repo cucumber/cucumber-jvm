@@ -1,17 +1,12 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.snippets.Snippet;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.runtime.BackendSupplier;
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.snippets.Snippet;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 public abstract class TestBackendSupplier implements Backend, BackendSupplier {
 

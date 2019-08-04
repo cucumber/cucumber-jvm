@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class FileResourceTest {
 
@@ -14,8 +17,10 @@ public class FileResourceTest {
         FileResource toTest1 = FileResource.createClasspathFileResource(new File("/testPath"), new File("/testPath/test1/test.feature"));
         FileResource toTest2 = FileResource.createClasspathFileResource(new File("testPath"), new File("testPath/test1/test.feature"));
 
-        assertEquals(URI.create("classpath:test1/test.feature"), toTest1.getPath());
-        assertEquals(URI.create("classpath:test1/test.feature"), toTest2.getPath());
+        assertAll("Checking FileResource",
+            () -> assertThat(toTest1.getPath(), is(equalTo(URI.create("classpath:test1/test.feature")))),
+            () -> assertThat(toTest2.getPath(), is(equalTo(URI.create("classpath:test1/test.feature"))))
+        );
     }
 
     @Test
@@ -24,9 +29,10 @@ public class FileResourceTest {
         FileResource toTest1 = FileResource.createFileResource(new File("test1"), new File("test1/test.feature"));
         FileResource toTest2 = FileResource.createFileResource(new File("test1/test.feature"), new File("test1/test.feature"));
 
-        // test
-        assertEquals(URI.create("file:test.feature"), toTest1.getPath());
-        assertEquals(new File("test1/test.feature").toURI(), toTest2.getPath());
+        assertAll("Checking FileResource",
+            () -> assertThat(toTest1.getPath(), is(equalTo(URI.create("file:test.feature")))),
+            () -> assertThat(toTest2.getPath(), is(equalTo(new File("test1/test.feature").toURI())))
+        );
     }
 
 }

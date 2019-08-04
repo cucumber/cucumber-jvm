@@ -20,7 +20,8 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -90,16 +91,15 @@ public class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = new Result(Status.PASSED, Duration.ofNanos(12345L), null);
 
-
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertEquals(usageMap.size(), 1);
+        assertThat(usageMap.size(), is(equalTo(1)));
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0).getName(), "step");
-        assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), Duration.ofNanos(12345L));
+        assertThat(durationEntries.size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
+        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ofNanos(12345L))));
     }
 
     @Test
@@ -115,12 +115,12 @@ public class UsageFormatterTest {
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, failed));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertEquals(usageMap.size(), 1);
+        assertThat(usageMap.size(), is(equalTo(1)));
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0).getName(), "step");
-        assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), Duration.ofSeconds(12345));
+        assertThat(durationEntries.size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
+        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ofSeconds(12345))));
     }
 
     @Test
@@ -133,12 +133,12 @@ public class UsageFormatterTest {
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertEquals(usageMap.size(), 1);
+        assertThat(usageMap.size(), is(equalTo(1)));
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0).getName(), "step");
-        assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), Duration.ZERO);
+        assertThat(durationEntries.size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
+        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ZERO)));
     }
 
     // Note: Duplicate of above test
@@ -152,12 +152,12 @@ public class UsageFormatterTest {
         usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertEquals(usageMap.size(), 1);
+        assertThat(usageMap.size(), is(equalTo(1)));
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0).getName(), "step");
-        assertEquals(durationEntries.get(0).getDurations().size(), 1);
-        assertEquals(durationEntries.get(0).getDurations().get(0).getDuration(), Duration.ZERO);
+        assertThat(durationEntries.size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
+        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ZERO)));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
-        assertEquals(Duration.ofSeconds(2L), result);
+        assertThat(result, is(equalTo(Duration.ofSeconds(2L))));
     }
 
     @Test
@@ -248,7 +248,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(1L), Duration.ofSeconds(2L)));
-        assertEquals(Duration.ofNanos(1333333333), result);
+        assertThat(result, is(equalTo(Duration.ofNanos(1333333333))));
     }
 
     @Test
@@ -256,7 +256,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateAverage(Collections.emptyList());
-        assertEquals(Duration.ZERO, result);
+        assertThat(result, is(equalTo(Duration.ZERO)));
     }
 
     @Test
@@ -264,7 +264,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
-        assertEquals(Duration.ofSeconds(2L), result);
+        assertThat(result, is(equalTo(Duration.ofSeconds(2L))));
     }
 
     @Test
@@ -272,7 +272,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(3L), Duration.ofSeconds(10L), Duration.ofSeconds(5L)));
-        assertEquals(Duration.ofSeconds(4), result);
+        assertThat(result, is(equalTo(Duration.ofSeconds(4))));
     }
 
     @Test
@@ -280,7 +280,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(2L), Duration.ofSeconds(9L)));
-        assertEquals(Duration.ofMillis(5500), result);
+        assertThat(result, is(equalTo(Duration.ofMillis(5500))));
     }
 
     @Test
@@ -288,7 +288,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(Collections.emptyList());
-        assertEquals(Duration.ZERO, result);
+        assertThat(result, is(equalTo(Duration.ZERO)));
     }
 
     private PickleStepTestStep mockTestStep() {

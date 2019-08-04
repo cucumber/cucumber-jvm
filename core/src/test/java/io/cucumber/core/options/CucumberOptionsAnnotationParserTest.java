@@ -21,10 +21,10 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CucumberOptionsAnnotationParserTest {
@@ -52,16 +52,22 @@ public class CucumberOptionsAnnotationParserTest {
             .addDefaultSummaryPrinterIfNotPresent()
             .addDefaultFormatterIfNotPresent()
             .build();
-        assertFalse(runtimeOptions.isStrict());
-        assertNull(runtimeOptions.getObjectFactoryClass());
-        assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options")));
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")));
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertFalse(runtimeOptions.isStrict()),
+            () -> assertThat(runtimeOptions.getObjectFactoryClass(), is(nullValue())),
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options"))),
+            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")))
+        );
+
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-        assertThat(plugins.getPlugins(), hasSize(2));
-        assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter");
-        assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
+        assertAll("Checking Plugins",
+            () -> assertThat(plugins.getPlugins(), hasSize(2)),
+            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
+            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter")
+        );
     }
 
     public static URI uri(String str) {
@@ -79,20 +85,24 @@ public class CucumberOptionsAnnotationParserTest {
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-        assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options")));
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")));
-
-        assertThat(plugins.getPlugins(), hasSize(2));
-        assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter");
-        assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
+        assertAll("Checking Plugins",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options"))),
+            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options"))),
+            () -> assertThat(plugins.getPlugins(), hasSize(2)),
+            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
+            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter")
+        );
     }
 
     @Test
     public void create_with_no_name() {
         RuntimeOptions runtimeOptions = parser().parse(NoName.class).build();
-        assertTrue(runtimeOptions.getTagExpressions().isEmpty());
-        assertTrue(runtimeOptions.getNameFilters().isEmpty());
-        assertTrue(runtimeOptions.getLineFilters().isEmpty());
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertTrue(runtimeOptions.getTagExpressions().isEmpty()),
+            () -> assertTrue(runtimeOptions.getNameFilters().isEmpty()),
+            () -> assertTrue(runtimeOptions.getLineFilters().isEmpty())
+        );
     }
 
     @Test
@@ -100,22 +110,25 @@ public class CucumberOptionsAnnotationParserTest {
         RuntimeOptions runtimeOptions = parser().parse(MultipleNames.class).build();
 
         List<Pattern> filters = runtimeOptions.getNameFilters();
-        assertEquals(2, filters.size());
+        assertThat(filters.size(), is(equalTo(2)));
         Iterator<Pattern> iterator = filters.iterator();
-        assertEquals("name1", getRegexpPattern(iterator.next()));
-        assertEquals("name2", getRegexpPattern(iterator.next()));
+
+        assertAll("Checking Pattern",
+            () -> assertThat(getRegexpPattern(iterator.next()), is(equalTo("name1"))),
+            () -> assertThat(getRegexpPattern(iterator.next()), is(equalTo("name2")))
+        );
     }
 
     @Test
     public void testObjectFactory() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithCustomObjectFactory.class).build();
-        assertEquals(TestObjectFactory.class, runtimeOptions.getObjectFactoryClass());
+        assertThat(runtimeOptions.getObjectFactoryClass(), is(equalTo(TestObjectFactory.class)));
     }
 
     @Test
     public void create_with_snippets() {
         RuntimeOptions runtimeOptions = parser().parse(Snippets.class).build();
-        assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
+        assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
     }
 
     private String getRegexpPattern(Object pattern) {
@@ -139,8 +152,11 @@ public class CucumberOptionsAnnotationParserTest {
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
         List<Plugin> pluginList = plugins.getPlugins();
-        assertPluginExists(pluginList, "io.cucumber.core.plugin.JSONFormatter");
-        assertPluginExists(pluginList, "io.cucumber.core.plugin.PrettyFormatter");
+
+        assertAll("Checking Plugin",
+            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.JSONFormatter"),
+            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.PrettyFormatter")
+        );
     }
 
     @Test
@@ -296,7 +312,6 @@ public class CucumberOptionsAnnotationParserTest {
     private static class ClassWithGlueAndExtraGlue {
         // empty
     }
-
 
     private static class CoreCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
         private final CucumberOptions annotation;

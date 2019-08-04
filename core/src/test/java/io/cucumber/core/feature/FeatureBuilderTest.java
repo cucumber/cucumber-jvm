@@ -9,7 +9,10 @@ import java.net.URI;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +30,7 @@ public class FeatureBuilderTest {
 
         List<CucumberFeature> features = builder.build();
 
-        assertEquals(1, features.size());
+        assertThat(features.size(), is(equalTo(1)));
     }
 
     @Test
@@ -40,8 +43,10 @@ public class FeatureBuilderTest {
 
         List<CucumberFeature> features = builder.build();
 
-        assertEquals(1, features.size());
-        assertEquals(featurePath, features.get(0).getUri());
+        assertAll("Checking CucumberFeature",
+            () -> assertThat(features.size(), is(equalTo(1))),
+            () -> assertThat(features.get(0).getUri(), is(equalTo(featurePath)))
+        );
     }
 
     private Resource createResourceMock(URI featurePath) throws IOException {

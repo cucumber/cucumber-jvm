@@ -6,7 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FunctionNameGeneratorTest {
@@ -15,8 +15,10 @@ public class FunctionNameGeneratorTest {
     private FunctionNameGenerator camelCase = new FunctionNameGenerator(SnippetType.CAMELCASE.joiner());
 
     private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
-        assertEquals(expectedUnderscore, underscore.generateFunctionName(sentence));
-        assertEquals(expectedCamelCase, camelCase.generateFunctionName(sentence));
+        assertAll("Checking FunctionNameGenerator",
+            () -> assertThat(underscore.generateFunctionName(sentence), is(equalTo(expectedUnderscore))),
+            () -> assertThat(camelCase.generateFunctionName(sentence), is(equalTo(expectedCamelCase)))
+        );
     }
 
     @Test

@@ -30,8 +30,10 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -199,7 +201,7 @@ public class RunnerTest {
             }
         };
         runnerSupplier.get().runPickle(pickleEventMatchingStepDefinitions);
-        assertEquals(emptyList(), stepDefinition.getArgs());
+        assertThat(stepDefinition.getArgs(), is(equalTo(emptyList())));
     }
 
     @Test
@@ -215,7 +217,7 @@ public class RunnerTest {
         };
 
         runnerSupplier.get().runPickle(pickleEvent);
-        assertNull(stepDefinition.getArgs());
+        assertThat(stepDefinition.getArgs(), is(nullValue()));
     }
 
     @Test

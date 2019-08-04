@@ -7,13 +7,15 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
+import java.time.Clock;
+
 import static java.time.Duration.ZERO;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.isA;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-
-import java.time.Clock;
 
 public class TestCaseResultListenerTest {
 
@@ -58,7 +60,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockUndefinedResult());
 
         assertFalse(resultListener.isPassed());
-        assertTrue(resultListener.getError() instanceof SkipException);
+        assertThat(resultListener.getError(), isA(SkipException.class));
     }
 
     @Test
@@ -78,7 +80,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockPendingResult());
 
         assertFalse(resultListener.isPassed());
-        assertTrue(resultListener.getError() instanceof SkipException);
+        assertThat(resultListener.getError(), isA(SkipException.class));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockPendingResult());
 
         assertFalse(resultListener.isPassed());
-        assertTrue(resultListener.getError() instanceof TestPendingException);
+        assertThat(resultListener.getError(), isA(TestPendingException.class));
     }
 
     @Test
@@ -98,7 +100,7 @@ public class TestCaseResultListenerTest {
         resultListener.receiveResult(mockSkippedResult());
 
         assertFalse(resultListener.isPassed());
-        assertTrue(resultListener.getError() instanceof SkipException);
+        assertThat(resultListener.getError(), isA(SkipException.class));
     }
 
     private Result mockPassedResult() {

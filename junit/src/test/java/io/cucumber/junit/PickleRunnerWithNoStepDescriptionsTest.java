@@ -7,7 +7,9 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
 public class PickleRunnerWithNoStepDescriptionsTest {
@@ -26,7 +28,7 @@ public class PickleRunnerWithNoStepDescriptionsTest {
             createJunitOptions()
         );
 
-        assertEquals("scenario name(feature name)", runner.getDescription().getDisplayName());
+        assertThat(runner.getDescription().getDisplayName(), is(equalTo("scenario name(feature name)")));
     }
 
     @Test
@@ -43,7 +45,7 @@ public class PickleRunnerWithNoStepDescriptionsTest {
             createFileNameCompatibleJUnitOptions()
         );
 
-        assertEquals("scenario_name(feature_name)", runner.getDescription().getDisplayName());
+        assertThat(runner.getDescription().getDisplayName(), is(equalTo("scenario_name(feature_name)")));
     }
 
     @Test
@@ -61,7 +63,7 @@ public class PickleRunnerWithNoStepDescriptionsTest {
             createFileNameCompatibleJUnitOptions()
         );
 
-        assertEquals("____________(___________)", runner.getDescription().getDisplayName());
+        assertThat(runner.getDescription().getDisplayName(), is(equalTo("____________(___________)")));
     }
 
     private JUnitOptions createJunitOptions() {
@@ -71,4 +73,5 @@ public class PickleRunnerWithNoStepDescriptionsTest {
     private JUnitOptions createFileNameCompatibleJUnitOptions() {
         return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).setStrict(true).build();
     }
+
 }

@@ -1,8 +1,18 @@
 package io.cucumber.core.plugin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.jupiter.api.function.Executable;
+import org.junit.rules.TemporaryFolder;
+import org.webbitserver.HttpControl;
+import org.webbitserver.HttpHandler;
+import org.webbitserver.HttpRequest;
+import org.webbitserver.HttpResponse;
+import org.webbitserver.WebServer;
+import org.webbitserver.netty.NettyWebServer;
+import org.webbitserver.rest.Rest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,18 +40,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.webbitserver.HttpControl;
-import org.webbitserver.HttpHandler;
-import org.webbitserver.HttpRequest;
-import org.webbitserver.HttpResponse;
-import org.webbitserver.WebServer;
-import org.webbitserver.netty.NettyWebServer;
-import org.webbitserver.rest.Rest;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class URLOutputStreamTest {
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
@@ -86,7 +89,7 @@ public class URLOutputStreamTest {
         w.close();
 
         File testFile = new File(urlWithoutParentDirectory.toURI());
-        assertEquals("Hellesøy", read(testFile));
+        assertThat(read(testFile), is(equalTo("Hellesøy")));
     }
 
     @Test
@@ -95,7 +98,7 @@ public class URLOutputStreamTest {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
         w.close();
-        assertEquals("Hellesøy", read(tmp));
+        assertThat(read(tmp), is(equalTo("Hellesøy")));
     }
 
     @Test
@@ -114,7 +117,7 @@ public class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
         w.close();
-        assertEquals("Hellesøy", data.poll(1000, TimeUnit.MILLISECONDS));
+        assertThat(data.poll(1000, TimeUnit.MILLISECONDS), is(equalTo("Hellesøy")));
     }
 
     @Test
@@ -122,11 +125,10 @@ public class URLOutputStreamTest {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
-        try {
-            w.close();
-            fail();
-        } catch (FileNotFoundException expected) {
-        }
+
+        final Executable testMethod = () -> w.close();
+        final FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
     }
 
     @Test
@@ -144,13 +146,13 @@ public class URLOutputStreamTest {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
-        try {
-            w.close();
-            fail();
-        } catch (IOException expected) {
-            assertEquals("PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
-                "HTTP 500\nsomething went wrong", expected.getMessage());
-        }
+
+        final Executable testMethod = () -> w.close();
+        final IOException actualThrown = assertThrows(IOException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
+                "HTTP 500\nsomething went wrong"
+        )));
     }
 
     @Test
@@ -160,8 +162,11 @@ public class URLOutputStreamTest {
         startThreadsFromList(testThreads);
         countDownLatch.countDown();
         waitAllThreadsFromList(testThreads);
-        assertTrue("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated());
-        assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty());
+
+        assertAll("Checking CountDownLatch",
+            () -> assertTrue("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated()),
+            () -> assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty())
+        );
     }
 
     private String read(File testFile) throws IOException {

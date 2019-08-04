@@ -22,7 +22,9 @@ import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class JavaSnippetTest {
 
@@ -37,7 +39,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
+        assertThat(snippetFor("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 
     @Test
@@ -60,7 +62,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have 4.2 cukes in my large belly", customParameterType));
+        assertThat(snippetFor("I have 4.2 cukes in my large belly", customParameterType), is(equalTo(expected)));
     }
 
     @Test
@@ -85,7 +87,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have large and small bellies", customParameterType));
+        assertThat(snippetFor("I have large and small bellies", customParameterType), is(equalTo(expected)));
     }
 
     @Test
@@ -96,7 +98,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("before 5 after"));
+        assertThat(snippetFor("before 5 after"), is(equalTo(expected)));
     }
 
     @Test
@@ -107,7 +109,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have 4 cukes in: my \"big\" red-belly!"));
+        assertThat(snippetFor("I have 4 cukes in: my \"big\" red-belly!"), is(equalTo(expected)));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("the DI system receives a message saying \"{ dataIngestion: { feeds: [ feed: { merchantId: 666, feedId: 1, feedFileLocation: feed.csv } ] }\""));
+        assertThat(expected, snippetFor("the DI system receives a message saying \"{ dataIngestion: { feeds: [ feed: { merchantId: 666, feedId: 1, feedFileLocation: feed.csv } ] }\""), is(equalTo(expected)));
     }
 
     @Test
@@ -129,7 +131,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have $5"));
+        assertThat(snippetFor("I have $5"), is(equalTo(expected)));
     }
 
     @Test
@@ -140,7 +142,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("is there an error?:"));
+        assertThat(snippetFor("is there an error?:"), is(equalTo(expected)));
     }
 
     @Test
@@ -151,7 +153,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("([a-z]*)?.+"));
+        assertThat(snippetFor("([a-z]*)?.+"), is(equalTo(expected)));
     }
 
     @Test
@@ -162,7 +164,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have 5 cukes (maybe more)"));
+        assertThat(snippetFor("I have 5 cukes (maybe more)"), is(equalTo(expected)));
     }
 
     @Test
@@ -173,7 +175,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetFor("I have 5 cukes [maybe more]"));
+        assertThat(snippetFor("I have 5 cukes [maybe more]"), is(equalTo(expected)));
     }
 
     @Test
@@ -184,7 +186,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetForDocString("I have:", new PickleString(null, "hello")));
+        assertThat(snippetForDocString("I have:", new PickleString(null, "hello")), is(equalTo(expected)));
     }
 
     @Test
@@ -214,7 +216,7 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertEquals(expected, snippetForDocString("I have a \"Documentation String\":", new PickleString(null, "hello"), customParameterType));
+        assertThat(snippetForDocString("I have a \"Documentation String\":", new PickleString(null, "hello"), customParameterType), is(equalTo(expected)));
     }
 
     @Test
@@ -225,7 +227,7 @@ public class JavaSnippetTest {
             "public void Then_it_responds(String arg1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "}\n";
-        assertEquals(expected, snippetFor("Then it responds UTF-8"));
+        assertThat(snippetFor("Then it responds UTF-8"), is(equalTo(expected)));
     }
 
     @Test
@@ -243,7 +245,7 @@ public class JavaSnippetTest {
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
-        assertEquals(expected, snippetForDataTable("I have:", dataTable));
+        assertThat(snippetForDataTable("I have:", dataTable), is(equalTo(expected)));
     }
 
 
@@ -287,7 +289,7 @@ public class JavaSnippetTest {
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
-        assertEquals(expected, snippetForDataTable("I have in table \"M6\":", dataTable, customParameterType));
+        assertThat(snippetForDataTable("I have in table \"M6\":", dataTable, customParameterType), is(equalTo(expected)));
     }
 
     @Test
@@ -299,7 +301,7 @@ public class JavaSnippetTest {
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
 
-        assertEquals(expected, snippetFor("Then it responds <param>"));
+        assertThat(snippetFor("Then it responds <param>"), is(equalTo(expected)));
     }
 
     private String snippetFor(String name) {

@@ -10,6 +10,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CollectionUtilTest {
@@ -60,8 +61,10 @@ public class CollectionUtilTest {
     }
 
     private void assertThatListContainsOneElement(String element) {
-        assertThat(list.size(), equalTo(1));
-        assertThat(list.get(0), equalTo(element));
+        assertAll("Checking list",
+            () -> assertThat(list.size(), equalTo(1)),
+            () -> assertThat(list.get(0), equalTo(element))
+        );
     }
 
 }

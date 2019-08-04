@@ -6,7 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CreateInstanceByDefaultConstructorTest {
@@ -25,7 +25,7 @@ public class CreateInstanceByDefaultConstructorTest {
 
     @Test
     public void shouldCreateNewInstance() {
-        assertNotNull(createInstanceByDefaultConstructor.apply(HasDefaultConstructor.class));
+        assertThat(createInstanceByDefaultConstructor.apply(HasDefaultConstructor.class), is(notNullValue()));
     }
 
     @Test

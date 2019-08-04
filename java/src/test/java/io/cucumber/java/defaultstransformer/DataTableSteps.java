@@ -4,19 +4,15 @@ import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMap
 import io.cucumber.java.DefaultDataTableCellTransformer;
 import io.cucumber.java.DefaultDataTableEntryTransformer;
 import io.cucumber.java.DefaultParameterTransformer;
-import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Given;
-import org.hamcrest.CoreMatchers;
 
 import java.lang.reflect.Type;
-import java.time.LocalDate;
 import java.util.Currency;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class DataTableSteps {
 

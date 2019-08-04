@@ -8,8 +8,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Java8LambdaStepDefinitionTest {
@@ -19,7 +19,7 @@ public class Java8LambdaStepDefinitionTest {
         StepdefBody.A1<String> body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
-        assertEquals(1, stepDefinition.parameterInfos().size());
+        assertThat(stepDefinition.parameterInfos().size(), is(equalTo(1)));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class Java8LambdaStepDefinitionTest {
         StepdefBody.A2<String, String> body = (p1, p2) -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A2.class, body);
-        assertEquals(2, stepDefinition.parameterInfos().size());
+        assertThat(stepDefinition.parameterInfos().size(), is(equalTo(2)));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class Java8LambdaStepDefinitionTest {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
 
-        assertEquals(Object.class, stepDefinition.parameterInfos().get(0).getType());
+        assertThat(stepDefinition.parameterInfos().get(0).getType(), isA((Object.class)));
     }
 
     @Test

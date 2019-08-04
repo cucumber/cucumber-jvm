@@ -28,7 +28,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -56,19 +55,19 @@ public class CucumberTest {
     @Test
     public void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
-        assertEquals(2, cucumber.getChildren().size());
-        assertEquals("Feature: Feature A", cucumber.getChildren().get(0).getName());
+        assertThat(cucumber.getChildren().size(), is(equalTo(2)));
+        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature: Feature A")));
     }
 
     @Test
     public void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
-        assertEquals(2, cucumber.getChildren().size());
-        assertEquals("Feature: Feature A", cucumber.getChildren().get(0).getName());
+        assertThat(cucumber.getChildren().size(), is(equalTo(2)));
+        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature: Feature A")));
     }
 
     @Test
-    public void testThatParsingErrorsIsNicelyReported() throws Exception {
+    public void testThatParsingErrorsIsNicelyReported() {
         final Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
         final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertAll("Checking Exception including cause",
@@ -91,7 +90,7 @@ public class CucumberTest {
     public void finds_no_features_when_explicit_feature_path_has_no_features() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
         List<FeatureRunner> children = cucumber.getChildren();
-        assertEquals(emptyList(), children);
+        assertThat(children, is(equalTo(emptyList())));
     }
 
     @Test

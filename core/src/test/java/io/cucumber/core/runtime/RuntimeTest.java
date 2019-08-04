@@ -61,7 +61,8 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -168,7 +169,7 @@ public class RuntimeTest {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -176,21 +177,21 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void non_strict_with_undefined_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     public void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertEquals(0x1, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -198,7 +199,7 @@ public class RuntimeTest {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -206,7 +207,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -214,7 +215,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -222,7 +223,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -230,7 +231,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -238,7 +239,7 @@ public class RuntimeTest {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -246,7 +247,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -254,7 +255,7 @@ public class RuntimeTest {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
@@ -264,7 +265,7 @@ public class RuntimeTest {
 
         runtime.run();
 
-        assertEquals(0x0, runtime.exitStatus());
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -291,7 +292,7 @@ public class RuntimeTest {
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
         verify(beforeHook).execute(capturedScenario.capture());
-        assertEquals("scenario name", capturedScenario.getValue().getName());
+        assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
     }
 
     private TestBackendSupplier createTestBackendSupplier(final CucumberFeature feature, final HookDefinition beforeHook) {
@@ -326,22 +327,23 @@ public class RuntimeTest {
 
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
-        assertEquals("" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestRun finished\n", formatterOutput);
+        assertThat(formatterOutput,
+            is(equalTo("" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestRun finished\n")));
     }
 
     @Test
@@ -367,32 +369,33 @@ public class RuntimeTest {
 
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
-        assertEquals("" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestRun finished\n", formatterOutput);
+        assertThat(formatterOutput,
+            is(equalTo("" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestRun finished\n")));
     }
 
     @Test
@@ -432,24 +435,25 @@ public class RuntimeTest {
 
         String formatterOutput = formatterSpy.toString();
 
-        assertEquals("" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestCase started\n" +
-            "  TestStep started\n" +
-            "  TestStep finished\n" +
-            "TestCase finished\n" +
-            "TestRun finished\n", formatterOutput);
+        assertThat(formatterOutput,
+            is(equalTo("" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestCase started\n" +
+                "  TestStep started\n" +
+                "  TestStep finished\n" +
+                "TestCase finished\n" +
+                "TestRun finished\n")));
     }
 
     @Test
@@ -543,7 +547,7 @@ public class RuntimeTest {
         threadBlocked.await(1, SECONDS);
         thread.interrupt();
         interruptHit.await(1, SECONDS);
-        assertEquals(0, interruptHit.getCount());
+        assertThat(interruptHit.getCount(), is(equalTo(0L)));
     }
 
     @Test

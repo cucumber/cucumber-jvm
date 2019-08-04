@@ -36,10 +36,10 @@ import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -136,29 +136,33 @@ public class CachingGlueTest {
 
         glue.prepareGlue(typeRegistry);
 
-        assertEquals(1, glue.getStepDefinitions().size());
-        assertEquals(1, glue.getBeforeHooks().size());
-        assertEquals(1, glue.getAfterHooks().size());
-        assertEquals(1, glue.getBeforeStepHooks().size());
-        assertEquals(1, glue.getAfterStepHooks().size());
-        assertEquals(1, glue.getDataTableTypeDefinitions().size());
-        assertEquals(1, glue.getParameterTypeDefinitions().size());
-        assertEquals(1, glue.getDefaultParameterTransformers().size());
-        assertEquals(1, glue.getDefaultDataTableCellTransformers().size());
-        assertEquals(1, glue.getDefaultDataTableEntryTransformers().size());
+        assertAll("Checking Glue",
+            () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(1))),
+            () -> assertThat(glue.getBeforeHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getAfterHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getBeforeStepHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getAfterStepHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDataTableTypeDefinitions().size(), is(equalTo(1))),
+            () -> assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(1)))
+        );
 
         glue.removeScenarioScopedGlue();
 
-        assertEquals(0, glue.getStepDefinitions().size());
-        assertEquals(0, glue.getBeforeHooks().size());
-        assertEquals(0, glue.getAfterHooks().size());
-        assertEquals(0, glue.getBeforeStepHooks().size());
-        assertEquals(0, glue.getAfterStepHooks().size());
-        assertEquals(0, glue.getDataTableTypeDefinitions().size());
-        assertEquals(0, glue.getParameterTypeDefinitions().size());
-        assertEquals(0, glue.getDefaultParameterTransformers().size());
-        assertEquals(0, glue.getDefaultDataTableCellTransformers().size());
-        assertEquals(0, glue.getDefaultDataTableEntryTransformers().size());
+        assertAll("Checking Glue",
+            () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(0))),
+            () -> assertThat(glue.getBeforeHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getAfterHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getBeforeStepHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getAfterStepHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDataTableTypeDefinitions().size(), is(equalTo(0))),
+            () -> assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(0)))
+        );
     }
 
     @Test
@@ -169,7 +173,7 @@ public class CachingGlueTest {
         String featurePath = "someFeature.feature";
 
         PickleStep pickleStep = getPickleStep("pattern");
-        assertNull(glue.stepDefinitionMatch(featurePath, pickleStep));
+        assertThat(glue.stepDefinitionMatch(featurePath, pickleStep), is(nullValue()));
     }
 
     @Test
@@ -186,17 +190,17 @@ public class CachingGlueTest {
         PickleStep pickleStep1 = getPickleStep(stepText);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        assertEquals(stepDefinition1, pickleStepDefinitionMatch.getStepDefinition());
+        assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
 
         //check cache
-        assertEquals(stepDefinition1.getPattern(), glue.getStepPatternByStepText().get(stepText));
+        assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
-        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
+        assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         PickleStep pickleStep2 = getPickleStep(stepText);
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
-        assertEquals(stepDefinition1, pickleStepDefinitionMatch2.getStepDefinition());
+        assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition1)));
     }
 
     @Test
@@ -212,22 +216,22 @@ public class CachingGlueTest {
 
         PickleStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        assertEquals(stepDefinition1, match1.getStepDefinition());
+        assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         //check cache
-        assertEquals(stepDefinition1.getPattern(), glue.getStepPatternByStepText().get(stepText));
+        assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
-        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
+        assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         //check arguments
-        assertEquals("cell 1", ((DataTable) match1.getArguments().get(0).getValue()).cell(0, 0));
+        assertThat(((DataTable) match1.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 1")));
 
         //check second match
         PickleStep pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
 
         //check arguments
-        assertEquals("cell 2", ((DataTable) match2.getArguments().get(0).getValue()).cell(0, 0));
+        assertThat(((DataTable) match2.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 2")));
     }
 
     @Test
@@ -244,21 +248,21 @@ public class CachingGlueTest {
         PickleStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
 
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        assertEquals(stepDefinition1, match1.getStepDefinition());
+        assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         //check cache
-        assertEquals(stepDefinition1.getPattern(), glue.getStepPatternByStepText().get(stepText));
+        assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
-        assertEquals(stepDefinition1, coreStepDefinition.getStepDefinition());
+        assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         //check arguments
-        assertEquals("doc string 1", match1.getArguments().get(0).getValue());
+        assertThat(match1.getArguments().get(0).getValue(), is(equalTo("doc string 1")));
 
         //check second match
         PickleStep pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
         //check arguments
-        assertEquals("doc string 2", match2.getArguments().get(0).getValue());
+        assertThat(match2.getArguments().get(0).getValue(), is(equalTo("doc string 2")));
     }
 
     @Test
@@ -274,7 +278,7 @@ public class CachingGlueTest {
 
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        assertEquals(stepDefinition1, pickleStepDefinitionMatch.getStepDefinition());
+        assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         glue.removeScenarioScopedGlue();
 
@@ -283,7 +287,7 @@ public class CachingGlueTest {
         glue.prepareGlue(typeRegistry);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        assertEquals(stepDefinition2, pickleStepDefinitionMatch2.getStepDefinition());
+        assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition2)));
     }
 
 
@@ -300,7 +304,7 @@ public class CachingGlueTest {
 
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
-        assertEquals(stepDefinition1, pickleStepDefinitionMatch.getStepDefinition());
+        assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         glue.removeScenarioScopedGlue();
 
@@ -341,7 +345,7 @@ public class CachingGlueTest {
 
             glue.stepDefinitionMatch(featurePath, getPickleStep("pattern1"));
         } catch (AmbiguousStepDefinitionsException e) {
-            assertEquals(2, e.getMatches().size());
+            assertThat(e.getMatches().size(), is(equalTo(2)));
             ambiguousCalled = true;
         }
         assertTrue(ambiguousCalled);

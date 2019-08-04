@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.TestCase;
@@ -18,14 +17,14 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 
 import static java.time.Instant.EPOCH;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
-
 
 public class ThreadLocalRunnerSupplierTest {
 
@@ -75,19 +74,26 @@ public class ThreadLocalRunnerSupplierTest {
         thread0.join();
         thread1.join();
 
-        assertNotSame(runners[0], runners[1]);
+        assertAll("Checking Runner",
+            () -> assertThat(runners[0], is(not(equalTo(runners[1])))),
+            () -> assertThat(runners[1], is(not(equalTo(runners[0]))))
+        );
     }
 
     @Test
     public void should_return_the_same_runner_on_subsequent_calls() {
-        assertSame(runnerSupplier.get(), runnerSupplier.get());
+        assertThat(runnerSupplier.get(), is(equalTo(runnerSupplier.get())));
     }
 
     @Test
     public void runner_should_wrap_event_bus_bus() {
         //This avoids problems with JUnit which listens to individual runners
         EventBus runnerBus = runnerSupplier.get().getBus();
-        assertNotSame(eventBus, runnerBus);
+
+        assertAll("Checking EventBus",
+            () -> assertThat(eventBus, is(not(equalTo(runnerBus)))),
+            () -> assertThat(runnerBus, is(not(equalTo(eventBus))))
+        );
     }
 
     @Test
