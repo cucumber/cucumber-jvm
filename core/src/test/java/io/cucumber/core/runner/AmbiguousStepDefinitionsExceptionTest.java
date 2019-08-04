@@ -26,15 +26,30 @@ public class AmbiguousStepDefinitionsExceptionTest {
 
         return Arrays.asList(
 
-            DynamicTest.dynamicTest("Null PickleStep, Null PickleStepDefinitionMatches Collection", () -> {
+            DynamicTest.dynamicTest("Null PickleStep, doesn't matter", () -> {
                 final Executable testMethod = () -> {
                     throw new AmbiguousStepDefinitionsException(null, null);
                 };
-                final AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+                final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
                 assertAll(
-                    () -> assertThat(expectedThrown.getMessage(), is(equalTo("Null PickleStep matches more than one step definition:\n"))),
-                    () -> assertThat(expectedThrown.getCause(), is(nullValue())),
-                    () -> assertThat(expectedThrown.getMatches(), is(equalTo(new ArrayList<Throwable>())))
+                    () -> assertThat(expectedThrown.getMessage(), is(equalTo(
+                        "Supplied PickleStep can't be null for AmbiguousStepDefinitionsException"
+                    ))),
+                    () -> assertThat(expectedThrown.getCause(), is(nullValue()))
+                );
+            }),
+
+            DynamicTest.dynamicTest("PickleStep, Null PickleStepDefinitionMatches Collection", () -> {
+                final PickleStep mockPickleStep = mock(PickleStep.class);
+                final Executable testMethod = () -> {
+                    throw new AmbiguousStepDefinitionsException(mockPickleStep, null);
+                };
+                final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+                assertAll(
+                    () -> assertThat(expectedThrown.getMessage(), is(equalTo(
+                        "Supplied List<PickleStepDefinitionMatch> can't be null for AmbiguousStepDefinitionsException"
+                    ))),
+                    () -> assertThat(expectedThrown.getCause(), is(nullValue()))
                 );
             }),
 

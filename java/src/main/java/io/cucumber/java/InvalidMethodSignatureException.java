@@ -6,6 +6,7 @@ import io.cucumber.core.reflection.MethodFormat;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 final class InvalidMethodSignatureException
     extends CucumberException {
@@ -15,6 +16,9 @@ final class InvalidMethodSignatureException
     }
 
     static InvalidMethodSignatureExceptionBuilder builder(final Method method) {
+        if (Objects.isNull(method)) {
+            throw new IllegalArgumentException("Supplied Method can't be null for InvalidMethodSignatureException");
+        }
         return new InvalidMethodSignatureExceptionBuilder(method);
     }
 

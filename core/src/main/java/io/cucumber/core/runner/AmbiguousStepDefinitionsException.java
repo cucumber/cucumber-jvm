@@ -13,18 +13,20 @@ final public class AmbiguousStepDefinitionsException
     private final List<PickleStepDefinitionMatch> matches;
 
     AmbiguousStepDefinitionsException(final PickleStep step, final List<PickleStepDefinitionMatch> matches) {
-        super(createMessage(step, Objects.isNull(matches) ? new ArrayList<>() : matches));
-        this.matches = Objects.isNull(matches) ? new ArrayList<>() : matches;
+        super(createMessage(step, matches));
+        this.matches = matches;
     }
 
     private static String createMessage(final PickleStep step, final List<PickleStepDefinitionMatch> matches) {
-        final StringBuilder msg = new StringBuilder();
         if (Objects.isNull(step)) {
-            msg.append("Null PickleStep");
-        } else {
-            msg.append(quoteText(step.getText()));
+            throw new IllegalArgumentException("Supplied PickleStep can't be null for AmbiguousStepDefinitionsException");
         }
-        msg.append(" matches more than one step definition:\n");
+        if (Objects.isNull(matches)) {
+            throw new IllegalArgumentException("Supplied List<PickleStepDefinitionMatch> can't be null for AmbiguousStepDefinitionsException");
+        }
+        final StringBuilder msg = new StringBuilder()
+            .append(quoteText(step.getText()))
+            .append(" matches more than one step definition:\n");
         for (final PickleStepDefinitionMatch match : matches) {
             msg.append("  ")
                 .append(quoteText(match.getPattern()))
