@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ApplicationScoped
 public class CDIBellyStepdefs {
@@ -17,4 +17,5 @@ public class CDIBellyStepdefs {
     public void checkCukes(int n) {
         assertEquals(n, belly.getCukes());
     }
+
 }

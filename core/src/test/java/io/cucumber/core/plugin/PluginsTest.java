@@ -3,14 +3,13 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.event.Event;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.options.RuntimeOptions;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -19,12 +18,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.quality.Strictness.STRICT_STUBS;
 
+@ExtendWith({MockitoExtension.class})
 public class PluginsTest {
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule().strictness(STRICT_STUBS);
 
     @Mock
     private EventPublisher rootEventPublisher;

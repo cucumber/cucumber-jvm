@@ -2,25 +2,24 @@ package io.cucumber.java;
 
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Lookup;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.quality.Strictness.STRICT_STUBS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith({MockitoExtension.class})
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class JavaHookDefinitionTest {
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule().strictness(STRICT_STUBS);
 
     private final Lookup lookup = new Lookup() {
 
@@ -109,6 +108,5 @@ public class JavaHookDefinitionTest {
     public void too_many_parameters(Scenario arg1, String arg2) {
 
     }
-
 
 }

@@ -10,7 +10,6 @@ import static java.lang.Thread.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InvokerTest {
@@ -90,9 +89,9 @@ public class InvokerTest {
                 break;
             }
         }
-        assertTrue(String.format("Threads weren't cleaned up, initial count: %d current count: %d",
+        assertThat(String.format("Threads weren't cleaned up, initial count: %d current count: %d",
             initialNumberOfThreads, currentNumberOfThreads),
-            cleanedUp);
+            cleanedUp, is(equalTo(true)));
     }
 
     public static class Slow {

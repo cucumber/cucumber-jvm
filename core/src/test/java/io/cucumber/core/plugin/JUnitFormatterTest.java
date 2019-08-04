@@ -28,7 +28,9 @@ import java.util.Scanner;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class JUnitFormatterTest {
 
@@ -547,13 +549,13 @@ public class JUnitFormatterTest {
         XMLUnit.setIgnoreWhitespace(true);
         InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
         Diff diff = new Diff(control, new FileReader(actual));
-        assertTrue("XML files are similar " + diff, diff.identical());
+        assertThat("XML files are similar " + diff, diff.identical(), is(equalTo(true)));
     }
 
     private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = new Diff(expected, actual);
-        assertTrue("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical());
+        assertThat("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical(), is(equalTo(true)));
     }
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {

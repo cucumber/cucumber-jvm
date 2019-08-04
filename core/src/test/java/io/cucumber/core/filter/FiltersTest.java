@@ -1,25 +1,22 @@
 package io.cucumber.core.filter;
 
 import gherkin.events.PickleEvent;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+@ExtendWith(MockitoExtension.class)
 public class FiltersTest {
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
     private Options fomock;
 
@@ -55,4 +52,5 @@ public class FiltersTest {
         }
         return pickles;
     }
+
 }

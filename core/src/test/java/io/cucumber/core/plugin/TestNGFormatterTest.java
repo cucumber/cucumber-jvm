@@ -25,7 +25,9 @@ import java.util.Scanner;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public final class TestNGFormatterTest {
 
@@ -344,7 +346,7 @@ public final class TestNGFormatterTest {
                 return super.differenceFound(difference);
             }
         };
-        assertTrue("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical());
+        assertThat("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical(), is(equalTo(true)));
     }
 
     private String runFeaturesWithFormatter(boolean strict) throws IOException {
