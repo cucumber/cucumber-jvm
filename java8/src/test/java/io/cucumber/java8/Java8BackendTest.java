@@ -5,12 +5,11 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.java8.steps.Stepdefs;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 
@@ -18,10 +17,8 @@ import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith({MockitoExtension.class})
 public class Java8BackendTest {
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
     private Glue glue;
@@ -31,7 +28,7 @@ public class Java8BackendTest {
 
     private Java8Backend backend;
 
-    @Before
+    @BeforeEach
     public void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);

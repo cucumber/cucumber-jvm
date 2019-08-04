@@ -17,12 +17,11 @@ import io.cucumber.core.snippets.SnippetType;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -43,24 +42,24 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.emptyCollectionOf;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class RuntimeOptionsTest {
 
     private final Map<String, String> properties = new HashMap<>();
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
     @Mock
     private ResourceLoader resourceLoader;
 
@@ -567,10 +566,11 @@ public class RuntimeOptionsTest {
 
     @Test
     public void fail_on_unsupported_options() {
-        expectedException.expectMessage("Unknown option: -concreteUnsupportedOption");
-        new CommandlineOptionsParser()
+        final Executable testMethod = () -> new CommandlineOptionsParser()
             .parse(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"))
             .build();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Unknown option: -concreteUnsupportedOption")));
     }
 
     @Test
@@ -591,11 +591,11 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_less_than_1_thread_is_not_allowed() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("--threads must be > 0");
-        new CommandlineOptionsParser()
+        final Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--threads", "0")
             .build();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("--threads must be > 0")));
     }
 
     @Test
@@ -689,20 +689,20 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_invalid_ordertype_is_not_allowed() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Invalid order. Must be either reverse, random or random:<long>");
-        new CommandlineOptionsParser()
+        final Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--order", "invalid")
             .build();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
     }
 
     @Test
     public void ensure_less_than_1_count_is_not_allowed() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("--count must be > 0");
-        new CommandlineOptionsParser()
+        final Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--count", "0")
             .build();
+        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("--count must be > 0")));
     }
 
     @Test
