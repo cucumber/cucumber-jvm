@@ -23,10 +23,10 @@ public class TooManyInstancesExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("Null Instances Collection", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new TooManyInstancesException(null);
                 };
-                final TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
+                TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Expected only one instance, but found too many: null"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -34,10 +34,10 @@ public class TooManyInstancesExceptionTest {
             }),
 
             DynamicTest.dynamicTest("Empty Instances Collection", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new TooManyInstancesException(new ArrayList<>());
                 };
-                final TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
+                TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Expected only one instance, but found too many: []"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -45,12 +45,12 @@ public class TooManyInstancesExceptionTest {
             }),
 
             DynamicTest.dynamicTest("Instances Collection of One", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     final Collection<String> instances = new ArrayList<>();
                     instances.add("instanceOne");
                     throw new TooManyInstancesException(instances);
                 };
-                final TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
+                TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Expected only one instance, but found too many: [instanceOne]"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -58,13 +58,13 @@ public class TooManyInstancesExceptionTest {
             }),
 
             DynamicTest.dynamicTest("Instances Collection of Two", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     final Collection<String> instances = new ArrayList<>();
                     instances.add("instanceOne");
                     instances.add("instanceTwo");
                     throw new TooManyInstancesException(instances);
                 };
-                final TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
+                TooManyInstancesException expectedThrown = assertThrows(TooManyInstancesException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Expected only one instance, but found too many: [instanceOne, instanceTwo]"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))

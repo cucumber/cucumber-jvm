@@ -23,10 +23,10 @@ public class NoInstancesExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("Null No Instances", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new NoInstancesException(null);
                 };
-                final NoInstancesException expectedThrown = assertThrows(NoInstancesException.class, testMethod);
+                NoInstancesException expectedThrown = assertThrows(NoInstancesException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Couldn't find a single implementation of null"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -34,10 +34,10 @@ public class NoInstancesExceptionTest {
             }),
 
             DynamicTest.dynamicTest("No Instances", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new NoInstancesException(NoInstancesExceptionTest.class);
                 };
-                final NoInstancesException expectedThrown = assertThrows(NoInstancesException.class, testMethod);
+                NoInstancesException expectedThrown = assertThrows(NoInstancesException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Couldn't find a single implementation of class io.cucumber.core.reflection.NoInstancesExceptionTest"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))

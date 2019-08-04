@@ -24,10 +24,10 @@ public class CompositeCucumberExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("Null Causes Collection", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CompositeCucumberException(null);
                 };
-                final CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
+                CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 0 exceptions:"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue())),
@@ -36,10 +36,10 @@ public class CompositeCucumberExceptionTest {
             }),
 
             DynamicTest.dynamicTest("Empty Causes Collection", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CompositeCucumberException(new ArrayList<>());
                 };
-                final CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
+                CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 0 exceptions:"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue())),
@@ -50,10 +50,10 @@ public class CompositeCucumberExceptionTest {
             DynamicTest.dynamicTest("Causes Collection of One", () -> {
                 final List<Throwable> causes = new ArrayList<>();
                 causes.add(new IllegalArgumentException());
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CompositeCucumberException(causes);
                 };
-                final CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
+                CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 1 exceptions:\n  java.lang.IllegalArgumentException(null)"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue())),
@@ -65,10 +65,10 @@ public class CompositeCucumberExceptionTest {
                 final List<Throwable> causes = new ArrayList<>();
                 causes.add(new IllegalArgumentException());
                 causes.add(new RuntimeException());
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CompositeCucumberException(causes);
                 };
-                final CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
+                CompositeCucumberException expectedThrown = assertThrows(CompositeCucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 2 exceptions:\n  java.lang.IllegalArgumentException(null)\n  java.lang.RuntimeException(null)"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue())),

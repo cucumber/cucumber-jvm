@@ -27,10 +27,10 @@ public class AmbiguousStepDefinitionsExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("Null PickleStep, doesn't matter", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new AmbiguousStepDefinitionsException(null, null);
                 };
-                final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+                IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "Supplied PickleStep can't be null for AmbiguousStepDefinitionsException"
@@ -41,10 +41,10 @@ public class AmbiguousStepDefinitionsExceptionTest {
 
             DynamicTest.dynamicTest("PickleStep, Null PickleStepDefinitionMatches Collection", () -> {
                 final PickleStep mockPickleStep = mock(PickleStep.class);
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new AmbiguousStepDefinitionsException(mockPickleStep, null);
                 };
-                final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+                IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "Supplied List<PickleStepDefinitionMatch> can't be null for AmbiguousStepDefinitionsException"
@@ -57,10 +57,10 @@ public class AmbiguousStepDefinitionsExceptionTest {
                 final PickleStep mockPickleStep = mock(PickleStep.class);
                 when(mockPickleStep.getText())
                     .thenReturn("PickleStep_Text");
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new AmbiguousStepDefinitionsException(mockPickleStep, new ArrayList<>());
                 };
-                final AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+                AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("\"PickleStep_Text\" matches more than one step definition:\n"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue())),
@@ -79,10 +79,10 @@ public class AmbiguousStepDefinitionsExceptionTest {
                 when(mockPickleStepDefinitionMatchOne.getLocation())
                     .thenReturn("PickleStepDefinitionMatchOne_Location");
                 matches.add(mockPickleStepDefinitionMatchOne);
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new AmbiguousStepDefinitionsException(mockPickleStep, matches);
                 };
-                final AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+                AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "\"PickleStep_Text\" matches more than one step definition:\n  \"PickleStepDefinitionMatchOne_Pattern\" in PickleStepDefinitionMatchOne_Location\n"
@@ -109,10 +109,10 @@ public class AmbiguousStepDefinitionsExceptionTest {
                 when(mockPickleStepDefinitionMatchTwo.getLocation())
                     .thenReturn("PickleStepDefinitionMatchTwo_Location");
                 matches.add(mockPickleStepDefinitionMatchTwo);
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new AmbiguousStepDefinitionsException(mockPickleStep, matches);
                 };
-                final AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+                AmbiguousStepDefinitionsException expectedThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "\"PickleStep_Text\" matches more than one step definition:\n  \"PickleStepDefinitionMatchOne_Pattern\" in PickleStepDefinitionMatchOne_Location\n  \"PickleStepDefinitionMatchTwo_Pattern\" in PickleStepDefinitionMatchTwo_Location\n"

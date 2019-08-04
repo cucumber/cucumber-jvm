@@ -27,8 +27,8 @@ public class FlatteningIteratorTest {
         assertThat(toList(fi), is(equalTo(asList(1, 2, 3, 4))));
         assertFalse(fi.hasNext());
 
-        final Executable testMethod = () -> fi.next();
-        final NoSuchElementException actualThrown = assertThrows(NoSuchElementException.class, testMethod);
+        Executable testMethod = () -> fi.next();
+        NoSuchElementException actualThrown = assertThrows(NoSuchElementException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(nullValue()));
     }
 

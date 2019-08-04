@@ -17,15 +17,15 @@ public class UndefinedStepDefinitionMatchTest {
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {
-        final Executable testMethod = () -> match.runStep(mock(Scenario.class));
-        final UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
+        Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_dry_run() {
-        final Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
-        final UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
+        Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }
 

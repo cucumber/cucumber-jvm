@@ -24,11 +24,11 @@ public class InvalidMethodSignatureExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("Null Method", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw InvalidMethodSignatureException.builder(null)
                         .build();
                 };
-                final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+                IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "Supplied Method can't be null for InvalidMethodSignatureException"
@@ -39,11 +39,11 @@ public class InvalidMethodSignatureExceptionTest {
 
             DynamicTest.dynamicTest("Method", () -> {
                 final Method aMethod = TestingMethodClass.class.getMethod("aMethod");
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw InvalidMethodSignatureException.builder(aMethod)
                         .build();
                 };
-                final InvalidMethodSignatureException expectedThrown = assertThrows(InvalidMethodSignatureException.class, testMethod);
+                InvalidMethodSignatureException expectedThrown = assertThrows(InvalidMethodSignatureException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         String.format("A method annotated with  must have one of these signatures:\n * \nat io.cucumber.java.TestingMethodClass.aMethod() in file:%s/target/test-classes/\n\n",

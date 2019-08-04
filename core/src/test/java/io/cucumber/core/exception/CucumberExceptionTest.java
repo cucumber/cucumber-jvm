@@ -23,10 +23,10 @@ public class CucumberExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("cause", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CucumberException(new RuntimeException());
                 };
-                final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+                CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("java.lang.RuntimeException"))),
                     () -> assertThat(expectedThrown.getCause(), isA(RuntimeException.class))
@@ -34,10 +34,10 @@ public class CucumberExceptionTest {
             }),
 
             DynamicTest.dynamicTest("cause null", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CucumberException((Throwable) null);
                 };
-                final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+                CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(nullValue())),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -45,10 +45,10 @@ public class CucumberExceptionTest {
             }),
 
             DynamicTest.dynamicTest("message", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CucumberException("message");
                 };
-                final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+                CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("message"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -56,10 +56,10 @@ public class CucumberExceptionTest {
             }),
 
             DynamicTest.dynamicTest("message null", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CucumberException((String) null);
                 };
-                final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+                CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(nullValue())),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -67,10 +67,10 @@ public class CucumberExceptionTest {
             }),
 
             DynamicTest.dynamicTest("message, cause", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CucumberException("message", new RuntimeException());
                 };
-                final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+                CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("message"))),
                     () -> assertThat(expectedThrown.getCause(), isA(RuntimeException.class))
@@ -78,10 +78,10 @@ public class CucumberExceptionTest {
             }),
 
             DynamicTest.dynamicTest("message null, cause null", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new CucumberException(null, null);
                 };
-                final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+                CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(nullValue())),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))

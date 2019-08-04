@@ -22,10 +22,10 @@ public class UndefinedStepDefinitionExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("no args constructor", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new UndefinedStepDefinitionException();
                 };
-                final UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
+                UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))

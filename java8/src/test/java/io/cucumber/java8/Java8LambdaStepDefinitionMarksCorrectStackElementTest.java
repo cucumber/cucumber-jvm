@@ -22,8 +22,8 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        final Executable testMethod = () -> stepDefinition.execute(new Object[0]);
-        final Exception actualThrown = assertThrows(Exception.class, testMethod);
+        Executable testMethod = () -> stepDefinition.execute(new Object[0]);
+        Exception actualThrown = assertThrows(Exception.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(nullValue())),
             () -> assertThat("Unexpected exception StackTrace", actualThrown,

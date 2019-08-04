@@ -37,8 +37,8 @@ public class BackendServiceLoaderTest {
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
 
-        final Executable testMethod = () -> backendSupplier.get(emptyList()).iterator().next();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> backendSupplier.get(emptyList()).iterator().next();
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "No backends were found. Please make sure you have a backend module on your CLASSPATH."
         )));

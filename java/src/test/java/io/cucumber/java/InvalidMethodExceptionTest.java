@@ -23,10 +23,10 @@ public class InvalidMethodExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("Null Method, Null Glue Code Class", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw InvalidMethodException.createInvalidMethodException(null, null);
                 };
-                final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+                IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "Supplied Method can't be null for InvalidMethodException"
@@ -37,10 +37,10 @@ public class InvalidMethodExceptionTest {
 
             DynamicTest.dynamicTest("Method, Glue Code Class", () -> {
                 final Method aMethod = TestingMethodClass.class.getMethod("aMethod");
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw InvalidMethodException.createInvalidMethodException(aMethod, InvalidMethodExceptionTest.class);
                 };
-                final InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
+                InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                         "You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.InvalidMethodExceptionTest extends class io.cucumber.java.TestingMethodClass"

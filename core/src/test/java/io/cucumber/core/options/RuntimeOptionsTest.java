@@ -566,10 +566,10 @@ public class RuntimeOptionsTest {
 
     @Test
     public void fail_on_unsupported_options() {
-        final Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> new CommandlineOptionsParser()
             .parse(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"))
             .build();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Unknown option: -concreteUnsupportedOption")));
     }
 
@@ -591,10 +591,10 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_less_than_1_thread_is_not_allowed() {
-        final Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--threads", "0")
             .build();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("--threads must be > 0")));
     }
 
@@ -689,19 +689,19 @@ public class RuntimeOptionsTest {
 
     @Test
     public void ensure_invalid_ordertype_is_not_allowed() {
-        final Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--order", "invalid")
             .build();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
     }
 
     @Test
     public void ensure_less_than_1_count_is_not_allowed() {
-        final Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--count", "0")
             .build();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("--count must be > 0")));
     }
 

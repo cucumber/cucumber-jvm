@@ -23,10 +23,10 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
         if (Objects.isNull(matches)) {
             throw new IllegalArgumentException("Supplied List<PickleStepDefinitionMatch> can't be null for AmbiguousStepDefinitionsException");
         }
-        final StringBuilder msg = new StringBuilder()
+        StringBuilder msg = new StringBuilder()
             .append(quoteText(step.getText()))
             .append(" matches more than one step definition:\n");
-        for (final PickleStepDefinitionMatch match : matches) {
+        for (PickleStepDefinitionMatch match : matches) {
             msg.append("  ")
                 .append(quoteText(match.getPattern()))
                 .append(" in ")

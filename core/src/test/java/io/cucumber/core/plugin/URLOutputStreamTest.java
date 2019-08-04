@@ -126,8 +126,8 @@ public class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
 
-        final Executable testMethod = () -> w.close();
-        final FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
+        Executable testMethod = () -> w.close();
+        FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
     }
 
@@ -147,8 +147,8 @@ public class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
 
-        final Executable testMethod = () -> w.close();
-        final IOException actualThrown = assertThrows(IOException.class, testMethod);
+        Executable testMethod = () -> w.close();
+        IOException actualThrown = assertThrows(IOException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
                 "HTTP 500\nsomething went wrong"

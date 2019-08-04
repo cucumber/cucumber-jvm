@@ -26,10 +26,10 @@ public class DuplicateStepDefinitionExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("StepDefinition null, StepDefinition null", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new DuplicateStepDefinitionException(null, null);
                 };
-                final DuplicateStepDefinitionException expectedThrown = assertThrows(DuplicateStepDefinitionException.class, testMethod);
+                DuplicateStepDefinitionException expectedThrown = assertThrows(DuplicateStepDefinitionException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Duplicate step definitions in \"null step definition\" and \"null step definition\""))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -37,7 +37,7 @@ public class DuplicateStepDefinitionExceptionTest {
             }),
 
             DynamicTest.dynamicTest("StepDefinition mock, StepDefinition mock", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     final StepDefinition mockStepDefinitionA = mock(StepDefinition.class);
                     when(mockStepDefinitionA.getLocation(true))
                         .thenReturn("StepDefinitionA_Location");
@@ -46,7 +46,7 @@ public class DuplicateStepDefinitionExceptionTest {
                         .thenReturn("StepDefinitionB_Location");
                     throw new DuplicateStepDefinitionException(mockStepDefinitionA, mockStepDefinitionB);
                 };
-                final DuplicateStepDefinitionException expectedThrown = assertThrows(DuplicateStepDefinitionException.class, testMethod);
+                DuplicateStepDefinitionException expectedThrown = assertThrows(DuplicateStepDefinitionException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("Duplicate step definitions in StepDefinitionA_Location and StepDefinitionB_Location"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))

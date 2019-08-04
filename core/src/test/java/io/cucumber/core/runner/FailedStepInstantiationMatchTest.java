@@ -34,15 +34,15 @@ public class FailedStepInstantiationMatchTest {
 
     @Test
     public void throws_the_exception_passed_to_the_match_when_run() {
-        final Executable testMethod = () -> match.runStep(mock(Scenario.class));
-        final Exception expectedThrown = assertThrows(Exception.class, testMethod);
+        Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        Exception expectedThrown = assertThrows(Exception.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(nullValue()));
     }
 
     @Test
     public void throws_the_exception_passed_to_the_match_when_dry_run() {
-        final Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
-        final Exception expectedThrown = assertThrows(Exception.class, testMethod);
+        Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        Exception expectedThrown = assertThrows(Exception.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(nullValue()));
     }
 

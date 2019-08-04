@@ -88,8 +88,8 @@ public class GluePathTest {
 
     @Test
     public void glue_path_must_have_class_path_scheme() {
-        final Executable testMethod = () -> GluePath.parse("file:com/example/app");
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> GluePath.parse("file:com/example/app");
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "The glue path must have a classpath scheme file:com/example/app"
         )));
@@ -97,8 +97,8 @@ public class GluePathTest {
 
     @Test
     public void glue_path_must_have_valid_identifier_parts() {
-        final Executable testMethod = () -> GluePath.parse("01-examples");
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> GluePath.parse("01-examples");
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "The glue path contained invalid identifiers 01-examples"
         )));
@@ -120,8 +120,8 @@ public class GluePathTest {
     public void absolute_windows_path_form_is_not_valid() {
         assumeThat(File.separatorChar, is('\\')); //Requires windows
 
-        final Executable testMethod = () -> GluePath.parse("C:\\com\\example\\app");
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> GluePath.parse("C:\\com\\example\\app");
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "The glue path must have a classpath scheme"
         )));

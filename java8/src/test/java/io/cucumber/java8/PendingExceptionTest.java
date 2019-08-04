@@ -22,10 +22,10 @@ public class PendingExceptionTest {
         return Arrays.asList(
 
             DynamicTest.dynamicTest("no args constructor", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new PendingException();
                 };
-                final PendingException expectedThrown = assertThrows(PendingException.class, testMethod);
+                PendingException expectedThrown = assertThrows(PendingException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("TODO: implement me"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))
@@ -33,10 +33,10 @@ public class PendingExceptionTest {
             }),
 
             DynamicTest.dynamicTest("message", () -> {
-                final Executable testMethod = () -> {
+                Executable testMethod = () -> {
                     throw new PendingException("message");
                 };
-                final PendingException expectedThrown = assertThrows(PendingException.class, testMethod);
+                PendingException expectedThrown = assertThrows(PendingException.class, testMethod);
                 assertAll(
                     () -> assertThat(expectedThrown.getMessage(), is(equalTo("message"))),
                     () -> assertThat(expectedThrown.getCause(), is(nullValue()))

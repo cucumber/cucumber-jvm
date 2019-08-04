@@ -480,14 +480,14 @@ public class RuntimeTest {
             }
         };
 
-        final Executable testMethod = () -> TestHelper.builder()
+        Executable testMethod = () -> TestHelper.builder()
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
             .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
             .withRuntimeArgs("--threads", "2")
             .build()
             .run();
-        final CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
+        CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "There were 3 exceptions:\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)"
         )));
