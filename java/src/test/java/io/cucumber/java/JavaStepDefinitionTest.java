@@ -9,6 +9,7 @@ import java.util.Optional;
 import static java.util.Arrays.stream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JavaStepDefinitionTest {
@@ -43,8 +44,11 @@ public class JavaStepDefinitionTest {
         PendingException exception = assertThrows(PendingException.class, () -> definition.execute(new Object[0]));
         Optional<StackTraceElement> match = stream(exception.getStackTrace()).filter(definition::isDefinedAt).findFirst();
         StackTraceElement stackTraceElement = match.get();
-        assertThat(stackTraceElement.getMethodName(), is("method_throws"));
-        assertThat(stackTraceElement.getClassName(), is(JavaStepDefinitionTest.class.getName()));
+
+        assertAll("Checking StackTraceElement",
+            () -> assertThat(stackTraceElement.getMethodName(), is("method_throws")),
+            () -> assertThat(stackTraceElement.getClassName(), is(JavaStepDefinitionTest.class.getName()))
+        );
     }
 
     public void method_throws() {

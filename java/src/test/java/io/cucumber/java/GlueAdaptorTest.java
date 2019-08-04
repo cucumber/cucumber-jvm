@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class GlueAdaptorTest {
 
@@ -127,17 +128,19 @@ public class GlueAdaptorTest {
     public void creates_all_glue_steps() {
         MethodScanner.scan(GlueAdaptorTest.class, adaptor::addDefinition);
 
-        assertThat(stepDefinitions, containsInAnyOrder(aStep, repeated));
-        assertThat(defaultDataTableCellTransformer, notNullValue());
-        assertThat(defaultDataTableEntryTransformer, notNullValue());
-        assertThat(defaultParameterTransformer, notNullValue());
-        assertThat(dataTableTypeDefinition, notNullValue());
-        assertThat(parameterTypeDefinition.parameterType().getRegexps(), is(singletonList("pattern")));
-        assertThat(parameterTypeDefinition.parameterType().getName(), is("name"));
-        assertThat(afterStepHook, notNullValue());
-        assertThat(beforeStepHook, notNullValue());
-        assertThat(afterHook, notNullValue());
-        assertThat(beforeHook, notNullValue());
+        assertAll("Checking MethodScanner",
+            () -> assertThat(stepDefinitions, containsInAnyOrder(aStep, repeated)),
+            () -> assertThat(defaultDataTableCellTransformer, notNullValue()),
+            () -> assertThat(defaultDataTableEntryTransformer, notNullValue()),
+            () -> assertThat(defaultParameterTransformer, notNullValue()),
+            () -> assertThat(dataTableTypeDefinition, notNullValue()),
+            () -> assertThat(parameterTypeDefinition.parameterType().getRegexps(), is(singletonList("pattern"))),
+            () -> assertThat(parameterTypeDefinition.parameterType().getName(), is("name")),
+            () -> assertThat(afterStepHook, notNullValue()),
+            () -> assertThat(beforeStepHook, notNullValue()),
+            () -> assertThat(afterHook, notNullValue()),
+            () -> assertThat(beforeHook, notNullValue())
+        );
     }
 
     @Given(value = "a step", timeout = 100)

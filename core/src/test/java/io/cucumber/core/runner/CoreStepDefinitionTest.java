@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
 public class CoreStepDefinitionTest {
@@ -71,9 +72,11 @@ public class CoreStepDefinitionTest {
         Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
         Map<Double, Double> stepDefs = runStepDef(m, false, new PickleTable(listOfDoublesWithoutHeader()));
 
-        assertThat(stepDefs, hasEntry(1000.0, 999.0));
-        assertThat(stepDefs, hasEntry(0.5, -0.5));
-        assertThat(stepDefs, hasEntry(100.5, 99.5));
+        assertAll("Checking StepDefs",
+            () -> assertThat(stepDefs, hasEntry(1000.0, 999.0)),
+            () -> assertThat(stepDefs, hasEntry(0.5, -0.5)),
+            () -> assertThat(stepDefs, hasEntry(100.5, 99.5))
+        );
     }
 
     @Test
@@ -101,16 +104,22 @@ public class CoreStepDefinitionTest {
     public void passes_plain_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
         DataTable stepDefs = runStepDef(m, false, new PickleTable(listOfDatesWithHeader()));
-        assertThat(stepDefs.cell(0, 0), is(equalTo("Birth Date")));
-        assertThat(stepDefs.cell(1, 0), is(equalTo("1957-05-10")));
+
+        assertAll("Checking stepDefs",
+            () -> assertThat(stepDefs.cell(0, 0), is(equalTo("Birth Date"))),
+            () -> assertThat(stepDefs.cell(1, 0), is(equalTo("1957-05-10")))
+        );
     }
 
     @Test
     public void passes_transposed_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
         DataTable stepDefs = runStepDef(m, true, new PickleTable(listOfDatesWithHeader()));
-        assertThat(stepDefs.cell(0, 0), is(equalTo("Birth Date")));
-        assertThat(stepDefs.cell(0, 1), is(equalTo("1957-05-10")));
+
+        assertAll("Checking stepDefs",
+            () -> assertThat(stepDefs.cell(0, 0), is(equalTo("Birth Date"))),
+            () -> assertThat(stepDefs.cell(0, 1), is(equalTo("1957-05-10")))
+        );
     }
 
     private <T> T runStepDef(Method method, boolean transposed, PickleTable table) throws Throwable {

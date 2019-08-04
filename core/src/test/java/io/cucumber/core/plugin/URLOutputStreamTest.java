@@ -44,6 +44,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class URLOutputStreamTest {
@@ -161,8 +162,11 @@ public class URLOutputStreamTest {
         startThreadsFromList(testThreads);
         countDownLatch.countDown();
         waitAllThreadsFromList(testThreads);
-        assertTrue("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated());
-        assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty());
+
+        assertAll("Checking CountDownLatch",
+            () -> assertTrue("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated()),
+            () -> assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty())
+        );
     }
 
     private String read(File testFile) throws IOException {

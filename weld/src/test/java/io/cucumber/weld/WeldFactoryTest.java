@@ -13,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class WeldFactoryTest {
 
@@ -45,9 +46,11 @@ public class WeldFactoryTest {
         final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
         factory.stop();
 
-        assertThat(o1, is(notNullValue()));
-        assertThat(o1, is(not(equalTo(o2))));
-        assertThat(o2, is(not(equalTo(o1))));
+        assertAll("Checking BellyStepdefs",
+            () -> assertThat(o1, is(notNullValue())),
+            () -> assertThat(o1, is(not(equalTo(o2)))),
+            () -> assertThat(o2, is(not(equalTo(o1))))
+        );
     }
 
     @Test

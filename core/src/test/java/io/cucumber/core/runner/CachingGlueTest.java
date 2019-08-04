@@ -39,6 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -135,29 +136,33 @@ public class CachingGlueTest {
 
         glue.prepareGlue(typeRegistry);
 
-        assertThat(glue.getStepDefinitions().size(), is(equalTo(1)));
-        assertThat(glue.getBeforeHooks().size(), is(equalTo(1)));
-        assertThat(glue.getAfterHooks().size(), is(equalTo(1)));
-        assertThat(glue.getBeforeStepHooks().size(), is(equalTo(1)));
-        assertThat(glue.getAfterStepHooks().size(), is(equalTo(1)));
-        assertThat(glue.getDataTableTypeDefinitions().size(), is(equalTo(1)));
-        assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(1)));
-        assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(1)));
-        assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(1)));
-        assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(1)));
+        assertAll("Checking Glue",
+            () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(1))),
+            () -> assertThat(glue.getBeforeHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getAfterHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getBeforeStepHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getAfterStepHooks().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDataTableTypeDefinitions().size(), is(equalTo(1))),
+            () -> assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(1)))
+        );
 
         glue.removeScenarioScopedGlue();
 
-        assertThat(glue.getStepDefinitions().size(), is(equalTo(0)));
-        assertThat(glue.getBeforeHooks().size(), is(equalTo(0)));
-        assertThat(glue.getAfterHooks().size(), is(equalTo(0)));
-        assertThat(glue.getBeforeStepHooks().size(), is(equalTo(0)));
-        assertThat(glue.getAfterStepHooks().size(), is(equalTo(0)));
-        assertThat(glue.getDataTableTypeDefinitions().size(), is(equalTo(0)));
-        assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(0)));
-        assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(0)));
-        assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(0)));
-        assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(0)));
+        assertAll("Checking Glue",
+            () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(0))),
+            () -> assertThat(glue.getBeforeHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getAfterHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getBeforeStepHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getAfterStepHooks().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDataTableTypeDefinitions().size(), is(equalTo(0))),
+            () -> assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(0)))
+        );
     }
 
     @Test

@@ -10,6 +10,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class PicoFactoryTest {
 
@@ -28,9 +29,11 @@ public class PicoFactoryTest {
         StepDefs o2 = factory.getInstance(StepDefs.class);
         factory.stop();
 
-        assertThat(o1, is(notNullValue()));
-        assertThat(o1, is(not(equalTo(o2))));
-        assertThat(o2, is(not(equalTo(o1))));
+        assertAll("Checking StepDefs",
+            () -> assertThat(o1, is(notNullValue())),
+            () -> assertThat(o1, is(not(equalTo(o2)))),
+            () -> assertThat(o2, is(not(equalTo(o1))))
+        );
     }
 
     @Test

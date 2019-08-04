@@ -22,6 +22,7 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,12 +39,14 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), contains(
-            URI.create("file:path/bar.feature"),
-            URI.create("file:path/foo.feature")
-        ));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2)));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(
+                URI.create("file:path/bar.feature"),
+                URI.create("file:path/foo.feature")
+            )),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)))
+        );
     }
 
     @Test
@@ -57,8 +60,10 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
-        assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
+            () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
+        );
     }
 
     @Test
@@ -72,8 +77,10 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
-        assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
+            () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
+        );
     }
 
     @Test
@@ -86,8 +93,10 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
-        assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
+            () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
+        );
     }
 
     @Test
@@ -100,8 +109,10 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), hasSize(0));
-        assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
+            () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
+        );
     }
 
     @Test
@@ -115,9 +126,11 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:path/bar.feature"), URI.create("file:path/foo.feature")));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2)));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:path/bar.feature"), URI.create("file:path/foo.feature"))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)))
+        );
     }
 
     @Test
@@ -130,8 +143,10 @@ public class RerunFileTest {
             .parse("@file:rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature")));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)))
+        );
     }
 
     @Test
@@ -144,13 +159,14 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), contains(
-            URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
-            URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature")
-        ));
-
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature"), singleton(4)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(
+                URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
+                URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature")
+            )),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature"), singleton(4)))
+        );
     }
 
     @Test
@@ -164,13 +180,14 @@ public class RerunFileTest {
             .parse("@file:path/rerun.txt")
             .build();
 
-        assertThat(runtimeOptions.getFeaturePaths(), contains(
-            URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
-            URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature")
-        ));
-
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)));
-        assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature"), singleton(4)));
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(
+                URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
+                URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature")
+            )),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature"), singleton(4)))
+        );
     }
 
     @Test

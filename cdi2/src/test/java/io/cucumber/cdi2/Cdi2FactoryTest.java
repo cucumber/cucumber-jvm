@@ -9,6 +9,7 @@ import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class Cdi2FactoryTest {
 
@@ -23,8 +24,10 @@ public class Cdi2FactoryTest {
         factory.start();
         final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
         final CDIBellyStepdefs cdiStep = factory.getInstance(CDIBellyStepdefs.class);
-        assertThat(cdiStep.getClass(), not(isA(CDIBellyStepdefs.class))); // it is a CDI proxy
-        assertThat(cdiStep.getClass().getSuperclass(), isA(CDIBellyStepdefs.class));
+        assertAll("Checking CDIBellyStepdefs",
+            () -> assertThat(cdiStep.getClass(), not(isA(CDIBellyStepdefs.class))), // it is a CDI proxy
+            () -> assertThat(cdiStep.getClass().getSuperclass(), isA(CDIBellyStepdefs.class))
+        );
         factory.stop();
 
         // Scenario 2
@@ -32,9 +35,11 @@ public class Cdi2FactoryTest {
         final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
         factory.stop();
 
-        assertThat(o1, is(notNullValue()));
-        assertThat(o1, is(not(equalTo(o2))));
-        assertThat(o2, is(not(equalTo(o1))));
+        assertAll("Checking BellyStepdefs",
+            () -> assertThat(o1, is(notNullValue())),
+            () -> assertThat(o1, is(not(equalTo(o2)))),
+            () -> assertThat(o2, is(not(equalTo(o1))))
+        );
     }
 
 }
