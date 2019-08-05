@@ -19,12 +19,7 @@ final class FileResourceIterator implements Iterator<Resource> {
     }
 
     private FileResourceIterator(File root, File file, final String suffix, boolean classpathFileResourceIterator) {
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.isDirectory() || hasSuffix(suffix, file.getPath());
-            }
-        };
+        FileFilter filter = file1 -> file1.isDirectory() || hasSuffix(suffix, file1.getPath());
         flatteningIterator.push(new FileIterator(root, file, filter, classpathFileResourceIterator));
     }
 

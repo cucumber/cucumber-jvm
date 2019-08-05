@@ -51,24 +51,9 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             testSources.addTestSourceReadEvent(event.getUri(), event);
         }
     };
-    private final EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private final EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
-        @Override
-        public void receive(final TestCaseFinished event) {
-            handleTestCaseFinished(event);
-        }
-    };
-    private final EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(final TestRunFinished event) {
-            finishReport(event);
-        }
-    };
+    private final EventHandler<TestCaseStarted> caseStartedHandler = this::handleTestCaseStarted;
+    private final EventHandler<TestCaseFinished> caseFinishedHandler = this::handleTestCaseFinished;
+    private final EventHandler<TestRunFinished> runFinishedHandler = this::finishReport;
 
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final Map<String, TestData> allTests = new HashMap<>();

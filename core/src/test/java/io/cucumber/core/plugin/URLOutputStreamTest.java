@@ -192,20 +192,17 @@ public class URLOutputStreamTest {
                 new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + i + "/tmpFile.tmp") :
                 new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
             tmpFiles.add(tmp);
-            result.add(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        // Every thread should wait command to run
-                        countDownLatch.await();
-                        new URLOutputStream(tmp.toURI().toURL());
-                    } catch (IOException e) {
-                        threadErrors.add("Thread" + curThreadNo + ": parent dir not created. " + e.getMessage());
-                    } catch (InterruptedException e) {
-                        threadErrors.add("Thread" + curThreadNo + ": not started on time. " + e.getMessage());
-                    }
+            result.add(new Thread(() -> {
+                try {
+                    // Every thread should wait command to run
+                    countDownLatch.await();
+                    new URLOutputStream(tmp.toURI().toURL());
+                } catch (IOException e) {
+                    threadErrors.add("Thread" + curThreadNo + ": parent dir not created. " + e.getMessage());
+                } catch (InterruptedException e) {
+                    threadErrors.add("Thread" + curThreadNo + ": not started on time. " + e.getMessage());
                 }
-            });
+            }));
         }
         return result;
     }

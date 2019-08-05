@@ -19,12 +19,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class StepExpressionFactoryTest {
 
-    private static final TypeResolver UNKNOWN_TYPE = new TypeResolver() {
-        @Override
-        public Type resolve() {
-            return Object.class;
-        }
-    };
+    private static final TypeResolver UNKNOWN_TYPE = () -> Object.class;
 
     static class Ingredient {
         String name;

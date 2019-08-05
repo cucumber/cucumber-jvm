@@ -30,18 +30,8 @@ public final class UsageFormatter implements Plugin, EventListener {
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final NiceAppendable out;
 
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
+    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
+    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
 
     /**
      * Constructor

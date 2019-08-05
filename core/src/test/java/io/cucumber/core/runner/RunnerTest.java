@@ -65,14 +65,11 @@ public class RunnerTest {
         Backend backend = mock(Backend.class);
         when(backend.getSnippet()).thenReturn(new TestSnippet());
         ObjectFactory objectFactory = mock(ObjectFactory.class);
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Glue glue = invocation.getArgument(0);
-                glue.addAfterHook(afterHook);
-                glue.addBeforeHook(beforeHook);
-                return null;
-            }
+        doAnswer(invocation -> {
+            Glue glue = invocation.getArgument(0);
+            glue.addAfterHook(afterHook);
+            glue.addBeforeHook(beforeHook);
+            return null;
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
 

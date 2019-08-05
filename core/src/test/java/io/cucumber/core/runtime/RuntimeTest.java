@@ -470,17 +470,9 @@ public class RuntimeTest {
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
-            @Override
-            public void setEventPublisher(EventPublisher publisher) {
-                publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
-                    @Override
-                    public void receive(TestStepFinished event) {
-                        throw new RuntimeException("boom");
-                    }
-                });
-            }
-        };
+        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
+            throw new RuntimeException("boom");
+        });
 
         expectedException.expect(CompositeCucumberException.class);
         expectedException.expectMessage("There were 3 exceptions");
@@ -512,36 +504,25 @@ public class RuntimeTest {
         final CountDownLatch threadBlocked = new CountDownLatch(1);
         final CountDownLatch interruptHit = new CountDownLatch(1);
 
-        final ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
+        final ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
-            public void setEventPublisher(EventPublisher publisher) {
-                publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
-                    @Override
-                    public void receive(TestStepFinished event) {
-                        try {
-                            threadBlocked.countDown();
-                            HOURS.sleep(1);
-                        } catch (InterruptedException ignored) {
-                            interruptHit.countDown();
-                        }
-                    }
-                });
-            }
-        };
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                TestHelper.builder()
-                    .withFeatures(Arrays.asList(feature1, feature2))
-                    .withFormatterUnderTest(brokenEventListener)
-                    .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-                    .withRuntimeArgs("--threads", "2")
-                    .build()
-                    .run();
-
+            public void receive(TestStepFinished event) {
+                try {
+                    threadBlocked.countDown();
+                    HOURS.sleep(1);
+                } catch (InterruptedException ignored) {
+                    interruptHit.countDown();
+                }
             }
         });
+
+        Thread thread = new Thread(() -> TestHelper.builder()
+            .withFeatures(Arrays.asList(feature1, feature2))
+            .withFormatterUnderTest(brokenEventListener)
+            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+            .withRuntimeArgs("--threads", "2")
+            .build()
+            .run());
 
         thread.start();
         threadBlocked.await(1, SECONDS);
@@ -564,17 +545,12 @@ public class RuntimeTest {
 
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
-        Plugin eventListener = new EventListener() {
+        Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
             @Override
-            public void setEventPublisher(EventPublisher publisher) {
-                publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
-                    @Override
-                    public void receive(StepDefinedEvent event) {
-                        stepDefinedEvents.add(event.getStepDefinition());
-                    }
-                });
+            public void receive(StepDefinedEvent event) {
+                stepDefinedEvents.add(event.getStepDefinition());
             }
-        };
+        });
 
 
         final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
@@ -598,12 +574,7 @@ public class RuntimeTest {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
+        FeatureSupplier featureSupplier = () -> singletonList(feature);
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(eventListener)
@@ -706,12 +677,7 @@ public class RuntimeTest {
             }
         };
 
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
+        FeatureSupplier featureSupplier = () -> singletonList(feature);
 
         return Runtime.builder()
             .withRuntimeOptions(

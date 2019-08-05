@@ -28,18 +28,8 @@ final class UndefinedStepsTracker implements EventListener {
     private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<>();
     private boolean hasUndefinedSteps = false;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            pathToSourceMap.put(event.getUri(), event.getSource());
-        }
-    };
-    private EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = new EventHandler<SnippetsSuggestedEvent>() {
-        @Override
-        public void receive(SnippetsSuggestedEvent event) {
-            handleSnippetsSuggested(event.getUri(), event.getStepLocations(), event.getSnippets());
-        }
-    };
+    private EventHandler<TestSourceRead> testSourceReadHandler = event -> pathToSourceMap.put(event.getUri(), event.getSource());
+    private EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = event -> handleSnippetsSuggested(event.getUri(), event.getStepLocations(), event.getSnippets());
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {

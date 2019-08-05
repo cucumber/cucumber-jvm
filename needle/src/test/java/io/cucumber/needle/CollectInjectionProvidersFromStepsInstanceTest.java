@@ -18,16 +18,12 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
     private final CollectInjectionProvidersFromStepsInstance function = CollectInjectionProvidersFromStepsInstance.INSTANCE;
 
     @NeedleInjectionProvider
-    private final InjectionProviderInstancesSupplier supplier = new InjectionProviderInstancesSupplier() {
+    private final InjectionProviderInstancesSupplier supplier = () -> {
+        final HashSet<InjectionProvider<?>> result = new HashSet<>();
 
-        @Override
-        public Set<InjectionProvider<?>> get() {
-            final HashSet<InjectionProvider<?>> result = new HashSet<InjectionProvider<?>>();
+        result.add(NamedInjectionProvider.forNamedValue("foo", "bar"));
 
-            result.add(NamedInjectionProvider.forNamedValue("foo", "bar"));
-
-            return result;
-        }
+        return result;
     };
 
     private static class MyNeedleTestcase extends NeedleTestcase {

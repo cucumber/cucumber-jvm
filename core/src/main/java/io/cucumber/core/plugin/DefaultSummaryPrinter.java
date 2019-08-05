@@ -53,12 +53,7 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
     public void setEventPublisher(EventPublisher publisher) {
         stats.setEventPublisher(publisher);
         undefinedStepsTracker.setEventPublisher(publisher);
-        publisher.registerHandlerFor(TestRunFinished.class, new EventHandler<TestRunFinished>() {
-            @Override
-            public void receive(TestRunFinished event) {
-                print();
-            }
-        });
+        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
     }
 
     @Override
