@@ -63,7 +63,7 @@ final class GlueAdaptor {
     private static String expression(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
-            return (String) Invoker.invoke(annotation, expressionMethod, 0);
+            return (String) Invoker.invoke(annotation, expressionMethod);
         } catch (Throwable e) {
             throw new IllegalStateException(e);
         }
@@ -72,7 +72,7 @@ final class GlueAdaptor {
     private static long timeoutMillis(Annotation annotation) {
         try {
             Method regexpMethod = annotation.getClass().getMethod("timeout");
-            return (Long) Invoker.invoke(annotation, regexpMethod, 0);
+            return (Long) Invoker.invoke(annotation, regexpMethod);
         } catch (Throwable throwable) {
             throw new IllegalStateException(throwable);
         }

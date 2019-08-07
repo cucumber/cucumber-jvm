@@ -71,9 +71,9 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
     }
 
-    static final class SomeLambdaStepDefs implements En {
+    public static final class SomeLambdaStepDefs implements En {
 
-        SomeLambdaStepDefs() {
+        public SomeLambdaStepDefs() {
             Given("I have a some step definition", () -> {
                 throw new Exception();
             });
