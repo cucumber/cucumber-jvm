@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.TestRunFinished;
 

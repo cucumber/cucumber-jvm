@@ -4,7 +4,6 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonPrimitive;
 import gherkin.deps.com.google.gson.JsonSerializer;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
@@ -30,9 +29,6 @@ public final class UsageFormatter implements Plugin, EventListener {
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final NiceAppendable out;
 
-    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
-    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
-
     /**
      * Constructor
      *
@@ -45,8 +41,8 @@ public final class UsageFormatter implements Plugin, EventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     void handleTestStepFinished(TestStepFinished event) {

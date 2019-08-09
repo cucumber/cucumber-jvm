@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.event.TestSourceRead;
@@ -28,13 +27,10 @@ final class UndefinedStepsTracker implements EventListener {
     private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<>();
     private boolean hasUndefinedSteps = false;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = event -> pathToSourceMap.put(event.getUri(), event.getSource());
-    private EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = event -> handleSnippetsSuggested(event.getUri(), event.getStepLocations(), event.getSnippets());
-
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
     }
 
     boolean hasUndefinedSteps() {
@@ -43,6 +39,14 @@ final class UndefinedStepsTracker implements EventListener {
 
     List<String> getSnippets() {
         return snippets;
+    }
+
+    private void handleTestSourceRead(TestSourceRead event) {
+        pathToSourceMap.put(event.getUri(), event.getSource());
+    }
+
+    private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
+        handleSnippetsSuggested(event.getUri(), event.getStepLocations(), event.getSnippets());
     }
 
     void handleSnippetsSuggested(String uri, List<SnippetsSuggestedEvent.Location> stepLocations, List<String> snippets) {
