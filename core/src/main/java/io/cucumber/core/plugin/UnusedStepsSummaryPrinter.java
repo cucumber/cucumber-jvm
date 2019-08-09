@@ -2,7 +2,9 @@ package io.cucumber.core.plugin;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import io.cucumber.core.event.*;
 
@@ -10,7 +12,8 @@ import static java.util.Locale.ROOT;
 
 public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, SummaryPrinter {
 
-	private final Map<String, String> unusedSteps = new TreeMap<>();
+	private final Map<String, String> registeredSteps = new TreeMap<>();
+	private final Set<String> usedSteps = new TreeSet<>();
 	private final NiceAppendable out;
 	private Formats formats = new MonochromeFormats();
 
@@ -30,26 +33,29 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 	}
 
 	private void handleStepDefinedEvent(StepDefinedEvent event) {
-		unusedSteps.put(event.getStepDefinition().getLocation(false), event.getStepDefinition().getPattern());
+		registeredSteps.put(event.getStepDefinition().getLocation(false), event.getStepDefinition().getPattern());
 	}
 
 	private void handleTestStepFinished(TestStepFinished event) {
 		String codeLocation = event.getTestStep().getCodeLocation();
 		if (codeLocation != null) {
-			unusedSteps.remove(codeLocation);
+			usedSteps.add(codeLocation);
 		}
 	}
 
 	private void finishReport() {
-		if (unusedSteps.isEmpty()) {
+		// Remove all used steps
+		usedSteps.forEach(registeredSteps::remove);
+
+		if (registeredSteps.isEmpty()) {
 			return;
 		}
 
 		Format format = formats.get(Status.UNUSED.name().toLowerCase(ROOT));
-		out.println(format.text(unusedSteps.size() + " Unused steps:"));
+		out.println(format.text(registeredSteps.size() + " Unused steps:"));
 
 		// Output results when done
-		for (Entry<String, String> entry : unusedSteps.entrySet()) {
+		for (Entry<String, String> entry : registeredSteps.entrySet()) {
 			String location = entry.getKey();
 			String pattern = entry.getValue();
 			out.println(format.text(location) + " # " + pattern);
