@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public final class Filters {
+public final class Filters implements Predicate<PickleEvent> {
 
     private final List<Predicate<PickleEvent>> filters;
 
@@ -34,7 +34,8 @@ public final class Filters {
         this.count = options.getLimitCount();
     }
 
-    public boolean matchesFilters(PickleEvent pickleEvent) {
+    @Override
+	public boolean test(PickleEvent pickleEvent) {
         for (Predicate<PickleEvent> filter : filters) {
             if (!filter.test(pickleEvent)) {
                 return false;

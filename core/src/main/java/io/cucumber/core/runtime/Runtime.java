@@ -42,6 +42,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
@@ -87,14 +88,10 @@ public final class Runtime {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
 
-        final List<PickleEvent> filteredEvents = new ArrayList<>();
-        for (CucumberFeature feature : features) {
-            for (final PickleEvent pickleEvent : feature.getPickles()) {
-                if (filters.matchesFilters(pickleEvent)) {
-                    filteredEvents.add(pickleEvent);
-                }
-            }
-        }
+        final List<PickleEvent> filteredEvents = features.stream()
+                .flatMap(feature -> feature.getPickles().stream())
+                .filter(filters)
+                .collect(Collectors.toList());
 
         final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
         final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);

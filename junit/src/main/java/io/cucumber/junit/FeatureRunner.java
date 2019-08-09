@@ -1,7 +1,6 @@
 package io.cucumber.junit;
 
 import gherkin.ast.Feature;
-import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.filter.Filters;
@@ -78,23 +77,21 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     private void buildFeatureElementRunners(Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
-        for (PickleEvent pickleEvent : cucumberFeature.getPickles()) {
-            if (filters.matchesFilters(pickleEvent)) {
-                try {
-                    if (jUnitOptions.stepNotifications()) {
-                        PickleRunner picklePickleRunner;
-                        picklePickleRunner = withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
-                        children.add(picklePickleRunner);
-                    } else {
-                        PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
-                        children.add(picklePickleRunner);
-                    }
-                } catch (InitializationError e) {
-                    throw new CucumberException("Failed to create scenario runner", e);
+        cucumberFeature.getPickles().stream().filter(filters).forEach(pickleEvent -> {
+            try {
+                if (jUnitOptions.stepNotifications()) {
+                    PickleRunner picklePickleRunner;
+                    picklePickleRunner = withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
+                    children.add(picklePickleRunner);
+                } else {
+                    PickleRunner picklePickleRunner;
+                    picklePickleRunner = withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
+                    children.add(picklePickleRunner);
                 }
+            } catch (InitializationError e) {
+                throw new CucumberException("Failed to create scenario runner", e);
             }
-        }
+        });
     }
 
     private static final class FeatureId implements Serializable {

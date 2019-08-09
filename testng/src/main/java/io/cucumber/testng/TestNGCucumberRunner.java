@@ -125,7 +125,7 @@ public final class TestNGCucumberRunner {
             List<CucumberFeature> features = getFeatures();
             for (CucumberFeature feature : features) {
                 for (PickleEvent pickle : feature.getPickles()) {
-                    if (filters.matchesFilters(pickle)) {
+                    if (filters.test(pickle)) {
                         scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
                             new CucumberFeatureWrapperImpl(feature)});
                     }
