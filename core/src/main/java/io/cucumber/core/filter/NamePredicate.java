@@ -3,9 +3,10 @@ package io.cucumber.core.filter;
 import gherkin.events.PickleEvent;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-final class NamePredicate implements PicklePredicate {
+final class NamePredicate implements Predicate<PickleEvent> {
     private List<Pattern> patterns;
 
     NamePredicate(List<Pattern> patterns) {
@@ -13,7 +14,7 @@ final class NamePredicate implements PicklePredicate {
     }
 
     @Override
-    public boolean apply(PickleEvent pickleEvent) {
+    public boolean test(PickleEvent pickleEvent) {
         String name = pickleEvent.pickle.getName();
         for (Pattern pattern : patterns) {
             if (pattern.matcher(name).find()) {

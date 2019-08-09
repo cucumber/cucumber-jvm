@@ -6,8 +6,9 @@ import gherkin.pickles.PickleLocation;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
-class LinePredicate implements PicklePredicate {
+class LinePredicate implements Predicate<PickleEvent> {
     private Map<URI, ? extends Collection<Integer>> lineFilters;
 
     LinePredicate(Map<URI, ? extends Collection<Integer>> lineFilters) {
@@ -15,7 +16,7 @@ class LinePredicate implements PicklePredicate {
     }
 
     @Override
-    public boolean apply(PickleEvent pickleEvent) {
+    public boolean test(PickleEvent pickleEvent) {
         URI picklePath = URI.create(pickleEvent.uri);
         if (!lineFilters.containsKey(picklePath)) {
             return true;

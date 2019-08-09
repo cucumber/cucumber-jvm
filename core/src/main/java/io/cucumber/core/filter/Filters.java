@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public final class Filters {
 
-    private final List<PicklePredicate> filters;
+    private final List<Predicate<PickleEvent>> filters;
 
     private int count;
 
@@ -34,8 +35,8 @@ public final class Filters {
     }
 
     public boolean matchesFilters(PickleEvent pickleEvent) {
-        for (PicklePredicate filter : filters) {
-            if (!filter.apply(pickleEvent)) {
+        for (Predicate<PickleEvent> filter : filters) {
+            if (!filter.test(pickleEvent)) {
                 return false;
             }
         }
@@ -43,9 +44,9 @@ public final class Filters {
     }
 
     public List<PickleEvent> limitPickleEvents(List<PickleEvent> pickleEvents) {
-    	if (count > pickleEvents.size() || count < 1) {
-    		return pickleEvents;
-    	}
-		return pickleEvents.subList(0, count);
-	}
+        if (count > pickleEvents.size() || count < 1) {
+            return pickleEvents;
+        }
+        return pickleEvents.subList(0, count);
+    }
 }
