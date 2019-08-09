@@ -7,13 +7,13 @@ cache:
 
 jobs:
   include:
-  # 1.1 Semver check disabled for v5. We're breaking it.
-#  - stage: test
-#    jdk: openjdk8
-#    script: mvn verify -Pcheck-semantic-version -DskipTests=true
-#    env: CHECK_SEMANTIC_VERSION=true
+  # 1.1 Semver check
+  - stage: test
+    jdk: openjdk8
+    script: mvn verify -Pcheck-semantic-version -DskipTests=true
+    env: CHECK_SEMANTIC_VERSION=true
 
-    # 1.2 Check JDK 8,10,ea
+  # 1.2 Check JDK 8,10,ea
   - stage: test
     jdk: openjdk8
     script: mvn clean verify
@@ -24,7 +24,7 @@ jobs:
   - jdk: openjdk11
     script: mvn -q verify
 
-   # 1.3 Check java doc
+  # 1.3 Check java doc
   - jdk: openjdk8
     env: JAVADOC=true
     script:
