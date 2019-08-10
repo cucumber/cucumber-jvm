@@ -33,8 +33,8 @@ import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Glue code for running Cucumber via TestNG.
@@ -121,19 +121,13 @@ public final class TestNGCucumberRunner {
      */
     public Object[][] provideScenarios() {
         try {
-            List<Object[]> scenarios = new ArrayList<>();
-            List<CucumberFeature> features = getFeatures();
-            for (CucumberFeature feature : features) {
-                for (PickleEvent pickle : feature.getPickles()) {
-                    if (filters.test(pickle)) {
-                        scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
-                            new CucumberFeatureWrapperImpl(feature)});
-                    }
-                }
-            }
-            return scenarios.toArray(new Object[][]{});
+            return getFeatures().stream().flatMap(feature -> feature.getPickles().stream().filter(filters)
+                    .map(pickle -> new Object[] {
+                            new PickleEventWrapperImpl(pickle),
+                            new CucumberFeatureWrapperImpl(feature) }))
+                    .collect(Collectors.toList()).toArray(new Object[][] {});
         } catch (CucumberException e) {
-            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e), null}};
+            return new Object[][] { new Object[] { new CucumberExceptionWrapper(e), null } };
         }
     }
 
