@@ -14,22 +14,31 @@ import org.junit.runners.model.InitializationError;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.PickleRunners.withStepDescriptions;
 
 final class FeatureRunner extends ParentRunner<PickleRunner> {
-    private final List<PickleRunner> children = new ArrayList<>();
 
+    private final List<PickleRunner> children;
     private final CucumberFeature cucumberFeature;
     private Description description;
 
     FeatureRunner(CucumberFeature cucumberFeature, Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
-        buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
+        this.children = cucumberFeature.getPickles().stream().filter(filters).map(pickleEvent -> {
+            if (jUnitOptions.stepNotifications()) {
+                try {
+                    return withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
+                } catch (InitializationError e) {
+                    throw new CucumberException("Failed to create scenario runner", e);
+                }
+            }
+            return withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -76,24 +85,6 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         }
     }
 
-    private void buildFeatureElementRunners(Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) {
-        cucumberFeature.getPickles().stream().filter(filters).forEach(pickleEvent -> {
-            try {
-                if (jUnitOptions.stepNotifications()) {
-                    PickleRunner picklePickleRunner;
-                    picklePickleRunner = withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
-                    children.add(picklePickleRunner);
-                } else {
-                    PickleRunner picklePickleRunner;
-                    picklePickleRunner = withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
-                    children.add(picklePickleRunner);
-                }
-            } catch (InitializationError e) {
-                throw new CucumberException("Failed to create scenario runner", e);
-            }
-        });
-    }
-
     private static final class FeatureId implements Serializable {
         private static final long serialVersionUID = 1L;
         private final URI uri;
@@ -108,7 +99,6 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
             if (o == null || getClass() != o.getClass()) return false;
             FeatureId featureId = (FeatureId) o;
             return uri.equals(featureId.uri);
-
         }
 
         @Override
