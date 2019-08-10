@@ -11,12 +11,9 @@ import java.util.regex.Pattern;
 
 public final class Filters implements Predicate<PickleEvent> {
 
-    private Predicate<PickleEvent> filter;
-
-    private int count;
+    private Predicate<PickleEvent> filter = t-> true;
 
     public Filters(Options options) {
-        this.filter = t -> true;
         List<String> tagExpressions = options.getTagExpressions();
         if (!tagExpressions.isEmpty()) {
             this.filter = this.filter.and(new TagPredicate(tagExpressions));
@@ -29,19 +26,10 @@ public final class Filters implements Predicate<PickleEvent> {
         if (!lineFilters.isEmpty()) {
             this.filter = this.filter.and(new LinePredicate(lineFilters));
         }
-
-        this.count = options.getLimitCount();
     }
 
     @Override
     public boolean test(PickleEvent pickleEvent) {
         return this.filter.test(pickleEvent);
-    }
-
-    public List<PickleEvent> limitPickleEvents(List<PickleEvent> pickleEvents) {
-        if (count > pickleEvents.size() || count < 1) {
-            return pickleEvents;
-        }
-        return pickleEvents.subList(0, count);
     }
 }

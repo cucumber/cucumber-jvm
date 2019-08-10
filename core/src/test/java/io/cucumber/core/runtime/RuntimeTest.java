@@ -8,7 +8,6 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
@@ -33,7 +32,6 @@ import io.cucumber.core.runner.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -44,13 +42,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 import static io.cucumber.core.runner.TestHelper.feature;
@@ -75,7 +67,6 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 public class RuntimeTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
-    private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Rule
@@ -659,36 +650,6 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withEventBus(bus)
             .build();
-    }
-
-    private Runtime createRuntimeWithMockedGlue(final HookDefinition hook,
-                                                final HookType hookType,
-                                                final CucumberFeature feature,
-                                                String... runtimeArgs) {
-        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
-                    for (Step step : child.getSteps()) {
-                        mockMatch(glue, step.getText());
-                    }
-                }
-                mockHook(glue, hook, hookType);
-            }
-        };
-
-        FeatureSupplier featureSupplier = () -> singletonList(feature);
-
-        return Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(runtimeArgs)
-                    .build()
-            )
-            .withBackendSupplier(testBackendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .build();
-
     }
 
     private void mockMatch(Glue glue, String text) {

@@ -42,6 +42,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -59,21 +60,25 @@ public final class Runtime {
     private final ExitStatus exitStatus;
 
     private final RunnerSupplier runnerSupplier;
-    private final Filters filters;
+    private final Predicate<PickleEvent> filter;
+    private final int limit;
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
 
+
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
-                    final Filters filters,
+                    final Predicate<PickleEvent> filter,
+                    final int limit,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
                     final ExecutorService executor,
                     final PickleOrder pickleOrder) {
-        this.filters = filters;
         this.bus = bus;
+        this.filter = filter;
+        this.limit = limit;
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
@@ -90,11 +95,12 @@ public final class Runtime {
 
         final List<PickleEvent> filteredEvents = features.stream()
                 .flatMap(feature -> feature.getPickles().stream())
-                .filter(filters)
+                .filter(filter)
                 .collect(Collectors.toList());
 
         final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
-        final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);
+        final List<PickleEvent> limitedEvents = (limit > orderedEvents.size() || limit < 1)
+                ? orderedEvents : orderedEvents.subList(0, limit);
 
         final List<Future<?>> executingPickles = new ArrayList<>();
         for (final PickleEvent pickleEvent : limitedEvents) {
@@ -226,10 +232,11 @@ public final class Runtime {
                 ? this.featureSupplier
                 : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
-            final Filters filters = new Filters(runtimeOptions);
+            final Predicate<PickleEvent> filter = new Filters(runtimeOptions);
+            final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
 
-            return new Runtime(exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor, pickleOrder);
+            return new Runtime(exitStatus, eventBus, filter, limit, runnerSupplier, featureSupplier, executor, pickleOrder);
         }
     }
 
