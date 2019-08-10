@@ -14,6 +14,7 @@ import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -41,9 +42,9 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Cucumber JUnit Runner.
@@ -79,7 +80,7 @@ import java.util.function.Predicate;
  */
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<FeatureRunner> {
-    private final List<FeatureRunner> children = new ArrayList<>();
+    private final List<FeatureRunner> children;
     private final EventBus bus;
     private final List<CucumberFeature> features;
     private final Plugins plugins;
@@ -151,12 +152,16 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<PickleEvent> filters = new Filters(runtimeOptions);
-        for (CucumberFeature cucumberFeature : features) {
-            FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
-            if (!featureRunner.isEmpty()) {
-                children.add(featureRunner);
-            }
-        }
+        this.children = features.stream()
+                .map(cucumberFeature -> {
+                    try {
+                        return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
+                    } catch (InitializationError e) {
+                        throw new CucumberException(e);
+                    }
+                })
+                .filter(featureRunner -> !featureRunner.isEmpty())
+                .collect(Collectors.toList());
     }
 
     @Override
