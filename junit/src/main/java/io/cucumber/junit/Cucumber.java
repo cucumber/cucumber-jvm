@@ -1,5 +1,6 @@
 package io.cucumber.junit;
 
+import gherkin.events.PickleEvent;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.event.TestRunFinished;
@@ -42,6 +43,7 @@ import org.junit.runners.model.Statement;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Cucumber JUnit Runner.
@@ -148,7 +150,7 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
-        Filters filters = new Filters(runtimeOptions);
+        Predicate<PickleEvent> filters = new Filters(runtimeOptions);
         for (CucumberFeature cucumberFeature : features) {
             FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
             if (!featureRunner.isEmpty()) {

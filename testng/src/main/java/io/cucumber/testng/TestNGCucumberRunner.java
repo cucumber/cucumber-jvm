@@ -34,6 +34,7 @@ import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +51,7 @@ import java.util.stream.Collectors;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
     private final EventBus bus;
-    private final Filters filters;
+    private final Predicate<PickleEvent> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;

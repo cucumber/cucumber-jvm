@@ -1,9 +1,9 @@
 package io.cucumber.junit;
 
 import gherkin.ast.Feature;
+import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.filter.Filters;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
@@ -15,6 +15,7 @@ import org.junit.runners.model.InitializationError;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
@@ -26,10 +27,10 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    FeatureRunner(CucumberFeature cucumberFeature, Filters filters, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
+    FeatureRunner(CucumberFeature cucumberFeature, Predicate<PickleEvent> filter, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
-        this.children = cucumberFeature.getPickles().stream().filter(filters).map(pickleEvent -> {
+        this.children = cucumberFeature.getPickles().stream().filter(filter).map(pickleEvent -> {
             if (jUnitOptions.stepNotifications()) {
                 try {
                     return withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
