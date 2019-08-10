@@ -93,19 +93,14 @@ public final class Runtime {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
 
-        final List<PickleEvent> filteredEvents = features.stream()
+        final List<Future<?>> executingPickles = features.stream()
                 .flatMap(feature -> feature.getPickles().stream())
                 .filter(filter)
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        list -> pickleOrder.orderPickleEvents(list).stream()))
+                .limit(limit > 0 ? limit : Integer.MAX_VALUE)
+                .map(pickleEvent -> executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)))
                 .collect(Collectors.toList());
-
-        final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
-        final List<PickleEvent> limitedEvents = (limit > orderedEvents.size() || limit < 1)
-                ? orderedEvents : orderedEvents.subList(0, limit);
-
-        final List<Future<?>> executingPickles = new ArrayList<>();
-        for (final PickleEvent pickleEvent : limitedEvents) {
-            executingPickles.add(executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)));
-        }
 
         executor.shutdown();
 
