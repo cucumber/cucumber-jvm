@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaStepDefinitionTransposeTest {
 
-    public static class StepDefs {
+    public static class Steps {
 
         public void mapOfDoubleToDouble(Map<Double, Double> mapOfDoubleToDouble) {
 
@@ -25,19 +25,19 @@ public class JavaStepDefinitionTransposeTest {
 
     @Test
     public void transforms_to_map_of_double_to_double() throws Throwable {
-        Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
+        Method m = Steps.class.getMethod("mapOfDoubleToDouble", Map.class);
         assertFalse(isTransposed(m));
     }
 
     @Test
     public void transforms_transposed_to_map_of_double_to_double() throws Throwable {
-        Method m = StepDefs.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
+        Method m = Steps.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
         assertTrue(isTransposed(m));
     }
 
     private boolean isTransposed(Method method) {
-        StepDefs stepDefs = new StepDefs();
-        Lookup lookup = new SingletonFactory(stepDefs);
+        Steps steps = new Steps();
+        Lookup lookup = new SingletonFactory(steps);
         StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", 0, lookup);
 
         return stepDefinition.parameterInfos().get(0).isTransposed();

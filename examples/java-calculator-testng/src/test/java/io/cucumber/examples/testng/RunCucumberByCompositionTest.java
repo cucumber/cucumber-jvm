@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
  * TestNG test.
  */
 @CucumberOptions(strict = true, plugin = "json:target/cucumber-report-feature-composite.json")
-public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
+public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)

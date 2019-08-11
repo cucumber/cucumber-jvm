@@ -30,8 +30,8 @@ public class MethodScannerTest {
 
     @Test
     public void scan_finds_annotated_methods() throws NoSuchMethodException {
-        Method method = BaseStepDefs.class.getMethod("m");
-        MethodScanner.scan(BaseStepDefs.class, backend);
+        Method method = BaseSteps.class.getMethod("m");
+        MethodScanner.scan(BaseSteps.class, backend);
         assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
     }
 
@@ -43,19 +43,19 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_method_declaring_class() {
-        InvalidMethodException exception = assertThrows(InvalidMethodException.class, () -> MethodScanner.scan(Stepdefs2.class, backend));
+        InvalidMethodException exception = assertThrows(InvalidMethodException.class, () -> MethodScanner.scan(ExtendedSteps.class, backend));
         assertThat(exception.getMessage(), is(
             "You're not allowed to extend classes that define Step Definitions or hooks. " +
-                "class io.cucumber.java.MethodScannerTest$Stepdefs2 extends class io.cucumber.java.MethodScannerTest$BaseStepDefs"
+                "class io.cucumber.java.MethodScannerTest$ExtendedSteps extends class io.cucumber.java.MethodScannerTest$BaseSteps"
         ));
     }
 
-    public static class Stepdefs2 extends BaseStepDefs {
+    public static class ExtendedSteps extends BaseSteps {
         public interface Interface1 {
         }
     }
 
-    public static class BaseStepDefs {
+    public static class BaseSteps {
         @Before
         public void m() {
         }
