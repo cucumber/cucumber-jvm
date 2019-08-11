@@ -123,7 +123,7 @@ class URLOutputStream extends OutputStream {
         }
     }
 
-    public class ResponseException extends IOException {
+    class ResponseException extends IOException {
         private final Gson gson = new Gson();
         private final int responseCode;
         private final String contentType;

@@ -178,7 +178,7 @@ final class PickleRunners {
     static final class PickleId implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String uri;
-        private int pickleLine;
+        private final int pickleLine;
 
         PickleId(String uri, int pickleLine) {
             this.uri = uri;

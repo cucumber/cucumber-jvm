@@ -99,7 +99,7 @@ public final class SnippetGenerator {
         }
     }
 
-    ArgumentPattern[] argumentPatterns() {
+    private ArgumentPattern[] argumentPatterns() {
         return DEFAULT_ARGUMENT_PATTERNS;
     }
 

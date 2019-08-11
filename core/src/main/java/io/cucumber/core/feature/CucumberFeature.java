@@ -8,14 +8,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class CucumberFeature {
+public final class CucumberFeature {
     private final URI uri;
     private final List<PickleEvent> pickles;
-    private GherkinDocument gherkinDocument;
-    private String gherkinSource;
+    private final GherkinDocument gherkinDocument;
+    private final String gherkinSource;
 
-
-    public CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<PickleEvent> pickles) {
+    CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<PickleEvent> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
