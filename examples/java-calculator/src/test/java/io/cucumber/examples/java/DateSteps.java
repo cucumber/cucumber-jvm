@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 
-public class DateStepdefs {
+public class DateSteps {
     private String result;
     private DateCalculator calculator;
 

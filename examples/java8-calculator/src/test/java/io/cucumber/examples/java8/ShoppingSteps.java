@@ -7,11 +7,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ShoppingStepdefs implements En {
+public class ShoppingSteps implements En {
 
     private RpnCalculator calc = new RpnCalculator();
 
-    public ShoppingStepdefs() {
+    public ShoppingSteps() {
 
         Given("the following groceries:", (DataTable dataTable) -> {
             List<Grocery> groceries = dataTable.asList(Grocery.class);

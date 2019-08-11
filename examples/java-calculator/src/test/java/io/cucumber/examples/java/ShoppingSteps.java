@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ShoppingStepdefs {
+public class ShoppingSteps {
     private RpnCalculator calc = new RpnCalculator();
 
     @Given("the following groceries:")
