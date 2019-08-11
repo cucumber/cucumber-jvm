@@ -5,10 +5,11 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 final class Java8StepDefinition extends AbstractGlueDefinition implements StepDefinition {
@@ -54,12 +55,10 @@ final class Java8StepDefinition extends AbstractGlueDefinition implements StepDe
     }
 
     private static List<ParameterInfo> fromTypes(String expression, StackTraceElement location, Type[] genericParameterTypes) {
-        List<ParameterInfo> result = new ArrayList<>();
-        for (Type type : genericParameterTypes) {
-            LambdaTypeResolver typeResolver = new LambdaTypeResolver(type, expression, location);
-            result.add(new Java8ParameterInfo(type, typeResolver));
-        }
-        return result;
+        return Arrays.stream(genericParameterTypes)
+            .map(type -> new LambdaTypeResolver(type, expression, location))
+            .map(Java8ParameterInfo::new)
+            .collect(toList());
     }
 
 }

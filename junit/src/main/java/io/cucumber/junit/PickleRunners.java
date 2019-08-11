@@ -70,9 +70,7 @@ final class PickleRunners {
         public Description getDescription() {
             if (description == null) {
                 description = Description.createSuiteDescription(getName(), new PickleId(pickleEvent));
-                for (PickleStep step : getChildren()) {
-                    description.addChild(describeChild(step));
-                }
+                getChildren().forEach(step -> description.addChild(describeChild(step)));
             }
             return description;
         }

@@ -2,7 +2,7 @@ package io.cucumber.core.feature;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +11,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Identifies either a directory containing feature files, a specific
@@ -74,15 +75,13 @@ public class FeatureWithLines implements Serializable {
     }
 
     private static FeatureWithLines parseFeaturePath(String pathName) {
-        return create(FeaturePath.parse(pathName), Collections.<Integer>emptyList());
+        return create(FeaturePath.parse(pathName), Collections.emptyList());
     }
 
     private static List<Integer> toInts(String[] strings) {
-        List<Integer> result = new ArrayList<>();
-        for (String string : strings) {
-            result.add(Integer.parseInt(string));
-        }
-        return result;
+        return Arrays.stream(strings)
+            .map(Integer::parseInt)
+            .collect(Collectors.toList());
     }
 
     public String toString() {

@@ -6,12 +6,12 @@ import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 
 final class TagPredicate implements Predicate<PickleEvent> {
@@ -37,15 +37,10 @@ final class TagPredicate implements Predicate<PickleEvent> {
             return true;
         }
 
-        List<String> tags = new ArrayList<>();
-        for (PickleTag pickleTag : pickleEvent.pickle.getTags()) {
-            tags.add(pickleTag.getName());
-        }
-        for (Expression expression : expressions) {
-            if (!expression.evaluate(tags)) {
-                return false;
-            }
-        }
-        return true;
+        List<String> tags = pickleEvent.pickle.getTags().stream()
+            .map(PickleTag::getName)
+            .collect(toList());
+        return expressions.stream()
+            .allMatch(expression -> expression.evaluate(tags));
     }
 }

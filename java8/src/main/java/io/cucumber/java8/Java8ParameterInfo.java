@@ -6,16 +6,14 @@ import io.cucumber.core.backend.TypeResolver;
 import java.lang.reflect.Type;
 
 final class Java8ParameterInfo implements ParameterInfo {
-    private final Type type;
-    private final TypeResolver typeResolver;
+    private final LambdaTypeResolver typeResolver;
 
-    Java8ParameterInfo(Type type, TypeResolver typeResolver) {
-        this.type = type;
+    Java8ParameterInfo(LambdaTypeResolver typeResolver) {
         this.typeResolver = typeResolver;
     }
 
     public Type getType() {
-        return type;
+        return typeResolver.getType();
     }
 
     @Override
@@ -28,8 +26,4 @@ final class Java8ParameterInfo implements ParameterInfo {
         return typeResolver;
     }
 
-    @Override
-    public String toString() {
-        return type.toString();
-    }
 }

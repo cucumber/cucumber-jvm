@@ -20,27 +20,22 @@ public class FlatteningIteratorTest {
 
     @Test
     public void flattens_iterators() {
-        final FlatteningIterator<Integer> fi = new FlatteningIterator<Integer>();
+        final FlatteningIterator<Integer> fi = new FlatteningIterator<>();
         fi.push(asList(3, 4).iterator());
         fi.push(asList(1, 2).iterator());
 
         assertThat(toList(fi), is(equalTo(asList(1, 2, 3, 4))));
         assertFalse(fi.hasNext());
 
-        final Executable testMethod = () -> fi.next();
+        final Executable testMethod = fi::next;
         final NoSuchElementException actualThrown = assertThrows(NoSuchElementException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(nullValue()));
     }
 
     private <T> List<T> toList(final Iterator<T> fi) {
-        Iterable<T> i = new Iterable<T>() {
-            @Override
-            public Iterator<T> iterator() {
-                return fi;
-            }
-        };
+        Iterable<T> i = () -> fi;
 
-        List<T> l = new ArrayList<T>();
+        List<T> l = new ArrayList<>();
         for (T o : i) {
             l.add(o);
         }

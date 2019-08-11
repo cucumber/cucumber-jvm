@@ -7,6 +7,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Arrays;
+
 public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
     @Rule
@@ -23,13 +25,11 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         expectedException.expect(new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
             @Override
             protected boolean matchesSafely(Throwable item) {
-                for (StackTraceElement stackTraceElement : item.getStackTrace()) {
-                    if(stepDefinition.isDefinedAt(stackTraceElement)){
-                        return SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName());
-                    }
-
-                }
-                return false;
+                return Arrays.stream(item.getStackTrace())
+                    .filter(stepDefinition::isDefinedAt)
+                    .findFirst()
+                    .filter(stackTraceElement -> SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName()))
+                    .isPresent();
             }
         });
 
