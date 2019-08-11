@@ -26,6 +26,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Load `Backend` implementations via SPI ([#1450](https://github.com/cucumber/cucumber-jvm/issues/1450), [#1463](https://github.com/cucumber/cucumber-jvm/issues/1463) John Patrick, M.P. Korstanje)
  * [Core] Load `ObjectFactory` via SPI
  * [Core] Share object factory  between all backend implementations
+    - [CDI2] No longer depends on `cucumber-java`
+    - [Guice] No longer depends on `cucumber-java`
+    - [Needle] No longer depends on `cucumber-java`
+    - [Pico] No longer depends on `cucumber-java`
+    - [Spring] No longer depends on `cucumber-java`
+    - [Weld] No longer depends on `cucumber-java`
  * [Core] Use feature file language to parse numbers in the type registry
    - Unless explicitly set using the `TypeRegistryConfigurer`
  * [Core] Use Java Time API in Events ([#1620](https://github.com/cucumber/cucumber-jvm/pull/1620) Yatharth Zutshi)
@@ -37,7 +43,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Upgrade `datatable` to 2.0.0 
     - Empty cells are `null` values in `DataTable` ([1617](https://github.com/cucumber/cucumber-jvm/issues/1617) M.P. Korstanje)        
     - Improve handling of tables without header ([#cucumber/540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
-    - Remove DataTableType convenience methods ([1643](https://github.com/cucumber/cucumber-jvm/issues/1643) M.P. Korstanje) 
+    - Remove DataTableType convenience methods ([1643](https://github.com/cucumber/cucumber-jvm/issues/1643) M.P. Korstanje)  
      
 ### Deprecated
  * [Core] Deprecate `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
