@@ -18,6 +18,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449) M.P. Korstanje)
    - Adds `Automatic-Module-Name` to each module
    - Roots packages in `io.cucumber.<module>`
+   - Use `find . -name '*.java' -exec sed -i 's/import cucumber.api/import io.cucumber/g' {} \; -exec sed -i 's/cucumber.CucumberOptions/cucumber.junit.CucumberOptions/g' {} \;` to adopt 90% of the new package structure
    - Use @API Guardian annotations to mark the public API ([#1536](https://github.com/cucumber/cucumber-jvm/issues/1536) M.P. Korstanje)
  * [All] Compile using source and target level 8 ([#1611](https://github.com/cucumber/cucumber-jvm/issues/1611) M.P. Korstanje)
  * [Java8] Remove `cucumber-java8` dependency on `cucumber-java`
