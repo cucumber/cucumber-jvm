@@ -43,12 +43,13 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 /**
  * This is the main entry point for running Cucumber features from the CLI.
@@ -94,13 +95,13 @@ public final class Runtime {
         }
 
         final List<Future<?>> executingPickles = features.stream()
-                .flatMap(feature -> feature.getPickles().stream())
-                .filter(filter)
-                .collect(Collectors.collectingAndThen(Collectors.toList(),
-                        list -> pickleOrder.orderPickleEvents(list).stream()))
-                .limit(limit > 0 ? limit : Integer.MAX_VALUE)
-                .map(pickleEvent -> executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)))
-                .collect(Collectors.toList());
+            .flatMap(feature -> feature.getPickles().stream())
+            .filter(filter)
+            .collect(collectingAndThen(toList(),
+                list -> pickleOrder.orderPickleEvents(list).stream()))
+            .limit(limit > 0 ? limit : Integer.MAX_VALUE)
+            .map(pickleEvent -> executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)))
+            .collect(toList());
 
         executor.shutdown();
 

@@ -14,7 +14,6 @@ import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -45,6 +44,8 @@ import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Cucumber JUnit Runner.
@@ -153,15 +154,9 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<PickleEvent> filters = new Filters(runtimeOptions);
         this.children = features.stream()
-                .map(cucumberFeature -> {
-                    try {
-                        return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOptions);
-                    } catch (InitializationError e) {
-                        throw new CucumberException(e);
-                    }
-                })
-                .filter(featureRunner -> !featureRunner.isEmpty())
-                .collect(Collectors.toList());
+                .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
+                .filter(runner -> !runner.isEmpty())
+                .collect(toList());
     }
 
     @Override

@@ -1,10 +1,11 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runtime.RunnerSupplier;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.runner.Runner;
+import io.cucumber.core.runtime.RunnerSupplier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -27,8 +28,12 @@ final class PickleRunners {
 
     }
 
-    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {
-        return new WithStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
+    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions options) {
+        try {
+            return new WithStepDescriptions(runnerSupplier, pickleEvent, options);
+        } catch (InitializationError e) {
+            throw new CucumberException("Failed to create scenario runner", e);
+        }
     }
 
 
@@ -41,7 +46,7 @@ final class PickleRunners {
         private final RunnerSupplier runnerSupplier;
         private final PickleEvent pickleEvent;
         private final JUnitOptions jUnitOptions;
-        private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
+        private final Map<PickleStep, Description> stepDescriptions = new HashMap<>();
         private Description description;
 
         WithStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {

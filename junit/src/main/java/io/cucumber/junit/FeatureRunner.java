@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.PickleRunners.withStepDescriptions;
+import static java.util.stream.Collectors.toList;
 
 final class FeatureRunner extends ParentRunner<PickleRunner> {
 
@@ -27,19 +28,23 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    FeatureRunner(CucumberFeature cucumberFeature, Predicate<PickleEvent> filter, RunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
+    static FeatureRunner create(CucumberFeature feature, Predicate<PickleEvent> filter, RunnerSupplier runners, JUnitOptions options) {
+        try {
+            return new FeatureRunner(feature, filter, runners, options);
+        } catch (InitializationError e) {
+            throw new CucumberException("Failed to create scenario runner", e);
+        }
+    }
+
+    private FeatureRunner(CucumberFeature feature, Predicate<PickleEvent> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
         super(null);
-        this.cucumberFeature = cucumberFeature;
-        this.children = cucumberFeature.getPickles().stream().filter(filter).map(pickleEvent -> {
-            if (jUnitOptions.stepNotifications()) {
-                try {
-                    return withStepDescriptions(runnerSupplier, pickleEvent, jUnitOptions);
-                } catch (InitializationError e) {
-                    throw new CucumberException("Failed to create scenario runner", e);
-                }
-            }
-            return withNoStepDescriptions(cucumberFeature.getName(), runnerSupplier, pickleEvent, jUnitOptions);
-        }).collect(Collectors.toList());
+        this.cucumberFeature = feature;
+        this.children = feature.getPickles().stream()
+            .filter(filter).
+                map(pickleEvent -> options.stepNotifications()
+                    ? withStepDescriptions(runners, pickleEvent, options)
+                    : withNoStepDescriptions(feature.getName(), runners, pickleEvent, options))
+            .collect(toList());
     }
 
     @Override
