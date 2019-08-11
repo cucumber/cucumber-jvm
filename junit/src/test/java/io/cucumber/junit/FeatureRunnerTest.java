@@ -185,7 +185,7 @@ public class FeatureRunnerTest {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory, typeRegistrySupplier);
-        return new FeatureRunner(cucumberFeature, filters, runnerSupplier, junitOption);
+        return FeatureRunner.create(cucumberFeature, filters, runnerSupplier, junitOption);
     }
 
     @Test
@@ -364,7 +364,7 @@ public class FeatureRunnerTest {
             throw illegalStateException;
         };
 
-        FeatureRunner featureRunner = new FeatureRunner(feature, filters, runnerSupplier, new JUnitOptions());
+        FeatureRunner featureRunner = FeatureRunner.create(feature, filters, runnerSupplier, new JUnitOptions());
 
         RunNotifier notifier = mock(RunNotifier.class);
         featureRunner.runChild(featureRunner.getChildren().get(0), notifier);

@@ -42,11 +42,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 /**
  * This is the main entry point for running Cucumber features from the CLI.
@@ -58,21 +61,25 @@ public final class Runtime {
     private final ExitStatus exitStatus;
 
     private final RunnerSupplier runnerSupplier;
-    private final Filters filters;
+    private final Predicate<PickleEvent> filter;
+    private final int limit;
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
 
+
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
-                    final Filters filters,
+                    final Predicate<PickleEvent> filter,
+                    final int limit,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
                     final ExecutorService executor,
                     final PickleOrder pickleOrder) {
-        this.filters = filters;
         this.bus = bus;
+        this.filter = filter;
+        this.limit = limit;
         this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
@@ -87,22 +94,14 @@ public final class Runtime {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
         }
 
-        final List<PickleEvent> filteredEvents = new ArrayList<>();
-        for (CucumberFeature feature : features) {
-            for (final PickleEvent pickleEvent : feature.getPickles()) {
-                if (filters.matchesFilters(pickleEvent)) {
-                    filteredEvents.add(pickleEvent);
-                }
-            }
-        }
-
-        final List<PickleEvent> orderedEvents = pickleOrder.orderPickleEvents(filteredEvents);
-        final List<PickleEvent> limitedEvents = filters.limitPickleEvents(orderedEvents);
-
-        final List<Future<?>> executingPickles = new ArrayList<>();
-        for (final PickleEvent pickleEvent : limitedEvents) {
-            executingPickles.add(executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)));
-        }
+        final List<Future<?>> executingPickles = features.stream()
+            .flatMap(feature -> feature.getPickles().stream())
+            .filter(filter)
+            .collect(collectingAndThen(toList(),
+                list -> pickleOrder.orderPickleEvents(list).stream()))
+            .limit(limit > 0 ? limit : Integer.MAX_VALUE)
+            .map(pickleEvent -> executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)))
+            .collect(toList());
 
         executor.shutdown();
 
@@ -229,10 +228,11 @@ public final class Runtime {
                 ? this.featureSupplier
                 : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
-            final Filters filters = new Filters(runtimeOptions);
+            final Predicate<PickleEvent> filter = new Filters(runtimeOptions);
+            final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
 
-            return new Runtime(exitStatus, eventBus, filters, runnerSupplier, featureSupplier, executor, pickleOrder);
+            return new Runtime(exitStatus, eventBus, filter, limit, runnerSupplier, featureSupplier, executor, pickleOrder);
         }
     }
 

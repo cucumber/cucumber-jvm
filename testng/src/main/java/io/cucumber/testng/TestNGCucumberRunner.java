@@ -23,9 +23,9 @@ import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -33,8 +33,11 @@ import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Glue code for running Cucumber via TestNG.
@@ -50,7 +53,7 @@ import java.util.List;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
     private final EventBus bus;
-    private final Filters filters;
+    private final Predicate<PickleEvent> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
@@ -121,17 +124,14 @@ public final class TestNGCucumberRunner {
      */
     public Object[][] provideScenarios() {
         try {
-            List<Object[]> scenarios = new ArrayList<>();
-            List<CucumberFeature> features = getFeatures();
-            for (CucumberFeature feature : features) {
-                for (PickleEvent pickle : feature.getPickles()) {
-                    if (filters.matchesFilters(pickle)) {
-                        scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
-                            new CucumberFeatureWrapperImpl(feature)});
-                    }
-                }
-            }
-            return scenarios.toArray(new Object[][]{});
+            return getFeatures().stream()
+                .flatMap(feature -> feature.getPickles().stream()
+                    .filter(filters)
+                    .map(pickle -> new Object[]{
+                        new PickleEventWrapperImpl(pickle),
+                        new CucumberFeatureWrapperImpl(feature)}))
+                .collect(toList())
+                .toArray(new Object[0][0]);
         } catch (CucumberException e) {
             return new Object[][]{new Object[]{new CucumberExceptionWrapper(e), null}};
         }

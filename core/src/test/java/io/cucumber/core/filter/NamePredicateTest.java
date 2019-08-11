@@ -27,7 +27,7 @@ public class NamePredicateTest {
         PickleEvent pickleEvent = createPickleWithName("a pickle name");
         NamePredicate predicate = new NamePredicate(asList(Pattern.compile("^a pickle name$")));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class NamePredicateTest {
         PickleEvent pickleEvent = createPickleWithName("a pickle name with suffix");
         NamePredicate predicate = new NamePredicate(asList(Pattern.compile("^a pickle name$")));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class NamePredicateTest {
         PickleEvent pickleEvent = createPickleWithName("a pickle name with suffix");
         NamePredicate predicate = new NamePredicate(asList(Pattern.compile("a pickle name")));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class NamePredicateTest {
         PickleEvent pickleEvent = createPickleWithName("a pickleEvent name");
         NamePredicate predicate = new NamePredicate(asList(Pattern.compile("a .* name")));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     private PickleEvent createPickleWithName(String pickleName) {

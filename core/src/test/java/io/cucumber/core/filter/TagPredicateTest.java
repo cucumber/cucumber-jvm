@@ -34,7 +34,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
         TagPredicate predicate = new TagPredicate("");
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
 
@@ -43,7 +43,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
         TagPredicate predicate = new TagPredicate(asList("", ""));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(Collections.<PickleTag>emptyList());
         TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
         TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG, BAR_TAG));
         TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(BAR_TAG));
         TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(Collections.<PickleTag>emptyList());
         TagPredicate predicate = new TagPredicate(asList(NOT_FOO_TAG_VALUE));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
         TagPredicate predicate = new TagPredicate(asList(NOT_FOO_TAG_VALUE));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(BAR_TAG));
         TagPredicate predicate = new TagPredicate(asList(NOT_FOO_TAG_VALUE));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG, BAR_TAG));
         TagPredicate predicate = new TagPredicate(asList(FOO_AND_BAR_TAG_VALUE));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
         TagPredicate predicate = new TagPredicate(asList(FOO_AND_BAR_TAG_VALUE));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
         TagPredicate predicate = new TagPredicate(asList(FOO_OR_BAR_TAG_VALUE));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TagPredicateTest {
         PickleEvent pickleEvent = createPickleWithTags(Collections.<PickleTag>emptyList());
         TagPredicate predicate = new TagPredicate(asList(FOO_OR_BAR_TAG_VALUE));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     private PickleEvent createPickleWithTags(List<PickleTag> tags) {
