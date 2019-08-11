@@ -56,49 +56,6 @@ public final class JSONFormatter implements EventListener {
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
     
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            handleTestSourceRead(event);
-        }
-    };
-    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
-        @Override
-        public void receive(TestStepStarted event) {
-            handleTestStepStarted(event);
-        }
-    };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
-        @Override
-        public void receive(WriteEvent event) {
-            handleWrite(event);
-        }
-    };
-    private EventHandler<EmbedEvent> embedEventhandler = new EventHandler<EmbedEvent>() {
-        @Override
-        public void receive(EmbedEvent event) {
-            handleEmbed(event);
-        }
-    };
-
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -106,13 +63,13 @@ public final class JSONFormatter implements EventListener {
     
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
-        publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
+        publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     private void handleTestSourceRead(TestSourceRead event) {

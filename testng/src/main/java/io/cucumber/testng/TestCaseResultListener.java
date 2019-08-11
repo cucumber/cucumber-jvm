@@ -14,12 +14,7 @@ class TestCaseResultListener {
     private final EventBus bus;
     private boolean strict;
     private Result result;
-    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
-        @Override
-        public void receive(TestCaseFinished event) {
-            receiveResult(event.getResult());
-        }
-    };
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> receiveResult(event.getResult());
 
     TestCaseResultListener(EventBus bus, boolean strict) {
         this.strict = strict;

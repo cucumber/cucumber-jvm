@@ -57,7 +57,7 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
     }
 
     private Object execute(String fromValue, Type toValueType) throws Throwable {
-        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, 0, fromValue, toValueType);
+        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

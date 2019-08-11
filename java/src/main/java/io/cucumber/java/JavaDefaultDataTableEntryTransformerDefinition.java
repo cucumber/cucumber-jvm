@@ -90,7 +90,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         } else {
             args = new Object[]{fromValue, toValueType};
         }
-        return (T) Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, 0, args);
+        return (T) Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
 }

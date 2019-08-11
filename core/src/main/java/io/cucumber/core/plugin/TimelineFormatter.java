@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.TestCaseEvent;
 import io.cucumber.core.event.TestCaseFinished;
@@ -45,31 +44,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         "/io/cucumber/core/plugin/timeline/chosen-sprite.png"
     };
 
-    private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            testSources.addTestSourceReadEvent(event.getUri(), event);
-        }
-    };
-    private final EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private final EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
-        @Override
-        public void receive(final TestCaseFinished event) {
-            handleTestCaseFinished(event);
-        }
-    };
-    private final EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(final TestRunFinished event) {
-            finishReport(event);
-        }
-    };
-
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final Map<String, TestData> allTests = new HashMap<>();
     private final Map<Long, GroupData> allGroups = new HashMap<>();
@@ -86,12 +60,17 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         this.reportJs = reportJs;
     }
 
+
     @Override
     public void setEventPublisher(final EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class,  this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
+        publisher.registerHandlerFor(TestRunFinished.class, this::finishReport);
+    }
+
+    private void handleTestSourceRead(TestSourceRead event) {
+        testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {

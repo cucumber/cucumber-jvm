@@ -16,13 +16,6 @@ public final class StepExpressionFactory {
     private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
 
-    private static final DocStringTransformer<String> DOC_STRING_IDENTITY = new DocStringTransformer<String>() {
-        @Override
-        public String transform(String input) {
-            return input;
-        }
-    };
-
     public StepExpressionFactory(TypeRegistry registry) {
         this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
@@ -32,13 +25,9 @@ public final class StepExpressionFactory {
         if (expressionString == null) throw new NullPointerException("expression can not be null");
         Expression expression = expressionFactory.createExpression(expressionString);
 
-        RawTableTransformer<DataTable> toDataTable = new RawTableTransformer<DataTable>() {
-            @Override
-            public DataTable transform(List<List<String>> raw) {
-                return DataTable.create(raw, tableConverter);
-            }
-        };
-        return new StepExpression(expression, DOC_STRING_IDENTITY, toDataTable);
+        RawTableTransformer<DataTable> toDataTable = raw -> DataTable.create(raw, tableConverter);
+        DocStringTransformer<Object> toDocString = (String input) -> input;
+        return new StepExpression(expression, toDocString, toDataTable);
     }
 
     public StepExpression createExpression(String expressionString, Type tableOrDocStringType) {
@@ -64,26 +53,20 @@ public final class StepExpressionFactory {
             throw registerTypeInConfiguration(expressionString, e);
         }
 
-        RawTableTransformer<?> tableTransform = new RawTableTransformer<Object>() {
-            @Override
-            public Object transform(List<List<String>> raw) {
-                DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
-                Type targetType = tableOrDocStringType.resolve();
-                return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
-            }
+        RawTableTransformer<?> tableTransform = (List<List<String>> raw) -> {
+            DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
+            Type targetType = tableOrDocStringType.resolve();
+            return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
         };
 
-        DocStringTransformer<?> docStringTransform = new DocStringTransformer<Object>() {
-            @Override
-            public Object transform(String docString) {
-                Type targetType = tableOrDocStringType.resolve();
-                if (Object.class.equals(targetType)) {
-                    return docString;
-                }
-
-                List<List<String>> raw = singletonList(singletonList(docString));
-                return DataTable.create(raw, StepExpressionFactory.this.tableConverter).convert(targetType, transpose);
+        DocStringTransformer<?> docStringTransform = (String docString) -> {
+            Type targetType = tableOrDocStringType.resolve();
+            if (Object.class.equals(targetType)) {
+                return docString;
             }
+
+            List<List<String>> raw = singletonList(singletonList(docString));
+            return DataTable.create(raw, StepExpressionFactory.this.tableConverter).convert(targetType, transpose);
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
     }

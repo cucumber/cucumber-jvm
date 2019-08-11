@@ -14,13 +14,7 @@ public class SimpleNameGetterProvider implements InjectionProvider<NameGetter> {
 
     @Override
     public NameGetter getInjectedObject(final Class<?> injectionPointType) {
-        return new NameGetter() {
-
-            @Override
-            public String getName() {
-                return FOO;
-            }
-        };
+        return () -> FOO;
     }
 
     @Override

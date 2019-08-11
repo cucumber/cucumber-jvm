@@ -8,12 +8,13 @@ import io.cucumber.tagexpressions.TagExpressionParser;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 
-public final class TagPredicate implements PicklePredicate {
+public final class TagPredicate implements Predicate<PickleEvent> {
     private final List<Expression> expressions = new ArrayList<>();
 
     public TagPredicate(String tagExpression) {
@@ -31,7 +32,7 @@ public final class TagPredicate implements PicklePredicate {
     }
 
     @Override
-    public boolean apply(PickleEvent pickleEvent) {
+    public boolean test(PickleEvent pickleEvent) {
         return apply(pickleEvent.pickle.getTags());
     }
 

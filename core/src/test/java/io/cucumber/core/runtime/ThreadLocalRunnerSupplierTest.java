@@ -54,19 +54,9 @@ public class ThreadLocalRunnerSupplierTest {
     @Test
     public void should_create_a_runner_per_thread() throws InterruptedException {
         final Runner[] runners = new Runner[2];
-        Thread thread0 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runners[0] = runnerSupplier.get();
-            }
-        });
+        Thread thread0 = new Thread(() -> runners[0] = runnerSupplier.get());
 
-        Thread thread1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runners[1] = runnerSupplier.get();
-            }
-        });
+        Thread thread1 = new Thread(() -> runners[1] = runnerSupplier.get());
 
         thread0.start();
         thread1.start();

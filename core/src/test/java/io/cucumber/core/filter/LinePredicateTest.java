@@ -31,7 +31,7 @@ public class LinePredicateTest {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4)));
         LinePredicate predicate = new LinePredicate(singletonMap(URI.create("another_path/file.feature"), asList(8)));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class LinePredicateTest {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(8)));
         LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(4, 8)));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class LinePredicateTest {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4), pickleLocation(8)));
         LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(8)));
 
-        assertTrue(predicate.apply(pickleEvent));
+        assertTrue(predicate.test(pickleEvent));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class LinePredicateTest {
         PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4), pickleLocation(8)));
         LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(10)));
 
-        assertFalse(predicate.apply(pickleEvent));
+        assertFalse(predicate.test(pickleEvent));
     }
 
     private PickleEvent createPickleEventWithLocations(String uri, List<PickleLocation> locations) {

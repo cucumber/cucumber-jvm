@@ -27,7 +27,7 @@ public class RpnCalculatorStepdefs {
         calc.push("+");
     }
 
-    @Given("I press (.+)")
+    @Given("^I press (.+)$")
     public void I_press(String what) {
         calc.push(what);
     }

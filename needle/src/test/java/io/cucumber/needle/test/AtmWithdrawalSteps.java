@@ -46,12 +46,7 @@ public class AtmWithdrawalSteps {
     private final InjectionProvider<?> valueProvider = new ValueInjectionProvider(VALUE);
 
     @NeedleInjectionProvider
-    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = new InjectionProviderInstancesSupplier() {
-        @Override
-        public Set<InjectionProvider<?>> get() {
-            return Collections.<InjectionProvider<?>>singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
-        }
-    };
+    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = () -> Collections.<InjectionProvider<?>>singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
 
     /*
      * This is what we test

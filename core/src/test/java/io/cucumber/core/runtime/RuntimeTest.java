@@ -8,7 +8,6 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
@@ -33,9 +32,7 @@ import io.cucumber.core.runner.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 
@@ -43,13 +40,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 import static io.cucumber.core.runner.TestHelper.feature;
@@ -76,7 +67,6 @@ public class RuntimeTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
-    private final TypeRegistry TYPE_REGISTRY = new TypeRegistry(Locale.ENGLISH);
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Test
@@ -468,17 +458,9 @@ public class RuntimeTest {
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
-            @Override
-            public void setEventPublisher(EventPublisher publisher) {
-                publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
-                    @Override
-                    public void receive(TestStepFinished event) {
-                        throw new RuntimeException("boom");
-                    }
-                });
-            }
-        };
+        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
+            throw new RuntimeException("boom");
+        });
 
         Executable testMethod = () -> TestHelper.builder()
             .withFeatures(Arrays.asList(feature1, feature2))
@@ -510,36 +492,25 @@ public class RuntimeTest {
         final CountDownLatch threadBlocked = new CountDownLatch(1);
         final CountDownLatch interruptHit = new CountDownLatch(1);
 
-        final ConcurrentEventListener brokenEventListener = new ConcurrentEventListener() {
+        final ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
             @Override
-            public void setEventPublisher(EventPublisher publisher) {
-                publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
-                    @Override
-                    public void receive(TestStepFinished event) {
-                        try {
-                            threadBlocked.countDown();
-                            HOURS.sleep(1);
-                        } catch (InterruptedException ignored) {
-                            interruptHit.countDown();
-                        }
-                    }
-                });
-            }
-        };
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                TestHelper.builder()
-                    .withFeatures(Arrays.asList(feature1, feature2))
-                    .withFormatterUnderTest(brokenEventListener)
-                    .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-                    .withRuntimeArgs("--threads", "2")
-                    .build()
-                    .run();
-
+            public void receive(TestStepFinished event) {
+                try {
+                    threadBlocked.countDown();
+                    HOURS.sleep(1);
+                } catch (InterruptedException ignored) {
+                    interruptHit.countDown();
+                }
             }
         });
+
+        Thread thread = new Thread(() -> TestHelper.builder()
+            .withFeatures(Arrays.asList(feature1, feature2))
+            .withFormatterUnderTest(brokenEventListener)
+            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+            .withRuntimeArgs("--threads", "2")
+            .build()
+            .run());
 
         thread.start();
         threadBlocked.await(1, SECONDS);
@@ -562,17 +533,12 @@ public class RuntimeTest {
 
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
-        Plugin eventListener = new EventListener() {
+        Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
             @Override
-            public void setEventPublisher(EventPublisher publisher) {
-                publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
-                    @Override
-                    public void receive(StepDefinedEvent event) {
-                        stepDefinedEvents.add(event.getStepDefinition());
-                    }
-                });
+            public void receive(StepDefinedEvent event) {
+                stepDefinedEvents.add(event.getStepDefinition());
             }
-        };
+        });
 
 
         final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
@@ -596,12 +562,7 @@ public class RuntimeTest {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
+        FeatureSupplier featureSupplier = () -> singletonList(feature);
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(eventListener)
@@ -686,41 +647,6 @@ public class RuntimeTest {
             .withBackendSupplier(backendSupplier)
             .withEventBus(bus)
             .build();
-    }
-
-    private Runtime createRuntimeWithMockedGlue(final HookDefinition hook,
-                                                final HookType hookType,
-                                                final CucumberFeature feature,
-                                                String... runtimeArgs) {
-        TestBackendSupplier testBackendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
-                    for (Step step : child.getSteps()) {
-                        mockMatch(glue, step.getText());
-                    }
-                }
-                mockHook(glue, hook, hookType);
-            }
-        };
-
-        FeatureSupplier featureSupplier = new FeatureSupplier() {
-            @Override
-            public List<CucumberFeature> get() {
-                return singletonList(feature);
-            }
-        };
-
-        return Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(runtimeArgs)
-                    .build()
-            )
-            .withBackendSupplier(testBackendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .build();
-
     }
 
     private void mockMatch(Glue glue, String text) {

@@ -20,7 +20,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookTestStep;
 import io.cucumber.core.event.HookType;
@@ -84,49 +83,6 @@ public final class HTMLFormatter implements EventListener {
     private Examples currentExamples;
     private int embeddedIndex;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            handleTestSourceRead(event);
-        }
-    };
-    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
-        @Override
-        public void receive(TestStepStarted event) {
-            handleTestStepStarted(event);
-        }
-    };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<EmbedEvent> embedEventhandler = new EventHandler<EmbedEvent>() {
-        @Override
-        public void receive(EmbedEvent event) {
-            handleEmbed(event);
-        }
-    };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
-        @Override
-        public void receive(WriteEvent event) {
-            handleWrite(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
-
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HTMLFormatter(URL htmlReportDir) {
         this(htmlReportDir, createJsOut(htmlReportDir));
@@ -139,13 +95,13 @@ public final class HTMLFormatter implements EventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
+        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     private void handleTestSourceRead(TestSourceRead event) {

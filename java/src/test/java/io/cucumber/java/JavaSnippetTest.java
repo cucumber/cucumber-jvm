@@ -124,17 +124,6 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithDollarSigns() {
-        String expected = "" +
-            "@Given(\"I have ${int}\")\n" +
-            "public void i_have_$(Integer int1) {\n" +
-            "    // Write code here that turns the phrase above into concrete actions\n" +
-            "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
-        assertThat(snippetFor("I have $5"), is(equalTo(expected)));
-    }
-
-    @Test
     public void generatesSnippetWithQuestionMarks() {
         String expected = "" +
             "@Given(\"is there an error?:\")\n" +

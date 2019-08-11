@@ -27,48 +27,13 @@ final class JUnitReporter {
     TestNotifier stepNotifier; // package-private for testing
     private PickleRunner pickleRunner;
     private RunNotifier runNotifier;
-    TestNotifier pickleRunnerNotifier; // package-private for testing
+    private TestNotifier pickleRunnerNotifier;
     ArrayList<Throwable> stepErrors; // package-private for testing
-    private final EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
+    private final EventHandler<TestStepStarted> testStepStartedHandler = this::handTestStepStarted;
+    private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = this::handleTestCaseResult;
 
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted();
-        }
-
-    };
-    private final EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
-
-        @Override
-        public void receive(TestStepStarted event) {
-            if (event.getTestStep() instanceof PickleStepTestStep) {
-                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-                handleStepStarted(testStep.getPickleStep());
-            }
-        }
-
-    };
-    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
-
-        @Override
-        public void receive(TestStepFinished event) {
-            if (event.getTestStep() instanceof PickleStepTestStep) {
-                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-                handleStepResult(testStep, event.getResult());
-            } else {
-                handleHookResult(event.getResult());
-            }
-        }
-
-    };
-    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
-
-        @Override
-        public void receive(TestCaseFinished event) {
-            handleTestCaseResult(event.getResult());
-        }
-
-    };
 
     JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
@@ -94,9 +59,17 @@ final class JUnitReporter {
         pickleRunnerNotifier = new EachTestNotifier(runNotifier, pickleRunner.getDescription());
     }
 
-    void handleTestCaseStarted() {
+    void handleTestCaseStarted(TestCaseStarted testCaseStarted) {
         pickleRunnerNotifier.fireTestStarted();
         stepErrors = new ArrayList<Throwable>();
+    }
+
+
+    private void handTestStepStarted(TestStepStarted event) {
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+            handleStepStarted(testStep.getPickleStep());
+        }
     }
 
     void handleStepStarted(gherkin.pickles.PickleStep step) {
@@ -109,38 +82,47 @@ final class JUnitReporter {
         stepNotifier.fireTestStarted();
     }
 
+    private void handleTestStepFinished(TestStepFinished event) {
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+            handleStepResult(testStep, event.getResult());
+        } else {
+            handleHookResult(event.getResult());
+        }
+    }
+
     void handleStepResult(PickleStepTestStep testStep, Result result) {
         Throwable error = result.getError();
         switch (result.getStatus()) {
-        case PASSED:
-            // do nothing
-            break;
-        case SKIPPED:
-            if (error == null) {
-                error = new SkippedThrowable(STEP);
-            } else {
+            case PASSED:
+                // do nothing
+                break;
+            case SKIPPED:
+                if (error == null) {
+                    error = new SkippedThrowable(STEP);
+                } else {
+                    stepErrors.add(error);
+                }
+                stepNotifier.addFailedAssumption(error);
+                break;
+            case PENDING:
                 stepErrors.add(error);
-            }
-            stepNotifier.addFailedAssumption(error);
-            break;
-        case PENDING:
-            stepErrors.add(error);
-            addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
-            break;
-        case UNDEFINED:
-            if (error == null) {
-                error = new UndefinedThrowable();
-            }
-            stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
-            addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
-            break;
-        case AMBIGUOUS:
-        case FAILED:
-            stepErrors.add(error);
-            stepNotifier.addFailure(error);
-            break;
-        default:
-            throw new IllegalStateException("Unexpected result status: " + result.getStatus());
+                addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+                break;
+            case UNDEFINED:
+                if (error == null) {
+                    error = new UndefinedThrowable();
+                }
+                stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
+                addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+                break;
+            case AMBIGUOUS:
+            case FAILED:
+                stepErrors.add(error);
+                stepNotifier.addFailure(error);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected result status: " + result.getStatus());
         }
         stepNotifier.fireTestFinished();
     }
@@ -151,31 +133,32 @@ final class JUnitReporter {
         }
     }
 
-    void handleTestCaseResult(Result result) {
+    void handleTestCaseResult(TestCaseFinished event) {
+        Result result = event.getResult();
         switch (result.getStatus()) {
-        case PASSED:
-            // do nothing
-            break;
-        case SKIPPED:
-            if (stepErrors.isEmpty()) {
-                stepErrors.add(new SkippedThrowable(SCENARIO));
-            }
-            stepErrors.stream()
-                .findFirst()
-                .ifPresent(error -> pickleRunnerNotifier.addFailedAssumption(error));
-            break;
-        case PENDING:
-        case UNDEFINED:
-            stepErrors.stream()
-                .findFirst()
-                .ifPresent(error -> addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error));
-            break;
-        case AMBIGUOUS:
-        case FAILED:
-            for (Throwable error : stepErrors) {
-                pickleRunnerNotifier.addFailure(error);
-            }
-            break;
+            case PASSED:
+                // do nothing
+                break;
+            case SKIPPED:
+                if (stepErrors.isEmpty()) {
+                    stepErrors.add(new SkippedThrowable(SCENARIO));
+                }
+                stepErrors.stream()
+                    .findFirst()
+                    .ifPresent(error -> pickleRunnerNotifier.addFailedAssumption(error));
+                break;
+            case PENDING:
+            case UNDEFINED:
+                stepErrors.stream()
+                    .findFirst()
+                    .ifPresent(error -> addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error));
+                break;
+            case AMBIGUOUS:
+            case FAILED:
+                for (Throwable error : stepErrors) {
+                    pickleRunnerNotifier.addFailure(error);
+                }
+                break;
         }
         pickleRunnerNotifier.fireTestFinished();
     }

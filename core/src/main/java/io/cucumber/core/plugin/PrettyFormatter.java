@@ -42,43 +42,6 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private Examples currentExamples;
     private int locationIndentation;
 
-    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
-        @Override
-        public void receive(TestSourceRead event) {
-            handleTestSourceRead(event);
-        }
-    };
-    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
-        @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event);
-        }
-    };
-    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
-        @Override
-        public void receive(TestStepStarted event) {
-            handleTestStepStarted(event);
-        }
-    };
-    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event);
-        }
-    };
-    private EventHandler<WriteEvent> writeEventhandler = new EventHandler<WriteEvent>() {
-        @Override
-        public void receive(WriteEvent event) {
-            handleWrite(event);
-        }
-    };
-    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
-        @Override
-        public void receive(TestRunFinished event) {
-            finishReport();
-        }
-    };
-
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public PrettyFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -87,12 +50,12 @@ public final class PrettyFormatter implements EventListener, ColorAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestStepStarted.class, this::handleTestStepStarted);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     @Override

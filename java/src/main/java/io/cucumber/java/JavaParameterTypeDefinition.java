@@ -81,7 +81,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
             args = captureGroups;
         }
 
-        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, 0, args);
+        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
 }

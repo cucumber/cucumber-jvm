@@ -185,23 +185,16 @@ public class StepDefinitionMatchTest {
     public void throws_could_not_convert_exception_for_singleton_table_dimension_mismatch() {
         PickleTable table = new PickleTable(
             asList(
-                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "A"), new PickleCell(mock(PickleLocation.class), "B"))),
-                new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "C"), new PickleCell(mock(PickleLocation.class), "D")))
+                new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "A"))),
+                new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "B"))),
+                new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "C"))),
+                new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), "D")))
             )
         );
 
-        typeRegistry.defineDataTableType(new DataTableType(
-            ItemQuantity.class,
-            new TableCellTransformer<ItemQuantity>() {
-                @Override
-                public ItemQuantity transform(String s) {
-                    return new ItemQuantity(s);
-                }
-            }
+        typeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new ));
 
-        ));
-
-        PickleStep step = new PickleStep("I have some cukes in my belly", singletonList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
+        PickleStep step = new PickleStep("I have some cukes in my belly", singletonList(table), singletonList(mock(PickleLocation.class)));
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);

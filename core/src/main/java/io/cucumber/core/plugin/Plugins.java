@@ -33,12 +33,7 @@ public final class Plugins {
 
     private static EventPublisher createCanonicalOrderEventPublisher(EventPublisher eventPublisher) {
         final CanonicalOrderEventPublisher canonicalOrderEventPublisher = new CanonicalOrderEventPublisher();
-        eventPublisher.registerHandlerFor(Event.class, new EventHandler<Event>() {
-            @Override
-            public void receive(Event event) {
-                canonicalOrderEventPublisher.handle(event);
-            }
-        });
+        eventPublisher.registerHandlerFor(Event.class, canonicalOrderEventPublisher::handle);
         return canonicalOrderEventPublisher;
     }
 
