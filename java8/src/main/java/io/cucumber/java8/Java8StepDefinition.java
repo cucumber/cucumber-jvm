@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 final class Java8StepDefinition extends AbstractGlueDefinition implements StepDefinition {
@@ -32,10 +33,11 @@ final class Java8StepDefinition extends AbstractGlueDefinition implements StepDe
                                                         T body) {
         super(body, new Exception().getStackTrace()[3]);
         this.timeoutMillis = timeoutMillis;
-        this.expression = expression;
+        this.expression = requireNonNull(expression, "cucumber-expression may not be null");
         this.parameterInfos = fromTypes(expression, location, resolveRawArguments(bodyClass, body.getClass()));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void execute(final Object[] args) throws Throwable {
         Invoker.invoke(body, method, timeoutMillis, args);

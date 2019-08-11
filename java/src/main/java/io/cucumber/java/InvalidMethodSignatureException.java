@@ -6,6 +6,9 @@ import io.cucumber.core.reflection.MethodFormat;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 final class InvalidMethodSignatureException extends CucumberException {
 
@@ -19,13 +22,13 @@ final class InvalidMethodSignatureException extends CucumberException {
 
     static class InvalidMethodSignatureExceptionBuilder {
 
-        private Method method;
+        private final Method method;
         private final List<Class<?>> annotations = new ArrayList<>();
         private final List<String> signatures = new ArrayList<>();
         private final List<String> notes = new ArrayList<>();
 
         private InvalidMethodSignatureExceptionBuilder(Method method) {
-            this.method = method;
+            this.method = requireNonNull(method);
         }
 
         InvalidMethodSignatureExceptionBuilder addAnnotation(Class<?> annotation) {

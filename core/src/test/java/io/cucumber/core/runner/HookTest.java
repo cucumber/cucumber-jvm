@@ -44,7 +44,7 @@ public class HookTest {
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         final HookDefinition hook = mock(HookDefinition.class);
         TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
-        when(hook.matches(ArgumentMatchers.anyCollection())).thenReturn(true);
+        when(hook.getTagExpression()).thenReturn("");
 
         doAnswer(invocation -> {
             Glue glue = invocation.getArgument(0);

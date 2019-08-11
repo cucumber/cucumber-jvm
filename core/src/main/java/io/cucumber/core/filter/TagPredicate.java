@@ -14,10 +14,10 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 
-public final class TagPredicate implements Predicate<PickleEvent> {
+final class TagPredicate implements Predicate<PickleEvent> {
     private final List<Expression> expressions = new ArrayList<>();
 
-    public TagPredicate(String tagExpression) {
+    TagPredicate(String tagExpression) {
         this(tagExpression.isEmpty() ? emptyList() : singletonList(tagExpression));
     }
 
@@ -33,16 +33,12 @@ public final class TagPredicate implements Predicate<PickleEvent> {
 
     @Override
     public boolean test(PickleEvent pickleEvent) {
-        return apply(pickleEvent.pickle.getTags());
-    }
-
-    public boolean apply(Collection<PickleTag> pickleTags) {
         if (expressions.isEmpty()) {
             return true;
         }
 
         List<String> tags = new ArrayList<>();
-        for (PickleTag pickleTag : pickleTags) {
+        for (PickleTag pickleTag : pickleEvent.pickle.getTags()) {
             tags.add(pickleTag.getName());
         }
         for (Expression expression : expressions) {
@@ -52,5 +48,4 @@ public final class TagPredicate implements Predicate<PickleEvent> {
         }
         return true;
     }
-
 }

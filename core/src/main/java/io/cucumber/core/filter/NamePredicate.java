@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 final class NamePredicate implements Predicate<PickleEvent> {
-    private List<Pattern> patterns;
+    private final List<Pattern> patterns;
 
     NamePredicate(List<Pattern> patterns) {
         this.patterns = patterns;

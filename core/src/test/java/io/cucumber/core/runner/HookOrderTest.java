@@ -186,7 +186,7 @@ public class HookOrderTest {
         for (int order : ordering) {
             HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
             when(hook.getOrder()).thenReturn(order);
-            when(hook.matches(ArgumentMatchers.anyList())).thenReturn(true);
+            when(hook.getTagExpression()).thenReturn("");
             hooks.add(hook);
         }
         return hooks;

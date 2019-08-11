@@ -1,33 +1,32 @@
 package io.cucumber.java8;
 
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.filter.TagPredicate;
 import io.cucumber.core.runtime.Invoker;
 
-import java.util.Collection;
+import static java.util.Objects.requireNonNull;
 
 final class Java8HookDefinition extends AbstractGlueDefinition implements HookDefinition {
-    private final TagPredicate tagPredicate;
+    private final String tagExpression;
     private final int order;
     private final long timeoutMillis;
 
-    private Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, Object body) {
+    private Java8HookDefinition(String tagExpression, int order, long timeoutMillis, Object body) {
         super(body, new Exception().getStackTrace()[3]);
         this.order = order;
         this.timeoutMillis = timeoutMillis;
-        this.tagPredicate = new TagPredicate(tagExpressions);
+        this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
     }
 
-    Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, HookBody hookBody) {
-        this(tagExpressions, order, timeoutMillis, (Object) hookBody);
+    Java8HookDefinition(String tagExpression, int order, long timeoutMillis, HookBody hookBody) {
+        this(tagExpression, order, timeoutMillis, (Object) hookBody);
     }
 
-    Java8HookDefinition(String tagExpressions, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
-        this(tagExpressions, order, timeoutMillis, (Object) hookNoArgsBody);
+    Java8HookDefinition(String tagExpression, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
+        this(tagExpression, order, timeoutMillis, (Object) hookNoArgsBody);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void execute(final Scenario scenario) throws Throwable {
         Object[] args;
@@ -40,8 +39,8 @@ final class Java8HookDefinition extends AbstractGlueDefinition implements HookDe
     }
 
     @Override
-    public boolean matches(Collection<PickleTag> tags) {
-        return tagPredicate.apply(tags);
+    public String getTagExpression() {
+        return tagExpression;
     }
 
     @Override

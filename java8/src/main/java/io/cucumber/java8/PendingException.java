@@ -8,6 +8,7 @@ import org.apiguardian.api.API;
  *
  * @see Java8Snippet
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 @Pending
 @API(status = API.Status.STABLE)
 public final class PendingException extends RuntimeException {

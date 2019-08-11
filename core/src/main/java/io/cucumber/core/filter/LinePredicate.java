@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
-class LinePredicate implements Predicate<PickleEvent> {
-    private Map<URI, ? extends Collection<Integer>> lineFilters;
+final class LinePredicate implements Predicate<PickleEvent> {
+    private final Map<URI, ? extends Collection<Integer>> lineFilters;
 
     LinePredicate(Map<URI, ? extends Collection<Integer>> lineFilters) {
         this.lineFilters = lineFilters;

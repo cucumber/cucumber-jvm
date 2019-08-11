@@ -54,8 +54,8 @@ public class PickleStepTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final Scenario scenario = new Scenario(bus, testCase);
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
-    private HookDefinition afterHookDefinition = mock(HookDefinition.class);
-    private HookDefinition beforeHookDefinition = mock(HookDefinition.class);
+    private CoreHookDefinition afterHookDefinition = mock(CoreHookDefinition.class);
+    private CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
     private final HookTestStep beforeHook = new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
     private final HookTestStep afterHook = new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(

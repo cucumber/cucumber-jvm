@@ -251,7 +251,7 @@ public class TestHelper {
                                      final List<HookDefinition> beforeStepHooks,
                                      final List<HookDefinition> afterStepHooks) throws Throwable {
             HookDefinition hook = mock(HookDefinition.class);
-            when(hook.matches(ArgumentMatchers.<PickleTag>anyCollection())).thenReturn(true);
+            when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {
                 when(hook.getLocation(anyBoolean())).thenReturn(hookLocation);
             }

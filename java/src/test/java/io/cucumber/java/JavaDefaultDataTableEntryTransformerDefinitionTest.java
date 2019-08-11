@@ -138,8 +138,8 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T join(Map<String, String> fromValue) {
-        //noinspection unchecked
         return (T) fromValue.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining());
     }
 

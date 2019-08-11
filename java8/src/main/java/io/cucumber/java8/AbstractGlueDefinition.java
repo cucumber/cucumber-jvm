@@ -5,8 +5,10 @@ import io.cucumber.core.runner.ScenarioScoped;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractGlueDefinition implements ScenarioScoped {
 
@@ -15,9 +17,9 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
     final StackTraceElement location;
 
     AbstractGlueDefinition(Object body, StackTraceElement location) {
-        this.body = body;
+        this.body = requireNonNull(body);
         this.method = getAcceptMethod(body.getClass());
-        this.location = location;
+        this.location = requireNonNull(location);
     }
 
     public final String getLocation(boolean detail) {
