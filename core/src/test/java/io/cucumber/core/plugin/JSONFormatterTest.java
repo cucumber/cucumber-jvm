@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.Result;
@@ -16,7 +15,6 @@ import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
@@ -639,7 +637,7 @@ public class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
             "                }\n" +
             "              },\n" +
             "              {\n" +
@@ -648,7 +646,7 @@ public class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
             "                }\n" +
             "              }\n" +
             "            ],\n" +
@@ -682,7 +680,7 @@ public class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
             "                }\n" +
             "              },\n" +
             "              {\n" +
@@ -691,7 +689,7 @@ public class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
             "                }\n" +
             "              }\n" +
             "            ],\n" +

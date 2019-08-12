@@ -17,12 +17,24 @@ import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
-    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator.comparing(CoreHookDefinition::getOrder);
-    private static final Comparator<CoreHookDefinition> DESCENDING = ASCENDING.reversed();
-
+    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
+        .comparingInt(CoreHookDefinition::getOrder)
+        .thenComparing((a, b) -> {
+            boolean aScenarioScoped = (a instanceof ScenarioScoped);
+            boolean bScenarioScoped = (b instanceof ScenarioScoped);
+            return Boolean.compare(aScenarioScoped, bScenarioScoped);
+        });
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
@@ -71,13 +83,13 @@ final class CachingGlue implements Glue {
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterHooks.sort(DESCENDING);
+        afterHooks.sort(ASCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterStepHooks.sort(DESCENDING);
+        afterStepHooks.sort(ASCENDING);
     }
 
     @Override
@@ -106,19 +118,23 @@ final class CachingGlue implements Glue {
     }
 
     Collection<CoreHookDefinition> getBeforeHooks() {
-        return beforeHooks;
+        return new ArrayList<>(beforeHooks);
     }
 
     Collection<CoreHookDefinition> getBeforeStepHooks() {
-        return beforeStepHooks;
+        return new ArrayList<>(beforeStepHooks);
     }
 
     Collection<CoreHookDefinition> getAfterHooks() {
-        return afterHooks;
+        List<CoreHookDefinition> hooks = new ArrayList<>(afterHooks);
+        Collections.reverse(hooks);
+        return hooks;
     }
 
     Collection<CoreHookDefinition> getAfterStepHooks() {
-        return afterStepHooks;
+        List<CoreHookDefinition> hooks = new ArrayList<>(afterStepHooks);
+        Collections.reverse(hooks);
+        return hooks;
     }
 
     Collection<ParameterTypeDefinition> getParameterTypeDefinitions() {

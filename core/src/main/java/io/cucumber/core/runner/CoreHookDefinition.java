@@ -26,19 +26,23 @@ class CoreHookDefinition {
         this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
     }
 
-    public void execute(Scenario scenario) throws Throwable {
+    void execute(Scenario scenario) throws Throwable {
         delegate.execute(scenario);
     }
 
-    public String getLocation(boolean detail) {
+    HookDefinition getDelegate() {
+        return delegate;
+    }
+
+    String getLocation(boolean detail) {
         return delegate.getLocation(detail);
     }
 
-    public int getOrder() {
+    int getOrder() {
         return delegate.getOrder();
     }
 
-    public boolean matches(List<String> tags) {
+    boolean matches(List<String> tags) {
         return tagExpression.evaluate(tags);
     }
 
