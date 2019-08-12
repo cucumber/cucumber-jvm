@@ -68,8 +68,8 @@ public class CucumberTest {
 
     @Test
     public void testThatParsingErrorsIsNicelyReported() {
-        final Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(CompositeParserException.class))
@@ -184,8 +184,8 @@ public class CucumberTest {
 
     @Test
     public void no_stepdefs_in_cucumber_runner_invalid() {
-        final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
-        final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
+        CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 

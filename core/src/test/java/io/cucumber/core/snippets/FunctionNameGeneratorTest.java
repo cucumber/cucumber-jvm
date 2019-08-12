@@ -23,8 +23,8 @@ public class FunctionNameGeneratorTest {
 
     @Test
     public void testSanitizeEmptyFunctionName() {
-        final Executable testMethod = () -> underscore.generateFunctionName("");
-        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> underscore.generateFunctionName("");
+        IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Cannot create function name from empty sentence")));
     }
 

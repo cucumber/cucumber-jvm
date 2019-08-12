@@ -23,8 +23,8 @@ public class AmbiguousStepDefinitionMatchsTest {
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {
-        final Executable testMethod = () -> match.runStep(mock(Scenario.class));
-        final AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+        Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "\"\" matches more than one step definition:\n"
         )));
@@ -32,8 +32,8 @@ public class AmbiguousStepDefinitionMatchsTest {
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_dry_run() {
-        final Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
-        final AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
+        Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "\"\" matches more than one step definition:\n"
         )));

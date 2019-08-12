@@ -54,8 +54,8 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.\n" +
                 "However, the gherkin step has 1 arguments:\n" +
@@ -80,8 +80,8 @@ public class StepDefinitionMatchTest {
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.\n" +
                 "However, the gherkin step has 2 arguments:\n" +
@@ -102,8 +102,8 @@ public class StepDefinitionMatchTest {
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Step [I have {int} cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
                 "However, the gherkin step has 2 arguments:\n" +
@@ -123,8 +123,8 @@ public class StepDefinitionMatchTest {
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
                 "However, the gherkin step has 0 arguments.\n" +
@@ -144,8 +144,8 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have a datatable] defined at '{stubbed location with details}'.\n" +
                 "It appears you did not register a data table type. The details are in the stacktrace below."
@@ -173,8 +173,8 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'.\n" +
                 "The details are in the stacktrace below."
@@ -201,8 +201,8 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
-        final Executable testMethod = () -> stepDefinitionMatch.runStep(null);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
                 "The details are in the stacktrace below."

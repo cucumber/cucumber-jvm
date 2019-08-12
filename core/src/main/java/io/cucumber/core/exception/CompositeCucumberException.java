@@ -2,8 +2,10 @@ package io.cucumber.core.exception;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class CompositeCucumberException extends CucumberException {
+public final class CompositeCucumberException extends CucumberException {
+
     private final List<Throwable> causes;
 
     public CompositeCucumberException(List<Throwable> causes) {
@@ -16,10 +18,9 @@ public class CompositeCucumberException extends CucumberException {
     }
 
     public String getMessage() {
-        StringBuilder sb = new StringBuilder(super.getMessage());
-        for (Throwable e : this.causes) {
-            sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
-        }
-        return sb.toString();
+        return super.getMessage() + this.causes.stream()
+            .map(e -> String.format("  %s(%s)", e.getClass().getName(), e.getMessage()))
+            .collect(Collectors.joining("\n", "\n", ""));
     }
+
 }

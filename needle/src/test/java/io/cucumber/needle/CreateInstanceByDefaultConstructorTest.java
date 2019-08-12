@@ -30,8 +30,8 @@ public class CreateInstanceByDefaultConstructorTest {
 
     @Test
     public void shouldNotCreateNewInstanceWhenConstructorIsMissing() {
-        final Executable testMethod = () -> createInstanceByDefaultConstructor.apply(DoesNotHaveDefaultConstructor.class);
-        final IllegalStateException expectedThrown = assertThrows(IllegalStateException.class, testMethod);
+        Executable testMethod = () -> createInstanceByDefaultConstructor.apply(DoesNotHaveDefaultConstructor.class);
+        IllegalStateException expectedThrown = assertThrows(IllegalStateException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Can not instantiate Instance by Default Constructor.")));
     }
 

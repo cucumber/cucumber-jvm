@@ -55,8 +55,8 @@ public class GuiceFactoryTest {
     public void factoryStartFailsIfScenarioScopeIsNotBound() {
         factory = new GuiceFactory(Guice.createInjector());
 
-        final Executable testMethod = () -> factory.start();
-        final ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
+        Executable testMethod = () -> factory.start();
+        ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Guice configuration errors:\n\n" +
                 "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
