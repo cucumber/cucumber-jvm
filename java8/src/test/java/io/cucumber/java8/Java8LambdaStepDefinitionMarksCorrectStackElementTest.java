@@ -3,43 +3,37 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Arrays;
 
 public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private final MyLambdaGlueRegistry myLambdaGlueRegistry = new MyLambdaGlueRegistry();
 
     @Test
-    public void exception_from_step_should_be_defined_at_step_definition_class() {
+    public void exception_from_step_should_be_defined_at_step_definition_class() throws Throwable {
         LambdaGlueRegistry.INSTANCE.set(myLambdaGlueRegistry);
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        Executable testMethod = () -> stepDefinition.execute(new Object[0]);
-        Exception actualThrown = assertThrows(Exception.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(nullValue())),
-            () -> assertThat("Unexpected exception StackTrace", actualThrown,
-                new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
-                    @Override
-                    protected boolean matchesSafely(Throwable item) {
-                        for (final StackTraceElement stackTraceElement : item.getStackTrace()) {
-                            if (stepDefinition.isDefinedAt(stackTraceElement)) {
-                                return SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName());
-                            }
+        expectedException.expect(new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
+            @Override
+            protected boolean matchesSafely(Throwable item) {
+                return Arrays.stream(item.getStackTrace())
+                    .filter(stepDefinition::isDefinedAt)
+                    .findFirst()
+                    .filter(stackTraceElement -> SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName()))
+                    .isPresent();
+            }
+        });
 
-                        }
-                        return false;
-                    }
-                })
-        );
+        stepDefinition.execute(new Object[0]);
     }
 
 
@@ -86,5 +80,4 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
     }
-
 }

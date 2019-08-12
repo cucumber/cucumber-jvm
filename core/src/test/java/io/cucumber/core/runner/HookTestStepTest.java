@@ -27,7 +27,7 @@ import static org.mockito.Mockito.never;
 
 public class HookTestStepTest {
 
-    private final HookDefinition hookDefintion = mock(HookDefinition.class);
+    private final CoreHookDefinition hookDefintion = mock(CoreHookDefinition.class);
     private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = new TestCase(
         Collections.<PickleStepTestStep>emptyList(),

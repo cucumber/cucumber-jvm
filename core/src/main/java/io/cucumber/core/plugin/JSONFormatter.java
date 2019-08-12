@@ -45,13 +45,13 @@ public final class JSONFormatter implements EventListener {
     private static final String before = "before";
     private static final String after = "after";
     private String currentFeatureFile;
-    private List<Map<String, Object>> featureMaps = new ArrayList<>();
+    private final List<Map<String, Object>> featureMaps = new ArrayList<>();
     private List<Map<String, Object>> currentElementsList;
     private Map<String, Object> currentElementMap;
     private Map<String, Object> currentTestCaseMap;
     private List<Map<String, Object>> currentStepsList;
     private Map<String, Object> currentStepOrHookMap;
-    private Map<String, Object> currentBeforeStepHookList = new HashMap<>();
+    private final Map<String, Object> currentBeforeStepHookList = new HashMap<>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();

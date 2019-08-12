@@ -20,6 +20,7 @@ final class FlatteningIterator<T> implements Iterator<T> {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("unchecked")
     private void moveToNext() {
         if (nextBlank && !this.iterators.isEmpty()) {
             if (!iterators.peek().hasNext()) {

@@ -1,16 +1,16 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.TestCase;
+import gherkin.deps.com.google.gson.Gson;
+import gherkin.deps.com.google.gson.GsonBuilder;
+import gherkin.deps.com.google.gson.annotations.SerializedName;
 import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseEvent;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.exception.CucumberException;
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.deps.com.google.gson.annotations.SerializedName;
 
 import java.io.Closeable;
 import java.io.File;
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
 public final class TimelineFormatter implements ConcurrentEventListener {
@@ -64,7 +65,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     @Override
     public void setEventPublisher(final EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
-        publisher.registerHandlerFor(TestCaseStarted.class,  this::handleTestCaseStarted);
+        publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestRunFinished.class, this::finishReport);
     }
@@ -131,9 +132,8 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
         try {
             final OutputStream out = new URLOutputStream(new URL(dir, file));
-            return new NiceAppendable(new OutputStreamWriter(out, "UTF-8"));
-        }
-        catch (IOException e) {
+            return new NiceAppendable(new OutputStreamWriter(out, UTF_8));
+        } catch (IOException e) {
             throw new CucumberException(e);
         }
     }
@@ -147,11 +147,9 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             while ((length = source.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new CucumberException("Unable to write to report file item: ", e);
-        }
-        finally {
+        } finally {
             closeQuietly(os);
         }
     }
@@ -161,8 +159,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             if (out != null) {
                 out.close();
             }
-        }
-        catch (IOException ignored) {
+        } catch (IOException ignored) {
             // go gentle into that good night
         }
     }
@@ -213,7 +210,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             return tags.toString();
         }
 
-        public void end(final TestCaseFinished event) {
+        void end(final TestCaseFinished event) {
             this.endTime = event.getInstant();
             this.className = event.getResult().getStatus().name().toLowerCase(ROOT);
         }

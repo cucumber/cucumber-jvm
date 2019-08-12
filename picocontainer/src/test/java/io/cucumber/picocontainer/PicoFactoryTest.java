@@ -17,16 +17,16 @@ public class PicoFactoryTest {
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new PicoFactory();
-        factory.addClass(StepDefs.class);
+        factory.addClass(Steps.class);
 
         // Scenario 1
         factory.start();
-        StepDefs o1 = factory.getInstance(StepDefs.class);
+        Steps o1 = factory.getInstance(Steps.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        StepDefs o2 = factory.getInstance(StepDefs.class);
+        Steps o2 = factory.getInstance(Steps.class);
         factory.stop();
 
         assertAll("Checking StepDefs",
@@ -40,11 +40,11 @@ public class PicoFactoryTest {
     public void shouldDisposeOnStop() {
         // Given
         ObjectFactory factory = new PicoFactory();
-        factory.addClass(StepDefs.class);
+        factory.addClass(Steps.class);
 
         // When
         factory.start();
-        StepDefs steps = factory.getInstance(StepDefs.class);
+        Steps steps = factory.getInstance(Steps.class);
 
         // Then
         assertFalse(steps.getBelly().isDisposed());

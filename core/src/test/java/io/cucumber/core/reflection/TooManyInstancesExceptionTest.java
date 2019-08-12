@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class TooManyInstancesExceptionTest {
 
     @Test
-    void found_two_instances(){
+    void found_two_instances() {
         Collection<String> instances = Arrays.asList("one", "two");
         TooManyInstancesException expectedThrown = new TooManyInstancesException(instances);
         assertAll(

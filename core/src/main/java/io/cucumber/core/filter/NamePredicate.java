@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 final class NamePredicate implements Predicate<PickleEvent> {
-    private List<Pattern> patterns;
+    private final List<Pattern> patterns;
 
     NamePredicate(List<Pattern> patterns) {
         this.patterns = patterns;
@@ -16,12 +16,7 @@ final class NamePredicate implements Predicate<PickleEvent> {
     @Override
     public boolean test(PickleEvent pickleEvent) {
         String name = pickleEvent.pickle.getName();
-        for (Pattern pattern : patterns) {
-            if (pattern.matcher(name).find()) {
-                return true;
-            }
-        }
-        return false;
+        return patterns.stream().anyMatch(pattern -> pattern.matcher(name).find());
     }
 
 }

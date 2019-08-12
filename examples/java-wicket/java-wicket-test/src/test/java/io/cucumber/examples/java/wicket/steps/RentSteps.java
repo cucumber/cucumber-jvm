@@ -7,7 +7,7 @@ import io.cucumber.java.en.When;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class RentStepdefs {
+public class RentSteps {
     private RentACarSupport rentACarSupport = new RentACarSupport();
 
     @Given("there are {int} cars available for rental")

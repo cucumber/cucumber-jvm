@@ -6,7 +6,7 @@ import org.testng.annotations.BeforeMethod;
 /**
  *  An example base class
  */
-class RunCukesByCompositionBase {
+class RunCucumberByCompositionBase {
     
     @BeforeClass
     public void beforeClass() {

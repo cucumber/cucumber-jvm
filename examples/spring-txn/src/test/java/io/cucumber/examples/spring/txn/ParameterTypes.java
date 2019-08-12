@@ -1,4 +1,4 @@
-package io.cucumber.examples.java;
+package io.cucumber.examples.spring.txn;
 
 import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.DefaultDataTableCellTransformer;

@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
+            <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apiguardian</groupId>
@@ -47,6 +47,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>

@@ -5,6 +5,8 @@ import io.cucumber.core.reflection.MethodFormat;
 
 import java.lang.reflect.Method;
 
+import static java.util.Objects.requireNonNull;
+
 abstract class AbstractGlueDefinition {
 
     protected final Method method;
@@ -13,8 +15,8 @@ abstract class AbstractGlueDefinition {
     private String fullFormat;
 
     AbstractGlueDefinition(Method method, Lookup lookup) {
-        this.method = method;
-        this.lookup = lookup;
+        this.method = requireNonNull(method);
+        this.lookup = requireNonNull(lookup);
     }
 
     public final String getLocation(boolean detail) {

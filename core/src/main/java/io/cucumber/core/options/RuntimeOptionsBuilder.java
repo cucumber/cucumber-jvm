@@ -1,11 +1,11 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.Options;
+import io.cucumber.core.snippets.SnippetType;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -18,12 +18,12 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public final class RuntimeOptionsBuilder {
-    private List<String> parsedTagFilters = new ArrayList<>();
-    private List<Pattern> parsedNameFilters = new ArrayList<>();
-    private Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
-    private List<URI> parsedFeaturePaths = new ArrayList<>();
-    private List<URI> parsedGlue = new ArrayList<>();
-    private ParsedPluginData parsedPluginData = new ParsedPluginData();
+    private final List<String> parsedTagFilters = new ArrayList<>();
+    private final List<Pattern> parsedNameFilters = new ArrayList<>();
+    private final Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
+    private final List<URI> parsedFeaturePaths = new ArrayList<>();
+    private final List<URI> parsedGlue = new ArrayList<>();
+    private final ParsedPluginData parsedPluginData = new ParsedPluginData();
     private boolean parsedIsRerun = false;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;

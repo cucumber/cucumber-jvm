@@ -147,7 +147,8 @@ public final class Runner {
         return createTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
     }
 
-    private List<HookTestStep> createTestStepsForHooks(List<PickleTag> tags, Collection<HookDefinition> hooks, HookType hookType) {
+    private List<HookTestStep> createTestStepsForHooks(List<PickleTag> pickleTags, Collection<CoreHookDefinition> hooks, HookType hookType) {
+        List<String> tags = pickleTags.stream().map(PickleTag::getName).collect(Collectors.toList());
         return hooks.stream()
             .filter(hook -> hook.matches(tags))
             .map(hook -> new HookTestStep(hookType, new HookDefinitionMatch(hook)))

@@ -20,8 +20,8 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import java.util.*;
 
 final class CachingGlue implements Glue {
-    private static final Comparator<HookDefinition> ASCENDING = Comparator.comparing(HookDefinition::getOrder);
-    private static final Comparator<HookDefinition> DESCENDING = ASCENDING.reversed();
+    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator.comparing(CoreHookDefinition::getOrder);
+    private static final Comparator<CoreHookDefinition> DESCENDING = ASCENDING.reversed();
 
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
@@ -29,11 +29,11 @@ final class CachingGlue implements Glue {
     private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
 
-    private final List<HookDefinition> beforeHooks = new ArrayList<>();
-    private final List<HookDefinition> beforeStepHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
-    private final List<HookDefinition> afterStepHooks = new ArrayList<>();
-    private final List<HookDefinition> afterHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> afterStepHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> afterHooks = new ArrayList<>();
 
     /*
      * Storing the pattern that matches the step text allows us to cache the rather slow
@@ -58,25 +58,25 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
-        beforeHooks.add(hookDefinition);
+        beforeHooks.add(CoreHookDefinition.create(hookDefinition));
         beforeHooks.sort(ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
-        beforeStepHooks.add(hookDefinition);
+        beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
         beforeStepHooks.sort(ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
-        afterHooks.add(hookDefinition);
+        afterHooks.add(CoreHookDefinition.create(hookDefinition));
         afterHooks.sort(DESCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
-        afterStepHooks.add(hookDefinition);
+        afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
         afterStepHooks.sort(DESCENDING);
     }
 
@@ -105,19 +105,19 @@ final class CachingGlue implements Glue {
         defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
     }
 
-    Collection<HookDefinition> getBeforeHooks() {
+    Collection<CoreHookDefinition> getBeforeHooks() {
         return beforeHooks;
     }
 
-    Collection<HookDefinition> getBeforeStepHooks() {
+    Collection<CoreHookDefinition> getBeforeStepHooks() {
         return beforeStepHooks;
     }
 
-    Collection<HookDefinition> getAfterHooks() {
+    Collection<CoreHookDefinition> getAfterHooks() {
         return afterHooks;
     }
 
-    Collection<HookDefinition> getAfterStepHooks() {
+    Collection<CoreHookDefinition> getAfterStepHooks() {
         return afterStepHooks;
     }
 
@@ -267,8 +267,8 @@ final class CachingGlue implements Glue {
         while (glueIterator.hasNext()) {
             Object glue = glueIterator.next();
             if (glue instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) glue;
-                scenarioScopedHookDefinition.disposeScenarioScope();
+                ScenarioScoped scenarioScopedGlue = (ScenarioScoped) glue;
+                scenarioScopedGlue.disposeScenarioScope();
                 glueIterator.remove();
             }
         }

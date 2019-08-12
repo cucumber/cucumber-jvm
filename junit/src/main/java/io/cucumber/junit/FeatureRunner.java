@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.PickleRunners.withStepDescriptions;
@@ -57,9 +56,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     public Description getDescription() {
         if (description == null) {
             description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature));
-            for (PickleRunner child : getChildren()) {
-                description.addChild(describeChild(child));
-            }
+            getChildren().forEach(child -> description.addChild(describeChild(child)));
         }
         return description;
     }

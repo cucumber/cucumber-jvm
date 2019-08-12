@@ -463,8 +463,8 @@ public class CachingGlueTest {
         }
 
         @Override
-        public boolean matches(Collection<PickleTag> tags) {
-            return true;
+        public String getTagExpression() {
+            return "";
         }
 
         @Override

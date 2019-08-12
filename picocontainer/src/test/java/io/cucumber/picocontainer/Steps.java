@@ -12,11 +12,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class StepDefs {
+public class Steps {
 
     private final DisposableCucumberBelly belly;
 
-    public StepDefs(DisposableCucumberBelly belly) {
+    public Steps(DisposableCucumberBelly belly) {
         this.belly = belly;
     }
 

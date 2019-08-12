@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 final class InvalidMethodSignatureException extends CucumberException {
 
     private InvalidMethodSignatureException(String message) {
@@ -15,21 +17,18 @@ final class InvalidMethodSignatureException extends CucumberException {
     }
 
     static InvalidMethodSignatureExceptionBuilder builder(Method method) {
-        if (Objects.isNull(method)) {
-            throw new IllegalArgumentException("Supplied Method can't be null for InvalidMethodSignatureException");
-        }
         return new InvalidMethodSignatureExceptionBuilder(method);
     }
 
     static class InvalidMethodSignatureExceptionBuilder {
 
-        private Method method;
+        private final Method method;
         private final List<Class<?>> annotations = new ArrayList<>();
         private final List<String> signatures = new ArrayList<>();
         private final List<String> notes = new ArrayList<>();
 
         private InvalidMethodSignatureExceptionBuilder(Method method) {
-            this.method = method;
+            this.method = requireNonNull(method);
         }
 
         InvalidMethodSignatureExceptionBuilder addAnnotation(Class<?> annotation) {
@@ -37,13 +36,14 @@ final class InvalidMethodSignatureException extends CucumberException {
             return this;
         }
 
+
         InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
             signatures.add(signature);
             return this;
         }
 
         InvalidMethodSignatureExceptionBuilder addNote(String note) {
-            notes.add(note);
+            this.notes.add(note);
             return this;
         }
 
@@ -87,5 +87,4 @@ final class InvalidMethodSignatureException extends CucumberException {
             return "A method annotated with " + builder.toString();
         }
     }
-
 }

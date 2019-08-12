@@ -1,11 +1,13 @@
 package io.cucumber.examples.testng;
 
 import io.cucumber.examples.testng.RpnCalculator;
+import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -29,6 +31,14 @@ public class ShoppingStepdefs {
     @Then("my change should be {}")
     public void my_change_should_be_(int change) {
         assertEquals(-calc.value().intValue(), change);
+    }
+
+    @DataTableType
+    public Grocery grocery(Map<String, String> entry) {
+        return new ShoppingStepdefs.Grocery(
+            entry.get("name"),
+            ShoppingStepdefs.Price.fromString(entry.get("price"))
+        );
     }
 
     static class Grocery {

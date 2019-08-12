@@ -1,12 +1,17 @@
 package io.cucumber.core.api;
 
 import io.cucumber.core.event.Status;
-import java.util.Collection;
 import org.apiguardian.api.API;
+
+import java.util.Collection;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
+ * <p>
+ * Note: This class is not intended to be used to create reports. To create custom reports use
+ * the {@code io.cucumber.core.plugin.Plugin} class. The plugin system provides a much richer access to Cucumbers then
+ * hooks after could provide. For an example see {@code io.cucumber.core.plugin.PrettyFormatter}.
  */
 @API(status = API.Status.STABLE)
 public interface Scenario {
@@ -39,7 +44,6 @@ public interface Scenario {
      *
      * @param data     what to embed, for example an image.
      * @param mimeType what is the data?
-     *
      * @deprecated use {@link Scenario#embed(byte[], String, String)} instead.
      */
     @Deprecated
@@ -62,7 +66,6 @@ public interface Scenario {
     void write(String text);
 
     /**
-     *
      * @return the name of the Scenario
      */
     String getName();

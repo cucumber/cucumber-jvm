@@ -70,9 +70,7 @@ final class PickleRunners {
         public Description getDescription() {
             if (description == null) {
                 description = Description.createSuiteDescription(getName(), new PickleId(pickleEvent));
-                for (PickleStep step : getChildren()) {
-                    description.addChild(describeChild(step));
-                }
+                getChildren().forEach(step -> description.addChild(describeChild(step)));
             }
             return description;
         }
@@ -178,7 +176,7 @@ final class PickleRunners {
     static final class PickleId implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String uri;
-        private int pickleLine;
+        private final int pickleLine;
 
         PickleId(String uri, int pickleLine) {
             this.uri = uri;

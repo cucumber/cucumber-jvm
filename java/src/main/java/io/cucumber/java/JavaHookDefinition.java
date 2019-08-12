@@ -1,28 +1,26 @@
 package io.cucumber.java;
 
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.filter.TagPredicate;
 import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
+import static java.util.Objects.requireNonNull;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
     private final long timeoutMillis;
-    private final TagPredicate tagPredicate;
+    private final String tagExpression;
     private final int order;
     private final Lookup lookup;
 
     JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.timeoutMillis = timeoutMillis;
-        this.tagPredicate = new TagPredicate(tagExpression);
+        this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
         this.lookup = lookup;
     }
@@ -53,6 +51,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             .build();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void execute(Scenario scenario) throws Throwable {
         Object[] args;
@@ -66,8 +65,8 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     }
 
     @Override
-    public boolean matches(Collection<PickleTag> tags) {
-        return tagPredicate.apply(tags);
+    public String getTagExpression() {
+        return tagExpression;
     }
 
     @Override

@@ -293,7 +293,7 @@ public class RunnerTest {
 
     private HookDefinition addHook() {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(ArgumentMatchers.anyList())).thenReturn(true);
+        when(hook.getTagExpression()).thenReturn("");
         return hook;
     }
 

@@ -10,12 +10,12 @@ public class TestNGCucumberRunnerTest {
 
     @BeforeMethod
     public void setUp() {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
+        testNGCucumberRunner = new TestNGCucumberRunner(io.cucumber.testng.RunCucumberTest.class);
     }
 
     @Test(expectedExceptions = CucumberException.class)
     public void runCukesStrict() throws Throwable {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCukesStrict.class);
+        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
 
         for (Object[] scenario : testNGCucumberRunner.provideScenarios()) {
             PickleEventWrapper pickleEvent = (PickleEventWrapper) scenario[0];
@@ -56,7 +56,7 @@ public class TestNGCucumberRunnerTest {
     }
 
     @CucumberOptions(strict = true)
-    static class RunCukesStrict extends AbstractTestNGCucumberTests {
+    static class RunCucumberTest extends AbstractTestNGCucumberTests {
     }
 
     @CucumberOptions(features = "classpath:io/cucumber/error/parse-error.feature")

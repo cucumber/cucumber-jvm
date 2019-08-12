@@ -6,18 +6,18 @@ import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 
-public final class TagPredicate implements Predicate<PickleEvent> {
+final class TagPredicate implements Predicate<PickleEvent> {
     private final List<Expression> expressions = new ArrayList<>();
 
-    public TagPredicate(String tagExpression) {
+    TagPredicate(String tagExpression) {
         this(tagExpression.isEmpty() ? emptyList() : singletonList(tagExpression));
     }
 
@@ -33,24 +33,14 @@ public final class TagPredicate implements Predicate<PickleEvent> {
 
     @Override
     public boolean test(PickleEvent pickleEvent) {
-        return apply(pickleEvent.pickle.getTags());
-    }
-
-    public boolean apply(Collection<PickleTag> pickleTags) {
         if (expressions.isEmpty()) {
             return true;
         }
 
-        List<String> tags = new ArrayList<>();
-        for (PickleTag pickleTag : pickleTags) {
-            tags.add(pickleTag.getName());
-        }
-        for (Expression expression : expressions) {
-            if (!expression.evaluate(tags)) {
-                return false;
-            }
-        }
-        return true;
+        List<String> tags = pickleEvent.pickle.getTags().stream()
+            .map(PickleTag::getName)
+            .collect(toList());
+        return expressions.stream()
+            .allMatch(expression -> expression.evaluate(tags));
     }
-
 }

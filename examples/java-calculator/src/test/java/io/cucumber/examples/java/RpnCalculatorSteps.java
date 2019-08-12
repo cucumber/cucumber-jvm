@@ -1,18 +1,21 @@
-package io.cucumber.examples.testng;
+package io.cucumber.examples.java;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.examples.testng.RpnCalculator;
+import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.DefaultDataTableCellTransformer;
+import io.cucumber.java.DefaultDataTableEntryTransformer;
+import io.cucumber.java.DefaultParameterTransformer;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
-public class RpnCalculatorStepdefs {
+public class RpnCalculatorSteps {
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
@@ -38,8 +41,8 @@ public class RpnCalculatorStepdefs {
     }
 
     @Before("not @foo")
-    public void before() {
-        System.out.println("Runs before scenarios *not* tagged with @foo");
+    public void before(Scenario scenario) {
+        scenario.write("Runs before scenarios *not* tagged with @foo");
     }
 
     @After
@@ -56,15 +59,35 @@ public class RpnCalculatorStepdefs {
         }
     }
 
-    static final class Entry {
-        private final Integer first;
-        private final Integer second;
-        private final String operation;
 
-        Entry(Integer first, Integer second, String operation) {
-                this.first = first;
-                this.second = second;
-                this.operation = operation;
+
+    static final class Entry {
+        private Integer first;
+        private Integer second;
+        private String operation;
+
+        public Integer getFirst() {
+            return first;
+        }
+
+        public void setFirst(Integer first) {
+            this.first = first;
+        }
+
+        public Integer getSecond() {
+            return second;
+        }
+
+        public void setSecond(Integer second) {
+            this.second = second;
+        }
+
+        public String getOperation() {
+            return operation;
+        }
+
+        public void setOperation(String operation) {
+            this.operation = operation;
         }
     }
 }

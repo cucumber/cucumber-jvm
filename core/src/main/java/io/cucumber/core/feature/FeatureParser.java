@@ -7,15 +7,14 @@ import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.Resource;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -53,10 +52,9 @@ public class FeatureParser {
         if (gherkinDocument.getFeature() == null) {
             return Collections.emptyList();
         }
-        List<PickleEvent> pickleEvents = new ArrayList<>();
-        for (Pickle pickle : new Compiler().compile(gherkinDocument)) {
-            pickleEvents.add(new PickleEvent(resource.getPath().toString(), pickle));
-        }
-        return pickleEvents;
+        return new Compiler().compile(gherkinDocument)
+            .stream()
+            .map(pickle -> new PickleEvent(resource.getPath().toString(), pickle))
+            .collect(Collectors.toList());
     }
 }

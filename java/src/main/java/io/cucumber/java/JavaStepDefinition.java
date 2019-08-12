@@ -8,6 +8,8 @@ import io.cucumber.core.runtime.Invoker;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 final class JavaStepDefinition extends AbstractGlueDefinition implements StepDefinition {
     private final String expression;
     private final long timeoutMillis;
@@ -21,9 +23,10 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
         super(method, lookup);
         this.timeoutMillis = timeoutMillis;
         this.parameterInfos = JavaParameterInfo.fromMethod(method);
-        this.expression = expression;
+        this.expression = requireNonNull(expression, "cucumber-expression may not be null");
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void execute(Object[] args) throws Throwable {
         Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);

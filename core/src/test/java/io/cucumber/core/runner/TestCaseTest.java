@@ -34,8 +34,8 @@ public class TestCaseTest {
 
 
     private final PickleStepDefinitionMatch definitionMatch1 = mock(PickleStepDefinitionMatch.class);
-    private HookDefinition beforeStep1HookDefinition1 = mock(HookDefinition.class);
-    private HookDefinition afterStep1HookDefinition1 = mock(HookDefinition.class);
+    private CoreHookDefinition beforeStep1HookDefinition1 = mock(CoreHookDefinition.class);
+    private CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
 
     @BeforeEach
     public void init() {
@@ -51,8 +51,8 @@ public class TestCaseTest {
     );
 
     private final PickleStepDefinitionMatch definitionMatch2 = mock(PickleStepDefinitionMatch.class);
-    private HookDefinition beforeStep1HookDefinition2 = mock(HookDefinition.class);
-    private HookDefinition afterStep1HookDefinition2 = mock(HookDefinition.class);
+    private CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
+    private CoreHookDefinition afterStep1HookDefinition2 = mock(CoreHookDefinition.class);
 
     private final PickleStepTestStep testStep2 = new PickleStepTestStep(
         "uri",

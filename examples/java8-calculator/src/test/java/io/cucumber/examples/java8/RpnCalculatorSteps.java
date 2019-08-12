@@ -8,10 +8,10 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class RpnCalculatorStepdefs implements En {
+public class RpnCalculatorSteps implements En {
     private RpnCalculator calc;
 
-    public RpnCalculatorStepdefs() {
+    public RpnCalculatorSteps() {
         Given("a calculator I just turned on", () -> {
             calc = new RpnCalculator();
         });

@@ -63,7 +63,7 @@ public class CoreStepDefinitionTest {
     }
 
 
-    public static class StepDefs {
+    public static class Steps {
         public void listOfListOfDoubles(List<List<Double>> listOfListOfDoubles) {
         }
 
@@ -80,7 +80,7 @@ public class CoreStepDefinitionTest {
 
     @Test
     public void transforms_to_map_of_double_to_double() throws Throwable {
-        Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
+        Method m = Steps.class.getMethod("mapOfDoubleToDouble", Map.class);
         Map<Double, Double> stepDefs = runStepDef(m, false, new PickleTable(listOfDoublesWithoutHeader()));
 
         assertAll("Checking StepDefs",
@@ -92,28 +92,28 @@ public class CoreStepDefinitionTest {
 
     @Test
     public void transforms_transposed_to_map_of_double_to_double() throws Throwable {
-        Method m = StepDefs.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
+        Method m = Steps.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
         Map<Double, List<Double>> stepDefs = runStepDef(m, true, new PickleTable(listOfDoublesWithoutHeader()));
         assertThat(stepDefs, hasEntry(100.5, asList(0.5, 1000.0)));
     }
 
     @Test
     public void transforms_to_list_of_single_values() throws Throwable {
-        Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
+        Method m = Steps.class.getMethod("listOfListOfDoubles", List.class);
         List<List<Double>> stepDefs = runStepDef(m, false, new PickleTable(listOfDoublesWithoutHeader()));
         assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
     }
 
     @Test
     public void transforms_to_list_of_single_values_transposed() throws Throwable {
-        Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
+        Method m = Steps.class.getMethod("listOfListOfDoubles", List.class);
         List<List<Double>> stepDefs = runStepDef(m, true, new PickleTable(transposedListOfDoublesWithoutHeader()));
         assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
     }
 
     @Test
     public void passes_plain_data_table() throws Throwable {
-        Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
+        Method m = Steps.class.getMethod("plainDataTable", DataTable.class);
         DataTable stepDefs = runStepDef(m, false, new PickleTable(listOfDatesWithHeader()));
 
         assertAll("Checking stepDefs",
@@ -124,7 +124,7 @@ public class CoreStepDefinitionTest {
 
     @Test
     public void passes_transposed_data_table() throws Throwable {
-        Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
+        Method m = Steps.class.getMethod("plainDataTable", DataTable.class);
         DataTable stepDefs = runStepDef(m, true, new PickleTable(listOfDatesWithHeader()));
 
         assertAll("Checking stepDefs",

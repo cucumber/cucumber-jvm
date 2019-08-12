@@ -24,7 +24,7 @@ final class Java8Backend implements Backend {
     private final Container container;
     private final ClassFinder classFinder;
 
-    private List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
+    private final List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
     private Glue glue;
 
     Java8Backend(Lookup lookup, Container container, ResourceLoader resourceLoader) {
