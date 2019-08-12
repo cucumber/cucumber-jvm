@@ -4,7 +4,7 @@ import io.cucumber.core.exception.CucumberException;
 
 import java.util.Collection;
 
-public final class TooManyInstancesException extends CucumberException {
+final class TooManyInstancesException extends CucumberException {
 
     TooManyInstancesException(Collection instances) {
         super(createMessage(instances));
@@ -13,5 +13,4 @@ public final class TooManyInstancesException extends CucumberException {
     private static String createMessage(Collection instances) {
         return String.format("Expected only one instance, but found too many: %s", instances);
     }
-
 }

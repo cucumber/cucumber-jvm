@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 final public class AmbiguousStepDefinitionsException extends CucumberException {
 
     private final List<PickleStepDefinitionMatch> matches;
@@ -17,12 +19,9 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
     }
 
     private static String createMessage(PickleStep step, List<PickleStepDefinitionMatch> matches) {
-        if (Objects.isNull(step)) {
-            throw new IllegalArgumentException("Supplied PickleStep can't be null for AmbiguousStepDefinitionsException");
-        }
-        if (Objects.isNull(matches)) {
-            throw new IllegalArgumentException("Supplied List<PickleStepDefinitionMatch> can't be null for AmbiguousStepDefinitionsException");
-        }
+        requireNonNull(step);
+        requireNonNull(matches);
+
         StringBuilder msg = new StringBuilder()
             .append(quoteText(step.getText()))
             .append(" matches more than one step definition:\n");
