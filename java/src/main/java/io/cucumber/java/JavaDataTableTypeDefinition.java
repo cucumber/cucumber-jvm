@@ -3,8 +3,12 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.runtime.Invoker;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.*;
+import io.cucumber.datatable.TableCellTransformer;
+import io.cucumber.datatable.TableEntryTransformer;
+import io.cucumber.datatable.TableRowTransformer;
+import io.cucumber.datatable.TableTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -23,7 +27,6 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
         this.dataTableType = createDataTableType(method);
     }
 
-    @SuppressWarnings("unchecked")
     private DataTableType createDataTableType(Method method) {
         Class returnType = requireValidReturnType(method);
         Type parameterType = requireValidParameterType(method);

@@ -54,7 +54,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
             }
         }
 
-        if (!(Type.class.equals(parameterTypes[1]) || Class.class.equals(parameterTypes[1]))) {
+        if (!Type.class.equals(parameterTypes[1])) {
             throw createInvalidSignatureException(method);
         }
 
@@ -70,8 +70,6 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultDataTableEntryTransformer.class)
-            .addSignature("public T defaultDataTableEntry(Map<String, String> fromValue, Class<T> toValueType)")
-            .addSignature("public T defaultDataTableCell(Map<String, String> fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer)")
             .addSignature("public Object defaultDataTableEntry(Map<String, String> fromValue, Type toValueType)")
             .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
             .build();
@@ -82,15 +80,14 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return transformer;
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T execute(Map<String, String> fromValue, Class<T> toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
+    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
         Object[] args;
         if (method.getParameterTypes().length == 3) {
             args = new Object[]{fromValue, toValueType, cellTransformer};
         } else {
             args = new Object[]{fromValue, toValueType};
         }
-        return (T) Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
+        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
 }

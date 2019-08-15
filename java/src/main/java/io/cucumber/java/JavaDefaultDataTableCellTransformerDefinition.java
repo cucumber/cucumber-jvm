@@ -54,10 +54,8 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefiniti
         return transformer;
     }
 
-
-    @SuppressWarnings("unchecked")
-    private <T> T execute(String fromValue, Class<T> toValueType) throws Throwable {
-        return (T) Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+    private Object execute(String fromValue, Type toValueType) throws Throwable {
+        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

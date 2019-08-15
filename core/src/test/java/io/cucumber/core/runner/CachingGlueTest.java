@@ -6,7 +6,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
@@ -27,10 +26,8 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
@@ -44,13 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CachingGlueTest {
+class CachingGlueTest {
 
     private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
     private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
 
     @Test
-    public void throws_duplicate_error_on_dupe_stepdefs() {
+    void throws_duplicate_error_on_dupe_stepdefs() {
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
         when(a.getLocation(true)).thenReturn("foo.bf:10");
@@ -69,7 +66,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void throws_on_duplicate_default_parameter_transformer() {
+    void throws_on_duplicate_default_parameter_transformer() {
         glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
         glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
 
@@ -85,7 +82,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void throws_on_duplicate_default_table_entry_transformer() {
+    void throws_on_duplicate_default_table_entry_transformer() {
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
 
@@ -101,7 +98,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void throws_on_duplicate_default_table_cell_transformer() {
+    void throws_on_duplicate_default_table_cell_transformer() {
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
 
@@ -118,7 +115,7 @@ public class CachingGlueTest {
 
 
     @Test
-    public void removes_glue_that_is_scenario_scoped() {
+    void removes_glue_that_is_scenario_scoped() {
         // This test is a bit fragile - it is testing state, not behaviour.
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
@@ -166,7 +163,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_null_if_no_matching_steps_found() {
+    void returns_null_if_no_matching_steps_found() {
         StepDefinition stepDefinition = new MockedStepDefinition("pattern1");
         glue.addStepDefinition(stepDefinition);
 
@@ -177,7 +174,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_match_from_cache_if_single_found() {
+    void returns_match_from_cache_if_single_found() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -204,7 +201,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_match_from_cache_for_step_with_table() {
+    void returns_match_from_cache_for_step_with_table() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -235,7 +232,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_match_from_cache_for_ste_with_doc_string() {
+    void returns_match_from_cache_for_ste_with_doc_string() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -266,7 +263,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_fresh_match_from_cache_after_evicting_scenario_scoped() {
+    void returns_fresh_match_from_cache_after_evicting_scenario_scoped() {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
         PickleStep pickleStep1 = getPickleStep(stepText);
@@ -292,7 +289,7 @@ public class CachingGlueTest {
 
 
     @Test
-    public void returns_no_match_after_evicting_scenario_scoped() {
+    void returns_no_match_after_evicting_scenario_scoped() {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
         PickleStep pickleStep1 = getPickleStep(stepText);
@@ -529,7 +526,6 @@ public class CachingGlueTest {
 
     private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
-
         boolean disposed;
 
         @Override
@@ -539,12 +535,7 @@ public class CachingGlueTest {
 
         @Override
         public TableCellByTypeTransformer tableCellByTypeTransformer() {
-            return new TableCellByTypeTransformer() {
-                @Override
-                public <T> T transform(String value, Class<T> cellType) {
-                    return (T) new Object();
-                }
-            };
+            return (value, cellType) -> new Object();
         }
 
         @Override
@@ -563,12 +554,7 @@ public class CachingGlueTest {
 
         @Override
         public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
-            return new TableEntryByTypeTransformer() {
-                @Override
-                public <T> T transform(Map<String, String> entry, Class<T> type, TableCellByTypeTransformer cellTransformer) {
-                    return (T) new Object();
-                }
-            };
+            return (entry, type, cellTransformer) -> new Object();
         }
 
         @Override
