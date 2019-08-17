@@ -3,7 +3,7 @@ package io.cucumber.core.event;
 import org.apiguardian.api.API;
 
 /**
- * Represents an argument in for a step definition.
+ * Represents an argument in a cucumber or regular expressions
  * <p>
  * The step definition {@code I have {long} cukes in my belly}
  * when matched with {@code I have 7 cukes in my belly} will produce

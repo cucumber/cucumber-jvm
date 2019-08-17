@@ -1,97 +1,93 @@
 package io.cucumber.core.runner;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
-public class ScenarioTest {
+class ScenarioTest {
 
     @Test
-    public void provides_the_uri_of_the_feature_file() {
-        Scenario scenario = createScenarioWithFeatureFileUri(uri("path/file.feature"));
-
-        assertThat(scenario.getUri(), is(equalTo("path/file.feature")));
-    }
-
-    @Test
-    public void provides_the_scenario_line() {
-        List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(3), column(2)));
-        Scenario scenario = createScenarioWithScenarioLocations(scenarioLocation);
-
-        assertThat(scenario.getLine(), is(equalTo((Integer) 3)));
+    void provides_the_uri_of_the_feature_file() {
+        CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
+        Scenario scenario = createScenario(feature);
+        assertThat(scenario.getUri(), is(equalTo("file:path/file.feature")));
     }
 
     @Test
-    public void provides_both_the_example_row_line_and_scenario_outline_line_for_scenarios_from_scenario_outlines() {
-        List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(8), column(4)), new PickleLocation(line(3), column(2)));
-        Scenario scenario = createScenarioWithScenarioLocations(scenarioLocation);
+    void provides_the_scenario_line() {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
 
-        assertThat(scenario.getLine(), is(equalTo((Integer) 8)));
+        Scenario scenario = createScenario(feature);
+        assertThat(scenario.getLine(), is(equalTo(2)));
     }
 
     @Test
-    public void provides_the_uri_and_scenario_line_as_unique_id() {
-        List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(3), column(2)));
-        Scenario scenario = createScenarioWithFeatureFileUriAndScenarioLocations(uri("path/file.feature"), scenarioLocation);
+    void provides_both_the_example_row_line_and_scenario_outline_line_for_scenarios_from_scenario_outlines() {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario Outline: Test scenario\n" +
+            "     Given I have 4 <thing> in my belly\n" +
+            "     Examples:\n" +
+            "       | thing | \n" +
+            "       | cuke  | \n"
+        );
 
-        assertThat(scenario.getId(), is(equalTo("path/file.feature:3")));
+        Scenario scenario = createScenario(feature);
+        assertThat(scenario.getLine(), is(equalTo(6)));
     }
 
     @Test
-    public void provides_the_uri_and_example_row_line_as_unique_id_for_scenarios_from_scenario_outlines() {
-        List<PickleLocation> scenarioLocation = asList(new PickleLocation(line(8), column(4)), new PickleLocation(line(3), column(2)));
-        Scenario scenario = createScenarioWithFeatureFileUriAndScenarioLocations(uri("path/file.feature"), scenarioLocation);
+    void provides_the_uri_and_scenario_line_as_unique_id() {
+        CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
 
-        assertThat(scenario.getId(), is(equalTo("path/file.feature:8")));
+        Scenario scenario = createScenario(feature);
+
+        assertThat(scenario.getId(), is(equalTo("file:path/file.feature:2")));
     }
 
-    private Scenario createScenarioWithFeatureFileUri(String uri) {
-        return createScenarioWithFeatureFileUriAndScenarioLocations(uri, asList(new PickleLocation(1, 1)));
+    @Test
+    void provides_the_uri_and_example_row_line_as_unique_id_for_scenarios_from_scenario_outlines() {
+        CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+            "Feature: Test feature\n" +
+            "  Scenario Outline: Test scenario\n" +
+            "     Given I have 4 <thing> in my belly\n" +
+            "     Examples:\n" +
+            "       | thing | \n" +
+            "       | cuke  | \n"
+        );
+        Scenario scenario = createScenario(feature);
+
+        assertThat(scenario.getId(), is(equalTo("file:path/file.feature:6")));
     }
 
-    private Scenario createScenarioWithScenarioLocations(List<PickleLocation> locations) {
-        return createScenarioWithFeatureFileUriAndScenarioLocations("uri", locations);
-    }
-
-    private Scenario createScenarioWithFeatureFileUriAndScenarioLocations(String uri, List<PickleLocation> locations) {
+    private Scenario createScenario(CucumberFeature feature) {
         return new Scenario(mock(EventBus.class), new TestCase(
-            Collections.<PickleStepTestStep>emptyList(),
-            Collections.<HookTestStep>emptyList(),
-            Collections.<HookTestStep>emptyList(),
-            new PickleEvent(uri, new Pickle(
-                "name",
-                "en",
-                Collections.<PickleStep>emptyList(),
-                Collections.<PickleTag>emptyList(),
-                locations
-            )),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            feature.getPickles().get(0),
             false
         ));
-    }
-
-    private String uri(String uri) {
-        return uri;
-    }
-
-    private int line(int line) {
-        return line;
-    }
-
-    private int column(int column) {
-        return column;
     }
 
 }

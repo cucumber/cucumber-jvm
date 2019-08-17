@@ -1,141 +1,117 @@
 package io.cucumber.core.filter;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.List;
-
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
-public class TagPredicateTest {
-
-    private static final String NAME = "pickle_name";
-    private static final String LANGUAGE = "en";
-    private static final List<PickleStep> NO_STEPS = Collections.emptyList();
-    private static final PickleLocation MOCK_LOCATION = mock(PickleLocation.class);
-    private static final String FOO_TAG_VALUE = "@FOO";
-    private static final PickleTag FOO_TAG = new PickleTag(MOCK_LOCATION, FOO_TAG_VALUE);
-    private static final String BAR_TAG_VALUE = "@BAR";
-    private static final PickleTag BAR_TAG = new PickleTag(MOCK_LOCATION, BAR_TAG_VALUE);
-    private static final String NOT_FOO_TAG_VALUE = "not @FOO";
-    private static final String FOO_OR_BAR_TAG_VALUE = "@FOO or @BAR";
-    private static final String FOO_AND_BAR_TAG_VALUE = "@FOO and @BAR";
+class TagPredicateTest {
 
     @Test
-    public void empty_tag_predicate_matches_pickle_with_any_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
+    void empty_tag_predicate_matches_pickle_with_any_tags() {
+        CucumberPickle pickle = createPickleWithTags("@FOO");
         TagPredicate predicate = new TagPredicate("");
-
-        assertTrue(predicate.test(pickleEvent));
+        assertTrue(predicate.test(pickle));
     }
 
 
     @Test
-    public void list_of_empty_tag_predicates_matches_pickle_with_any_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
+    void list_of_empty_tag_predicates_matches_pickle_with_any_tags() {
+        CucumberPickle pickle = createPickleWithTags("@FOO");
         TagPredicate predicate = new TagPredicate(asList("", ""));
-
-        assertTrue(predicate.test(pickleEvent));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void single_tag_predicate_does_not_match_pickle_with_no_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(Collections.<PickleTag>emptyList());
-        TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
-
-        assertFalse(predicate.test(pickleEvent));
+    void single_tag_predicate_does_not_match_pickle_with_no_tags() {
+        CucumberPickle pickle = createPickleWithTags();
+        TagPredicate predicate = new TagPredicate("@FOO");
+        assertFalse(predicate.test(pickle));
     }
 
     @Test
-    public void single_tag_predicate_matches_pickle_with_same_single_tag() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
-
-        assertTrue(predicate.test(pickleEvent));
+    void single_tag_predicate_matches_pickle_with_same_single_tag() {
+        CucumberPickle pickle = createPickleWithTags("@FOO");
+        TagPredicate predicate = new TagPredicate("@FOO");
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void single_tag_predicate_matches_pickle_with_more_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG, BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
-
-        assertTrue(predicate.test(pickleEvent));
+    void single_tag_predicate_matches_pickle_with_more_tags() {
+        CucumberPickle pickle = createPickleWithTags("@FOO", "@BAR");
+        TagPredicate predicate = new TagPredicate("@FOO");
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void single_tag_predicate_does_not_match_pickle_with_different_single_tag() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_TAG_VALUE));
-
-        assertFalse(predicate.test(pickleEvent));
+    void single_tag_predicate_does_not_match_pickle_with_different_single_tag() {
+        CucumberPickle pickle = createPickleWithTags("@BAR");
+        TagPredicate predicate = new TagPredicate("@FOO");
+        assertFalse(predicate.test(pickle));
     }
 
     @Test
-    public void not_tag_predicate_matches_pickle_with_no_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(Collections.<PickleTag>emptyList());
-        TagPredicate predicate = new TagPredicate(asList(NOT_FOO_TAG_VALUE));
-
-        assertTrue(predicate.test(pickleEvent));
+    void not_tag_predicate_matches_pickle_with_no_tags() {
+        CucumberPickle pickle = createPickleWithTags();
+        TagPredicate predicate = new TagPredicate(singletonList("not @FOO"));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void not_tag_predicate_does_not_match_pickle_with_same_single_tag() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
-        TagPredicate predicate = new TagPredicate(asList(NOT_FOO_TAG_VALUE));
-
-        assertFalse(predicate.test(pickleEvent));
+    void not_tag_predicate_does_not_match_pickle_with_same_single_tag() {
+        CucumberPickle pickle = createPickleWithTags("@FOO");
+        TagPredicate predicate = new TagPredicate(singletonList("not @FOO"));
+        assertFalse(predicate.test(pickle));
     }
 
     @Test
-    public void not_tag_predicate_matches_pickle_with_different_single_tag() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(NOT_FOO_TAG_VALUE));
-
-        assertTrue(predicate.test(pickleEvent));
+    void not_tag_predicate_matches_pickle_with_different_single_tag() {
+        CucumberPickle pickle = createPickleWithTags("@BAR");
+        TagPredicate predicate = new TagPredicate(singletonList("not @FOO"));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void and_tag_predicate_matches_pickle_with_all_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG, BAR_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_AND_BAR_TAG_VALUE));
-
-        assertTrue(predicate.test(pickleEvent));
+    void and_tag_predicate_matches_pickle_with_all_tags() {
+        CucumberPickle pickle = createPickleWithTags("@FOO", "@BAR");
+        TagPredicate predicate = new TagPredicate(singletonList("@FOO and @BAR"));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void and_tag_predicate_does_not_match_pickle_with_one_of_the_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_AND_BAR_TAG_VALUE));
-
-        assertFalse(predicate.test(pickleEvent));
+    void and_tag_predicate_does_not_match_pickle_with_one_of_the_tags() {
+        CucumberPickle pickle = createPickleWithTags("@FOO");
+        TagPredicate predicate = new TagPredicate(singletonList("@FOO and @BAR"));
+        assertFalse(predicate.test(pickle));
     }
 
     @Test
-    public void or_tag_predicate_matches_pickle_with_one_of_the_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(asList(FOO_TAG));
-        TagPredicate predicate = new TagPredicate(asList(FOO_OR_BAR_TAG_VALUE));
-
-        assertTrue(predicate.test(pickleEvent));
+    void or_tag_predicate_matches_pickle_with_one_of_the_tags() {
+        CucumberPickle pickle = createPickleWithTags("@FOO");
+        TagPredicate predicate = new TagPredicate(singletonList("@FOO or @BAR"));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void or_tag_predicate_does_not_match_pickle_none_of_the_tags() {
-        PickleEvent pickleEvent = createPickleWithTags(Collections.<PickleTag>emptyList());
-        TagPredicate predicate = new TagPredicate(asList(FOO_OR_BAR_TAG_VALUE));
-
-        assertFalse(predicate.test(pickleEvent));
+    void or_tag_predicate_does_not_match_pickle_none_of_the_tags() {
+        CucumberPickle pickle = createPickleWithTags();
+        TagPredicate predicate = new TagPredicate(singletonList("@FOO or @BAR"));
+        assertFalse(predicate.test(pickle));
     }
 
-    private PickleEvent createPickleWithTags(List<PickleTag> tags) {
-        return new PickleEvent("uri", new Pickle(NAME, LANGUAGE, NO_STEPS, tags, asList(MOCK_LOCATION)));
+    private CucumberPickle createPickleWithTags(String... tags) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  " + String.join(" ", tags) + "\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
+        return feature.getPickles().get(0);
     }
 
 }

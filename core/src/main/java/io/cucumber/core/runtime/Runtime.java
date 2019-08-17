@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
@@ -14,6 +13,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
@@ -61,7 +61,7 @@ public final class Runtime {
     private final ExitStatus exitStatus;
 
     private final RunnerSupplier runnerSupplier;
-    private final Predicate<PickleEvent> filter;
+    private final Predicate<CucumberPickle> filter;
     private final int limit;
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
@@ -71,7 +71,7 @@ public final class Runtime {
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
-                    final Predicate<PickleEvent> filter,
+                    final Predicate<CucumberPickle> filter,
                     final int limit,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
@@ -98,7 +98,7 @@ public final class Runtime {
             .flatMap(feature -> feature.getPickles().stream())
             .filter(filter)
             .collect(collectingAndThen(toList(),
-                list -> pickleOrder.orderPickleEvents(list).stream()))
+                list -> pickleOrder.orderPickles(list).stream()))
             .limit(limit > 0 ? limit : Integer.MAX_VALUE)
             .map(pickleEvent -> executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)))
             .collect(toList());
@@ -228,7 +228,7 @@ public final class Runtime {
                 ? this.featureSupplier
                 : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
-            final Predicate<PickleEvent> filter = new Filters(runtimeOptions);
+            final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
 

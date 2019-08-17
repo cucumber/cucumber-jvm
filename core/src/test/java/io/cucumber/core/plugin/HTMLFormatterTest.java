@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import gherkin.deps.com.google.gson.JsonParser;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,7 +30,6 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
-import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -41,7 +41,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class HTMLFormatterTest {
+class HTMLFormatterTest {
 
     private final static String jsFunctionCallRegexString = "formatter.(\\w*)\\(([^)]*)\\);";
     private final static Pattern jsFunctionCallRegex = Pattern.compile(jsFunctionCallRegexString);
@@ -62,7 +62,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void writes_index_html() throws Throwable {
+    void writes_index_html() throws Throwable {
         writeReport();
         URL indexHtml = new URL(outputDir, "index.html");
         Document document = Jsoup.parse(new File(indexHtml.getFile()), UTF_8.name());
@@ -71,7 +71,7 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void writes_valid_report_js() throws Throwable {
+    void writes_valid_report_js() throws Throwable {
         writeReport();
         assertJsFunctionCallSequence(asList("" +
                 "formatter.uri(\"file:some/path/some.feature\");\n",
@@ -107,13 +107,13 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void includes_uri() throws Throwable {
+    void includes_uri() throws Throwable {
         writeReport();
         assertContains("formatter.uri(\"file:some/path/some.feature\");", readReportJs());
     }
 
     @Test
-    public void included_embedding() throws Throwable {
+    void included_embedding() throws Throwable {
         writeReport();
         String reportJs = readReportJs();
         assertAll("Checking ReportJs",
@@ -123,8 +123,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_a_single_scenario() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_a_single_scenario() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -174,8 +174,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_backgound() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_backgound() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
             "    Given first step\n" +
@@ -259,8 +259,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_scenario_outline() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_scenario_outline() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: outline name\n" +
             "    Given first step\n" +
@@ -376,8 +376,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_before_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_before_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -412,8 +412,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_after_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_after_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -448,8 +448,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_after_step_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_after_step_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -507,8 +507,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_output_from_before_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_output_from_before_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -545,8 +545,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_output_from_after_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_output_from_after_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -583,8 +583,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_output_from_after_step_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_output_from_after_step_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -638,8 +638,8 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void should_handle_text_embeddings_from_before_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_text_embeddings_from_before_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -743,7 +743,7 @@ public class HTMLFormatterTest {
 
     private void runFeaturesWithFormatter(URL outputDir) {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
-        CucumberFeature feature = feature("some/path/some.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("some/path/some.feature", "" +
             "Feature:\n" +
             "  Scenario: some cukes\n" +
             "    Given first step\n");

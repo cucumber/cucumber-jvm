@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
@@ -18,13 +19,12 @@ import java.util.Map;
 
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
-import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class PrettyFormatterTest {
+class PrettyFormatterTest {
 
     private final List<CucumberFeature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
@@ -34,8 +34,8 @@ public class PrettyFormatterTest {
     private final List<Answer<Object>> hookActions = new ArrayList<>();
 
     @Test
-    public void should_align_the_indentation_of_location_strings() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_align_the_indentation_of_location_strings() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -58,8 +58,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_background() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_background() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
             "    Given first step\n" +
@@ -89,8 +89,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_scenario_outline() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_handle_scenario_outline() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: <name>\n" +
             "    Given first step\n" +
@@ -123,8 +123,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_descriptions() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_descriptions() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "    feature description\n" +
             "    ...\n" +
@@ -178,8 +178,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_tags() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_tags() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "@feature_tag\n" +
             "Feature: feature name\n" +
             "  @scenario_tag\n" +
@@ -219,8 +219,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_error_message_for_failed_steps() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_error_message_for_failed_steps() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -236,8 +236,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_error_message_for_before_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_error_message_for_before_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -255,8 +255,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_error_message_for_after_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_error_message_for_after_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -273,8 +273,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_output_from_before_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_output_from_before_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -293,8 +293,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_output_from_after_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_output_from_after_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -312,8 +312,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_print_output_from_afterStep_hooks() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_print_output_from_afterStep_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -336,8 +336,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_color_code_steps_according_to_the_result() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_color_code_steps_according_to_the_result() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -352,8 +352,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_color_code_locations_as_comments() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_color_code_locations_as_comments() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -368,8 +368,8 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_color_code_error_message_according_to_the_result() {
-        CucumberFeature feature = feature("path/test.feature", "" +
+    void should_color_code_error_message_according_to_the_result() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -384,7 +384,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_mark_subsequent_arguments_in_steps() {
+    void should_mark_subsequent_arguments_in_steps() {
         Formats formats = new AnsiFormats();
 
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
@@ -403,7 +403,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_mark_nested_argument_as_part_of_full_argument() {
+    void should_mark_nested_argument_as_part_of_full_argument() {
         Formats formats = new AnsiFormats();
 
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
@@ -421,7 +421,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_mark_nested_arguments_as_part_of_enclosing_argument() {
+    void should_mark_nested_arguments_as_part_of_enclosing_argument() {
         Formats formats = new AnsiFormats();
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
