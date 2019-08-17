@@ -55,8 +55,6 @@ public class RpnCalculatorSteps {
         }
     }
 
-
-
     static final class Entry {
         private Integer first;
         private Integer second;

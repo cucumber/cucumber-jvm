@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
@@ -11,13 +10,21 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
     private static final Comparator<CoreHookDefinition> ASCENDING = Comparator.comparing(CoreHookDefinition::getOrder);
@@ -193,16 +200,16 @@ final class CachingGlue implements Glue {
         });
     }
 
-    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
-        PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(featurePath, step);
+    PickleStepDefinitionMatch stepDefinitionMatch(String uri, CucumberStep step) {
+        PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(uri, step);
         if (cachedMatch != null) {
             return cachedMatch;
         }
-        return findStepDefinitionMatch(featurePath, step);
+        return findStepDefinitionMatch(uri, step);
     }
 
 
-    private PickleStepDefinitionMatch cachedStepDefinitionMatch(String featurePath, PickleStep step) {
+    private PickleStepDefinitionMatch cachedStepDefinitionMatch(String featurePath, CucumberStep step) {
         String stepDefinitionPattern = stepPatternByStepText.get(step.getText());
         if (stepDefinitionPattern == null) {
             return null;
@@ -221,8 +228,8 @@ final class CachingGlue implements Glue {
         return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step);
     }
 
-    private PickleStepDefinitionMatch findStepDefinitionMatch(String featurePath, PickleStep step) {
-        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
+    private PickleStepDefinitionMatch findStepDefinitionMatch(String uri, CucumberStep step) {
+        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.isEmpty()) {
             return null;
         }
@@ -237,12 +244,12 @@ final class CachingGlue implements Glue {
         return match;
     }
 
-    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
+    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String uri, CucumberStep step) {
         List<PickleStepDefinitionMatch> result = new ArrayList<>();
         for (CoreStepDefinition coreStepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = coreStepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step));
+                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step));
             }
         }
         return result;

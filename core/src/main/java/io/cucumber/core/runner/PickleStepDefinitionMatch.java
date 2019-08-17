@@ -4,26 +4,26 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
-import io.cucumber.core.stepexpression.Argument;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
-    private final transient String featurePath;
+    private final transient String uri;
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
     // to prevent it from ending up in the JSON.
-    private final transient PickleStep step;
+    private final transient CucumberStep step;
 
-    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
+    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, CucumberStep step) {
         super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
-        this.featurePath = featurePath;
+        this.uri = uri;
         this.step = step;
     }
 
@@ -137,7 +137,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     StackTraceElement getStepLocation() {
-        return new StackTraceElement("✽", step.getText(), featurePath, getStepLine(step));
+        return new StackTraceElement("✽", step.getText(), uri, step.getStepLine());
     }
 
     public Match getMatch() {
@@ -153,7 +153,4 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         return stepDefinition.getLocation(false);
     }
 
-    private static int getStepLine(PickleStep step) {
-        return step.getLocations().get(step.getLocations().size() - 1).getLine();
-    }
 }

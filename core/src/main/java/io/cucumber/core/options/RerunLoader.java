@@ -1,6 +1,7 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.options;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 
@@ -14,19 +15,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class RerunLoader {
+class RerunLoader {
     private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     private final ResourceLoader resourceLoader;
 
-    public RerunLoader(ResourceLoader resourceLoader) {
+    RerunLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    public List<FeatureWithLines> load(URI rerunPath) {
+    List<FeatureWithLines> load(URI rerunPath) {
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
 
-        if(!resources.iterator().hasNext()){
+        if (!resources.iterator().hasNext()) {
             throw new CucumberException("Rerun file did not exist: " + rerunPath);
         }
 

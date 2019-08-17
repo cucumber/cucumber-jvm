@@ -10,13 +10,13 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.BackendSupplier;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-public class FeatureRunnerTest {
+class FeatureRunnerTest {
 
     private static void assertDescriptionIsPredictable(Description description, Set<Description> descriptions) {
         assertTrue(descriptions.contains(description));
@@ -58,7 +58,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void should_not_create_step_descriptions_by_default() throws Exception {
+    void should_not_create_step_descriptions_by_default() throws Exception {
         CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background:\n" +
@@ -93,7 +93,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void should_not_issue_notification_for_steps_by_default_scenario_outline_with_two_examples_table_and_background() throws Throwable {
+    void should_not_issue_notification_for_steps_by_default_scenario_outline_with_two_examples_table_and_background() throws Throwable {
         CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
@@ -125,7 +125,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void should_not_issue_notification_for_steps_by_default_two_scenarios_with_background() throws Throwable {
+    void should_not_issue_notification_for_steps_by_default_two_scenarios_with_background() throws Throwable {
         CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
@@ -155,7 +155,7 @@ public class FeatureRunnerTest {
         return notifier;
     }
 
-    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
+    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(RuntimeOptions.defaultOptions());
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
@@ -189,7 +189,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void should_populate_descriptions_with_stable_unique_ids() throws Exception {
+    void should_populate_descriptions_with_stable_unique_ids() throws Exception {
         CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background:\n" +
@@ -219,7 +219,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void step_descriptions_can_be_turned_on() throws Exception {
+    void step_descriptions_can_be_turned_on() throws Exception {
         CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background:\n" +
@@ -255,7 +255,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void step_notification_can_be_turned_on_scenario_outline_with_two_examples_table_and_background() throws Throwable {
+    void step_notification_can_be_turned_on_scenario_outline_with_two_examples_table_and_background() throws Throwable {
         CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
@@ -312,7 +312,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void step_notification_can_be_turned_on_two_scenarios_with_background() throws Throwable {
+    void step_notification_can_be_turned_on_two_scenarios_with_background() throws Throwable {
         CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
@@ -350,7 +350,7 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void should_notify_of_failure_to_create_runners_and_request_test_execution_to_stop() throws InitializationError {
+    void should_notify_of_failure_to_create_runners_and_request_test_execution_to_stop() {
         CucumberFeature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario_1 name\n" +

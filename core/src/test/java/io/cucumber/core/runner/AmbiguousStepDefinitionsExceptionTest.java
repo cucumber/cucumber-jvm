@@ -1,6 +1,8 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,8 +20,13 @@ class AmbiguousStepDefinitionsExceptionTest {
 
     @Test
     void can_report_ambiguous_step_definitions() {
-        PickleStep mockPickleStep = mock(PickleStep.class);
-        when(mockPickleStep.getText()).thenReturn("PickleStep_Text");
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
+
+        CucumberStep mockPickleStep = feature.getPickles().get(0).getSteps().get(0);
 
         PickleStepDefinitionMatch mockPickleStepDefinitionMatchOne = mock(PickleStepDefinitionMatch.class);
         when(mockPickleStepDefinitionMatchOne.getPattern()).thenReturn("PickleStepDefinitionMatchOne_Pattern");
@@ -35,7 +42,7 @@ class AmbiguousStepDefinitionsExceptionTest {
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(equalTo(
                 "" +
-                    "\"PickleStep_Text\" matches more than one step definition:\n" +
+                    "\"I have 4 cukes in my belly\" matches more than one step definition:\n" +
                     "  \"PickleStepDefinitionMatchOne_Pattern\" in PickleStepDefinitionMatchOne_Location\n" +
                     "  \"PickleStepDefinitionMatchTwo_Pattern\" in PickleStepDefinitionMatchTwo_Location"
             ))),

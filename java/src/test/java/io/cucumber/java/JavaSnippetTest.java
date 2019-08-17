@@ -1,38 +1,29 @@
 package io.cucumber.java;
 
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.snippets.SnippetType;
-import io.cucumber.cucumberexpressions.CaptureGroupTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.TypeReference;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class JavaSnippetTest {
+class JavaSnippetTest {
 
-    private static final String GIVEN_KEYWORD = "Given";
     private final SnippetType snippetType = SnippetType.UNDERSCORE;
 
     @Test
-    public void generatesPlainSnippet() {
+    void generatesPlainSnippet() {
         String expected = "" +
             "@Given(\"I have {int} cukes in my {string} belly\")\n" +
             "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
@@ -43,18 +34,15 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesPlainSnippetUsingCustomParameterTypes() {
+    void generatesPlainSnippetUsingCustomParameterTypes() {
         ParameterType<Size> customParameterType = new ParameterType<Size>(
             "size",
             "small|medium|large",
             Size.class,
-            new CaptureGroupTransformer<Size>() {
-                @Override
-                public Size transform(String... strings) {
-                    return null;
-                }
-            }, true,
-            false);
+            (String... groups) -> null,
+            true,
+            false
+        );
 
         String expected = "" +
             "@Given(\"I have {double} cukes in my {size} belly\")\n" +
@@ -66,20 +54,16 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesPlainSnippetUsingComplexParameterTypes() {
-        ParameterType<List<Size>> customParameterType = new ParameterType<List<Size>>(
+    void generatesPlainSnippetUsingComplexParameterTypes() {
+        ParameterType<List<Size>> customParameterType = new ParameterType<>(
             "sizes",
             singletonList("(small|medium|large)(( and |, )(small|medium|large))*"),
             new TypeReference<List<Size>>() {
             }.getType(),
-            new CaptureGroupTransformer<List<Size>>() {
-                @Override
-                public List<Size> transform(String... strings) {
-                    return null;
-                }
-            },
+            (String[] groups) -> null,
             true,
-            false);
+            false
+        );
 
         String expected = "" +
             "@Given(\"I have {sizes} bellies\")\n" +
@@ -91,7 +75,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesCopyPasteReadyStepSnippetForNumberParameters() {
+    void generatesCopyPasteReadyStepSnippetForNumberParameters() {
         String expected = "" +
             "@Given(\"before {int} after\")\n" +
             "public void before_after(Integer int1) {\n" +
@@ -102,7 +86,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
+    void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
             "@Given(\"I have {int} cukes in: my {string} red-belly!\")\n" +
             "public void i_have_cukes_in_my_red_belly(Integer int1, String string) {\n" +
@@ -113,7 +97,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
+    void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
             "@Given(\"the DI system receives a message saying {string}\")\n" +
             "public void the_DI_system_receives_a_message_saying(String string) {\n" +
@@ -124,7 +108,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithQuestionMarks() {
+    void generatesSnippetWithQuestionMarks() {
         String expected = "" +
             "@Given(\"is there an error?:\")\n" +
             "public void is_there_an_error() {\n" +
@@ -135,7 +119,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithLotsOfNonIdentifierCharacters() {
+    void generatesSnippetWithLotsOfNonIdentifierCharacters() {
         String expected = "" +
             "@Given(\"\\\\([a-z]*)?.+\")\n" +
             "public void a_z() {\n" +
@@ -146,7 +130,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithParentheses() {
+    void generatesSnippetWithParentheses() {
         String expected = "" +
             "@Given(\"I have {int} cukes \\\\(maybe more)\")\n" +
             "public void i_have_cukes_maybe_more(Integer int1) {\n" +
@@ -157,7 +141,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithBrackets() {
+    void generatesSnippetWithBrackets() {
         String expected = "" +
             "@Given(\"I have {int} cukes [maybe more]\")\n" +
             "public void i_have_cukes_maybe_more(Integer int1) {\n" +
@@ -168,30 +152,26 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithDocString() {
+    void generatesSnippetWithDocString() {
         String expected = "" +
             "@Given(\"I have:\")\n" +
             "public void i_have(String docString) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertThat(snippetForDocString("I have:", new PickleString(null, "hello")), is(equalTo(expected)));
+        assertThat(snippetForDocString("I have:", "hello"), is(equalTo(expected)));
     }
 
     @Test
-    public void generatesSnippetWithMultipleArgumentsNamedDocString() {
-        ParameterType<String> customParameterType = new ParameterType<String>(
+    void generatesSnippetWithMultipleArgumentsNamedDocString() {
+        ParameterType<String> customParameterType = new ParameterType<>(
             "docString",
             "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
             String.class,
-            new CaptureGroupTransformer<String>() {
-                @Override
-                public String transform(String... strings) {
-                    return null;
-                }
-            },
+            (String[] groups) -> null,
             true,
-            false);
+            false
+        );
 
         String expected = "" +
             "@Given(\"I have a {docString}:\")\n" +
@@ -205,12 +185,12 @@ public class JavaSnippetTest {
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        assertThat(snippetForDocString("I have a \"Documentation String\":", new PickleString(null, "hello"), customParameterType), is(equalTo(expected)));
+        assertThat(snippetForDocString("I have a \"Documentation String\":", "hello", customParameterType), is(equalTo(expected)));
     }
 
     @Test
     @Disabled("TODO issue tracked to within io.cucumber.cucumberexpressions.CucumberExpressionGenerator")
-    public void recognisesWordWithNumbers() {
+    void recognisesWordWithNumbers() {
         String expected = "" +
             "@Given(\"Then it responds ([\\\"]*)\")\n" +
             "public void Then_it_responds(String arg1) {\n" +
@@ -220,7 +200,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithDataTable() {
+    void generatesSnippetWithDataTable() {
         String expected = "" +
             "@Given(\"I have:\")\n" +
             "public void i_have(io.cucumber.datatable.DataTable dataTable) {\n" +
@@ -233,23 +213,17 @@ public class JavaSnippetTest {
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
-        assertThat(snippetForDataTable("I have:", dataTable), is(equalTo(expected)));
+        assertThat(snippetForDataTable("I have:"), is(equalTo(expected)));
     }
 
 
     @Test
-    public void generatesSnippetWithMultipleArgumentsNamedDataTable() {
-        ParameterType<String> customParameterType = new ParameterType<String>(
+    void generatesSnippetWithMultipleArgumentsNamedDataTable() {
+        ParameterType<String> customParameterType = new ParameterType<>(
             "dataTable",
             "\"([^\"\\\\]*(\\\\.[^\"\\\\]*)*)\"",
             String.class,
-            new CaptureGroupTransformer<String>() {
-                @Override
-                public String transform(String... strings) {
-                    return null;
-                }
-            },
+            (String[] groups) -> null,
             true,
             false);
 
@@ -277,12 +251,11 @@ public class JavaSnippetTest {
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
             "}\n";
-        PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
-        assertThat(snippetForDataTable("I have in table \"M6\":", dataTable, customParameterType), is(equalTo(expected)));
+        assertThat(snippetForDataTable("I have in table \"M6\":", customParameterType), is(equalTo(expected)));
     }
 
     @Test
-    public void generateSnippetWithOutlineParam() {
+    void generateSnippetWithOutlineParam() {
         String expected = "" +
             "@Given(\"Then it responds <param>\")\n" +
             "public void then_it_responds_param() {\n" +
@@ -293,50 +266,86 @@ public class JavaSnippetTest {
         assertThat(snippetFor("Then it responds <param>"), is(equalTo(expected)));
     }
 
-    private String snippetFor(String name) {
-        PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, snippetType);
+    private String snippetFor(String stepText) {
+        CucumberStep step = createStep(stepText);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
-    private String snippetFor(String name, ParameterType<?> parameterType) {
-        PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
+    private String snippetFor(String stepText, ParameterType<?> parameterType) {
+        CucumberStep step = createStep(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, snippetType);
-        return String.join("\n", snippet);
-    }
-
-    private String snippetForDocString(String name, PickleString docString) {
-        PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, snippetType);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
-    private String snippetForDocString(String name, PickleString docString, ParameterType<String> parameterType) {
-        PickleStep step = new PickleStep(name, asList((Argument) docString), Collections.<PickleLocation>emptyList());
+    private String snippetForDocString(String stepText, String docString) {
+        CucumberStep step = createStepWithDocString(stepText, docString);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
+
+    private String snippetForDocString(String stepText, String docString, ParameterType<String> parameterType) {
+        CucumberStep step = createStepWithDocString(stepText, docString);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, snippetType);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
-    private String snippetForDataTable(String name, PickleTable dataTable) {
-        PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, snippetType);
+    private String snippetForDataTable(String stepText) {
+        CucumberStep step = createStepWithDataTable(stepText);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
-    private String snippetForDataTable(String name, PickleTable dataTable, ParameterType<String> parameterType) {
-        PickleStep step = new PickleStep(name, asList((Argument) dataTable), Collections.<PickleLocation>emptyList());
+    private String snippetForDataTable(String stepText, ParameterType<String> parameterType) {
+        CucumberStep step = createStepWithDataTable(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, GIVEN_KEYWORD, snippetType);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
         return String.join("\n", snippet);
+    }
+
+    private CucumberStep createStep(String stepText) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    Given " + stepText + "\n";
+
+        CucumberFeature feature = TestFeatureParser.parse(source);
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
+    private CucumberStep createStepWithDocString(String stepText, String docString) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    Given " + stepText + "\n" +
+            "      \"\"\"\n" +
+            "      " + docString + "\n" +
+            "      \"\"\"";
+
+        CucumberFeature feature = TestFeatureParser.parse(source);
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
+    private CucumberStep createStepWithDataTable(String stepText) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    Given " + stepText + "\n" +
+            "      | key   | \n" +
+            "      | value | \n";
+
+        CucumberFeature feature = TestFeatureParser.parse(source);
+        return feature.getPickles().get(0).getSteps().get(0);
     }
 
     private static class Size {

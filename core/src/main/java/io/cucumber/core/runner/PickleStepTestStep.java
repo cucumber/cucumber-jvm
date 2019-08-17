@@ -1,26 +1,27 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.event.Argument;
+import io.cucumber.core.event.StepArgument;
 import io.cucumber.core.event.TestCase;
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberStep;
 
 import java.util.Collections;
 import java.util.List;
 
 final class PickleStepTestStep extends TestStep implements io.cucumber.core.event.PickleStepTestStep {
     private final String uri;
-    private final PickleStep step;
+    private final CucumberStep step;
     private final List<HookTestStep> afterStepHookSteps;
     private final List<HookTestStep> beforeStepHookSteps;
     private final PickleStepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(String uri, PickleStep step, PickleStepDefinitionMatch definitionMatch) {
-        this(uri, step, Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), definitionMatch);
+    PickleStepTestStep(String uri, CucumberStep step, PickleStepDefinitionMatch definitionMatch) {
+        this(uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
     PickleStepTestStep(String uri,
-                       PickleStep step,
+                       CucumberStep step,
                        List<HookTestStep> beforeStepHookSteps,
                        List<HookTestStep> afterStepHookSteps,
                        PickleStepDefinitionMatch definitionMatch
@@ -38,13 +39,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.core.even
         boolean skipNextStep = skipSteps;
 
         for (HookTestStep before : beforeStepHookSteps) {
-            skipNextStep |= before.run(testCase, bus,  scenario, skipSteps);
+            skipNextStep |= before.run(testCase, bus, scenario, skipSteps);
         }
 
-        skipNextStep |= super.run(testCase, bus,  scenario, skipNextStep);
+        skipNextStep |= super.run(testCase, bus, scenario, skipNextStep);
 
         for (HookTestStep after : afterStepHookSteps) {
-            skipNextStep |=  after.run(testCase, bus,  scenario, skipSteps);
+            skipNextStep |= after.run(testCase, bus, scenario, skipSteps);
         }
 
         return skipNextStep;
@@ -59,18 +60,18 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.core.even
     }
 
     @Override
-    public PickleStep getPickleStep() {
+    public CucumberStep getStep() {
         return step;
     }
 
     @Override
-    public String getStepLocation() {
-        return uri + ":" + getStepLine();
+    public String getUri() {
+        return uri;
     }
 
     @Override
     public int getStepLine() {
-        return step.getLocations().get(step.getLocations().size() - 1).getLine();
+        return step.getStepLine();
     }
 
     @Override
@@ -84,7 +85,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.core.even
     }
 
     @Override
-    public List<gherkin.pickles.Argument> getStepArgument() {
+    public StepArgument getStepArgument() {
         return step.getArgument();
     }
 

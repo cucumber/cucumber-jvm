@@ -2,15 +2,15 @@ package io.cucumber.testng;
 
 import io.cucumber.core.feature.CucumberFeature;
 
-class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
+final class FeatureWrapperImpl implements FeatureWrapper {
     private final CucumberFeature cucumberFeature;
 
-    CucumberFeatureWrapperImpl(CucumberFeature cucumberFeature) {
+    FeatureWrapperImpl(CucumberFeature cucumberFeature) {
         this.cucumberFeature = cucumberFeature;
     }
 
     @Override
     public String toString() {
-        return "\"" + cucumberFeature.getGherkinFeature().getFeature().getName() + "\"";
+        return "\"" + cucumberFeature.getName() + "\"";
     }
 }

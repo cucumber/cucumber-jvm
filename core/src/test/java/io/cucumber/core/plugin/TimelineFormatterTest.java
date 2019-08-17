@@ -5,8 +5,8 @@ import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonDeserializer;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,14 +16,12 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,28 +31,25 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class TimelineFormatterTest {
+class TimelineFormatterTest {
 
-    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = new Comparator<TimelineFormatter.TestData>() {
-        @Override
-        public int compare(TimelineFormatter.TestData o1, TimelineFormatter.TestData o2) {
-            return o1.id.compareTo(o2.id);
-        }
-    };
+    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator.comparing(o -> o.id);
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/core/plugin/timeline";
     private static final String REPORT_JS = "report.js";
     private static final Duration STEP_DURATION = Duration.ofMillis(1000);
 
-    private final Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, (JsonDeserializer<Instant>) (json,
-                                                                                                                type, jsonDeserializationContext) -> {
-        return json.isJsonObject() ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong()) : Instant.ofEpochMilli(json.getAsLong());
-    }).create();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(
+        Instant.class,
+        (JsonDeserializer<Instant>) (json, type, jsonDeserializationContext) ->
+            json.isJsonObject()
+                ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong())
+                : Instant.ofEpochMilli(json.getAsLong())).create();
 
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
-    private final CucumberFeature failingFeature = feature("some/path/failing.feature", "" +
+    private final CucumberFeature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
         "Feature: Failing Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -70,7 +65,7 @@ public class TimelineFormatterTest {
         "    When step_02\n" +
         "    Then step_03");
 
-    private final CucumberFeature successfulFeature = feature("some/path/successful.feature", "" +
+    private final CucumberFeature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
         "Feature: Successful Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -82,7 +77,7 @@ public class TimelineFormatterTest {
         "    When step_20\n" +
         "    Then step_30");
 
-    private final CucumberFeature pendingFeature = feature("some/path/pending.feature", "" +
+    private final CucumberFeature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
         "Feature: Pending Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -97,7 +92,7 @@ public class TimelineFormatterTest {
     private File reportJsFile;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         reportDir = TempDir.createTempDirectory();
         reportJsFile = new File(reportDir, REPORT_JS);
 
@@ -116,7 +111,7 @@ public class TimelineFormatterTest {
     }
 
     @Test
-    public void shouldWriteAllRequiredFilesToOutputDirectory() throws IOException {
+    void shouldWriteAllRequiredFilesToOutputDirectory() throws IOException {
         runFormatterWithPlugin();
 
         assertThat(REPORT_JS + ": did not exist in output dir", reportJsFile.exists(), is(equalTo(true)));
@@ -132,7 +127,7 @@ public class TimelineFormatterTest {
     }
 
     @Test
-    public void shouldWriteItemsCorrectlyToReportJsWhenRunInParallel() throws Throwable {
+    void shouldWriteItemsCorrectlyToReportJsWhenRunInParallel() throws Throwable {
         TestHelper.builder()
             .withFeatures(failingFeature, successfulFeature, pendingFeature)
             .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath(), "--threads", "3")
@@ -159,12 +154,12 @@ public class TimelineFormatterTest {
         }
 
         //Sort the tests, output order is not a problem but obviously asserting it is
-        Collections.sort(actualOutput.tests, TEST_DATA_COMPARATOR);
+        actualOutput.tests.sort(TEST_DATA_COMPARATOR);
         assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, false, false);
     }
 
     @Test
-    public void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
+    void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
         runFormatterWithPlugin();
 
         assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
@@ -188,7 +183,7 @@ public class TimelineFormatterTest {
         final ActualReportOutput actualOutput = readReport();
 
         //Sort the tests, output order is not a problem but obviously asserting it is
-        Collections.sort(actualOutput.tests, TEST_DATA_COMPARATOR);
+        actualOutput.tests.sort(TEST_DATA_COMPARATOR);
 
         assertAll("Checking Timeline",
             () -> assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, true, true),

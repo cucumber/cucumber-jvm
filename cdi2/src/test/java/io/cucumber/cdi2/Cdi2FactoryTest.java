@@ -11,10 +11,10 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class Cdi2FactoryTest {
+class Cdi2FactoryTest {
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
 
         final ObjectFactory factory = new Cdi2Factory();
         factory.addClass(BellyStepdefs.class);

@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.CucumberStep;
 
 import java.util.List;
 
@@ -12,12 +12,12 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
 
     private final List<PickleStepDefinitionMatch> matches;
 
-    AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {
+    AmbiguousStepDefinitionsException(CucumberStep step, List<PickleStepDefinitionMatch> matches) {
         super(createMessage(step, matches));
         this.matches = matches;
     }
 
-    private static String createMessage(PickleStep step, List<PickleStepDefinitionMatch> matches) {
+    private static String createMessage(CucumberStep step, List<PickleStepDefinitionMatch> matches) {
         requireNonNull(step);
         requireNonNull(matches);
 

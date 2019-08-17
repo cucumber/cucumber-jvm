@@ -1,10 +1,10 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.snippets.SnippetType;
 
-class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
+final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
     @Override
     public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
@@ -69,12 +69,12 @@ class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.O
         @Override
         public SnippetType snippets() {
             switch (annotation.snippets()) {
-            case UNDERSCORE:
-                return SnippetType.UNDERSCORE;
-            case CAMELCASE:
-                return SnippetType.CAMELCASE;
-            default:
-                throw new IllegalArgumentException("" + annotation.snippets());
+                case UNDERSCORE:
+                    return SnippetType.UNDERSCORE;
+                case CAMELCASE:
+                    return SnippetType.CAMELCASE;
+                default:
+                    throw new IllegalArgumentException("" + annotation.snippets());
             }
         }
 

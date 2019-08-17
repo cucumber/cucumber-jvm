@@ -18,8 +18,8 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
 
         for (Object[] scenario : testNGCucumberRunner.provideScenarios()) {
-            PickleEventWrapper pickleEvent = (PickleEventWrapper) scenario[0];
-            testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent());
+            PickleWrapper pickleEvent = (PickleWrapper) scenario[0];
+            testNGCucumberRunner.runScenario(pickleEvent.getPickle());
         }
     }
 
@@ -31,9 +31,9 @@ public class TestNGCucumberRunnerTest {
         // the feature file only contains one scenario
         Assert.assertEquals(scenarios.length, 1);
         Object[] scenario = scenarios[0];
-        PickleEventWrapper pickleEvent = (PickleEventWrapper) scenario[0];
+        PickleWrapper pickleEvent = (PickleWrapper) scenario[0];
 
-        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent()); // runScenario() throws CucumberException
+        testNGCucumberRunner.runScenario(pickleEvent.getPickle()); // runScenario() throws CucumberException
     }
 
     @Test
@@ -41,7 +41,8 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner = new TestNGCucumberRunner(ParseError.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios(); // a CucumberException is caught
         try {
-            ((PickleEventWrapper) scenarios[0][0]).getPickleEvent();
+            PickleWrapper pickleWrapper = (PickleWrapper) scenarios[0][0];
+            pickleWrapper.getPickle();
             Assert.fail("CucumberException not thrown");
         } catch (CucumberException e) {
             Assert.assertEquals(e.getMessage(), "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature");

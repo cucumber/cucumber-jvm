@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 
 /**
@@ -9,7 +8,7 @@ import io.cucumber.core.exception.CucumberException;
  *
  * @see TestNGCucumberRunner#provideScenarios()
  */
-final class CucumberExceptionWrapper implements PickleEventWrapper {
+final class CucumberExceptionWrapper implements PickleWrapper {
     private final CucumberException exception;
 
     CucumberExceptionWrapper(CucumberException e) {
@@ -17,7 +16,7 @@ final class CucumberExceptionWrapper implements PickleEventWrapper {
     }
 
     @Override
-    public PickleEvent getPickleEvent() {
+    public Pickle getPickle() {
         throw this.exception;
     }
 }

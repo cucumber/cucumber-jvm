@@ -1,13 +1,9 @@
 package io.cucumber.core.runtime;
 
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.Step;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
@@ -19,7 +15,9 @@ import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
@@ -35,7 +33,6 @@ import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 
 import java.net.URI;
 import java.time.Clock;
@@ -49,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static io.cucumber.core.runner.TestHelper.feature;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static java.util.Collections.emptyList;
@@ -69,15 +65,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class RuntimeTest {
+class RuntimeTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
     @Test
-    public void runs_feature_with_json_formatter() {
-        final CucumberFeature feature = feature("test.feature", "" +
+    void runs_feature_with_json_formatter() {
+        final CucumberFeature feature = TestFeatureParser.parse("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
             "    Given b\n" +
@@ -159,7 +155,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_with_passed_scenarios() {
+    void strict_with_passed_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
@@ -167,7 +163,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_passed_scenarios() {
+    void non_strict_with_passed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
@@ -175,21 +171,21 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_undefined_scenarios() {
+    void non_strict_with_undefined_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
-    public void strict_with_undefined_scenarios() {
+    void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
-    public void strict_with_pending_scenarios() {
+    void strict_with_pending_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
@@ -197,7 +193,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_pending_scenarios() {
+    void non_strict_with_pending_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
@@ -205,7 +201,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_skipped_scenarios() {
+    void non_strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
@@ -213,7 +209,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_with_skipped_scenarios() {
+    void strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
@@ -221,7 +217,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_failed_scenarios() {
+    void non_strict_with_failed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
@@ -229,7 +225,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_with_failed_scenarios() {
+    void strict_with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
@@ -237,7 +233,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_ambiguous_scenarios() {
+    void non_strict_with_ambiguous_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
@@ -245,7 +241,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_with_ambiguous_scenarios() {
+    void strict_with_ambiguous_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
@@ -253,7 +249,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_pass_if_no_features_are_found() {
+    void should_pass_if_no_features_are_found() {
         ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
         Runtime runtime = createStrictRuntime(resourceLoader);
 
@@ -263,8 +259,8 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_make_scenario_name_available_to_hooks() throws Throwable {
-        final CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_make_scenario_name_available_to_hooks() throws Throwable {
+        final CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -293,8 +289,8 @@ public class RuntimeTest {
         return new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                for (ScenarioDefinition child : feature.getGherkinFeature().getFeature().getChildren()) {
-                    for (Step step : child.getSteps()) {
+                for (CucumberPickle child : feature.getPickles()) {
+                    for (CucumberStep step : child.getSteps()) {
                         mockMatch(glue, step.getText());
                     }
                 }
@@ -304,8 +300,8 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_for_two_scenarios_with_background() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+    void should_call_formatter_for_two_scenarios_with_background() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
@@ -341,8 +337,8 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+    void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
@@ -393,20 +389,20 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
-        CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
+    void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
+        CucumberFeature feature1 = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
             "    Given first step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+        CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: feature name 2\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        CucumberFeature feature3 = TestHelper.feature("path/test3.feature", "" +
+        CucumberFeature feature3 = TestFeatureParser.parse("path/test3.feature", "" +
             "Feature: feature name 3\n" +
             "  Scenario: scenario_3 name\n" +
             "    Given first step\n");
@@ -451,15 +447,15 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_fail_on_event_listener_exception_when_running_in_parallel() {
-        CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
+    void should_fail_on_event_listener_exception_when_running_in_parallel() {
+        CucumberFeature feature1 = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
             "    Given first step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+        CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: feature name 2\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
@@ -482,15 +478,15 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_interrupt_waiting_plugins() throws InterruptedException {
-        final CucumberFeature feature1 = TestHelper.feature("path/test.feature", "" +
+    void should_interrupt_waiting_plugins() throws InterruptedException {
+        final CucumberFeature feature1 = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
             "    Given first step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        final CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+        final CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: feature name 2\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
@@ -498,15 +494,12 @@ public class RuntimeTest {
         final CountDownLatch threadBlocked = new CountDownLatch(1);
         final CountDownLatch interruptHit = new CountDownLatch(1);
 
-        final ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
-            @Override
-            public void receive(TestStepFinished event) {
-                try {
-                    threadBlocked.countDown();
-                    HOURS.sleep(1);
-                } catch (InterruptedException ignored) {
-                    interruptHit.countDown();
-                }
+        final ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
+            try {
+                threadBlocked.countDown();
+                HOURS.sleep(1);
+            } catch (InterruptedException ignored) {
+                interruptHit.countDown();
             }
         });
 
@@ -526,8 +519,8 @@ public class RuntimeTest {
     }
 
     @Test
-    public void generates_events_for_glue_and_scenario_scoped_glue() {
-        final CucumberFeature feature = feature("test.feature", "" +
+    void generates_events_for_glue_and_scenario_scoped_glue() {
+        final CucumberFeature feature = TestFeatureParser.parse("test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: Run a scenario once\n" +
             "    Given global scoped\n" +
@@ -539,11 +532,8 @@ public class RuntimeTest {
 
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
-        Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class, new EventHandler<StepDefinedEvent>() {
-            @Override
-            public void receive(StepDefinedEvent event) {
-                stepDefinedEvents.add(event.getStepDefinition());
-            }
+        Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class, (StepDefinedEvent event) -> {
+            stepDefinedEvents.add(event.getStepDefinition());
         });
 
 
@@ -612,7 +602,7 @@ public class RuntimeTest {
 
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources(any(URI.class), eq(".feature"))).thenReturn(Collections.<Resource>emptyList());
+        when(resourceLoader.resources(any(URI.class), eq(".feature"))).thenReturn(Collections.emptyList());
         return resourceLoader;
     }
 

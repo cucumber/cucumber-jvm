@@ -32,7 +32,7 @@ public class FeatureParser {
             Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
             TokenMatcher matcher = new TokenMatcher();
             GherkinDocument gherkinDocument = parser.parse(source, matcher);
-            List<PickleEvent> pickleEvents = compilePickles(gherkinDocument, resource);
+            List<CucumberPickle> pickleEvents = compilePickles(gherkinDocument, resource);
             return new CucumberFeature(gherkinDocument, path, source, pickleEvents);
         } catch (ParserException e) {
             throw new CucumberException("Failed to parse resource at: " + path.toString(), e);
@@ -48,13 +48,14 @@ public class FeatureParser {
     }
 
 
-    private static List<PickleEvent> compilePickles(GherkinDocument gherkinDocument, Resource resource) {
+    private static List<CucumberPickle> compilePickles(GherkinDocument gherkinDocument, Resource resource) {
         if (gherkinDocument.getFeature() == null) {
             return Collections.emptyList();
         }
         return new Compiler().compile(gherkinDocument)
             .stream()
             .map(pickle -> new PickleEvent(resource.getPath().toString(), pickle))
+            .map(pickleEvent -> new CucumberPickle(pickleEvent, gherkinDocument))
             .collect(Collectors.toList());
     }
 }

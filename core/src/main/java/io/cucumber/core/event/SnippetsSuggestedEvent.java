@@ -10,13 +10,13 @@ import java.util.Objects;
 @API(status = API.Status.STABLE)
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
     private final String uri;
-    private final List<Location> stepLocations;
+    private final int stepLine;
     private final List<String> snippets;
 
-    public SnippetsSuggestedEvent(Instant timeInstant, String uri, List<Location> stepLocations, List<String> snippets) {
+    public SnippetsSuggestedEvent(Instant timeInstant, String uri, int stepLine, List<String> snippets) {
         super(timeInstant);
         this.uri = Objects.requireNonNull(uri);
-        this.stepLocations = Objects.requireNonNull(stepLocations);
+        this.stepLine = stepLine;
         this.snippets = Collections.unmodifiableList(Objects.requireNonNull(snippets));
     }
 
@@ -24,8 +24,8 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
         return uri;
     }
 
-    public List<Location> getStepLocations() {
-        return stepLocations;
+    public int getStepLine() {
+        return stepLine;
     }
 
     public List<String> getSnippets() {

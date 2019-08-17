@@ -7,7 +7,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.feature.RerunLoader;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.order.PickleOrder;
