@@ -143,8 +143,8 @@ class RunnerTest {
 
         InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
         inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afteStepHook1).execute(any(Scenario.class));
         inOrder.verify(afteStepHook2).execute(any(Scenario.class));
+        inOrder.verify(afteStepHook1).execute(any(Scenario.class));
     }
 
     @Test

@@ -25,10 +25,12 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -283,7 +285,6 @@ class CachingGlueTest {
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition2)));
     }
 
-
     @Test
     void returns_no_match_after_evicting_scenario_scoped() {
         String featurePath = "someFeature.feature";
@@ -322,6 +323,57 @@ class CachingGlueTest {
         checkAmbiguousCalled(featurePath);
         //try again to verify if we don't cache when there is ambiguous step
         checkAmbiguousCalled(featurePath);
+    }
+
+    @Test
+    void sorts_before_hooks_by_order() {
+        HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition2 = new MockedScenarioScopedHookDefinition(13);
+        HookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition(24);
+        glue.addBeforeHook(hookDefinition1);
+        glue.addBeforeHook(hookDefinition2);
+        glue.addBeforeHook(hookDefinition3);
+
+        List<HookDefinition> hooks = glue.getBeforeHooks()
+            .stream()
+            .map(CoreHookDefinition::getDelegate)
+            .collect(Collectors.toList());
+
+        assertThat(hooks, contains(hookDefinition1, hookDefinition2, hookDefinition3));
+    }
+
+    @Test
+    void sorts_after_hooks_in_reverse_order() {
+        HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition2 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition(24);
+        glue.addAfterHook(hookDefinition1);
+        glue.addAfterHook(hookDefinition2);
+        glue.addAfterHook(hookDefinition3);
+
+        List<HookDefinition> hooks = glue.getAfterHooks()
+            .stream()
+            .map(CoreHookDefinition::getDelegate)
+            .collect(Collectors.toList());
+
+        assertThat(hooks, contains(hookDefinition3, hookDefinition2, hookDefinition1));
+    }
+
+    @Test
+    void scenario_scoped_hooks_have_higher_order() {
+        HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition2 = new MockedHookDefinition(12);
+        HookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition(24);
+        glue.addBeforeHook(hookDefinition1);
+        glue.addBeforeHook(hookDefinition2);
+        glue.addBeforeHook(hookDefinition3);
+
+        List<HookDefinition> hooks = glue.getBeforeHooks()
+            .stream()
+            .map(CoreHookDefinition::getDelegate)
+            .collect(Collectors.toList());
+
+        assertThat(hooks, contains(hookDefinition2, hookDefinition1, hookDefinition3));
     }
 
     private void checkAmbiguousCalled(String featurePath) {
@@ -459,9 +511,52 @@ class CachingGlueTest {
     }
 
 
+    private static class MockedHookDefinition implements HookDefinition {
+
+        private final int order;
+        boolean disposed;
+
+        MockedHookDefinition() {
+            this(0);
+        }
+
+        MockedHookDefinition(int order) {
+            this.order = order;
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked hook definition";
+        }
+
+        @Override
+        public void execute(Scenario scenario) {
+
+        }
+
+        @Override
+        public String getTagExpression() {
+            return "";
+        }
+
+        @Override
+        public int getOrder() {
+            return order;
+        }
+    }
+
     private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
+        private final int order;
         boolean disposed;
+
+        MockedScenarioScopedHookDefinition() {
+            this(0);
+        }
+
+        MockedScenarioScopedHookDefinition(int order) {
+            this.order = order;
+        }
 
         @Override
         public void disposeScenarioScope() {
@@ -485,7 +580,7 @@ class CachingGlueTest {
 
         @Override
         public int getOrder() {
-            return 0;
+            return order;
         }
     }
 

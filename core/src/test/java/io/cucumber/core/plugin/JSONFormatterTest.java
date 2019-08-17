@@ -646,7 +646,7 @@ class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
             "                }\n" +
             "              },\n" +
             "              {\n" +
@@ -655,7 +655,7 @@ class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
             "                }\n" +
             "              }\n" +
             "            ],\n" +
@@ -689,7 +689,7 @@ class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
             "                }\n" +
             "              },\n" +
             "              {\n" +
@@ -698,7 +698,7 @@ class JSONFormatterTest {
             "                  \"status\": \"passed\"\n" +
             "                },\n" +
             "                \"match\": {\n" +
-            "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+            "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
             "                }\n" +
             "              }\n" +
             "            ],\n" +

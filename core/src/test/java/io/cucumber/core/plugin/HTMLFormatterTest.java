@@ -95,14 +95,16 @@ class HTMLFormatterTest {
             "formatter.result({\n" +
                 "  \"status\": \"passed\"\n" +
                 "});\n",
-            "formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");\n",
-            "formatter.after({\n" +
-                "  \"status\": \"passed\"\n" +
-                "});\n",
             "formatter.embedding(\"text/plain\", \"dodgy stack trace here\", null);\n",
             "formatter.after({\n" +
                 "  \"status\": \"passed\"\n" +
-                "});\n"),
+                "});\n",
+            "formatter.embedding(\"image/png\", \"embedded0.png\", \"Fake image\");\n",
+            "formatter.after({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n"
+
+            ),
             readReportJs());
     }
 
