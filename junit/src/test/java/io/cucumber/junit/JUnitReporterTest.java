@@ -1,18 +1,20 @@
 package io.cucumber.junit;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.junit.JUnitReporter.EachTestNotifier;
 import io.cucumber.junit.JUnitReporter.NoTestNotifier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.AssumptionViolatedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -25,6 +27,7 @@ import java.util.List;
 
 import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,13 +40,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JUnitReporterTest {
-
+class JUnitReporterTest {
     private JUnitReporter jUnitReporter;
     private RunNotifier runNotifier;
 
     @Test
-    public void test_case_started_fires_test_started_for_pickle() {
+    void test_case_started_fires_test_started_for_pickle() {
         createNonStrictReporter();
         PickleRunner pickleRunner = mockPickleRunner(Collections.emptyList());
         runNotifier = mock(RunNotifier.class);
@@ -55,9 +57,9 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_started_does_not_fire_test_started_for_step_by_default() {
+    void test_step_started_does_not_fire_test_started_for_step_by_default() {
         createNonStrictReporter();
-        PickleStep runnerStep = mockStep();
+        CucumberStep runnerStep = mockStep();
         PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
         runNotifier = mock(RunNotifier.class);
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
@@ -68,9 +70,9 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_started_fires_test_started_for_step_when_using_step_notifications() {
+    void test_step_started_fires_test_started_for_step_when_using_step_notifications() {
         createReporter(new JUnitOptionsBuilder().setStepNotifications(true).build());
-        PickleStep runnerStep = mockStep();
+        CucumberStep runnerStep = mockStep();
         PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
         runNotifier = mock(RunNotifier.class);
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
@@ -81,7 +83,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_fires_only_test_finished_for_passed_step() {
+    void test_step_finished_fires_only_test_finished_for_passed_step() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
@@ -94,7 +96,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step() {
+    void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
@@ -114,7 +116,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_assumption_violated() {
+    void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_assumption_violated() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
@@ -134,7 +136,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_adds_no_step_exeption_for_skipped_step_without_exception() {
+    void test_step_finished_adds_no_step_exeption_for_skipped_step_without_exception() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
@@ -146,7 +148,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_adds_the_step_exeption_for_skipped_step_with_assumption_violated() {
+    void test_step_finished_adds_the_step_exeption_for_skipped_step_with_assumption_violated() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
@@ -155,11 +157,11 @@ public class JUnitReporterTest {
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
-        assertThat(jUnitReporter.stepErrors, is(equalTo(asList(exception))));
+        assertThat(jUnitReporter.stepErrors, is(equalTo(singletonList(exception))));
     }
 
     @Test
-    public void test_step_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_non_strict_mode() {
+    void test_step_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_non_strict_mode() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
@@ -179,7 +181,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_strict_mode() {
+    void test_step_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_strict_mode() {
         createStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
@@ -199,7 +201,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_adds_the_step_exeption_for_pending_steps() {
+    void test_step_finished_adds_the_step_exeption_for_pending_steps() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
@@ -208,18 +210,25 @@ public class JUnitReporterTest {
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
-        assertThat(jUnitReporter.stepErrors, is(equalTo(asList(exception))));
+        assertThat(jUnitReporter.stepErrors, is(equalTo(singletonList(exception))));
     }
 
     @Test
-    public void test_step_finished_fires_assumption_failed_and_test_finished_for_undefined_step_in_non_strict_mode() {
+    void test_step_finished_fires_assumption_failed_and_test_finished_for_undefined_step_in_non_strict_mode() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
         Result result = mockResult(Status.UNDEFINED);
+        PickleStepTestStep testStep = mockTestStep();
 
-        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
+        jUnitReporter.handleSnippetSuggested(new SnippetsSuggestedEvent(
+            Instant.now(),
+            "file:example.feature",
+            0,
+            singletonList("snippet")
+        ));
+        jUnitReporter.handleStepResult(testStep, result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
@@ -228,18 +237,28 @@ public class JUnitReporterTest {
         Failure failure = failureArgumentCaptor.getValue();
         assertThat(failure.getDescription(), is(equalTo(description)));
         assertThat(failure.getException(), instanceOf(UndefinedThrowable.class));
-        assertThat(failure.getException().getMessage(), is(equalTo("This step is undefined")));
+        assertThat(
+            failure.getException().getMessage(),
+            is(equalTo("This step is undefined. You can implement it using tne snippet(s) below:\n\nsnippet"))
+        );
     }
 
     @Test
-    public void test_step_finished_fires_failure_and_test_finished_for_undefined_step_in_strict_mode() {
+    void test_step_finished_fires_failure_and_test_finished_for_undefined_step_in_strict_mode() {
         createStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
         setUpStepNotifierAndStepErrors(description);
         Result result = mockResult(Status.UNDEFINED);
+        PickleStepTestStep testStep = mockTestStep();
 
-        jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
+        jUnitReporter.handleSnippetSuggested(new SnippetsSuggestedEvent(
+            Instant.now(),
+            "file:example.feature",
+            0,
+            singletonList("snippet")
+        ));
+        jUnitReporter.handleStepResult(testStep, result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
@@ -248,25 +267,37 @@ public class JUnitReporterTest {
         Failure failure = failureArgumentCaptor.getValue();
         assertThat(failure.getDescription(), is(equalTo(description)));
         assertThat(failure.getException(), instanceOf(UndefinedThrowable.class));
-        assertThat(failure.getException().getMessage(), is(equalTo("This step is undefined")));
+        assertThat(
+            failure.getException().getMessage(),
+            is(equalTo("This step is undefined. You can implement it using tne snippet(s) below:\n\nsnippet"))
+        );
     }
 
     @Test
-    public void test_step_finished_adds_a_step_exeption_for_undefined_steps() {
+    void test_step_finished_adds_a_step_exeption_for_undefined_steps() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
-        PickleStepTestStep testStep = mockTestStep("XX");
+        PickleStepTestStep testStep = mockTestStep();
         Result result = mockResult(Status.UNDEFINED);
 
+        jUnitReporter.handleSnippetSuggested(new SnippetsSuggestedEvent(
+            Instant.now(),
+            "file:example.feature",
+            0,
+            singletonList("snippet")
+        ));
         jUnitReporter.handleStepResult(testStep, result);
 
         assertFalse(jUnitReporter.stepErrors.isEmpty());
-        assertThat(jUnitReporter.stepErrors.get(0).getMessage(), is(equalTo("The step \"XX\" is undefined")));
+        assertThat(
+            jUnitReporter.stepErrors.get(0).getMessage(),
+            is(equalTo("The step \"XX\" is undefined. You can implement it using tne snippet(s) below:\n\nsnippet"))
+        );
     }
 
     @Test
-    public void test_step_finished_fires_failure_and_test_finished_for_failed_step() {
+    void test_step_finished_fires_failure_and_test_finished_for_failed_step() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Description description = mock(Description.class);
@@ -286,7 +317,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_step_finished_adds_the_step_exeption_for_failed_steps() {
+    void test_step_finished_adds_the_step_exeption_for_failed_steps() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         setUpNoStepNotifierAndStepErrors();
@@ -295,11 +326,11 @@ public class JUnitReporterTest {
 
         jUnitReporter.handleStepResult(mock(PickleStepTestStep.class), result);
 
-        assertThat(jUnitReporter.stepErrors, is(equalTo(asList(exception))));
+        assertThat(jUnitReporter.stepErrors, is(equalTo(singletonList(exception))));
     }
 
     @Test
-    public void test_case_finished_fires_only_test_finished_for_passed_step() {
+    void test_case_finished_fires_only_test_finished_for_passed_step() {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -311,11 +342,11 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_assumption_failed_and_test_finished_for_skipped_step() {
+    void test_case_finished_fires_assumption_failed_and_test_finished_for_skipped_step() {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
-        populateStepErrors(Collections.<Throwable>emptyList());
+        populateStepErrors(Collections.emptyList());
         Result result = mockResult(Status.SKIPPED);
 
         jUnitReporter.handleTestCaseResult(new TestCaseFinished(Instant.now(), mock(TestCase.class), result));
@@ -330,7 +361,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_assumption_violated() {
+    void test_case_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_assumption_violated() {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -351,7 +382,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_non_strict_mode() {
+    void test_case_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_non_strict_mode() {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -372,7 +403,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_failure_and_test_finished_for_pending_step_in_strict_mode() {
+    void test_case_finished_fires_failure_and_test_finished_for_pending_step_in_strict_mode() {
         createStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -393,7 +424,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_assumption_failed_and_test_finished_for_undefined_step_in_non_strict_mode() {
+    void test_case_finished_fires_assumption_failed_and_test_finished_for_undefined_step_in_non_strict_mode() {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -414,7 +445,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_failure_and_test_finished_for_undefined_step_in_strict_mode() {
+    void test_case_finished_fires_failure_and_test_finished_for_undefined_step_in_strict_mode() {
         createStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -435,7 +466,7 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void test_case_finished_fires_failure_and_test_finished_for_failed_step() {
+    void test_case_finished_fires_failure_and_test_finished_for_failed_step() {
         createNonStrictReporter();
         Description description = mock(Description.class);
         createRunNotifier(description);
@@ -465,40 +496,45 @@ public class JUnitReporterTest {
         return new Result(status, ZERO, null);
     }
 
-    private PickleRunner mockPickleRunner(List<PickleStep> runnerSteps) {
+    private PickleRunner mockPickleRunner(List<CucumberStep> runnerSteps) {
         PickleRunner pickleRunner = mock(PickleRunner.class);
         when(pickleRunner.getDescription()).thenReturn(mock(Description.class));
-        for (PickleStep runnerStep : runnerSteps) {
+        for (CucumberStep runnerStep : runnerSteps) {
             Description runnerStepDescription = stepDescription(runnerStep);
             when(pickleRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         }
         return pickleRunner;
     }
 
-    private List<PickleStep> runnerSteps(PickleStep step) {
-        List<PickleStep> runnerSteps = new ArrayList<PickleStep>();
+    private List<CucumberStep> runnerSteps(CucumberStep step) {
+        List<CucumberStep> runnerSteps = new ArrayList<>();
         runnerSteps.add(step);
         return runnerSteps;
     }
 
-    private Description stepDescription(PickleStep runnerStep) {
+    private Description stepDescription(CucumberStep runnerStep) {
         return Description.createTestDescription("", runnerStep.getText());
     }
 
-    private PickleStep mockStep() {
+    private CucumberStep mockStep() {
         String stepName = "step name";
         return mockStep(stepName);
     }
 
-    private PickleStep mockStep(String stepName) {
-        PickleStep step = mock(PickleStep.class);
-        when(step.getText()).thenReturn(stepName);
-        return step;
+    private CucumberStep mockStep(String stepName) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepName + "\n"
+        );
+        return feature.getPickles().get(0).getSteps().get(0);
     }
 
-    private PickleStepTestStep mockTestStep(String stepText) {
+    private PickleStepTestStep mockTestStep() {
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        when(testStep.getStepText()).thenReturn(stepText);
+        when(testStep.getStepText()).thenReturn("XX");
+        when(testStep.getStepLine()).thenReturn(0);
+        when(testStep.getUri()).thenReturn("file:example.feature");
         return testStep;
     }
 

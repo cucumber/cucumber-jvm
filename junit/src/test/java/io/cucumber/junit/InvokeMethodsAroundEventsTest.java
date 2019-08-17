@@ -1,12 +1,13 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.plugin.ConcurrentEventListener;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
+import io.cucumber.core.plugin.ConcurrentEventListener;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
@@ -16,17 +17,17 @@ import java.util.List;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
 
-public class InvokeMethodsAroundEventsTest {
+class InvokeMethodsAroundEventsTest {
 
     private static final List<String> events = new ArrayList<>();
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterEach
+    void afterClass() {
         events.clear();
     }
 
     @Test
-    public void invoke_methods_around_events() throws InitializationError {
+    void invoke_methods_around_events() throws InitializationError {
         Cucumber cucumber = new Cucumber(BeforeAfterClass.class);
         cucumber.run(new RunNotifier());
         assertThat(events, contains("BeforeClass", "TestRunStarted", "TestRunFinished", "AfterClass"));
