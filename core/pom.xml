@@ -13,13 +13,11 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
-        <!-- version 2.4.0 does not work on Java 7 -->
         <jsoup.version>1.12.1</jsoup.version>
         <xmlunit.version>1.6</xmlunit.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
-        <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
     </properties>
 
     <dependencies>
@@ -107,6 +105,13 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
 

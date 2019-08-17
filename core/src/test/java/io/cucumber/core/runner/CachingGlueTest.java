@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Locale.ENGLISH;
@@ -640,7 +639,6 @@ class CachingGlueTest {
 
     private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
-
         boolean disposed;
 
         @Override
@@ -650,12 +648,7 @@ class CachingGlueTest {
 
         @Override
         public TableCellByTypeTransformer tableCellByTypeTransformer() {
-            return new TableCellByTypeTransformer() {
-                @Override
-                public <T> T transform(String value, Class<T> cellType) {
-                    return (T) new Object();
-                }
-            };
+            return (value, cellType) -> new Object();
         }
 
         @Override
@@ -674,12 +667,7 @@ class CachingGlueTest {
 
         @Override
         public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
-            return new TableEntryByTypeTransformer() {
-                @Override
-                public <T> T transform(Map<String, String> entry, Class<T> type, TableCellByTypeTransformer cellTransformer) {
-                    return (T) new Object();
-                }
-            };
+            return (entry, type, cellTransformer) -> new Object();
         }
 
         @Override

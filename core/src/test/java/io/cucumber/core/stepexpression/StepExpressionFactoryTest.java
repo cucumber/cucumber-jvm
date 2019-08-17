@@ -1,12 +1,10 @@
 package io.cucumber.core.stepexpression;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.TableCellByTypeTransformer;
-import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
-import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -19,11 +17,11 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNull.nullValue;
 
-public class StepExpressionFactoryTest {
+class StepExpressionFactoryTest {
 
     private static final TypeResolver UNKNOWN_TYPE = () -> Object.class;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     static class Ingredient {
         public String name;
@@ -60,7 +58,7 @@ public class StepExpressionFactoryTest {
 
 
     @Test
-    public void table_expression_with_type_creates_table_from_table() {
+    void table_expression_with_type_creates_table_from_table() {
 
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", DataTable.class);
 
@@ -72,7 +70,7 @@ public class StepExpressionFactoryTest {
     }
 
     @Test
-    public void table_expression_with_type_creates_single_ingredients_from_table() {
+    void table_expression_with_type_creates_single_ingredients_from_table() {
 
         registry.defineDataTableType(new DataTableType(Ingredient.class, beanMapper(registry)));
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", Ingredient.class);
@@ -83,8 +81,9 @@ public class StepExpressionFactoryTest {
         assertThat(ingredient.name, is(equalTo("chocolate")));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void table_expression_with_list_type_creates_list_of_ingredients_from_table() {
+    void table_expression_with_list_type_creates_list_of_ingredients_from_table() {
 
         registry.defineDataTableType(new DataTableType(Ingredient.class, listBeanMapper(registry)));
 
@@ -97,28 +96,25 @@ public class StepExpressionFactoryTest {
     }
 
     @Test
-    public void unknown_target_type_does_no_transform_data_table() {
+    void unknown_target_type_does_no_transform_data_table() {
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
         List<Argument> match = expression.match("Given some stuff:", table);
         assertThat(match.get(0).getValue(), is(equalTo(DataTable.create(table))));
     }
 
     @Test
-    public void unknown_target_type_does_not_transform_doc_string() {
+    void unknown_target_type_does_not_transform_doc_string() {
         String docString = "A rather long and boring string of documentation";
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
         List<Argument> match = expression.match("Given some stuff:", docString);
         assertThat(match.get(0).getValue(), is(equalTo(docString)));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void empty_table_cells_are_presented_as_null_to_transformer() {
-        registry.setDefaultDataTableEntryTransformer(new TableEntryByTypeTransformer() {
-            @Override
-            public <T> T transform(Map<String, String> map, Class<T> aClass, TableCellByTypeTransformer tableCellByTypeTransformer) {
-                return new ObjectMapper().convertValue(map, aClass);
-            }
-        });
+    void empty_table_cells_are_presented_as_null_to_transformer() {
+        registry.setDefaultDataTableEntryTransformer(
+            (map, valueType, tableCellByTypeTransformer) -> objectMapper.convertValue(map, objectMapper.constructType(valueType)));
 
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", getTypeFromStepDefinition());
         List<List<String>> table = asList(asList("name", "amount", "unit"), asList("chocolate", null, "tbsp"));

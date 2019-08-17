@@ -44,7 +44,7 @@
         <!--Dependencies -->
         <gherkin.version>5.1.0</gherkin.version>
         <cucumber-expressions.version>8.0.0</cucumber-expressions.version>
-        <datatable.version>2.0.0</datatable.version>
+        <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
 
         <!--Test Dependencies-->
@@ -54,6 +54,7 @@
         <hamcrest.version>2.1</hamcrest.version>
         <assertj.core.version>3.13.1</assertj.core.version>
         <mockito.version>3.0.0</mockito.version>
+        <jackson-databind.version>2.9.9.3</jackson-databind.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>

@@ -5,6 +5,7 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JavaDefaultDataTableEntryTransformerDefinitionTest {
+class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
     private final Map<String, String> fromValue = singletonMap("key", "value");
     private final Lookup lookup = new Lookup() {
@@ -26,16 +27,13 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
         }
     };
 
-    private TableCellByTypeTransformer cellTransformer = new TableCellByTypeTransformer() {
-        @Override
-        public <T> T transform(String value, Class<T> cellType) {
-            throw new IllegalStateException();
-        }
+    private TableCellByTypeTransformer cellTransformer = (value, cellType) -> {
+        throw new IllegalStateException();
     };
 
     @Test
-    public void transforms_with_correct_method() throws Throwable {
-        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method", Map.class, Class.class);
+    void transforms_with_correct_method() throws Throwable {
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method", Map.class, Type.class);
         JavaDefaultDataTableEntryTransformerDefinition definition =
             new JavaDefaultDataTableEntryTransformerDefinition(method, lookup);
 
@@ -44,14 +42,14 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
     }
 
-    public <T> T correct_method(Map<String, String> fromValue, Class<T> toValue) {
+    public <T> T correct_method(Map<String, String> fromValue, Type toValueType) {
         return join(fromValue);
     }
 
 
     @Test
-    public void transforms_with_correct_method_with_cell_transformer() throws Throwable {
-        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method_with_cell_transformer", Map.class, Class.class, TableCellByTypeTransformer.class);
+    void transforms_with_correct_method_with_cell_transformer() throws Throwable {
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method_with_cell_transformer", Map.class, Type.class, TableCellByTypeTransformer.class);
         JavaDefaultDataTableEntryTransformerDefinition definition =
             new JavaDefaultDataTableEntryTransformerDefinition(method, lookup);
 
@@ -61,12 +59,12 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     }
 
 
-    public <T> T correct_method_with_cell_transformer(Map<String, String> fromValue, Class<T> toValue, TableCellByTypeTransformer cellTransformer) {
+    public <T> T correct_method_with_cell_transformer(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) {
         return join(fromValue);
     }
 
     @Test
-    public void method_must_have_2_or_3_arguments() throws Throwable {
+    void method_must_have_2_or_3_arguments() throws Throwable {
         Method toFew = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("one_argument", Map.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(toFew, lookup));
         Method toMany = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("four_arguments", Map.class, String.class, String.class, String.class);
@@ -78,63 +76,63 @@ public class JavaDefaultDataTableEntryTransformerDefinitionTest {
     }
 
 
-    public <T> T four_arguments(Map<String, String> fromValue, String one, String two, String three) {
+    public Object four_arguments(Map<String, String> fromValue, String one, String two, String three) {
         return null;
     }
 
 
     @Test
-    public void method_must_have_return_type() throws Throwable {
-        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("void_return_type", Map.class, Class.class);
+    void method_must_have_return_type() throws Throwable {
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("void_return_type", Map.class, Type.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
-    public void void_return_type(Map<String, String> fromValue, Class<?> toValue) {
+    public void void_return_type(Map<String, String> fromValue, Type toValueType) {
     }
 
 
     @Test
-    public void method_must_have_map_as_first_argument() throws Throwable {
-        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", String.class, Class.class);
+    void method_must_have_map_as_first_argument() throws Throwable {
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", String.class, Type.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
-        Method method2 = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", List.class, Class.class);
+        Method method2 = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", List.class, Type.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method2, lookup));
-        Method method3 = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", Map.class, Class.class);
+        Method method3 = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_first_type", Map.class, Type.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method3, lookup));
     }
 
 
-    public <T> T invalid_first_type(String fromValue, Class<T> toValue) {
+    public Object invalid_first_type(String fromValue, Type toValueType) {
         return null;
     }
 
-    public <T> T invalid_first_type(List<String> fromValue, Class<T> toValue) {
+    public Object invalid_first_type(List<String> fromValue, Type toValueType) {
         return null;
     }
 
-    public <T> T invalid_first_type(Map<String, Object> fromValue, Class<T> toValue) {
+    public Object invalid_first_type(Map<String, Object> fromValue, Type toValueType) {
         return null;
     }
 
     @Test
-    public void method_must_have_class_as_second_argument() throws Throwable {
+    void method_must_have_class_as_second_argument() throws Throwable {
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_second_type", Map.class, String.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
-    public <T> T invalid_second_type(Map<String, String> fromValue, String toValue) {
+    public Object invalid_second_type(Map<String, String> fromValue, String toValue) {
         return null;
     }
 
 
     @Test
-    public void method_must_have_cell_transformer_as_optional_third_argument() throws Throwable {
-        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_optional_third_type", Map.class, Class.class, String.class);
+    void method_must_have_cell_transformer_as_optional_third_argument() throws Throwable {
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("invalid_optional_third_type", Map.class, Type.class, String.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
 
-    public <T> T invalid_optional_third_type(Map<String, String> fromValue, Class<T> toValue, String cellTransformer) {
+    public Object invalid_optional_third_type(Map<String, String> fromValue, Type toValueType, String cellTransformer) {
         return null;
     }
 
