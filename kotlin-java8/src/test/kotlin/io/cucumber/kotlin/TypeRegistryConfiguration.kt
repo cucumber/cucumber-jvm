@@ -1,11 +1,10 @@
-package io.cucumber.runtime.kotlin.test
+package io.cucumber.kotlin
 
-import io.cucumber.core.api.TypeRegistryConfigurer
 import io.cucumber.core.api.TypeRegistry
+import io.cucumber.core.api.TypeRegistryConfigurer
 import io.cucumber.datatable.DataTableType
 import io.cucumber.datatable.TableEntryTransformer
-import io.cucumber.kotlin.Person
-import java.util.Locale
+import java.util.*
 import java.util.Locale.ENGLISH
 
 class TypeRegistryConfiguration : TypeRegistryConfigurer {
