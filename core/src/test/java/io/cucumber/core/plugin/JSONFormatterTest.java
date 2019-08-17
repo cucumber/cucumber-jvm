@@ -5,6 +5,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
@@ -19,6 +20,7 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
@@ -32,13 +34,13 @@ import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ofMillis;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class JSONFormatterTest {
+class JSONFormatterTest {
 
     private final List<CucumberFeature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
@@ -49,25 +51,32 @@ public class JSONFormatterTest {
     private Duration stepDuration = Duration.ZERO;
 
     @Test
-    public void featureWithOutlineTest() {
-        String actual = runFeaturesWithFormatter(asList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature"));
-        String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
-
+     void featureWithOutlineTest() {
+        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature");
+        String actual = runFeaturesWithFormatter(featurePaths);
+        InputStream resourceAsStream = getClass().getResourceAsStream("JSONPrettyFormatterTest.json");
+        String expected = new Scanner(resourceAsStream, "UTF-8")
+            .useDelimiter("\\A")
+            .next();
         assertThat(actual, sameJSONAs(expected));
     }
 
 
     @Test
-    public void featureWithOutlineTestParallel() throws Exception {
-        String actual = runFeaturesWithFormatterInParallel(asList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature"));
-        String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
+     void featureWithOutlineTestParallel() throws Exception {
+        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature");
+        String actual = runFeaturesWithFormatterInParallel(featurePaths);
+        InputStream resourceAsStream = getClass().getResourceAsStream("JSONPrettyFormatterTest.json");
+        String expected = new Scanner(resourceAsStream, "UTF-8")
+            .useDelimiter("\\A")
+            .next();
 
         assertThat(actual, sameJSONAs(expected));
     }
 
     @Test
-    public void should_format_scenario_with_an_undefined_step() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_an_undefined_step() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -115,8 +124,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_a_passed_step() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_a_passed_step() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -169,8 +178,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_a_failed_step() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_a_failed_step() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -224,8 +233,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_outline_with_one_example() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_outline_with_one_example() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Fruit party\n" +
             "\n" +
             "  Scenario Outline: Monkey eats fruits\n" +
@@ -281,8 +290,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_feature_with_background() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_feature_with_background() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Background: There are bananas\n" +
@@ -410,8 +419,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_feature_and_scenario_with_tags() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_feature_and_scenario_with_tags() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "@Party @Banana\n" +
             "Feature: Banana party\n" +
             "  @Monkey\n" +
@@ -493,8 +502,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_hooks() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_hooks() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -573,8 +582,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_add_step_hooks_to_step() {
-        CucumberFeature feature = TestHelper.feature("file:path/test.feature", "" +
+     void should_add_step_hooks_to_step() {
+        CucumberFeature feature = TestFeatureParser.parse("file:path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -710,8 +719,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_handle_write_from_a_hook() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_handle_write_from_a_hook() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -781,8 +790,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_handle_embed_from_a_hook() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_handle_embed_from_a_hook() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -855,8 +864,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_handle_embed_with_name_from_a_hook() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_handle_embed_with_name_from_a_hook() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -930,8 +939,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_a_step_with_a_doc_string() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_a_step_with_a_doc_string() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -991,8 +1000,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -1053,8 +1062,8 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_a_step_with_a_data_table() {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+     void should_format_scenario_with_a_step_with_a_data_table() {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -1123,13 +1132,13 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_handle_several_features() {
-        CucumberFeature feature1 = TestHelper.feature("file:path/test1.feature", "" +
+     void should_handle_several_features() {
+        CucumberFeature feature1 = TestFeatureParser.parse("file:path/test1.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
             "    Given there are bananas\n");
-        CucumberFeature feature2 = TestHelper.feature("path/test2.feature", "" +
+        CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: Orange party\n" +
             "\n" +
             "  Scenario: Monkey eats oranges\n" +
@@ -1226,7 +1235,7 @@ public class JSONFormatterTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
 
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         args.add("--threads");
         args.add("4");
         args.add("--plugin");

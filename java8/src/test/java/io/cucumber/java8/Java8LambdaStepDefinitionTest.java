@@ -45,8 +45,8 @@ public class Java8LambdaStepDefinitionTest {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
 
-        final Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
         )));
@@ -58,8 +58,8 @@ public class Java8LambdaStepDefinitionTest {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
 
-        final Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
         )));

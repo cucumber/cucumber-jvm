@@ -1,7 +1,6 @@
 package io.cucumber.core.filter;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
@@ -11,10 +10,9 @@ import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 
 
-final class TagPredicate implements Predicate<PickleEvent> {
+final class TagPredicate implements Predicate<CucumberPickle> {
     private final List<Expression> expressions = new ArrayList<>();
 
     TagPredicate(String tagExpression) {
@@ -32,14 +30,12 @@ final class TagPredicate implements Predicate<PickleEvent> {
     }
 
     @Override
-    public boolean test(PickleEvent pickleEvent) {
+    public boolean test(CucumberPickle pickle) {
         if (expressions.isEmpty()) {
             return true;
         }
 
-        List<String> tags = pickleEvent.pickle.getTags().stream()
-            .map(PickleTag::getName)
-            .collect(toList());
+        List<String> tags = pickle.getTags();
         return expressions.stream()
             .allMatch(expression -> expression.evaluate(tags));
     }

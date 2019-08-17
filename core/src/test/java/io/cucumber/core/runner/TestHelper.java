@@ -1,44 +1,37 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.plugin.ConcurrentEventListener;
-import io.cucumber.core.plugin.EventListener;
-import io.cucumber.core.event.Event;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.runtime.*;
+import io.cucumber.core.event.Event;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.feature.Argument;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.feature.DataTableArgument;
+import io.cucumber.core.feature.DocStringArgument;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.feature.CucumberFeature;
-import gherkin.pickles.Compiler;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
-import gherkin.pickles.PickleTag;
-import io.cucumber.core.feature.FeatureIdentifier;
+import io.cucumber.core.plugin.ConcurrentEventListener;
+import io.cucumber.core.plugin.EventListener;
+import io.cucumber.core.plugin.Plugin;
+import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.TestFeatureSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import junit.framework.AssertionFailedError;
-import org.mockito.ArgumentMatchers;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -56,7 +49,6 @@ import static io.cucumber.core.event.Status.PENDING;
 import static io.cucumber.core.event.Status.SKIPPED;
 import static io.cucumber.core.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
-import static java.util.Locale.ENGLISH;
 import static java.util.Locale.ROOT;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -95,18 +87,7 @@ public class TestHelper {
         private final List<String> hookLocations;
         private final List<Answer<Object>> hookActions;
 
-        public TestHelperBackendSupplier(ResourceLoader resourceLoader, TypeRegistry typeRegistry) {
-            this(
-                Collections.emptyList(),
-                Collections.emptyMap(),
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList()
-            );
-        }
-
-        public TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, io.cucumber.core.event.Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
+        TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, io.cucumber.core.event.Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, io.cucumber.core.event.Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
             this.features = features;
             this.stepsToResult = stepsToResult;
             this.stepsToLocation = stepsToLocation;
@@ -140,13 +121,10 @@ public class TestHelper {
         private static void mockSteps(Glue glue, List<CucumberFeature> features,
                                       Map<String, io.cucumber.core.event.Result> stepsToResult,
                                       final Map<String, String> stepsToLocation) {
-            Compiler compiler = new Compiler();
-            TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
-
-            List<PickleStep> steps = new ArrayList<>();
+            List<CucumberStep> steps = new ArrayList<>();
             for (CucumberFeature feature : features) {
-                for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-                    for (PickleStep step : pickle.getSteps()) {
+                for (CucumberPickle pickle : feature.getPickles()) {
+                    for (CucumberStep step : pickle.getSteps()) {
                         if (!containsStep(steps, step)) {
                             steps.add(step);
                         }
@@ -154,7 +132,7 @@ public class TestHelper {
                 }
             }
 
-            for (final PickleStep step : steps) {
+            for (final CucumberStep step : steps) {
                 final io.cucumber.core.event.Result stepResult = getResultWithDefaultPassed(stepsToResult, step.getText());
                 if (stepResult.getStatus().is(UNDEFINED)) {
                     continue;
@@ -193,11 +171,10 @@ public class TestHelper {
         }
 
 
-        private static boolean containsStep(List<PickleStep> steps, PickleStep step) {
-            for (PickleStep definedSteps : steps) {
+        private static boolean containsStep(List<CucumberStep> steps, CucumberStep step) {
+            for (CucumberStep definedSteps : steps) {
                 if (definedSteps.getText().equals(step.getText())
-                    && definedSteps.getArgument().size() == step.getArgument().size()
-                ) {
+                    && (definedSteps.getArgument() == null) == (step.getArgument() == null)) {
                     return true;
                 }
             }
@@ -205,13 +182,14 @@ public class TestHelper {
             return false;
         }
 
-        private static Type[] mapArgumentToTypes(PickleStep step) {
+        private static Type[] mapArgumentToTypes(CucumberStep step) {
             Type[] types = new Type[0];
-            if (step.getArgument().isEmpty()) {
+            Argument argument = step.getArgument();
+            if (argument == null) {
                 return types;
-            } else if (step.getArgument().get(0) instanceof PickleString) {
+            } else if (argument instanceof DocStringArgument) {
                 types = new Type[]{String.class};
-            } else if (step.getArgument().get(0) instanceof PickleTable) {
+            } else if (argument instanceof DataTableArgument) {
                 types = new Type[]{DataTable.class};
             }
             return types;
@@ -256,12 +234,12 @@ public class TestHelper {
                 when(hook.getLocation(anyBoolean())).thenReturn(hookLocation);
             }
             if (action != null) {
-                doAnswer(action).when(hook).execute((Scenario) any());
+                doAnswer(action).when(hook).execute(any());
             }
             if (hookEntry.getValue().getStatus().is(FAILED)) {
-                doThrow(hookEntry.getValue().getError()).when(hook).execute((Scenario) any());
+                doThrow(hookEntry.getValue().getError()).when(hook).execute(any());
             } else if (hookEntry.getValue().getStatus().is(PENDING)) {
-                doThrow(new TestPendingException()).when(hook).execute((io.cucumber.core.api.Scenario) any());
+                doThrow(new TestPendingException()).when(hook).execute(any());
             }
             if ("before".equals(hookEntry.getKey())) {
                 beforeHooks.add(hook);
@@ -437,25 +415,6 @@ public class TestHelper {
         }
     }
 
-    public static CucumberFeature feature(final String uri, final String source) {
-        return feature(FeatureIdentifier.parse(uri), source);
-    }
-
-    public static CucumberFeature feature(final URI uri, final String source) {
-        return FeatureParser.parseResource(new Resource() {
-            @Override
-            public URI getPath() {
-                return uri;
-            }
-
-            @Override
-            public InputStream getInputStream() {
-                return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
-            }
-
-        });
-    }
-
     public static io.cucumber.core.event.Result result(String status) {
         return result(fromLowerCaseName(status));
     }
@@ -486,13 +445,10 @@ public class TestHelper {
     }
 
     public static Answer<Object> createWriteHookAction(final String output) {
-        return new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Scenario scenario = (Scenario) invocation.getArguments()[0];
-                scenario.write(output);
-                return null;
-            }
+        return invocation -> {
+            Scenario scenario = (Scenario) invocation.getArguments()[0];
+            scenario.write(output);
+            return null;
         };
     }
 
@@ -500,30 +456,25 @@ public class TestHelper {
         return createEmbedHookAction(data, mimeType, null);
     }
 
+    @SuppressWarnings("deprecation")
     public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
-        return new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Scenario scenario = (Scenario) invocation.getArguments()[0];
-                if (name != null) {
-                    scenario.embed(data, mimeType, name);
-                } else {
-                    scenario.embed(data, mimeType);
-                }
-                return null;
+        return invocation -> {
+            Scenario scenario = (Scenario) invocation.getArguments()[0];
+            if (name != null) {
+                scenario.embed(data, mimeType, name);
+            } else {
+                scenario.embed(data, mimeType);
             }
+            return null;
         };
     }
 
     private static AssertionFailedError mockAssertionFailedError() {
         AssertionFailedError error = mock(AssertionFailedError.class);
-        Answer<Object> printStackTraceHandler = new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
-                writer.print("the stack trace");
-                return null;
-            }
+        Answer<Object> printStackTraceHandler = invocation -> {
+            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+            writer.print("the stack trace");
+            return null;
         };
         doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
         when(error.getStackTrace()).thenReturn(new StackTraceElement[0]);
@@ -533,13 +484,10 @@ public class TestHelper {
 
     private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
         AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
-        Answer<Object> printStackTraceHandler = new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
-                writer.print("the stack trace");
-                return null;
-            }
+        Answer<Object> printStackTraceHandler = invocation -> {
+            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+            writer.print("the stack trace");
+            return null;
         };
         doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
         when(exception.getMessage()).thenReturn("the message");

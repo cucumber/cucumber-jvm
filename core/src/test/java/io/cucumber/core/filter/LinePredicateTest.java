@@ -1,69 +1,79 @@
 package io.cucumber.core.filter;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LinePredicateTest {
+class LinePredicateTest {
 
-    private static final String NAME = "pickle_name";
-    private static final String LANGUAGE = "en";
-    private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
-    private static final List<PickleTag> NO_TAGS = Collections.<PickleTag>emptyList();
+    private final CucumberFeature feature = TestFeatureParser.parse(
+        "file:path/file.feature",
+        "" +
+            "Feature: Test feature\n" +
+            "  Scenario Outline: Test scenario\n" +
+            "     Given I have 4 <thing> in my belly\n" +
+            "     Examples:\n" +
+            "       | thing    | \n" +
+            "       | cucumber | \n" +
+            "       | gherkin  | \n"
+    );
+    private final CucumberPickle pickle = feature.getPickles().get(0);
 
     @Test
-    public void matches_pickles_from_files_not_in_the_predicate_map() {
+    void matches_pickles_from_files_not_in_the_predicate_map() {
         // the argument "path/file.feature another_path/file.feature:8"
         // results in only line predicates only for another_path/file.feature,
         // but all pickles from path/file.feature shall also be executed.
-        PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4)));
-        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("another_path/file.feature"), asList(8)));
-
-        assertTrue(predicate.test(pickleEvent));
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            URI.create("file:another_path/file.feature"),
+            singletonList(8)
+        ));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void matches_pickles_for_any_line_in_predicate() {
-        PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(8)));
-        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(4, 8)));
-
-        assertTrue(predicate.test(pickleEvent));
+    void matches_pickles_for_any_line_in_predicate() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            URI.create("file:path/file.feature"),
+            asList(2, 4)
+        ));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void matches_pickles_on_any_location_of_the_pickle() {
-        PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4), pickleLocation(8)));
-        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(8)));
-
-        assertTrue(predicate.test(pickleEvent));
+    void matches_pickles_on_scenario_location_of_the_pickle() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            URI.create("file:path/file.feature"),
+            singletonList(2)
+        ));
+        assertTrue(predicate.test(pickle));
     }
 
     @Test
-    public void does_not_matches_pickles_not_on_any_line_of_the_predicate() {
-        PickleEvent pickleEvent = createPickleEventWithLocations("path/file.feature", asList(pickleLocation(4), pickleLocation(8)));
-        LinePredicate predicate = new LinePredicate(singletonMap(URI.create("path/file.feature"), asList(10)));
-
-        assertFalse(predicate.test(pickleEvent));
+    void matches_pickles_on_example_location_of_the_pickle() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            URI.create("file:path/file.feature"),
+            singletonList(6)
+        ));
+        assertTrue(predicate.test(pickle));
     }
 
-    private PickleEvent createPickleEventWithLocations(String uri, List<PickleLocation> locations) {
-        return new PickleEvent(uri, new Pickle(NAME, LANGUAGE, NO_STEPS, NO_TAGS, locations));
-    }
-
-    private PickleLocation pickleLocation(int line) {
-        return new PickleLocation(line, 0);
+    @Test
+    void does_not_matches_pickles_not_on_any_line_of_the_predicate() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            URI.create("file:path/file.feature"),
+            singletonList(4)
+        ));
+        assertFalse(predicate.test(pickle));
     }
 
 }

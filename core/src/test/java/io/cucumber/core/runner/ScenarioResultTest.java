@@ -1,11 +1,12 @@
 package io.cucumber.core.runner;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.event.EmbedEvent;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.WriteEvent;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
@@ -27,38 +28,43 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ScenarioResultTest {
+class ScenarioResultTest {
 
-    private EventBus bus = mock(EventBus.class);
-    private Scenario s = new Scenario(
+    private final CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+        "Feature: Test feature\n" +
+        "  Scenario: Test scenario\n" +
+        "     Given I have 4 cukes in my belly\n"
+    );
+    private final EventBus bus = mock(EventBus.class);
+    private final Scenario s = new Scenario(
         bus,
         new TestCase(
-            Collections.<PickleStepTestStep>emptyList(),
-            Collections.<HookTestStep>emptyList(),
-            Collections.<HookTestStep>emptyList(),
-            mock(PickleEvent.class),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            Collections.emptyList(),
+            feature.getPickles().get(0),
             false
         )
     );
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         when(bus.getInstant()).thenReturn(Instant.now());
     }
 
     @Test
-    public void no_steps_is_undefined() {
+    void no_steps_is_undefined() {
         assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED)));
     }
 
     @Test
-    public void one_passed_step_is_passed() {
+    void one_passed_step_is_passed() {
         s.add(new Result(Status.PASSED, ZERO, null));
         assertThat(s.getStatus(), is(equalTo(Status.PASSED)));
     }
 
     @Test
-    public void passed_failed_pending_undefined_skipped_is_failed() {
+    void passed_failed_pending_undefined_skipped_is_failed() {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.FAILED, ZERO, null));
         s.add(new Result(Status.PENDING, ZERO, null));
@@ -72,7 +78,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() {
+    void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
@@ -83,7 +89,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_pending_undefined_skipped_is_pending() {
+    void passed_pending_undefined_skipped_is_pending() {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.PENDING, ZERO, null));
@@ -96,7 +102,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_undefined_skipped_is_undefined() {
+    void passed_undefined_skipped_is_undefined() {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
@@ -108,20 +114,20 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void embeds_data() {
+    void embeds_data() {
         byte[] data = new byte[]{1, 2, 3};
         s.embed(data, "bytes/foo");
         verify(bus).send(argThat(new EmbedEventMatcher(data, "bytes/foo")));
     }
 
     @Test
-    public void prints_output() {
+    void prints_output() {
         s.write("Hi");
         verify(bus).send(argThat(new WriteEventMatcher("Hi")));
     }
 
     @Test
-    public void failed_followed_by_pending_yields_failed_error() {
+    void failed_followed_by_pending_yields_failed_error() {
         Throwable failedError = mock(Throwable.class);
         Throwable pendingError = mock(Throwable.class);
 
@@ -132,7 +138,7 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void pending_followed_by_failed_yields_failed_error() {
+    void pending_followed_by_failed_yields_failed_error() {
         Throwable pendingError = mock(Throwable.class);
         Throwable failedError = mock(Throwable.class);
 
@@ -142,7 +148,7 @@ public class ScenarioResultTest {
         assertThat(s.getError(), sameInstance(failedError));
     }
 
-    private final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
+    private static final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
         private byte[] data;
         private String mimeType;
 
@@ -158,7 +164,7 @@ public class ScenarioResultTest {
         }
     }
 
-    private final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
+    private static final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
         private String text;
 
         WriteEventMatcher(String text) {

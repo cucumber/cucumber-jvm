@@ -50,8 +50,8 @@ public class PluginFactoryTest {
 
     @Test
     public void fails_to_instantiate_html_plugin_without_dir_arg() {
-        final Executable testMethod = () -> fc.create(parse("html"));
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> fc.create(parse("html"));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "You must supply an output argument to html. Like so: html:output"
         )));
@@ -110,8 +110,8 @@ public class PluginFactoryTest {
         WantsAppendable plugin = (WantsAppendable) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
         assertThat(plugin.out, is(instanceOf(PrintStream.class)));
 
-        final Executable testMethod = () -> fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable " +
                 "and io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable use it. " +

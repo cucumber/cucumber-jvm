@@ -1,15 +1,13 @@
 package io.cucumber.core.runner;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
-import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
@@ -55,7 +53,7 @@ public final class Runner {
         return bus;
     }
 
-    public void runPickle(PickleEvent pickle) {
+    public void runPickle(CucumberPickle pickle) {
         try {
             TypeRegistry typeRegistry = createTypeRegistryForPickle(pickle);
             snippetGenerators = createSnippetGeneratorsForPickle(typeRegistry);
@@ -79,87 +77,80 @@ public final class Runner {
             .collect(Collectors.toList());
     }
 
-    private TypeRegistry createTypeRegistryForPickle(PickleEvent pickle) {
+    private TypeRegistry createTypeRegistryForPickle(CucumberPickle pickle) {
         Locale locale = typeRegistryConfigurer.locale();
-        if(locale == null){
-            locale = new Locale(pickle.pickle.getLanguage());
+        if (locale == null) {
+            locale = new Locale(pickle.getLanguage());
         }
         TypeRegistry typeRegistry = new TypeRegistry(locale);
         typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
         return typeRegistry;
     }
 
-    private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
-        if (pickleEvent.pickle.getSteps().isEmpty()) {
-            return new TestCase(emptyList(), emptyList(), emptyList(), pickleEvent, runnerOptions.isDryRun());
+    private TestCase createTestCaseForPickle(CucumberPickle pickle) {
+        if (pickle.getSteps().isEmpty()) {
+            return new TestCase(emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
         }
 
-        List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickleEvent);
-        List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickleEvent.pickle.getTags());
-        List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickleEvent.pickle.getTags());
-        return new TestCase(testSteps, beforeHooks, afterHooks, pickleEvent, runnerOptions.isDryRun());
+        List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
+        List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
+        List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
+        return new TestCase(testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
     }
 
-    private List<PickleStepTestStep> createTestStepsForPickleSteps(PickleEvent pickleEvent) {
+    private List<PickleStepTestStep> createTestStepsForPickleSteps(CucumberPickle pickle) {
         List<PickleStepTestStep> testSteps = new ArrayList<>();
 
-        for (PickleStep step : pickleEvent.pickle.getSteps()) {
+        for (CucumberStep step : pickle.getSteps()) {
             PickleStepDefinitionMatch match;
             try {
-                match = glue.stepDefinitionMatch(pickleEvent.uri, step);
+                match = glue.stepDefinitionMatch(pickle.getUri(), step);
                 if (match == null) {
                     List<String> snippets = new ArrayList<>();
                     for (SnippetGenerator snippetGenerator : snippetGenerators) {
-                        List<String> snippet = snippetGenerator.getSnippet(step, "**KEYWORD**", runnerOptions.getSnippetType());
+                        List<String> snippet = snippetGenerator.getSnippet(step, runnerOptions.getSnippetType());
                         snippets.addAll(snippet);
                     }
                     if (!snippets.isEmpty()) {
-                        bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickleEvent.uri, locations(step), snippets));
+                        bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getStepLine(), snippets));
                     }
-                    match = new UndefinedPickleStepDefinitionMatch(step);
+                    match = new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
                 }
             } catch (AmbiguousStepDefinitionsException e) {
-                match = new AmbiguousPickleStepDefinitionsMatch(pickleEvent.uri, step, e);
+                match = new AmbiguousPickleStepDefinitionsMatch(pickle.getUri(), step, e);
             } catch (Throwable t) {
-                match = new FailedPickleStepInstantiationMatch(pickleEvent.uri, step, t);
+                match = new FailedPickleStepInstantiationMatch(pickle.getUri(), step, t);
             }
 
 
-            List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickleEvent.pickle.getTags());
-            List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickleEvent.pickle.getTags());
-            testSteps.add(new PickleStepTestStep(pickleEvent.uri, step, beforeStepHookSteps, afterStepHookSteps, match));
+            List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
+            List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
+            testSteps.add(new PickleStepTestStep(pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
         }
 
         return testSteps;
     }
 
-    private List<SnippetsSuggestedEvent.Location> locations(PickleStep step) {
-        return step.getLocations().stream()
-            .map(p -> new SnippetsSuggestedEvent.Location(p.getLine(), p.getLine()))
-            .collect(Collectors.toList());
-    }
-
-    private List<HookTestStep> createTestStepsForBeforeHooks(List<PickleTag> tags) {
+    private List<HookTestStep> createTestStepsForBeforeHooks(List<String> tags) {
         return createTestStepsForHooks(tags, glue.getBeforeHooks(), HookType.BEFORE);
     }
 
-    private List<HookTestStep> createTestStepsForAfterHooks(List<PickleTag> tags) {
+    private List<HookTestStep> createTestStepsForAfterHooks(List<String> tags) {
         return createTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
     }
 
-    private List<HookTestStep> createTestStepsForHooks(List<PickleTag> pickleTags, Collection<CoreHookDefinition> hooks, HookType hookType) {
-        List<String> tags = pickleTags.stream().map(PickleTag::getName).collect(Collectors.toList());
+    private List<HookTestStep> createTestStepsForHooks(List<String> tags, Collection<CoreHookDefinition> hooks, HookType hookType) {
         return hooks.stream()
             .filter(hook -> hook.matches(tags))
             .map(hook -> new HookTestStep(hookType, new HookDefinitionMatch(hook)))
             .collect(Collectors.toList());
     }
 
-    private List<HookTestStep> createAfterStepHooks(List<PickleTag> tags) {
+    private List<HookTestStep> createAfterStepHooks(List<String> tags) {
         return createTestStepsForHooks(tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
     }
 
-    private List<HookTestStep> createBeforeStepHooks(List<PickleTag> tags) {
+    private List<HookTestStep> createBeforeStepHooks(List<String> tags) {
         return createTestStepsForHooks(tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
     }
 

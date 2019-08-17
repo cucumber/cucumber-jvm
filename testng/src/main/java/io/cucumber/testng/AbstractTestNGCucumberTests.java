@@ -22,10 +22,11 @@ public abstract class AbstractTestNGCucumberTests {
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
+    @SuppressWarnings("unused")
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
-    public void runScenario(PickleEventWrapper pickleWrapper, CucumberFeatureWrapper featureWrapper) throws Throwable {
+    public void runScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) throws Throwable {
         // the 'featureWrapper' parameter solely exists to display the feature file in a test report
-        testNGCucumberRunner.runScenario(pickleWrapper.getPickleEvent());
+        testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 
     /**

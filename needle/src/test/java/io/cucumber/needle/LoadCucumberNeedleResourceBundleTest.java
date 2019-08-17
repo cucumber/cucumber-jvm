@@ -49,22 +49,22 @@ public class LoadCucumberNeedleResourceBundleTest {
 
     @Test
     public void shouldFailWhenResourceNameIsNull() {
-        final Executable testMethod = () -> function.apply(null);
-        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> function.apply(null);
+        IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
     @Test
     public void shouldFailWhenResourceNameIsEmpty() {
-        final Executable testMethod = () -> function.apply("");
-        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> function.apply("");
+        IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
     @Test
     public void shouldFailWhenResourceNameIsBlank() {
-        final Executable testMethod = () -> function.apply(" ");
-        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> function.apply(" ");
+        IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 

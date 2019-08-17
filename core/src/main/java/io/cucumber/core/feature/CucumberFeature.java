@@ -1,7 +1,6 @@
 package io.cucumber.core.feature;
 
 import gherkin.ast.GherkinDocument;
-import gherkin.events.PickleEvent;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -10,27 +9,27 @@ import java.util.Objects;
 
 public final class CucumberFeature {
     private final URI uri;
-    private final List<PickleEvent> pickles;
+    private final List<CucumberPickle> pickles;
     private final GherkinDocument gherkinDocument;
     private final String gherkinSource;
 
-    CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<PickleEvent> pickles) {
+    CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<CucumberPickle> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
         this.pickles = pickles;
     }
 
-    public List<PickleEvent> getPickles() {
+    public String getKeyword() {
+        return gherkinDocument.getFeature().getKeyword();
+    }
+
+    public List<CucumberPickle> getPickles() {
         return pickles;
     }
 
     public String getName() {
         return gherkinDocument.getFeature().getName();
-    }
-
-    public GherkinDocument getGherkinFeature() {
-        return gherkinDocument;
     }
 
     public URI getUri() {

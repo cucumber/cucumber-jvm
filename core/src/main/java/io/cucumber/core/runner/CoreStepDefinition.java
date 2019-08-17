@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-class CoreStepDefinition {
+final class CoreStepDefinition {
 
     private final StepExpression expression;
     private final ArgumentMatcher argumentMatcher;
@@ -49,7 +49,7 @@ class CoreStepDefinition {
         return stepDefinition;
     }
 
-    List<Argument> matchedArguments(PickleStep step) {
+    List<Argument> matchedArguments(CucumberStep step) {
         return argumentMatcher.argumentsFrom(step, types);
     }
 

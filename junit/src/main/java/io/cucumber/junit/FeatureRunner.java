@@ -1,9 +1,8 @@
 package io.cucumber.junit;
 
-import gherkin.ast.Feature;
-import gherkin.events.PickleEvent;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
@@ -27,7 +26,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    static FeatureRunner create(CucumberFeature feature, Predicate<PickleEvent> filter, RunnerSupplier runners, JUnitOptions options) {
+    static FeatureRunner create(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) {
         try {
             return new FeatureRunner(feature, filter, runners, options);
         } catch (InitializationError e) {
@@ -35,7 +34,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         }
     }
 
-    private FeatureRunner(CucumberFeature feature, Predicate<PickleEvent> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
+    private FeatureRunner(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
         super(null);
         this.cucumberFeature = feature;
         this.children = feature.getPickles().stream()
@@ -48,8 +47,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     @Override
     protected String getName() {
-        Feature feature = cucumberFeature.getGherkinFeature().getFeature();
-        return feature.getKeyword() + ": " + feature.getName();
+        return cucumberFeature.getKeyword() + ": " + cucumberFeature.getName();
     }
 
     @Override

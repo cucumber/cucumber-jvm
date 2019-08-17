@@ -1,33 +1,33 @@
 package io.cucumber.junit;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
-import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
+import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.FeatureLoader;
+import io.cucumber.core.filter.Filters;
+import io.cucumber.core.io.ClassFinder;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
 import io.cucumber.core.options.CucumberPropertiesParser;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
-import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
-import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.plugin.PluginFactory;
+import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
-import io.cucumber.core.filter.Filters;
-import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.plugin.PluginFactory;
-import io.cucumber.core.feature.FeatureLoader;
+import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
+import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
@@ -43,7 +43,6 @@ import org.junit.runners.model.Statement;
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -152,7 +151,7 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
-        Predicate<PickleEvent> filters = new Filters(runtimeOptions);
+        Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
                 .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
                 .filter(runner -> !runner.isEmpty())

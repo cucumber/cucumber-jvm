@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-public class CanonicalEventOrderTest {
+class CanonicalEventOrderTest {
 
     private static final int LESS_THAN = -1;
     private static final int EQUAL_TO = 0;
@@ -42,7 +42,7 @@ public class CanonicalEventOrderTest {
 
     private Event runStarted = new TestRunStarted(getInstant());
     private Event testRead = new TestSourceRead(getInstant(), "uri", "source");
-    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", Collections.emptyList(), Collections.emptyList());
+    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", 0, Collections.emptyList());
     private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
     private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
     private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
@@ -50,7 +50,7 @@ public class CanonicalEventOrderTest {
     private Event runFinished = new TestRunFinished(getInstant());
 
     @Test
-    public void verifyTestRunStartedSortedCorrectly() {
+    void verifyTestRunStartedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(runStarted, runStarted), equalTo(EQUAL_TO)),
             () -> assertThat(comparator.compare(runStarted, testRead), equalTo(LESS_THAN)),
@@ -64,7 +64,7 @@ public class CanonicalEventOrderTest {
     }
 
     @Test
-    public void verifyTestSourceReadSortedCorrectly() {
+    void verifyTestSourceReadSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(testRead, runStarted), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(testRead, testRead), equalTo(EQUAL_TO)),
@@ -78,7 +78,7 @@ public class CanonicalEventOrderTest {
     }
 
     @Test
-    public void verifySnippetsSuggestedSortedCorrectly() {
+    void verifySnippetsSuggestedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(suggested, runStarted), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(suggested, testRead), equalTo(GREATER_THAN)),
@@ -92,7 +92,7 @@ public class CanonicalEventOrderTest {
     }
 
     @Test
-    public void verifyTestCaseStartedSortedCorrectly() {
+    void verifyTestCaseStartedSortedCorrectly() {
         final List<Event> greaterThan = Arrays.asList(runStarted, testRead, suggested);
         for (final Event e : greaterThan) {
             assertAll("comparator CanonicalEventOrder",
@@ -121,7 +121,7 @@ public class CanonicalEventOrderTest {
     }
 
     @Test
-    public void verifyTestRunFinishedSortedCorrectly() {
+    void verifyTestRunFinishedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(runFinished, runStarted), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(runFinished, suggested), equalTo(GREATER_THAN)),

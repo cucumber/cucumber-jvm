@@ -20,8 +20,8 @@ public class FeaturePathTest {
 
     @Test
     public void can_parse_empty_feature_path() {
-        final Executable testMethod = () -> FeaturePath.parse("");
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> FeaturePath.parse("");
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("featureIdentifier may not be empty")));
     }
 

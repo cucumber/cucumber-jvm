@@ -1,7 +1,6 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.feature.RerunLoader;
 import io.cucumber.core.io.MultiLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

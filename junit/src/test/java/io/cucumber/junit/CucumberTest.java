@@ -2,9 +2,9 @@ package io.cucumber.junit;
 
 import gherkin.ParserException.CompositeParserException;
 import io.cucumber.core.exception.CucumberException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.experimental.ParallelComputer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.Description;
@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 
-public class CucumberTest {
+class CucumberTest {
 
     private String dir;
 
-    @Before
-    public void ensureDirectory() {
+    @BeforeEach
+    void ensureDirectory() {
         dir = System.getProperty("user.dir");
         if (dir.endsWith("cucumber-jvm")) {
             // Might be the case if we're running in an IDE - at least in IDEA.
@@ -47,29 +47,29 @@ public class CucumberTest {
         }
     }
 
-    @After
-    public void ensureOriginalDirectory() {
+    @AfterEach
+    void ensureOriginalDirectory() {
         System.setProperty("user.dir", dir);
     }
 
     @Test
-    public void finds_features_based_on_implicit_package() throws InitializationError {
+    void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
         assertThat(cucumber.getChildren().size(), is(equalTo(2)));
         assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature: Feature A")));
     }
 
     @Test
-    public void finds_features_based_on_explicit_root_package() throws InitializationError {
+    void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
         assertThat(cucumber.getChildren().size(), is(equalTo(2)));
         assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature: Feature A")));
     }
 
     @Test
-    public void testThatParsingErrorsIsNicelyReported() {
-        final Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+    void testThatParsingErrorsIsNicelyReported() {
+        Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(CompositeParserException.class))
@@ -77,7 +77,7 @@ public class CucumberTest {
     }
 
     @Test
-    public void testThatFileIsNotCreatedOnParsingError() throws Exception {
+    void testThatFileIsNotCreatedOnParsingError() throws Exception {
         try {
             new Cucumber(FormatterWithLexerErrorFeature.class);
             fail("Expecting error");
@@ -87,14 +87,14 @@ public class CucumberTest {
     }
 
     @Test
-    public void finds_no_features_when_explicit_feature_path_has_no_features() throws InitializationError {
+    void finds_no_features_when_explicit_feature_path_has_no_features() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
         List<FeatureRunner> children = cucumber.getChildren();
         assertThat(children, is(equalTo(emptyList())));
     }
 
     @Test
-    public void cucumber_can_run_pickles_in_parallel() throws Exception {
+    void cucumber_can_run_pickles_in_parallel() throws Exception {
         RunNotifier notifier = new RunNotifier();
         RunListener listener = Mockito.mock(RunListener.class);
         notifier.addListener(listener);
@@ -148,7 +148,7 @@ public class CucumberTest {
     }
 
     @Test
-    public void cucumber_returns_description_tree_with_features_and_pickles() throws InitializationError {
+    void cucumber_returns_description_tree_with_features_and_pickles() throws InitializationError {
         Description description = new Cucumber(ValidEmpty.class).getDescription();
 
         assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$ValidEmpty"));
@@ -160,59 +160,64 @@ public class CucumberTest {
 
 
     @RunWith(Cucumber.class)
-    public class ValidEmpty {
+    public static class ValidEmpty {
     }
 
     @RunWith(Cucumber.class)
-    private class ValidIgnored {
+    public static class ValidIgnored {
         public void ignoreMe() {
         }
     }
 
     @RunWith(Cucumber.class)
-    private class Invalid {
+    public static class Invalid {
         @DummyWhen
         public void ignoreMe() {
         }
     }
 
     @Test
-    public void no_stepdefs_in_cucumber_runner_valid() {
+    void no_stepdefs_in_cucumber_runner_valid() {
         Assertions.assertNoCucumberAnnotatedMethods(ValidEmpty.class);
         Assertions.assertNoCucumberAnnotatedMethods(ValidIgnored.class);
     }
 
     @Test
-    public void no_stepdefs_in_cucumber_runner_invalid() {
-        final Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
-        final CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
+    void no_stepdefs_in_cucumber_runner_invalid() {
+        Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
+        CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 
-    public class ImplicitFeatureAndGluePath {
+    @SuppressWarnings("WeakerAccess")
+    public static class ImplicitFeatureAndGluePath {
     }
 
+    @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:io/cucumber/junit"})
-    public class ExplicitFeaturePath {
+    public static class ExplicitFeaturePath {
     }
 
+    @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:gibber/ish"})
-    public class ExplicitFeaturePathWithNoFeatures {
+    public static class ExplicitFeaturePathWithNoFeatures {
     }
 
+    @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"})
-    public class LexerErrorFeature {
+    public static class LexerErrorFeature {
 
     }
 
+    @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
-    public class FormatterWithLexerErrorFeature {
+    public static class FormatterWithLexerErrorFeature {
 
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public static @interface DummyWhen {
+    @interface DummyWhen {
 
     }
 

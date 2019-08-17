@@ -25,8 +25,8 @@ public class FeatureIdentifierTest {
 
     @Test
     public void reject_feature_with_lines() {
-        final Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to/file.feature:10:40"));
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to/file.feature:10:40"));
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "featureIdentifier does not reference a single feature file: classpath:/path/to/file.feature:10:40"
         )));
@@ -34,8 +34,8 @@ public class FeatureIdentifierTest {
 
     @Test
     public void reject_directory_form() {
-        final Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to"));
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to"));
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "featureIdentifier does not reference a single feature file: classpath:/path/to"
         )));

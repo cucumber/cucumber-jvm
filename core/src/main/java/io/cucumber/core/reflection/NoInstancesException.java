@@ -9,6 +9,7 @@ final class NoInstancesException extends CucumberException {
     }
 
     private static String createMessage(Class parentType) {
-        return String.format("Couldn't find a single implementation of " + parentType);
+        return String.format("Couldn't find a single implementation of %s", parentType);
     }
+
 }

@@ -108,7 +108,7 @@ public final class UsageFormatter implements Plugin, EventListener {
     private void addUsageEntry(Result result, PickleStepTestStep testStep) {
         List<StepContainer> stepContainers = usageMap.computeIfAbsent(testStep.getPattern(), k -> new ArrayList<>());
         StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
-        StepDuration stepDuration = new StepDuration(result.getDuration(), testStep.getStepLocation());
+        StepDuration stepDuration = new StepDuration(result.getDuration(), testStep.getUri() + ":" + testStep.getStepLine());
         stepContainer.getDurations().add(stepDuration);
     }
 

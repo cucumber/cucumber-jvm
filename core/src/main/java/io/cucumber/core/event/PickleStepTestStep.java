@@ -1,5 +1,6 @@
 package io.cucumber.core.event;
 
+import io.cucumber.core.feature.CucumberStep;
 import org.apiguardian.api.API;
 
 import java.util.List;
@@ -18,16 +19,15 @@ public interface PickleStepTestStep extends TestStep {
     String getPattern();
 
     /**
-     * The matched Gherkin step as a compiled Pickle.
+     * The matched Gherkin step
      *
      * @return the matched step
      */
-    gherkin.pickles.PickleStep getPickleStep();
-
+    CucumberStep getStep();
 
     /**
      * Returns the arguments provided to the step definition.
-     *
+     * <p>
      * For example the step definition <code>Given (.*) pickles</code>
      * when matched with <code>Given 15 pickles</code> will receive
      * as argument <code>"15"</code>.
@@ -43,7 +43,7 @@ public interface PickleStepTestStep extends TestStep {
      * @return arguments provided to the gherkin step.
      */
 
-    List<gherkin.pickles.Argument> getStepArgument();
+    StepArgument getStepArgument();
 
     /**
      * The line in the feature file defining this step.
@@ -53,11 +53,11 @@ public interface PickleStepTestStep extends TestStep {
     int getStepLine();
 
     /**
-     * A uri to to the feature and line of this step.
+     * A uri to to the feature of this step.
      *
      * @return a uri
      */
-    String getStepLocation();
+    String getUri();
 
     /**
      * The full text of the Gherkin step.

@@ -1,21 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.HookTestStep;
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestStep;
-import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestSourceRead;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
-import io.cucumber.core.event.WriteEvent;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -23,11 +7,24 @@ import gherkin.ast.Step;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.net.iharder.Base64;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
+import io.cucumber.core.event.DataTableArgument;
+import io.cucumber.core.event.DocStringArgument;
+import io.cucumber.core.event.EmbedEvent;
+import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.HookTestStep;
+import io.cucumber.core.event.HookType;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
+import io.cucumber.core.event.Status;
+import io.cucumber.core.event.StepArgument;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.core.event.TestStep;
+import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.core.event.TestStepStarted;
+import io.cucumber.core.event.WriteEvent;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -55,12 +52,12 @@ public final class JSONFormatter implements EventListener {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
-    
+
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
     }
-    
+
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
@@ -76,6 +73,7 @@ public final class JSONFormatter implements EventListener {
         testSources.addTestSourceReadEvent(event.getUri(), event);
     }
 
+    @SuppressWarnings("unchecked")
     private void handleTestCaseStarted(TestCaseStarted event) {
         if (currentFeatureFile == null || !currentFeatureFile.equals(event.getTestCase().getUri())) {
             currentFeatureFile = event.getTestCase().getUri();
@@ -94,6 +92,7 @@ public final class JSONFormatter implements EventListener {
         currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
     }
 
+    @SuppressWarnings("unchecked")
     private void handleTestStepStarted(TestStepStarted event) {
         if (event.getTestStep() instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
@@ -108,7 +107,7 @@ public final class JSONFormatter implements EventListener {
                 currentBeforeStepHookList.clear();
             }
             currentStepsList.add(currentStepOrHookMap);
-        } else if(event.getTestStep() instanceof HookTestStep) {
+        } else if (event.getTestStep() instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) event.getTestStep();
             currentStepOrHookMap = createHookStep(hookTestStep);
             addHookStepToTestCaseMap(currentStepOrHookMap, hookTestStep.getHookType());
@@ -154,7 +153,7 @@ public final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createTestCase(TestCaseStarted event) {
         Map<String, Object> testCaseMap = new HashMap<>();
-        
+
         testCaseMap.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
 
         TestCase testCase = event.getTestCase();
@@ -211,12 +210,14 @@ public final class JSONFormatter implements EventListener {
         stepMap.put("name", testStep.getStepText());
         stepMap.put("line", testStep.getStepLine());
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
-        if (!testStep.getStepArgument().isEmpty()) {
-            Argument argument = testStep.getStepArgument().get(0);
-            if (argument instanceof PickleString) {
-                stepMap.put("doc_string", createDocStringMap(argument));
-            } else if (argument instanceof PickleTable) {
-                stepMap.put("rows", createDataTableList(argument));
+        StepArgument argument = testStep.getStepArgument();
+        if (argument != null) {
+            if (argument instanceof DocStringArgument) {
+                DocStringArgument docStringArgument = (DocStringArgument) argument;
+                stepMap.put("doc_string", createDocStringMap(docStringArgument));
+            } else if (argument instanceof DataTableArgument) {
+                DataTableArgument dataTableArgument = (DataTableArgument) argument;
+                stepMap.put("rows", createDataTableList(dataTableArgument));
             }
         }
         if (astNode != null) {
@@ -227,31 +228,22 @@ public final class JSONFormatter implements EventListener {
         return stepMap;
     }
 
-    private Map<String, Object> createDocStringMap(Argument argument) {
+    private Map<String, Object> createDocStringMap(DocStringArgument docString) {
         Map<String, Object> docStringMap = new HashMap<>();
-        PickleString docString = ((PickleString)argument);
         docStringMap.put("value", docString.getContent());
-        docStringMap.put("line", docString.getLocation().getLine());
+        docStringMap.put("line", docString.getLine());
         docStringMap.put("content_type", docString.getContentType());
         return docStringMap;
     }
 
-    private List<Map<String, Object>> createDataTableList(Argument argument) {
-        List<Map<String, Object>> rowList = new ArrayList<>();
-        for (PickleRow row : ((PickleTable)argument).getRows()) {
-            Map<String, Object> rowMap = new HashMap<>();
-            rowMap.put("cells", createCellList(row));
+    private List<Map<String, List<String>>> createDataTableList(DataTableArgument argument) {
+        List<Map<String, List<String>>> rowList = new ArrayList<>();
+        for (List<String> row : argument.cells()) {
+            Map<String, List<String>> rowMap = new HashMap<>();
+            rowMap.put("cells", new ArrayList<>(row));
             rowList.add(rowMap);
         }
         return rowList;
-    }
-
-    private List<String> createCellList(PickleRow row) {
-        List<String> cells = new ArrayList<>();
-        for (PickleCell cell : row.getCells()) {
-            cells.add(cell.getValue());
-        }
-        return cells;
     }
 
     private Map<String, Object> createHookStep(HookTestStep hookTestStep) {
@@ -286,14 +278,14 @@ public final class JSONFormatter implements EventListener {
         if (!mapToAddTo.containsKey(hookName)) {
             mapToAddTo.put(hookName, new ArrayList<Map<String, Object>>());
         }
-        ((List<Map<String, Object>>)mapToAddTo.get(hookName)).add(currentStepOrHookMap);
+        ((List<Map<String, Object>>) mapToAddTo.get(hookName)).add(currentStepOrHookMap);
     }
 
     private void addOutputToHookMap(String text) {
         if (!currentStepOrHookMap.containsKey("output")) {
             currentStepOrHookMap.put("output", new ArrayList<String>());
         }
-        ((List<String>)currentStepOrHookMap.get("output")).add(text);
+        ((List<String>) currentStepOrHookMap.get("output")).add(text);
     }
 
     private void addEmbeddingToHookMap(byte[] data, String mimeType, String name) {
@@ -301,7 +293,7 @@ public final class JSONFormatter implements EventListener {
             currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
         }
         Map<String, Object> embedMap = createEmbeddingMap(data, mimeType, name);
-        ((List<Map<String, Object>>)currentStepOrHookMap.get("embeddings")).add(embedMap);
+        ((List<Map<String, Object>>) currentStepOrHookMap.get("embeddings")).add(embedMap);
     }
 
     private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType, String name) {
@@ -316,7 +308,7 @@ public final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createMatchMap(TestStep step, Result result) {
         Map<String, Object> matchMap = new HashMap<>();
-        if(step instanceof PickleStepTestStep) {
+        if (step instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) step;
             if (!testStep.getDefinitionArgument().isEmpty()) {
                 List<Map<String, Object>> argumentList = new ArrayList<>();
@@ -348,10 +340,10 @@ public final class JSONFormatter implements EventListener {
         }
         return resultMap;
     }
-    
+
     private String getDateTimeFromTimeStamp(Instant instant) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-                .withZone(ZoneOffset.UTC);
+            .withZone(ZoneOffset.UTC);
         return formatter.format(instant);
     }
 

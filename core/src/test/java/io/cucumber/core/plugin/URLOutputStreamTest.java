@@ -1,11 +1,10 @@
 package io.cucumber.core.plugin;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
@@ -65,15 +64,15 @@ public class URLOutputStreamTest {
     private final List<File> tmpFiles = new ArrayList<File>();
     private final List<String> threadErrors = new ArrayList<String>();
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    Path tempDir;
 
-    @Before
+    @BeforeEach
     public void startWebbit() throws ExecutionException, InterruptedException {
         webbit = new NettyWebServer(Executors.newSingleThreadExecutor(), new InetSocketAddress("127.0.0.1", 9873), URI.create("http://127.0.0.1:9873")).start().get();
     }
 
-    @After
+    @AfterEach
     public void stopWebbit() throws ExecutionException, InterruptedException {
         webbit.stop().get();
     }
@@ -127,8 +126,8 @@ public class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
 
-        final Executable testMethod = () -> w.close();
-        final FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
+        Executable testMethod = () -> w.close();
+        FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
     }
 
@@ -148,8 +147,8 @@ public class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
 
-        final Executable testMethod = () -> w.close();
-        final IOException actualThrown = assertThrows(IOException.class, testMethod);
+        Executable testMethod = () -> w.close();
+        IOException actualThrown = assertThrows(IOException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
                 "HTTP 500\nsomething went wrong"
@@ -189,8 +188,8 @@ public class URLOutputStreamTest {
             final int curThreadNo = i;
             // It useful when 2-3 threads (not more) tries to create the same directory for the report
             final File tmp = (i % 3 == 0 || i % 3 == 2) ?
-                new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + i + "/tmpFile.tmp") :
-                new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
+                new File(tempDir.toAbsolutePath().toString() + "/cuce" + ballast + i + "/tmpFile.tmp") :
+                new File(tempDir.toAbsolutePath().toString() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
             tmpFiles.add(tmp);
             result.add(new Thread(() -> {
                 try {

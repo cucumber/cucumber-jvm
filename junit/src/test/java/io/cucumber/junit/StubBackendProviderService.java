@@ -45,9 +45,12 @@ public class StubBackendProviderService implements BackendProviderService {
         @Override
         public Snippet getSnippet() {
             return new Snippet() {
+
+                private int i = 1;
+
                 @Override
                 public MessageFormat template() {
-                    return new MessageFormat("");
+                    return new MessageFormat("stub snippet " + i++);
                 }
 
                 @Override
