@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
@@ -8,6 +7,7 @@ import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
@@ -35,7 +35,6 @@ import org.apiguardian.api.API;
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -53,7 +52,7 @@ import static java.util.stream.Collectors.toList;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
     private final EventBus bus;
-    private final Predicate<PickleEvent> filters;
+    private final Predicate<CucumberPickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
@@ -102,11 +101,11 @@ public final class TestNGCucumberRunner {
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 
-    public void runScenario(PickleEvent pickle) throws Throwable {
+    public void runScenario(Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        runner.runPickle(pickle);
+        runner.runPickle(pickle.getCucumberPickle());
         testCaseResultListener.finishExecutionUnit();
 
         if (!testCaseResultListener.isPassed()) {
@@ -119,17 +118,17 @@ public final class TestNGCucumberRunner {
     }
 
     /**
-     * @return returns the cucumber scenarios as a two dimensional array of {@link PickleEventWrapper}
-     * scenarios combined with their {@link CucumberFeatureWrapper} feature.
+     * @return returns the cucumber scenarios as a two dimensional array of {@link PickleWrapper}
+     * scenarios combined with their {@link FeatureWrapper} feature.
      */
     public Object[][] provideScenarios() {
         try {
             return getFeatures().stream()
                 .flatMap(feature -> feature.getPickles().stream()
                     .filter(filters)
-                    .map(pickle -> new Object[]{
-                        new PickleEventWrapperImpl(pickle),
-                        new CucumberFeatureWrapperImpl(feature)}))
+                    .map(cucumberPickle -> new Object[]{
+                        new PickleWrapperImpl(new Pickle(cucumberPickle)),
+                        new FeatureWrapperImpl(feature)}))
                 .collect(toList())
                 .toArray(new Object[0][0]);
         } catch (CucumberException e) {
