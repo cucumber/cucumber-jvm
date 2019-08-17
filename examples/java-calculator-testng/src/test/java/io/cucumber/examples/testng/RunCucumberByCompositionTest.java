@@ -1,8 +1,8 @@
 package io.cucumber.examples.testng;
 
-import io.cucumber.testng.CucumberFeatureWrapper;
 import io.cucumber.testng.CucumberOptions;
-import io.cucumber.testng.PickleEventWrapper;
+import io.cucumber.testng.FeatureWrapper;
+import io.cucumber.testng.PickleWrapper;
 import io.cucumber.testng.TestNGCucumberRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -24,8 +24,8 @@ public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     }
 
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
-    public void scenario(PickleEventWrapper pickleEvent, CucumberFeatureWrapper cucumberFeature) throws Throwable {
-        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent());
+    public void scenario(PickleWrapper pickle, FeatureWrapper cucumberFeature) throws Throwable {
+        testNGCucumberRunner.runScenario(pickle.getPickle());
     }
 
     @DataProvider
