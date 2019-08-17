@@ -1,8 +1,8 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.EventPublisher;
+import io.cucumber.core.event.PickleStepTestStep;
+import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestRunFinished;
@@ -21,7 +21,7 @@ import java.util.Locale;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-class Stats implements EventListener, ColorAware, StrictAware {
+class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
     private static final long ONE_SECOND = SECONDS.toNanos(1);
     private static final long ONE_MINUTE = 60 * ONE_SECOND;
     private SubCounts scenarioSubCounts = new SubCounts();

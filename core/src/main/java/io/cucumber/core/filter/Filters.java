@@ -1,6 +1,6 @@
 package io.cucumber.core.filter;
 
-import gherkin.events.PickleEvent;
+import io.cucumber.core.feature.CucumberPickle;
 
 import java.net.URI;
 import java.util.Collection;
@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public final class Filters implements Predicate<PickleEvent> {
+public final class Filters implements Predicate<CucumberPickle> {
 
-    private Predicate<PickleEvent> filter = t -> true;
+    private Predicate<CucumberPickle> filter = t -> true;
 
     public Filters(Options options) {
         List<String> tagExpressions = options.getTagExpressions();
@@ -29,7 +29,7 @@ public final class Filters implements Predicate<PickleEvent> {
     }
 
     @Override
-    public boolean test(PickleEvent pickleEvent) {
+    public boolean test(CucumberPickle pickleEvent) {
         return this.filter.test(pickleEvent);
     }
 }

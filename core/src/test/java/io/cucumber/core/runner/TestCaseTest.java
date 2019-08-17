@@ -1,14 +1,12 @@
 package io.cucumber.core.runner;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -26,25 +24,25 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
 
-public class TestCaseTest {
+class TestCaseTest {
+
+    private final CucumberFeature feature = TestFeatureParser.parse("" +
+        "Feature: Test feature\n" +
+        "  Scenario: Test scenario\n" +
+        "     Given I have 4 cukes in my belly\n" +
+        "     And I have 4 cucumber on my plate\n"
+    );
 
     private final EventBus bus = mock(EventBus.class);
-
 
     private final PickleStepDefinitionMatch definitionMatch1 = mock(PickleStepDefinitionMatch.class);
     private CoreHookDefinition beforeStep1HookDefinition1 = mock(CoreHookDefinition.class);
     private CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
 
-    @BeforeEach
-    public void init() {
-        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
-    }
-
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
         "uri",
-        mock(PickleStep.class),
+        feature.getPickles().get(0).getSteps().get(0),
         singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
         singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
         definitionMatch1
@@ -53,18 +51,21 @@ public class TestCaseTest {
     private final PickleStepDefinitionMatch definitionMatch2 = mock(PickleStepDefinitionMatch.class);
     private CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
     private CoreHookDefinition afterStep1HookDefinition2 = mock(CoreHookDefinition.class);
-
     private final PickleStepTestStep testStep2 = new PickleStepTestStep(
         "uri",
-        mock(PickleStep.class),
+        feature.getPickles().get(0).getSteps().get(1),
         singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
         singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),
         definitionMatch2
     );
 
+    @BeforeEach
+    void init() {
+        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
+    }
 
     @Test
-    public void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
+    void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
         doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
 
         createTestCase(testStep1).run(bus);
@@ -76,7 +77,7 @@ public class TestCaseTest {
     }
 
     @Test
-    public void run_all_steps() throws Throwable {
+    void run_all_steps() throws Throwable {
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
@@ -86,7 +87,7 @@ public class TestCaseTest {
     }
 
     @Test
-    public void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
+    void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
         doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -100,7 +101,7 @@ public class TestCaseTest {
 
 
     @Test
-    public void skip_hooks_of_step_after_skipped_step() throws Throwable {
+    void skip_hooks_of_step_after_skipped_step() throws Throwable {
         doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -113,7 +114,7 @@ public class TestCaseTest {
     }
 
     @Test
-    public void skip_steps_at_first_gherkin_step_after_non_passed_result() throws Throwable {
+    void skip_steps_at_first_gherkin_step_after_non_passed_result() throws Throwable {
         doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -125,13 +126,16 @@ public class TestCaseTest {
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(asList(steps), Collections.<HookTestStep>emptyList(), Collections.<HookTestStep>emptyList(), pickleEvent(), false);
+        return new TestCase(asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
     }
 
-    private PickleEvent pickleEvent() {
-        Pickle pickle = mock(Pickle.class);
-        when(pickle.getLocations()).thenReturn(singletonList(new PickleLocation(1, 1)));
-        return new PickleEvent("uri", pickle);
+    private CucumberPickle pickle() {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
+        return feature.getPickles().get(0);
     }
 
 }

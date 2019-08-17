@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -27,12 +29,12 @@ import java.util.Scanner;
 
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class JUnitFormatterTest {
+class JUnitFormatterTest {
 
     private final List<CucumberFeature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
@@ -43,33 +45,33 @@ public class JUnitFormatterTest {
     private Duration stepDuration = null;
 
     @Test
-    public void featureSimpleTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
+    void featureSimpleTest() throws Exception {
+        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
         assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_1.report.xml", report);
     }
 
     @Test
-    public void featureWithBackgroundTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_2.feature"));
+    void featureWithBackgroundTest() throws Exception {
+        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_2.feature"));
         assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_2.report.xml", report);
     }
 
     @Test
-    public void featureWithOutlineTest() throws Exception {
-        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_3.feature"));
+    void featureWithOutlineTest() throws Exception {
+        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_3.feature"));
         assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_3.report.xml", report);
     }
 
     @Test
-    public void featureSimpleStrictTest() throws Exception {
+    void featureSimpleStrictTest() throws Exception {
         boolean strict = true;
-        File report = runFeaturesWithJunitFormatter(asList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"), strict);
+        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"), strict);
         assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_1_strict.report.xml", report);
     }
 
     @Test
-    public void should_format_passed_scenario() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_passed_scenario() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -97,8 +99,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_format_skipped_scenario() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_skipped_scenario() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -131,8 +133,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_format_pending_scenario() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_pending_scenario() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -160,8 +162,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_format_failed_scenario() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_failed_scenario() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -192,8 +194,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_handle_failure_in_before_hook() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_handle_failure_in_before_hook() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -225,8 +227,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_handle_pending_in_before_hook() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_handle_pending_in_before_hook() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -255,8 +257,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_handle_failure_in_before_hook_with_background() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_handle_failure_in_before_hook_with_background() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Background: background name\n" +
                 "    Given first step\n" +
@@ -289,8 +291,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_handle_failure_in_after_hook() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_handle_failure_in_after_hook() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -322,8 +324,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_accumulate_time_from_steps_and_hooks() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_accumulate_time_from_steps_and_hooks() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    * first step\n" +
@@ -350,8 +352,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_outlines() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_scenario_outlines() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario Outline: outline_name\n" +
                 "    Given first step \"<arg>\"\n" +
@@ -391,8 +393,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_outlines_with_multiple_examples() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_scenario_outlines_with_multiple_examples() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario Outline: outline name\n" +
                 "    Given first step \"<arg>\"\n" +
@@ -452,8 +454,8 @@ public class JUnitFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_outlines_with_arguments_in_name() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature",
+    void should_format_scenario_outlines_with_arguments_in_name() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario Outline: outline name <arg>\n" +
                 "    Given first step \"<arg>\"\n" +
@@ -499,7 +501,7 @@ public class JUnitFormatterTest {
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         if (strict) {
             args.add("--strict");
         }
@@ -547,7 +549,11 @@ public class JUnitFormatterTest {
 
     private void assertXmlEqual(String expectedPath, File actual) throws IOException, SAXException {
         XMLUnit.setIgnoreWhitespace(true);
-        InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        InputStreamReader control = new InputStreamReader(
+            contextClassLoader.getResourceAsStream(expectedPath),
+            StandardCharsets.UTF_8
+        );
         Diff diff = new Diff(control, new FileReader(actual));
         assertThat("XML files are similar " + diff, diff.identical(), is(equalTo(true)));
     }

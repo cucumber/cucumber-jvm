@@ -1,15 +1,14 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.Classpath;
 import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.feature.RerunLoader;
+import io.cucumber.core.io.Classpath;
+import io.cucumber.core.io.MultiLoader;
+import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.snippets.SnippetType;
 
 import java.net.URI;
 import java.util.regex.Pattern;

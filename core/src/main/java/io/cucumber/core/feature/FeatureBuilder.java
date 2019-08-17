@@ -5,7 +5,6 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ final class FeatureBuilder {
 
     public List<CucumberFeature> build() {
         List<CucumberFeature> cucumberFeatures = new ArrayList<>(sourceToFeature.values());
-        Collections.sort(cucumberFeatures, new CucumberFeature.CucumberFeatureUriComparator());
+        cucumberFeatures.sort(new CucumberFeature.CucumberFeatureUriComparator());
         return cucumberFeatures;
     }
 

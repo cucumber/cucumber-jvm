@@ -1,14 +1,13 @@
 package io.cucumber.core.filter;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleLocation;
+import io.cucumber.core.feature.CucumberPickle;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
-final class LinePredicate implements Predicate<PickleEvent> {
+final class LinePredicate implements Predicate<CucumberPickle> {
     private final Map<URI, ? extends Collection<Integer>> lineFilters;
 
     LinePredicate(Map<URI, ? extends Collection<Integer>> lineFilters) {
@@ -16,16 +15,14 @@ final class LinePredicate implements Predicate<PickleEvent> {
     }
 
     @Override
-    public boolean test(PickleEvent pickleEvent) {
-        URI picklePath = URI.create(pickleEvent.uri);
+    public boolean test(CucumberPickle pickle) {
+        URI picklePath = URI.create(pickle.getUri());
         if (!lineFilters.containsKey(picklePath)) {
             return true;
         }
         for (Integer line : lineFilters.get(picklePath)) {
-            for (PickleLocation location : pickleEvent.pickle.getLocations()) {
-                if (line == location.getLine()) {
-                    return true;
-                }
+            if (line == pickle.getLine() || line == pickle.getScenarioLine()) {
+                return true;
             }
         }
         return false;

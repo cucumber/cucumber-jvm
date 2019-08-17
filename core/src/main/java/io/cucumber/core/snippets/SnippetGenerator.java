@@ -1,9 +1,8 @@
 package io.cucumber.core.snippets;
 
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
+import io.cucumber.core.event.DataTableArgument;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.feature.DocStringArgument;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -33,23 +32,39 @@ public final class SnippetGenerator {
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public List<String> getSnippet(PickleStep step, String keyword, SnippetType snippetType) {
+    public List<String> getSnippet(CucumberStep step, SnippetType snippetType) {
         List<GeneratedExpression> generatedExpressions = generator.generateExpressions(step.getText());
         List<String> snippets = new ArrayList<>(generatedExpressions.size());
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
             snippets.add(snippet.template().format(new String[]{
-                    keyword,
+                    sanitize(step.getKeyWord()),
                     snippet.escapePattern(expression.getSource()),
                     functionName(expression.getSource(), functionNameGenerator),
                     snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
                     REGEXP_HINT,
-                    !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
+                    tableHint(step)
                 }
             ));
         }
 
         return snippets;
+    }
+
+    private String tableHint(CucumberStep step) {
+        if (step.getArgument() == null) {
+            return "";
+        }
+
+        if (step.getArgument() instanceof DataTableArgument) {
+            return snippet.tableHint();
+        }
+
+        return "";
+    }
+
+    private static String sanitize(String keyWord) {
+        return keyWord.replaceAll("[\\s',!]", "");
     }
 
     private String functionName(String sentence, FunctionNameGenerator functionNameGenerator) {
@@ -63,8 +78,8 @@ public final class SnippetGenerator {
     }
 
 
-    private Map<String, Type> arguments(PickleStep step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
-        Map<String, Type> arguments = new LinkedHashMap<String, Type>(parameterTypes.size() + 1);
+    private Map<String, Type> arguments(CucumberStep step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
+        Map<String, Type> arguments = new LinkedHashMap<>(parameterTypes.size() + 1);
 
         for (int i = 0; i < parameterTypes.size(); i++) {
             ParameterType<?> parameterType = parameterTypes.get(i);
@@ -72,15 +87,12 @@ public final class SnippetGenerator {
             arguments.put(parameterName, parameterType.getType());
         }
 
-        if (step.getArgument().isEmpty()) {
+        io.cucumber.core.feature.Argument arg = step.getArgument();
+        if (arg == null) {
             return arguments;
-        }
-
-        Argument arg = step.getArgument().get(0);
-        if (arg instanceof PickleString) {
+        } else if (arg instanceof DocStringArgument) {
             arguments.put(parameterName("docString", parameterNames), String.class);
-        }
-        if (arg instanceof PickleTable) {
+        } else if (arg instanceof io.cucumber.core.feature.DataTableArgument) {
             arguments.put(parameterName("dataTable", parameterNames), DataTable.class);
         }
 

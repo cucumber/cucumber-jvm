@@ -1,22 +1,20 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.event.Result;
-import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleTag;
+import io.cucumber.core.event.TestStep;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberPickle;
 
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 final class TestCase implements io.cucumber.core.event.TestCase {
-    private final PickleEvent pickleEvent;
+    private final CucumberPickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
@@ -25,12 +23,12 @@ final class TestCase implements io.cucumber.core.event.TestCase {
     TestCase(List<PickleStepTestStep> testSteps,
                     List<HookTestStep> beforeHooks,
                     List<HookTestStep> afterHooks,
-                    PickleEvent pickleEvent,
+             CucumberPickle pickle,
                     boolean dryRun) {
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
-        this.pickleEvent = pickleEvent;
+        this.pickle = pickle;
         this.dryRun = dryRun;
     }
 
@@ -70,7 +68,7 @@ final class TestCase implements io.cucumber.core.event.TestCase {
 
     @Override
     public String getName() {
-        return pickleEvent.pickle.getName();
+        return pickle.getName();
     }
 
     @Override
@@ -80,22 +78,19 @@ final class TestCase implements io.cucumber.core.event.TestCase {
 
     @Override
     public String getUri() {
-        return pickleEvent.uri;
+        return pickle.getUri();
     }
 
     public Integer getLine() {
-        return pickleEvent.pickle.getLocations().get(0).getLine();
+        return pickle.getLine();
     }
 
     private String fileColonLine(Integer line) {
-        return URI.create(pickleEvent.uri).getSchemeSpecificPart() + ":" + line;
+        return URI.create(pickle.getUri()).getSchemeSpecificPart() + ":" + line;
     }
 
     @Override
     public List<String> getTags() {
-        return pickleEvent.pickle.getTags()
-            .stream()
-            .map(PickleTag::getName)
-            .collect(Collectors.toList());
+        return pickle.getTags();
     }
 }
