@@ -1,22 +1,25 @@
 package io.cucumber.guice.matcher;
 
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertDescription;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertDoesNotMatch;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertMatches;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertMismatchDescription;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertNullSafe;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertUnknownTypeSafe;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
+class ElementsAreAllUniqueMatcherTest {
 
     private final Matcher<Collection<?>> matcher = ElementsAreAllUniqueMatcher.elementsAreAllUnique();
 
-    @Override
-    protected Matcher<?> createMatcher() {
-        return matcher;
-    }
-
-    public void testDoesNotMatchNullCollection() {
+    @Test
+    void testDoesNotMatchNullCollection() {
         Collection<?> arg = null;
 
         assertAll("Checking Matcher",
@@ -25,7 +28,8 @@ public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testDoesNotMatchCollectionWithLessThanTwoElements() {
+    @Test
+    void testDoesNotMatchCollectionWithLessThanTwoElements() {
         Collection<String> arg = Arrays.asList("foo");
 
         assertAll("Checking Matcher",
@@ -34,7 +38,8 @@ public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testDoesNotMatchCollectionWithNullElement() {
+    @Test
+    void testDoesNotMatchCollectionWithNullElement() {
         Collection<String> arg = Arrays.asList("foo", null);
 
         assertAll("Checking Matcher",
@@ -43,11 +48,13 @@ public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testMatchesCollectionWithTwoElementsThatAreUnique() {
+    @Test
+    void testMatchesCollectionWithTwoElementsThatAreUnique() {
         assertMatches(matcher, Arrays.asList("foo", "bar"));
     }
 
-    public void testDoesNotMatchCollectionWithTwoElementsThatAreNotUnique() {
+    @Test
+    void testDoesNotMatchCollectionWithTwoElementsThatAreNotUnique() {
         Collection<String> arg = Arrays.asList("foo", "foo");
 
         assertAll("Checking Matcher",
@@ -56,11 +63,13 @@ public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testMatchesCollectionWithThreeElementsThatAreAllUnique() {
+    @Test
+    void testMatchesCollectionWithThreeElementsThatAreAllUnique() {
         assertMatches(matcher, Arrays.asList("foo", "bar", "baz"));
     }
 
-    public void testDoesNotMatchCollectionWithElementsThatAreNotUnique() {
+    @Test
+    void testDoesNotMatchCollectionWithElementsThatAreNotUnique() {
         Collection<String> arg = Arrays.asList("foo", "bar", "foo");
 
         assertAll("Checking Matcher",
@@ -69,7 +78,8 @@ public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testDoesNotMatchCollectionWithThreeElementsThatAreNotUnique() {
+    @Test
+    void testDoesNotMatchCollectionWithThreeElementsThatAreNotUnique() {
         Collection<String> arg = Arrays.asList("foo", "foo", "foo");
 
         assertAll("Checking Matcher",
@@ -78,7 +88,18 @@ public class ElementsAreAllUniqueMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testMatcherDescription() {
+    @Test
+    void testMatcherDescription() {
         assertDescription(ElementsAreAllUniqueMatcher.DESCRIPTION, matcher);
+    }
+
+    @Test
+    void testIsNullSafe() {
+        assertNullSafe(matcher);
+    }
+
+    @Test
+    void testCopesWithUnknownTypes() {
+        assertUnknownTypeSafe(matcher);
     }
 }
