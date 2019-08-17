@@ -1,20 +1,25 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.EventHandler;
+import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
-import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.SCENARIO;
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.STEP;
@@ -34,6 +39,34 @@ final class JUnitReporter {
     private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = this::handleTestCaseResult;
 
+    private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
+    private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
+
+    private static final class StepLocation implements Comparable<StepLocation> {
+        private final String uri;
+        private final int line;
+
+        private StepLocation(String uri, int line) {
+            this.uri = uri;
+            this.line = line;
+        }
+
+        @Override
+        public int compareTo(StepLocation o) {
+            int order = uri.compareTo(o.uri);
+            return order != 0 ? order : Integer.compare(line, o.line);
+        }
+    }
+
+    void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
+        snippetsPerStep.putIfAbsent(new StepLocation(
+                snippetsSuggestedEvent.getUri(),
+                snippetsSuggestedEvent.getStepLine()
+            ),
+            snippetsSuggestedEvent.getSnippets()
+        );
+    }
+
 
     JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
@@ -42,6 +75,7 @@ final class JUnitReporter {
         bus.registerHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+        bus.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedEventEventHandler);
     }
 
     void finishExecutionUnit() {
@@ -49,6 +83,7 @@ final class JUnitReporter {
         bus.removeHandlerFor(TestStepStarted.class, testStepStartedHandler);
         bus.removeHandlerFor(TestStepFinished.class, testStepFinishedHandler);
         bus.removeHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+        bus.removeHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedEventEventHandler);
     }
 
     void startExecutionUnit(PickleRunner pickleRunner, RunNotifier runNotifier) {
@@ -61,18 +96,18 @@ final class JUnitReporter {
 
     void handleTestCaseStarted(TestCaseStarted testCaseStarted) {
         pickleRunnerNotifier.fireTestStarted();
-        stepErrors = new ArrayList<Throwable>();
+        stepErrors = new ArrayList<>();
     }
 
 
     private void handTestStepStarted(TestStepStarted event) {
         if (event.getTestStep() instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-            handleStepStarted(testStep.getPickleStep());
+            handleStepStarted(testStep.getStep());
         }
     }
 
-    void handleStepStarted(gherkin.pickles.PickleStep step) {
+    void handleStepStarted(CucumberStep step) {
         if (junitOptions.stepNotifications()) {
             Description description = pickleRunner.describeChild(step);
             stepNotifier = new EachTestNotifier(runNotifier, description);
@@ -110,10 +145,19 @@ final class JUnitReporter {
                 addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
                 break;
             case UNDEFINED:
+                List<String> snippets = snippetsPerStep.remove(
+                    new StepLocation(testStep.getUri(), testStep.getStepLine())
+                );
                 if (error == null) {
-                    error = new UndefinedThrowable();
+                    error = new UndefinedThrowable(
+                        snippets
+                    );
                 }
-                stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
+                stepErrors.add(new UndefinedThrowable(
+                    testStep.getStepText(),
+                    snippets,
+                    snippetsPerStep.values()
+                ));
                 addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
                 break;
             case AMBIGUOUS:

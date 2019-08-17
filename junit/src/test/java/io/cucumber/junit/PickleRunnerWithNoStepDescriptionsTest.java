@@ -1,9 +1,9 @@
 package io.cucumber.junit;
 
-import gherkin.events.PickleEvent;
+import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
-public class PickleRunnerWithNoStepDescriptionsTest {
+class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
-    public void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() {
-        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
+    void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() {
+        List<CucumberPickle> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -32,8 +32,8 @@ public class PickleRunnerWithNoStepDescriptionsTest {
     }
 
     @Test
-    public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
+    void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
+        List<CucumberPickle> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -49,8 +49,8 @@ public class PickleRunnerWithNoStepDescriptionsTest {
     }
 
     @Test
-    public void shouldConvertTextFromFeatureFileWithRussianLanguage() {
-        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
+    void shouldConvertTextFromFeatureFileWithRussianLanguage() {
+        List<CucumberPickle> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
             "#language:ru\n" +
             "Функция: имя функции\n" +
             "  Сценарий: имя сценария\n" +

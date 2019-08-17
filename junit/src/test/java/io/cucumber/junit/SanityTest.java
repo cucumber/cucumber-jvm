@@ -1,20 +1,21 @@
 package io.cucumber.junit;
 
-import org.junit.Test;
 
-public class SanityTest {
+import org.junit.jupiter.api.Test;
+
+class SanityTest {
     @Test
-    public void reports_events_correctly_with_cucumber_runner() {
+    void reports_events_correctly_with_cucumber_runner() {
         SanityChecker.run(RunCucumberTest.class);
     }
 
     @Test
-    public void reports_events_correctly_with_junit_runner() {
+    void reports_events_correctly_with_junit_runner() {
         SanityChecker.run(RunCucumberTest.class);
     }
 
     @Test
-    public void reports_events_correctly_with_no_step_notifications() {
-        SanityChecker.run(RunCucumberTestNoStepNotifications.class);
+    void reports_events_correctly_with_no_step_notifications() {
+        SanityChecker.run(RunCucumberTestWithStepNotifications.class);
     }
 }

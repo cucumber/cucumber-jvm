@@ -1,12 +1,8 @@
 package io.cucumber.examples.java;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.DefaultDataTableCellTransformer;
-import io.cucumber.java.DefaultDataTableEntryTransformer;
-import io.cucumber.java.DefaultParameterTransformer;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -58,8 +54,6 @@ public class RpnCalculatorSteps {
             calc.push(entry.operation);
         }
     }
-
-
 
     static final class Entry {
         private Integer first;
