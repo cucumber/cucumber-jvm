@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 
-public final class CucumberStep {
+public final class CucumberStep implements io.cucumber.core.event.CucumberStep {
 
     private final PickleStep pickleStep;
     private final String keyWord;
@@ -39,19 +39,23 @@ public final class CucumberStep {
         return null;
     }
 
+    @Override
     public int getStepLine() {
         int last = pickleStep.getLocations().size() - 1;
         return pickleStep.getLocations().get(last).getLine();
     }
 
+    @Override
     public Argument getArgument() {
         return argument;
     }
 
+    @Override
     public String getKeyWord() {
         return keyWord;
     }
 
+    @Override
     public String getText() {
         return pickleStep.getText();
     }

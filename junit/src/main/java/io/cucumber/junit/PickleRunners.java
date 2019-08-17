@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.event.CucumberStep;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.RunnerSupplier;
 import org.junit.runner.Description;
@@ -11,6 +11,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,9 @@ final class PickleRunners {
 
         @Override
         protected List<CucumberStep> getChildren() {
-            return pickle.getSteps();
+            // Casts io.cucumber.core.feature.CucumberStep
+            // to io.cucumber.core.event.CucumberStep
+            return new ArrayList<>(pickle.getSteps());
         }
 
         @Override

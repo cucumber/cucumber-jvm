@@ -1,5 +1,6 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.event.CucumberStep;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
@@ -9,7 +10,6 @@ import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;

@@ -1,6 +1,5 @@
 package io.cucumber.core.event;
 
-import io.cucumber.core.feature.CucumberStep;
 import org.apiguardian.api.API;
 
 import java.util.List;
