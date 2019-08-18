@@ -1,8 +1,6 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.io.MultiLoader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,12 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 final class RuntimeOptionsParserTest {
 
-    private RuntimeOptionsParser parser;
-
-    @BeforeEach
-    void setUp() {
-        this.parser = new RuntimeOptionsParser(new RerunLoader(new MultiLoader(this.getClass().getClassLoader())));
-    }
+    private RuntimeOptionsParser parser = new RuntimeOptionsParser();
 
     @Test
     void testParseWithObjectFactoryArgument() {

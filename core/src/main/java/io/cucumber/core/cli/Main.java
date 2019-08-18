@@ -37,17 +37,15 @@ public class Main {
      * @return 0 if execution was successful, 1 if it was not (test failures)
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-
-        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
-        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromEnvironment())
             .build(propertiesFileOptions);
 
-        RuntimeOptions systemOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions systemOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 

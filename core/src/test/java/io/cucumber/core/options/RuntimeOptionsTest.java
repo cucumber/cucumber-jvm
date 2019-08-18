@@ -62,9 +62,6 @@ class RuntimeOptionsTest {
 
     private final Map<String, String> properties = new HashMap<>();
 
-    @Mock
-    private ResourceLoader resourceLoader;
-
     public static URI uri(String s) {
         return URI.create(s);
     }
@@ -82,13 +79,6 @@ class RuntimeOptionsTest {
                 description.appendValue(pluginName);
             }
         };
-    }
-
-    private static void mockFileResource(ResourceLoader resourceLoader, String path, String feature)
-        throws IOException {
-        Resource resource = mock(Resource.class);
-        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes(UTF_8)));
-        when(resourceLoader.resources(uri(path), null)).thenReturn(singletonList(resource));
     }
 
     @Test
@@ -415,19 +405,6 @@ class RuntimeOptionsTest {
     }
 
     @Test
-    void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property()
-        throws IOException {
-        properties.put(OPTIONS_PROPERTY_NAME, "--tags @Tag");
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "file:path/file.feature:3\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:path/file.feature")));
-    }
-
-    @Test
     void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         properties.put(OPTIONS_PROPERTY_NAME, "--plugin pretty");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
@@ -572,7 +549,7 @@ class RuntimeOptionsTest {
             .parse(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"))
             .build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Unknown option: -concreteUnsupportedOption")));
+        assertThat(actualThrown.getMessage(), is(equalTo("Unknown option: -concreteUnsupportedOption")));
     }
 
     @Test
@@ -597,7 +574,7 @@ class RuntimeOptionsTest {
             .parse("--threads", "0")
             .build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("--threads must be > 0")));
+        assertThat(actualThrown.getMessage(), is(equalTo("--threads must be > 0")));
     }
 
     @Test
@@ -703,8 +680,8 @@ class RuntimeOptionsTest {
         Executable testMethod = () -> new CommandlineOptionsParser()
             .parse("--order", "invalid")
             .build();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        assertThat(actualThrown.getMessage(), is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
     }
 
     @Test
@@ -713,85 +690,9 @@ class RuntimeOptionsTest {
             .parse("--count", "0")
             .build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("--count must be > 0")));
+        assertThat(actualThrown.getMessage(), is(equalTo("--count must be > 0")));
     }
 
-    @Test
-    void loads_no_features_when_rerun_file_contains_carriage_return() throws Exception {
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "\r";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-        assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
-    }
-
-    @Test
-    void loads_features_specified_in_rerun_file() throws Exception {
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "file:path/bar.feature:2\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature"))),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)))
-        );
-    }
-
-    @Test
-    void loads_features_specified_in_rerun_file_with_empty_cucumber_options() throws Exception {
-        properties.put(OPTIONS_PROPERTY_NAME, "");
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "file:path/bar.feature:2\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature"))),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)))
-        );
-    }
-
-    @Test
-    void clobbers_features_from_rerun_file_specified_in_cli_if_features_specified_in_cucumber_options_property() throws Exception {
-        properties.put(OPTIONS_PROPERTY_NAME, "file:path/foo.feature");
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "file:path/bar.feature:2\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        RuntimeOptions options = new CucumberPropertiesParser(resourceLoader)
-            .parse(properties)
-            .build(runtimeOptions);
-
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/foo.feature"))),
-            () -> assertThat(options.getLineFilters().size(), is(0))
-        );
-    }
-
-    @Test
-    void loads_no_features_when_rerun_file_is_empty() throws Exception {
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
-    }
 
 
     @Test
@@ -806,112 +707,6 @@ class RuntimeOptionsTest {
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
     }
 
-    @Test
-    void loads_no_features_when_rerun_file_contains_new_line() throws Exception {
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
-    }
-
-    @Test
-    void loads_no_features_when_rerun_file_contains_new_line_and_carriage_return() throws Exception {
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "\r\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
-    }
-
-    @Test
-    void last_new_line_is_optinal() throws Exception {
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = "file:path/bar.feature" + ":2";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:path/bar.feature"))),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:path/bar.feature"), singleton(2)))
-        );
-    }
-
-    @Test
-    void loads_features_specified_in_rerun_file_from_classpath_when_not_in_file_system() throws Exception {
-        String featurePath = "classpath:path/bar.feature";
-        URI featureUri = uri(featurePath);
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = featurePath + ":2";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(featureUri)),
-            () -> assertThat(options.getLineFilters(), hasEntry(featureUri, singleton(2)))
-        );
-    }
-
-    @Test
-    void understands_whitespace_in_rerun_filepath() throws Exception {
-        String featurePath1 = "My Documents/tests/bar.feature";
-        String rerunPath = "file:rerun.txt";
-        String rerunFile = featurePath1 + ":2\n";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:My%20Documents/tests/bar.feature"))),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:My%20Documents/tests/bar.feature"), singleton(2)))
-        );
-    }
-
-    @Test
-    void understands_rerun_files_separated_by_with_whitespace() throws Exception {
-        String featurePath1 = "file:/home/users/mp/My%20Documents/tests/bar.feature";
-        String featurePath2 = "file:/home/users/mp/My%20Documents/tests/foo.feature";
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = featurePath1 + ":2 " + featurePath2 + ":4";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-
-        assertThat(options.getFeaturePaths(), is(asList(uri(featurePath1), uri(featurePath2))));
-
-    }
-
-    @Test
-    void understands_rerun_files_without_separation_in_rerun_filepath() throws Exception {
-        String featurePath1 = "file:/home/users/mp/My%20Documents/tests/bar.feature";
-        String featurePath2 = "file:/home/users/mp/My%20Documents/tests/foo.feature";
-        String rerunPath = "file:path/rerun.txt";
-        String rerunFile = featurePath1 + ":2" + featurePath2 + ":4";
-        mockFileResource(resourceLoader, rerunPath, rerunFile);
-
-        RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" + rerunPath)
-            .build();
-        assertThat(options.getFeaturePaths(), contains(uri(featurePath1), uri(featurePath2)));
-    }
 
     public static final class AwareFormatter implements StrictAware, ColorAware, EventListener {
 

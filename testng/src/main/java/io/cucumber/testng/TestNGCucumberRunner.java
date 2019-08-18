@@ -65,29 +65,26 @@ public final class TestNGCucumberRunner {
      *              and {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class clazz) {
-
-        ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
-        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
             .withOptionsProvider(new TestNGCucumberOptionsProvider())
             .parse(clazz)
             .build(propertiesFileOptions);
 
-        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        runtimeOptions = new CucumberPropertiesParser(resourceLoader)
+        runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
+        ClassLoader classLoader = clazz.getClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
 
@@ -97,6 +94,7 @@ public final class TestNGCucumberRunner {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }

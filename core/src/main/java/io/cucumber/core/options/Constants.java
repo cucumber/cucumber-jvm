@@ -78,14 +78,13 @@ public final class Constants {
      * {@code @path/file} Load {@code path/file} from the file system and parse
      * feature paths.
      * <p>
-     * TODO: Implement
      * {@code @classpath:path/file} Load {@code path/file} from the classpath and
      * parse feature paths.
      * <p>
      *
      * @see io.cucumber.core.feature.FeaturePath
      */
-    public static final String FEATURES_PROPERTY_NAME = "cucumber.feature";
+    public static final String FEATURE_PROPERTY_NAME = "cucumber.feature";
     /**
      * Property name used to set name filter: {@value}
      * <p>

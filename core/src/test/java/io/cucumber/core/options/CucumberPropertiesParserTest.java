@@ -65,7 +65,7 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_features() {
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "com/example.feature");
+        properties.put(Constants.FEATURE_PROPERTY_NAME, "com/example.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
             URI.create("file:com/example.feature")

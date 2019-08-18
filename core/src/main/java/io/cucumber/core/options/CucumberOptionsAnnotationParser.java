@@ -2,34 +2,38 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.io.Classpath;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.snippets.SnippetType;
 
-import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
 public final class CucumberOptionsAnnotationParser {
-    private final RerunLoader rerunLoader;
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
     private OptionsProvider optionsProvider;
 
-    public CucumberOptionsAnnotationParser() {
-        this(new MultiLoader(CucumberOptionsAnnotationParser.class.getClassLoader()));
+    private static String packagePath(Class clazz) {
+        String packageName = packageName(clazz);
+
+        if (packageName.isEmpty()) {
+            return Classpath.CLASSPATH_SCHEME_PREFIX + "/";
+        }
+
+        return Classpath.CLASSPATH_SCHEME_PREFIX + packageName.replace('.', '/');
     }
 
-    public CucumberOptionsAnnotationParser(ResourceLoader resourceLoader) {
-        this.rerunLoader = new RerunLoader(resourceLoader);
+    private static String packageName(Class clazz) {
+        String className = clazz.getName();
+        return className.substring(0, Math.max(0, className.lastIndexOf('.')));
     }
 
-    public CucumberOptionsAnnotationParser withOptionsProvider(OptionsProvider optionsProvider){
+    public CucumberOptionsAnnotationParser withOptionsProvider(OptionsProvider optionsProvider) {
         this.optionsProvider = optionsProvider;
         return this;
     }
@@ -98,8 +102,8 @@ public final class CucumberOptionsAnnotationParser {
             for (String feature : options.features()) {
                 if (feature.startsWith("@")) {
                     args.setIsRerun(true);
-                    URI rerunFile = FeaturePath.parse(feature.substring(1));
-                    for (FeatureWithLines featureWithLines : rerunLoader.load(rerunFile)) {
+                    Path rerunFile = Paths.get(feature.substring(1));
+                    for (FeatureWithLines featureWithLines : OptionsFileParser.parseFeatureWithLinesFile(rerunFile)) {
                         args.addFeature(featureWithLines);
                     }
                 } else {
@@ -159,21 +163,6 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private static String packagePath(Class clazz) {
-        String packageName = packageName(clazz);
-
-        if (packageName.isEmpty()) {
-            return Classpath.CLASSPATH_SCHEME_PREFIX + "/";
-        }
-
-        return Classpath.CLASSPATH_SCHEME_PREFIX + packageName.replace('.', '/');
-    }
-
-    private static String packageName(Class clazz) {
-        String className = clazz.getName();
-        return className.substring(0, Math.max(0, className.lastIndexOf('.')));
-    }
-
     private boolean runningInEnvironmentWithoutAnsiSupport() {
         boolean intelliJidea = System.getProperty("idea.launcher.bin.path") != null;
         // TODO: What does Eclipse use?
@@ -210,7 +199,7 @@ public final class CucumberOptionsAnnotationParser {
         String[] name();
 
         SnippetType snippets();
-        
+
         Class<? extends ObjectFactory> objectFactory();
     }
 }

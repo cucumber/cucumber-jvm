@@ -97,25 +97,21 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         super(clazz);
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
-        ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
-        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
             .withOptionsProvider(new JUnitCucumberOptionsProvider())
             .parse(clazz)
             .build(propertiesFileOptions);
 
-        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        RuntimeOptions runtimeOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
@@ -138,6 +134,8 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
             .build(junitEnvironmentOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
+        ClassLoader classLoader = clazz.getClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
         this.features = featureSupplier.get();
@@ -149,6 +147,7 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<CucumberPickle> filters = new Filters(runtimeOptions);

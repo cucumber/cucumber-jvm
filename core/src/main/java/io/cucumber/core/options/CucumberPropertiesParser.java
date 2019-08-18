@@ -3,9 +3,12 @@ package io.cucumber.core.options;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -18,7 +21,7 @@ import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.FEATURE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
@@ -29,16 +32,6 @@ import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 
 public final class CucumberPropertiesParser {
-
-    private final ResourceLoader resourceLoader;
-
-    public CucumberPropertiesParser(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-
-    public CucumberPropertiesParser() {
-        this(new MultiLoader(CucumberPropertiesParser.class.getClassLoader()));
-    }
 
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         final RuntimeOptionsBuilder builder;
@@ -85,9 +78,9 @@ public final class CucumberPropertiesParser {
             builder::setStrict
         );
 
-        parse(properties,
-            FEATURES_PROPERTY_NAME,
-            FeatureWithLines::parse,
+        parseAll(properties,
+            FEATURE_PROPERTY_NAME,
+            property -> parseMaybeRerunFile(builder, property),
             builder::addFeature
         );
 
@@ -104,9 +97,9 @@ public final class CucumberPropertiesParser {
             builder::addTagFilter
         );
 
-        parse(properties,
+        parseAll(properties,
             GLUE_PROPERTY_NAME,
-            GluePath::parse,
+            this::parseMaybeGlueFile,
             builder::addGlue
         );
 
@@ -137,24 +130,45 @@ public final class CucumberPropertiesParser {
         return builder;
     }
 
-    private <T> void parse(Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter) {
+    private Collection<URI> parseMaybeGlueFile(String property) {
+        if (property.startsWith("@")) {
+            Path glueFile = Paths.get(property.substring(1));
+            return OptionsFileParser.parseGlueFile(glueFile);
+        } else {
+            return Collections.singletonList(GluePath.parse(property));
+        }
+    }
+
+    private Collection<FeatureWithLines> parseMaybeRerunFile(RuntimeOptionsBuilder builder, String property) {
+        if (property.startsWith("@")) {
+            builder.setIsRerun(true);
+            Path rerunFile = Paths.get(property.substring(1));
+            return OptionsFileParser.parseFeatureWithLinesFile(rerunFile);
+        } else {
+            return Collections.singletonList(FeatureWithLines.parse(property));
+        }
+    }
+
+    private <T> void parseAll(Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser, Consumer<T> setter) {
         String property = properties.get(propertyName);
-        if (property == null) {
+        if (property == null || property.isEmpty()) {
             return;
         }
         try {
-            T parsed = parser.apply(property);
-            setter.accept(parsed);
+            Collection<T> parsed = parser.apply(property);
+            parsed.forEach(setter);
         } catch (Exception e) {
             throw new CucumberException("Failed to parse '" + propertyName + "' with value '" + property + "'", e);
         }
+    }
 
+    private <T> void parse(Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter) {
+        parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
     }
 
     private RuntimeOptionsBuilder parseCucumberOptions(String cucumberOptions) {
         RuntimeOptionsBuilder builder;
-        RerunLoader rerunLoader = new RerunLoader(resourceLoader);
-        RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
+        RuntimeOptionsParser parser = new RuntimeOptionsParser();
         List<String> args = ShellWords.parse(cucumberOptions);
         builder = parser.parse(args);
         return builder;
