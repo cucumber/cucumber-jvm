@@ -109,6 +109,8 @@ public final class TestNGCucumberRunner {
         testCaseResultListener.finishExecutionUnit();
 
         if (!testCaseResultListener.isPassed()) {
+            // null pointer is covered by isPassed
+            // noinspection ConstantConditions
             throw testCaseResultListener.getError();
         }
     }

@@ -28,45 +28,17 @@ final class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;
-
+    private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
+    private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
     TestNotifier stepNotifier; // package-private for testing
+    ArrayList<Throwable> stepErrors; // package-private for testing
+    private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
     private PickleRunner pickleRunner;
     private RunNotifier runNotifier;
-    private TestNotifier pickleRunnerNotifier;
-    ArrayList<Throwable> stepErrors; // package-private for testing
-    private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
     private final EventHandler<TestStepStarted> testStepStartedHandler = this::handTestStepStarted;
-    private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
+    private TestNotifier pickleRunnerNotifier;
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = this::handleTestCaseResult;
-
-    private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
-    private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
-
-    private static final class StepLocation implements Comparable<StepLocation> {
-        private final String uri;
-        private final int line;
-
-        private StepLocation(String uri, int line) {
-            this.uri = uri;
-            this.line = line;
-        }
-
-        @Override
-        public int compareTo(StepLocation o) {
-            int order = uri.compareTo(o.uri);
-            return order != 0 ? order : Integer.compare(line, o.line);
-        }
-    }
-
-    void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
-        snippetsPerStep.putIfAbsent(new StepLocation(
-                snippetsSuggestedEvent.getUri(),
-                snippetsSuggestedEvent.getStepLine()
-            ),
-            snippetsSuggestedEvent.getSnippets()
-        );
-    }
-
 
     JUnitReporter(EventBus bus, JUnitOptions junitOption) {
         this.junitOptions = junitOption;
@@ -76,6 +48,15 @@ final class JUnitReporter {
         bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
         bus.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedEventEventHandler);
+    }
+
+    void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
+        snippetsPerStep.putIfAbsent(new StepLocation(
+                snippetsSuggestedEvent.getUri(),
+                snippetsSuggestedEvent.getStepLine()
+            ),
+            snippetsSuggestedEvent.getSnippets()
+        );
     }
 
     void finishExecutionUnit() {
@@ -98,7 +79,6 @@ final class JUnitReporter {
         pickleRunnerNotifier.fireTestStarted();
         stepErrors = new ArrayList<>();
     }
-
 
     private void handTestStepStarted(TestStepStarted event) {
         if (event.getTestStep() instanceof PickleStepTestStep) {
@@ -149,11 +129,11 @@ final class JUnitReporter {
                     new StepLocation(testStep.getUri(), testStep.getStepLine())
                 );
                 if (error == null) {
-                    error = new UndefinedThrowable(
+                    error = new UndefinedStepException(
                         snippets
                     );
                 }
-                stepErrors.add(new UndefinedThrowable(
+                stepErrors.add(new UndefinedStepException(
                     testStep.getStepText(),
                     snippets,
                     snippetsPerStep.values()
@@ -226,6 +206,21 @@ final class JUnitReporter {
         void fireTestFinished();
     }
 
+    private static final class StepLocation implements Comparable<StepLocation> {
+        private final String uri;
+        private final int line;
+
+        private StepLocation(String uri, int line) {
+            this.uri = uri;
+            this.line = line;
+        }
+
+        @Override
+        public int compareTo(StepLocation o) {
+            int order = uri.compareTo(o.uri);
+            return order != 0 ? order : Integer.compare(line, o.line);
+        }
+    }
 
     static final class NoTestNotifier implements TestNotifier {
 

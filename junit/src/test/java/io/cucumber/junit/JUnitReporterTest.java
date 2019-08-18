@@ -236,7 +236,7 @@ class JUnitReporterTest {
 
         Failure failure = failureArgumentCaptor.getValue();
         assertThat(failure.getDescription(), is(equalTo(description)));
-        assertThat(failure.getException(), instanceOf(UndefinedThrowable.class));
+        assertThat(failure.getException(), instanceOf(UndefinedStepException.class));
         assertThat(
             failure.getException().getMessage(),
             is(equalTo("This step is undefined. You can implement it using tne snippet(s) below:\n\nsnippet"))
@@ -266,7 +266,7 @@ class JUnitReporterTest {
 
         Failure failure = failureArgumentCaptor.getValue();
         assertThat(failure.getDescription(), is(equalTo(description)));
-        assertThat(failure.getException(), instanceOf(UndefinedThrowable.class));
+        assertThat(failure.getException(), instanceOf(UndefinedStepException.class));
         assertThat(
             failure.getException().getMessage(),
             is(equalTo("This step is undefined. You can implement it using tne snippet(s) below:\n\nsnippet"))
