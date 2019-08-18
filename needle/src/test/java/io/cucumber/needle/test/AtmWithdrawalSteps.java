@@ -17,12 +17,11 @@ import org.hamcrest.core.Is;
 
 import javax.inject.Inject;
 import java.util.Collections;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class AtmWithdrawalSteps {
@@ -46,7 +45,7 @@ public class AtmWithdrawalSteps {
     private final InjectionProvider<?> valueProvider = new ValueInjectionProvider(VALUE);
 
     @NeedleInjectionProvider
-    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = () -> Collections.<InjectionProvider<?>>singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
+    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = () -> Collections.singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
 
     /*
      * This is what we test
@@ -55,7 +54,7 @@ public class AtmWithdrawalSteps {
     private AtmService atmService;
 
     @Given("I have {int} EUR in my account")
-    public void I_have_EUR_in_my_account(final int account) throws Throwable {
+    public void I_have_EUR_in_my_account(final int account) {
         assertNotNull(atmService);
         when(bicGetter.getBic()).thenReturn(BIC);
         assertThat(atmService.getInfo(), is("BIC: " + BIC + " and VALUE: " + VALUE));
@@ -66,19 +65,19 @@ public class AtmWithdrawalSteps {
     }
 
     @When("I withdraw {int} EUR")
-    public void I_withdraw_EUR(final int amount) throws Throwable {
+    public void I_withdraw_EUR(final int amount) {
         atmService.withdraw(amount);
     }
 
     @Then("I have {int} EUR remaining.")
-    public void I_have_EUR_remaining(final int remaining) throws Throwable {
+    public void I_have_EUR_remaining(final int remaining) {
         atmService.getAmount();
         assertThat(atmService.getAmount(), Is.is(remaining));
     }
 
     @Before
     public void checkInjectionWorked() {
-        assertTrue("Got a mock injected instead of the real instance.", moreSteps.isThisReallyYouOrJustAMock());
+        assertTrue(moreSteps.isThisReallyYouOrJustAMock(), "Got a mock injected instead of the real instance.");
     }
 
     public boolean isThisReallyYouOrJustAMock() {

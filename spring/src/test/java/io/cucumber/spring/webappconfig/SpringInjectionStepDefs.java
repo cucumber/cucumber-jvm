@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,7 +25,7 @@ public class SpringInjectionStepDefs {
     private ResultActions callUrl;
 
     @Given("I have the web context set")
-    public void I_have_the_web_context_set() throws Throwable {
+    public void I_have_the_web_context_set() {
         assertNotNull(wac);
     }
 

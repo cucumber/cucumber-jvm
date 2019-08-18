@@ -6,9 +6,9 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
+import org.opentest4j.TestAbortedException;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -107,7 +107,7 @@ class JUnitFormatterTest {
                 "    When second step\n" +
                 "    Then third step\n");
         features.add(feature);
-        Throwable exception = new AssumptionViolatedException("message");
+        Throwable exception = new TestAbortedException("message");
         stepsToResult.put("first step", result("skipped", exception));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));

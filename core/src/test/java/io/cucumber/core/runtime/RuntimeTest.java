@@ -52,12 +52,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -580,7 +580,7 @@ class RuntimeTest {
         for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
             if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
                 MockedScenarioScopedStepDefinition mocked = (MockedScenarioScopedStepDefinition) stepDefinedEvent;
-                assertTrue("Scenario scoped step definition should be disposed of", mocked.disposed);
+                assertTrue(mocked.disposed, "Scenario scoped step definition should be disposed of");
             }
         }
 

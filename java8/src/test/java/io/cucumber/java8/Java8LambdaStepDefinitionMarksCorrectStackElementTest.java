@@ -3,26 +3,25 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
     private final MyLambdaGlueRegistry myLambdaGlueRegistry = new MyLambdaGlueRegistry();
 
     @Test
-    public void exception_from_step_should_be_defined_at_step_definition_class() throws Throwable {
+    void exception_from_step_should_be_defined_at_step_definition_class() {
         LambdaGlueRegistry.INSTANCE.set(myLambdaGlueRegistry);
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        expectedException.expect(new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
+        Exception exception = assertThrows(Exception.class, () -> stepDefinition.execute(new Object[0]));
+        MatcherAssert.assertThat(exception, new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
             @Override
             protected boolean matchesSafely(Throwable item) {
                 return Arrays.stream(item.getStackTrace())
@@ -32,12 +31,9 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
                     .isPresent();
             }
         });
-
-        stepDefinition.execute(new Object[0]);
     }
 
-
-    private class MyLambdaGlueRegistry implements LambdaGlueRegistry {
+    private static class MyLambdaGlueRegistry implements LambdaGlueRegistry {
 
         private StepDefinition stepDefinition;
 

@@ -14,8 +14,8 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.assertThat;
 
 class InvokeMethodsAroundEventsTest {
 

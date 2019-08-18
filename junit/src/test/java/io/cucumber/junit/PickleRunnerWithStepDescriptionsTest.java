@@ -12,8 +12,8 @@ import org.junit.runner.Description;
 import java.util.List;
 
 import static io.cucumber.junit.TestPickleBuilder.pickleEventsFromFeature;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.mock;
 
 class PickleRunnerWithStepDescriptionsTest {
@@ -49,7 +49,7 @@ class PickleRunnerWithStepDescriptionsTest {
         Description stepDescription1 = runnerDescription.getChildren().get(0);
         Description stepDescription2 = runnerDescription.getChildren().get(2);
 
-        assertNotEquals("Descriptions must not be equal.", stepDescription1, stepDescription2);
+        assertNotEquals(stepDescription1, stepDescription2);
     }
 
     @Test
@@ -74,7 +74,7 @@ class PickleRunnerWithStepDescriptionsTest {
         Description stepDescription1 = runnerDescription.getChildren().get(0);
         Description stepDescription2 = runnerDescription.getChildren().get(1);
 
-        assertNotEquals("Descriptions must not be equal.", stepDescription1, stepDescription2);
+        assertNotEquals(stepDescription1, stepDescription2);
     }
 
     @Test
@@ -100,9 +100,9 @@ class PickleRunnerWithStepDescriptionsTest {
         Description runnerDescription = runner.getDescription();
         Description stepDescription = runnerDescription.getChildren().get(0);
 
-        assertEquals("description includes scenario name as class name", "first", stepDescription.getClassName());
-        assertEquals("description includes step keyword and name as method name", "step", stepDescription.getMethodName());
-        assertEquals("description includes scenario and step name in display name", "step(first)", stepDescription.getDisplayName());
+        assertEquals("first", stepDescription.getClassName());
+        assertEquals("step", stepDescription.getMethodName());
+        assertEquals("step(first)", stepDescription.getDisplayName());
 
     }
 

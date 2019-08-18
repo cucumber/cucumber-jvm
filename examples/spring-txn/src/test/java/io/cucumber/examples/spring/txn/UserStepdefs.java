@@ -6,7 +6,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserStepdefs {
     @Autowired
@@ -24,13 +24,15 @@ public class UserStepdefs {
     }
 
     @Given("a User has posted the following messages:")
-    public void a_User_has_posted_the_following_messages(List<Message> messages) throws Throwable {
+    public void a_User_has_posted_the_following_messages(List<Message> messages) {
         thereIsAuser();
         for (Message m : messages) {
             m.setAuthor(user);
             messageRepository.save(m);
         }
-        assertTrue("No transaction is active",
-            TransactionSynchronizationManager.isActualTransactionActive());
+        assertTrue(
+            TransactionSynchronizationManager.isActualTransactionActive(),
+            "No transaction is active"
+        );
     }
 }

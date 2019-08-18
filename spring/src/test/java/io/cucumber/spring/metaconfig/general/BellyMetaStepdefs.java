@@ -5,7 +5,7 @@ import io.cucumber.spring.beans.Belly;
 import io.cucumber.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MetaConfiguration
 public class BellyMetaStepdefs {
@@ -21,12 +21,12 @@ public class BellyMetaStepdefs {
     }
 
     @Then("I have a meta belly")
-    public void I_have_belly() throws Throwable {
+    public void I_have_belly() {
         assertNotNull(belly);
     }
 
     @Then("I have a meta belly bean")
-    public void I_have_belly_bean() throws Throwable {
+    public void I_have_belly_bean() {
         assertNotNull(bellyBean);
     }
 }

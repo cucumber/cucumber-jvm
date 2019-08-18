@@ -1,10 +1,5 @@
 package io.cucumber.spring.threading;
 
-import static java.lang.Thread.currentThread;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,16 +11,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.currentThread;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 @WebAppConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
 public class ThreadingStepDefs {
 
-    private static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<Thread, ThreadingStepDefs>();
+    private static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<>();
 
     private static final CountDownLatch latch = new CountDownLatch(2);
 
     @Given("I am a step definition")
-    public void iAmAStepDefinition() throws Throwable {
+    public void iAmAStepDefinition() {
         map.put(currentThread(), this);
     }
 
@@ -35,7 +35,7 @@ public class ThreadingStepDefs {
     }
 
     @Then("I should not be shared between threads")
-    public void iShouldNotBeSharedBetweenThreads() throws Throwable {
+    public void iShouldNotBeSharedBetweenThreads() {
         for (Map.Entry<Thread, ThreadingStepDefs> entries : map.entrySet()) {
             if (entries.getKey().equals(currentThread())) {
                 assertSame(entries.getValue(), this);

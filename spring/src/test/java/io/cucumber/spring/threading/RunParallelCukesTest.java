@@ -8,16 +8,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class RunParallelCukesTest {
+class RunParallelCukesTest {
 
-    private final Callable<Byte> runCuke = new Callable<Byte>() {
-        @Override
-        public Byte call() throws Exception {
+    @Test
+    void test() {
+        Callable<Byte> runCucumber = () -> {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             String[] args = {
                 "--glue", "io.cucumber.spring.threading",
@@ -25,18 +24,16 @@ public class RunParallelCukesTest {
                 "--strict"
             };
             return Main.run(args, classLoader);
-        }
-    };
+        };
 
-    @Test
-    public void test() {
+
         ExecutorService executorService = newFixedThreadPool(2);
-        Future<Byte> result1 = executorService.submit(runCuke);
-        Future<Byte> result2 = executorService.submit(runCuke);
+        Future<Byte> result1 = executorService.submit(runCucumber);
+        Future<Byte> result2 = executorService.submit(runCucumber);
 
-        assertAll("Checking executorService.submit()",
-            () -> assertThat(result1.get().byteValue(), is(equalTo(0x0))),
-            () -> assertThat(result2.get().byteValue(), is(equalTo(0x0)))
+        assertAll("jobs completed successfully",
+            () -> assertThat(result1.get(), is((byte) 0x0)),
+            () -> assertThat(result2.get(), is((byte) 0x0))
         );
     }
 

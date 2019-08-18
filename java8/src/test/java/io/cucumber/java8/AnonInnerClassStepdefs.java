@@ -1,6 +1,6 @@
 package io.cucumber.java8;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnonInnerClassStepdefs implements LambdaGlue {
 

@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class URLOutputStreamTest {
+class URLOutputStreamTest {
 
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
 
@@ -61,24 +61,24 @@ public class URLOutputStreamTest {
     private WebServer webbit;
     private final int threadsCount = 100;
     private final long waitTimeoutMillis = 30000L;
-    private final List<File> tmpFiles = new ArrayList<File>();
-    private final List<String> threadErrors = new ArrayList<String>();
+    private final List<File> tmpFiles = new ArrayList<>();
+    private final List<String> threadErrors = new ArrayList<>();
 
     @TempDir
     Path tempDir;
 
     @BeforeEach
-    public void startWebbit() throws ExecutionException, InterruptedException {
+    void startWebbit() throws ExecutionException, InterruptedException {
         webbit = new NettyWebServer(Executors.newSingleThreadExecutor(), new InetSocketAddress("127.0.0.1", 9873), URI.create("http://127.0.0.1:9873")).start().get();
     }
 
     @AfterEach
-    public void stopWebbit() throws ExecutionException, InterruptedException {
+    void stopWebbit() throws ExecutionException, InterruptedException {
         webbit.stop().get();
     }
 
     @Test
-    public void write_to_file_without_existing_parent_directory() throws IOException, URISyntaxException {
+    void write_to_file_without_existing_parent_directory() throws IOException, URISyntaxException {
         Path filesWithoutParent = Files.createTempDirectory("filesWithoutParent");
         String baseURL = filesWithoutParent.toUri().toURL().toString();
         URL urlWithoutParentDirectory = createUrl(baseURL + "/non/existing/directory");
@@ -93,7 +93,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void can_write_to_file() throws IOException {
+    void can_write_to_file() throws IOException {
         File tmp = File.createTempFile("cucumber-jvm", "tmp");
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
@@ -102,7 +102,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void can_http_put() throws IOException, InterruptedException {
+    void can_http_put() throws IOException, InterruptedException {
         final BlockingQueue<String> data = new LinkedBlockingDeque<String>();
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
@@ -121,7 +121,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void throws_fnfe_if_http_response_is_404() throws IOException {
+    void throws_fnfe_if_http_response_is_404() throws IOException {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
@@ -132,7 +132,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void throws_ioe_if_http_response_is_500() throws IOException {
+    void throws_ioe_if_http_response_is_500() throws IOException {
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
             @Override
@@ -156,7 +156,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void do_not_throw_ioe_if_parent_dir_created_by_another_thread() {
+    void do_not_throw_ioe_if_parent_dir_created_by_another_thread() {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         List<Thread> testThreads = getThreadsWithLatchForFile(countDownLatch, threadsCount);
         startThreadsFromList(testThreads);

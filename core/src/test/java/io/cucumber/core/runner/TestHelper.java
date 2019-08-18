@@ -26,8 +26,8 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TestFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
-import junit.framework.AssertionFailedError;
 import org.mockito.stubbing.Answer;
+import org.opentest4j.TestAbortedException;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
@@ -50,7 +50,7 @@ import static io.cucumber.core.event.Status.SKIPPED;
 import static io.cucumber.core.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.util.Locale.ROOT;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
@@ -469,8 +469,8 @@ public class TestHelper {
         };
     }
 
-    private static AssertionFailedError mockAssertionFailedError() {
-        AssertionFailedError error = mock(AssertionFailedError.class);
+    private static TestAbortedException mockAssertionFailedError() {
+        TestAbortedException error = mock(TestAbortedException.class);
         Answer<Object> printStackTraceHandler = invocation -> {
             PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
             writer.print("the stack trace");

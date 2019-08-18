@@ -1,6 +1,5 @@
 package io.cucumber.junit;
 
-import gherkin.ParserException.CompositeParserException;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.experimental.ParallelComputer;
 import org.junit.jupiter.api.AfterEach;
@@ -26,11 +25,9 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 
@@ -71,19 +68,26 @@ class CucumberTest {
         Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))),
-            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(CompositeParserException.class))
+            () -> assertThat(
+                actualThrown.getMessage(),
+                is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))
+            ),
+            () -> assertThat(
+                actualThrown.getCause().getClass().getName(),
+                is("gherkin.ParserException$CompositeParserException")
+            )
         );
     }
 
     @Test
-    void testThatFileIsNotCreatedOnParsingError() throws Exception {
-        try {
-            new Cucumber(FormatterWithLexerErrorFeature.class);
-            fail("Expecting error");
-        } catch (CucumberException e) {
-            assertFalse("File is created despite Lexor Error", new File("target/lexor_error_feature.json").exists());
-        }
+    void testThatFileIsNotCreatedOnParsingError() {
+        assertThrows(CucumberException.class,
+            () -> new Cucumber(FormatterWithLexerErrorFeature.class)
+        );
+        assertFalse(
+            new File("target/lexor_error_feature.json").exists(),
+            "File is created despite Lexor Error"
+        );
     }
 
     @Test

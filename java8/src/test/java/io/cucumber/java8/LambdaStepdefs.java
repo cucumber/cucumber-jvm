@@ -1,14 +1,14 @@
 package io.cucumber.java8;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import io.cucumber.core.api.Scenario;
 import io.cucumber.datatable.DataTable;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LambdaStepdefs implements io.cucumber.java8.En {
     private static LambdaStepdefs lastInstance;

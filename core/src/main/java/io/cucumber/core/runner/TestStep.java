@@ -18,7 +18,8 @@ abstract class TestStep implements io.cucumber.core.event.TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
         "org.junit.AssumptionViolatedException",
         "org.junit.internal.AssumptionViolatedException",
-        "org.testng.SkipException"
+        "org.opentest4j.TestAbortedException",
+        "org.testng.SkipException",
     };
 
     static {
