@@ -43,10 +43,10 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Options can be provided in order of precedence by:
  * <ol>
- * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
+ * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
+ * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
+ * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
  */
 @API(status = API.Status.STABLE)

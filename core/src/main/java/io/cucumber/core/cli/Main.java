@@ -16,9 +16,9 @@ import org.apiguardian.api.API;
  * Options can be provided in order of precedence through:
  * <ol>
  * <li>command line arguments</li>
- * <li>{@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()}</li>
- * <li>{@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
- * <li>{@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
+ * <li>{@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()}</li>
+ * <li>{@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
+ * <li>{@value Constants#OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
  */
 @API(status = API.Status.STABLE)

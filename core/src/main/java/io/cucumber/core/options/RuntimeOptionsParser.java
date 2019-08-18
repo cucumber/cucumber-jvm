@@ -7,11 +7,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.order.StandardPickleOrders;
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.datatable.DataTable;
 
 import java.io.BufferedReader;
@@ -20,9 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -32,10 +25,8 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 final class RuntimeOptionsParser {
-    private static final Logger log = LoggerFactory.getLogger(RuntimeOptionsParser.class);
 
     static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
-    private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
 
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
@@ -84,13 +75,7 @@ final class RuntimeOptionsParser {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
             } else if (arg.equals("--snippets")) {
                 String nextArg = args.remove(0);
-                if ("underscore".equals(nextArg)) {
-                    parsedOptions.setSnippetType(SnippetType.UNDERSCORE);
-                } else if ("camelcase".equals(nextArg)) {
-                    parsedOptions.setSnippetType(SnippetType.CAMELCASE);
-                } else {
-                    throw new CucumberException("Unrecognized SnippetType " + nextArg);
-                }
+                parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
             } else if (arg.equals("--name") || arg.equals("-n")) {
                 String nextArg = args.remove(0);
                 Pattern pattern = Pattern.compile(nextArg);
@@ -98,7 +83,7 @@ final class RuntimeOptionsParser {
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 parsedOptions.setWip(true);
             } else if (arg.equals("--order")) {
-                parsedOptions.setPickleOrder(parsePickleOrder(args.remove(0)));
+                parsedOptions.setPickleOrder(PickleOrderParser.parse(args.remove(0)));
             } else if (arg.equals("--count")) {
                 int count = Integer.parseInt(args.remove(0));
                 if (count < 1) {
@@ -123,28 +108,6 @@ final class RuntimeOptionsParser {
             }
         }
         return parsedOptions;
-    }
-
-    private static PickleOrder parsePickleOrder(String argument) {
-
-        if ("reverse".equals(argument)) {
-            return StandardPickleOrders.reverseLexicalUriOrder();
-        }
-
-        Matcher matcher = RANDOM_AND_SEED_PATTERN.matcher(argument);
-        if (matcher.matches()) {
-            long seed = Math.abs(new Random().nextLong());
-            String seedString = matcher.group(1);
-            if (seedString != null) {
-                seed = Long.parseLong(seedString);
-            } else {
-                log.info("Using random scenario order. Seed: " + seed);
-            }
-
-            return StandardPickleOrders.random(seed);
-        }
-
-        throw new CucumberException("Invalid order. Must be either reverse, random or random:<long>");
     }
 
     private static void printUsage() {
