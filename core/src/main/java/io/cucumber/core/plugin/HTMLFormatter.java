@@ -14,17 +14,15 @@ import gherkin.ast.TableRow;
 import gherkin.ast.Tag;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.pickles.Argument;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
+import io.cucumber.core.event.DataTableArgument;
+import io.cucumber.core.event.DocStringArgument;
 import io.cucumber.core.event.EmbedEvent;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.HookTestStep;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.StepArgument;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.event.TestRunFinished;
@@ -362,12 +360,14 @@ public final class HTMLFormatter implements EventListener {
     private Map<String, Object> createTestStep(PickleStepTestStep testStep) {
         Map<String, Object> stepMap = new HashMap<>();
         stepMap.put("name", testStep.getStepText());
-        if (!testStep.getStepArgument().isEmpty()) {
-            Argument argument = testStep.getStepArgument().get(0);
-            if (argument instanceof PickleString) {
-                stepMap.put("doc_string", createDocStringMap((PickleString) argument));
-            } else if (argument instanceof PickleTable) {
-                stepMap.put("rows", createDataTableList((PickleTable) argument));
+        StepArgument argument = testStep.getStepArgument();
+        if (argument != null) {
+            if (argument instanceof DocStringArgument) {
+                DocStringArgument docStringArgument = (DocStringArgument) argument;
+                stepMap.put("doc_string", createDocStringMap(docStringArgument));
+            } else if (argument instanceof DataTableArgument) {
+                DataTableArgument dataTableArgument = (DataTableArgument) argument;
+                stepMap.put("rows", createDataTableList(dataTableArgument));
             }
         }
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
@@ -379,32 +379,24 @@ public final class HTMLFormatter implements EventListener {
         return stepMap;
     }
 
-    private Map<String, Object> createDocStringMap(PickleString docString) {
+    private Map<String, Object> createDocStringMap(DocStringArgument docString) {
         Map<String, Object> docStringMap = new HashMap<>();
         docStringMap.put("value", docString.getContent());
         return docStringMap;
     }
 
-    private List<Map<String, Object>> createDataTableList(PickleTable dataTable) {
+    private List<Map<String, Object>> createDataTableList(DataTableArgument dataTable) {
         List<Map<String, Object>> rowList = new ArrayList<>();
-        for (PickleRow row : dataTable.getRows()) {
+        for (List<String> row : dataTable.cells()) {
             rowList.add(createRowMap(row));
         }
         return rowList;
     }
 
-    private Map<String, Object> createRowMap(PickleRow row) {
+    private Map<String, Object> createRowMap(List<String> row) {
         Map<String, Object> rowMap = new HashMap<>();
-        rowMap.put("cells", createCellList(row));
+        rowMap.put("cells", row);
         return rowMap;
-    }
-
-    private List<String> createCellList(PickleRow row) {
-        List<String> cells = new ArrayList<>();
-        for (PickleCell cell : row.getCells()) {
-            cells.add(cell.getValue());
-        }
-        return cells;
     }
 
     private Map<String, Object> createMatchMap(PickleStepTestStep testStep) {

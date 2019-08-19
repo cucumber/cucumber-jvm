@@ -31,8 +31,8 @@ public class CucumberFeatureTest {
         URI featurePath = URI.create("path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + "path/bar.feature"));
-        final Executable testMethod = () -> new FeatureLoader(resourceLoader).load(singletonList(featurePath));
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> new FeatureLoader(resourceLoader).load(singletonList(featurePath));
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Not a file or directory: path/bar.feature"
         )));
@@ -43,8 +43,8 @@ public class CucumberFeatureTest {
         URI featurePath = URI.create("classpath:path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(emptyList());
-        final Executable testMethod = () -> new FeatureLoader(resourceLoader).load(singletonList(featurePath));
-        final IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> new FeatureLoader(resourceLoader).load(singletonList(featurePath));
+        IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Feature not found: classpath:path/bar.feature"
         )));

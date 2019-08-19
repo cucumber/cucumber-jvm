@@ -19,7 +19,7 @@ public final class Invoker {
 
     }
 
-    public static <T> T timeout(Callback<T> callback, long timeoutMillis) throws Throwable {
+    static <T> T timeout(Callback<T> callback, long timeoutMillis) throws Throwable {
         if (timeoutMillis == 0) {
             return callback.call();
         }
@@ -62,33 +62,33 @@ public final class Invoker {
         }
     }
 
-    public static Object invoke(final Object target, final Method method, long timeoutMillis, final Object... args) throws Throwable {
-        final Method targetMethod = targetMethod(target, method);
-        return timeout(new Callback<Object>() {
-            @Override
-            public Object call() throws Throwable {
-                boolean accessible = targetMethod.isAccessible();
-                try {
-                    targetMethod.setAccessible(true);
-                    return targetMethod.invoke(target, args);
-                } catch (IllegalArgumentException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
-                        ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (InvocationTargetException e) {
-                    throw e.getTargetException();
-                } catch (IllegalAccessException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
-                        ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
-                } finally {
-                    targetMethod.setAccessible(accessible);
-                }
-            }
-        }, timeoutMillis);
+    /**
+     * @deprecated timeout has been deprecated in favour of library solutions used by the end user.
+     */
+    @Deprecated
+    public static Object invoke(Object target, Method method, long timeoutMillis, Object... args) throws Throwable {
+        Method targetMethod = targetMethod(target, method);
+        return timeout(() -> Invoker.invoke(target, targetMethod, args), timeoutMillis);
     }
 
-    private static Method targetMethod(final Object target, final Method method) throws NoSuchMethodException {
-        final Class<?> targetClass = target.getClass();
-        final Class<?> declaringClass = method.getDeclaringClass();
+    public static Object invoke(Object target, Method targetMethod, Object... args) throws Throwable {
+        boolean accessible = targetMethod.isAccessible();
+        try {
+            targetMethod.setAccessible(true);
+            return targetMethod.invoke(target, args);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
+                ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        } finally {
+            targetMethod.setAccessible(accessible);
+        }
+    }
+
+    private static Method targetMethod(Object target, Method method) throws NoSuchMethodException {
+        Class<?> targetClass = target.getClass();
+        Class<?> declaringClass = method.getDeclaringClass();
 
         // Immediately return the provided method if the class loaders are the same.
         if (targetClass.getClassLoader().equals(declaringClass.getClassLoader())) {
@@ -114,7 +114,7 @@ public final class Invoker {
         }
     }
 
-    public interface Callback<T> {
+    interface Callback<T> {
         T call() throws Throwable;
     }
 }

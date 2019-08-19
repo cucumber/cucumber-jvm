@@ -8,7 +8,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import org.testng.SkipException;
 
-class TestCaseResultListener {
+final class TestCaseResultListener {
     private static final String UNDEFINED_MESSAGE = "There are undefined steps";
     private static final String SKIPPED_MESSAGE = "This scenario is skipped";
     private final EventBus bus;

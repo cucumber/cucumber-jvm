@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
@@ -8,6 +7,7 @@ import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;
@@ -23,9 +23,9 @@ import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -33,8 +33,10 @@ import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Glue code for running Cucumber via TestNG.
@@ -50,7 +52,7 @@ import java.util.List;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
     private final EventBus bus;
-    private final Filters filters;
+    private final Predicate<CucumberPickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
@@ -99,11 +101,11 @@ public final class TestNGCucumberRunner {
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 
-    public void runScenario(PickleEvent pickle) throws Throwable {
+    public void runScenario(Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        runner.runPickle(pickle);
+        runner.runPickle(pickle.getCucumberPickle());
         testCaseResultListener.finishExecutionUnit();
 
         if (!testCaseResultListener.isPassed()) {
@@ -116,22 +118,19 @@ public final class TestNGCucumberRunner {
     }
 
     /**
-     * @return returns the cucumber scenarios as a two dimensional array of {@link PickleEventWrapper}
-     * scenarios combined with their {@link CucumberFeatureWrapper} feature.
+     * @return returns the cucumber scenarios as a two dimensional array of {@link PickleWrapper}
+     * scenarios combined with their {@link FeatureWrapper} feature.
      */
     public Object[][] provideScenarios() {
         try {
-            List<Object[]> scenarios = new ArrayList<>();
-            List<CucumberFeature> features = getFeatures();
-            for (CucumberFeature feature : features) {
-                for (PickleEvent pickle : feature.getPickles()) {
-                    if (filters.matchesFilters(pickle)) {
-                        scenarios.add(new Object[]{new PickleEventWrapperImpl(pickle),
-                            new CucumberFeatureWrapperImpl(feature)});
-                    }
-                }
-            }
-            return scenarios.toArray(new Object[][]{});
+            return getFeatures().stream()
+                .flatMap(feature -> feature.getPickles().stream()
+                    .filter(filters)
+                    .map(cucumberPickle -> new Object[]{
+                        new PickleWrapperImpl(new Pickle(cucumberPickle)),
+                        new FeatureWrapperImpl(feature)}))
+                .collect(toList())
+                .toArray(new Object[0][0]);
         } catch (CucumberException e) {
             return new Object[][]{new Object[]{new CucumberExceptionWrapper(e), null}};
         }

@@ -29,30 +29,30 @@ public class InvokerTest {
     @Test
     public void times_out_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        final Executable testMethod = () -> Invoker.timeout(() -> slow.slow(100), 50);
-        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        Executable testMethod = () -> Invoker.timeout(() -> slow.slow(100), 50);
+        TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 50ms.")));
     }
 
     @Test
     public void times_out_infinite_loop_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        final Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
+        Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
             slow.infinite();
             return null;
         }, 10);
-        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 10ms.")));
     }
 
     @Test
     public void times_out_infinite_latch_wait_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        final Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
+        Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
             slow.infiniteLatchWait();
             return null;
         }, 10);
-        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 10ms.")));
     }
 
@@ -60,11 +60,11 @@ public class InvokerTest {
     @Test
     public void times_out_busy_wait_if_it_takes_too_long() {
         final Slow slow = new Slow();
-        final Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
+        Executable testMethod = () -> Invoker.timeout((Invoker.Callback<Void>) () -> {
             slow.busyWait();
             return null;
         }, 1);
-        final TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
+        TimeoutException expectedThrown = assertThrows(TimeoutException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Timed out after 1ms.")));
     }
 

@@ -1,12 +1,5 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
-import gherkin.pickles.PickleTag;
 import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
@@ -16,6 +9,9 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
@@ -27,15 +23,13 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -44,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CachingGlueTest {
+class CachingGlueTest {
 
     private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
     private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
 
     @Test
-    public void throws_duplicate_error_on_dupe_stepdefs() {
+    void throws_duplicate_error_on_dupe_stepdefs() {
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
         when(a.getLocation(true)).thenReturn("foo.bf:10");
@@ -69,7 +63,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void throws_on_duplicate_default_parameter_transformer() {
+    void throws_on_duplicate_default_parameter_transformer() {
         glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
         glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
 
@@ -85,7 +79,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void throws_on_duplicate_default_table_entry_transformer() {
+    void throws_on_duplicate_default_table_entry_transformer() {
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
 
@@ -101,7 +95,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void throws_on_duplicate_default_table_cell_transformer() {
+    void throws_on_duplicate_default_table_cell_transformer() {
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
 
@@ -118,7 +112,7 @@ public class CachingGlueTest {
 
 
     @Test
-    public void removes_glue_that_is_scenario_scoped() {
+    void removes_glue_that_is_scenario_scoped() {
         // This test is a bit fragile - it is testing state, not behaviour.
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
@@ -166,18 +160,18 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_null_if_no_matching_steps_found() {
+    void returns_null_if_no_matching_steps_found() {
         StepDefinition stepDefinition = new MockedStepDefinition("pattern1");
         glue.addStepDefinition(stepDefinition);
 
         String featurePath = "someFeature.feature";
 
-        PickleStep pickleStep = getPickleStep("pattern");
+        CucumberStep pickleStep = getPickleStep("pattern");
         assertThat(glue.stepDefinitionMatch(featurePath, pickleStep), is(nullValue()));
     }
 
     @Test
-    public void returns_match_from_cache_if_single_found() {
+    void returns_match_from_cache_if_single_found() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -187,7 +181,7 @@ public class CachingGlueTest {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
-        PickleStep pickleStep1 = getPickleStep(stepText);
+        CucumberStep pickleStep1 = getPickleStep(stepText);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -198,13 +192,13 @@ public class CachingGlueTest {
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
         assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-        PickleStep pickleStep2 = getPickleStep(stepText);
+        CucumberStep pickleStep2 = getPickleStep(stepText);
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition1)));
     }
 
     @Test
-    public void returns_match_from_cache_for_step_with_table() {
+    void returns_match_from_cache_for_step_with_table() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -214,7 +208,7 @@ public class CachingGlueTest {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
-        PickleStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
+        CucumberStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
@@ -227,7 +221,7 @@ public class CachingGlueTest {
         assertThat(((DataTable) match1.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 1")));
 
         //check second match
-        PickleStep pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
+        CucumberStep pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
 
         //check arguments
@@ -235,7 +229,7 @@ public class CachingGlueTest {
     }
 
     @Test
-    public void returns_match_from_cache_for_ste_with_doc_string() {
+    void returns_match_from_cache_for_ste_with_doc_string() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -245,7 +239,7 @@ public class CachingGlueTest {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
 
-        PickleStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
+        CucumberStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
 
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -259,17 +253,17 @@ public class CachingGlueTest {
         assertThat(match1.getArguments().get(0).getValue(), is(equalTo("doc string 1")));
 
         //check second match
-        PickleStep pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
+        CucumberStep pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
         //check arguments
         assertThat(match2.getArguments().get(0).getValue(), is(equalTo("doc string 2")));
     }
 
     @Test
-    public void returns_fresh_match_from_cache_after_evicting_scenario_scoped() {
+    void returns_fresh_match_from_cache_after_evicting_scenario_scoped() {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
-        PickleStep pickleStep1 = getPickleStep(stepText);
+        CucumberStep pickleStep1 = getPickleStep(stepText);
 
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
@@ -290,12 +284,11 @@ public class CachingGlueTest {
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition2)));
     }
 
-
     @Test
-    public void returns_no_match_after_evicting_scenario_scoped() {
+    void returns_no_match_after_evicting_scenario_scoped() {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
-        PickleStep pickleStep1 = getPickleStep(stepText);
+        CucumberStep pickleStep1 = getPickleStep(stepText);
 
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
@@ -314,16 +307,8 @@ public class CachingGlueTest {
         assertThat(pickleStepDefinitionMatch2, nullValue());
     }
 
-    private static PickleStep getPickleStepWithSingleCellTable(String stepText, String cell) {
-        return new PickleStep(stepText, Collections.singletonList(new PickleTable(singletonList(new PickleRow(singletonList(new PickleCell(mock(PickleLocation.class), cell)))))), Collections.emptyList());
-    }
-
-    private static PickleStep getPickleStepWithDocString(String stepText, String doc) {
-        return new PickleStep(stepText, Collections.singletonList(new PickleString(mock(PickleLocation.class), doc)), Collections.emptyList());
-    }
-
     @Test
-    public void throws_ambiguous_steps_def_exception_when_many_patterns_match() {
+    void throws_ambiguous_steps_def_exception_when_many_patterns_match() {
         StepDefinition stepDefinition1 = new MockedStepDefinition("pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         StepDefinition stepDefinition3 = new MockedStepDefinition("^pattern[1,3]");
@@ -339,6 +324,57 @@ public class CachingGlueTest {
         checkAmbiguousCalled(featurePath);
     }
 
+    @Test
+    void sorts_before_hooks_by_order() {
+        HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition2 = new MockedScenarioScopedHookDefinition(13);
+        HookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition(24);
+        glue.addBeforeHook(hookDefinition1);
+        glue.addBeforeHook(hookDefinition2);
+        glue.addBeforeHook(hookDefinition3);
+
+        List<HookDefinition> hooks = glue.getBeforeHooks()
+            .stream()
+            .map(CoreHookDefinition::getDelegate)
+            .collect(Collectors.toList());
+
+        assertThat(hooks, contains(hookDefinition1, hookDefinition2, hookDefinition3));
+    }
+
+    @Test
+    void sorts_after_hooks_in_reverse_order() {
+        HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition2 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition(24);
+        glue.addAfterHook(hookDefinition1);
+        glue.addAfterHook(hookDefinition2);
+        glue.addAfterHook(hookDefinition3);
+
+        List<HookDefinition> hooks = glue.getAfterHooks()
+            .stream()
+            .map(CoreHookDefinition::getDelegate)
+            .collect(Collectors.toList());
+
+        assertThat(hooks, contains(hookDefinition3, hookDefinition2, hookDefinition1));
+    }
+
+    @Test
+    void scenario_scoped_hooks_have_higher_order() {
+        HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
+        HookDefinition hookDefinition2 = new MockedHookDefinition(12);
+        HookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition(24);
+        glue.addBeforeHook(hookDefinition1);
+        glue.addBeforeHook(hookDefinition2);
+        glue.addBeforeHook(hookDefinition3);
+
+        List<HookDefinition> hooks = glue.getBeforeHooks()
+            .stream()
+            .map(CoreHookDefinition::getDelegate)
+            .collect(Collectors.toList());
+
+        assertThat(hooks, contains(hookDefinition2, hookDefinition1, hookDefinition3));
+    }
+
     private void checkAmbiguousCalled(String featurePath) {
         boolean ambiguousCalled = false;
         try {
@@ -351,8 +387,39 @@ public class CachingGlueTest {
         assertTrue(ambiguousCalled);
     }
 
-    private static PickleStep getPickleStep(String text) {
-        return new PickleStep(text, Collections.emptyList(), Collections.emptyList());
+    private static CucumberStep getPickleStep(String text) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + text + "\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
+
+    private static CucumberStep getPickleStepWithSingleCellTable(String stepText, String cell) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepText + "\n" +
+            "       | " + cell + " |\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
+    private static CucumberStep getPickleStepWithDocString(String stepText, String doc) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepText + "\n" +
+            "       \"\"\"\n" +
+            "       " + doc + "\n" +
+            "       \"\"\"\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
     }
 
     private static class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
@@ -443,9 +510,52 @@ public class CachingGlueTest {
     }
 
 
+    private static class MockedHookDefinition implements HookDefinition {
+
+        private final int order;
+        boolean disposed;
+
+        MockedHookDefinition() {
+            this(0);
+        }
+
+        MockedHookDefinition(int order) {
+            this.order = order;
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked hook definition";
+        }
+
+        @Override
+        public void execute(Scenario scenario) {
+
+        }
+
+        @Override
+        public String getTagExpression() {
+            return "";
+        }
+
+        @Override
+        public int getOrder() {
+            return order;
+        }
+    }
+
     private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
+        private final int order;
         boolean disposed;
+
+        MockedScenarioScopedHookDefinition() {
+            this(0);
+        }
+
+        MockedScenarioScopedHookDefinition(int order) {
+            this.order = order;
+        }
 
         @Override
         public void disposeScenarioScope() {
@@ -463,13 +573,13 @@ public class CachingGlueTest {
         }
 
         @Override
-        public boolean matches(Collection<PickleTag> tags) {
-            return true;
+        public String getTagExpression() {
+            return "";
         }
 
         @Override
         public int getOrder() {
-            return 0;
+            return order;
         }
     }
 
@@ -529,7 +639,6 @@ public class CachingGlueTest {
 
     private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
-
         boolean disposed;
 
         @Override
@@ -539,12 +648,7 @@ public class CachingGlueTest {
 
         @Override
         public TableCellByTypeTransformer tableCellByTypeTransformer() {
-            return new TableCellByTypeTransformer() {
-                @Override
-                public <T> T transform(String value, Class<T> cellType) {
-                    return (T) new Object();
-                }
-            };
+            return (value, cellType) -> new Object();
         }
 
         @Override
@@ -563,12 +667,7 @@ public class CachingGlueTest {
 
         @Override
         public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
-            return new TableEntryByTypeTransformer() {
-                @Override
-                public <T> T transform(Map<String, String> entry, Class<T> type, TableCellByTypeTransformer cellTransformer) {
-                    return (T) new Object();
-                }
-            };
+            return (entry, type, cellTransformer) -> new Object();
         }
 
         @Override

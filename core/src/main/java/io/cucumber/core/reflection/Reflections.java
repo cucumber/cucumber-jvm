@@ -37,7 +37,7 @@ public final class Reflections {
         }
     }
 
-    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs) {
+    private <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs) {
         Collection<T> result = new HashSet<T>();
         for (URI packageName : packageNames) {
             for (Class<? extends T> clazz : classFinder.getDescendants(parentType, packageName)) {
@@ -49,7 +49,7 @@ public final class Reflections {
         return result;
     }
 
-    public <T> T newInstance(Class[] constructorParams, Object[] constructorArgs, Class<? extends T> clazz) {
+    private <T> T newInstance(Class[] constructorParams, Object[] constructorArgs, Class<? extends T> clazz) {
         Constructor<? extends T> constructor;
         try {
             constructor = clazz.getConstructor(constructorParams);

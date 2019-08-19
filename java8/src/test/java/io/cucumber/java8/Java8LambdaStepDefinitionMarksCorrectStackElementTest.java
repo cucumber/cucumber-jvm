@@ -3,41 +3,37 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
-public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
+import java.util.Arrays;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
     private final MyLambdaGlueRegistry myLambdaGlueRegistry = new MyLambdaGlueRegistry();
 
     @Test
-    public void exception_from_step_should_be_defined_at_step_definition_class() throws Throwable {
+    void exception_from_step_should_be_defined_at_step_definition_class() {
         LambdaGlueRegistry.INSTANCE.set(myLambdaGlueRegistry);
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        expectedException.expect(new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
+        Exception exception = assertThrows(Exception.class, () -> stepDefinition.execute(new Object[0]));
+        MatcherAssert.assertThat(exception, new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
             @Override
             protected boolean matchesSafely(Throwable item) {
-                for (StackTraceElement stackTraceElement : item.getStackTrace()) {
-                    if(stepDefinition.isDefinedAt(stackTraceElement)){
-                        return SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName());
-                    }
-
-                }
-                return false;
+                return Arrays.stream(item.getStackTrace())
+                    .filter(stepDefinition::isDefinedAt)
+                    .findFirst()
+                    .filter(stackTraceElement -> SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName()))
+                    .isPresent();
             }
         });
-
-        stepDefinition.execute(new Object[0]);
     }
 
-
-    private class MyLambdaGlueRegistry implements LambdaGlueRegistry {
+    private static class MyLambdaGlueRegistry implements LambdaGlueRegistry {
 
         private StepDefinition stepDefinition;
 
@@ -71,9 +67,9 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
     }
 
-    static final class SomeLambdaStepDefs implements En {
+    public static final class SomeLambdaStepDefs implements En {
 
-        SomeLambdaStepDefs() {
+        public SomeLambdaStepDefs() {
             Given("I have a some step definition", () -> {
                 throw new Exception();
             });

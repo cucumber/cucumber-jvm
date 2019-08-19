@@ -43,8 +43,8 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
         <gherkin.version>5.1.0</gherkin.version>
-        <cucumber-expressions.version>7.0.2</cucumber-expressions.version>
-        <datatable.version>1.1.14</datatable.version>
+        <cucumber-expressions.version>8.0.0</cucumber-expressions.version>
+        <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
 
         <!--Test Dependencies-->
@@ -52,8 +52,8 @@
         <junit-jupiter.version>5.5.1</junit-jupiter.version>
         <junit-platform.version>1.5.1</junit-platform.version>
         <hamcrest.version>2.1</hamcrest.version>
-        <assertj.core.version>3.13.1</assertj.core.version>
         <mockito.version>3.0.0</mockito.version>
+        <jackson-databind.version>2.9.9.3</jackson-databind.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>
@@ -144,7 +144,6 @@
                 <artifactId>cucumber-kotlin-java8</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -162,12 +161,12 @@
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
+                <artifactId>junit-jupiter</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
+                <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
@@ -176,39 +175,15 @@
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj.core.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

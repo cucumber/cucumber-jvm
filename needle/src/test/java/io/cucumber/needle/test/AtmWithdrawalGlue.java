@@ -1,13 +1,13 @@
 package io.cucumber.needle.test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import javax.inject.Inject;
-
 import io.cucumber.java.Before;
 import io.cucumber.needle.test.injectionprovider.NameGetter;
 import io.cucumber.needle.test.injectionprovider.SimpleNameGetterProvider;
+
+import javax.inject.Inject;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AtmWithdrawalGlue {
 

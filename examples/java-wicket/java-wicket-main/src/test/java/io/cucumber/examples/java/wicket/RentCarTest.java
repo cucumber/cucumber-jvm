@@ -4,17 +4,17 @@ import io.cucumber.examples.java.wicket.view.Available;
 import io.cucumber.examples.java.wicket.view.Create;
 import io.cucumber.examples.java.wicket.view.Rent;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-public class RentCarTest {
+class RentCarTest {
     private Application application = new Application();
     private WicketTester wicketTester = new WicketTester(application);
 
     @Test
-    public void shouldRentACar() {
+    void shouldRentACar() {
         int initialNumberOfCars = 43;
 
         Create create = wicketTester.startPage(Create.class);

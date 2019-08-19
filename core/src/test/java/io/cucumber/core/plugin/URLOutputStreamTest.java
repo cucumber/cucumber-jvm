@@ -1,11 +1,10 @@
 package io.cucumber.core.plugin;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
@@ -47,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class URLOutputStreamTest {
+class URLOutputStreamTest {
 
     private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
 
@@ -62,24 +61,24 @@ public class URLOutputStreamTest {
     private WebServer webbit;
     private final int threadsCount = 100;
     private final long waitTimeoutMillis = 30000L;
-    private final List<File> tmpFiles = new ArrayList<File>();
-    private final List<String> threadErrors = new ArrayList<String>();
+    private final List<File> tmpFiles = new ArrayList<>();
+    private final List<String> threadErrors = new ArrayList<>();
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    Path tempDir;
 
-    @Before
-    public void startWebbit() throws ExecutionException, InterruptedException {
+    @BeforeEach
+    void startWebbit() throws ExecutionException, InterruptedException {
         webbit = new NettyWebServer(Executors.newSingleThreadExecutor(), new InetSocketAddress("127.0.0.1", 9873), URI.create("http://127.0.0.1:9873")).start().get();
     }
 
-    @After
-    public void stopWebbit() throws ExecutionException, InterruptedException {
+    @AfterEach
+    void stopWebbit() throws ExecutionException, InterruptedException {
         webbit.stop().get();
     }
 
     @Test
-    public void write_to_file_without_existing_parent_directory() throws IOException, URISyntaxException {
+    void write_to_file_without_existing_parent_directory() throws IOException, URISyntaxException {
         Path filesWithoutParent = Files.createTempDirectory("filesWithoutParent");
         String baseURL = filesWithoutParent.toUri().toURL().toString();
         URL urlWithoutParentDirectory = createUrl(baseURL + "/non/existing/directory");
@@ -94,7 +93,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void can_write_to_file() throws IOException {
+    void can_write_to_file() throws IOException {
         File tmp = File.createTempFile("cucumber-jvm", "tmp");
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
@@ -103,7 +102,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void can_http_put() throws IOException, InterruptedException {
+    void can_http_put() throws IOException, InterruptedException {
         final BlockingQueue<String> data = new LinkedBlockingDeque<String>();
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
@@ -122,18 +121,18 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void throws_fnfe_if_http_response_is_404() throws IOException {
+    void throws_fnfe_if_http_response_is_404() throws IOException {
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
 
-        final Executable testMethod = () -> w.close();
-        final FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
+        Executable testMethod = () -> w.close();
+        FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
     }
 
     @Test
-    public void throws_ioe_if_http_response_is_500() throws IOException {
+    void throws_ioe_if_http_response_is_500() throws IOException {
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
             @Override
@@ -148,8 +147,8 @@ public class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
 
-        final Executable testMethod = () -> w.close();
-        final IOException actualThrown = assertThrows(IOException.class, testMethod);
+        Executable testMethod = () -> w.close();
+        IOException actualThrown = assertThrows(IOException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
                 "HTTP 500\nsomething went wrong"
@@ -157,7 +156,7 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void do_not_throw_ioe_if_parent_dir_created_by_another_thread() {
+    void do_not_throw_ioe_if_parent_dir_created_by_another_thread() {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         List<Thread> testThreads = getThreadsWithLatchForFile(countDownLatch, threadsCount);
         startThreadsFromList(testThreads);
@@ -189,8 +188,8 @@ public class URLOutputStreamTest {
             final int curThreadNo = i;
             // It useful when 2-3 threads (not more) tries to create the same directory for the report
             final File tmp = (i % 3 == 0 || i % 3 == 2) ?
-                new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + i + "/tmpFile.tmp") :
-                new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
+                new File(tempDir.toAbsolutePath().toString() + "/cuce" + ballast + i + "/tmpFile.tmp") :
+                new File(tempDir.toAbsolutePath().toString() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
             tmpFiles.add(tmp);
             result.add(new Thread(() -> {
                 try {

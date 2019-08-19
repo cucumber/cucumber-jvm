@@ -6,20 +6,15 @@ import io.cucumber.datatable.DataTable;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import static java.util.stream.Collectors.joining;
+
 abstract class AbstractJavaSnippet implements Snippet {
     @Override
     public final String arguments(Map<String, Type> arguments) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, Type> argType : arguments.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append(", ");
-            }
-            sb.append(getArgType(argType.getValue())).append(" ").append(argType.getKey());
-        }
-        return sb.toString();
+        return arguments.entrySet()
+            .stream()
+            .map(argType -> getArgType(argType.getValue()) + " " + argType.getKey())
+            .collect(joining(", "));
     }
 
     private String getArgType(Type argType) {

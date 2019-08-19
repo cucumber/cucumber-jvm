@@ -25,7 +25,7 @@ final class TestSourcesModel {
     private final Map<String, GherkinDocument> pathToAstMap = new HashMap<String, GherkinDocument>();
     private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<String, Map<Integer, AstNode>>();
 
-    static Feature getFeatureForTestCase(AstNode astNode) {
+    private static Feature getFeatureForTestCase(AstNode astNode) {
         while (astNode.parent != null) {
             astNode = astNode.parent;
         }
@@ -60,10 +60,10 @@ final class TestSourcesModel {
             return calculateId(astNode.parent) + ";" + convertToId(((ScenarioDefinition) node).getName());
         }
         if (node instanceof ExamplesRowWrapperNode) {
-            return calculateId(astNode.parent) + ";" + Integer.toString(((ExamplesRowWrapperNode) node).bodyRowIndex + 2);
+            return calculateId(astNode.parent) + ";" + (((ExamplesRowWrapperNode) node).bodyRowIndex + 2);
         }
         if (node instanceof TableRow) {
-            return calculateId(astNode.parent) + ";" + Integer.toString(1);
+            return calculateId(astNode.parent) + ";" + 1;
         }
         if (node instanceof Examples) {
             return calculateId(astNode.parent) + ";" + convertToId(((Examples) node).getName());

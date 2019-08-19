@@ -1,7 +1,6 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.exception.CucumberException;
-import gherkin.events.PickleEvent;
 
 /**
  * The only purpose of this class is to move parse errors from the DataProvider
@@ -9,16 +8,15 @@ import gherkin.events.PickleEvent;
  *
  * @see TestNGCucumberRunner#provideScenarios()
  */
-class CucumberExceptionWrapper implements PickleEventWrapper {
-    private CucumberException exception;
+final class CucumberExceptionWrapper implements PickleWrapper {
+    private final CucumberException exception;
 
     CucumberExceptionWrapper(CucumberException e) {
         this.exception = e;
     }
 
     @Override
-    public PickleEvent getPickleEvent() {
+    public Pickle getPickle() {
         throw this.exception;
     }
-
 }

@@ -1,12 +1,11 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.api.Scenario;
-import io.cucumber.core.backend.HookDefinition;
 
 final class HookDefinitionMatch implements StepDefinitionMatch {
-    private final HookDefinition hookDefinition;
+    private final CoreHookDefinition hookDefinition;
 
-    HookDefinitionMatch(HookDefinition hookDefinition) {
+    HookDefinitionMatch(CoreHookDefinition hookDefinition) {
         this.hookDefinition = hookDefinition;
     }
 

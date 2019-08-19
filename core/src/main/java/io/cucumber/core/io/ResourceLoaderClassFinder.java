@@ -37,6 +37,7 @@ public final class ResourceLoaderClassFinder implements ClassFinder {
         return resourceName.substring(0, resourceName.length() - CLASS_SUFFIX.length()).replace(PACKAGE_PATH_SEPARATOR, DOT);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Class<? extends T> loadClass(String className) throws ClassNotFoundException {
         return (Class<? extends T>) classLoader.loadClass(className);
     }

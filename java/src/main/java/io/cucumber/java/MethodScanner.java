@@ -81,7 +81,7 @@ final class MethodScanner {
     private static Annotation[] repeatedAnnotations(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
-            return (Annotation[]) Invoker.invoke(annotation, expressionMethod, 0);
+            return (Annotation[]) Invoker.invoke(annotation, expressionMethod);
         } catch (Throwable e) {
             throw new IllegalStateException(e);
         }

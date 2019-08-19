@@ -8,7 +8,7 @@ import io.cucumber.needle.NeedleInjectionProvider;
 
 import javax.inject.Inject;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Just here to show that injection providers from this class also work in other classes.
@@ -18,21 +18,21 @@ import static org.junit.Assert.assertTrue;
 public class MoreSteps {
 
     @NeedleInjectionProvider
-    private InjectionProvider<MoreSteps> thisInjectionProvider = new DefaultInstanceInjectionProvider<MoreSteps>(this);
+    private InjectionProvider<MoreSteps> thisInjectionProvider = new DefaultInstanceInjectionProvider<>(this);
 
     @Inject
     private AtmWithdrawalSteps atmWithdrawalSteps;
 
     @Before
     public void checkInjectionWorked() {
-        assertTrue("Got a mock injected instead of the real instance.", atmWithdrawalSteps.isThisReallyYouOrJustAMock());
+        assertTrue(atmWithdrawalSteps.isThisReallyYouOrJustAMock(), "Got a mock injected instead of the real instance.");
     }
 
     @Given("i call a step that i don't really need")
     public void this_step_is_here_only_to_have_the_class_instantiated() {
     }
 
-    public boolean isThisReallyYouOrJustAMock() {
+    boolean isThisReallyYouOrJustAMock() {
         return true;
     }
 }

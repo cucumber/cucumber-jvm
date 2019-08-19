@@ -240,8 +240,8 @@ public class SpringFactoryTest {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
 
-        final Executable testMethod = () -> factory.addClass(BellyStepdefs.class);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> factory.addClass(BellyStepdefs.class);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
         )));
@@ -251,8 +251,8 @@ public class SpringFactoryTest {
     public void shouldFailIfClassWithSpringComponentAnnotationsIsFound() {
         final ObjectFactory factory = new SpringFactory();
 
-        final Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation"
         )));
@@ -262,8 +262,8 @@ public class SpringFactoryTest {
     public void shouldFailIfClassWithAnnotationAnnotatedWithSpringComponentAnnotationsIsFound() {
         final ObjectFactory factory = new SpringFactory();
 
-        final Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
-        final CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation"
         )));

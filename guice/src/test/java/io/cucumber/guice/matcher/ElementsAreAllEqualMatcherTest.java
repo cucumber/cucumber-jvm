@@ -1,22 +1,26 @@
 package io.cucumber.guice.matcher;
 
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertDescription;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertDoesNotMatch;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertMatches;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertMismatchDescription;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertNullSafe;
+import static io.cucumber.guice.matcher.AbstractMatcherTest.assertUnknownTypeSafe;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
+class ElementsAreAllEqualMatcherTest {
 
     private final Matcher<Collection<?>> matcher = ElementsAreAllEqualMatcher.elementsAreAllEqual();
 
-    @Override
-    protected Matcher<?> createMatcher() {
-        return matcher;
-    }
-
-    public void testDoesNotMatchNullCollection() {
+    @Test
+    void testDoesNotMatchNullCollection() {
         Collection<?> arg = null;
 
         assertAll("Checking Matcher",
@@ -25,8 +29,9 @@ public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testDoesNotMatchCollectionWithLessThanTwoElements() {
-        Collection<String> arg = Arrays.asList("foo");
+    @Test
+    void testDoesNotMatchCollectionWithLessThanTwoElements() {
+        Collection<String> arg = Collections.singletonList("foo");
 
         assertAll("Checking Matcher",
             () -> assertDoesNotMatch(matcher, arg),
@@ -34,7 +39,8 @@ public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testDoesNotMatchCollectionWithNullElements() {
+    @Test
+    void testDoesNotMatchCollectionWithNullElements() {
         Collection<Object> arg = Arrays.asList(null, null);
 
         assertAll("Checking Matcher",
@@ -43,11 +49,13 @@ public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testMatchesCollectionWithTwoElementsThatAreEqual() {
+    @Test
+    void testMatchesCollectionWithTwoElementsThatAreEqual() {
         assertMatches(matcher, Arrays.asList("foo", "foo"));
     }
 
-    public void testDoesNotMatchCollectionWithTwoElementsThatAreNotEqual() {
+    @Test
+    void testDoesNotMatchCollectionWithTwoElementsThatAreNotEqual() {
         Collection<String> arg = Arrays.asList("foo", "bar");
 
         assertAll("Checking Matcher",
@@ -56,11 +64,13 @@ public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testMatchesCollectionWithThreeElementsThatAreEqual() {
+    @Test
+    void testMatchesCollectionWithThreeElementsThatAreEqual() {
         assertMatches(matcher, Arrays.asList("foo", "foo", "foo"));
     }
 
-    public void testDoesNotMatchCollectionWithSomeElementsThatAreNotEqual() {
+    @Test
+    void testDoesNotMatchCollectionWithSomeElementsThatAreNotEqual() {
         Collection<String> arg = Arrays.asList("foo", "foo", "bar");
 
         assertAll("Checking Matcher",
@@ -69,7 +79,8 @@ public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testDoesNotMatchCollectionWithThreeElementsThatAreNotEqual() {
+    @Test
+    void testDoesNotMatchCollectionWithThreeElementsThatAreNotEqual() {
         Collection<String> arg = Arrays.asList("foo", "bar", "baz");
 
         assertAll("Checking Matcher",
@@ -78,7 +89,19 @@ public class ElementsAreAllEqualMatcherTest extends AbstractMatcherTest {
         );
     }
 
-    public void testMatcherDescription() {
+    @Test
+    void testMatcherDescription() {
         assertDescription(ElementsAreAllEqualMatcher.DESCRIPTION, matcher);
     }
+
+    @Test
+    void testIsNullSafe() {
+        assertNullSafe(matcher);
+    }
+
+    @Test
+    void testCopesWithUnknownTypes() {
+        assertUnknownTypeSafe(matcher);
+    }
+
 }

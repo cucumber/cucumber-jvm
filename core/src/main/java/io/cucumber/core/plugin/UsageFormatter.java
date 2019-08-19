@@ -4,7 +4,6 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonPrimitive;
 import gherkin.deps.com.google.gson.JsonSerializer;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
@@ -30,9 +29,6 @@ public final class UsageFormatter implements Plugin, EventListener {
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final NiceAppendable out;
 
-    private EventHandler<TestStepFinished> stepFinishedHandler = this::handleTestStepFinished;
-    private EventHandler<TestRunFinished> runFinishedHandler = event -> finishReport();
-
     /**
      * Constructor
      *
@@ -45,8 +41,8 @@ public final class UsageFormatter implements Plugin, EventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
     }
 
     void handleTestStepFinished(TestStepFinished event) {
@@ -112,7 +108,7 @@ public final class UsageFormatter implements Plugin, EventListener {
     private void addUsageEntry(Result result, PickleStepTestStep testStep) {
         List<StepContainer> stepContainers = usageMap.computeIfAbsent(testStep.getPattern(), k -> new ArrayList<>());
         StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
-        StepDuration stepDuration = new StepDuration(result.getDuration(), testStep.getStepLocation());
+        StepDuration stepDuration = new StepDuration(result.getDuration(), testStep.getUri() + ":" + testStep.getStepLine());
         stepContainer.getDurations().add(stepDuration);
     }
 

@@ -24,15 +24,15 @@ public class CollectionUtilTest {
 
     @Test
     public void testNullPointerExceptionIsThrownWhenListIsNull() {
-        final Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(null);
-        final NullPointerException expectedThrown = assertThrows(NullPointerException.class, testMethod);
+        Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(null);
+        NullPointerException expectedThrown = assertThrows(NullPointerException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("List must not be null.")));
     }
 
     @Test
     public void testIllegalArgumentExceptionIsThrownWhenListIsEmpty() {
-        final Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(list);
-        final IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
+        Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(list);
+        IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("List must contain at least one element.")));
     }
 

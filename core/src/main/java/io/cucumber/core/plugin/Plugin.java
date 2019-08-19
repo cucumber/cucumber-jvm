@@ -12,8 +12,10 @@ import java.net.URL;
  * A plugin can be added to the runtime to listen in on step definition, summary printing and test
  * execution.
  * <p>
- * Plugins are added to the runtime from the command line or @{@link io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions} and may be provided with a
- * parameter. To accept this parameter the plugin must have a public constructor that accepts one of the following
+ * Plugins are added to the runtime from the command line or by annotating a runner class with
+ * {@link io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions} and may be provided with a
+ * parameter using this syntax {@code com.example.MyPlugin:path/to/output.json}. To accept this parameter the plugin must
+ * have a public constructor that accepts one of the following
  * arguments:
  * <ul>
  * <li>{@link String}</li>

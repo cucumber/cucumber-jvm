@@ -28,6 +28,10 @@ final class LambdaTypeResolver implements TypeResolver {
         return requireNonMapOrListType(type);
     }
 
+    public Type getType() {
+        return type;
+    }
+
     private Type requireNonMapOrListType(Type argumentType) {
         if (argumentType instanceof Class) {
             Class<?> argumentClass = (Class<?>) argumentType;

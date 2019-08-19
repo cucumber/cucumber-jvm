@@ -9,10 +9,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class OpenEJBObjectFactoryTest {
+class OpenEJBObjectFactoryTest {
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new OpenEJBObjectFactory();
         factory.addClass(BellyStepdefs.class);
 

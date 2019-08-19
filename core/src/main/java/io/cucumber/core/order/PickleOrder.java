@@ -1,10 +1,10 @@
 package io.cucumber.core.order;
 
-import java.util.List;
+import io.cucumber.core.feature.CucumberPickle;
 
-import gherkin.events.PickleEvent;
+import java.util.List;
 
 public interface PickleOrder {
 
-	List<PickleEvent> orderPickleEvents(List<PickleEvent> pickleEvents);
+	List<CucumberPickle> orderPickles(List<CucumberPickle> pickleEvents);
 }

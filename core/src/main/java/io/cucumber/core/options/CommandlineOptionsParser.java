@@ -2,7 +2,6 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.feature.RerunLoader;
 
 import java.util.Arrays;
 import java.util.List;

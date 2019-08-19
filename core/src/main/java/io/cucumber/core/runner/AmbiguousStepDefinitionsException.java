@@ -1,25 +1,29 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.exception.CucumberException;
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.feature.CucumberStep;
 
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
+
 final public class AmbiguousStepDefinitionsException extends CucumberException {
+
     private final List<PickleStepDefinitionMatch> matches;
 
-    AmbiguousStepDefinitionsException(PickleStep step, List<PickleStepDefinitionMatch> matches) {
+    AmbiguousStepDefinitionsException(CucumberStep step, List<PickleStepDefinitionMatch> matches) {
         super(createMessage(step, matches));
         this.matches = matches;
     }
 
-    private static String createMessage(PickleStep step, List<PickleStepDefinitionMatch> matches) {
-        StringBuilder msg = new StringBuilder();
-        msg.append(quoteText(step.getText())).append(" matches more than one step definition:\n");
-        for (PickleStepDefinitionMatch match : matches) {
-            msg.append("  ").append(quoteText(match.getPattern())).append(" in ").append(match.getLocation()).append("\n");
-        }
-        return msg.toString();
+    private static String createMessage(CucumberStep step, List<PickleStepDefinitionMatch> matches) {
+        requireNonNull(step);
+        requireNonNull(matches);
+
+        return quoteText(step.getText()) + " matches more than one step definition:\n" + matches.stream()
+            .map(match -> "  " + quoteText(match.getPattern()) + " in " + match.getLocation())
+            .collect(joining("\n"));
     }
 
     private static String quoteText(String text) {
@@ -29,4 +33,5 @@ final public class AmbiguousStepDefinitionsException extends CucumberException {
     public List<PickleStepDefinitionMatch> getMatches() {
         return matches;
     }
+
 }

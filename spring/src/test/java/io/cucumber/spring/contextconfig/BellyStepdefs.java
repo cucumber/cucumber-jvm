@@ -6,7 +6,7 @@ import io.cucumber.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration("classpath:cucumber.xml")
 public class BellyStepdefs {
@@ -22,12 +22,12 @@ public class BellyStepdefs {
     }
 
     @Then("I have belly")
-    public void I_have_belly() throws Throwable {
+    public void I_have_belly() {
         assertNotNull(belly);
     }
 
     @Then("I have belly bean")
-    public void I_have_belly_bean() throws Throwable {
+    public void I_have_belly_bean() {
         assertNotNull(bellyBean);
     }
 }

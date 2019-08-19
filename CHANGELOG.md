@@ -18,6 +18,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449) M.P. Korstanje)
    - Adds `Automatic-Module-Name` to each module
    - Roots packages in `io.cucumber.<module>`
+   - Use `find . -name '*.java' -exec sed -i 's/import cucumber.api/import io.cucumber/g' {} \; -exec sed -i 's/cucumber.CucumberOptions/cucumber.junit.CucumberOptions/g' {} \;` to adopt 90% of the new package structure
    - Use @API Guardian annotations to mark the public API ([#1536](https://github.com/cucumber/cucumber-jvm/issues/1536) M.P. Korstanje)
  * [All] Compile using source and target level 8 ([#1611](https://github.com/cucumber/cucumber-jvm/issues/1611) M.P. Korstanje)
  * [Java8] Remove `cucumber-java8` dependency on `cucumber-java`
@@ -25,9 +26,25 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Load `Backend` implementations via SPI ([#1450](https://github.com/cucumber/cucumber-jvm/issues/1450), [#1463](https://github.com/cucumber/cucumber-jvm/issues/1463) John Patrick, M.P. Korstanje)
  * [Core] Load `ObjectFactory` via SPI
  * [Core] Share object factory  between all backend implementations
+    - [CDI2] No longer depends on `cucumber-java`
+    - [Guice] No longer depends on `cucumber-java`
+    - [Needle] No longer depends on `cucumber-java`
+    - [Pico] No longer depends on `cucumber-java`
+    - [Spring] No longer depends on `cucumber-java`
+    - [Weld] No longer depends on `cucumber-java`
  * [Core] Use feature file language to parse numbers in the type registry
    - Unless explicitly set using the `TypeRegistryConfigurer`
  * [Core] Use Java Time API in Events ([#1620](https://github.com/cucumber/cucumber-jvm/pull/1620) Yatharth Zutshi)
+ * [Core] Upgrade `cucumber-expressions` to 8.0.0
+    - Simplify heuristics to distinguish between Cucumber Expressions and Regular Expressions ([#cucumber/515](https://github.com/cucumber/cucumber/issues/515), [#cucumber/581](https://github.com/cucumber/cucumber/pull/581), [#1581](https://github.com/cucumber/cucumber-jvm/issues/1581) M.P.Korstanje)
+    - Improve decimal number parsing ([#cucumber/600](https://github.com/cucumber/cucumber/issues/600), [#cucumber/605](https://github.com/cucumber/cucumber/pull/605), [#cucumber/669](https://github.com/cucumber/cucumber/issues/669), [#cucumber/672](https://github.com/cucumber/cucumber/pull/672), [#cucumber/675](https://github.com/cucumber/cucumber/pull/675), [#cucumber/677](https://github.com/cucumber/cucumber/pull/677) Aslak Hellesøy, Vincent Psarga, Luke Hill, M.P. Korstanje )
+    - Recognize look around as a non-capturing regex group ([#cucumber/481](https://github.com/cucumber/cucumber/issues/576), [#cucumber/593](https://github.com/cucumber/cucumber/pull/593) Luke Hill)
+    - Prefer type from method over type from ParameterType   ([#cucumber/658](https://github.com/cucumber/cucumber/pull/658) [#cucumber/659](https://github.com/cucumber/cucumber/pull/659) M.P. Korstanje)
+ * [Core] Upgrade `datatable` to 3.0.0 
+    - Empty cells are `null` values in `DataTable` ([1617](https://github.com/cucumber/cucumber-jvm/issues/1617) M.P. Korstanje)        
+    - Improve handling of tables without header ([#cucumber/540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
+    - Remove DataTableType convenience methods ([1643](https://github.com/cucumber/cucumber-jvm/issues/1643) M.P. Korstanje)  
+    - Changes to value type from `Class<?>` to `Type` and return type to `Object` in `TableEntryByTypeTransformer` and `TableCellByTypeTransformer`
 
 ### Deprecated
  * [Core] Deprecate `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)

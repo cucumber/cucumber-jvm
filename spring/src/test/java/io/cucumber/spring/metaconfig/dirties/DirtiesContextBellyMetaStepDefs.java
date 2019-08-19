@@ -6,7 +6,7 @@ import io.cucumber.spring.beans.Belly;
 import io.cucumber.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DirtiesMetaConfiguration
 public class DirtiesContextBellyMetaStepDefs {

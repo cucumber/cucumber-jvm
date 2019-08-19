@@ -5,16 +5,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class Cdi2FactoryTest {
+class Cdi2FactoryTest {
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
 
         final ObjectFactory factory = new Cdi2Factory();
         factory.addClass(BellyStepdefs.class);
@@ -25,8 +24,8 @@ public class Cdi2FactoryTest {
         final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
         final CDIBellyStepdefs cdiStep = factory.getInstance(CDIBellyStepdefs.class);
         assertAll("Checking CDIBellyStepdefs",
-            () -> assertThat(cdiStep.getClass(), not(isA(CDIBellyStepdefs.class))), // it is a CDI proxy
-            () -> assertThat(cdiStep.getClass().getSuperclass(), isA(CDIBellyStepdefs.class))
+            () -> assertThat(cdiStep.getClass(), not(is(CDIBellyStepdefs.class))), // it is a CDI proxy
+            () -> assertThat(cdiStep.getClass().getSuperclass(), is(CDIBellyStepdefs.class))
         );
         factory.stop();
 

@@ -19,8 +19,8 @@ public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
     @Override
     public void configureTypeRegistry(TypeRegistry typeRegistry) {
         typeRegistry.defineDataTableType(new DataTableType(
-            RpnCalculatorStepdefs.Entry.class,
-            (Map<String, String> row) -> new RpnCalculatorStepdefs.Entry(
+            RpnCalculatorSteps.Entry.class,
+            (Map<String, String> row) -> new RpnCalculatorSteps.Entry(
                 Integer.valueOf(row.get("first")),
                 Integer.valueOf(row.get("second")),
                 row.get("operation")
@@ -28,10 +28,10 @@ public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
         ));
 
         typeRegistry.defineDataTableType(new DataTableType(
-            ShoppingStepdefs.Grocery.class,
-            (Map<String, String> row) -> new ShoppingStepdefs.Grocery(
+            ShoppingSteps.Grocery.class,
+            (Map<String, String> row) -> new ShoppingSteps.Grocery(
                 row.get("name"),
-                ShoppingStepdefs.Price.fromString(row.get("price"))
+                ShoppingSteps.Price.fromString(row.get("price"))
             )
         ));
     }

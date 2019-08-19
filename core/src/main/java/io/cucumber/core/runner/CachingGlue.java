@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
@@ -11,29 +10,42 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
-    private static final Comparator<HookDefinition> ASCENDING = Comparator.comparing(HookDefinition::getOrder);
-    private static final Comparator<HookDefinition> DESCENDING = ASCENDING.reversed();
-
+    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
+        .comparingInt(CoreHookDefinition::getOrder)
+        .thenComparing((a, b) -> {
+            boolean aScenarioScoped = (a instanceof ScenarioScoped);
+            boolean bScenarioScoped = (b instanceof ScenarioScoped);
+            return Boolean.compare(aScenarioScoped, bScenarioScoped);
+        });
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
     private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
 
-    private final List<HookDefinition> beforeHooks = new ArrayList<>();
-    private final List<HookDefinition> beforeStepHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
-    private final List<HookDefinition> afterStepHooks = new ArrayList<>();
-    private final List<HookDefinition> afterHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> afterStepHooks = new ArrayList<>();
+    private final List<CoreHookDefinition> afterHooks = new ArrayList<>();
 
     /*
      * Storing the pattern that matches the step text allows us to cache the rather slow
@@ -58,26 +70,26 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
-        beforeHooks.add(hookDefinition);
+        beforeHooks.add(CoreHookDefinition.create(hookDefinition));
         beforeHooks.sort(ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
-        beforeStepHooks.add(hookDefinition);
+        beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
         beforeStepHooks.sort(ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
-        afterHooks.add(hookDefinition);
-        afterHooks.sort(DESCENDING);
+        afterHooks.add(CoreHookDefinition.create(hookDefinition));
+        afterHooks.sort(ASCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
-        afterStepHooks.add(hookDefinition);
-        afterStepHooks.sort(DESCENDING);
+        afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
+        afterStepHooks.sort(ASCENDING);
     }
 
     @Override
@@ -105,20 +117,24 @@ final class CachingGlue implements Glue {
         defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
     }
 
-    Collection<HookDefinition> getBeforeHooks() {
-        return beforeHooks;
+    Collection<CoreHookDefinition> getBeforeHooks() {
+        return new ArrayList<>(beforeHooks);
     }
 
-    Collection<HookDefinition> getBeforeStepHooks() {
-        return beforeStepHooks;
+    Collection<CoreHookDefinition> getBeforeStepHooks() {
+        return new ArrayList<>(beforeStepHooks);
     }
 
-    Collection<HookDefinition> getAfterHooks() {
-        return afterHooks;
+    Collection<CoreHookDefinition> getAfterHooks() {
+        List<CoreHookDefinition> hooks = new ArrayList<>(afterHooks);
+        Collections.reverse(hooks);
+        return hooks;
     }
 
-    Collection<HookDefinition> getAfterStepHooks() {
-        return afterStepHooks;
+    Collection<CoreHookDefinition> getAfterStepHooks() {
+        List<CoreHookDefinition> hooks = new ArrayList<>(afterStepHooks);
+        Collections.reverse(hooks);
+        return hooks;
     }
 
     Collection<ParameterTypeDefinition> getParameterTypeDefinitions() {
@@ -193,16 +209,16 @@ final class CachingGlue implements Glue {
         });
     }
 
-    PickleStepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
-        PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(featurePath, step);
+    PickleStepDefinitionMatch stepDefinitionMatch(String uri, CucumberStep step) {
+        PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(uri, step);
         if (cachedMatch != null) {
             return cachedMatch;
         }
-        return findStepDefinitionMatch(featurePath, step);
+        return findStepDefinitionMatch(uri, step);
     }
 
 
-    private PickleStepDefinitionMatch cachedStepDefinitionMatch(String featurePath, PickleStep step) {
+    private PickleStepDefinitionMatch cachedStepDefinitionMatch(String featurePath, CucumberStep step) {
         String stepDefinitionPattern = stepPatternByStepText.get(step.getText());
         if (stepDefinitionPattern == null) {
             return null;
@@ -221,8 +237,8 @@ final class CachingGlue implements Glue {
         return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step);
     }
 
-    private PickleStepDefinitionMatch findStepDefinitionMatch(String featurePath, PickleStep step) {
-        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
+    private PickleStepDefinitionMatch findStepDefinitionMatch(String uri, CucumberStep step) {
+        List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.isEmpty()) {
             return null;
         }
@@ -237,12 +253,12 @@ final class CachingGlue implements Glue {
         return match;
     }
 
-    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
+    private List<PickleStepDefinitionMatch> stepDefinitionMatches(String uri, CucumberStep step) {
         List<PickleStepDefinitionMatch> result = new ArrayList<>();
         for (CoreStepDefinition coreStepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = coreStepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step));
+                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step));
             }
         }
         return result;
@@ -267,8 +283,8 @@ final class CachingGlue implements Glue {
         while (glueIterator.hasNext()) {
             Object glue = glueIterator.next();
             if (glue instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScopedHookDefinition = (ScenarioScoped) glue;
-                scenarioScopedHookDefinition.disposeScenarioScope();
+                ScenarioScoped scenarioScopedGlue = (ScenarioScoped) glue;
+                scenarioScopedGlue.disposeScenarioScope();
                 glueIterator.remove();
             }
         }

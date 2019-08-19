@@ -1,14 +1,14 @@
 package io.cucumber.core.runner;
 
-import gherkin.pickles.PickleStep;
 import io.cucumber.core.api.Scenario;
+import io.cucumber.core.feature.CucumberStep;
 
 import java.util.Collections;
 
 final class FailedPickleStepInstantiationMatch extends PickleStepDefinitionMatch {
     private final Throwable throwable;
 
-    FailedPickleStepInstantiationMatch(String uri, PickleStep step, Throwable throwable) {
+    FailedPickleStepInstantiationMatch(String uri, CucumberStep step, Throwable throwable) {
         super(Collections.emptyList(), new NoStepDefinition(), uri, step);
         this.throwable = removeFrameworkFramesAndAppendStepLocation(throwable, getStepLocation());
     }

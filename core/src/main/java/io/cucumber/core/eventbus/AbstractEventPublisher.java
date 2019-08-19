@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractEventPublisher implements EventPublisher {
-    protected Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<Class<? extends Event>, List<EventHandler>>();
+    protected final Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<>();
 
     @Override
     public final <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {

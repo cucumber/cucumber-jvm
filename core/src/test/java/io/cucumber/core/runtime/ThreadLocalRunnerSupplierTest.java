@@ -1,7 +1,6 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
-import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
@@ -26,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
-public class ThreadLocalRunnerSupplierTest {
+class ThreadLocalRunnerSupplierTest {
 
     private ThreadLocalRunnerSupplier runnerSupplier;
     private TimeServiceEventBus eventBus;
 
     @BeforeEach
-    public void before() {
+    void before() {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
@@ -47,12 +46,12 @@ public class ThreadLocalRunnerSupplierTest {
 
 
     @Test
-    public void should_create_a_runner() {
+    void should_create_a_runner() {
         assertThat(runnerSupplier.get(), is(notNullValue()));
     }
 
     @Test
-    public void should_create_a_runner_per_thread() throws InterruptedException {
+    void should_create_a_runner_per_thread() throws InterruptedException {
         final Runner[] runners = new Runner[2];
         Thread thread0 = new Thread(() -> runners[0] = runnerSupplier.get());
 
@@ -71,12 +70,12 @@ public class ThreadLocalRunnerSupplierTest {
     }
 
     @Test
-    public void should_return_the_same_runner_on_subsequent_calls() {
+    void should_return_the_same_runner_on_subsequent_calls() {
         assertThat(runnerSupplier.get(), is(equalTo(runnerSupplier.get())));
     }
 
     @Test
-    public void runner_should_wrap_event_bus_bus() {
+    void runner_should_wrap_event_bus_bus() {
         //This avoids problems with JUnit which listens to individual runners
         EventBus runnerBus = runnerSupplier.get().getBus();
 
@@ -87,14 +86,12 @@ public class ThreadLocalRunnerSupplierTest {
     }
 
     @Test
-    public void should_limit_runner_bus_scope_to_events_generated_by_runner() {
+    void should_limit_runner_bus_scope_to_events_generated_by_runner() {
         //This avoids problems with JUnit which listens to individual runners
-        runnerSupplier.get().getBus().registerHandlerFor(TestCaseStarted.class, new EventHandler<TestCaseStarted>() {
-            @Override
-            public void receive(TestCaseStarted event) {
-                fail();
-            }
-        });
+        runnerSupplier.get().getBus().registerHandlerFor(
+            TestCaseStarted.class,
+            event -> fail("Should not receive event")
+        );
         eventBus.send(new TestCaseStarted(EPOCH, mock(TestCase.class)));
     }
 

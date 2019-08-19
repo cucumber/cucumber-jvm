@@ -1,15 +1,14 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.api.Scenario;
-import gherkin.pickles.PickleStep;
+import io.cucumber.core.feature.CucumberStep;
 
 import java.util.Collections;
 
 final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
 
-    UndefinedPickleStepDefinitionMatch(PickleStep step) {
-        super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step);
+    UndefinedPickleStepDefinitionMatch(String uri, CucumberStep step) {
+        super(Collections.emptyList(), new NoStepDefinition(), uri, step);
     }
 
     @Override
@@ -18,7 +17,7 @@ final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) throws Throwable {
+    public void dryRunStep(Scenario scenario) {
         runStep(scenario);
     }
 

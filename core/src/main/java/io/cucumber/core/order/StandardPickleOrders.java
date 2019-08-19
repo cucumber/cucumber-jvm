@@ -1,10 +1,9 @@
 package io.cucumber.core.order;
 
-import gherkin.events.PickleEvent;
+import io.cucumber.core.feature.CucumberPickle;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Random;
 
 public final class StandardPickleOrders {
@@ -15,15 +14,14 @@ public final class StandardPickleOrders {
 
     public static PickleOrder lexicalUriOrder() {
         return pickleEvents -> {
-            Collections.sort(pickleEvents, new PickleUriComparator());
+            pickleEvents.sort(new PickleUriComparator());
             return pickleEvents;
         };
     }
 
     public static PickleOrder reverseLexicalUriOrder() {
         return pickleEvents -> {
-            Collections.sort(pickleEvents, new PickleUriComparator());
-            Collections.reverse(pickleEvents);
+            pickleEvents.sort(new PickleUriComparator().reversed());
             return pickleEvents;
         };
     }
@@ -35,11 +33,11 @@ public final class StandardPickleOrders {
         };
     }
 
-    private static class PickleUriComparator implements Comparator<PickleEvent> {
+    private static class PickleUriComparator implements Comparator<CucumberPickle> {
 
         @Override
-        public int compare(PickleEvent a, PickleEvent b) {
-            return a.uri.compareTo(b.uri);
+        public int compare(CucumberPickle a, CucumberPickle b) {
+            return a.getUri().compareTo(b.getUri());
         }
     }
 
