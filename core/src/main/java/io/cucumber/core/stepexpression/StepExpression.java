@@ -43,13 +43,13 @@ public final class StepExpression {
 
     }
 
-    public List<Argument> match(String text, String docStringArgument, Type... types) {
+    public List<Argument> match(String text, String docStringArgument, String docStringContentType, Type... types) {
         List<Argument> list = match(text, types);
         if (list == null) {
             return null;
         }
 
-        list.add(new DocStringArgument(docStringType, docStringArgument));
+        list.add(new DocStringArgument(docStringType, docStringArgument, docStringContentType));
 
         return list;
     }

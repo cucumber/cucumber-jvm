@@ -25,7 +25,8 @@ public final class ArgumentMatcher {
         if (arg instanceof DocStringArgument) {
             DocStringArgument docString = (DocStringArgument) arg;
             String content = docString.getContent();
-            return expression.match(step.getText(), content, types);
+            String contentType = docString.getContentType();
+            return expression.match(step.getText(), content, contentType, types);
         }
 
         if (arg instanceof DataTableArgument) {

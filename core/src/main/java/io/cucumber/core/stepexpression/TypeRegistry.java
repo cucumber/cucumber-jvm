@@ -16,10 +16,13 @@ public final class TypeRegistry implements io.cucumber.core.api.TypeRegistry {
 
     private final DataTableTypeRegistry dataTableTypeRegistry;
 
+    private final DocStringTypeRegistry docStringTypeRegistry;
+
 
     public TypeRegistry(Locale locale) {
         parameterTypeRegistry = new ParameterTypeRegistry(locale);
         dataTableTypeRegistry = new DataTableTypeRegistry(locale);
+        docStringTypeRegistry = new DocStringTypeRegistry();
     }
 
     public ParameterTypeRegistry parameterTypeRegistry() {
@@ -30,9 +33,18 @@ public final class TypeRegistry implements io.cucumber.core.api.TypeRegistry {
         return dataTableTypeRegistry;
     }
 
+    public DocStringTypeRegistry docStringTypeRegistry() {
+        return docStringTypeRegistry;
+    }
+
     @Override
     public void defineParameterType(ParameterType<?> parameterType) {
         parameterTypeRegistry.defineParameterType(parameterType);
+    }
+
+    @Override
+    public void defineDocStringType(DocStringType docStringType) {
+        docStringTypeRegistry.defineDocStringType(docStringType);
     }
 
     @Override

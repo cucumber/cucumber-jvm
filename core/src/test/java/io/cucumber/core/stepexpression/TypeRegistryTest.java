@@ -41,6 +41,13 @@ class TypeRegistryTest {
     }
 
     @Test
+    void should_define_doc_string_parameter_type() {
+        String contentType = "sb";
+        DocStringType expected = new DocStringType(StringBuilder.class, contentType, (String s) -> new StringBuilder(s));
+        registry.defineDocStringType(expected);
+    }
+
+    @Test
     void should_set_default_parameter_transformer() {
         ParameterByTypeTransformer expected = (fromValue, toValueType) -> null;
         registry.setDefaultParameterTransformer(expected);

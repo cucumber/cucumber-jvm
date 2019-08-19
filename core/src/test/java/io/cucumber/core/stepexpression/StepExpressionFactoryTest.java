@@ -1,5 +1,6 @@
 package io.cucumber.core.stepexpression;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
@@ -103,11 +104,37 @@ class StepExpressionFactoryTest {
     }
 
     @Test
-    void unknown_target_type_does_not_transform_doc_string() {
+    void unknown_target_type_transform_doc_string_to_string_object() {
         String docString = "A rather long and boring string of documentation";
+        String contentType = null;
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
-        List<Argument> match = expression.match("Given some stuff:", docString);
+        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
         assertThat(match.get(0).getValue(), is(equalTo(docString)));
+    }
+
+    @Test
+    void docstring_expression_transform_doc_string_to_json_node() {
+        String docString = "{\"hello\": \"world\"}";
+        String contentType = "json";
+        registry.defineDocStringType(new DocStringType(JsonNode.class, contentType, (String s) -> objectMapper.convertValue(docString, JsonNode.class)));
+
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", JsonNode.class);
+        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
+        JsonNode node = (JsonNode) match.get(0).getValue();
+        assertThat(node.asText(), equalTo(docString));
+    }
+
+    @Test
+    void docstring_expression_transform_anonymous_doc_string_type() {
+        String docString = "A rather long and boring string of documentation";
+        String contentType = null;
+        registry.defineDocStringType(new DocStringType(StringBuilder.class, (String s) -> new StringBuilder(s)));
+
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", StringBuilder.class);
+        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
+        StringBuilder sb = (StringBuilder) match.get(0).getValue();
+        assertThat(sb.toString(), equalTo(docString));
+
     }
 
     @SuppressWarnings("unchecked")

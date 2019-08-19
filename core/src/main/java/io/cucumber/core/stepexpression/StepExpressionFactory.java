@@ -15,10 +15,12 @@ public final class StepExpressionFactory {
 
     private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
+    private final DocStringConverter docStringConverter;
 
     public StepExpressionFactory(TypeRegistry registry) {
         this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
+        this.docStringConverter = new DocStringConverter(registry.docStringTypeRegistry());
     }
 
     public StepExpression createExpression(String expressionString) {
@@ -26,7 +28,7 @@ public final class StepExpressionFactory {
         Expression expression = expressionFactory.createExpression(expressionString);
 
         RawTableTransformer<DataTable> toDataTable = raw -> DataTable.create(raw, tableConverter);
-        DocStringTransformer<Object> toDocString = (String input) -> input;
+        DocStringTransformer<Object> toDocString = (String input, String contentType) -> input;
         return new StepExpression(expression, toDocString, toDataTable);
     }
 
@@ -59,14 +61,17 @@ public final class StepExpressionFactory {
             return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
         };
 
-        DocStringTransformer<?> docStringTransform = (String docString) -> {
+        DocStringTransformer<?> docStringTransform = (DocStringTransformer<Object>) (docString, contentType) -> {
             Type targetType = tableOrDocStringType.resolve();
-            if (Object.class.equals(targetType)) {
+            if (String.class.equals(targetType)) {
                 return docString;
             }
-
-            List<List<String>> raw = singletonList(singletonList(docString));
-            return DataTable.create(raw, StepExpressionFactory.this.tableConverter).convert(targetType, transpose);
+            if (contentType == null || contentType.isEmpty()) {
+                return docStringConverter.convert(docString, targetType);
+            }
+            else {
+                return docStringConverter.convert(docString, contentType);
+            }
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
     }
