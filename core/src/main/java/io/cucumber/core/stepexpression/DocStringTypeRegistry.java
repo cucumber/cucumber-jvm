@@ -48,18 +48,10 @@ public class DocStringTypeRegistry {
     }
 
     DocStringType lookUpByType(Type type) {
-        DocStringType docStringType = anonymousDocstringTypes.get(type);
-        if (docStringType == null) {
-            throw new CucumberException(String.format("It appears you did not register docstring type for %s", type));
-        }
         return anonymousDocstringTypes.get(type);
     }
 
     DocStringType lookUpByContentType(String contentType) {
-        DocStringType docStringType = namedDocstringTypes.get(contentType);
-        if (docStringType == null) {
-            throw new CucumberException(String.format("It appears you did not register docstring type for content type %s", contentType));
-        }
         return namedDocstringTypes.get(contentType);
     }
 
