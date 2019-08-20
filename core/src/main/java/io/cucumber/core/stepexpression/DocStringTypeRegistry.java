@@ -15,7 +15,7 @@ public class DocStringTypeRegistry {
     public DocStringTypeRegistry() {
         anonymousDocstringTypes = new HashMap<>();
         namedDocstringTypes = new HashMap<>();
-        defineAnonymousDocStringType(new DocStringType(Object.class, Object::toString));
+        defineDocStringType(new DocStringType(String.class,"", (String docString) -> docString));
     }
 
 
