@@ -61,17 +61,13 @@ public final class StepExpressionFactory {
             return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
         };
 
-        DocStringTransformer<?> docStringTransform = (DocStringTransformer<Object>) (docString, contentType) -> {
+        DocStringTransformer<?> docStringTransform = (text, contentType) -> {
             Type targetType = tableOrDocStringType.resolve();
-            if (String.class.equals(targetType)) {
-                return docString;
+            DocString docString = new DocString(text, contentType);
+            if (Object.class.equals(targetType)) {
+                return text;
             }
-            if (contentType == null || contentType.isEmpty()) {
-                return docStringConverter.convert(docString, targetType);
-            }
-            else {
-                return docStringConverter.convert(docString, contentType);
-            }
+            return docStringConverter.convert(docString, targetType);
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
     }
