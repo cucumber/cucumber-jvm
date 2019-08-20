@@ -128,7 +128,7 @@ class StepExpressionFactoryTest {
     void docstring_expression_transform_anonymous_doc_string_type() {
         String docString = "A rather long and boring string of documentation";
         String contentType = null;
-        registry.defineDocStringType(new DocStringType(StringBuilder.class, (String s) -> new StringBuilder(s)));
+        registry.defineDocStringType(new DocStringType(StringBuilder.class, contentType, (String s) -> new StringBuilder(s)));
 
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", StringBuilder.class);
         List<Argument> match = expression.match("Given some stuff:", docString, contentType);

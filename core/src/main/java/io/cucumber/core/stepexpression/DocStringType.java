@@ -22,12 +22,6 @@ public class DocStringType {
         return targetType;
     }
 
-    public <T> DocStringType(Type targetType, Converter<T> converter) {
-        this.targetType = targetType;
-        this.converter = converter;
-        this.contentType = "";
-    }
-
     public <T> DocStringType(Type targetType, String contentType, Converter<T> converter) {
         this.targetType = targetType;
         if (contentType == null) {
