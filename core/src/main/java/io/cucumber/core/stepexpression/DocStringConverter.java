@@ -2,7 +2,7 @@ package io.cucumber.core.stepexpression;
 
 import java.lang.reflect.Type;
 
-public class DocStringConverter {
+final class DocStringConverter {
 
     private final DocStringTypeRegistry docStringTypeRegistry;
 

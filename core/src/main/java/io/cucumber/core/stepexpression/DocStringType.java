@@ -2,21 +2,23 @@ package io.cucumber.core.stepexpression;
 
 
 import java.lang.reflect.Type;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE)
 public class DocStringType {
     private final Type targetType;
     private final String contentType;
     private final Converter converter;
 
-    public Converter getConverter() {
+    Converter getConverter() {
         return converter;
     }
 
-    public String getContentType() {
+    String getContentType() {
         return contentType;
     }
 
-    public Type getTargetType() {
+    Type getTargetType() {
         return targetType;
     }
 
@@ -37,6 +39,7 @@ public class DocStringType {
         this.converter = converter;
     }
 
+    @FunctionalInterface
     public interface Converter<T> {
         T convert(String s);
     }
