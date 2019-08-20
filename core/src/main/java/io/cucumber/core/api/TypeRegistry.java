@@ -20,7 +20,7 @@ public interface TypeRegistry {
     void defineParameterType(ParameterType<?> parameterType);
 
     /**
-     * Defines a ne docstring type.
+     * Defines a new docstring type.
      * @param docStringType The new docstring type.
      */
     void defineDocStringType(DocStringType docStringType);
