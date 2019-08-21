@@ -92,7 +92,7 @@ public class StubBackendProviderService implements BackendProviderService {
 
                 @Override
                 public MessageFormat template() {
-                    return new MessageFormat("stub snippet" + i);
+                    return new MessageFormat("stub snippet" + i++);
                 }
 
                 @Override

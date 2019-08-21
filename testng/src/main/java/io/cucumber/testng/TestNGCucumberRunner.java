@@ -14,6 +14,8 @@ import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -31,11 +33,13 @@ import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
+import org.testng.SkipException;
 
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -51,6 +55,9 @@ import static java.util.stream.Collectors.toList;
  */
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(TestNGCucumberRunner.class);
+
     private final EventBus bus;
     private final Predicate<CucumberPickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
@@ -105,14 +112,30 @@ public final class TestNGCucumberRunner {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        runner.runPickle(pickle.getCucumberPickle());
+        CucumberPickle cucumberPickle = pickle.getCucumberPickle();
+        runner.runPickle(cucumberPickle);
         testCaseResultListener.finishExecutionUnit();
 
-        if (!testCaseResultListener.isPassed()) {
-            // null pointer is covered by isPassed
-            // noinspection ConstantConditions
-            throw testCaseResultListener.getError();
+        if (testCaseResultListener.isPassed()) {
+            return;
         }
+
+        // Log the reason we skipped the test. TestNG doesn't provide it by
+        // default
+        Throwable error = testCaseResultListener.getError();
+        if (error instanceof SkipException) {
+            SkipException skipException = (SkipException) error;
+            if (skipException.isSkip()) {
+                log.info(format("Skipped scenario: '%s'. %s",
+                    cucumberPickle.getName(),
+                    skipException.getMessage()
+                ));
+            }
+        }
+
+        // null pointer is covered by isPassed
+        // noinspection ConstantConditions
+        throw error;
     }
 
     public void finish() {
