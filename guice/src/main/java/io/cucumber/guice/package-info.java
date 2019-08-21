@@ -131,8 +131,8 @@
  * import com.google.inject.Guice;
  * import com.google.inject.Injector;
  * import com.google.inject.Stage;
- * import cucumber.api.guice.CucumberModules;
- * import cucumber.runtime.java.guice.InjectorSource;
+ * import io.cucumber.guice.CucumberModules;
+ * import io.cucumber.guice.InjectorSource;
  *
  * public class YourInjectorSource implements InjectorSource {
  *
