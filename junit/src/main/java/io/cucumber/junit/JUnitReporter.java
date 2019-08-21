@@ -1,12 +1,12 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.CucumberStep;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.core.event.TestStep;
 import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
@@ -30,8 +30,8 @@ final class JUnitReporter {
     private final EventBus bus;
     private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
-    TestNotifier stepNotifier; // package-private for testing
-    ArrayList<Throwable> stepErrors; // package-private for testing
+    private List<Throwable> stepErrors;
+    private TestNotifier stepNotifier;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
     private PickleRunner pickleRunner;
     private RunNotifier runNotifier;
@@ -50,7 +50,7 @@ final class JUnitReporter {
         bus.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedEventEventHandler);
     }
 
-    void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
+    private void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
         snippetsPerStep.putIfAbsent(new StepLocation(
                 snippetsSuggestedEvent.getUri(),
                 snippetsSuggestedEvent.getStepLine()
@@ -75,26 +75,23 @@ final class JUnitReporter {
         pickleRunnerNotifier = new EachTestNotifier(runNotifier, pickleRunner.getDescription());
     }
 
-    void handleTestCaseStarted(TestCaseStarted testCaseStarted) {
+    private void handleTestCaseStarted(TestCaseStarted testCaseStarted) {
         pickleRunnerNotifier.fireTestStarted();
         stepErrors = new ArrayList<>();
     }
 
     private void handTestStepStarted(TestStepStarted event) {
-        if (event.getTestStep() instanceof PickleStepTestStep) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-            handleStepStarted(testStep.getStep());
+        TestStep testStep = event.getTestStep();
+        if (testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
+            if (junitOptions.stepNotifications()) {
+                Description description = pickleRunner.describeChild(pickleStep.getStep());
+                stepNotifier = new EachTestNotifier(runNotifier, description);
+            } else {
+                stepNotifier = new NoTestNotifier();
+            }
+            stepNotifier.fireTestStarted();
         }
-    }
-
-    void handleStepStarted(CucumberStep step) {
-        if (junitOptions.stepNotifications()) {
-            Description description = pickleRunner.describeChild(step);
-            stepNotifier = new EachTestNotifier(runNotifier, description);
-        } else {
-            stepNotifier = new NoTestNotifier();
-        }
-        stepNotifier.fireTestStarted();
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -106,7 +103,7 @@ final class JUnitReporter {
         }
     }
 
-    void handleStepResult(PickleStepTestStep testStep, Result result) {
+    private void handleStepResult(PickleStepTestStep testStep, Result result) {
         Throwable error = result.getError();
         switch (result.getStatus()) {
             case PASSED:
@@ -122,23 +119,26 @@ final class JUnitReporter {
                 break;
             case PENDING:
                 stepErrors.add(error);
-                addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+                addFailureOrFailedAssumptionDependingOnStrictMode(
+                    stepNotifier,
+                    error
+                );
                 break;
             case UNDEFINED:
                 List<String> snippets = snippetsPerStep.remove(
                     new StepLocation(testStep.getUri(), testStep.getStepLine())
                 );
-                if (error == null) {
-                    error = new UndefinedStepException(
-                        snippets
-                    );
-                }
                 stepErrors.add(new UndefinedStepException(
                     testStep.getStepText(),
                     snippets,
                     snippetsPerStep.values()
                 ));
-                addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
+                addFailureOrFailedAssumptionDependingOnStrictMode(
+                    stepNotifier,
+                    error == null
+                        ? new UndefinedStepException(snippets)
+                        : error
+                );
                 break;
             case AMBIGUOUS:
             case FAILED:
@@ -151,13 +151,7 @@ final class JUnitReporter {
         stepNotifier.fireTestFinished();
     }
 
-    void handleHookResult(Result result) {
-        if (result.getError() != null) {
-            stepErrors.add(result.getError());
-        }
-    }
-
-    void handleTestCaseResult(TestCaseFinished event) {
+    private void handleTestCaseResult(TestCaseFinished event) {
         Result result = event.getResult();
         switch (result.getStatus()) {
             case PASSED:
@@ -179,12 +173,16 @@ final class JUnitReporter {
                 break;
             case AMBIGUOUS:
             case FAILED:
-                for (Throwable error : stepErrors) {
-                    pickleRunnerNotifier.addFailure(error);
-                }
+                stepErrors.forEach(error -> pickleRunnerNotifier.addFailure(error));
                 break;
         }
         pickleRunnerNotifier.fireTestFinished();
+    }
+
+    private void handleHookResult(Result result) {
+        if (result.getError() != null) {
+            stepErrors.add(result.getError());
+        }
     }
 
     private void addFailureOrFailedAssumptionDependingOnStrictMode(TestNotifier notifier, Throwable error) {
