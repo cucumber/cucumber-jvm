@@ -334,7 +334,7 @@ class TimelineFormatterTest {
         }
     }
 
-    private class ActualReportOutput {
+    private static class ActualReportOutput {
 
         private final List<TimelineFormatter.TestData> tests;
         private final List<TimelineFormatter.GroupData> groups;

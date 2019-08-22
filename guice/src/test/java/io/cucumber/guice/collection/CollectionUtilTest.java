@@ -13,38 +13,38 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CollectionUtilTest {
+class CollectionUtilTest {
 
     private List<String> list;
 
     @BeforeEach
-    public void setUp() {
-        list = new ArrayList<String>();
+    void setUp() {
+        list = new ArrayList<>();
     }
 
     @Test
-    public void testNullPointerExceptionIsThrownWhenListIsNull() {
+    void testNullPointerExceptionIsThrownWhenListIsNull() {
         Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(null);
         NullPointerException expectedThrown = assertThrows(NullPointerException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("List must not be null.")));
     }
 
     @Test
-    public void testIllegalArgumentExceptionIsThrownWhenListIsEmpty() {
+    void testIllegalArgumentExceptionIsThrownWhenListIsEmpty() {
         Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(list);
         IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("List must contain at least one element.")));
     }
 
     @Test
-    public void testListIsNotModifiedWhenItContainsOneItem() {
+    void testListIsNotModifiedWhenItContainsOneItem() {
         list.add("foo");
         CollectionUtil.removeAllExceptFirstElement(list);
         assertThatListContainsOneElement("foo");
     }
 
     @Test
-    public void testSecondItemIsRemovedWhenListContainsTwoItems() {
+    void testSecondItemIsRemovedWhenListContainsTwoItems() {
         list.add("foo");
         list.add("bar");
         CollectionUtil.removeAllExceptFirstElement(list);
@@ -52,7 +52,7 @@ public class CollectionUtilTest {
     }
 
     @Test
-    public void testSecondAndThirdItemsAreRemovedWhenListContainsThreeItems() {
+    void testSecondAndThirdItemsAreRemovedWhenListContainsThreeItems() {
         list.add("foo");
         list.add("bar");
         list.add("baz");

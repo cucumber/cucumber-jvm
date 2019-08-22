@@ -1,23 +1,17 @@
-package io.cucumber.junit;
+package io.cucumber.testng;
+
+import org.testng.SkipException;
 
 import java.util.Collection;
 import java.util.List;
 
-final class UndefinedThrowable extends Throwable {
+final class UndefinedStepException extends SkipException {
     private static final long serialVersionUID = 1L;
+    private final boolean strict;
 
-    UndefinedThrowable(List<String> snippets) {
-        super(createMessage(snippets), null, false, false);
-    }
-
-    private static String createMessage(List<String> snippets) {
-        StringBuilder sb = new StringBuilder("This step is undefined");
-        appendSnippets(snippets, sb);
-        return sb.toString();
-    }
-
-    UndefinedThrowable(String stepText, List<String> snippets, Collection<List<String>> otherSnippets) {
-        super(createMessage(stepText, snippets, otherSnippets), null, false, false);
+    UndefinedStepException(String stepText, List<String> snippets, Collection<List<String>> otherSnippets, boolean strict) {
+        super(createMessage(stepText, snippets, otherSnippets));
+        this.strict = strict;
     }
 
     private static String createMessage(String stepText, List<String> snippets, Collection<List<String>> otherSnippets) {
@@ -47,6 +41,11 @@ final class UndefinedThrowable extends Throwable {
         }
         sb.append(". You can implement it using tne snippet(s) below:\n\n");
         sb.append(String.join("\n", snippets));
+    }
+
+    @Override
+    public boolean isSkip() {
+        return !strict;
     }
 
 }

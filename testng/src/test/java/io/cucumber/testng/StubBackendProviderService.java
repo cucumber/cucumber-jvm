@@ -35,14 +35,14 @@ public class StubBackendProviderService implements BackendProviderService {
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
-            glue.addStepDefinition(createStepDefinition("background step"));
-            glue.addStepDefinition(createStepDefinition("scenario name"));
-            glue.addStepDefinition(createStepDefinition("scenario C"));
-            glue.addStepDefinition(createStepDefinition("scenario D"));
-            glue.addStepDefinition(createStepDefinition("scenario E"));
-            glue.addStepDefinition(createStepDefinition("first step"));
-            glue.addStepDefinition(createStepDefinition("second step"));
-            glue.addStepDefinition(createStepDefinition("third step"));
+            glue.addStepDefinition(createStepDefinition("step"));
+            glue.addStepDefinition(createStepDefinition("another step"));
+            glue.addStepDefinition(createStepDefinition("foo"));
+            glue.addStepDefinition(createStepDefinition("bar"));
+            glue.addStepDefinition(createStepDefinition("baz"));
+            glue.addStepDefinition(createStepDefinition("G&A"));
+            glue.addStepDefinition(createStepDefinition("G<A"));
+            glue.addStepDefinition(createStepDefinition("T>A"));
 
         }
 
@@ -87,9 +87,12 @@ public class StubBackendProviderService implements BackendProviderService {
         @Override
         public Snippet getSnippet() {
             return new Snippet() {
+
+                private int i = 1;
+
                 @Override
                 public MessageFormat template() {
-                    return new MessageFormat("");
+                    return new MessageFormat("stub snippet" + i++);
                 }
 
                 @Override

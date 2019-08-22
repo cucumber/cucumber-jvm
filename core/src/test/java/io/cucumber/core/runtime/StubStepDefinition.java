@@ -48,7 +48,7 @@ public class StubStepDefinition implements StepDefinition {
         return expression;
     }
 
-    private final class StubParameterInfo implements ParameterInfo {
+    private static final class StubParameterInfo implements ParameterInfo {
 
         private final Type type;
 

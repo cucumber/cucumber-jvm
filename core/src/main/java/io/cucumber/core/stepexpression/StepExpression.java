@@ -56,7 +56,7 @@ public final class StepExpression {
 
 
     private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
-        List<Argument> copy = new ArrayList<Argument>(match.size() + 1);
+        List<Argument> copy = new ArrayList<>(match.size() + 1);
         for (io.cucumber.cucumberexpressions.Argument<?> argument : match) {
             copy.add(new ExpressionArgument(argument));
         }

@@ -5,6 +5,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertThrows;
+
 public class TestNGCucumberRunnerTest {
     private TestNGCucumberRunner testNGCucumberRunner;
 
@@ -13,8 +15,8 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner = new TestNGCucumberRunner(io.cucumber.testng.RunCucumberTest.class);
     }
 
-    @Test(expectedExceptions = CucumberException.class)
-    public void runCukesStrict() throws Throwable {
+    @Test
+    public void runCucumberTest() throws Throwable {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
 
         for (Object[] scenario : testNGCucumberRunner.provideScenarios()) {
@@ -23,8 +25,8 @@ public class TestNGCucumberRunnerTest {
         }
     }
 
-    @Test(expectedExceptions = CucumberException.class)
-    public void runScenarioWithUndefinedStepsStrict() throws Throwable {
+    @Test
+    public void runScenarioWithUndefinedStepsStrict() {
         testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedStepsStrict.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios();
 
@@ -33,7 +35,10 @@ public class TestNGCucumberRunnerTest {
         Object[] scenario = scenarios[0];
         PickleWrapper pickleEvent = (PickleWrapper) scenario[0];
 
-        testNGCucumberRunner.runScenario(pickleEvent.getPickle()); // runScenario() throws CucumberException
+        assertThrows(
+            UndefinedStepException.class,
+            () -> testNGCucumberRunner.runScenario(pickleEvent.getPickle())
+        );
     }
 
     @Test
@@ -50,7 +55,7 @@ public class TestNGCucumberRunnerTest {
     }
 
     @CucumberOptions(
-        features = "classpath:io/cucumber/testng/undefined_steps.feature",
+        features = "classpath:io/cucumber/undefined/undefined_steps.feature",
         strict = true
     )
     static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {

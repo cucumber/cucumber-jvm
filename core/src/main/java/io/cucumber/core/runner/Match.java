@@ -29,7 +29,7 @@ abstract class Match {
 
     private static final class UndefinedMatch extends Match {
         UndefinedMatch() {
-            super(Collections.<Argument>emptyList(), null);
+            super(Collections.emptyList(), null);
         }
     }
 }

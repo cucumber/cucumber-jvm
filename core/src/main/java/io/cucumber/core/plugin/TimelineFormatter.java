@@ -104,7 +104,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void appendAsJsonToJs(final Gson gson, final NiceAppendable out, final String pushTo, final Collection<?> content) {
-        out.append("CucumberHTML." + pushTo + ".pushArray(");
+        out.append("CucumberHTML.").append(pushTo).append(".pushArray(");
         gson.toJson(content, out);
         out.append(");");
     }
@@ -216,7 +216,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
     }
 
-    class GroupData {
+    static class GroupData {
         @SerializedName("id")
         final long id;
         @SerializedName("content")

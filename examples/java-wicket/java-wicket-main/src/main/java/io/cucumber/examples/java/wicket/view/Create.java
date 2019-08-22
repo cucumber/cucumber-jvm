@@ -28,9 +28,9 @@ public class Create extends WebPage {
 
     private class CreateCarsForm extends Form<ValueMap> {
         public CreateCarsForm(String id) {
-            super(id, new CompoundPropertyModel<ValueMap>(new ValueMap()));
+            super(id, new CompoundPropertyModel<>(new ValueMap()));
 
-            FormComponent<Integer> textField = new TextField<Integer>("numberOfCarsField");
+            FormComponent<Integer> textField = new TextField<>("numberOfCarsField");
             textField.setType(String.class);
 
             add(textField);

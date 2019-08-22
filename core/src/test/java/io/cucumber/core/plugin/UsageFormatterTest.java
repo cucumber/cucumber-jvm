@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -29,10 +30,10 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class UsageFormatterTest {
+class UsageFormatterTest {
 
     @Test
-    public void close() throws IOException {
+    void close() throws IOException {
         Appendable out = mock(Appendable.class, withSettings().extraInterfaces(Closeable.class));
         UsageFormatter usageFormatter = new UsageFormatter(out);
         usageFormatter.finishReport();
@@ -40,7 +41,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithFailedStep() {
+    void resultWithFailedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Status.FAILED, Duration.ZERO, null);
@@ -49,7 +50,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithSkippedStep() {
+    void resultWithSkippedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Status.SKIPPED, Duration.ZERO, null);
@@ -58,7 +59,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithPendingStep() {
+    void resultWithPendingStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Status.PENDING, Duration.ZERO, null);
@@ -67,7 +68,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithAmbiguousStep() {
+    void resultWithAmbiguousStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Status.AMBIGUOUS, Duration.ZERO, null);
@@ -76,7 +77,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithUndefinedStep() {
+    void resultWithUndefinedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = new Result(Status.AMBIGUOUS, Duration.ZERO, null);
@@ -85,7 +86,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithPassedStep() {
+    void resultWithPassedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
@@ -103,7 +104,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithPassedAndFailedStep() {
+    void resultWithPassedAndFailedStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
@@ -124,7 +125,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void resultWithZeroDuration() {
+    void resultWithZeroDuration() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
@@ -143,7 +144,7 @@ public class UsageFormatterTest {
 
     // Note: Duplicate of above test
     @Test
-    public void resultWithNullDuration() {
+    void resultWithNullDuration() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         PickleStepTestStep testStep = mockTestStep();
@@ -161,13 +162,13 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void doneWithoutUsageStatisticStrategies() {
+    void doneWithoutUsageStatisticStrategies() {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L), "location.feature");
-        stepContainer.getDurations().addAll(asList(stepDuration));
-        usageFormatter.usageMap.put("a (.*)", asList(stepContainer));
+        stepContainer.getDurations().addAll(singletonList(stepDuration));
+        usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
 
         usageFormatter.finishReport();
 
@@ -197,15 +198,15 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void doneWithUsageStatisticStrategies() {
+    void doneWithUsageStatisticStrategies() {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
         UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L), "location.feature");
-        stepContainer.getDurations().addAll(asList(stepDuration));
+        stepContainer.getDurations().addAll(singletonList(stepDuration));
 
-        usageFormatter.usageMap.put("a (.*)", asList(stepContainer));
+        usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
 
         usageFormatter.finishReport();
 
@@ -236,7 +237,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateAverageFromList() {
+    void calculateAverageFromList() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
@@ -244,7 +245,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateAverageOf() {
+    void calculateAverageOf() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(1L), Duration.ofSeconds(2L)));
@@ -252,7 +253,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateAverageOfEmptylist() {
+    void calculateAverageOfEmptylist() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateAverage(Collections.emptyList());
@@ -260,7 +261,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateMedianOfOddNumberOfEntries() {
+    void calculateMedianOfOddNumberOfEntries() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
@@ -268,7 +269,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateMedianOfEvenNumberOfEntries() {
+    void calculateMedianOfEvenNumberOfEntries() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(3L), Duration.ofSeconds(10L), Duration.ofSeconds(5L)));
@@ -276,7 +277,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateMedianOf() {
+    void calculateMedianOf() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(2L), Duration.ofSeconds(9L)));
@@ -284,7 +285,7 @@ public class UsageFormatterTest {
     }
 
     @Test
-    public void calculateMedianOfEmptylist() {
+    void calculateMedianOfEmptylist() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(Collections.emptyList());

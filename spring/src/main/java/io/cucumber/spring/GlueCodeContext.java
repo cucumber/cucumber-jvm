@@ -5,14 +5,11 @@ import java.util.Map;
 
 class GlueCodeContext {
 
-    private static final ThreadLocal<GlueCodeContext> localContext = new ThreadLocal<GlueCodeContext>() {
-        protected GlueCodeContext initialValue() {
-            return new GlueCodeContext();
-        }
-    };
+    private static final ThreadLocal<GlueCodeContext> localContext =
+        ThreadLocal.withInitial(GlueCodeContext::new);
 
-    private final Map<String, Object> objects = new HashMap<String, Object>();
-    private final Map<String, Runnable> callbacks = new HashMap<String, Runnable>();
+    private final Map<String, Object> objects = new HashMap<>();
+    private final Map<String, Runnable> callbacks = new HashMap<>();
     private int counter;
 
     private GlueCodeContext() {

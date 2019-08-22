@@ -49,7 +49,7 @@ class SequentialScenarioScope implements ScenarioScope {
     @Override
     public void enterScope() {
         checkState(scenarioValues == null, "A scoping block is already in progress");
-        scenarioValues = new HashMap<Key<?>, Object>();
+        scenarioValues = new HashMap<>();
     }
 
     @Override

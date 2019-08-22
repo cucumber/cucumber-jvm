@@ -10,7 +10,7 @@ public class InMemoryCarDAO implements CarDAO {
 
     public InMemoryCarDAO() {
         if (cars == null) {
-            cars = new LinkedList<Car>();
+            cars = new LinkedList<>();
         }
     }
 

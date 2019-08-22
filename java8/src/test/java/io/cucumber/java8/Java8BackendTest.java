@@ -14,11 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URI;
 
 import static java.lang.Thread.currentThread;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class})
-public class Java8BackendTest {
+class Java8BackendTest {
 
     @Mock
     private Glue glue;
@@ -29,15 +29,15 @@ public class Java8BackendTest {
     private Java8Backend backend;
 
     @BeforeEach
-    public void createBackend() {
+    void createBackend() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         this.backend = new Java8Backend(factory, factory, resourceLoader);
     }
 
     @Test
-    public void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java8/steps")));
+    void finds_step_definitions_by_classpath_url() {
+        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java8/steps")));
         backend.buildWorld();
         verify(factory).addClass(Steps.class);
     }

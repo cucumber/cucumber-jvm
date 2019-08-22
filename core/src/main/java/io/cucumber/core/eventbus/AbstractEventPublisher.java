@@ -17,7 +17,7 @@ public abstract class AbstractEventPublisher implements EventPublisher {
         if (handlers.containsKey(eventType)) {
             handlers.get(eventType).add(handler);
         } else {
-            List<EventHandler> list = new ArrayList<EventHandler>();
+            List<EventHandler> list = new ArrayList<>();
             list.add(handler);
             handlers.put(eventType, list);
         }

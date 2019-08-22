@@ -103,14 +103,11 @@ class URLOutputStreamTest {
 
     @Test
     void can_http_put() throws IOException, InterruptedException {
-        final BlockingQueue<String> data = new LinkedBlockingDeque<String>();
+        final BlockingQueue<String> data = new LinkedBlockingDeque<>();
         Rest r = new Rest(webbit);
-        r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
-            @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
-                data.offer(req.body());
-                res.end();
-            }
+        r.PUT("/.cucumber/stepdefs.json", (req, res, ctl) -> {
+            data.offer(req.body());
+            res.end();
         });
 
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
@@ -126,7 +123,7 @@ class URLOutputStreamTest {
         w.write("Hellesøy");
         w.flush();
 
-        Executable testMethod = () -> w.close();
+        Executable testMethod = w::close;
         FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
     }
@@ -134,20 +131,17 @@ class URLOutputStreamTest {
     @Test
     void throws_ioe_if_http_response_is_500() throws IOException {
         Rest r = new Rest(webbit);
-        r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
-            @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
-                res.status(500);
-                res.content("something went wrong");
-                res.end();
-            }
+        r.PUT("/.cucumber/stepdefs.json", (req, res, ctl) -> {
+            res.status(500);
+            res.content("something went wrong");
+            res.end();
         });
 
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
         w.write("Hellesøy");
         w.flush();
 
-        Executable testMethod = () -> w.close();
+        Executable testMethod = w::close;
         IOException actualThrown = assertThrows(IOException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
@@ -182,7 +176,7 @@ class URLOutputStreamTest {
     }
 
     private List<Thread> getThreadsWithLatchForFile(final CountDownLatch countDownLatch, int threadsCount) {
-        List<Thread> result = new ArrayList<Thread>();
+        List<Thread> result = new ArrayList<>();
         String ballast = "" + System.currentTimeMillis();
         for (int i = 0; i < threadsCount; i++) {
             final int curThreadNo = i;

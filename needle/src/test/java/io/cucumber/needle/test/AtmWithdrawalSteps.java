@@ -16,8 +16,8 @@ import io.cucumber.needle.test.injectionprovider.ValueInjectionProvider;
 import org.hamcrest.core.Is;
 
 import javax.inject.Inject;
-import java.util.Collections;
 
+import static java.util.Collections.singleton;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,7 +45,8 @@ public class AtmWithdrawalSteps {
     private final InjectionProvider<?> valueProvider = new ValueInjectionProvider(VALUE);
 
     @NeedleInjectionProvider
-    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = () -> Collections.singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
+    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier =
+        () -> singleton(new DefaultInstanceInjectionProvider<>(AtmWithdrawalSteps.this));
 
     /*
      * This is what we test

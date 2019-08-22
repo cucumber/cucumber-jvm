@@ -19,27 +19,20 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class InjectorSourceFactoryTest {
+class InjectorSourceFactoryTest {
 
     private InjectorSourceFactory createInjectorSourceFactory(Map<String, String> properties) {
         return new InjectorSourceFactory(properties);
     }
 
     @Test
-    public void createsDefaultInjectorSourceWhenGuiceModulePropertyIsNotSet() {
+    void createsDefaultInjectorSourceWhenGuiceModulePropertyIsNotSet() {
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(Collections.emptyMap());
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
     }
 
-    static class CustomInjectorSource implements InjectorSource {
-        @Override
-        public Injector getInjector() {
-            return null;
-        }
-    }
-
     @Test
-    public void instantiatesInjectorSourceByFullyQualifiedName() {
+    void instantiatesInjectorSourceByFullyQualifiedName() {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, CustomInjectorSource.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
@@ -47,12 +40,12 @@ public class InjectorSourceFactoryTest {
     }
 
     @Test
-    public void failsToInstantiateNonExistantClass() {
+    void failsToInstantiateNonExistantClass() {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, "some.bogus.Class");
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
-        Executable testMethod = () -> injectorSourceFactory.create();
+        Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
@@ -61,12 +54,12 @@ public class InjectorSourceFactoryTest {
     }
 
     @Test
-    public void failsToInstantiateClassNotImplementingInjectorSource() {
+    void failsToInstantiateClassNotImplementingInjectorSource() {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, String.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
-        Executable testMethod = () -> injectorSourceFactory.create();
+        Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
@@ -74,23 +67,13 @@ public class InjectorSourceFactoryTest {
         );
     }
 
-    static class PrivateConstructor implements InjectorSource {
-        private PrivateConstructor() {
-        }
-
-        @Override
-        public Injector getInjector() {
-            return null;
-        }
-    }
-
     @Test
-    public void failsToInstantiateClassWithPrivateConstructor() {
+    void failsToInstantiateClassWithPrivateConstructor() {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, PrivateConstructor.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
-        Executable testMethod = () -> injectorSourceFactory.create();
+        Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
@@ -98,23 +81,13 @@ public class InjectorSourceFactoryTest {
         );
     }
 
-    static class NoDefaultConstructor implements InjectorSource {
-        private NoDefaultConstructor(String someParameter) {
-        }
-
-        @Override
-        public Injector getInjector() {
-            return null;
-        }
-    }
-
     @Test
-    public void failsToInstantiateClassWithNoDefaultConstructor() {
+    void failsToInstantiateClassWithNoDefaultConstructor() {
         Map<String, String> properties = new HashMap<>();
         properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, NoDefaultConstructor.class.getName());
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
-        Executable testMethod = () -> injectorSourceFactory.create();
+        Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
@@ -137,7 +110,7 @@ public class InjectorSourceFactoryTest {
      * <p>See <a href="https://github.com/cucumber/cucumber-jvm/issues/1036">https://github.com/cucumber/cucumber-jvm/issues/1036</a>
      */
     @Test
-    public void instantiateClassInChildClassLoader() {
+    void instantiateClassInChildClassLoader() {
         ClassLoader childClassLoader = new MyChildClassLoader(this.getClass().getClassLoader());
         Thread.currentThread().setContextClassLoader(childClassLoader);
 
@@ -148,8 +121,35 @@ public class InjectorSourceFactoryTest {
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
     }
 
+    public static class CustomInjectorSource implements InjectorSource {
+        @Override
+        public Injector getInjector() {
+            return null;
+        }
+    }
+
+    public static class PrivateConstructor implements InjectorSource {
+        private PrivateConstructor() {
+        }
+
+        @Override
+        public Injector getInjector() {
+            return null;
+        }
+    }
+
+    public static class NoDefaultConstructor implements InjectorSource {
+        private NoDefaultConstructor(String someParameter) {
+        }
+
+        @Override
+        public Injector getInjector() {
+            return null;
+        }
+    }
+
     private static class MyChildClassLoader extends ClassLoader {
-        public MyChildClassLoader(ClassLoader parent) {
+        MyChildClassLoader(ClassLoader parent) {
             super(parent);
         }
 
