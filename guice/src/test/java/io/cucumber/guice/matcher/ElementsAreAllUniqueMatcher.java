@@ -20,7 +20,7 @@ public class ElementsAreAllUniqueMatcher<E> extends ElementsAreAllMatcher<E> {
      * <pre>assertThat(Arrays.asList("foo", "bar", "baz"), elementsAreAllUnique())</pre>
      */
     public static <E> Matcher<Collection<? extends E>> elementsAreAllUnique() {
-        return new ElementsAreAllUniqueMatcher<E>();
+        return new ElementsAreAllUniqueMatcher<>();
     }
 
     @Override

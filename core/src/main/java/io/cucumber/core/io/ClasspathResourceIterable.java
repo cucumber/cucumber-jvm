@@ -29,7 +29,7 @@ final class ClasspathResourceIterable implements Iterable<Resource> {
     @Override
     public Iterator<Resource> iterator() {
         try {
-            FlatteningIterator<Resource> iterator = new FlatteningIterator<Resource>();
+            FlatteningIterator<Resource> iterator = new FlatteningIterator<>();
             Enumeration<URL> resources = classLoader.getResources(path);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();

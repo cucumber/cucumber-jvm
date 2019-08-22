@@ -10,6 +10,8 @@ import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -21,10 +23,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class EventBusTest {
+@ExtendWith(MockitoExtension.class)
+class EventBusTest {
 
     @Test
-    public void handlers_receive_the_events_they_registered_for() {
+    void handlers_receive_the_events_they_registered_for() {
         EventHandler<TestStepFinished> handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         Result result = new Result(Status.PASSED, ZERO, null);
@@ -39,7 +42,7 @@ public class EventBusTest {
     }
 
     @Test
-    public void handlers_do_not_receive_the_events_they_did_not_registered_for() {
+    void handlers_do_not_receive_the_events_they_did_not_registered_for() {
         EventHandler handler = mock(EventHandler.class);
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         TestCase testCase = mock(TestCase.class);

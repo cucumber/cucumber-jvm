@@ -3,9 +3,10 @@ package io.cucumber.core.event;
 import org.apiguardian.api.API;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
@@ -15,9 +16,9 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
 
     public SnippetsSuggestedEvent(Instant timeInstant, String uri, int stepLine, List<String> snippets) {
         super(timeInstant);
-        this.uri = Objects.requireNonNull(uri);
+        this.uri = requireNonNull(uri);
         this.stepLine = stepLine;
-        this.snippets = Collections.unmodifiableList(Objects.requireNonNull(snippets));
+        this.snippets = unmodifiableList(requireNonNull(snippets));
     }
 
     public String getUri() {
@@ -30,24 +31,6 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
 
     public List<String> getSnippets() {
         return snippets;
-    }
-
-    public static final class Location {
-        private final int line;
-        private final int column;
-
-        public Location(int line, int column) {
-            this.line = line;
-            this.column = column;
-        }
-
-        public int getLine() {
-            return line;
-        }
-
-        public int getColumn() {
-            return column;
-        }
     }
 
 }

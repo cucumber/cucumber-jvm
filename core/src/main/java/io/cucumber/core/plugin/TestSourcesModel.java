@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 final class TestSourcesModel {
-    private final Map<String, TestSourceRead> pathToReadEventMap = new HashMap<String, TestSourceRead>();
-    private final Map<String, GherkinDocument> pathToAstMap = new HashMap<String, GherkinDocument>();
-    private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<String, Map<Integer, AstNode>>();
+    private final Map<String, TestSourceRead> pathToReadEventMap = new HashMap<>();
+    private final Map<String, GherkinDocument> pathToAstMap = new HashMap<>();
+    private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<>();
 
     private static Feature getFeatureForTestCase(AstNode astNode) {
         while (astNode.parent != null) {
@@ -151,12 +151,12 @@ final class TestSourcesModel {
         if (!pathToReadEventMap.containsKey(path)) {
             return;
         }
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
             GherkinDocument gherkinDocument = parser.parse(pathToReadEventMap.get(path).getSource(), matcher);
             pathToAstMap.put(path, gherkinDocument);
-            Map<Integer, AstNode> nodeMap = new HashMap<Integer, AstNode>();
+            Map<Integer, AstNode> nodeMap = new HashMap<>();
             AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);
             for (ScenarioDefinition child : gherkinDocument.getFeature().getChildren()) {
                 processScenarioDefinition(nodeMap, child, currentParent);
@@ -193,7 +193,7 @@ final class TestSourcesModel {
         }
     }
 
-    class ExamplesRowWrapperNode extends Node {
+    static class ExamplesRowWrapperNode extends Node {
         final int bodyRowIndex;
 
         ExamplesRowWrapperNode(Node examplesRow, int bodyRowIndex) {
@@ -202,7 +202,7 @@ final class TestSourcesModel {
         }
     }
 
-    class AstNode {
+    static class AstNode {
         final Node node;
         final AstNode parent;
 

@@ -113,8 +113,8 @@ public final class RuntimeOptionsBuilder {
         }
 
         if (this.parsedIsRerun || !this.parsedFeaturePaths.isEmpty()) {
-            runtimeOptions.setFeaturePaths(Collections.<URI>emptyList());
-            runtimeOptions.setLineFilters(Collections.<URI, Set<Integer>>emptyMap());
+            runtimeOptions.setFeaturePaths(Collections.emptyList());
+            runtimeOptions.setLineFilters(Collections.emptyMap());
         }
         if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || !this.parsedLineFilters.isEmpty()) {
             runtimeOptions.setTagExpressions(this.parsedTagFilters);

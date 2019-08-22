@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 final class FlatteningIterator<T> implements Iterator<T> {
-    private final Deque<Iterator<?>> iterators = new ArrayDeque<Iterator<?>>();
+    private final Deque<Iterator<?>> iterators = new ArrayDeque<>();
 
     private T next;
     private boolean nextBlank = true;

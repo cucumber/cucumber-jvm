@@ -44,12 +44,8 @@ import org.springframework.util.ClassUtils;
  */
 abstract class FixBootstrapUtils {
 
-    private static ThreadLocal<ContextCache> contextCache = new ThreadLocal<ContextCache>(){
-        @Override
-        protected ContextCache initialValue() {
-            return new DefaultContextCache();
-        }
-    };
+    private static ThreadLocal<ContextCache> contextCache =
+        ThreadLocal.withInitial(DefaultContextCache::new);
 
     private static final String DEFAULT_TEST_CONTEXT_BOOTSTRAPPER_CLASS_NAME =
 			"org.springframework.test.context.support.DefaultTestContextBootstrapper";
