@@ -14,8 +14,6 @@ import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -55,8 +53,6 @@ import static java.util.stream.Collectors.toList;
  */
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
-
-    private static final Logger log = LoggerFactory.getLogger(TestNGCucumberRunner.class);
 
     private final EventBus bus;
     private final Predicate<CucumberPickle> filters;
@@ -126,7 +122,7 @@ public final class TestNGCucumberRunner {
         if (error instanceof SkipException) {
             SkipException skipException = (SkipException) error;
             if (skipException.isSkip()) {
-                log.info(format("Skipped scenario: '%s'. %s",
+                System.out.println(format("Skipped scenario: '%s'. %s",
                     cucumberPickle.getName(),
                     skipException.getMessage()
                 ));
