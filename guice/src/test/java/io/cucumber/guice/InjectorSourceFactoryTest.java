@@ -48,7 +48,7 @@ class InjectorSourceFactoryTest {
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a   zero args constructor."))),
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(ClassNotFoundException.class))
         );
     }
@@ -62,7 +62,7 @@ class InjectorSourceFactoryTest {
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a   zero args constructor."))),
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(ClassCastException.class))
         );
     }
@@ -76,7 +76,7 @@ class InjectorSourceFactoryTest {
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a   zero args constructor."))),
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(IllegalAccessException.class))
         );
     }
@@ -90,7 +90,7 @@ class InjectorSourceFactoryTest {
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
         assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a   zero args constructor."))),
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(InstantiationException.class))
         );
     }
@@ -121,29 +121,29 @@ class InjectorSourceFactoryTest {
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
     }
 
-    static class CustomInjectorSource implements InjectorSource {
+    public static class CustomInjectorSource implements InjectorSource {
         @Override
-        Injector getInjector() {
+        public Injector getInjector() {
             return null;
         }
     }
 
-    static class PrivateConstructor implements InjectorSource {
+    public static class PrivateConstructor implements InjectorSource {
         private PrivateConstructor() {
         }
 
         @Override
-        Injector getInjector() {
+        public Injector getInjector() {
             return null;
         }
     }
 
-    static class NoDefaultConstructor implements InjectorSource {
+    public static class NoDefaultConstructor implements InjectorSource {
         private NoDefaultConstructor(String someParameter) {
         }
 
         @Override
-        Injector getInjector() {
+        public Injector getInjector() {
             return null;
         }
     }
