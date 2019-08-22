@@ -82,9 +82,21 @@ public final class Constants {
      * parse feature paths.
      * <p>
      *
-     * @see io.cucumber.core.feature.FeaturePath
+     * @see io.cucumber.core.feature.FeatureWithLines
      */
     public static final String FEATURE_PROPERTY_NAME = "cucumber.feature";
+
+    /**
+     * Property name to set a file from which feature locations will be read: {@value}
+     * <p>
+     * Feature paths must be separated by a new line. The feature path is
+     * a uri or path e.g.: {@code path/to/feature/dir}.
+     *
+     * @see io.cucumber.core.feature.FeatureWithLines
+     * @see #FEATURE_PROPERTY_NAME
+     */
+    public static final String RERUN_FILE_PROPERTY_NAME = "cucumber.rerun-file";
+
     /**
      * Property name used to set name filter: {@value}
      * <p>
@@ -106,13 +118,22 @@ public final class Constants {
     /**
      * Property name to set the glue path: {@value}
      * <p>
-     * The glue path is a comma separated list of packages where glue code (step
-     * definitions, hooks and plugins) are loaded from e.g:
-     * {@code com.example.app.steps}.
-     * <p>
-     * Defaults to the root package.
+     * The glue path is a uri or package name e.g.: {@code com.example.app.steps}.
+     *
+     * @see io.cucumber.core.feature.GluePath
      */
     public static final String GLUE_PROPERTY_NAME = "cucumber.glue";
+
+    /**
+     * Property name to set a file from which glue paths will be read: {@value}
+     * <p>
+     * Glue paths must be separated by a new line. The glue path is
+     * a uri or package name e.g.: {@code com.example.app.steps}.
+     *
+     * @see io.cucumber.core.feature.GluePath
+     * @see #GLUE_PROPERTY_NAME
+     */
+    public static final String GLUE_FILE_PROPERTY_NAME = "cucumber.glue-file";
     /**
      * Property name used to select a specific object factory implementation:
      * {@value}
@@ -152,7 +173,6 @@ public final class Constants {
      * {@code PLUGIN} can also be a fully qualified class name, allowing registration
      * of 3rd party plugins.
      * <p>
-     * TODO: Implement @plugins.txt
      * <p>
      */
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";

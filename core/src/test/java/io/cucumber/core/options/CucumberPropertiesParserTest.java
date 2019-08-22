@@ -5,13 +5,21 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +28,9 @@ class CucumberPropertiesParserTest {
 
     private final CucumberPropertiesParser cucumberPropertiesParser = new CucumberPropertiesParser();
     private final Map<String, String> properties = new HashMap<>();
+
+    @TempDir
+    Path temp;
 
     @Test
     void should_parse_cucumber_options() {
@@ -127,7 +138,6 @@ class CucumberPropertiesParserTest {
         assertThat(options.isWip(), equalTo(true));
     }
 
-
     @Test
     void should_throw_when_fails_to_parse() {
         properties.put(Constants.OBJECT_FACTORY_PROPERTY_NAME, "garbage");
@@ -136,6 +146,28 @@ class CucumberPropertiesParserTest {
             () -> cucumberPropertiesParser.parse(properties).build()
         );
         assertThat(exception.getMessage(), equalTo("Failed to parse 'cucumber.object-factory' with value 'garbage'"));
+    }
+
+    @Test
+    void should_parse_rerun_file() throws IOException {
+        Path path = mockFileResource("path/to.feature");
+        properties.put(Constants.RERUN_FILE_PROPERTY_NAME, path.toString());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("file:path/to.feature")));
+    }
+
+    @Test
+    void should_parse_glue_file() throws IOException {
+        Path path = mockFileResource("com.example.app");
+        properties.put(Constants.GLUE_FILE_PROPERTY_NAME, path.toString());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getGlue(), containsInAnyOrder(URI.create("classpath:com/example/app")));
+    }
+
+    private Path mockFileResource(String... contents) throws IOException {
+        Path path = Files.createTempFile(temp, "", ".txt");
+        Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
+        return path;
     }
 
     private static final class CustomObjectFactory implements ObjectFactory {

@@ -24,12 +24,15 @@ import static io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FEATURE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.GLUE_FILE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.RERUN_FILE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
+import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 
 public final class CucumberPropertiesParser {
 
@@ -78,9 +81,15 @@ public final class CucumberPropertiesParser {
             builder::setStrict
         );
 
-        parseAll(properties,
+        parse(properties,
             FEATURE_PROPERTY_NAME,
-            property -> parseMaybeRerunFile(builder, property),
+            FeatureWithLines::parse,
+            builder::addFeature
+        );
+
+        parseAll(properties,
+            RERUN_FILE_PROPERTY_NAME,
+            property -> parseRerunFile(builder, property),
             builder::addFeature
         );
 
@@ -92,14 +101,19 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             FILTER_TAGS_PROPERTY_NAME,
-            //TODO: Parse early
             Function.identity(),
             builder::addTagFilter
         );
 
-        parseAll(properties,
+        parse(properties,
             GLUE_PROPERTY_NAME,
-            this::parseMaybeGlueFile,
+            GluePath::parse,
+            builder::addGlue
+        );
+
+        parseAll(properties,
+            GLUE_FILE_PROPERTY_NAME,
+            this::parseGlueFile,
             builder::addGlue
         );
 
@@ -111,7 +125,6 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             PLUGIN_PROPERTY_NAME,
-            //TODO: Parse early
             Function.identity(),
             plugin -> builder.addPluginName(plugin, true)
         );
@@ -130,23 +143,15 @@ public final class CucumberPropertiesParser {
         return builder;
     }
 
-    private Collection<URI> parseMaybeGlueFile(String property) {
-        if (property.startsWith("@")) {
-            Path glueFile = Paths.get(property.substring(1));
-            return OptionsFileParser.parseGlueFile(glueFile);
-        } else {
-            return Collections.singletonList(GluePath.parse(property));
-        }
+    private Collection<URI> parseGlueFile(String property) {
+        Path glueFile = Paths.get(property);
+        return OptionsFileParser.parseGlueFile(glueFile);
     }
 
-    private Collection<FeatureWithLines> parseMaybeRerunFile(RuntimeOptionsBuilder builder, String property) {
-        if (property.startsWith("@")) {
-            builder.setIsRerun(true);
-            Path rerunFile = Paths.get(property.substring(1));
-            return OptionsFileParser.parseFeatureWithLinesFile(rerunFile);
-        } else {
-            return Collections.singletonList(FeatureWithLines.parse(property));
-        }
+    private Collection<FeatureWithLines> parseRerunFile(RuntimeOptionsBuilder builder, String property) {
+        builder.setIsRerun(true);
+        Path rerunFile = Paths.get(property);
+        return parseFeatureWithLinesFile(rerunFile);
     }
 
     private <T> void parseAll(Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser, Consumer<T> setter) {
