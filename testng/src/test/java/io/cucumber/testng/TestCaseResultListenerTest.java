@@ -1,7 +1,12 @@
 package io.cucumber.testng;
 
+import io.cucumber.core.event.PickleStepTestStep;
 import io.cucumber.core.event.Result;
+import io.cucumber.core.event.SnippetsSuggestedEvent;
 import io.cucumber.core.event.Status;
+import io.cucumber.core.event.TestCase;
+import io.cucumber.core.event.TestCaseFinished;
+import io.cucumber.core.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.testng.SkipException;
@@ -9,9 +14,20 @@ import org.testng.annotations.Test;
 
 import java.time.Clock;
 
+import static io.cucumber.core.event.Status.AMBIGUOUS;
+import static io.cucumber.core.event.Status.FAILED;
+import static io.cucumber.core.event.Status.PENDING;
+import static io.cucumber.core.event.Status.SKIPPED;
+import static io.cucumber.core.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
+import static java.time.Instant.now;
+import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
@@ -21,11 +37,29 @@ public class TestCaseResultListenerTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
+    private String uri = "file:path/to.feature";
+    private int line = 0;
+    private Exception error = new Exception();
+    private TestCase testCase = mock(TestCase.class);
+    private PickleStepTestStep step = createPickleStepTestStep();
+
+    private PickleStepTestStep createPickleStepTestStep() {
+        PickleStepTestStep step = mock(PickleStepTestStep.class);
+        when(step.getStepLine()).thenReturn(line);
+        when(step.getUri()).thenReturn(uri);
+        when(step.getStepText()).thenReturn("some step");
+        return step;
+    }
+
     @Test
     public void should_be_passed_for_passed_result() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        resultListener.receiveResult(mockPassedResult());
+        Result stepResult = new Result(Status.PASSED, ZERO, null);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(Status.PASSED, ZERO, null);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertTrue(resultListener.isPassed());
         assertNull(resultListener.getError());
@@ -33,51 +67,89 @@ public class TestCaseResultListenerTest {
 
     @Test
     public void should_not_be_passed_for_failed_result() {
-        Result result = mockFailedResult();
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        resultListener.receiveResult(result);
+        Result stepResult = new Result(FAILED, ZERO, error);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(FAILED, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError(), result.getError());
+        assertEquals(resultListener.getError(), error);
     }
 
     @Test
     public void should_not_be_passed_for_ambiguous_result() {
-        Result result = mockAmbiguousResult();
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        resultListener.receiveResult(result);
+        Result stepResult = new Result(AMBIGUOUS, ZERO, error);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(AMBIGUOUS, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError(), result.getError());
+        assertEquals(resultListener.getError(), error);
     }
 
     @Test
     public void should_be_skipped_for_undefined_result() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        resultListener.receiveResult(mockUndefinedResult());
+        bus.send(new SnippetsSuggestedEvent(now(), uri, line, singletonList("stub snippet")));
+
+        Result stepResult = new Result(UNDEFINED, ZERO, error);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(UNDEFINED, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
-        assertThat(resultListener.getError(), isA(SkipException.class));
+        Throwable resultError = requireNonNull(resultListener.getError());
+        SkipException skipException = (SkipException) resultError;
+        assertThat(skipException.isSkip(), is(true));
+        assertThat(skipException.getMessage(), is("" +
+            "The step \"some step\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "\n" +
+            "stub snippet"
+        ));
     }
 
     @Test
     public void should_not_be_skipped_for_undefined_result_in_strict_mode() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
 
-        resultListener.receiveResult(mockUndefinedResult());
+        bus.send(new SnippetsSuggestedEvent(now(), uri, line, singletonList("stub snippet")));
+
+        Result stepResult = new Result(UNDEFINED, ZERO, error);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(UNDEFINED, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError().getMessage(), "There are undefined steps");
+        Throwable resultError = requireNonNull(resultListener.getError());
+        SkipException skipException = (SkipException) resultError;
+        assertThat(skipException.isSkip(), is(false));
+        assertThat(skipException.getMessage(), is("" +
+            "The step \"some step\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "\n" +
+            "stub snippet"
+        ));
     }
 
     @Test
     public void should_be_skipped_for_pending_result() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        resultListener.receiveResult(mockPendingResult());
+        Exception error = new TestPendingException();
+
+        Result stepResult = new Result(PENDING, ZERO, error);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(PENDING, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
         assertThat(resultListener.getError(), isA(SkipException.class));
@@ -87,44 +159,31 @@ public class TestCaseResultListenerTest {
     public void should_not_be_skipped_for_pending_result_in_strict_mode() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
 
-        resultListener.receiveResult(mockPendingResult());
+        TestPendingException error = new TestPendingException();
+
+        Result stepResult = new Result(PENDING, ZERO, error);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(PENDING, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
-        assertThat(resultListener.getError(), isA(TestPendingException.class));
+        assertEquals(error, resultListener.getError());
     }
 
     @Test
     public void should_be_skipped_for_skipped_result() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        resultListener.receiveResult(mockSkippedResult());
+        Result stepResult = new Result(SKIPPED, ZERO, null);
+        bus.send(new TestStepFinished(now(), testCase, step, stepResult));
+
+        Result testCaseResult = new Result(SKIPPED, ZERO, null);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         assertFalse(resultListener.isPassed());
         assertThat(resultListener.getError(), isA(SkipException.class));
     }
 
-    private Result mockPassedResult() {
-        return new Result(Status.PASSED, ZERO, null);
-    }
-
-    private Result mockSkippedResult() {
-        return new Result(Status.SKIPPED, ZERO, null);
-    }
-
-    private Result mockUndefinedResult() {
-        return new Result(Status.UNDEFINED, ZERO, null);
-    }
-
-    private Result mockFailedResult() {
-        return new Result(Status.FAILED, ZERO, new Exception());
-    }
-
-    private Result mockAmbiguousResult() {
-        return new Result(Status.AMBIGUOUS, ZERO, new Exception());
-    }
-
-    private Result mockPendingResult() {
-        return new Result(Status.PENDING, ZERO, new TestPendingException());
-    }
 
 }
