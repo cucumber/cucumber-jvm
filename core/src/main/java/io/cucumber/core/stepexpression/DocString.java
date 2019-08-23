@@ -1,5 +1,8 @@
 package io.cucumber.core.stepexpression;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE)
 public final class DocString {
     private final String text;
     private final String contentType;
