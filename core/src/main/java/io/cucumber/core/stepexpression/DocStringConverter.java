@@ -15,15 +15,15 @@ final class DocStringConverter {
         if (targetType.equals(DocString.class)) {
             return (T) docString;
         }
-
-        DocStringType namedType = docStringTypeRegistry.lookUpByContentType(docString.getContentType());
-        if (namedType == null) {
-            DocStringType type = docStringTypeRegistry.lookUpByType(targetType);
-            if (type == null) {
-                throw new CucumberException(String.format("It appears you did not register docstring type for %s", type));
+        DocStringType docStringType = docStringTypeRegistry.lookUpByContentType(docString.getContentType());
+        if (docStringType == null) {
+            if (targetType.equals(String.class)) {
+                docStringType = docStringTypeRegistry.lookUpByContentType("");
             }
-            return (T) type.getConverter().convert(docString.getText());
+            else {
+                throw new CucumberException(String.format("It appears you did not register docstring type for content type %s", docString.getContentType()));
+            }
         }
-        return (T) namedType.getConverter().convert(docString.getText());
+        return (T) docStringType.getConverter().convert(docString.getText());
     }
 }

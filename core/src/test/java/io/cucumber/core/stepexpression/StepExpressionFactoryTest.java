@@ -113,6 +113,15 @@ class StepExpressionFactoryTest {
     }
 
     @Test
+    void docstring_expression_transform_doc_string_with_content_type_to_string() {
+        String docString = "A rather long and boring string of documentation";
+        String contentType = "doc";
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", String.class);
+        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
+        assertThat(match.get(0).getValue(), is(equalTo(docString)));
+    }
+
+    @Test
     void docstring_expression_transform_doc_string_to_json_node() {
         String docString = "{\"hello\": \"world\"}";
         String contentType = "json";
@@ -122,19 +131,6 @@ class StepExpressionFactoryTest {
         List<Argument> match = expression.match("Given some stuff:", docString, contentType);
         JsonNode node = (JsonNode) match.get(0).getValue();
         assertThat(node.asText(), equalTo(docString));
-    }
-
-    @Test
-    void docstring_expression_transform_anonymous_doc_string_type() {
-        String docString = "A rather long and boring string of documentation";
-        String contentType = null;
-        registry.defineDocStringType(new DocStringType(StringBuilder.class, contentType, (String s) -> new StringBuilder(s)));
-
-        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", StringBuilder.class);
-        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
-        StringBuilder sb = (StringBuilder) match.get(0).getValue();
-        assertThat(sb.toString(), equalTo(docString));
-
     }
 
     @SuppressWarnings("unchecked")
