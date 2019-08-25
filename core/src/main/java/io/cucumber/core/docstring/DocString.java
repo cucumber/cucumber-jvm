@@ -55,7 +55,7 @@ public final class DocString {
         if (o == null || getClass() != o.getClass()) return false;
         DocString docString = (DocString) o;
         return text.equals(docString.text) &&
-            contentType.equals(docString.contentType);
+            Objects.equals(contentType, docString.contentType);
     }
 
     @Override

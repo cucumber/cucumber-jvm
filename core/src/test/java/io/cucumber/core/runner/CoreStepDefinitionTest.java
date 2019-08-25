@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.docstring.DocString;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -41,7 +42,7 @@ class CoreStepDefinitionTest {
         CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, typeRegistry);
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
-        assertThat(arguments.get(0).getValue(), is(equalTo("content")));
+        assertThat(arguments.get(0).getValue(), is(equalTo(DocString.create("content"))));
     }
 
 
