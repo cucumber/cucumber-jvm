@@ -31,39 +31,6 @@ jobs:
     - mvn clean verify -DskipTests=true
     - mvn javadoc:aggregate
 
-  # 2. Deploy
-  - stage: deploy
-    jdk: openjdk8
-    script:
-    - "./continuous-deployment/before-deploy.sh"
-    - "./continuous-deployment/deploy.sh"
-    - "./continuous-deployment/upload-api-docs.sh"
-    on:
-      repo: cucumber/cucumber-jvm
-
-env:
-  global:
-  - secure: |-
-      rEtPzPG3bMKzx00AwDJq5tsp8LSCds5ePV6ZP+wgECP2BVIoD16zP8F6T0fY
-      QK/2etRW6pcernOGP8S3SQE4e5ZBT5sqYY0mhKlq2aiem3i3gAwEzZvdLjWV
-      1C6KyQplzdjKdaYWOre8YSXv5vxS3ZVS6NJc+0EQM3olTKV3flQ=
-  - secure: |-
-      BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
-      K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
-      969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
-  - secure: |-
-      YFC36RaO9gnbOlqDt94mp5s6ipOiAjs32J+fo1plaL02WceKfgVvcKOlirfO
-      58vytZ0hu9SdV1KYWOqr787cg7B7EZcUUKzDE/9ldsNr/WfwTIIt34Umu2oZ
-      v2dOSpimxxMXJCjW+nFcfjENVJfg2flT31kjtzsGiZtpHK3TxqY=
-  - secure: |-
-      Zq9aGkt4PJQ0MVTrbbNbe8OEV68wWjIDfYiCumrGZ1n8sIy3AgERxRjsHgiD
-      QzDDaLAw2ynHFXq9OuxlgY922ltPOQBkio0ARNmfRFJo2ArUyqeK53BPrnxJ
-      tjZwOM9sWlmckoRz5iv3k28Z7yim9N+mHZ9/DcogEdDi0O0X2tY=
-  - secure: |-
-      ambMvk6phoaLJYntjF67zHYWll+xTIZ/hJinfAzN1H1477/oUvxs9+S4BoLq
-      YRuaNCosy5WaZQGmK2DXoLE97ILhpukK9aAO4JW2LbjBJdEZTOg6DQrSluqN
-      k5fmA23NhdoGACwU+guqnJ4jcNDBLWXXsOuJ2J4AKUXJLR5VL+Q=
-
 branches:
   only:
   - master
