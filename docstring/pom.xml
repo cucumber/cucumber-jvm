@@ -10,6 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>docstring</artifactId>
+    <packaging>jar</packaging>
+    <name>Docstring</name>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
+    </properties>
 
     <dependencies>
         <dependency>
