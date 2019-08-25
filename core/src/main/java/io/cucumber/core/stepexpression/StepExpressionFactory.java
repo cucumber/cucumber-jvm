@@ -1,5 +1,7 @@
 package io.cucumber.core.stepexpression;
 
+import io.cucumber.core.docstring.DocString;
+import io.cucumber.core.docstring.DocStringTypeRegistryDocStringConverter;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
@@ -9,18 +11,16 @@ import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-
 public final class StepExpressionFactory {
 
     private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
-    private final DocStringConverter docStringConverter;
+    private final DocStringTypeRegistryDocStringConverter docStringConverter;
 
     public StepExpressionFactory(TypeRegistry registry) {
         this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
-        this.docStringConverter = new DocStringConverter(registry.docStringTypeRegistry());
+        this.docStringConverter = new DocStringTypeRegistryDocStringConverter(registry.docStringTypeRegistry());
     }
 
     public StepExpression createExpression(String expressionString) {
@@ -62,12 +62,9 @@ public final class StepExpressionFactory {
         };
 
         DocStringTransformer<?> docStringTransform = (text, contentType) -> {
+            DocString docString = DocString.create(text, contentType, docStringConverter);
             Type targetType = tableOrDocStringType.resolve();
-            DocString docString = new DocString(text, contentType);
-            if (Object.class.equals(targetType)) {
-                return text;
-            }
-            return docStringConverter.convert(docString, targetType);
+            return docString.convert(Object.class.equals(targetType) ? DocString.class : targetType);
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
     }

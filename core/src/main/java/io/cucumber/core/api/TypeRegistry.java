@@ -1,6 +1,6 @@
 package io.cucumber.core.api;
 
-import io.cucumber.core.stepexpression.DocStringType;
+import io.cucumber.core.docstring.DocStringType;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;

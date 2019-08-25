@@ -1,5 +1,7 @@
 package io.cucumber.core.stepexpression;
 
+import io.cucumber.core.docstring.DocStringType;
+import io.cucumber.core.docstring.DocStringTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;

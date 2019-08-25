@@ -2,6 +2,8 @@ package io.cucumber.core.stepexpression;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.core.docstring.DocString;
+import io.cucumber.core.docstring.DocStringType;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
@@ -104,12 +106,11 @@ class StepExpressionFactoryTest {
     }
 
     @Test
-    void unknown_target_type_transform_doc_string_to_string_object() {
+    void unknown_target_type_transform_doc_string_to_doc_string() {
         String docString = "A rather long and boring string of documentation";
-        String contentType = null;
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
-        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
-        assertThat(match.get(0).getValue(), is(equalTo(docString)));
+        List<Argument> match = expression.match("Given some stuff:", docString, null);
+        assertThat(match.get(0).getValue(), is(equalTo(DocString.create(docString))));
     }
 
     @Test

@@ -38,7 +38,7 @@ public final class ArgumentMatcher {
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
     }
 
-    private List<List<String>> emptyCellsToNull(List<List<String>> cells) {
+    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
         return cells.stream()
             .map(row -> row.stream()
                 .map(s -> s.isEmpty() ? null : s)
