@@ -8,11 +8,29 @@ import java.lang.reflect.Type;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A data table type describes how a doc string should be represented as an
+ * object.
+ */
 @API(status = API.Status.STABLE)
 public final class DocStringType {
     private final Type type;
     private final String contentType;
     private final Transformer transformer;
+
+    /**
+     * Creates a doc string type that can convert a doc string to an object.
+     *
+     * @param type        the type of the object
+     * @param transformer a function that creates an instance of
+     *                    <code>type</code> from the doc string
+     * @param <T>         see <code>type</code>
+     */
+    public <T> DocStringType(Type type, String contentType, Transformer<T> transformer) {
+        this.type = requireNonNull(type);
+        this.contentType = requireNonNull(contentType);
+        this.transformer = requireNonNull(transformer);
+    }
 
     String getContentType() {
         return contentType;
@@ -22,26 +40,20 @@ public final class DocStringType {
         return type;
     }
 
-    public <T> DocStringType(Type type, String contentType, Transformer<T> transformer) {
-        this.type = requireNonNull(type);
-        this.contentType = requireNonNull(contentType);
-        this.transformer = requireNonNull(transformer);
-    }
-
-    public Object transform(String text) {
+    Object transform(String content) {
         try {
-            return transformer.transform(text);
+            return transformer.transform(content);
         } catch (Throwable throwable) {
             throw new CucumberDocStringException(format(
                 "'%s' could not transform%n%s",
-                contentType, DocString.create(text, contentType)),
+                contentType, DocString.create(content, contentType)),
                 throwable);
         }
     }
 
     @FunctionalInterface
     public interface Transformer<T> {
-        T transform(String s) throws Throwable;
+        T transform(String content) throws Throwable;
     }
 
 }

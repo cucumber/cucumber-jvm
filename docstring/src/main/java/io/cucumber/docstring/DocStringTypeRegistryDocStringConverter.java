@@ -25,12 +25,12 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
 
         DocStringType docStringType = docStringTypeRegistry.lookupByContentType(docString.getContentType());
         if (docStringType != null) {
-            return (T) docStringType.transform(docString.getText());
+            return (T) docStringType.transform(docString.getContent());
         }
 
         docStringType = docStringTypeRegistry.lookupByType(targetType);
         if (docStringType != null) {
-            return (T) docStringType.transform(docString.getText());
+            return (T) docStringType.transform(docString.getContent());
         }
 
         if (docString.getContentType() == null) {

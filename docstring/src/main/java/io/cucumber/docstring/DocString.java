@@ -9,9 +9,26 @@ import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
+/**
+ * A doc string. For example:
+ *
+ * <pre>
+ * """application/json
+ * {
+ *   "hello": "world"
+ * }
+ * """
+ * </pre>
+ * <p>
+ * A doc string is either empty or contains some content.
+ * The content type is an optional description of the
+ * content using a <a href=https://tools.ietf.org/html/rfc2616#section-3.7>media-type</.
+ * <p>
+ * A DocString is immutable and thread safe.
+ */
 @API(status = API.Status.STABLE)
 public final class DocString {
-    private final String text;
+    private final String content;
     private final String contentType;
     private final DocStringConverter converter;
 
@@ -31,16 +48,16 @@ public final class DocString {
         return converter.convert(this, type);
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
     public String getContentType() {
         return contentType;
     }
 
-    private DocString(String text, String contentType, DocStringConverter converter) {
-        this.text = requireNonNull(text);
+    private DocString(String content, String contentType, DocStringConverter converter) {
+        this.content = requireNonNull(content);
         this.contentType = contentType;
         this.converter = requireNonNull(converter);
     }
@@ -54,18 +71,18 @@ public final class DocString {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DocString docString = (DocString) o;
-        return text.equals(docString.text) &&
+        return content.equals(docString.content) &&
             Objects.equals(contentType, docString.contentType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, contentType);
+        return Objects.hash(content, contentType);
     }
 
     @Override
     public String toString() {
-        return stream(text.split("\n"))
+        return stream(content.split("\n"))
             .collect(joining(
                 "\n      ",
                 "      \"\"\"" + contentType + "\n      ",
