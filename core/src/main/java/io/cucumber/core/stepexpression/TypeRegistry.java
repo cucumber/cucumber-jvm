@@ -1,7 +1,5 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.docstring.DocStringType;
-import io.cucumber.core.docstring.DocStringTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
@@ -9,6 +7,8 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTableTypeRegistry;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.docstring.DocStringType;
+import io.cucumber.docstring.DocStringTypeRegistry;
 
 import java.util.Locale;
 

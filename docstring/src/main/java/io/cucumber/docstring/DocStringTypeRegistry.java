@@ -1,6 +1,5 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
-import io.cucumber.core.exception.CucumberException;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
@@ -41,9 +40,9 @@ public final class DocStringTypeRegistry {
         docStringTypesByType.put(docStringType.getType(), docStringType);
     }
 
-    private static CucumberException createDuplicateTypeException(DocStringType existing, DocStringType docStringType) {
+    private static CucumberDocStringException createDuplicateTypeException(DocStringType existing, DocStringType docStringType) {
         String contentType = existing.getContentType();
-        return new CucumberException(format("" +
+        return new CucumberDocStringException(format("" +
                 "There is already docstring type registered for '%s' and %s.\n" +
                 "You are trying to add '%s' and %s",
             emptyToAnonymous(contentType),

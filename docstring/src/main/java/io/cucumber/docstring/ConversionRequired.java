@@ -1,7 +1,6 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
-import io.cucumber.core.docstring.DocString.DocStringConverter;
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.docstring.DocString.DocStringConverter;
 
 import java.lang.reflect.Type;
 
@@ -11,7 +10,7 @@ final class ConversionRequired implements DocStringConverter {
 
     @Override
     public <T> T convert(DocString docString, Type type) {
-        throw new CucumberException(format("" +
+        throw new CucumberDocStringException(format("" +
                 "Can't convert DocString to %s. " +
                 "You have to write the conversion for it in this method",
             type

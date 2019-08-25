@@ -1,9 +1,8 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
-import io.cucumber.core.exception.CucumberException;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,8 +12,8 @@ class DocStringTest {
     @Test
     void throws_when_no_converter_defined() {
         DocString docString = DocString.create("hello world");
-        CucumberException exception = assertThrows(
-            CucumberException.class,
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
             () -> docString.convert(Object.class)
         );
         assertThat(exception.getMessage(), is("" +
@@ -57,8 +56,8 @@ class DocStringTest {
             "application/json"
         );
 
-        assertThat(docString, equalTo(other));
-        assertThat(docString.hashCode(), equalTo(other.hashCode()));
+        assertThat(docString, CoreMatchers.equalTo(other));
+        assertThat(docString.hashCode(), CoreMatchers.equalTo(other.hashCode()));
     }
 
     @Test

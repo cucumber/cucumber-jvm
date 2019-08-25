@@ -2,12 +2,12 @@ package io.cucumber.core.stepexpression;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.core.docstring.DocString;
-import io.cucumber.core.docstring.DocStringType;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

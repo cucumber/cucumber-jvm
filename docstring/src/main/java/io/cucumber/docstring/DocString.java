@@ -1,4 +1,4 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
 import org.apiguardian.api.API;
 

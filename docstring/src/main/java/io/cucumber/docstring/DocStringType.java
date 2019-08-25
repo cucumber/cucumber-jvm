@@ -1,11 +1,11 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
 
-import io.cucumber.core.exception.CucumberException;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
@@ -32,8 +32,10 @@ public final class DocStringType {
         try {
             return transformer.transform(text);
         } catch (Throwable throwable) {
-            throw new CucumberException(String.format(
-                "'%s' could not transform%n%s", contentType, DocString.create(text, contentType)), throwable);
+            throw new CucumberDocStringException(format(
+                "'%s' could not transform%n%s",
+                contentType, DocString.create(text, contentType)),
+                throwable);
         }
     }
 

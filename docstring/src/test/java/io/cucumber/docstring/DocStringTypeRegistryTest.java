@@ -1,10 +1,9 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.cucumber.core.exception.CucumberException;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,11 +20,11 @@ class DocStringTypeRegistryTest {
             (String s) -> s
         );
 
-        CucumberException actualThrown = assertThrows(
-            CucumberException.class, () ->
+        CucumberDocStringException actualThrown = assertThrows(
+            CucumberDocStringException.class, () ->
                 registry.defineDocStringType(docStringType)
         );
-        assertThat(actualThrown.getMessage(), is(equalTo(
+        MatcherAssert.assertThat(actualThrown.getMessage(), is(equalTo(
             "There is already docstring type registered for '[anonymous]' and java.lang.String.\n" +
                 "You are trying to add '[anonymous]' and java.lang.String"
         )));
@@ -45,11 +44,11 @@ class DocStringTypeRegistryTest {
             (String s) -> null
         );
 
-        CucumberException exception = assertThrows(
-            CucumberException.class,
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
             () -> registry.defineDocStringType(duplicate)
         );
-        assertThat(exception.getMessage(), is("" +
+        MatcherAssert.assertThat(exception.getMessage(), is("" +
             "There is already docstring type registered for 'json' and com.fasterxml.jackson.databind.JsonNode.\n" +
             "You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode"
         ));

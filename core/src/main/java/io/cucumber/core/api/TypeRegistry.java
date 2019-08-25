@@ -1,11 +1,11 @@
 package io.cucumber.core.api;
 
-import io.cucumber.core.docstring.DocStringType;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.docstring.DocStringType;
 import org.apiguardian.api.API;
 
 /**

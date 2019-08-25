@@ -1,12 +1,12 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.docstring.DocString;
-import io.cucumber.core.docstring.DocStringTypeRegistryDocStringConverter;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
 
 import java.lang.reflect.Type;
 import java.util.List;

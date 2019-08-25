@@ -1,8 +1,7 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -74,8 +73,8 @@ class DocStringTypeRegistryDocStringConverterTest {
             "application/json"
         );
 
-        CucumberException exception = assertThrows(
-            CucumberException.class,
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class)
         );
 
@@ -90,8 +89,8 @@ class DocStringTypeRegistryDocStringConverterTest {
             "{\"hello\":\"world\"}"
         );
 
-        CucumberException exception = assertThrows(
-            CucumberException.class,
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class)
         );
 
@@ -115,8 +114,8 @@ class DocStringTypeRegistryDocStringConverterTest {
             "json"
         );
 
-        CucumberException exception = assertThrows(
-            CucumberException.class,
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class)
         );
 

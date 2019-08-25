@@ -1,7 +1,6 @@
-package io.cucumber.core.docstring;
+package io.cucumber.docstring;
 
-import io.cucumber.core.docstring.DocString.DocStringConverter;
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.docstring.DocString.DocStringConverter;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
@@ -35,13 +34,13 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
         }
 
         if (docString.getContentType() == null) {
-            throw new CucumberException(format(
+            throw new CucumberDocStringException(format(
                 "It appears you did not register docstring type for %s",
                 targetType.getTypeName()
             ));
         }
 
-        throw new CucumberException(format(
+        throw new CucumberDocStringException(format(
             "It appears you did not register docstring type for '%s' or %s",
             docString.getContentType(),
             targetType.getTypeName()

@@ -1,12 +1,12 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.docstring.DocString;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

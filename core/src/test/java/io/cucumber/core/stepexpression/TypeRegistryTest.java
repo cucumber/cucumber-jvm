@@ -1,7 +1,6 @@
 package io.cucumber.core.stepexpression;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.cucumber.core.docstring.DocStringType;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
@@ -10,6 +9,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
