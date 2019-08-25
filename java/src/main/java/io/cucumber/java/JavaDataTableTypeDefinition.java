@@ -65,7 +65,7 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(DataTableType.class)
+            .addAnnotation(io.cucumber.java.DataTableType.class)
             .addSignature("public Author author(DataTable table)")
             .addSignature("public Author author(List<String> row)")
             .addSignature("public Author author(Map<String, String> entry)")

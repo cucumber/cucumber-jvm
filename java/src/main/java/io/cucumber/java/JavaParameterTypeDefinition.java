@@ -59,7 +59,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(ParameterType.class)
+            .addAnnotation(io.cucumber.java.ParameterType.class)
             .addSignature("public Author parameterName(String all)")
             .addSignature("public Author parameterName(String captureGroup1, String captureGroup2, ...ect )")
             .addSignature("public Author parameterName(String... captureGroups)")
