@@ -9,8 +9,6 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
@@ -82,28 +80,14 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return transformer;
     }
 
-    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
+    Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
         Object[] args;
         if (method.getParameterTypes().length == 3) {
             args = new Object[]{fromValue, toValueType, cellTransformer};
         } else {
             args = new Object[]{fromValue, toValueType};
         }
-
-        CamelCaseStringConverter converter = new CamelCaseStringConverter();
-        if (method.getAnnotation(DefaultDataTableEntryTransformer.class).titleCaseHeaders()) {
-            args[0] = convertToCamelCase((Map<String, Object>)args[0]);
-        }
         return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
-    }
-
-    private Map<String, Object> convertToCamelCase(Map<String, Object> map) {
-        Map<String, Object> newMap = new HashMap<>();
-        CamelCaseStringConverter converter = new CamelCaseStringConverter();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            newMap.put(converter.map(entry.getKey()), entry.getValue());
-        }
-        return newMap;
     }
 
 }
