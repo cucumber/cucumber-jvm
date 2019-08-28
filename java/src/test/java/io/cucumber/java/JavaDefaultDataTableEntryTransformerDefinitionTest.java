@@ -2,6 +2,8 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.TableCellByTypeTransformer;
+import java.lang.reflect.Constructor;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -9,9 +11,12 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -131,6 +136,33 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"testString", "TestString", "Test String", "test String", "Test string"})
+    void convert_to_camel_case(String header) throws Throwable {
+        String expectedHeader = "testString";
+        String actualHeader = toCamelCase(header);
+        Assert.assertThat(actualHeader, equalTo(expectedHeader));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "threeWordsString", "ThreeWordsString", "three Words String", "Three Words String", "Three words String",
+        "Three Words string", "Three words string", "three Words string", "three words String", "threeWords string",
+        "three WordsString", "three wordsString",
+    })
+    void convert_three_words_to_camel_case(String header) throws Throwable {
+        String expectedHeader = "threeWordsString";
+        String actualHeader = toCamelCase(header);
+        Assert.assertThat(actualHeader, equalTo(expectedHeader));
+    }
+
+    private String toCamelCase(String header) throws Throwable{
+        Constructor constructor = JavaDefaultDataTableEntryTransformerDefinition.class.getDeclaredClasses()[0].getDeclaredConstructor();
+        constructor.setAccessible(true);
+        Object camelCaseStringConverter = constructor.newInstance();
+        Method method = camelCaseStringConverter.getClass().getDeclaredMethod("toCamelCase", String.class);
+        return (String) method.invoke(camelCaseStringConverter, header);
+    }
 
     public Object invalid_optional_third_type(Map<String, String> fromValue, Type toValueType, String cellTransformer) {
         return null;
