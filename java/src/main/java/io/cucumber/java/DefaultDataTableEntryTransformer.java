@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
 public @interface DefaultDataTableEntryTransformer {
-    boolean titleCaseHeaders() default false;
+    boolean headersToProperties() default false;
 }

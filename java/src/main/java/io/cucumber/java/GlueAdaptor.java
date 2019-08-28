@@ -54,12 +54,11 @@ final class GlueAdaptor {
         } else if (annotation.annotationType().equals(DefaultParameterTransformer.class)) {
             glue.addDefaultParameterTransformer(new JavaDefaultParameterTransformerDefinition(method, lookup));
         } else if (annotation.annotationType().equals(DefaultDataTableEntryTransformer.class)) {
-            if (method.getAnnotation(DefaultDataTableEntryTransformer.class).titleCaseHeaders()) {
-                glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableCapitalCaseTransformerDefinition(method, lookup));
+            boolean headersConversionRequired = false;
+            if (method.getAnnotation(DefaultDataTableEntryTransformer.class).headersToProperties()) {
+                headersConversionRequired = true;
             }
-            else {
-                glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
-            }
+            glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, headersConversionRequired));
         } else if (annotation.annotationType().equals(DefaultDataTableCellTransformer.class)) {
             glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup));
         }
