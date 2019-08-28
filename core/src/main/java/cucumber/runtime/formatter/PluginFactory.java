@@ -43,6 +43,7 @@ public final class PluginFactory {
         put("json", JSONFormatter.class);
         put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
+        put("undefined", UndefinedStepsPrinter.class);
         put("default_summary", DefaultSummaryPrinter.class);
         put("summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);

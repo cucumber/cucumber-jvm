@@ -47,6 +47,12 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
         return new RuntimeOptions();
     }
 
+    public void addUndefinedStepsPrinterIfSummaryNotDefined() {
+        if (pluginSummaryPrinterNames.isEmpty()) {
+            pluginSummaryPrinterNames.add("undefined");
+        }
+    }
+
     public int getCount() {
         return count;
     }

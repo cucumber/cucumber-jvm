@@ -3,16 +3,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ## [4.7.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
-### Added
- 
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
-
+ * [JUnit] JUnit will always print unused steps (M.P. Korstanje) 
+ * [TestNG] TestNG will always print unused steps (M.P. Korstanje)
+ 
 ## [4.7.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...v4.7.1) (2019-07-28)
 
 ### Fixed

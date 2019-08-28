@@ -2,8 +2,16 @@ package io.cucumber.testng;
 
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestRunStarted;
-import cucumber.runner.*;
-import cucumber.runtime.*;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
+import cucumber.runner.ThreadLocalRunnerSupplier;
+import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceEventBus;
+import cucumber.runtime.BackendModuleBackendSupplier;
+import cucumber.runtime.ClassFinder;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.Env;
+import cucumber.runtime.FeaturePathFeatureSupplier;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
@@ -13,9 +21,9 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
 import gherkin.events.PickleEvent;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.EnvironmentOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import org.apiguardian.api.API;
 
 import java.util.ArrayList;
@@ -51,6 +59,8 @@ public final class TestNGCucumberRunner {
         runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
             .parse(Env.INSTANCE)
             .build(annotationOptions);
+
+        runtimeOptions.addUndefinedStepsPrinterIfSummaryNotDefined();
 
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         BackendModuleBackendSupplier backendSupplier = new BackendModuleBackendSupplier(resourceLoader, classFinder, runtimeOptions);

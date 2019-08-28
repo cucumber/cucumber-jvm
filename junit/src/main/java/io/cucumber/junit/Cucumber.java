@@ -11,10 +11,7 @@ import cucumber.runtime.BackendModuleBackendSupplier;
 import cucumber.runtime.BackendSupplier;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Env;
-import io.cucumber.core.options.EnvironmentOptionsParser;
 import cucumber.runtime.FeaturePathFeatureSupplier;
-import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import cucumber.runtime.filter.Filters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.Plugins;
@@ -23,6 +20,9 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.FeatureLoader;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.options.EnvironmentOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -94,6 +94,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = new EnvironmentOptionsParser(resourceLoader)
             .parse(Env.INSTANCE)
             .build(annotationOptions);
+
+        runtimeOptions.addUndefinedStepsPrinterIfSummaryNotDefined();
 
         JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
             .parse(clazz)
