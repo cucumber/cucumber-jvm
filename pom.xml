@@ -57,6 +57,18 @@
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>
+
+        <project.Automatic-Module-Name>FIXME</project.Automatic-Module-Name>
+        <!-- Surefire/Failsafe jpms override(s) -->
+        <project.failsafe.argLine.jpms></project.failsafe.argLine.jpms>
+        <project.failsafe.argLine.jpms.global></project.failsafe.argLine.jpms.global>
+        <project.failsafe.argLine.jpms.module></project.failsafe.argLine.jpms.module>
+        <project.surefire.argLine.jpms></project.surefire.argLine.jpms>
+        <project.surefire.argLine.jpms.global>
+            --add-opens org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED
+            --add-opens org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED
+        </project.surefire.argLine.jpms.global>
+        <project.surefire.argLine.jpms.module></project.surefire.argLine.jpms.module>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -244,6 +256,28 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.22.1</version>
+                        <configuration>
+                            <argLine>${project.failsafe.argLine.jpms}</argLine>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.1</version>
+                        <configuration>
+                            <argLine>${project.surefire.argLine.jpms}</argLine>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
                         <executions>
@@ -266,6 +300,8 @@
             <properties>
                 <project.custom.java.version>11</project.custom.java.version>
                 <maven.compiler.release>11</maven.compiler.release>
+                <project.failsafe.argLine.jpms>${project.failsafe.argLine.jpms.global} ${project.failsafe.argLine.jpms.module}</project.failsafe.argLine.jpms>
+                <project.surefire.argLine.jpms>${project.surefire.argLine.jpms.global} ${project.surefire.argLine.jpms.module}</project.surefire.argLine.jpms>
             </properties>
         </profile>
 

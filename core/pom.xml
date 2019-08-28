@@ -18,6 +18,25 @@
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
+        <project.surefire.argLine.jpms.module>
+            --add-opens io.cucumber.core/io.cucumber.core.api=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.backend=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.cli=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.logging=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.event=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.eventbus=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.exception=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.feature=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.filter=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.io=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.options=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.plugin=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.reflection=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.runner=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.runtime=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.snippets=ALL-UNNAMED
+            --add-opens io.cucumber.core/io.cucumber.core.stepexpression=ALL-UNNAMED
+        </project.surefire.argLine.jpms.module>
     </properties>
 
     <dependencies>
