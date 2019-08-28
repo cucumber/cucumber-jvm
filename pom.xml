@@ -199,7 +199,7 @@
         <module>spring</module>
         <module>guice</module>
         <module>weld</module>
-<!--        <module>openejb</module>-->
+        <module>openejb</module>
         <module>needle</module>
         <module>cdi2</module>
     </modules>
