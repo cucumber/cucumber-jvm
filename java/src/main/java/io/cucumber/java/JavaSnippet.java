@@ -11,6 +11,6 @@ final class JavaSnippet extends AbstractJavaSnippet {
             "public void {2}({3}) '{'\n" +
             "    // {4}\n" +
             "{5}    throw new " + PendingException.class.getName() + "();\n" +
-            "'}'\n");
+            "'}'");
     }
 }

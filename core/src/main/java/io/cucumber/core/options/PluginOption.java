@@ -1,9 +1,5 @@
 package io.cucumber.core.options;
 
-import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.SummaryPrinter;
-import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.EventListener;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -20,6 +16,10 @@ import io.cucumber.core.plugin.TestNGFormatter;
 import io.cucumber.core.plugin.TimelineFormatter;
 import io.cucumber.core.plugin.UnusedStepsSummaryPrinter;
 import io.cucumber.core.plugin.UsageFormatter;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.Plugin;
+import io.cucumber.plugin.SummaryPrinter;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -31,19 +31,19 @@ public class PluginOption implements Options.Plugin {
 
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
-        put("junit", JUnitFormatter.class);
-        put("testng", TestNGFormatter.class);
+        put("default_summary", DefaultSummaryPrinter.class);
         put("html", HTMLFormatter.class);
+        put("json", JSONFormatter.class);
+        put("junit", JUnitFormatter.class);
+        put("null_summary", NullSummaryPrinter.class);
         put("pretty", PrettyFormatter.class);
         put("progress", ProgressFormatter.class);
-        put("json", JSONFormatter.class);
-        put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
         put("summary", DefaultSummaryPrinter.class);
-        put("default_summary", DefaultSummaryPrinter.class);
-        put("null_summary", NullSummaryPrinter.class);
-        put("unused", UnusedStepsSummaryPrinter.class);
+        put("testng", TestNGFormatter.class);
         put("timeline", TimelineFormatter.class);
+        put("unused", UnusedStepsSummaryPrinter.class);
+        put("usage", UsageFormatter.class);
     }};
 
     // Refuse plugins known to implement the old API

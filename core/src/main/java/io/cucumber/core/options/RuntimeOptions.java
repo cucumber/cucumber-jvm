@@ -53,6 +53,17 @@ public final class RuntimeOptions implements
         return new RuntimeOptions();
     }
 
+    void addDefaultFormatterIfAbsent(){
+        if (formatters.isEmpty()) {
+            formatters.add(PluginOption.parse("progress"));
+        }
+    }
+    void addDefaultSummaryPrinterIfAbsent(){
+        if (summaryPrinters.isEmpty()) {
+            summaryPrinters.add(PluginOption.parse("default_summary"));
+        }
+    }
+
     public int getCount() {
         return count;
     }

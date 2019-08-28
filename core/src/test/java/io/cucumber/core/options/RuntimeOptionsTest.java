@@ -165,7 +165,7 @@ class RuntimeOptionsTest {
     void creates_progress_formatter_as_default() {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse()
-            .addDefaultFormatterIfNotPresent()
+            .addDefaultFormatterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -177,7 +177,7 @@ class RuntimeOptionsTest {
     void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("--plugin", "pretty")
-            .addDefaultSummaryPrinterIfNotPresent()
+            .addDefaultSummaryPrinterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));

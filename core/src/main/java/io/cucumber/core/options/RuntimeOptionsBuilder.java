@@ -30,6 +30,8 @@ public final class RuntimeOptionsBuilder {
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
+    private boolean addDefaultSummaryPrinterIfAbsent;
+    private boolean addDefaultFormatterIfAbsent;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -124,6 +126,14 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
         }
 
+        if(addDefaultFormatterIfAbsent) {
+            runtimeOptions.addDefaultFormatterIfAbsent();
+        }
+
+        if(addDefaultSummaryPrinterIfAbsent) {
+            runtimeOptions.addDefaultSummaryPrinterIfAbsent();
+        }
+
         return runtimeOptions;
     }
 
@@ -185,13 +195,13 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder addDefaultSummaryPrinterIfNotPresent() {
-        parsedPluginData.addDefaultSummaryPrinterIfNotPresent();
+    public RuntimeOptionsBuilder addDefaultSummaryPrinterIfAbsent() {
+        this.addDefaultSummaryPrinterIfAbsent = true;
         return this;
     }
 
-    public RuntimeOptionsBuilder addDefaultFormatterIfNotPresent() {
-        parsedPluginData.addDefaultFormatterIfNotPresent();
+    public RuntimeOptionsBuilder addDefaultFormatterIfAbsent() {
+        this.addDefaultFormatterIfAbsent = true;
         return this;
     }
 
@@ -211,18 +221,6 @@ public final class RuntimeOptionsBuilder {
                 formatters.addName(pluginOption, isAddPlugin);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);
-            }
-        }
-
-        void addDefaultSummaryPrinterIfNotPresent() {
-            if (summaryPrinters.names.isEmpty()) {
-                addPluginName("summary", false);
-            }
-        }
-
-        void addDefaultFormatterIfNotPresent() {
-            if (formatters.names.isEmpty()) {
-                addPluginName("progress", false);
             }
         }
 

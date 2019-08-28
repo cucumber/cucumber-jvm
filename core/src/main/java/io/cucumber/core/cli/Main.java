@@ -50,8 +50,8 @@ public class Main {
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(argv)
-            .addDefaultFormatterIfNotPresent()
-            .addDefaultSummaryPrinterIfNotPresent()
+            .addDefaultFormatterIfAbsent()
+            .addDefaultSummaryPrinterIfAbsent()
             .build(systemOptions);
 
 
