@@ -111,7 +111,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>io.cucumber.core.api.cli.Main</mainClass>
+                            <mainClass>io.cucumber.core.cli.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
