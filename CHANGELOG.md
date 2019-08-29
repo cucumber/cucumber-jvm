@@ -69,8 +69,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.7.2](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v4.7.2) (2019-08-28)
 
 ### Fixed
- * [JUnit] JUnit will always print unused steps (M.P. Korstanje) 
- * [TestNG] TestNG will always print unused steps (M.P. Korstanje)  
+ * [JUnit] JUnit will always print undefined steps (M.P. Korstanje) 
+ * [TestNG] TestNG will always print undefined steps (M.P. Korstanje)  
  
 ## [4.7.1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...v4.7.1) (2019-07-28)
 
