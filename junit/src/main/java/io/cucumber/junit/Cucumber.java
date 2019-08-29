@@ -65,11 +65,12 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Options can be provided in by (order of precedence):
  * <ol>
- * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
+ * <li>Properties from {@link System#getProperties()} ()}</li>
+ * <li>Properties from in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@code cucumber.properties}</li>
+ * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
+ * For available properties see {@link Constants}.
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
  * These will be executed before and after all scenarios. Using these is not recommended as it limits the portability
@@ -152,9 +153,9 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
-                .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
-                .filter(runner -> !runner.isEmpty())
-                .collect(toList());
+            .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
+            .filter(runner -> !runner.isEmpty())
+            .collect(toList());
     }
 
     @Override
@@ -176,6 +177,12 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
     protected Statement childrenInvoker(RunNotifier notifier) {
         Statement runFeatures = super.childrenInvoker(notifier);
         return new RunCucumber(runFeatures);
+    }
+
+    @Override
+    public void setScheduler(RunnerScheduler scheduler) {
+        super.setScheduler(scheduler);
+        multiThreadingAssumed = true;
     }
 
     class RunCucumber extends Statement {
@@ -200,11 +207,5 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
         }
-    }
-
-    @Override
-    public void setScheduler(RunnerScheduler scheduler) {
-        super.setScheduler(scheduler);
-        multiThreadingAssumed = true;
     }
 }

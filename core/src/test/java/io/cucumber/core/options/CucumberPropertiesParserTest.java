@@ -76,7 +76,7 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_features() {
-        properties.put(Constants.FEATURE_PROPERTY_NAME, "com/example.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "com/example.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
             URI.create("file:com/example.feature")
@@ -154,14 +154,6 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.RERUN_FILE_PROPERTY_NAME, path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("file:path/to.feature")));
-    }
-
-    @Test
-    void should_parse_glue_file() throws IOException {
-        Path path = mockFileResource("com.example.app");
-        properties.put(Constants.GLUE_FILE_PROPERTY_NAME, path.toString());
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), containsInAnyOrder(URI.create("classpath:com/example/app")));
     }
 
     private Path mockFileResource(String... contents) throws IOException {

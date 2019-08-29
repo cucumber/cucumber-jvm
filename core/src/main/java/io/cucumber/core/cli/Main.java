@@ -1,7 +1,5 @@
 package io.cucumber.core.cli;
 
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberProperties;
@@ -13,13 +11,14 @@ import org.apiguardian.api.API;
 /**
  * Cucumber Main. Runs Cucumber as a CLI.
  * <p>
- * Options can be provided in order of precedence through:
+ * Options can be provided in by (order of precedence):
  * <ol>
- * <li>command line arguments</li>
- * <li>{@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()}</li>
- * <li>{@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
- * <li>{@value Constants#OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
+ * <li>Command line arguments</li>
+ * <li>Properties from {@link System#getProperties()}</li>
+ * <li>Properties from in {@link System#getenv()}</li>
+ * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
+ * For available properties see {@link Constants}.
  */
 @API(status = API.Status.STABLE)
 public class Main {

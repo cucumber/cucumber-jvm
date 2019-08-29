@@ -21,10 +21,9 @@ import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.FEATURE_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.GLUE_FILE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
@@ -82,7 +81,7 @@ public final class CucumberPropertiesParser {
         );
 
         parse(properties,
-            FEATURE_PROPERTY_NAME,
+            FEATURES_PROPERTY_NAME,
             FeatureWithLines::parse,
             builder::addFeature
         );
@@ -108,12 +107,6 @@ public final class CucumberPropertiesParser {
         parse(properties,
             GLUE_PROPERTY_NAME,
             GluePath::parse,
-            builder::addGlue
-        );
-
-        parseAll(properties,
-            GLUE_FILE_PROPERTY_NAME,
-            this::parseGlueFile,
             builder::addGlue
         );
 

@@ -43,13 +43,14 @@ import static java.util.stream.Collectors.toList;
 /**
  * Glue code for running Cucumber via TestNG.
  * <p>
- * Options can be provided in order of precedence by:
+ * Options can be provided in by (order of precedence):
  * <ol>
- * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
+ * <li>Properties from {@link System#getProperties()}</li>
+ * <li>Properties from in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>Setting {@value Constants#OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
+ * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
+ * For available properties see {@link Constants}.
  */
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {

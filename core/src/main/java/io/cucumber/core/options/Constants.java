@@ -61,9 +61,19 @@ public final class Constants {
     public static final String EXECUTION_STRICT_PROPERTY_NAME = "cucumber.execution.strict";
 
     /**
+     * Property name used to enable wip execution: {@value}
+     * <p>
+     * When using wip execution Cucumber will fail if there are any passing
+     * scenarios.
+     * <p>
+     * By default, wip execution is disabled
+     */
+    public static final String WIP_PROPERTY_NAME = "cucumber.execution.wip";
+
+    /**
      * Property name used to set feature location: {@value}
      * <p>
-     * {@code path} Load the files with the extension ".feature" for the
+     * {@code path/to/dir} Load the files with the extension ".feature" for the
      * directory {@code path} and its sub directories.
      * <p>
      * {@code path/name.feature} Load the feature file {@code path/name.feature}
@@ -80,11 +90,10 @@ public final class Constants {
      * <p>
      * {@code @classpath:path/file} Load {@code path/file} from the classpath and
      * parse feature paths.
-     * <p>
      *
      * @see io.cucumber.core.feature.FeatureWithLines
      */
-    public static final String FEATURE_PROPERTY_NAME = "cucumber.feature";
+    public static final String FEATURES_PROPERTY_NAME = "cucumber.features";
 
     /**
      * Property name to set a file from which feature locations will be read: {@value}
@@ -93,7 +102,7 @@ public final class Constants {
      * a uri or path e.g.: {@code path/to/feature/dir}.
      *
      * @see io.cucumber.core.feature.FeatureWithLines
-     * @see #FEATURE_PROPERTY_NAME
+     * @see #FEATURES_PROPERTY_NAME
      */
     public static final String RERUN_FILE_PROPERTY_NAME = "cucumber.rerun-file";
 
@@ -124,16 +133,6 @@ public final class Constants {
      */
     public static final String GLUE_PROPERTY_NAME = "cucumber.glue";
 
-    /**
-     * Property name to set a file from which glue paths will be read: {@value}
-     * <p>
-     * Glue paths must be separated by a new line. The glue path is
-     * a uri or package name e.g.: {@code com.example.app.steps}.
-     *
-     * @see io.cucumber.core.feature.GluePath
-     * @see #GLUE_PROPERTY_NAME
-     */
-    public static final String GLUE_FILE_PROPERTY_NAME = "cucumber.glue-file";
     /**
      * Property name used to select a specific object factory implementation:
      * {@value}
@@ -185,16 +184,6 @@ public final class Constants {
      * By defaults are generated using the under score naming convention.
      */
     public static final String SNIPPET_TYPE_PROPERTY_NAME = "cucumber.snippet-type";
-
-    /**
-     * Property name used to enable wip execution: {@value}
-     * <p>
-     * When using wip execution Cucumber will fail if there are any passing
-     * scenarios.
-     * <p>
-     * By default, wip execution is disabled
-     */
-    public static final String WIP_PROPERTY_NAME = "cucumber.wip";
 
     private Constants() {
 
