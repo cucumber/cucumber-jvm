@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.TableCellByTypeTransformer;
-import java.lang.reflect.Constructor;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
     private final Map<String, String> fromValue = singletonMap("key", "value");
+    private final JavaDefaultDataTableEntryTransformerDefinition.CamelCaseStringConverter camelCaseConverter
+        = new JavaDefaultDataTableEntryTransformerDefinition.CamelCaseStringConverter();
     private final Lookup lookup = new Lookup() {
 
         @Override
@@ -140,7 +141,7 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
     @ValueSource(strings = {"testString", "TestString", "Test String", "test String", "Test string"})
     void convert_to_camel_case(String header) throws Throwable {
         String expectedHeader = "testString";
-        String actualHeader = toCamelCase(header);
+        String actualHeader = camelCaseConverter.toCamelCase(header);
         Assert.assertThat(actualHeader, equalTo(expectedHeader));
     }
 
@@ -152,16 +153,8 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
     })
     void convert_three_words_to_camel_case(String header) throws Throwable {
         String expectedHeader = "threeWordsString";
-        String actualHeader = toCamelCase(header);
+        String actualHeader = camelCaseConverter.toCamelCase(header);
         Assert.assertThat(actualHeader, equalTo(expectedHeader));
-    }
-
-    private String toCamelCase(String header) throws Throwable{
-        Constructor constructor = JavaDefaultDataTableEntryTransformerDefinition.class.getDeclaredClasses()[0].getDeclaredConstructor();
-        constructor.setAccessible(true);
-        Object camelCaseStringConverter = constructor.newInstance();
-        Method method = camelCaseStringConverter.getClass().getDeclaredMethod("toCamelCase", String.class);
-        return (String) method.invoke(camelCaseStringConverter, header);
     }
 
     public Object invalid_optional_third_type(Map<String, String> fromValue, Type toValueType, String cellTransformer) {

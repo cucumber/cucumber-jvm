@@ -114,7 +114,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return newMap;
     }
 
-    private static class CamelCaseStringConverter {
+    static class CamelCaseStringConverter {
         private static final String WHITESPACE = " ";
         private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
