@@ -12,6 +12,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.util.List;
 import java.util.function.Predicate;
@@ -27,25 +28,27 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private final JUnitOptions options;
     private Description description;
+    private final Annotation[] annotations;
 
-    static FeatureRunner create(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) {
+    static FeatureRunner create(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options, Annotation... annotations) {
         try {
-            return new FeatureRunner(feature, filter, runners, options);
+            return new FeatureRunner(feature, filter, runners, options, annotations);
         } catch (InitializationError e) {
             throw new CucumberException("Failed to create scenario runner", e);
         }
     }
 
-    private FeatureRunner(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
+    private FeatureRunner(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options, Annotation... annotations) throws InitializationError {
         super(null);
         this.cucumberFeature = feature;
         this.options = options;
         this.children = feature.getPickles().stream()
             .filter(filter).
                 map(pickleEvent -> options.stepNotifications()
-                    ? withStepDescriptions(runners, pickleEvent, options)
-                    : withNoStepDescriptions(feature.getName(), runners, pickleEvent, options))
+                    ? withStepDescriptions(runners, pickleEvent, options, annotations)
+                    : withNoStepDescriptions(feature.getName(), runners, pickleEvent, options, annotations))
             .collect(toList());
+        this.annotations = annotations;
     }
 
     @Override
@@ -56,7 +59,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature));
+            description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature), annotations);
             getChildren().forEach(child -> description.addChild(describeChild(child)));
         }
         return description;

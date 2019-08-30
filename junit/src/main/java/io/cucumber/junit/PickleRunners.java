@@ -11,6 +11,8 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,17 +32,17 @@ final class PickleRunners {
 
     }
 
-    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions options) {
+    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions options, Annotation... annotations) {
         try {
-            return new WithStepDescriptions(runnerSupplier, pickle, options);
+            return new WithStepDescriptions(runnerSupplier, pickle, options, annotations);
         } catch (InitializationError e) {
             throw new CucumberException("Failed to create scenario runner", e);
         }
     }
 
 
-    static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions) {
-        return new NoStepDescriptions(featureName, runnerSupplier, pickle, jUnitOptions);
+    static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions, Annotation... annotations) {
+        return new NoStepDescriptions(featureName, runnerSupplier, pickle, jUnitOptions, annotations);
     }
 
 
@@ -50,12 +52,14 @@ final class PickleRunners {
         private final JUnitOptions jUnitOptions;
         private final Map<CucumberStep, Description> stepDescriptions = new HashMap<>();
         private Description description;
+        private final Annotation[] annotations;
 
-        WithStepDescriptions(RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
+        WithStepDescriptions(RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions, Annotation... annotations) throws InitializationError {
             super(null);
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
+            this.annotations = annotations;
         }
 
         @Override
@@ -73,7 +77,7 @@ final class PickleRunners {
         @Override
         public Description getDescription() {
             if (description == null) {
-                description = Description.createSuiteDescription(getName(), new PickleId(pickle));
+                description = Description.createSuiteDescription(getName(), new PickleId(pickle), annotations);
                 getChildren().forEach(step -> description.addChild(describeChild(step)));
             }
             return description;
@@ -85,6 +89,7 @@ final class PickleRunners {
             if (description == null) {
                 String testName = createName(step.getText(), jUnitOptions.filenameCompatibleNames());
                 description = Description.createTestDescription(getName(), testName, new PickleStepId(pickle, step));
+                setAnnotations(description, annotations);
                 stepDescriptions.put(step, description);
             }
             return description;
@@ -116,12 +121,14 @@ final class PickleRunners {
         private final CucumberPickle pickle;
         private final JUnitOptions jUnitOptions;
         private Description description;
+        private final Annotation[] annotations;
 
-        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions) {
+        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions, Annotation... annotations) {
             this.featureName = featureName;
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
+            this.annotations = annotations;
         }
 
         @Override
@@ -130,6 +137,7 @@ final class PickleRunners {
                 String className = createName(featureName, jUnitOptions.filenameCompatibleNames());
                 String name = createName(pickle.getName(), jUnitOptions.filenameCompatibleNames());
                 description = Description.createTestDescription(className, name, new PickleId(pickle));
+                setAnnotations(description, annotations);
             }
             return description;
         }
@@ -219,4 +227,14 @@ final class PickleRunners {
         }
     }
 
+    private static void setAnnotations(Description description, Annotation... annotations) {
+        try {
+            // HACK ALERT! Could not find another way without upstream junit changes
+            Field field = Description.class.getDeclaredField("fAnnotations");
+            field.setAccessible(true);
+            field.set(description, annotations);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

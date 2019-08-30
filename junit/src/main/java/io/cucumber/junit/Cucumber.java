@@ -40,6 +40,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
+import java.lang.annotation.Annotation;
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
@@ -152,8 +153,9 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
+        Annotation[] annotations = clazz.getAnnotations();
         this.children = features.stream()
-            .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
+            .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions, annotations))
             .filter(runner -> !runner.isEmpty())
             .collect(toList());
     }

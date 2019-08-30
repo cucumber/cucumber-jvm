@@ -1,14 +1,19 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
+import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.experimental.ParallelComputer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.Description;
+import org.junit.runner.FilterFactory;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
@@ -16,6 +21,7 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,6 +30,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -170,6 +177,15 @@ class CucumberTest {
         assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 
+    @Test
+    void testThatFilteringBasedOnJunitCategoriesWorks() throws InitializationError, NoTestsRemainException, FilterFactory.FilterNotCreatedException {
+        Cucumber cucumber = new Cucumber(CategoryFeature.class);
+        cucumber.filter(CategoryFilterFactory.includeCategory(UsedCategory.class, CategoryFeature.class.getAnnotations()));
+        assertThat(cucumber.getChildren(), is(iterableWithSize(2)));
+        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().get(1).getName(), is(equalTo("Feature B")));
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static class ImplicitFeatureAndGluePath {
     }
@@ -202,4 +218,8 @@ class CucumberTest {
 
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @Category(UsedCategory.class)
+    public static class CategoryFeature {
+    }
 }
