@@ -14,11 +14,11 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
 
     private final io.cucumber.docstring.DocStringType docStringType;
 
-    JavaDocStringTypeDefinition(String name, Method method, Lookup lookup) {
+    JavaDocStringTypeDefinition(String contentType, Method method, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.docStringType = new DocStringType(
             this.method.getReturnType(),
-            name.isEmpty() ? method.getName() : name,
+            contentType.isEmpty() ? method.getName() : contentType,
             this::execute
         );
     }
@@ -26,9 +26,6 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
     private static Method requireValidMethod(Method method) {
         Type returnType = method.getGenericReturnType();
         if (Void.class.equals(returnType) || void.class.equals(returnType)) {
-            throw createInvalidSignatureException(method);
-        }
-        if (!(returnType instanceof Class)) {
             throw createInvalidSignatureException(method);
         }
 
@@ -60,7 +57,7 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
     }
 
     @Override
-    public DocStringType parameterType() {
+    public DocStringType docStringType() {
         return docStringType;
     }
 }

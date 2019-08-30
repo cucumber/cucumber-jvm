@@ -32,16 +32,16 @@ public final class DocString {
     private final String contentType;
     private final DocStringConverter converter;
 
-    public static DocString create(String text, String contentType, DocStringConverter converter) {
-        return new DocString(text, contentType, converter);
+    public static DocString create(String content, String contentType, DocStringConverter converter) {
+        return new DocString(content, contentType, converter);
     }
 
-    public static DocString create(String docString, String contentType) {
-        return create(docString, contentType, new ConversionRequired());
+    public static DocString create(String content, String contentType) {
+        return create(content, contentType, new ConversionRequired());
     }
 
-    public static DocString create(String docString) {
-        return create(docString, null);
+    public static DocString create(String content) {
+        return create(content, null);
     }
 
     public Object convert(Type type) {

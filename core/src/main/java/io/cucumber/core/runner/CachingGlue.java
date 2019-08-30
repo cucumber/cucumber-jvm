@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
@@ -40,6 +41,7 @@ final class CachingGlue implements Glue {
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
     private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
+    private final List<DocStringTypeDefinition> docStringTypeDefinitions = new ArrayList<>();
 
     private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
@@ -117,6 +119,11 @@ final class CachingGlue implements Glue {
         defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
     }
 
+    @Override
+    public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+        docStringTypeDefinitions.add(docStringTypeDefinition);
+    }
+
     Collection<CoreHookDefinition> getBeforeHooks() {
         return new ArrayList<>(beforeHooks);
     }
@@ -172,6 +179,7 @@ final class CachingGlue implements Glue {
     void prepareGlue(TypeRegistry typeRegistry) throws DuplicateStepDefinitionException {
         parameterTypeDefinitions.forEach(ptd -> typeRegistry.defineParameterType(ptd.parameterType()));
         dataTableTypeDefinitions.forEach(dtd -> typeRegistry.defineDataTableType(dtd.dataTableType()));
+        docStringTypeDefinitions.forEach(dtd -> typeRegistry.defineDocStringType(dtd.docStringType()));
 
         if (defaultParameterTransformers.size() == 1) {
             DefaultParameterTransformerDefinition definition = defaultParameterTransformers.get(0);
@@ -188,7 +196,6 @@ final class CachingGlue implements Glue {
         } else if (defaultDataTableEntryTransformers.size() > 1) {
             throw new DuplicateDefaultDataTableEntryTransformers(defaultDataTableEntryTransformers);
         }
-
 
         if (defaultDataTableCellTransformers.size() == 1) {
             DefaultDataTableCellTransformerDefinition definition = defaultDataTableCellTransformers.get(0);

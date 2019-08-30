@@ -25,4 +25,5 @@ public interface Glue {
 
     void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer);
 
+    void addDocStringType(DocStringTypeDefinition docStringTypeDefinition);
 }

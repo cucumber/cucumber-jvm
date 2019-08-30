@@ -20,7 +20,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         this.parameterType = new ParameterType<>(
             name.isEmpty() ? method.getName() : name,
             singletonList(pattern),
-            this.method.getReturnType(),
+            this.method.getGenericReturnType(),
             this::execute,
             useForSnippets,
             preferForRegexpMatch
@@ -30,9 +30,6 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
     private static Method requireValidMethod(Method method) {
         Type returnType = method.getGenericReturnType();
         if (Void.class.equals(returnType) || void.class.equals(returnType)) {
-            throw createInvalidSignatureException(method);
-        }
-        if (!(returnType instanceof Class)) {
             throw createInvalidSignatureException(method);
         }
 

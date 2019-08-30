@@ -6,7 +6,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.EXPERIMENTAL)
 public interface DocStringTypeDefinition {
 
-    DocStringType parameterType();
+    DocStringType docStringType();
 
     /**
      * The source line where the parameter type is defined.
