@@ -7,8 +7,10 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import java.util.Set;
+import org.apiguardian.api.API;
 
-public class DeltaSpikeObjectFactory implements ObjectFactory {
+@API(status = API.Status.STABLE)
+public final class DeltaSpikeObjectFactory implements ObjectFactory {
 
     private final CdiContainer container;
 
