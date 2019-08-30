@@ -48,7 +48,7 @@ public @interface ParameterType {
     /**
      * Name of the parameter type.
      * <p>
-     * This is used in the type name in typed expressions. When not provided this will default to the name of
+     * This is used as the type name in typed expressions. When not provided this will default to the name of
      * the annotated method.
      *
      * @return human readable type name

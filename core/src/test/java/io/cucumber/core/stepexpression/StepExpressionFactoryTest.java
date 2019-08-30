@@ -1,10 +1,13 @@
 package io.cucumber.core.stepexpression;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -103,11 +106,32 @@ class StepExpressionFactoryTest {
     }
 
     @Test
-    void unknown_target_type_does_not_transform_doc_string() {
+    void unknown_target_type_transform_doc_string_to_doc_string() {
         String docString = "A rather long and boring string of documentation";
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", UNKNOWN_TYPE);
-        List<Argument> match = expression.match("Given some stuff:", docString);
+        List<Argument> match = expression.match("Given some stuff:", docString, null);
+        assertThat(match.get(0).getValue(), is(equalTo(DocString.create(docString))));
+    }
+
+    @Test
+    void docstring_expression_transform_doc_string_with_content_type_to_string() {
+        String docString = "A rather long and boring string of documentation";
+        String contentType = "doc";
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", String.class);
+        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
         assertThat(match.get(0).getValue(), is(equalTo(docString)));
+    }
+
+    @Test
+    void docstring_expression_transform_doc_string_to_json_node() {
+        String docString = "{\"hello\": \"world\"}";
+        String contentType = "json";
+        registry.defineDocStringType(new DocStringType(JsonNode.class, contentType, (String s) -> objectMapper.convertValue(docString, JsonNode.class)));
+
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", JsonNode.class);
+        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
+        JsonNode node = (JsonNode) match.get(0).getValue();
+        assertThat(node.asText(), equalTo(docString));
     }
 
     @SuppressWarnings("unchecked")

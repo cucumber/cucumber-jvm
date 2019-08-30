@@ -64,6 +64,7 @@ final class MethodScanner {
             || annotationClass.equals(DefaultParameterTransformer.class)
             || annotationClass.equals(DefaultDataTableEntryTransformer.class)
             || annotationClass.equals(DefaultDataTableCellTransformer.class)
+            || annotationClass.equals(DocStringType.class)
             ;
     }
 

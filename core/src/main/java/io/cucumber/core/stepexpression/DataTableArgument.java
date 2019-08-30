@@ -19,7 +19,7 @@ public final class DataTableArgument implements Argument {
         return tableType.transform(argument);
     }
 
-    public String getText() {
+    private String getText() {
         return DataTable.create(argument).toString();
     }
 

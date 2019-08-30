@@ -28,7 +28,7 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
     }
 
     private DataTableType createDataTableType(Method method) {
-        Class returnType = requireValidReturnType(method);
+        Type returnType = requireValidReturnType(method);
         Type parameterType = requireValidParameterType(method);
 
         if (DataTable.class.equals(parameterType)) {
@@ -65,7 +65,7 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(DataTableType.class)
+            .addAnnotation(io.cucumber.java.DataTableType.class)
             .addSignature("public Author author(DataTable table)")
             .addSignature("public Author author(List<String> row)")
             .addSignature("public Author author(Map<String, String> entry)")
@@ -97,17 +97,13 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
         return parameterizedType.getRawType();
     }
 
-    private static Class requireValidReturnType(Method method) {
+    private static Type requireValidReturnType(Method method) {
         Type returnType = method.getGenericReturnType();
         if (Void.class.equals(returnType) || void.class.equals(returnType)) {
             throw createInvalidSignatureException(method);
         }
 
-        if (!(returnType instanceof Class)) {
-            throw createInvalidSignatureException(method);
-        }
-
-        return (Class) returnType;
+        return returnType;
     }
 
 
