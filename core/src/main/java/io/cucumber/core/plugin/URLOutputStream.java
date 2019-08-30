@@ -30,7 +30,7 @@ class URLOutputStream extends OutputStream {
     private final HttpURLConnection urlConnection;
 
     URLOutputStream(URL url) throws IOException {
-        this(url, "PUT", Collections.<String, String>emptyMap(), 200);
+        this(url, "PUT", Collections.emptyMap(), 200);
     }
 
     private URLOutputStream(URL url, String method, Map<String, String> headers, int expectedResponseCode) throws IOException {

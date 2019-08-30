@@ -37,15 +37,6 @@ abstract class TestStep implements io.cucumber.core.event.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    /**
-     * Runs a test step.
-     *
-     * @param testCase
-     * @param bus
-     * @param scenario
-     * @param skipSteps
-     * @return true iff subsequent skippable steps should be skipped
-     */
     boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
         Instant startTimeMillis = bus.getInstant();
         bus.send(new TestStepStarted(startTimeMillis, testCase, this));

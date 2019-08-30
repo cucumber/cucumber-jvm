@@ -21,7 +21,7 @@ public class ElementsAreAllEqualMatcher<E> extends ElementsAreAllMatcher<E> {
      * <pre>assertThat(Arrays.asList("foo", "foo", "foo"), elementsAreAllEqual())</pre>
      */
     public static <E> Matcher<Collection<? extends E>> elementsAreAllEqual() {
-        return new ElementsAreAllEqualMatcher<E>();
+        return new ElementsAreAllEqualMatcher<>();
     }
 
     @Override

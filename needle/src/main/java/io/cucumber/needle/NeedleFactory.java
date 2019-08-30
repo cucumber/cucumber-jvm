@@ -39,9 +39,7 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
         logger.trace("start()");
         try {
             // First create all instances
-            for (final Class<?> stepDefinitionType : cachedStepsInstances.keySet()) {
-                cachedStepsInstances.put(stepDefinitionType, createStepsInstance(stepDefinitionType));
-            }
+            cachedStepsInstances.replaceAll((t, v) -> createStepsInstance(t));
             // Then collect injection providers from all instances
             for (Object stepsInstance : cachedStepsInstances.values()) {
                 addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
@@ -58,9 +56,7 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
     @Override
     public void stop() {
         logger.trace("stop()");
-        for (final Class<?> stepDefinitionType : cachedStepsInstances.keySet()) {
-            cachedStepsInstances.put(stepDefinitionType, null);
-        }
+        cachedStepsInstances.replaceAll((t, v) -> null);
     }
 
     @Override

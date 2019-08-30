@@ -38,7 +38,7 @@ public final class Reflections {
     }
 
     private <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs) {
-        Collection<T> result = new HashSet<T>();
+        Collection<T> result = new HashSet<>();
         for (URI packageName : packageNames) {
             for (Class<? extends T> clazz : classFinder.getDescendants(parentType, packageName)) {
                 if (isInstantiable(clazz)) {

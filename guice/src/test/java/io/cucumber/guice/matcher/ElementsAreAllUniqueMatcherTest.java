@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import static io.cucumber.guice.matcher.AbstractMatcherTest.assertDescription;
 import static io.cucumber.guice.matcher.AbstractMatcherTest.assertDoesNotMatch;
@@ -30,7 +31,7 @@ class ElementsAreAllUniqueMatcherTest {
 
     @Test
     void testDoesNotMatchCollectionWithLessThanTwoElements() {
-        Collection<String> arg = Arrays.asList("foo");
+        Collection<String> arg = Collections.singletonList("foo");
 
         assertAll("Checking Matcher",
             () -> assertDoesNotMatch(matcher, arg),

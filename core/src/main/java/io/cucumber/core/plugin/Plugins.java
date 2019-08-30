@@ -38,7 +38,7 @@ public final class Plugins {
     }
 
     private List<Plugin> createPlugins() {
-        List<Plugin> plugins = new ArrayList<Plugin>();
+        List<Plugin> plugins = new ArrayList<>();
         if (!pluginNamesInstantiated) {
             for (Options.Plugin pluginOption : pluginOptions.plugins()) {
                 Plugin plugin = pluginFactory.create(pluginOption);

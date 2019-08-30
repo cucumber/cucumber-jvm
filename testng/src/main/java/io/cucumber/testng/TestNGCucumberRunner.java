@@ -31,11 +31,13 @@ import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
+import org.testng.SkipException;
 
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -51,6 +53,7 @@ import static java.util.stream.Collectors.toList;
  */
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
+
     private final EventBus bus;
     private final Predicate<CucumberPickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
@@ -105,12 +108,30 @@ public final class TestNGCucumberRunner {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        runner.runPickle(pickle.getCucumberPickle());
+        CucumberPickle cucumberPickle = pickle.getCucumberPickle();
+        runner.runPickle(cucumberPickle);
         testCaseResultListener.finishExecutionUnit();
 
-        if (!testCaseResultListener.isPassed()) {
-            throw testCaseResultListener.getError();
+        if (testCaseResultListener.isPassed()) {
+            return;
         }
+
+        // Log the reason we skipped the test. TestNG doesn't provide it by
+        // default
+        Throwable error = testCaseResultListener.getError();
+        if (error instanceof SkipException) {
+            SkipException skipException = (SkipException) error;
+            if (skipException.isSkip()) {
+                System.out.println(format("Skipped scenario: '%s'. %s",
+                    cucumberPickle.getName(),
+                    skipException.getMessage()
+                ));
+            }
+        }
+
+        // null pointer is covered by isPassed
+        // noinspection ConstantConditions
+        throw error;
     }
 
     public void finish() {

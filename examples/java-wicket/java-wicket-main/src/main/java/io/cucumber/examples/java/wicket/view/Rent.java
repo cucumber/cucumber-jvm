@@ -19,7 +19,7 @@ public class Rent extends WebPage {
 
     private class RentCarForm extends Form<ValueMap> {
         public RentCarForm(String id) {
-            super(id, new CompoundPropertyModel<ValueMap>(new ValueMap()));
+            super(id, new CompoundPropertyModel<>(new ValueMap()));
         }
 
         @Override

@@ -19,7 +19,7 @@ public class DefaultInstanceInjectionProvider<T> implements InjectionProvider<T>
      * @return injection provider.
      */
     public static <T> DefaultInstanceInjectionProvider<T> providerFor(final T instance) {
-        return new DefaultInstanceInjectionProvider<T>(instance);
+        return new DefaultInstanceInjectionProvider<>(instance);
     }
 
     /**
