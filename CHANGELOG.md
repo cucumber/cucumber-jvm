@@ -45,7 +45,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Improve handling of tables without header ([#cucumber/540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
     - Remove DataTableType convenience methods ([1643](https://github.com/cucumber/cucumber-jvm/issues/1643) M.P. Korstanje)  
     - Changes to value type from `Class<?>` to `Type` and return type to `Object` in `TableEntryByTypeTransformer` and `TableCellByTypeTransformer`
- * [Core] Add dedicated DocStringTypeRegistry ([#1745](https://github.com/cucumber/cucumber-jvm/pull/1745) Anton Deriabin, M.P. Korstanje)
+ * [Core] Add dedicated DocStringTypeRegistry ([#1705](https://github.com/cucumber/cucumber-jvm/pull/1705), [#1745](https://github.com/cucumber/cucumber-jvm/pull/1745) Anton Deriabin, M.P. Korstanje)
     - Adds dedicated `io.cucumber.docstring.DocString` object to use in step definitions
     - DocStrings will no longer be converted by table cell converters
 
