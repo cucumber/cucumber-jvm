@@ -17,19 +17,20 @@ import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
 
+    private final CamelCaseStringConverter camelCaseStringConverter = new CamelCaseStringConverter();
     private final TableEntryByTypeTransformer transformer;
-    private final boolean headersConversionRequired;
+    private final boolean headersToProperties;
 
 
     JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup) {
         super(requireValidMethod(method), lookup);
-        this.headersConversionRequired = false;
+        this.headersToProperties = false;
         this.transformer = this::execute;
     }
 
-    JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup, boolean headersConversionRequired) {
+    JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup, boolean headersToProperties) {
         super(requireValidMethod(method), lookup);
-        this.headersConversionRequired = headersConversionRequired;
+        this.headersToProperties = headersToProperties;
         this.transformer = this::execute;
     }
 
@@ -92,8 +93,8 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
     }
 
     private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
-        if (this.headersConversionRequired) {
-            fromValue = convertToCamelCase(fromValue);
+        if (this.headersToProperties) {
+            fromValue = camelCaseStringConverter.toCamelCase(fromValue);
         }
 
         Object[] args;
@@ -105,31 +106,31 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
-    private Map<String, String> convertToCamelCase(Map<String, String> fromValue) {
-        Map<String, String> newMap = new HashMap<>();
-        CamelCaseStringConverter converter = new CamelCaseStringConverter();
-        for (Map.Entry<String, String> entry : fromValue.entrySet()) {
-            newMap.put(converter.toCamelCase(entry.getKey()), entry.getValue());
-        }
-        return newMap;
-    }
-
     static class CamelCaseStringConverter {
         private static final String WHITESPACE = " ";
         private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
-        String toCamelCase(String string) {
-            String[] splitted = normalizeSpace(string).split(WHITESPACE);
-            splitted[0] = uncapitalize(splitted[0]);
-            for (int i = 1; i < splitted.length; i++) {
-                splitted[i] = capitalize(splitted[i]);
+        Map<String, String> toCamelCase(Map<String, String> fromValue) {
+            Map<String, String> newMap = new HashMap<>();
+            CamelCaseStringConverter converter = new CamelCaseStringConverter();
+            for (Map.Entry<String, String> entry : fromValue.entrySet()) {
+                newMap.put(converter.toCamelCase(entry.getKey()), entry.getValue());
             }
-            return join(splitted);
+            return newMap;
         }
 
-        private String join(String[] splitted) {
+        String toCamelCase(String string) {
+            String[] parts = normalizeSpace(string).split(WHITESPACE);
+            parts[0] = uncapitalize(parts[0]);
+            for (int i = 1; i < parts.length; i++) {
+                parts[i] = capitalize(parts[i]);
+            }
+            return join(parts);
+        }
+
+        private String join(String[] parts) {
             StringBuilder sb = new StringBuilder();
-            for (String s : splitted) {
+            for (String s : parts) {
                 sb.append(s);
             }
             return sb.toString();

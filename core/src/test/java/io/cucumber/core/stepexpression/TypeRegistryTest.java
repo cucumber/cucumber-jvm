@@ -1,5 +1,6 @@
 package io.cucumber.core.stepexpression;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
@@ -8,6 +9,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -41,6 +43,12 @@ class TypeRegistryTest {
     }
 
     @Test
+    void should_define_doc_string_parameter_type() {
+        DocStringType expected = new DocStringType(JsonNode.class, "json", (String s) -> null);
+        registry.defineDocStringType(expected);
+    }
+
+    @Test
     void should_set_default_parameter_transformer() {
         ParameterByTypeTransformer expected = (fromValue, toValueType) -> null;
         registry.setDefaultParameterTransformer(expected);
@@ -57,5 +65,4 @@ class TypeRegistryTest {
         TableEntryByTypeTransformer expected = (entry, toValueType, tableCellByTypeTransformer) -> null;
         registry.setDefaultDataTableEntryTransformer(expected);
     }
-
 }

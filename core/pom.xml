@@ -38,6 +38,10 @@
             <artifactId>datatable</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>docstring</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
         </dependency>
@@ -111,7 +115,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>io.cucumber.core.api.cli.Main</mainClass>
+                            <mainClass>io.cucumber.core.cli.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

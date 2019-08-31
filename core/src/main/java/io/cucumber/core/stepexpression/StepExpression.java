@@ -30,26 +30,26 @@ public final class StepExpression {
         return expression.getSource();
     }
 
-    public List<Argument> match(String text, List<List<String>> tableArgument, Type... types) {
+    public List<Argument> match(String text, List<List<String>> cells, Type... types) {
         List<Argument> list = match(text, types);
 
         if (list == null) {
             return null;
         }
 
-        list.add(new DataTableArgument(tableType, tableArgument));
+        list.add(new DataTableArgument(tableType, cells));
 
         return list;
 
     }
 
-    public List<Argument> match(String text, String docStringArgument, Type... types) {
+    public List<Argument> match(String text, String content, String contentType, Type... types) {
         List<Argument> list = match(text, types);
         if (list == null) {
             return null;
         }
 
-        list.add(new DocStringArgument(docStringType, docStringArgument));
+        list.add(new DocStringArgument(this.docStringType, content, contentType));
 
         return list;
     }

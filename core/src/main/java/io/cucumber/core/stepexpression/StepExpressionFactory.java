@@ -5,20 +5,22 @@ import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
 
 import java.lang.reflect.Type;
 import java.util.List;
-
-import static java.util.Collections.singletonList;
 
 public final class StepExpressionFactory {
 
     private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
+    private final DocStringTypeRegistryDocStringConverter docStringConverter;
 
     public StepExpressionFactory(TypeRegistry registry) {
         this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
+        this.docStringConverter = new DocStringTypeRegistryDocStringConverter(registry.docStringTypeRegistry());
     }
 
     public StepExpression createExpression(String expressionString) {
@@ -26,7 +28,7 @@ public final class StepExpressionFactory {
         Expression expression = expressionFactory.createExpression(expressionString);
 
         RawTableTransformer<DataTable> toDataTable = raw -> DataTable.create(raw, tableConverter);
-        DocStringTransformer<Object> toDocString = (String input) -> input;
+        DocStringTransformer<Object> toDocString = (String input, String contentType) -> input;
         return new StepExpression(expression, toDocString, toDataTable);
     }
 
@@ -59,14 +61,10 @@ public final class StepExpressionFactory {
             return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
         };
 
-        DocStringTransformer<?> docStringTransform = (String docString) -> {
+        DocStringTransformer<?> docStringTransform = (text, contentType) -> {
+            DocString docString = DocString.create(text, contentType, docStringConverter);
             Type targetType = tableOrDocStringType.resolve();
-            if (Object.class.equals(targetType)) {
-                return docString;
-            }
-
-            List<List<String>> raw = singletonList(singletonList(docString));
-            return DataTable.create(raw, StepExpressionFactory.this.tableConverter).convert(targetType, transpose);
+            return docString.convert(Object.class.equals(targetType) ? DocString.class : targetType);
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
     }

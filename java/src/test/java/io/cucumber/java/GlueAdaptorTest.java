@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
@@ -36,8 +37,29 @@ public class GlueAdaptorTest {
             return (T) GlueAdaptorTest.this;
         }
     };
-
-
+    private final List<StepDefinition> stepDefinitions = new ArrayList<>();
+    private final Matcher<StepDefinition> aStep = new CustomTypeSafeMatcher<StepDefinition>("a step") {
+        @Override
+        protected boolean matchesSafely(StepDefinition item) {
+            return item.getPattern().equals("a step");
+        }
+    };
+    private final Matcher<StepDefinition> repeated = new CustomTypeSafeMatcher<StepDefinition>("repeated") {
+        @Override
+        protected boolean matchesSafely(StepDefinition item) {
+            return item.getPattern().equals("repeated");
+        }
+    };
+    private DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer;
+    private DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer;
+    private DefaultParameterTransformerDefinition defaultParameterTransformer;
+    private DataTableTypeDefinition dataTableTypeDefinition;
+    private ParameterTypeDefinition parameterTypeDefinition;
+    private HookDefinition afterStepHook;
+    private HookDefinition beforeStepHook;
+    private HookDefinition afterHook;
+    private HookDefinition beforeHook;
+    private DocStringTypeDefinition docStringTypeDefinition;
     private final Glue container = new Glue() {
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
@@ -97,38 +119,20 @@ public class GlueAdaptorTest {
             GlueAdaptorTest.this.defaultDataTableCellTransformer = defaultDataTableCellTransformer;
 
         }
+
+        @Override
+        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+            GlueAdaptorTest.this.docStringTypeDefinition = docStringTypeDefinition;
+        }
     };
+
     private final GlueAdaptor adaptor = new GlueAdaptor(lookup, container);
 
-    private final List<StepDefinition> stepDefinitions = new ArrayList<>();
-    private DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer;
-    private DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer;
-    private DefaultParameterTransformerDefinition defaultParameterTransformer;
-    private DataTableTypeDefinition dataTableTypeDefinition;
-    private ParameterTypeDefinition parameterTypeDefinition;
-    private HookDefinition afterStepHook;
-    private HookDefinition beforeStepHook;
-    private HookDefinition afterHook;
-    private HookDefinition beforeHook;
-
-    private final Matcher<StepDefinition> aStep = new CustomTypeSafeMatcher<StepDefinition>("a step") {
-        @Override
-        protected boolean matchesSafely(StepDefinition item) {
-            return item.getPattern().equals("a step");
-        }
-    };
-    private final Matcher<StepDefinition> repeated = new CustomTypeSafeMatcher<StepDefinition>("repeated") {
-        @Override
-        protected boolean matchesSafely(StepDefinition item) {
-            return item.getPattern().equals("repeated");
-        }
-    };
-
     @Test
-    public void creates_all_glue_steps() {
+    void creates_all_glue_steps() {
         MethodScanner.scan(GlueAdaptorTest.class, adaptor::addDefinition);
 
-        assertAll("Checking MethodScanner",
+        assertAll(
             () -> assertThat(stepDefinitions, containsInAnyOrder(aStep, repeated)),
             () -> assertThat(defaultDataTableCellTransformer, notNullValue()),
             () -> assertThat(defaultDataTableEntryTransformer, notNullValue()),
@@ -139,7 +143,8 @@ public class GlueAdaptorTest {
             () -> assertThat(afterStepHook, notNullValue()),
             () -> assertThat(beforeStepHook, notNullValue()),
             () -> assertThat(afterHook, notNullValue()),
-            () -> assertThat(beforeHook, notNullValue())
+            () -> assertThat(beforeHook, notNullValue()),
+            () -> assertThat(docStringTypeDefinition, notNullValue())
         );
     }
 
@@ -192,6 +197,11 @@ public class GlueAdaptorTest {
     @Before
     public void before() {
 
+    }
+
+    @DocStringType
+    public Object json(String docString) {
+        return null;
     }
 
 }
