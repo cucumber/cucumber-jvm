@@ -208,6 +208,7 @@
         <module>openejb</module>
         <module>needle</module>
         <module>cdi2</module>
+        <module>deltaspike</module>
     </modules>
 
     <profiles>
