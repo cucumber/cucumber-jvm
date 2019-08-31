@@ -39,7 +39,7 @@ final class CachingGlue implements Glue {
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
-    private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
+    private final List<CoreDefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
     private final List<DocStringTypeDefinition> docStringTypeDefinitions = new ArrayList<>();
 
@@ -111,7 +111,7 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
-        defaultDataTableEntryTransformers.add(defaultDataTableEntryTransformer);
+        defaultDataTableEntryTransformers.add(CoreDefaultDataTableEntryTransformerDefinition.create(defaultDataTableEntryTransformer));
     }
 
     @Override
@@ -168,12 +168,16 @@ final class CachingGlue implements Glue {
         return defaultParameterTransformers;
     }
 
-    Collection<DefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
+    Collection<CoreDefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
         return defaultDataTableEntryTransformers;
     }
 
     Collection<DefaultDataTableCellTransformerDefinition> getDefaultDataTableCellTransformers() {
         return defaultDataTableCellTransformers;
+    }
+
+    List<DocStringTypeDefinition> getDocStringTypeDefinitions() {
+        return docStringTypeDefinitions;
     }
 
     void prepareGlue(TypeRegistry typeRegistry) throws DuplicateStepDefinitionException {
@@ -279,6 +283,7 @@ final class CachingGlue implements Glue {
         removeScenarioScopedGlue(afterStepHooks);
         removeScenarioScopedGlue(stepDefinitions);
         removeScenarioScopedGlue(dataTableTypeDefinitions);
+        removeScenarioScopedGlue(docStringTypeDefinitions);
         removeScenarioScopedGlue(parameterTypeDefinitions);
         removeScenarioScopedGlue(defaultParameterTransformers);
         removeScenarioScopedGlue(defaultDataTableEntryTransformers);

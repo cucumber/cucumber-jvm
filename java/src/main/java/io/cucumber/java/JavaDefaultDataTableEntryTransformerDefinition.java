@@ -15,10 +15,8 @@ import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
 class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
 
-    private final CamelCaseStringConverter camelCaseStringConverter = new CamelCaseStringConverter();
     private final TableEntryByTypeTransformer transformer;
     private final boolean headersToProperties;
-
 
     JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup) {
         super(requireValidMethod(method), lookup);
@@ -90,11 +88,12 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return transformer;
     }
 
-    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
-        if (this.headersToProperties) {
-            fromValue = camelCaseStringConverter.toCamelCase(fromValue);
-        }
+    @Override
+    public boolean headersToProperties() {
+        return headersToProperties;
+    }
 
+    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
         Object[] args;
         if (method.getParameterTypes().length == 3) {
             args = new Object[]{fromValue, toValueType, cellTransformer};

@@ -1,4 +1,4 @@
-package io.cucumber.java;
+package io.cucumber.core.runner;
 
 import io.cucumber.core.exception.CucumberException;
 
