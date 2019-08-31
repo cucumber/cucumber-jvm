@@ -1,12 +1,19 @@
 package io.cucumber.java;
 
 
+import io.cucumber.core.exception.CucumberException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CamelCaseConverterTest {
 
@@ -38,4 +45,19 @@ class CamelCaseConverterTest {
         );
     }
 
+    @Test
+    void should_throw_on_duplicate_headers() {
+        Map<String, String> table = new HashMap<>();
+        table.put("Title Case Header", "value1");
+        table.put("TitleCaseHeader", "value2");
+
+        CucumberException exception = assertThrows(
+            CucumberException.class,
+            () -> camelCaseConverter.toCamelCase(table)
+        );
+        assertThat(exception.getMessage(), is("" +
+            "Failed to convert header 'Title Case Header' to property name. " +
+            "'TitleCaseHeader' also converted to 'titleCaseHeader'"
+        ));
+    }
 }
