@@ -367,9 +367,10 @@ class FeatureRunnerTest {
         FeatureRunner featureRunner = FeatureRunner.create(feature, filters, runnerSupplier, new JUnitOptions());
 
         RunNotifier notifier = mock(RunNotifier.class);
-        featureRunner.runChild(featureRunner.getChildren().get(0), notifier);
+        PickleRunners.PickleRunner pickleRunner = featureRunner.getChildren().get(0);
+        featureRunner.runChild(pickleRunner, notifier);
 
-        Description description = featureRunner.getDescription();
+        Description description = pickleRunner.getDescription();
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
 
         InOrder order = inOrder(notifier);

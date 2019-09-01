@@ -170,7 +170,12 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
 
     @Override
     protected void runChild(FeatureRunner child, RunNotifier notifier) {
-        child.run(notifier);
+        notifier.fireTestStarted(describeChild(child));
+        try {
+            child.run(notifier);
+        } finally {
+            notifier.fireTestFinished(describeChild(child));
+        }
     }
 
     @Override
