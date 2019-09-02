@@ -5,6 +5,7 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
@@ -20,6 +21,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -42,6 +44,40 @@ class CachingGlueTest {
 
     private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
     private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
+
+    private static CucumberStep getPickleStep(String text) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + text + "\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
+    private static CucumberStep getPickleStepWithSingleCellTable(String stepText, String cell) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepText + "\n" +
+            "       | " + cell + " |\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
+    private static CucumberStep getPickleStepWithDocString(String stepText, String doc) {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepText + "\n" +
+            "       \"\"\"\n" +
+            "       " + doc + "\n" +
+            "       \"\"\"\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
 
     @Test
     void throws_duplicate_error_on_dupe_stepdefs() {
@@ -110,7 +146,6 @@ class CachingGlueTest {
         ));
     }
 
-
     @Test
     void removes_glue_that_is_scenario_scoped() {
         // This test is a bit fragile - it is testing state, not behaviour.
@@ -122,8 +157,9 @@ class CachingGlueTest {
         glue.addAfterHook(new MockedScenarioScopedHookDefinition());
         glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition());
         glue.addAfterStepHook(new MockedScenarioScopedHookDefinition());
-        glue.addDataTableType(new MockedDataTableTypeDefinition());
         glue.addParameterType(new MockedParameterTypeDefinition());
+        glue.addDataTableType(new MockedDataTableTypeDefinition());
+        glue.addDocStringType(new MockedDocStringTypeDefinition());
         glue.addDefaultParameterTransformer(new MockedDefaultParameterTransformer());
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
@@ -140,7 +176,8 @@ class CachingGlueTest {
             () -> assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(1))),
             () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(1))),
             () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(1))),
-            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(1)))
+            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(1))),
+            () -> assertThat(glue.getDocStringTypeDefinitions().size(), is(equalTo(1)))
         );
 
         glue.removeScenarioScopedGlue();
@@ -155,7 +192,8 @@ class CachingGlueTest {
             () -> assertThat(glue.getParameterTypeDefinitions().size(), is(equalTo(0))),
             () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(0))),
             () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(0))),
-            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(0)))
+            () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(0))),
+            () -> assertThat(glue.getDocStringTypeDefinitions().size(), is(equalTo(0)))
         );
     }
 
@@ -387,44 +425,10 @@ class CachingGlueTest {
         assertTrue(ambiguousCalled);
     }
 
-    private static CucumberStep getPickleStep(String text) {
-        CucumberFeature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + text + "\n"
-        );
-
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
-
-    private static CucumberStep getPickleStepWithSingleCellTable(String stepText, String cell) {
-        CucumberFeature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + stepText + "\n" +
-            "       | " + cell + " |\n"
-        );
-
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
-    private static CucumberStep getPickleStepWithDocString(String stepText, String doc) {
-        CucumberFeature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + stepText + "\n" +
-            "       \"\"\"\n" +
-            "       " + doc + "\n" +
-            "       \"\"\"\n"
-        );
-
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
     private static class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
 
         private final String pattern;
+        boolean disposed;
 
         MockedScenarioScopedStepDefinition(String pattern) {
             this.pattern = pattern;
@@ -433,8 +437,6 @@ class CachingGlueTest {
         MockedScenarioScopedStepDefinition() {
             this("mocked scenario scoped step definition");
         }
-
-        boolean disposed;
 
         @Override
         public void disposeScenarioScope() {
@@ -666,6 +668,11 @@ class CachingGlueTest {
         }
 
         @Override
+        public boolean headersToProperties() {
+            return false;
+        }
+
+        @Override
         public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
             return (entry, type, cellTransformer) -> new Object();
         }
@@ -673,6 +680,25 @@ class CachingGlueTest {
         @Override
         public String getLocation(boolean detail) {
             return "mocked default data table entry transformer";
+        }
+    }
+
+    private static class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
+        boolean disposed;
+
+        @Override
+        public DocStringType docStringType() {
+            return new DocStringType(Object.class, "text/plain", content -> content);
+        }
+
+        @Override
+        public String getLocation(boolean detail) {
+            return "mocked default data table entry transformer";
+        }
+
+        @Override
+        public void disposeScenarioScope() {
+            this.disposed = true;
         }
     }
 

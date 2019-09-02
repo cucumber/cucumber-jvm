@@ -6,6 +6,8 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface DefaultDataTableEntryTransformerDefinition {
 
+    boolean headersToProperties();
+
     TableEntryByTypeTransformer tableEntryByTypeTransformer();
 
     /**
