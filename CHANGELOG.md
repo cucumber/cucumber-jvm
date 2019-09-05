@@ -18,6 +18,22 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [JUnit] Print suggested snippets per scenario ([#1740](https://github.com/cucumber/cucumber-jvm/pull/1740) M.P. Korstanje)
  * [DeltaSpike] Add ObjectFactory for Apache DeltaSpike ([#1616](https://github.com/cucumber/cucumber-jvm/pull/1616) Toepi)
    - Supports generic CDI containers including Weld, OpenEJB and OpenWebBeans
+ * [Core] Add property based runtime options ([#1675](https://github.com/cucumber/cucumber-jvm/pull/1675), [#1741](https://github.com/cucumber/cucumber-jvm/pull/1741) M.P. Korstanje)
+    - cucumber.ansi-colors.disabled
+    - cucumber.execution.dry-run
+    - cucumber.execution.limit
+    - cucumber.execution.order
+    - cucumber.execution.parallel.config.fixed.parallelism
+    - cucumber.execution.strict
+    - cucumber.execution.wip
+    - cucumber.feature
+    - cucumber.rerun-file
+    - cucumber.filter.name
+    - cucumber.filter.tags
+    - cucumber.glue
+    - cucumber.object-factory
+    - cucumber.plugin
+    - cucumber.snippet-type
 
 ### Changed
  * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449) M.P. Korstanje)
@@ -73,7 +89,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Java8] Set default before hook order to the same after hook (1000) 
  - [Doc] Fixed various Javadoc issues ([#1586](https://github.com/cucumber/cucumber-jvm/pull/1586) Michiel Leegwater)
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
- 
+ - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765) M.P. Korstanje)
+
 ## [4.7.2](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v4.7.2) (2019-08-28)
 
 ### Fixed
