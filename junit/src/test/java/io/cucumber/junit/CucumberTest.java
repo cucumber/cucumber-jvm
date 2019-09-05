@@ -106,20 +106,15 @@ class CucumberTest {
         Request.classes(computer, ValidEmpty.class).getRunner().run(notifier);
         {
             InOrder order = Mockito.inOrder(listener);
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("Feature A")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("A good start(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("A good start(Feature A)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Feature A")));
         }
         {
             InOrder order = Mockito.inOrder(listener);
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("Feature B")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("A(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("A(Feature B)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("B(Feature B)")));
@@ -130,7 +125,6 @@ class CucumberTest {
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Feature B")));
         }
     }
 
