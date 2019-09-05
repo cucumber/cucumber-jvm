@@ -84,6 +84,16 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
+    void should_parse_features_list() {
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "com/example/app.feature, com/example/other.feature");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getFeaturePaths(), contains(
+            URI.create("file:com/example/app.feature"),
+            URI.create("file:com/example/other.feature")
+        ));
+    }
+
+    @Test
     void should_parse_filter_name() {
         properties.put(Constants.FILTER_NAME_PROPERTY_NAME, "Test.*");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
@@ -111,6 +121,16 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
+    void should_parse_glue_list() {
+        properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.app.steps, com.example.other.steps");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getGlue(), contains(
+            URI.create("classpath:com/example/app/steps"),
+            URI.create("classpath:com/example/other/steps")
+        ));
+    }
+
+    @Test
     void should_parse_object_factory() {
         properties.put(Constants.OBJECT_FACTORY_PROPERTY_NAME, CustomObjectFactory.class.getName());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
@@ -119,9 +139,10 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_plugin() {
-        properties.put(Constants.PLUGIN_PROPERTY_NAME, "json:target/cucumber.json");
+        properties.put(Constants.PLUGIN_PROPERTY_NAME, "json:target/cucumber.json, html:target/cucumber.html");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.plugins().get(0).pluginString(), equalTo("json:target/cucumber.json"));
+        assertThat(options.plugins().get(1).pluginString(), equalTo("html:target/cucumber.html"));
     }
 
     @Test

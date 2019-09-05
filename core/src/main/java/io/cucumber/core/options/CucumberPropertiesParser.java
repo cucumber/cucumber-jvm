@@ -4,7 +4,6 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 
-import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -32,8 +31,18 @@ import static io.cucumber.core.options.Constants.RERUN_FILE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 public final class CucumberPropertiesParser {
+
+    private static <T> Function<String, Collection<T>> splitAndThen(Function<String, T> parse) {
+        return combined -> stream(combined.split(","))
+            .map(String::trim)
+            .filter(part -> !part.isEmpty())
+            .map(parse)
+            .collect(toList());
+    }
 
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         final RuntimeOptionsBuilder builder;
@@ -80,9 +89,9 @@ public final class CucumberPropertiesParser {
             builder::setStrict
         );
 
-        parse(properties,
+        parseAll(properties,
             FEATURES_PROPERTY_NAME,
-            FeatureWithLines::parse,
+            splitAndThen(FeatureWithLines::parse),
             builder::addFeature
         );
 
@@ -104,9 +113,9 @@ public final class CucumberPropertiesParser {
             builder::addTagFilter
         );
 
-        parse(properties,
+        parseAll(properties,
             GLUE_PROPERTY_NAME,
-            GluePath::parse,
+            splitAndThen(GluePath::parse),
             builder::addGlue
         );
 
@@ -116,9 +125,9 @@ public final class CucumberPropertiesParser {
             builder::setObjectFactoryClass
         );
 
-        parse(properties,
+        parseAll(properties,
             PLUGIN_PROPERTY_NAME,
-            Function.identity(),
+            splitAndThen(Function.identity()),
             plugin -> builder.addPluginName(plugin, true)
         );
 
@@ -134,11 +143,6 @@ public final class CucumberPropertiesParser {
         );
 
         return builder;
-    }
-
-    private Collection<URI> parseGlueFile(String property) {
-        Path glueFile = Paths.get(property);
-        return OptionsFileParser.parseGlueFile(glueFile);
     }
 
     private Collection<FeatureWithLines> parseRerunFile(RuntimeOptionsBuilder builder, String property) {

@@ -73,23 +73,21 @@ public final class Constants {
     /**
      * Property name used to set feature location: {@value}
      * <p>
-     * {@code path/to/dir} Load the files with the extension ".feature" for the
+     * A comma separated list of:
+     * <ul>
+     * <li>{@code path/to/dir}  - Load the files with the extension ".feature" for the
      * directory {@code path} and its sub directories.
-     * <p>
-     * {@code path/name.feature} Load the feature file {@code path/name.feature}
-     * from the file system.
-     * <p>
-     * {@code classpath:path/name.feature} Load the feature file
-     * {@code path/name.feature} from the classpath.
-     * <p>
-     * {@code path/name.feature:3:9} Load the scenarios on line 3 and line 9 in
-     * the file {@code path/name.feature}.
-     * <p>
-     * {@code @path/file} Load {@code path/file} from the file system and parse
-     * feature paths.
-     * <p>
-     * {@code @classpath:path/file} Load {@code path/file} from the classpath and
-     * parse feature paths.
+     * <li>{@code path/name.feature} - Load the feature file {@code path/name.feature}
+     * from the file system.</li>
+     * <li>{@code classpath:path/name.feature} - Load the feature file
+     * {@code path/name.feature} from the classpath.</li>
+     * <li>{@code path/name.feature:3:9} - Load the scenarios on line 3 and line 9 in
+     * the file {@code path/name.feature}.</li>
+     * <li>{@code @path/file} - Load {@code path/file} from the file system and parse
+     * feature paths.</li>
+     * <li>{@code @classpath:path/file} - Load {@code path/file} from the classpath and
+     * parse feature paths.</li>
+     * </ul>
      *
      * @see io.cucumber.core.feature.FeatureWithLines
      */
@@ -127,7 +125,8 @@ public final class Constants {
     /**
      * Property name to set the glue path: {@value}
      * <p>
-     * The glue path is a uri or package name e.g.: {@code com.example.app.steps}.
+     * A comma separated list of a classpath uri or package name e.g.:
+     * {@code com.example.app.steps}.
      *
      * @see io.cucumber.core.feature.GluePath
      */
@@ -153,8 +152,8 @@ public final class Constants {
     /**
      * Property name to enable plugins: {@value}
      * <p>
-     * Registers one or more plugins. Using the format
-     * {@code [PLUGIN[:PATH_OR_URL]]} e.g: {@code json:target/cucumber.json}.
+     * A comma separated list of {@code [PLUGIN[:PATH_OR_URL]]} e.g:
+     * {@code json:target/cucumber.json}.
      * <p>
      * Built-in formatter PLUGIN types:
      * <ul>
@@ -171,8 +170,6 @@ public final class Constants {
      * <p>
      * {@code PLUGIN} can also be a fully qualified class name, allowing registration
      * of 3rd party plugins.
-     * <p>
-     * <p>
      */
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
