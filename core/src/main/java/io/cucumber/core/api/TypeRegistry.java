@@ -5,10 +5,11 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.docstring.DocStringType;
 import org.apiguardian.api.API;
 
 /**
- * The type registry records defines parameter types and data table transformers.
+ * The type registry records defines parameter types, data table types and docstring transformers.
  */
 @API(status = API.Status.STABLE)
 public interface TypeRegistry {
@@ -17,6 +18,12 @@ public interface TypeRegistry {
      * @param parameterType The new parameter type.
      */
     void defineParameterType(ParameterType<?> parameterType);
+
+    /**
+     * Defines a new docstring type.
+     * @param docStringType The new docstring type.
+     */
+    void defineDocStringType(DocStringType docStringType);
 
     /**
      * Defines a new data table type.

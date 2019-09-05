@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
@@ -38,8 +39,9 @@ final class CachingGlue implements Glue {
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
-    private final List<DefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
+    private final List<CoreDefaultDataTableEntryTransformerDefinition> defaultDataTableEntryTransformers = new ArrayList<>();
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
+    private final List<DocStringTypeDefinition> docStringTypeDefinitions = new ArrayList<>();
 
     private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
@@ -109,12 +111,17 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
-        defaultDataTableEntryTransformers.add(defaultDataTableEntryTransformer);
+        defaultDataTableEntryTransformers.add(CoreDefaultDataTableEntryTransformerDefinition.create(defaultDataTableEntryTransformer));
     }
 
     @Override
     public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
         defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
+    }
+
+    @Override
+    public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+        docStringTypeDefinitions.add(docStringTypeDefinition);
     }
 
     Collection<CoreHookDefinition> getBeforeHooks() {
@@ -161,7 +168,7 @@ final class CachingGlue implements Glue {
         return defaultParameterTransformers;
     }
 
-    Collection<DefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
+    Collection<CoreDefaultDataTableEntryTransformerDefinition> getDefaultDataTableEntryTransformers() {
         return defaultDataTableEntryTransformers;
     }
 
@@ -169,9 +176,14 @@ final class CachingGlue implements Glue {
         return defaultDataTableCellTransformers;
     }
 
+    List<DocStringTypeDefinition> getDocStringTypeDefinitions() {
+        return docStringTypeDefinitions;
+    }
+
     void prepareGlue(TypeRegistry typeRegistry) throws DuplicateStepDefinitionException {
         parameterTypeDefinitions.forEach(ptd -> typeRegistry.defineParameterType(ptd.parameterType()));
         dataTableTypeDefinitions.forEach(dtd -> typeRegistry.defineDataTableType(dtd.dataTableType()));
+        docStringTypeDefinitions.forEach(dtd -> typeRegistry.defineDocStringType(dtd.docStringType()));
 
         if (defaultParameterTransformers.size() == 1) {
             DefaultParameterTransformerDefinition definition = defaultParameterTransformers.get(0);
@@ -188,7 +200,6 @@ final class CachingGlue implements Glue {
         } else if (defaultDataTableEntryTransformers.size() > 1) {
             throw new DuplicateDefaultDataTableEntryTransformers(defaultDataTableEntryTransformers);
         }
-
 
         if (defaultDataTableCellTransformers.size() == 1) {
             DefaultDataTableCellTransformerDefinition definition = defaultDataTableCellTransformers.get(0);
@@ -272,6 +283,7 @@ final class CachingGlue implements Glue {
         removeScenarioScopedGlue(afterStepHooks);
         removeScenarioScopedGlue(stepDefinitions);
         removeScenarioScopedGlue(dataTableTypeDefinitions);
+        removeScenarioScopedGlue(docStringTypeDefinitions);
         removeScenarioScopedGlue(parameterTypeDefinitions);
         removeScenarioScopedGlue(defaultParameterTransformers);
         removeScenarioScopedGlue(defaultDataTableEntryTransformers);

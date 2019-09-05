@@ -6,6 +6,7 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -41,7 +42,7 @@ class CoreStepDefinitionTest {
         CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, typeRegistry);
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
-        assertThat(arguments.get(0).getValue(), is(equalTo("content")));
+        assertThat(arguments.get(0).getValue(), is(equalTo(DocString.create("content"))));
     }
 
 

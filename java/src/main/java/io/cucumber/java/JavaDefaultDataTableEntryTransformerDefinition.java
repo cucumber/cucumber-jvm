@@ -16,9 +16,17 @@ import static io.cucumber.java.InvalidMethodSignatureException.builder;
 class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
 
     private final TableEntryByTypeTransformer transformer;
+    private final boolean headersToProperties;
 
     JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup) {
         super(requireValidMethod(method), lookup);
+        this.headersToProperties = false;
+        this.transformer = this::execute;
+    }
+
+    JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup, boolean headersToProperties) {
+        super(requireValidMethod(method), lookup);
+        this.headersToProperties = headersToProperties;
         this.transformer = this::execute;
     }
 
@@ -78,6 +86,11 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
     @Override
     public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
         return transformer;
+    }
+
+    @Override
+    public boolean headersToProperties() {
+        return headersToProperties;
     }
 
     private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {

@@ -25,7 +25,8 @@ public final class ArgumentMatcher {
         if (arg instanceof DocStringArgument) {
             DocStringArgument docString = (DocStringArgument) arg;
             String content = docString.getContent();
-            return expression.match(step.getText(), content, types);
+            String contentType = docString.getContentType();
+            return expression.match(step.getText(), content, contentType, types);
         }
 
         if (arg instanceof DataTableArgument) {
@@ -37,7 +38,7 @@ public final class ArgumentMatcher {
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
     }
 
-    private List<List<String>> emptyCellsToNull(List<List<String>> cells) {
+    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
         return cells.stream()
             .map(row -> row.stream()
                 .map(s -> s.isEmpty() ? null : s)

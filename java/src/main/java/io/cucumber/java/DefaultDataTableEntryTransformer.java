@@ -25,5 +25,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
 public @interface DefaultDataTableEntryTransformer {
-
+    /**
+     * Converts a data tables header headers to property names.
+     * <p>
+     * E.g. {@code Xml Http request} becomes {@code xmlHttpRequest}.
+     *
+     * @return true if conversion should be be applied, true by default.
+     */
+    boolean headersToProperties() default true;
 }

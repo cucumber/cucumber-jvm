@@ -131,7 +131,6 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
-
     public Object invalid_optional_third_type(Map<String, String> fromValue, Type toValueType, String cellTransformer) {
         return null;
     }

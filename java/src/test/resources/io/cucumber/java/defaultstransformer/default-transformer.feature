@@ -6,6 +6,12 @@ Feature: Datatable
       | Annie M. G. | Schmidt  | 1911-03-20 |
       | Roald       | Dahl     | 1916-09-13 |
 
+  Scenario: Convert a table with title case headers to a single object via the default transformer
+    Given a table with title case headers
+      | First Name  | last Name| Birth date |
+      | Annie M. G. | Schmidt  | 1911-03-20 |
+      | Roald       | Dahl     | 1916-09-13 |
+
 
   Scenario: Convert a table to a single object via the default transformer
 

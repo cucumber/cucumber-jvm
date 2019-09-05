@@ -122,10 +122,8 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier).fireTestStarted(pickleRunner.getDescription());
         verify(runNotifier, never()).fireTestStarted(pickleRunner.describeChild(step));
         verify(runNotifier, never()).fireTestFinished(pickleRunner.describeChild(step));
-        verify(runNotifier).fireTestFinished(pickleRunner.getDescription());
     }
 
     @Test
@@ -139,10 +137,8 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier).fireTestStarted(pickleRunner.getDescription());
         verify(runNotifier).fireTestStarted(pickleRunner.describeChild(step));
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
-        verify(runNotifier).fireTestFinished(pickleRunner.getDescription());
     }
 
     @Test
@@ -164,7 +160,6 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.getDescription());
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.getException(), instanceOf(SkippedThrowable.class));

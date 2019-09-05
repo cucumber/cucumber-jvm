@@ -76,7 +76,6 @@ final class JUnitReporter {
     }
 
     private void handleTestCaseStarted(TestCaseStarted testCaseStarted) {
-        pickleRunnerNotifier.fireTestStarted();
         stepErrors = new ArrayList<>();
     }
 
@@ -176,7 +175,6 @@ final class JUnitReporter {
                 stepErrors.forEach(error -> pickleRunnerNotifier.addFailure(error));
                 break;
         }
-        pickleRunnerNotifier.fireTestFinished();
     }
 
     private void handleHookResult(Result result) {

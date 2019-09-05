@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static io.cucumber.junit.FileNameCompatibleNames.createName;
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.PickleRunners.withStepDescriptions;
 import static java.util.stream.Collectors.toList;
@@ -24,6 +25,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     private final List<PickleRunner> children;
     private final CucumberFeature cucumberFeature;
+    private final JUnitOptions options;
     private Description description;
 
     static FeatureRunner create(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) {
@@ -37,6 +39,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private FeatureRunner(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
         super(null);
         this.cucumberFeature = feature;
+        this.options = options;
         this.children = feature.getPickles().stream()
             .filter(filter).
                 map(pickleEvent -> options.stepNotifications()
@@ -47,7 +50,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     @Override
     protected String getName() {
-        return cucumberFeature.getKeyword() + ": " + cucumberFeature.getName();
+        return createName(cucumberFeature.getName(), options.filenameCompatibleNames());
     }
 
     @Override
@@ -75,14 +78,14 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     @Override
     protected void runChild(PickleRunner child, RunNotifier notifier) {
-        notifier.fireTestStarted(getDescription());
+        notifier.fireTestStarted(describeChild(child));
         try {
             child.run(notifier);
         } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(getDescription(), e));
+            notifier.fireTestFailure(new Failure(describeChild(child), e));
             notifier.pleaseStop();
         } finally {
-            notifier.fireTestFinished(getDescription());
+            notifier.fireTestFinished(describeChild(child));
         }
     }
 
