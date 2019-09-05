@@ -10,10 +10,10 @@ class ObjectFactoryParser {
         try {
             objectFactoryClass = Class.forName(cucumberObjectFactory);
         } catch (ClassNotFoundException e) {
-            throw new CucumberException("Could not load object factory class for " + cucumberObjectFactory, e);
+            throw new CucumberException(String.format("Could not load object factory class for '%s'", cucumberObjectFactory), e);
         }
         if (!ObjectFactory.class.isAssignableFrom(objectFactoryClass)) {
-            throw new CucumberException("Object factory class " + objectFactoryClass + " was not a subclass of " + ObjectFactory.class);
+            throw new CucumberException(String.format("Object factory class '%s' was not a subclass of '%s'", objectFactoryClass, ObjectFactory.class));
         }
         return (Class<? extends ObjectFactory>) objectFactoryClass;
     }

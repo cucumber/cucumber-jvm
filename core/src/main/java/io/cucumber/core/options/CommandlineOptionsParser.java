@@ -1,26 +1,12 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-
 import java.util.Arrays;
 import java.util.List;
 
 public final class CommandlineOptionsParser {
 
-    private final ResourceLoader resourceLoader;
-
-    public CommandlineOptionsParser() {
-        this(new MultiLoader(CommandlineOptionsParser.class.getClassLoader()));
-    }
-
-    public CommandlineOptionsParser(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-
     public RuntimeOptionsBuilder parse(List<String> args) {
-        RerunLoader rerunLoader = new RerunLoader(resourceLoader);
-        RuntimeOptionsParser parser = new RuntimeOptionsParser(rerunLoader);
+        RuntimeOptionsParser parser = new RuntimeOptionsParser();
         return parser.parse(args);
     }
 

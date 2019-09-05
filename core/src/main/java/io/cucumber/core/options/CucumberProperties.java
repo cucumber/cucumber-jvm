@@ -9,6 +9,17 @@ import java.util.*;
 
 import static io.cucumber.core.options.Constants.CUCUMBER_PROPERTIES_FILE_NAME;
 
+/**
+ * Store properties.
+ * <p>
+ * Cucumber can read properties from file, environment or system properties.
+ * <p>
+ * Cucumber properties are formatted using kebab-case. E.g.
+ * {@code cucumber.snippet-type}. To facilitate environments that do no support
+ * kebab case properties can also be formatted (in order of preference) using
+ * upper snake case e.g. {@code CUCUMBER_SNIPPET_TYPE} or lower snake case e.g.
+ * {@code cucumber_snippet_type}.
+ */
 public final class CucumberProperties {
 
     private static final Logger log = LoggerFactory.getLogger(CucumberProperties.class);

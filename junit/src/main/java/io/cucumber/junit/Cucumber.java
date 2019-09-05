@@ -65,11 +65,12 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * Options can be provided in by (order of precedence):
  * <ol>
- * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()} ()}</li>
- * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
+ * <li>Properties from {@link System#getProperties()} ()}</li>
+ * <li>Properties from in {@link System#getenv()}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
- * <li>Setting {@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@code cucumber.properties}</li>
+ * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
+ * For available properties see {@link Constants}.
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
  * These will be executed before and after all scenarios. Using these is not recommended as it limits the portability
@@ -97,25 +98,21 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         super(clazz);
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
-        ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-
         // Parse the options early to provide fast feedback about invalid options
-        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
-        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser(resourceLoader)
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
             .withOptionsProvider(new JUnitCucumberOptionsProvider())
             .parse(clazz)
             .build(propertiesFileOptions);
 
-        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        RuntimeOptions runtimeOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
@@ -138,6 +135,8 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
             .build(junitEnvironmentOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
+        ClassLoader classLoader = clazz.getClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
         this.features = featureSupplier.get();
@@ -149,13 +148,14 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
-                .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
-                .filter(runner -> !runner.isEmpty())
-                .collect(toList());
+            .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
+            .filter(runner -> !runner.isEmpty())
+            .collect(toList());
     }
 
     @Override
@@ -177,6 +177,12 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
     protected Statement childrenInvoker(RunNotifier notifier) {
         Statement runFeatures = super.childrenInvoker(notifier);
         return new RunCucumber(runFeatures);
+    }
+
+    @Override
+    public void setScheduler(RunnerScheduler scheduler) {
+        super.setScheduler(scheduler);
+        multiThreadingAssumed = true;
     }
 
     class RunCucumber extends Statement {
@@ -201,11 +207,5 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
         }
-    }
-
-    @Override
-    public void setScheduler(RunnerScheduler scheduler) {
-        super.setScheduler(scheduler);
-        multiThreadingAssumed = true;
     }
 }

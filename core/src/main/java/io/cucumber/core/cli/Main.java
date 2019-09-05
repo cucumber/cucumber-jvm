@@ -1,7 +1,5 @@
 package io.cucumber.core.cli;
 
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberProperties;
@@ -13,13 +11,14 @@ import org.apiguardian.api.API;
 /**
  * Cucumber Main. Runs Cucumber as a CLI.
  * <p>
- * Options can be provided in order of precedence through:
+ * Options can be provided in by (order of precedence):
  * <ol>
- * <li>command line arguments</li>
- * <li>{@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getProperties()}</li>
- * <li>{@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@link System#getenv()}</li>
- * <li>{@value Constants#CUCUMBER_OPTIONS_PROPERTY_NAME} property in {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
+ * <li>Command line arguments</li>
+ * <li>Properties from {@link System#getProperties()}</li>
+ * <li>Properties from in {@link System#getenv()}</li>
+ * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
+ * For available properties see {@link Constants}.
  */
 @API(status = API.Status.STABLE)
 public class Main {
@@ -37,17 +36,15 @@ public class Main {
      * @return 0 if execution was successful, 1 if it was not (test failures)
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-
-        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
             .build();
 
-        RuntimeOptions environmentOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromEnvironment())
             .build(propertiesFileOptions);
 
-        RuntimeOptions systemOptions = new CucumberPropertiesParser(resourceLoader)
+        RuntimeOptions systemOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
