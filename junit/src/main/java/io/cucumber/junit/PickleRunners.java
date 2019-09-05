@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.junit.FileNameCompatibleNames.createName;
+
 
 final class PickleRunners {
 
@@ -65,7 +67,7 @@ final class PickleRunners {
 
         @Override
         protected String getName() {
-            return getPickleName(pickle, jUnitOptions.filenameCompatibleNames());
+            return createName(pickle.getName(), jUnitOptions.filenameCompatibleNames());
         }
 
         @Override
@@ -81,12 +83,7 @@ final class PickleRunners {
         public Description describeChild(CucumberStep step) {
             Description description = stepDescriptions.get(step);
             if (description == null) {
-                String testName;
-                if (jUnitOptions.filenameCompatibleNames()) {
-                    testName = makeNameFilenameCompatible(step.getText());
-                } else {
-                    testName = step.getText();
-                }
+                String testName = createName(step.getText(), jUnitOptions.filenameCompatibleNames());
                 description = Description.createTestDescription(getName(), testName, new PickleStepId(pickle, step));
                 stepDescriptions.put(step, description);
             }
@@ -131,7 +128,7 @@ final class PickleRunners {
         public Description getDescription() {
             if (description == null) {
                 String className = createName(featureName, jUnitOptions.filenameCompatibleNames());
-                String name = getPickleName(pickle, jUnitOptions.filenameCompatibleNames());
+                String name = createName(pickle.getName(), jUnitOptions.filenameCompatibleNames());
                 description = Description.createTestDescription(className, name, new PickleId(pickle));
             }
             return description;
@@ -151,28 +148,6 @@ final class PickleRunners {
             runner.runPickle(pickle);
             jUnitReporter.finishExecutionUnit();
         }
-    }
-
-    private static String getPickleName(CucumberPickle pickle, boolean useFilenameCompatibleNames) {
-        final String name = pickle.getName();
-        return createName(name, useFilenameCompatibleNames);
-    }
-
-
-    private static String createName(final String name, boolean useFilenameCompatibleNames) {
-        if (name.isEmpty()) {
-            return "EMPTY_NAME";
-        }
-
-        if (useFilenameCompatibleNames) {
-            return makeNameFilenameCompatible(name);
-        }
-
-        return name;
-    }
-
-    private static String makeNameFilenameCompatible(String name) {
-        return name.replaceAll("[^A-Za-z0-9_]", "_");
     }
 
     static final class PickleId implements Serializable {

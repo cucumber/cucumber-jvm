@@ -53,14 +53,14 @@ class CucumberTest {
     void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
         assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature: Feature A")));
+        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature A")));
     }
 
     @Test
     void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
         assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature: Feature A")));
+        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature A")));
     }
 
     @Test
@@ -98,7 +98,7 @@ class CucumberTest {
     }
 
     @Test
-    void cucumber_can_run_pickles_in_parallel() throws Exception {
+    void cucumber_can_run_features_in_parallel() throws Exception {
         RunNotifier notifier = new RunNotifier();
         RunListener listener = Mockito.mock(RunListener.class);
         notifier.addListener(listener);
@@ -106,21 +106,10 @@ class CucumberTest {
         Request.classes(computer, ValidEmpty.class).getRunner().run(notifier);
         {
             InOrder order = Mockito.inOrder(listener);
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("A good start(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("A good start(Feature A)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
         }
@@ -128,24 +117,12 @@ class CucumberTest {
             InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("A(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("A(Feature B)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("B(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("B(Feature B)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
-        }
-        {
-            InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
         }
@@ -157,7 +134,7 @@ class CucumberTest {
 
         assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$ValidEmpty"));
         Description feature = description.getChildren().get(0);
-        assertThat(feature.getDisplayName(), is("Feature: Feature A"));
+        assertThat(feature.getDisplayName(), is("Feature A"));
         Description pickle = feature.getChildren().get(0);
         assertThat(pickle.getDisplayName(), is("A good start(Feature A)"));
     }
@@ -174,7 +151,7 @@ class CucumberTest {
     }
 
     @RunWith(Cucumber.class)
-    public static class Invalid {
+    private static class Invalid {
         @DummyWhen
         public void ignoreMe() {
         }
