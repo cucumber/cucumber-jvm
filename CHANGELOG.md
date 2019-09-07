@@ -171,6 +171,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - It is recommended to implement your own transaction hooks.
     - Will allow the dependency on `spring-txn` to be removed.
 
+### Note
+Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and above that supports the new package structure. To use the latest snapshot version, refer [Follow the latest snapshot](https://github.com/cucumber/cucumber-eclipse#follow-the-latest-snapshot)
+ 
+
 ## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.0.0) (2019-06-15)
 
 ### Added
