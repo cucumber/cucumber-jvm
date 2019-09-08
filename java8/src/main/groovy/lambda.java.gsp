@@ -18,7 +18,7 @@ import io.cucumber.java8.LambdaGlue;
 import org.apiguardian.api.API;
 
 /**
- * ${locale.getDisplayLanguage()}
+ * ${language_name}
  * <p>
  * To execute steps in a feature file the steps must be
  * connected to executable code. This can be done by

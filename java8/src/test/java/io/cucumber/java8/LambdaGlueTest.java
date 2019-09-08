@@ -144,7 +144,7 @@ class LambdaGlueTest {
         assertHook(afterStepHook, "taxExpression", 42);
     }
 
-    private final Scenario scenario = Mockito.mock(Scenario.class);
+    private final io.cucumber.core.backend.Scenario scenario = Mockito.mock(io.cucumber.core.backend.Scenario.class);
 
     private final LambdaGlueRegistry lambdaGlueRegistry = new LambdaGlueRegistry() {
         @Override
