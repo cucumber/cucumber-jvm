@@ -1,8 +1,8 @@
 package io.cucumber.examples.java8;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
+import io.cucumber.java8.Scenario;
 
 import java.util.List;
 

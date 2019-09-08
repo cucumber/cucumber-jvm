@@ -1,9 +1,9 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.Scenario;
 import io.cucumber.core.event.HookType;
 import io.cucumber.core.event.Result;
 import io.cucumber.core.event.Status;

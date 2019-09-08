@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.feature.CucumberStep;
 
 import java.util.Collections;

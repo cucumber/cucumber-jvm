@@ -1,6 +1,5 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.junit.jupiter.api.BeforeEach;

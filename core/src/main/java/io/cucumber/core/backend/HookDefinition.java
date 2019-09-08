@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.api.Scenario;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)

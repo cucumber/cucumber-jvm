@@ -12,7 +12,7 @@ import static java.util.Collections.max;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
-class Scenario implements io.cucumber.core.api.Scenario {
+class Scenario implements io.cucumber.core.backend.Scenario {
 
     private final List<Result> stepResults = new ArrayList<>();
     private final EventBus bus;

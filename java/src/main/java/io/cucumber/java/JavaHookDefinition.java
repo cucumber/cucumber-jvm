@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.Scenario;
 import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
@@ -32,7 +32,8 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         }
 
         if (parameterTypes.length == 1) {
-            if (!(Object.class.equals(parameterTypes[0]) || Scenario.class.equals(parameterTypes[0]))) {
+            Class<?> parameterType = parameterTypes[0];
+            if (!(Object.class.equals(parameterType)  || io.cucumber.java.Scenario.class.equals(parameterType))) {
                 throw createInvalidSignatureException(method);
             }
         }
@@ -46,7 +47,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             .addAnnotation(After.class)
             .addAnnotation(BeforeStep.class)
             .addAnnotation(AfterStep.class)
-            .addSignature("public void before_or_after(Scenario scenario)")
+            .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
             .addSignature("public void before_or_after()")
             .build();
     }
@@ -56,7 +57,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     public void execute(Scenario scenario) throws Throwable {
         Object[] args;
         if (method.getParameterTypes().length == 1) {
-            args = new Object[]{scenario};
+            args = new Object[]{new io.cucumber.java.Scenario(scenario)};
         } else {
             args = new Object[0];
         }

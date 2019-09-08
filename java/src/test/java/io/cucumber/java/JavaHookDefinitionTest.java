@@ -1,6 +1,5 @@
 package io.cucumber.java;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.Lookup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings({"WeakerAccess"})
 @ExtendWith({MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class JavaHookDefinitionTest {
@@ -31,12 +31,12 @@ public class JavaHookDefinitionTest {
     };
 
     @Mock
-    private Scenario scenario;
+    private io.cucumber.core.backend.Scenario scenario;
 
     private boolean invoked = false;
 
     @Test
-    public void can_create_with_no_argument() throws Throwable {
+    void can_create_with_no_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
         JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, 0, lookup);
         definition.execute(scenario);
@@ -50,7 +50,7 @@ public class JavaHookDefinitionTest {
     }
 
     @Test
-    public void can_create_with_single_scenario_argument() throws Throwable {
+    void can_create_with_single_scenario_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
         JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, 0, lookup);
         definition.execute(scenario);
@@ -63,7 +63,7 @@ public class JavaHookDefinitionTest {
     }
 
     @Test
-    public void fails_if_hook_argument_is_not_scenario_result() throws NoSuchMethodException {
+    void fails_if_hook_argument_is_not_scenario_result() throws NoSuchMethodException {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_parameter", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
@@ -71,7 +71,7 @@ public class JavaHookDefinitionTest {
         );
         assertThat(exception.getMessage(), startsWith("" +
             "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
-            " * public void before_or_after(Scenario scenario)\n" +
+            " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
             " * public void before_or_after()\n" +
             "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(String) in file:"));
     }
@@ -82,7 +82,7 @@ public class JavaHookDefinitionTest {
     }
 
     @Test
-    public void fails_if_generic_hook_argument_is_not_scenario_result() throws NoSuchMethodException {
+    void fails_if_generic_hook_argument_is_not_scenario_result() throws NoSuchMethodException {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_generic_parameter", List.class);
         assertThrows(
             InvalidMethodSignatureException.class,
@@ -96,7 +96,7 @@ public class JavaHookDefinitionTest {
     }
 
     @Test
-    public void fails_if_too_many_arguments() throws NoSuchMethodException {
+    void fails_if_too_many_arguments() throws NoSuchMethodException {
         Method method = JavaHookDefinitionTest.class.getMethod("too_many_parameters", Scenario.class, String.class);
         assertThrows(
             InvalidMethodSignatureException.class,
