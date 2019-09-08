@@ -42,7 +42,7 @@
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
-        <gherkin.version>5.1.0</gherkin.version>
+        <gherkin.version>5.2.0</gherkin.version>
         <cucumber-expressions.version>8.0.0</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
@@ -77,12 +77,6 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.cucumber</groupId>
-                        <artifactId>gherkin-jvm-deps</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>

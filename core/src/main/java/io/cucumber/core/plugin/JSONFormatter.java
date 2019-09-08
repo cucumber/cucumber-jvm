@@ -6,7 +6,6 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.deps.net.iharder.Base64;
 import io.cucumber.core.event.DataTableArgument;
 import io.cucumber.core.event.DocStringArgument;
 import io.cucumber.core.event.EmbedEvent;
@@ -32,6 +31,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,7 +299,7 @@ public final class JSONFormatter implements EventListener {
     private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType, String name) {
         Map<String, Object> embedMap = new HashMap<>();
         embedMap.put("mime_type", mimeType);
-        embedMap.put("data", Base64.encodeBytes(data));
+        embedMap.put("data", Base64.getEncoder().encodeToString(data));
         if (name != null) {
             embedMap.put("name", name);
         }
