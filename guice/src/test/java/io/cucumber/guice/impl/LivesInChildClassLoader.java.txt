@@ -1,0 +1,11 @@
+package io.cucumber.guice.impl;
+
+import com.google.inject.Injector;
+import io.cucumber.guice.InjectorSource;
+
+public class LivesInChildClassLoader implements InjectorSource {
+  @Override
+  public Injector getInjector() {
+    return null;
+  }
+}

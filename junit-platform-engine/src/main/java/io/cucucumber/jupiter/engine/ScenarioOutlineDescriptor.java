@@ -1,6 +1,6 @@
 package io.cucucumber.jupiter.engine;
 
-import gherkin.events.PickleEvent;
+import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
@@ -16,14 +16,14 @@ class ScenarioOutlineDescriptor extends AbstractTestDescriptor {
         super(uniqueId, name, source);
     }
 
-    static TestDescriptor create(List<PickleEvent> pickles, FeatureOrigin source, TestDescriptor parent) {
-        PickleEvent outlinePickle = pickles.get(0);
+    static TestDescriptor create(List<CucumberPickle> pickles, FeatureOrigin source, TestDescriptor parent) {
+        CucumberPickle outlinePickle = pickles.get(0);
         UniqueId uniqueId = source.outlineSegment(parent.getUniqueId(), pickles);
         TestSource testSource = source.outlineSource(pickles);
-        TestDescriptor descriptor = new ScenarioOutlineDescriptor(uniqueId, outlinePickle.pickle.getName(), testSource);
+        TestDescriptor descriptor = new ScenarioOutlineDescriptor(uniqueId, outlinePickle.getName(), testSource);
 
         int index = 1;
-        for (PickleEvent pickleEvent : pickles) {
+        for (CucumberPickle pickleEvent : pickles) {
             descriptor.addChild(createExample(pickleEvent, index++, source, descriptor));
         }
 

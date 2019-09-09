@@ -1,8 +1,7 @@
 package io.cucucumber.jupiter.engine;
 
-import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleTag;
 import io.cucucumber.jupiter.engine.resource.ClasspathSupport;
+import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
@@ -17,23 +16,23 @@ import java.util.stream.Collectors;
 
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    private final PickleEvent pickleEvent;
+    private final CucumberPickle pickleEvent;
 
-    private PickleDescriptor(UniqueId uniqueId, String name, TestSource source, PickleEvent pickleEvent) {
+    private PickleDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberPickle pickleEvent) {
         super(uniqueId, name, source);
         this.pickleEvent = pickleEvent;
     }
 
-    static PickleDescriptor createExample(PickleEvent pickleEvent, int index, FeatureOrigin source, TestDescriptor parent) {
+    static PickleDescriptor createExample(CucumberPickle pickleEvent, int index, FeatureOrigin source, TestDescriptor parent) {
         UniqueId uniqueId = source.exampleSegment(parent.getUniqueId(), pickleEvent);
         TestSource testSource = source.exampleSource(pickleEvent);
         return new PickleDescriptor(uniqueId, "Example #" + index, testSource, pickleEvent);
     }
 
-    static PickleDescriptor createScenario(PickleEvent pickle, FeatureOrigin source, TestDescriptor parent) {
+    static PickleDescriptor createScenario(CucumberPickle pickle, FeatureOrigin source, TestDescriptor parent) {
         UniqueId uniqueId = source.scenarioSegment(parent.getUniqueId(), pickle);
         TestSource testSource = source.scenarioSource(pickle);
-        return new PickleDescriptor(uniqueId, pickle.pickle.getName(), testSource, pickle);
+        return new PickleDescriptor(uniqueId, pickle.getName(), testSource, pickle);
     }
 
     @Override
@@ -49,8 +48,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
 
     @Override
     public Set<TestTag> getTags() {
-        return pickleEvent.pickle.getTags().stream()
-            .map(PickleTag::getName)
+        return pickleEvent.getTags().stream()
             .filter(TestTag::isValid)
             .map(TestTag::create)
             .collect(Collectors.toSet());

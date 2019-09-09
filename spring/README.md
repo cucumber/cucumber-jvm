@@ -23,6 +23,24 @@ Add the `cucumber-spring` dependency to your `pom.xml`:
 For your own classes:
 
 * Add a `@Component` annotation to each of the classes cucumber-spring should manage.
+```java
+package com.example.app;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Belly {
+    private int cukes = 0;
+
+    public void setCukes(int cukes) {
+        this.cukes = cukes;
+    }
+
+    public int getCukes() {
+        return cukes;
+    }
+}
+```
 * Add the location of your classes to the `@ComponentScan` of your (test) configuration:
 
 ```java
@@ -39,6 +57,27 @@ public class Config {
 ```
 
 * Add `@DirtiesContext` to your test configuration if each scenario should have a fresh application context.
+```java
+package com.example.app;
+
+import com.example.app.Config;
+import cucumber.runtime.java.spring.beans.Belly;
+import cucumber.runtime.java.spring.beans.BellyBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+
+@ContextConfiguration(classes = { Config.class })
+@DirtiesContext
+public class SomeServiceSteps {
+
+    @Autowired
+    private Belly belly; // Each scenario have a new instance of Belly
+    
+    [...]
+    
+}
+```
 
 For classes from other frameworks:
 
@@ -97,6 +136,19 @@ public class SomeServiceSteps {
     SomeOtherService someOtherService;
 
     // the rest of your step definitions
+}
+```
+
+Changing a Spring bean's scope to `SCOPE_CUCUMBER_GLUE` will bound its lifecycle to the standard glue lifecycle.
+
+```java
+import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Scope;
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+
+@Component
+@Scope(SCOPE_CUCUMBER_GLUE)
+public class MyComponent {
 }
 ```
 

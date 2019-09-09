@@ -1,6 +1,7 @@
 package io.cucucumber.jupiter.engine.resource;
 
-import cucumber.runtime.io.Resource;
+
+import io.cucumber.core.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;

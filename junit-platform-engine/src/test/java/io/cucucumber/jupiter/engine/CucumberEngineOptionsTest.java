@@ -1,9 +1,8 @@
 package io.cucucumber.jupiter.engine;
 
+import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 
-import static cucumber.api.SnippetType.CAMELCASE;
-import static cucumber.api.SnippetType.UNDERSCORE;
 import static io.cucucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucucumber.jupiter.engine.Constants.DRY_RUN_ENABLED_PROPERTY_NAME;
 import static io.cucucumber.jupiter.engine.Constants.PLUGIN_PROPERTY_NAME;
@@ -22,13 +21,13 @@ class CucumberEngineOptionsTest {
             asList("html:path/to/report.html"),
             new CucumberEngineOptions(
                 new MapConfigurationParameters(PLUGIN_PROPERTY_NAME, "html:path/to/report.html")
-            ).getPluginNames()
+            ).plugins()
         );
         assertEquals(
             asList("html:path/with spaces/to/report.html", "json:path/with spaces/to/report.json"),
             new CucumberEngineOptions(
                 new MapConfigurationParameters(PLUGIN_PROPERTY_NAME, "\"html:path/with spaces/to/report.html\" \"json:path/with spaces/to/report.json\"")
-            ).getPluginNames()
+            ).plugins()
         );
     }
 
@@ -57,7 +56,7 @@ class CucumberEngineOptionsTest {
 
     @Test
     void getSnippetType() {
-        assertEquals(UNDERSCORE, new CucumberEngineOptions(new MapConfigurationParameters(SNIPPET_TYPE_PROPERTY_NAME, "underscore")).getSnippetType());
-        assertEquals(CAMELCASE, new CucumberEngineOptions(new MapConfigurationParameters(SNIPPET_TYPE_PROPERTY_NAME, "camelcase")).getSnippetType());
+        assertEquals(SnippetType.UNDERSCORE, new CucumberEngineOptions(new MapConfigurationParameters(SNIPPET_TYPE_PROPERTY_NAME, "underscore")).getSnippetType());
+        assertEquals(SnippetType.CAMELCASE, new CucumberEngineOptions(new MapConfigurationParameters(SNIPPET_TYPE_PROPERTY_NAME, "camelcase")).getSnippetType());
     }
 }

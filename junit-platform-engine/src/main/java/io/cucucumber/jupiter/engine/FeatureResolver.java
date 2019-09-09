@@ -1,9 +1,10 @@
 package io.cucucumber.jupiter.engine;
 
-import cucumber.runtime.io.Resource;
-import cucumber.runtime.model.CucumberFeature;
 import io.cucucumber.jupiter.engine.resource.ClassFilter;
 import io.cucucumber.jupiter.engine.resource.ResourceScanner;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.io.Resource;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.TestDescriptor;
@@ -24,7 +25,6 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import static cucumber.runtime.model.FeatureParser.parseResource;
 import static io.cucucumber.jupiter.engine.FeatureOrigin.isClassPath;
 import static io.cucucumber.jupiter.engine.resource.Resources.createClasspathResource;
 import static io.cucucumber.jupiter.engine.resource.Resources.createClasspathRootResource;
@@ -70,7 +70,7 @@ final class FeatureResolver {
             FeatureResolver::isFeature,
             (baseDir, resource) -> {
                 Resource specificResource = createResource.apply(baseDir, resource);
-                CucumberFeature parsedFeatured = parseResource(specificResource);
+                CucumberFeature parsedFeatured = FeatureParser.parseResource(specificResource);
                 return of(parsedFeatured);
             }
         );

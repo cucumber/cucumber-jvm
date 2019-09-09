@@ -1,8 +1,8 @@
 package io.cucucumber.jupiter.engine;
 
-import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.PickleLocation;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
@@ -33,10 +33,10 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         return featureDescriptor;
     }
 
-    private static void addFeatureElements(Collection<List<PickleEvent>> picklesPerScenario, FeatureOrigin source, TestDescriptor featureDescriptor) {
+    private static void addFeatureElements(Collection<List<CucumberPickle>> picklesPerScenario, FeatureOrigin source, TestDescriptor featureDescriptor) {
         picklesPerScenario.spliterator().forEachRemaining(pickleEvents -> {
             if (isScenario(pickleEvents)) {
-                PickleEvent pickle = pickleEvents.get(0);
+                CucumberPickle pickle = pickleEvents.get(0);
                 featureDescriptor.addChild(PickleDescriptor.createScenario(pickle, source, featureDescriptor));
             } else {
                 featureDescriptor.addChild(ScenarioOutlineDescriptor.create(pickleEvents, source, featureDescriptor));
@@ -44,21 +44,19 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         });
     }
 
-    private static Collection<List<PickleEvent>> compileFeature(CucumberFeature feature) {
+    private static Collection<List<CucumberPickle>> compileFeature(CucumberFeature feature) {
         // A scenarioSource with examples compiles into multiple pickle
         // We group these pickle by their original location
-        Map<Integer, List<PickleEvent>> picklesPerScenario = new LinkedHashMap<>();
-        for (PickleEvent pickle : feature.getPickles()) {
-            List<PickleLocation> locations = pickle.pickle.getLocations();
-            int scenarioLocation = locations.get(locations.size() - 1).getLine();
-            picklesPerScenario.putIfAbsent(scenarioLocation, new ArrayList<>());
-            picklesPerScenario.get(scenarioLocation).add(pickle);
+        Map<Integer, List<CucumberPickle>> picklesPerScenario = new LinkedHashMap<>();
+        for (CucumberPickle pickle : feature.getPickles()) {
+            picklesPerScenario.putIfAbsent(pickle.getScenarioLine(), new ArrayList<>());
+            picklesPerScenario.get(pickle.getScenarioLine()).add(pickle);
         }
 
         return picklesPerScenario.values();
     }
 
-    private static boolean isScenario(List<PickleEvent> pickleEvents) {
+    private static boolean isScenario(List<CucumberPickle> pickleEvents) {
         return pickleEvents.size() == 1;
     }
 
