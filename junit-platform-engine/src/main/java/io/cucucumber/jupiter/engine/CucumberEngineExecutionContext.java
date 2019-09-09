@@ -1,11 +1,9 @@
 package io.cucucumber.jupiter.engine;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.EventHandler;
 import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
 import io.cucumber.core.event.TestCaseFinished;
 import io.cucumber.core.event.TestRunFinished;
 import io.cucumber.core.event.TestRunStarted;
@@ -127,6 +125,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             }
             Throwable error = result.getError();
             if (result.getStatus().isOk(options.isStrict())) {
+                // TODO: Fix strict mode
                 // TODO: Include snippet here for undefined steps
                 // TODO: Return and throw in caller. See JUNIT.
                 // TODO: Distinguish between TestSkippedException and TestAbortedException

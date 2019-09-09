@@ -1,6 +1,5 @@
 package io.cucucumber.jupiter.engine;
 
-import gherkin.events.PickleEvent;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestDescriptor;
