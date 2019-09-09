@@ -127,6 +127,9 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             }
             Throwable error = result.getError();
             if (result.getStatus().isOk(options.isStrict())) {
+                // TODO: Include snippet here for undefined steps
+                // TODO: Return and throw in caller. See JUNIT.
+                // TODO: Distinguish between TestSkippedException and TestAbortedException
                 if (error == null) {
                     throw new TestAbortedException();
                 }

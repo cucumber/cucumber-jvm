@@ -8,6 +8,7 @@ import static org.junit.platform.engine.support.hierarchical.DefaultParallelExec
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_FIXED_PARALLELISM_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_STRATEGY_PROPERTY_NAME;
 
+//TODO: Replace with constants from cucumber-core
 public final class Constants {
     /**
      * Property name used to disable ansi colors in the output (not supported by all terminals): {@value}

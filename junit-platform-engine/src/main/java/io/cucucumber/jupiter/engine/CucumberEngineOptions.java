@@ -33,8 +33,9 @@ class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options,
     }
 
     @Override
-    public Iterable<Plugin> plugins() {
-        return null;
+    public List<Plugin> plugins() {
+        //TODO: Parse plugins here
+        return Collections.emptyList();
     }
 
     @Override
