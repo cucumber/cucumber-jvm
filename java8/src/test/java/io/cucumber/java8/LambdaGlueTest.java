@@ -1,8 +1,11 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.docstring.DocStringType;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static io.cucumber.java8.LambdaGlue.DEFAULT_AFTER_ORDER;
 import static io.cucumber.java8.LambdaGlue.DEFAULT_BEFORE_ORDER;
 import static io.cucumber.java8.LambdaGlue.EMPTY_TAG_EXPRESSION;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -174,6 +178,10 @@ class LambdaGlueTest {
         public void addAfterHookDefinition(HookDefinition afterHook) {
             LambdaGlueTest.this.afterHook = afterHook;
         }
+
+        @Override
+        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+        }
     };
 
     private final LambdaGlue lambdaGlue = new LambdaGlue() {
@@ -194,6 +202,21 @@ class LambdaGlueTest {
 
     void hook(Scenario scenario) {
         invoked.set(true);
+    }
+
+    private void assertDocString(DocStringTypeDefinition docStringTypeDefinition, Class returnType, String contentType, String content) throws Throwable {
+        DocStringType docStringType = docStringTypeDefinition.docStringType();
+        Method getContentType = DocStringType.class.getDeclaredMethod("getContentType");
+        Method transform = DocStringType.class.getDeclaredMethod("transform", String.class);
+        Method getType = DocStringType.class.getDeclaredMethod("getType");
+        getContentType.setAccessible(true);
+        transform.setAccessible(true);
+        getType.setAccessible(true);
+        String actualContentType = (String) getContentType.invoke(docStringType);
+
+        Class actualReturnType = transform.invoke(docStringType, content).getClass();
+        assertThat(actualContentType, equalTo(contentType));
+        assertThat(actualReturnType, equalTo(returnType));
     }
 
 }
