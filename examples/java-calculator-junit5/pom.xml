@@ -12,11 +12,6 @@
     <packaging>jar</packaging>
     <name>Examples: Java Calculator</name>
 
-    <properties>
-        <junit.jupiter.version>5.3.1</junit.jupiter.version>
-        <junit.platform.version>1.3.2</junit.platform.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -31,13 +26,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-console</artifactId>
-            <version>${junit.platform.version}</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -55,6 +44,13 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-console</artifactId>
+                        <version>${junit-platform.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <phase>test</phase>
