@@ -94,17 +94,6 @@ public final class Constants {
     public static final String FEATURES_PROPERTY_NAME = "cucumber.features";
 
     /**
-     * Property name to set a file from which feature locations will be read: {@value}
-     * <p>
-     * Feature paths must be separated by a new line. The feature path is
-     * a uri or path e.g.: {@code path/to/feature/dir}.
-     *
-     * @see io.cucumber.core.feature.FeatureWithLines
-     * @see #FEATURES_PROPERTY_NAME
-     */
-    public static final String RERUN_FILE_PROPERTY_NAME = "cucumber.rerun-file";
-
-    /**
      * Property name used to set name filter: {@value}
      * <p>
      * Filters features based on the provided regex pattern.
