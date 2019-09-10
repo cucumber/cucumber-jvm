@@ -152,7 +152,7 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("--glue", "somewhere")
             .build();
-        assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
+        assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
     }
 
     @Test
@@ -309,7 +309,7 @@ class RuntimeOptionsTest {
 
         assertAll("Checking RuntimeOptions",
             () -> assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths"))),
-            () -> assertThat(options.getGlue(), contains(uri("classpath:lookatme"))),
+            () -> assertThat(options.getGlue(), contains(uri("classpath:/lookatme"))),
             () -> assertTrue(options.isStrict())
         );
     }
@@ -323,7 +323,7 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
+        assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
     }
 
     @Test

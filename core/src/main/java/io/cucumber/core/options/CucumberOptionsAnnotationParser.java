@@ -25,7 +25,7 @@ public final class CucumberOptionsAnnotationParser {
             return Classpath.CLASSPATH_SCHEME_PREFIX + "/";
         }
 
-        return Classpath.CLASSPATH_SCHEME_PREFIX + packageName.replace('.', '/');
+        return Classpath.CLASSPATH_SCHEME_PREFIX + "/" + packageName.replace('.', '/');
     }
 
     private static String packageName(Class clazz) {

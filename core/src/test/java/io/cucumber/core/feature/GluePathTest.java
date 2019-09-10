@@ -62,7 +62,7 @@ class GluePathTest {
 
         assertAll("Checking uri",
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("com/example/app"))
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/com/example/app"))
         );
     }
 
@@ -82,7 +82,7 @@ class GluePathTest {
 
         assertAll("Checking uri",
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("com/example/app"))
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/com/example/app"))
         );
     }
 
@@ -112,7 +112,7 @@ class GluePathTest {
 
         assertAll("Checking uri",
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("com/example/app")))
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/com/example/app")))
         );
     }
 

@@ -1,5 +1,6 @@
 package io.cucumber.jupiter.engine;
 
+import io.cucumber.core.io.Classpath;
 import io.cucumber.jupiter.engine.resource.ClassFilter;
 import io.cucumber.jupiter.engine.resource.ResourceScanner;
 import io.cucumber.core.feature.CucumberFeature;
@@ -165,8 +166,7 @@ final class FeatureResolver {
     private Stream<TestDescriptor> resolveUri(URI uri) {
         List<CucumberFeature> testDescriptorStream;
         if (FeatureOrigin.isClassPath(uri)) {
-            String resourcePath = uri.getSchemeSpecificPart();
-            resourcePath = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
+            String resourcePath = Classpath.resourceName(uri);
             testDescriptorStream = scanner(createClasspathResource(resourcePath))
                 .scanForClasspathResource(resourcePath, packageFilter::match);
         } else {
