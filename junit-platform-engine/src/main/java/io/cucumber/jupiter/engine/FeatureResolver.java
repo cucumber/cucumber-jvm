@@ -195,6 +195,7 @@ final class FeatureResolver {
                 .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
                 .forEach(this::merge);
         } catch (Throwable e) {
+            //TODO: Check if we need to catch these.
             rethrowIfBlacklisted(e);
             logger.debug(e, () -> format("Failed to resolve features for '%s'.", uniqueIdSelector.getUniqueId()));
         }
