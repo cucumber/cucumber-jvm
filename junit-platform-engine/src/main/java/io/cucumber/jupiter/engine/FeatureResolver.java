@@ -166,6 +166,7 @@ final class FeatureResolver {
         List<CucumberFeature> testDescriptorStream;
         if (FeatureOrigin.isClassPath(uri)) {
             String resourcePath = uri.getSchemeSpecificPart();
+            resourcePath = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
             testDescriptorStream = scanner(createClasspathResource(resourcePath))
                 .scanForClasspathResource(resourcePath, packageFilter::match);
         } else {

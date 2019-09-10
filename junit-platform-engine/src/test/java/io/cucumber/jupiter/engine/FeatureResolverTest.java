@@ -28,7 +28,7 @@ import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
 class FeatureResolverTest {
     private final String featurePath = "io/cucumber/jupiter/engine/feature-with-outline.feature";
-    private final String featureSegmentValue = "classpath:" + featurePath;
+    private final String featureSegmentValue = "classpath:/" + featurePath;
     private TestDescriptor testDescriptor;
     private UniqueId id;
 

@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.determineFullyQualifiedResourceName;
 
 public class Resources {
-    private static final String CLASSPATH_SCHEME = "classpath:";
+    private static final String CLASSPATH_SCHEME = "classpath:/";
 
     private Resources() {
 
@@ -37,22 +37,22 @@ public class Resources {
 
     private static class ClasspathResource implements Resource {
 
-        private final String uri;
+        private final URI uri;
         private final Path resource;
 
         ClasspathResource(Path baseDir, Path resource) {
-            this.uri = CLASSPATH_SCHEME + baseDir.relativize(resource).toString();
+            this.uri = URI.create(CLASSPATH_SCHEME + baseDir.relativize(resource).toString());
             this.resource = resource;
         }
 
         ClasspathResource(String classpathResourceName, Path resource) {
-            this.uri = CLASSPATH_SCHEME + classpathResourceName;
+            this.uri = URI.create(CLASSPATH_SCHEME + classpathResourceName);
             this.resource = resource;
         }
 
         @Override
         public URI getPath() {
-            return URI.create(uri);
+            return uri;
         }
 
         @Override
@@ -81,17 +81,17 @@ public class Resources {
 
     private static class PackageResource implements Resource {
         private final Path resource;
-        private final String uri;
+        private final URI uri;
 
         PackageResource(Path baseDir, String packageName, Path resource) {
             String packagePath = ClasspathSupport.packagePath(packageName);
-            this.uri = CLASSPATH_SCHEME + determineFullyQualifiedResourceName(baseDir, packagePath, resource);
+            this.uri = URI.create(CLASSPATH_SCHEME + determineFullyQualifiedResourceName(baseDir, packagePath, resource));
             this.resource = resource;
         }
 
         @Override
         public URI getPath() {
-            return URI.create(uri);
+            return uri;
         }
 
         @Override

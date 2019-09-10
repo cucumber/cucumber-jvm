@@ -36,7 +36,7 @@ final class FileResource implements Resource {
     @Override
     public URI getPath() {
         if (classpathFileResource) {
-            return createURI(CLASSPATH_SCHEME, getRelativePath());
+            return createURI(CLASSPATH_SCHEME, "/" + getRelativePath());
         } else if (root.equals(file)) {
             return file.toURI();
         } else {

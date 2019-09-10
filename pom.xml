@@ -201,6 +201,7 @@
         <module>testng</module>
         <module>picocontainer</module>
         <module>junit</module>
+        <module>junit-platform-engine</module>
         <module>spring</module>
         <module>guice</module>
         <module>weld</module>
@@ -208,7 +209,6 @@
         <module>needle</module>
         <module>cdi2</module>
         <module>deltaspike</module>
-        <module>junit-platform-engine</module>
     </modules>
 
     <profiles>

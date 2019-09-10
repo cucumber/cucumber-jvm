@@ -26,7 +26,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
     static TestDescriptor create(CucumberFeature feature, TestDescriptor parent) {
         FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
         UniqueId uniqueId = source.featureSegment(parent.getUniqueId(), feature);
-        TestSource testSource = source.featureSource(feature);
+        TestSource testSource = source.featureSource();
         TestDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, feature.getName(), testSource, feature);
         addFeatureElements(compileFeature(feature), source, featureDescriptor);
         return featureDescriptor;
