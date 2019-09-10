@@ -172,7 +172,7 @@ class CucumberPropertiesParserTest {
     @Test
     void should_parse_rerun_file() throws IOException {
         Path path = mockFileResource("path/to.feature");
-        properties.put(Constants.RERUN_FILE_PROPERTY_NAME, path.toString());
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("file:path/to.feature")));
     }

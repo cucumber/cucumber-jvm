@@ -27,7 +27,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.strict
     - cucumber.execution.wip
     - cucumber.feature
-    - cucumber.rerun-file
     - cucumber.filter.name
     - cucumber.filter.tags
     - cucumber.glue

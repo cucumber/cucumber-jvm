@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -27,7 +28,6 @@ import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.RERUN_FILE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
@@ -36,11 +36,19 @@ import static java.util.stream.Collectors.toList;
 
 public final class CucumberPropertiesParser {
 
-    private static <T> Function<String, Collection<T>> splitAndThen(Function<String, T> parse) {
+    private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
         return combined -> stream(combined.split(","))
             .map(String::trim)
             .filter(part -> !part.isEmpty())
             .map(parse)
+            .collect(toList());
+    }
+
+    private static <T> Function<String, Collection<T>> splitAndThenFlatMap(Function<String, Stream<T>> parse) {
+        return combined -> stream(combined.split(","))
+            .map(String::trim)
+            .filter(part -> !part.isEmpty())
+            .flatMap(parse)
             .collect(toList());
     }
 
@@ -91,13 +99,7 @@ public final class CucumberPropertiesParser {
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
-            splitAndThen(FeatureWithLines::parse),
-            builder::addFeature
-        );
-
-        parseAll(properties,
-            RERUN_FILE_PROPERTY_NAME,
-            property -> parseRerunFile(builder, property),
+            splitAndThenFlatMap(s -> parseFeatureOrRerunFile(builder, s)),
             builder::addFeature
         );
 
@@ -115,7 +117,7 @@ public final class CucumberPropertiesParser {
 
         parseAll(properties,
             GLUE_PROPERTY_NAME,
-            splitAndThen(GluePath::parse),
+            splitAndMap(GluePath::parse),
             builder::addGlue
         );
 
@@ -127,7 +129,7 @@ public final class CucumberPropertiesParser {
 
         parseAll(properties,
             PLUGIN_PROPERTY_NAME,
-            splitAndThen(Function.identity()),
+            splitAndMap(Function.identity()),
             plugin -> builder.addPluginName(plugin, true)
         );
 
@@ -143,6 +145,13 @@ public final class CucumberPropertiesParser {
         );
 
         return builder;
+    }
+
+    private Stream<FeatureWithLines> parseFeatureOrRerunFile(RuntimeOptionsBuilder builder, String property) {
+        if(property.startsWith("@")){
+            return parseRerunFile(builder, property.substring(1)).stream();
+        }
+        return Stream.of(FeatureWithLines.parse(property));
     }
 
     private Collection<FeatureWithLines> parseRerunFile(RuntimeOptionsBuilder builder, String property) {
