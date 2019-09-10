@@ -49,8 +49,8 @@
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
-        <junit-jupiter.version>5.5.1</junit-jupiter.version>
-        <junit-platform.version>1.5.1</junit-platform.version>
+        <junit-jupiter.version>5.5.2</junit-jupiter.version>
+        <junit-platform.version>1.5.2</junit-platform.version>
         <hamcrest.version>2.1</hamcrest.version>
         <mockito.version>3.0.0</mockito.version>
         <jackson-databind.version>2.9.9.3</jackson-databind.version>
