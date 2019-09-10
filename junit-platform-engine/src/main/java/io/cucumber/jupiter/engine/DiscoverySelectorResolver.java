@@ -2,19 +2,28 @@ package io.cucumber.jupiter.engine;
 
 import io.cucumber.jupiter.engine.resource.ClassFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
 
+import static org.junit.platform.engine.Filter.composeFilters;
+
 class DiscoverySelectorResolver {
 
+    static ClassFilter buildPackageFilter(EngineDiscoveryRequest request) {
+        Filter<String> packageFilter = composeFilters(request.getFiltersByType(PackageNameFilter.class));
+        return ClassFilter.of(packageFilter.toPredicate(), aClass -> true);
+    }
+
     void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
-        ClassFilter packageFilter = ClasspathScanningSupport.buildPackageFilter(request);
+        ClassFilter packageFilter = buildPackageFilter(request);
         resolve(request, engineDescriptor, packageFilter);
         filter(engineDescriptor, packageFilter);
         pruneTree(engineDescriptor);
@@ -33,7 +42,22 @@ class DiscoverySelectorResolver {
     }
 
     private void filter(TestDescriptor engineDescriptor, ClassFilter packageFilter) {
-        new DiscoveryFilterApplier().applyPackagePredicate(packageFilter, engineDescriptor);
+        applyPackagePredicate(packageFilter, engineDescriptor);
+    }
+
+    void applyPackagePredicate(ClassFilter packagePredicate, TestDescriptor engineDescriptor) {
+        engineDescriptor.accept(descriptor -> {
+            if (descriptor instanceof PickleDescriptor
+                && !includePickle((PickleDescriptor) descriptor, packagePredicate)) {
+                descriptor.removeFromHierarchy();
+            }
+        });
+    }
+
+    private boolean includePickle(PickleDescriptor pickleDescriptor, ClassFilter packagePredicate) {
+        return pickleDescriptor.getPackage()
+            .map(packagePredicate::match)
+            .orElse(true);
     }
 
     private void pruneTree(TestDescriptor rootDescriptor) {

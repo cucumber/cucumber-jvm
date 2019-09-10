@@ -5,7 +5,6 @@ Use JUnit Platform to execute cucumber scenarios.
 
 Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 
-
 ```xml
 <dependency>
     <groupId>io.cucumber</groupId>
@@ -25,9 +24,8 @@ execution, is available as an opt-in feature. To enable parallel execution, simp
 ## Configuration Options ##
 
 Cucumber receives its configuration from the JUnit platform. To see how these can be supplied see the JUnit documentation
-[4.5. Configuration Parameters](https://junit.org/junit5/docs/5.3.0-M1/user-guide/index.html#running-tests-config-params). 
+[4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/user-guide/index.html#running-tests-config-params). 
 For supported values see [Constants](src/main/java/io/cucumber/jupiter/engine/Constants.java).
-
 
 ## Supported Discovery Selectors and Filters ## 
 

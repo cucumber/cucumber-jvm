@@ -4,15 +4,11 @@ import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
 import static io.cucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.DRY_RUN_ENABLED_PROPERTY_NAME;
+import static io.cucumber.jupiter.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.jupiter.engine.Constants.EXECUTION_STRICT_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.STRICT_ENABLED_PROPERTY_NAME;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -40,8 +36,8 @@ class CucumberEngineOptionsTest {
 
     @Test
     void isStrict() {
-        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(STRICT_ENABLED_PROPERTY_NAME, "true")).isStrict());
-        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(STRICT_ENABLED_PROPERTY_NAME, "false")).isStrict());
+        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_STRICT_PROPERTY_NAME, "true")).isStrict());
+        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_STRICT_PROPERTY_NAME, "false")).isStrict());
     }
 
     @Test
@@ -52,13 +48,13 @@ class CucumberEngineOptionsTest {
 
     @Test
     void getGlue() {
-
+        //TODO: Implement test
     }
 
     @Test
     void isDryRun() {
-        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(DRY_RUN_ENABLED_PROPERTY_NAME, "true")).isDryRun());
-        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(DRY_RUN_ENABLED_PROPERTY_NAME, "false")).isDryRun());
+        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_DRY_RUN_PROPERTY_NAME, "true")).isDryRun());
+        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_DRY_RUN_PROPERTY_NAME, "false")).isDryRun());
     }
 
     @Test

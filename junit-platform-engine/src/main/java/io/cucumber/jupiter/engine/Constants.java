@@ -3,19 +3,32 @@ package io.cucumber.jupiter.engine;
 import org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy;
 import org.junit.platform.engine.support.hierarchical.ParallelExecutionConfigurationStrategy;
 
+import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_CUSTOM_CLASS_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_DYNAMIC_FACTOR_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_FIXED_PARALLELISM_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_STRATEGY_PROPERTY_NAME;
 
-//TODO: Replace with constants from cucumber-core
 public final class Constants {
+
     /**
-     * Property name used to disable ansi colors in the output (not supported by all terminals): {@value}
+     * Property name used to disable ansi colors in the output (not supported
+     * by all terminals): {@value}
      * <p>
      * Ansi colors are enabled by default.
      */
-    public static final String ANSI_COLORS_DISABLED_PROPERTY_NAME = "cucumber.ansi-colors.disabled";
+    public static final String ANSI_COLORS_DISABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
+
+
+    /**
+     * Property name used to enable strict execution: {@value}
+     * <p>
+     * When using strict execution Cucumber will treat undefined and pending
+     * steps as errors.
+     * <p>
+     * By default, strict execution is disabled
+     */
+    public static final String EXECUTION_STRICT_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
 
     /**
      * Property name used to enable dry-run: {@value}
@@ -24,51 +37,30 @@ public final class Constants {
      * <p>
      * By default, dry-run is disabled
      */
-    public static final String DRY_RUN_ENABLED_PROPERTY_NAME = "cucumber.execution.dry-run";
+    public static final String EXECUTION_DRY_RUN_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 
     /**
      * Property name to set the glue path: {@value}
      * <p>
-     * The glue path is a space separated list of packages where glue
-     * code (step definitions, hooks and plugins) are
-     * loaded from e.g: {@code com.example.app.steps}.
-     * <p>
-     * Defaults to the root package.
+     * A comma separated list of a classpath uri or package name e.g.:
+     * {@code com.example.app.steps}.
+     *
+     * @see io.cucumber.core.feature.GluePath
      */
-    public static final String GLUE_PROPERTY_NAME = "cucumber.glue";
-
-    /**
-     * Property name used to enable strict mode: {@value}
-     * <p>
-     * In strict mode all undefined and pending steps are treated as errors.
-     * <p>
-     * By default strict mode is disabled.
-     */
-    public static final String STRICT_ENABLED_PROPERTY_NAME = "cucumber.execution.strict";
-
-    /**
-     * Property name used to enable parallel test execution: {@value}
-     * <p>
-     * By default, tests are executed sequentially in a single thread.
-     */
-    public static final String PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME = "cucumber.execution.parallel.enabled";
+    public static final String GLUE_PROPERTY_NAME = io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 
     /**
      * Property name to enable plugins: {@value}
      * <p>
-     * Registers one or more plugins. Using the format {@code [PLUGIN[:PATH_OR_URL]]} e.g:
-     *
-     * <ul>
-     * <li>{@value}=html:path/to/report.html</li>
-     * <li>{@value}="html:path/with spaces/to/report.html" "json:path/with spaces/to/report.json"</li>
-     * </ul>
-     *
+     * A comma separated list of {@code [PLUGIN[:PATH_OR_URL]]} e.g:
+     * {@code json:target/cucumber.json}.
      * <p>
      * Built-in formatter PLUGIN types:
      * <ul>
      * <li>html</li>
      * <li>pretty</li>
      * <li>progress</li>
+     * <li>summary</li>
      * <li>json</li>
      * <li>usage</li>
      * <li>rerun</li>
@@ -79,7 +71,8 @@ public final class Constants {
      * {@code PLUGIN} can also be a fully qualified class name, allowing registration
      * of 3rd party plugins.
      */
-    public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugins";
+    public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
+
 
     /**
      * Property name to control naming convention for generated snippets: {@value}
@@ -88,7 +81,14 @@ public final class Constants {
      * <p>
      * By defaults are generated using the under score naming convention.
      */
-    public static final String SNIPPET_TYPE_PROPERTY_NAME = "cucumber.snippet-type";
+    public static final String SNIPPET_TYPE_PROPERTY_NAME = io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
+
+    /**
+     * Property name used to enable parallel test execution: {@value}
+     * <p>
+     * By default, tests are executed sequentially in a single thread.
+     */
+    public static final String PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME = "cucumber.execution.parallel.enabled";
 
     static final String PARALLEL_CONFIG_PREFIX = "cucumber.execution.parallel.config.";
     /**
