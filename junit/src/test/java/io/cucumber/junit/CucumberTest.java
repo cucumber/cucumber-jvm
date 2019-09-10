@@ -70,7 +70,7 @@ class CucumberTest {
         assertAll("Checking Exception including cause",
             () -> assertThat(
                 actualThrown.getMessage(),
-                is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))
+                is(equalTo("Failed to parse resource at: classpath:/io/cucumber/error/lexer_error.feature"))
             ),
             () -> assertThat(
                 actualThrown.getCause().getClass().getName(),
