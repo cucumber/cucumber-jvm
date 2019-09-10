@@ -41,7 +41,10 @@ public class StubBackendProviderService implements BackendProviderService {
             glue.addStepDefinition(createStepDefinition("a scenario"));
             glue.addStepDefinition(createStepDefinition("is only runs once"));
             glue.addStepDefinition(createStepDefinition("a scenario outline"));
-            glue.addStepDefinition(createStepDefinition("T>A"));
+            glue.addStepDefinition(createStepDefinition("A is used"));
+            glue.addStepDefinition(createStepDefinition("B is used"));
+            glue.addStepDefinition(createStepDefinition("C is used"));
+            glue.addStepDefinition(createStepDefinition("D is used"));
 
         }
 

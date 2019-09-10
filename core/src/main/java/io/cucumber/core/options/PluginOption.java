@@ -86,7 +86,7 @@ public class PluginOption implements Options.Plugin {
         return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
-    static PluginOption parse(String pluginArgumentPattern) {
+    public static PluginOption parse(String pluginArgumentPattern) {
         Matcher pluginWithFile = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(pluginArgumentPattern);
         if (!pluginWithFile.matches()) {
             return new PluginOption(pluginArgumentPattern, parsePluginName(pluginArgumentPattern), null);

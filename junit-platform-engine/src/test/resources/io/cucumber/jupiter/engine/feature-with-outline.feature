@@ -15,12 +15,12 @@ Feature: A feature with scenario outlines
 
     @Example1Tag
     Examples:
+       | example |
        | A |
        | B |
-       | C |
 
     @Example2Tag
     Examples:
+      | example |
+      | C |
       | D |
-      | E |
-      | F |

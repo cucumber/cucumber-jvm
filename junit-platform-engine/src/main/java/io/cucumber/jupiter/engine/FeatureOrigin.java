@@ -26,7 +26,10 @@ abstract class FeatureOrigin {
     }
 
     private static FilePosition getPickleLocation(CucumberPickle location) {
-        return FilePosition.from(location.getLine());
+        return FilePosition.from(location.getLine(), location.getColumn());
+    }
+    private static FilePosition getScenarioLocation(CucumberPickle location) {
+        return FilePosition.from(location.getScenarioLine(), location.getScenarioColumn());
     }
     private static FeatureOrigin fromClassPathResource() {
         return new ClasspathFeatureOrigin();
@@ -86,7 +89,7 @@ abstract class FeatureOrigin {
         @Override
         TestSource outlineSource(List<CucumberPickle> pickleEvents) {
             CucumberPickle firstPickle = pickleEvents.get(0);
-            return FileSource.from(new File(firstPickle.getUri()), getPickleLocation(firstPickle));
+            return FileSource.from(new File(firstPickle.getUri()), getScenarioLocation(firstPickle));
         }
 
         @Override
@@ -116,7 +119,7 @@ abstract class FeatureOrigin {
         @Override
         TestSource outlineSource(List<CucumberPickle> pickleEvents) {
             CucumberPickle firstPickle = pickleEvents.get(0);
-            return ClasspathResourceSource.from(classpathUri(firstPickle), getPickleLocation(firstPickle));
+            return ClasspathResourceSource.from(classpathUri(firstPickle), getScenarioLocation(firstPickle));
         }
 
         @Override
