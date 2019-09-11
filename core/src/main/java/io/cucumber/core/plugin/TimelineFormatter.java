@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +28,11 @@ import java.util.TreeMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
+/**
+ * @deprecated The timeline formatter will be removed in cucumber-jvm 6.0.0 and be replaced by the standalone
+ * cucumber-html-formatter.
+ */
+@Deprecated
 public final class TimelineFormatter implements ConcurrentEventListener {
 
     private static final String[] TEXT_ASSETS = new String[]{
@@ -60,7 +64,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         this.reportDir = reportDir;
         this.reportJs = reportJs;
     }
-
 
     @Override
     public void setEventPublisher(final EventPublisher publisher) {
@@ -101,6 +104,15 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         reportJs.append("});");
         reportJs.close();
         copyReportFiles();
+
+        System.err.println("" +
+            "\n" +
+            "****************************************\n" +
+            "* WARNING: The timeline formatter will *\n" +
+            "* be removed in cucumber-jvm 6.0.0 and *\n" +
+            "* be replaced by the standalone        *\n" +
+            "* cucumber-html-formatter.             *\n" +
+            "****************************************\n");
     }
 
     private void appendAsJsonToJs(final Gson gson, final NiceAppendable out, final String pushTo, final Collection<?> content) {
