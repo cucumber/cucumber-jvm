@@ -53,7 +53,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public TimelineFormatter(final URL reportDir) {
-        this(reportDir, createJsonOut(reportDir, "report.js"));
+        this(reportDir, createOutput(reportDir, "report.js"));
     }
 
     private TimelineFormatter(final URL reportDir, final NiceAppendable reportJs) {
@@ -125,7 +125,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
     }
 
-    private static NiceAppendable createJsonOut(final URL dir, final String file) {
+    private static NiceAppendable createOutput(final URL dir, final String file) {
         final File outDir = new File(dir.getPath());
         if (!outDir.exists() && !outDir.mkdirs()) {
             throw new CucumberException("Failed to create dir: " + dir.getPath());
@@ -179,9 +179,9 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         @SerializedName("scenario")
         final String scenario;
         @SerializedName("start")
-        final Instant startTime;
+        final long startTime;
         @SerializedName("end")
-        Instant endTime;
+        long endTime;
         @SerializedName("group")
         final long threadId;
         @SerializedName("content")
@@ -197,7 +197,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             final String uri = testCase.getUri();
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = testCase.getName();
-            this.startTime = started.getInstant();
+            this.startTime = started.getInstant().toEpochMilli();
             this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
         }
@@ -211,7 +211,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
 
         void end(final TestCaseFinished event) {
-            this.endTime = event.getInstant();
+            this.endTime = event.getInstant().toEpochMilli();
             this.className = event.getResult().getStatus().name().toLowerCase(ROOT);
         }
     }
