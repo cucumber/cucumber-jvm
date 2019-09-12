@@ -22,6 +22,7 @@ public final class DocStringType {
      * Creates a doc string type that can convert a doc string to an object.
      *
      * @param type        the type of the object
+     * @param contentType the <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">media type</a> or <a href="https://github.github.com/gfm/#info-string">GFM info string</a>
      * @param transformer a function that creates an instance of
      *                    <code>type</code> from the doc string
      * @param <T>         see <code>type</code>
