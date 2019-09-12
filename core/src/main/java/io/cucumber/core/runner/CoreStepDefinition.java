@@ -8,10 +8,10 @@ import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.TypeRegistry;
-import io.cucumber.core.stepexpression.TypeResolver;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -35,7 +35,7 @@ final class CoreStepDefinition {
             return new StepExpressionFactory(typeRegistry).createExpression(expression);
         } else {
             ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            TypeResolver typeResolver = parameterInfo.getTypeResolver()::resolve;
+            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
             boolean transposed = parameterInfo.isTransposed();
             return new StepExpressionFactory(typeRegistry).createExpression(expression, typeResolver, transposed);
         }
