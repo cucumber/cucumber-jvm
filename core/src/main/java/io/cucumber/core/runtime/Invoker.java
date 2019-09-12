@@ -63,6 +63,15 @@ public final class Invoker {
     }
 
     /**
+     * Invokes a method. Wraps {@link Method#invoke(Object, Object...)} to provide better error messages. Also attempts to
+     * override visibility around the invocation.
+     *
+     * @param target the target object
+     * @param method the method to invoke
+     * @param timeoutMillis how long to wait before a timeout exception is thrown
+     * @param args arguments to the method
+     * @return return value from method invocation
+     * @throws Throwable error thrown by method invocation
      * @deprecated timeout has been deprecated in favour of library solutions used by the end user.
      */
     @Deprecated
@@ -71,18 +80,28 @@ public final class Invoker {
         return timeout(() -> Invoker.invoke(target, targetMethod, args), timeoutMillis);
     }
 
-    public static Object invoke(Object target, Method targetMethod, Object... args) throws Throwable {
-        boolean accessible = targetMethod.isAccessible();
+    /**
+     * Invokes a method. Wraps {@link Method#invoke(Object, Object...)} to provide better error messages. Also attempts to
+     * override visibility around the invocation.
+     *
+     * @param target the target object
+     * @param method the method to invoke
+     * @param args arguments to the method
+     * @return return value from method invocation
+     * @throws Throwable error thrown by method invocation
+     */
+    public static Object invoke(Object target, Method method, Object... args) throws Throwable {
+        boolean accessible = method.isAccessible();
         try {
-            targetMethod.setAccessible(true);
-            return targetMethod.invoke(target, args);
+            method.setAccessible(true);
+            return method.invoke(target, args);
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod) +
+            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method) +
                 ", caused by " + e.getClass().getName() + ": " + e.getMessage(), e);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         } finally {
-            targetMethod.setAccessible(accessible);
+            method.setAccessible(accessible);
         }
     }
 

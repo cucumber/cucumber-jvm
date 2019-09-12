@@ -16,12 +16,12 @@ import java.lang.annotation.Target;
 public @interface CucumberOptions {
 
     /**
-     * Skip execution of glue code.
+     * @return true if glue code execution should be skipped.
      */
     boolean dryRun() default false;
 
     /**
-     * Treat undefined and pending steps as errors.
+     * @return true if undefined and pending steps should be treated as errors.
      */
     boolean strict() default false;
 
@@ -33,6 +33,7 @@ public @interface CucumberOptions {
      * class. For example, if the annotated class is {@code com.example.RunCucumber}
      * then features are assumed to be located in {@code classpath:com/example}.
      *
+     * @return list of files or directories
      * @see io.cucumber.core.feature.FeatureWithLines
      */
     String[] features() default {};
@@ -45,6 +46,7 @@ public @interface CucumberOptions {
      * class. For example, if the annotated class is {@code com.example.RunCucumber}
      * then glue is assumed to be located in {@code com.example}.
      *
+     * @return list of package names
      * @see io.cucumber.core.feature.GluePath
      */
     String[] glue() default {};
@@ -54,6 +56,8 @@ public @interface CucumberOptions {
      * plugins) from. E.g: {@code com.example.app}
      * <p>
      * These packages are used in addition to the default described in {@code #glue}.
+     *
+     * @return list of package names
      */
     String[] extraGlue() default {};
 
@@ -61,6 +65,8 @@ public @interface CucumberOptions {
      * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.
      * <p>
      * For example {@code "@smoke and not @fast"}.
+     *
+     * @return list of tags
      */
     String[] tags() default {};
 
@@ -76,22 +82,24 @@ public @interface CucumberOptions {
      * Plugins can be provided with an argument. For example
      * {@code json:target/cucumber-report.json}
      *
+     * @return list of plugins
      * @see io.cucumber.core.plugin.Plugin
      */
     String[] plugin() default {};
 
     /**
-     * Don't colour terminal output.
+     * @return true if terminal output should be without colours.
      */
     boolean monochrome() default false;
 
     /**
-     * Only run scenarios whose names match provided regular expression.
+     * Only run scenarios whose names match one of the provided regular expressions.
+     * @return a list of regular expressions
      */
     String[] name() default {};
 
     /**
-     * Format of the generated snippets.
+     * @return the format of the generated snippets.
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
@@ -103,6 +111,8 @@ public @interface CucumberOptions {
      * <p>
      * Gradle for instance will use these names in the file names of
      * the JUnit xml report files.
+     *
+     * @return true to enforce the use of well-formed file names
      */
     boolean useFileNameCompatibleName() default false;
 
@@ -114,6 +124,8 @@ public @interface CucumberOptions {
      * test case in the JUnit domain (the leafs in the description tree),
      * and works better with the report files of the notification listeners
      * like maven surefire or gradle.
+     *
+     * @return true to include steps should be included in notifications
      */
     boolean stepNotifications() default false;
 
@@ -122,7 +134,9 @@ public @interface CucumberOptions {
      * <p>
      * In case a custom ObjectFactory is needed, the class can be specified here.
      * A custom ObjectFactory might be needed when more granular control is needed
-     * over the dependency injection mechanism. 
+     * over the dependency injection mechanism.
+     *
+     * @return an {@link io.cucumber.core.backend.ObjectFactory} implementation
      */
     Class<? extends io.cucumber.core.backend.ObjectFactory> objectFactory() default NoObjectFactory.class;
 
