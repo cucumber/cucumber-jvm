@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // https://github.com/cucumber/cucumber-jvm/issues/808
-public class ZipResourceIteratorFactoryTest {
+class ZipResourceIteratorFactoryTest {
 
     @Test
-    public void is_factory_for_jar_protocols() {
+    void is_factory_for_jar_protocols() {
         ZipResourceIteratorFactory factory = new ZipResourceIteratorFactory();
 
         assertAll("Checking ZipResourceIteratorFactory",

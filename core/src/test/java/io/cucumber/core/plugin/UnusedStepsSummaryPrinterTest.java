@@ -14,10 +14,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UnusedStepsSummaryPrinterTest {
+class UnusedStepsSummaryPrinterTest {
 
     @Test
-    public void verifyUnusedStepsPrinted() {
+    void verifyUnusedStepsPrinted() {
         StringBuilder out = new StringBuilder();
         UnusedStepsSummaryPrinter summaryPrinter = new UnusedStepsSummaryPrinter(out);
         TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC());

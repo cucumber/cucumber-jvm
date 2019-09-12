@@ -50,7 +50,7 @@ public class LoggerFactoryTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         Handler handler = new Handler() {
             @Override
             public void publish(LogRecord record) {
@@ -77,7 +77,7 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void error() {
+    void error() {
         logger.error("Error");
         assertThat(logged, logRecord("Error", Level.SEVERE, null));
         logger.error("Error", exception);
@@ -85,7 +85,7 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void warn() {
+    void warn() {
         logger.warn("Warn");
         assertThat(logged, logRecord("Warn", Level.WARNING, null));
         logger.warn("Warn", exception);
@@ -93,7 +93,7 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void info() {
+    void info() {
         logger.info("Info");
         assertThat(logged, logRecord("Info", Level.INFO, null));
         logger.info("Info", exception);
@@ -101,7 +101,7 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void config() {
+    void config() {
         logger.config("Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, null));
         logger.config("Config", exception);
@@ -110,7 +110,7 @@ public class LoggerFactoryTest {
 
 
     @Test
-    public void debug() {
+    void debug() {
         logger.debug("Debug");
         assertThat(logged, logRecord("Debug", Level.FINE, null));
         logger.debug("Debug", exception);
@@ -118,7 +118,7 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void trace() {
+    void trace() {
         logger.trace("Trace");
         assertThat(logged, logRecord("Trace", Level.FINER, null));
         logger.trace("Trace", exception);

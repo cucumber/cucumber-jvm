@@ -18,23 +18,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class FeaturePathFeatureSupplierTest {
+class FeaturePathFeatureSupplierTest {
 
     private LogRecordListener logRecordListener;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         logRecordListener = new LogRecordListener();
         LoggerFactory.addListener(logRecordListener);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         LoggerFactory.removeListener(logRecordListener);
     }
 
     @Test
-    public void logs_message_if_no_features_are_found() {
+    void logs_message_if_no_features_are_found() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(URI.create("file:does/not/exist"), ".feature")).thenReturn(Collections.emptyList());
         Options featureOptions = () -> Collections.singletonList(FeaturePath.parse("does/not/exist"));
@@ -45,7 +45,7 @@ public class FeaturePathFeatureSupplierTest {
     }
 
     @Test
-    public void logs_message_if_no_feature_paths_are_given() {
+    void logs_message_if_no_feature_paths_are_given() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         Options featureOptions = Collections::emptyList;
 

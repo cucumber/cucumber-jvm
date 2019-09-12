@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class FeatureBuilderTest {
+class FeatureBuilderTest {
 
     @Test
-    public void ignores_duplicate_features() throws IOException {
+    void ignores_duplicate_features() throws IOException {
         FeatureBuilder builder = new FeatureBuilder();
         URI featurePath = URI.create("foo.feature");
         Resource resource1 = createResourceMock(featurePath);
@@ -34,7 +34,7 @@ public class FeatureBuilderTest {
     }
 
     @Test
-    public void works_when_path_and_uri_are_the_same() throws IOException {
+    void works_when_path_and_uri_are_the_same() throws IOException {
         URI featurePath = URI.create("path/foo.feature");
         Resource resource = createResourceMock(featurePath);
         FeatureBuilder builder = new FeatureBuilder();

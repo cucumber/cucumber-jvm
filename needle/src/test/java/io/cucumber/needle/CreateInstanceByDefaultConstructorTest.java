@@ -9,7 +9,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CreateInstanceByDefaultConstructorTest {
+class CreateInstanceByDefaultConstructorTest {
 
     public static class HasDefaultConstructor {
         // empty
@@ -24,12 +24,12 @@ public class CreateInstanceByDefaultConstructorTest {
     private final CreateInstanceByDefaultConstructor createInstanceByDefaultConstructor = CreateInstanceByDefaultConstructor.INSTANCE;
 
     @Test
-    public void shouldCreateNewInstance() {
+    void shouldCreateNewInstance() {
         assertThat(createInstanceByDefaultConstructor.apply(HasDefaultConstructor.class), is(notNullValue()));
     }
 
     @Test
-    public void shouldNotCreateNewInstanceWhenConstructorIsMissing() {
+    void shouldNotCreateNewInstanceWhenConstructorIsMissing() {
         Executable testMethod = () -> createInstanceByDefaultConstructor.apply(DoesNotHaveDefaultConstructor.class);
         IllegalStateException expectedThrown = assertThrows(IllegalStateException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Can not instantiate Instance by Default Constructor.")));

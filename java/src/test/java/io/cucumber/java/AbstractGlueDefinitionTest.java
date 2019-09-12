@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class AbstractGlueDefinitionTest {
+class AbstractGlueDefinitionTest {
 
     private final Lookup lookup = new Lookup() {
 
@@ -22,7 +22,7 @@ public class AbstractGlueDefinitionTest {
     };
 
     @Test
-    public void test() throws NoSuchMethodException {
+    void test() throws NoSuchMethodException {
         Method method = AbstractGlueDefinitionTest.class.getMethod("method");
 
         AbstractGlueDefinition definition = new AbstractGlueDefinition(method, lookup) {

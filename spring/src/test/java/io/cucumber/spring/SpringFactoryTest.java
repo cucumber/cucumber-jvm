@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpringFactoryTest {
+class SpringFactoryTest {
 
     @Test
-    public void shouldGiveUsNewStepInstancesForEachScenario() {
+    void shouldGiveUsNewStepInstancesForEachScenario() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(BellyStepdefs.class);
 
@@ -54,7 +54,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldNeverCreateNewApplicationBeanInstances() {
+    void shouldNeverCreateNewApplicationBeanInstances() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
         factory1.addClass(BellyStepdefs.class);
@@ -78,7 +78,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldNeverCreateNewApplicationBeanInstancesUsingMetaConfiguration() {
+    void shouldNeverCreateNewApplicationBeanInstancesUsingMetaConfiguration() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
         factory1.addClass(BellyMetaStepdefs.class);
@@ -102,7 +102,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldFindStepDefsCreatedImplicitlyForAutowiring() {
+    void shouldFindStepDefsCreatedImplicitlyForAutowiring() {
         final ObjectFactory factory1 = new SpringFactory();
         factory1.addClass(WithSpringAnnotations.class);
         factory1.addClass(OneStepDef.class);
@@ -122,7 +122,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldReuseStepDefsCreatedImplicitlyForAutowiring() {
+    void shouldReuseStepDefsCreatedImplicitlyForAutowiring() {
         final ObjectFactory factory1 = new SpringFactory();
         factory1.addClass(WithSpringAnnotations.class);
         factory1.addClass(OneStepDef.class);
@@ -142,7 +142,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldRespectCommonAnnotationsInStepDefs() {
+    void shouldRespectCommonAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
         factory.start();
@@ -154,7 +154,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldRespectContextHierarchyInStepDefs() {
+    void shouldRespectContextHierarchyInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithContextHierarchyAnnotation.class);
         factory.start();
@@ -166,7 +166,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldRespectDirtiesContextAnnotationsInStepDefs() {
+    void shouldRespectDirtiesContextAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(DirtiesContextBellyStepDefs.class);
 
@@ -190,7 +190,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldRespectDirtiesContextAnnotationsInStepDefsUsingMetaConfiguration() {
+    void shouldRespectDirtiesContextAnnotationsInStepDefsUsingMetaConfiguration() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(DirtiesContextBellyMetaStepDefs.class);
 
@@ -214,7 +214,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldRespectCustomPropertyPlaceholderConfigurer() {
+    void shouldRespectCustomPropertyPlaceholderConfigurer() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
         factory.start();
@@ -225,7 +225,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldUseCucumberXmlIfNoClassWithSpringAnnotationIsFound() {
+    void shouldUseCucumberXmlIfNoClassWithSpringAnnotationIsFound() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(Object.class);
         factory.start();
@@ -236,7 +236,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
+    void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
 
@@ -248,7 +248,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldFailIfClassWithSpringComponentAnnotationsIsFound() {
+    void shouldFailIfClassWithSpringComponentAnnotationsIsFound() {
         final ObjectFactory factory = new SpringFactory();
 
         Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
@@ -259,7 +259,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldFailIfClassWithAnnotationAnnotatedWithSpringComponentAnnotationsIsFound() {
+    void shouldFailIfClassWithAnnotationAnnotatedWithSpringComponentAnnotationsIsFound() {
         final ObjectFactory factory = new SpringFactory();
 
         Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
@@ -270,7 +270,7 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldGlueScopedSpringBeanBehaveLikeGlueLifecycle() {
+    void shouldGlueScopedSpringBeanBehaveLikeGlueLifecycle() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
 
