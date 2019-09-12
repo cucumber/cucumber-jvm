@@ -540,8 +540,11 @@ public interface LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, timeoutMillis, body));
     }
 
-    default void DocStringType( String contentType, DocStringDefinitionBody docStringDefinitionBody) {
+    default void DocStringType(String contentType, DocStringDefinitionBody docStringDefinitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(docStringDefinitionBody, contentType));
     }
 
+    default <T> void DataTableType(DataTableDefinitionBody<T> dataTableDefinitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(dataTableDefinitionBody));
+    }
 }

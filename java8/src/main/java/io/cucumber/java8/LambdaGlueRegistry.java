@@ -1,9 +1,9 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.docstring.DocStringType;
 
 interface LambdaGlueRegistry {
     ThreadLocal<LambdaGlueRegistry> INSTANCE = new ThreadLocal<>();
@@ -19,4 +19,6 @@ interface LambdaGlueRegistry {
     void addAfterHookDefinition(HookDefinition afterHook);
 
     void addDocStringType(DocStringTypeDefinition docStringTypeDefinition);
+
+    void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition);
 }

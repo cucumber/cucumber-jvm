@@ -2,6 +2,7 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
+import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -12,7 +13,6 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.snippets.Snippet;
 
-import io.cucumber.docstring.DocStringType;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,15 +104,19 @@ final class Java8Backend implements Backend {
         }
 
         @Override
+        public void addAfterHookDefinition(HookDefinition afterHook) {
+            glue.addAfterHook(afterHook);
+        }
+
+        @Override
         public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
             glue.addDocStringType(docStringTypeDefinition);
 
         }
 
         @Override
-        public void addAfterHookDefinition(HookDefinition afterHook) {
-            glue.addAfterHook(afterHook);
-
+        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+            glue.addDataTableType(dataTableTypeDefinition);
         }
     }
 }

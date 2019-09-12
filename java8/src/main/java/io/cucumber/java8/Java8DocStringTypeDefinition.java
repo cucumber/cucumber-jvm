@@ -4,7 +4,7 @@ import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.docstring.DocStringType;
 
-public class Java8DocStringTypeDefinition extends AbstractGlueDefinition implements DocStringTypeDefinition {
+final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implements DocStringTypeDefinition {
 
     private final DocStringType docStringType;
 
