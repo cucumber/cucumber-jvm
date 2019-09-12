@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
+import io.cucumber.event.HookType;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestStepFinished;
+import io.cucumber.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;

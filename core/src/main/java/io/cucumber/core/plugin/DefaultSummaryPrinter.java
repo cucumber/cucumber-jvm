@@ -1,8 +1,12 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
-import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.event.EventPublisher;
+import io.cucumber.event.SnippetsSuggestedEvent;
+import io.cucumber.event.TestRunFinished;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.StrictAware;
+import io.cucumber.plugin.SummaryPrinter;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

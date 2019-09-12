@@ -1,12 +1,12 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.Event;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.event.Event;
+import io.cucumber.event.SnippetsSuggestedEvent;
+import io.cucumber.event.TestCase;
+import io.cucumber.event.TestCaseStarted;
+import io.cucumber.event.TestRunFinished;
+import io.cucumber.event.TestRunStarted;
+import io.cucumber.event.TestSourceRead;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

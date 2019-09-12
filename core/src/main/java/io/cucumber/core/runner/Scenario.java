@@ -1,8 +1,11 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.*;
+import io.cucumber.event.EmbedEvent;
+import io.cucumber.event.Result;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCase;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.event.WriteEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +21,7 @@ class Scenario implements io.cucumber.core.backend.Scenario {
     private final EventBus bus;
     private final TestCase testCase;
 
-    Scenario(EventBus bus, io.cucumber.core.event.TestCase testCase) {
+    Scenario(EventBus bus, TestCase testCase) {
         this.bus = requireNonNull(bus);
         this.testCase = requireNonNull(testCase);
     }
@@ -46,6 +49,7 @@ class Scenario implements io.cucumber.core.backend.Scenario {
         return getStatus() == Status.FAILED;
     }
 
+    @Deprecated
     @Override
     public void embed(byte[] data, String mimeType) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mimeType));

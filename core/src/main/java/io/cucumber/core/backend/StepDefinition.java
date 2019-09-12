@@ -5,7 +5,7 @@ import org.apiguardian.api.API;
 import java.util.List;
 
 @API(status = API.Status.STABLE)
-public interface StepDefinition extends io.cucumber.core.event.StepDefinition {
+public interface StepDefinition extends io.cucumber.event.StepDefinition {
     /**
      * Invokes the step definition. The method should raise a Throwable
      * if the invocation fails, which will cause the step to fail.

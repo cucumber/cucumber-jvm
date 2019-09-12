@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.EventPublisher;
+import io.cucumber.event.EventPublisher;
+import io.cucumber.plugin.EventListener;
 
 public class StubFormatter implements EventListener {
 

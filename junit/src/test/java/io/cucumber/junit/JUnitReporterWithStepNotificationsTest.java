@@ -1,15 +1,15 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.HookTestStep;
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
+import io.cucumber.event.HookTestStep;
+import io.cucumber.event.PickleStepTestStep;
+import io.cucumber.event.Result;
+import io.cucumber.event.SnippetsSuggestedEvent;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCase;
+import io.cucumber.event.TestCaseFinished;
+import io.cucumber.event.TestCaseStarted;
+import io.cucumber.event.TestStepFinished;
+import io.cucumber.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;

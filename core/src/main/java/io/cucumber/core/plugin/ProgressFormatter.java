@@ -1,12 +1,13 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.WriteEvent;
+import io.cucumber.event.PickleStepTestStep;
+import io.cucumber.event.EventPublisher;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestRunFinished;
+import io.cucumber.event.TestStepFinished;
+import io.cucumber.event.WriteEvent;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
 
 import java.util.HashMap;
 import java.util.Map;

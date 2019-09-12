@@ -1,12 +1,12 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.event.PickleStepTestStep;
+import io.cucumber.event.Result;
+import io.cucumber.event.SnippetsSuggestedEvent;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCase;
+import io.cucumber.event.TestCaseFinished;
+import io.cucumber.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.testng.SkipException;
@@ -14,11 +14,11 @@ import org.testng.annotations.Test;
 
 import java.time.Clock;
 
-import static io.cucumber.core.event.Status.AMBIGUOUS;
-import static io.cucumber.core.event.Status.FAILED;
-import static io.cucumber.core.event.Status.PENDING;
-import static io.cucumber.core.event.Status.SKIPPED;
-import static io.cucumber.core.event.Status.UNDEFINED;
+import static io.cucumber.event.Status.AMBIGUOUS;
+import static io.cucumber.event.Status.FAILED;
+import static io.cucumber.event.Status.PENDING;
+import static io.cucumber.event.Status.SKIPPED;
+import static io.cucumber.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.time.Instant.now;
 import static java.util.Collections.singletonList;

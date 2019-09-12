@@ -1,5 +1,6 @@
 package io.cucumber.testng;
 
+import io.cucumber.plugin.Plugin;
 import org.apiguardian.api.API;
 
 import java.lang.annotation.ElementType;
@@ -83,7 +84,7 @@ public @interface CucumberOptions {
      * {@code json:target/cucumber-report.json}
      *
      * @return list of plugins
-     * @see io.cucumber.core.plugin.Plugin
+     * @see Plugin
      */
     String[] plugin() default {};
 

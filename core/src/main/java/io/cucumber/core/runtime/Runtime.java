@@ -1,14 +1,14 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.ObjectFactoryServiceLoader;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.event.EventHandler;
+import io.cucumber.event.EventPublisher;
+import io.cucumber.event.Result;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCaseFinished;
+import io.cucumber.event.TestRunFinished;
+import io.cucumber.event.TestRunStarted;
+import io.cucumber.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
@@ -24,8 +24,8 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.plugin.ConcurrentEventListener;
-import io.cucumber.core.plugin.Plugin;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 

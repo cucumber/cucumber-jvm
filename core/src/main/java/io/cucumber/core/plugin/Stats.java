@@ -1,13 +1,16 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.event.EventPublisher;
+import io.cucumber.event.PickleStepTestStep;
+import io.cucumber.event.Result;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCaseFinished;
+import io.cucumber.event.TestRunFinished;
+import io.cucumber.event.TestRunStarted;
+import io.cucumber.event.TestStepFinished;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.StrictAware;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;

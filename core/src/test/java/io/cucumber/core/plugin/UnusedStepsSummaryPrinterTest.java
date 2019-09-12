@@ -4,8 +4,14 @@ import java.time.Clock;
 import java.time.Duration;
 
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.*;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.event.Result;
+import io.cucumber.event.Status;
+import io.cucumber.event.StepDefinedEvent;
+import io.cucumber.event.TestCase;
+import io.cucumber.event.TestRunFinished;
+import io.cucumber.event.TestStep;
+import io.cucumber.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,10 +20,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UnusedStepsSummaryPrinterTest {
+class UnusedStepsSummaryPrinterTest {
 
     @Test
-    public void verifyUnusedStepsPrinted() {
+    void verifyUnusedStepsPrinted() {
         StringBuilder out = new StringBuilder();
         UnusedStepsSummaryPrinter summaryPrinter = new UnusedStepsSummaryPrinter(out);
         TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC());

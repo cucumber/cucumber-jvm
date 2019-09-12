@@ -1,11 +1,11 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestStep;
-import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.event.PickleStepTestStep;
+import io.cucumber.event.Result;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCase;
+import io.cucumber.event.TestStep;
+import io.cucumber.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

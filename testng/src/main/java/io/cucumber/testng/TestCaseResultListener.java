@@ -1,13 +1,13 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.SnippetsSuggestedEvent;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestStep;
-import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.event.EventHandler;
+import io.cucumber.event.PickleStepTestStep;
+import io.cucumber.event.Result;
+import io.cucumber.event.SnippetsSuggestedEvent;
+import io.cucumber.event.Status;
+import io.cucumber.event.TestCaseFinished;
+import io.cucumber.event.TestStep;
+import io.cucumber.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import org.testng.SkipException;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static io.cucumber.core.event.Status.UNDEFINED;
+import static io.cucumber.event.Status.UNDEFINED;
 
 final class TestCaseResultListener {
 

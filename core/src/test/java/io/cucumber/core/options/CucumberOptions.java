@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.plugin.Plugin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -87,7 +88,7 @@ public @interface CucumberOptions {
      * Plugins can be provided with an argument. For example
      * {@code json:target/cucumber-report.json}
      *
-     * @see io.cucumber.core.plugin.Plugin
+     * @see Plugin
      * @return The plugins that should be added.
      */
     String[] plugin() default {};

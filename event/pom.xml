@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cucumber-jvm</artifactId>
+        <groupId>io.cucumber</groupId>
+        <version>5.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>cucumber-event</artifactId>
+    <name>Cucumber Events</name>
+    <description>Events emitted during the execution of Cucumber</description>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.event</project.Automatic-Module-Name>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

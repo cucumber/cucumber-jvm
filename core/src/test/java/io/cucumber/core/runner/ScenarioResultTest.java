@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.WriteEvent;
+import io.cucumber.event.EmbedEvent;
+import io.cucumber.event.Result;
+import io.cucumber.event.Status;
+import io.cucumber.event.WriteEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -113,6 +113,7 @@ class ScenarioResultTest {
         );
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void embeds_data() {
         byte[] data = new byte[]{1, 2, 3};
