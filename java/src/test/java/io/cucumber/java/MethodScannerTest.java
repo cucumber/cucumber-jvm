@@ -17,32 +17,32 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MethodScannerTest {
+class MethodScannerTest {
 
     private final List<Map.Entry<Method, Annotation>> scanResult = new ArrayList<>();
     private BiConsumer<Method, Annotation> backend = (method, annotation) ->
         scanResult.add(new SimpleEntry<>(method, annotation));
 
     @BeforeEach
-    public void createBackend() {
+    void createBackend() {
 
     }
 
     @Test
-    public void scan_finds_annotated_methods() throws NoSuchMethodException {
+    void scan_finds_annotated_methods() throws NoSuchMethodException {
         Method method = BaseSteps.class.getMethod("m");
         MethodScanner.scan(BaseSteps.class, backend);
         assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
     }
 
     @Test
-    public void scan_ignores_object() {
+    void scan_ignores_object() {
         MethodScanner.scan(Object.class, backend);
         assertThat(scanResult, empty());
     }
 
     @Test
-    public void loadGlue_fails_when_class_is_not_method_declaring_class() {
+    void loadGlue_fails_when_class_is_not_method_declaring_class() {
         InvalidMethodException exception = assertThrows(InvalidMethodException.class, () -> MethodScanner.scan(ExtendedSteps.class, backend));
         assertThat(exception.getMessage(), is(
             "You're not allowed to extend classes that define Step Definitions or hooks. " +

@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PicoFactoryTest {
+class PicoFactoryTest {
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new PicoFactory();
         factory.addClass(Steps.class);
 
@@ -37,7 +37,7 @@ public class PicoFactoryTest {
     }
 
     @Test
-    public void shouldDisposeOnStop() {
+    void shouldDisposeOnStop() {
         // Given
         ObjectFactory factory = new PicoFactory();
         factory.addClass(Steps.class);

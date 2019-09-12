@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CucumberNeedleConfigurationTest {
+class CucumberNeedleConfigurationTest {
 
     public abstract static class A implements InjectionProviderInstancesSupplier {
     }
 
     @Test
-    public void shouldReturnEmptyInstances() {
+    void shouldReturnEmptyInstances() {
         final InjectionProvider<?>[] allInjectionProviders = new CucumberNeedleConfiguration("resource-bundles/empty")
             .getInjectionProviders();
         assertThat(allInjectionProviders, is(notNullValue()));
@@ -25,7 +25,7 @@ public class CucumberNeedleConfigurationTest {
     }
 
     @Test
-    public void shouldEvaluateIfTypeIsInjectionProviderOrSupplier() {
+    void shouldEvaluateIfTypeIsInjectionProviderOrSupplier() {
         assertAll("Checking Needle Configuration",
             () -> assertTrue(CucumberNeedleConfiguration.isInjectionProvider(SimpleNameGetterProvider.class)),
             () -> assertFalse(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(SimpleNameGetterProvider.class)),

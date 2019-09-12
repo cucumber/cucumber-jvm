@@ -10,21 +10,21 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class JavaObjectFactoryTest {
+class JavaObjectFactoryTest {
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        factory.addClass(SteDef.class);
+        factory.addClass(StepDefinition.class);
 
         // Scenario 1
         factory.start();
-        SteDef o1 = factory.getInstance(SteDef.class);
+        StepDefinition o1 = factory.getInstance(StepDefinition.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        SteDef o2 = factory.getInstance(SteDef.class);
+        StepDefinition o2 = factory.getInstance(StepDefinition.class);
         factory.stop();
 
         assertAll("Checking SteDef",
@@ -34,7 +34,7 @@ public class JavaObjectFactoryTest {
         );
     }
 
-    public static class SteDef {
+    public static class StepDefinition {
         // we just test the instances
     }
 

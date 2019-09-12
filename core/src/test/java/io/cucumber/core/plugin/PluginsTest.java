@@ -1,12 +1,11 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.event.Event;
-import io.cucumber.plugin.EventListener;
 import io.cucumber.event.EventPublisher;
 import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.Plugin;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +22,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.withSettings;
 
 @ExtendWith({MockitoExtension.class})
- class PluginsTest {
+class PluginsTest {
 
     @Mock
     private EventPublisher rootEventPublisher;
@@ -37,7 +35,7 @@ import static org.mockito.Mockito.withSettings;
     private PluginFactory pluginFactory = new PluginFactory();
 
     @Test
-     void shouldSetStrictOnPlugin() {
+    void shouldSetStrictOnPlugin() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         StrictAware plugin = mock(StrictAware.class);
@@ -46,7 +44,7 @@ import static org.mockito.Mockito.withSettings;
     }
 
     @Test
-     void shouldSetMonochromeOnPlugin() {
+    void shouldSetMonochromeOnPlugin() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         ColorAware plugin = mock(ColorAware.class);
@@ -55,31 +53,31 @@ import static org.mockito.Mockito.withSettings;
     }
 
     @Test
-     void shouldSetConcurrentEventListener() {
+    void shouldSetConcurrentEventListener() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        Plugin plugin = mock(Plugin.class, withSettings().extraInterfaces(ConcurrentEventListener.class));
+        ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
         plugins.setEventBusOnEventListenerPlugins(rootEventPublisher);
-        verify((ConcurrentEventListener) plugin, times(1)).setEventPublisher(rootEventPublisher);
+        verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
     }
 
     @Test
-     void shouldSetNonConcurrentEventListener() {
+    void shouldSetNonConcurrentEventListener() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        Plugin plugin = mock(Plugin.class, withSettings().extraInterfaces(EventListener.class));
+        EventListener plugin = mock(EventListener.class);
         plugins.addPlugin(plugin);
         plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
-        verify((EventListener)plugin, times(1)).setEventPublisher(eventPublisher.capture());
+        verify(plugin, times(1)).setEventPublisher(eventPublisher.capture());
         assertThat(eventPublisher.getValue().getClass(), is(equalTo(CanonicalOrderEventPublisher.class)));
     }
 
     @Test
-     void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
+    void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        Plugin plugin = mock(Plugin.class, withSettings().extraInterfaces(EventListener.class));
+        EventListener plugin = mock(EventListener.class);
         plugins.addPlugin(plugin);
         plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
         verify(rootEventPublisher, times(1)).registerHandlerFor(eq(Event.class), ArgumentMatchers.any());

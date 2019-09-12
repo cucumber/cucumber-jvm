@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MethodFormatTest {
+class MethodFormatTest {
 
     private Method methodWithArgsAndException;
     private Method methodWithoutArgs;
@@ -25,23 +25,23 @@ public class MethodFormatTest {
     }
 
     @BeforeEach
-    public void lookupMethod() throws NoSuchMethodException {
+    void lookupMethod() throws NoSuchMethodException {
         this.methodWithoutArgs = this.getClass().getMethod("methodWithoutArgs");
         this.methodWithArgsAndException = this.getClass().getMethod("methodWithArgsAndException", String.class, Map.class);
     }
 
     @Test
-    public void shouldUseSimpleFormatWhenMethodHasException() {
+    void shouldUseSimpleFormatWhenMethodHasException() {
         assertThat(MethodFormat.SHORT.format(methodWithArgsAndException), is(equalTo("MethodFormatTest.methodWithArgsAndException(String,Map)")));
     }
 
     @Test
-    public void shouldUseSimpleFormatWhenMethodHasNoException() {
+    void shouldUseSimpleFormatWhenMethodHasNoException() {
         assertThat(MethodFormat.SHORT.format(methodWithoutArgs), is(equalTo("MethodFormatTest.methodWithoutArgs()")));
     }
 
     @Test
-    public void prints_code_source() {
+    void prints_code_source() {
         String format = MethodFormat.FULL.format(methodWithoutArgs);
         assertTrue(format.startsWith("io.cucumber.core.reflection.MethodFormatTest.methodWithoutArgs() in file:"));
     }

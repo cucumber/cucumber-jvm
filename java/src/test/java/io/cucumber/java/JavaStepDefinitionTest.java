@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JavaStepDefinitionTest {
+class JavaStepDefinitionTest {
 
     private final Lookup lookup = new Lookup() {
 
@@ -26,7 +26,7 @@ public class JavaStepDefinitionTest {
     private String argument;
 
     @Test
-    public void can_define_step() throws Throwable {
+    void can_define_step() throws Throwable {
         Method method = JavaStepDefinitionTest.class.getMethod("one_string_argument", String.class);
         JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", 0, lookup);
         definition.execute(new Object[]{"one_string_argument"});
@@ -38,7 +38,7 @@ public class JavaStepDefinitionTest {
     }
 
     @Test
-    public void can_provide_location_of_step() throws Throwable {
+    void can_provide_location_of_step() throws Throwable {
         Method method = JavaStepDefinitionTest.class.getMethod("method_throws");
         JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", 0, lookup);
         PendingException exception = assertThrows(PendingException.class, () -> definition.execute(new Object[0]));

@@ -12,10 +12,10 @@ import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class Java8LambdaStepDefinitionTest {
+class Java8LambdaStepDefinitionTest {
 
     @Test
-    public void should_calculate_parameters_count_from_body_with_one_param() {
+    void should_calculate_parameters_count_from_body_with_one_param() {
         StepdefBody.A1<String> body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
@@ -23,7 +23,7 @@ public class Java8LambdaStepDefinitionTest {
     }
 
     @Test
-    public void should_calculate_parameters_count_from_body_with_two_params() {
+    void should_calculate_parameters_count_from_body_with_two_params() {
         StepdefBody.A2<String, String> body = (p1, p2) -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A2.class, body);
@@ -31,7 +31,7 @@ public class Java8LambdaStepDefinitionTest {
     }
 
     @Test
-    public void should_resolve_type_to_object() {
+    void should_resolve_type_to_object() {
         StepdefBody.A1 body = (p1) -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
@@ -40,7 +40,7 @@ public class Java8LambdaStepDefinitionTest {
     }
 
     @Test
-    public void should_fail_for_param_with_non_generic_list() {
+    void should_fail_for_param_with_non_generic_list() {
         StepdefBody.A1<List> body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
@@ -53,7 +53,7 @@ public class Java8LambdaStepDefinitionTest {
     }
 
     @Test
-    public void should_fail_for_param_with_generic_list() {
+    void should_fail_for_param_with_generic_list() {
         StepdefBody.A1<List<String>> body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
