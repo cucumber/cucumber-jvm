@@ -6,7 +6,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.RunnerSupplier;
-import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.net.URI;

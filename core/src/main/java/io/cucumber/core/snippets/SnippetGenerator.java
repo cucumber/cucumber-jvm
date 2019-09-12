@@ -1,5 +1,6 @@
 package io.cucumber.core.snippets;
 
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.event.DataTableArgument;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.DocStringArgument;
