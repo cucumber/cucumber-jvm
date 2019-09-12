@@ -4,6 +4,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
 ### Added
+ * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
+   that wouldn't normally affect the timeline formatter. However, it did prevent some organisations from downloading the cucumber-core jar because nexus would block it.
  * [Core] Add `object-factory` option to CLI and `@CucumberOptions`. ([#1710](https://github.com/cucumber/cucumber-jvm/pull/1710) Ralph Kar)
  * [Java] Allow parameter types access to the test context ([#851](https://github.com/cucumber/cucumber-jvm/issues/851), [#1458](https://github.com/cucumber/cucumber-jvm/issues/1458) M.P. Korstanje)
    - Add `@ParameterType` alternative for `TypeRegistry.defineParameterType`
