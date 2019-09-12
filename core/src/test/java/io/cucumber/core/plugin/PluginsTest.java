@@ -20,7 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class})
-public class PluginsTest {
+class PluginsTest {
 
     @Mock
     private EventPublisher rootEventPublisher;
@@ -31,7 +31,7 @@ public class PluginsTest {
     private PluginFactory pluginFactory = new PluginFactory();
 
     @Test
-    public void shouldSetStrictOnPlugin() {
+    void shouldSetStrictOnPlugin() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         StrictAware plugin = mock(StrictAware.class);
@@ -40,7 +40,7 @@ public class PluginsTest {
     }
 
     @Test
-    public void shouldSetMonochromeOnPlugin() {
+    void shouldSetMonochromeOnPlugin() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         ColorAware plugin = mock(ColorAware.class);
@@ -49,7 +49,7 @@ public class PluginsTest {
     }
 
     @Test
-    public void shouldSetConcurrentEventListener() {
+    void shouldSetConcurrentEventListener() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
@@ -59,7 +59,7 @@ public class PluginsTest {
     }
 
     @Test
-    public void shouldSetNonConcurrentEventListener() {
+    void shouldSetNonConcurrentEventListener() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         EventListener plugin = mock(EventListener.class);
@@ -70,7 +70,7 @@ public class PluginsTest {
     }
 
     @Test
-    public void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
+    void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         EventListener plugin = mock(EventListener.class);

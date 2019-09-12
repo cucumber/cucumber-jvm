@@ -9,7 +9,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FunctionNameGeneratorTest {
+class FunctionNameGeneratorTest {
 
     private FunctionNameGenerator underscore = new FunctionNameGenerator(SnippetType.UNDERSCORE.joiner());
     private FunctionNameGenerator camelCase = new FunctionNameGenerator(SnippetType.CAMELCASE.joiner());
@@ -22,14 +22,14 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void testSanitizeEmptyFunctionName() {
+    void testSanitizeEmptyFunctionName() {
         Executable testMethod = () -> underscore.generateFunctionName("");
         IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Cannot create function name from empty sentence")));
     }
 
     @Test
-    public void testSanitizeFunctionName() {
+    void testSanitizeFunctionName() {
         assertFunctionNames(
             "test_function_123",
             "testFunction123",
@@ -37,7 +37,7 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void sanitizes_simple_sentence() {
+    void sanitizes_simple_sentence() {
         assertFunctionNames(
             "i_am_a_function_name",
             "iAmAFunctionName",
@@ -45,7 +45,7 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void sanitizes_sentence_with_multiple_spaces() {
+    void sanitizes_sentence_with_multiple_spaces() {
         assertFunctionNames(
             "i_am_a_function_name",
             "iAmAFunctionName",
@@ -53,7 +53,7 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void sanitizes_pascal_case_word() {
+    void sanitizes_pascal_case_word() {
         assertFunctionNames(
             "function_name_with_pascalCase_word",
             "functionNameWithPascalCaseWord",
@@ -61,7 +61,7 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void sanitizes_camel_case_word() {
+    void sanitizes_camel_case_word() {
         assertFunctionNames(
             "function_name_with_CamelCase_word",
             "functionNameWithCamelCaseWord",
@@ -69,7 +69,7 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void sanitizes_acronyms() {
+    void sanitizes_acronyms() {
         assertFunctionNames(
             "function_name_with_multi_char_acronym_HTTP_Server",
             "functionNameWithMultiCharAcronymHTTPServer",
@@ -77,7 +77,7 @@ public class FunctionNameGeneratorTest {
     }
 
     @Test
-    public void sanitizes_two_char_acronym() {
+    void sanitizes_two_char_acronym() {
         assertFunctionNames(
             "function_name_with_two_char_acronym_US",
             "functionNameWithTwoCharAcronymUS",

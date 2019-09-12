@@ -2,18 +2,18 @@ package io.cucumber.picocontainer;
 
 import org.junit.jupiter.api.Test;
 
-public class SomeTest {
+class SomeTest {
 
     @Test
-    public void one() {
+    void one() {
     }
 
     @Test
-    public void two() {
+    void two() {
     }
 
     @Test
-    public void three() {
+    void three() {
     }
 
 }

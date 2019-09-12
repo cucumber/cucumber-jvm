@@ -15,10 +15,10 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BackendServiceLoaderTest {
+class BackendServiceLoaderTest {
 
     @Test
-    public void should_create_a_backend() {
+    void should_create_a_backend() {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
@@ -29,7 +29,7 @@ public class BackendServiceLoaderTest {
     }
 
     @Test
-    public void should_throw_an_exception_when_no_backend_could_be_found() {
+    void should_throw_an_exception_when_no_backend_could_be_found() {
         ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);

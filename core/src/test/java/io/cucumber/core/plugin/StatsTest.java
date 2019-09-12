@@ -17,12 +17,12 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class StatsTest {
+class StatsTest {
 
     private static final Instant ANY_TIME = Instant.ofEpochMilli(1234567890);
 
     @Test
-    public void should_print_zero_scenarios_zero_steps_if_nothing_has_executed() {
+    void should_print_zero_scenarios_zero_steps_if_nothing_has_executed() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         counter.printStats(new PrintStream(baos));
@@ -33,7 +33,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_only_print_sub_counts_if_not_zero() {
+    void should_only_print_sub_counts_if_not_zero() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -49,7 +49,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_sub_counts_in_order_failed_ambiguous_skipped_pending_undefined_passed() {
+    void should_print_sub_counts_in_order_failed_ambiguous_skipped_pending_undefined_passed() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -67,7 +67,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_sub_counts_in_order_failed_ambiguous_skipped_undefined_passed_in_color() {
+    void should_print_sub_counts_in_order_failed_ambiguous_skipped_undefined_passed_in_color() {
         Stats counter = createColorSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -92,7 +92,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_zero_m_zero_s_if_nothing_has_executed() {
+    void should_print_zero_m_zero_s_if_nothing_has_executed() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -103,7 +103,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_report_the_difference_between_finish_time_and_start_time() {
+    void should_report_the_difference_between_finish_time_and_start_time() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -116,7 +116,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_minutes_seconds_and_milliseconds() {
+    void should_print_minutes_seconds_and_milliseconds() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -129,7 +129,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_minutes_instead_of_hours() {
+    void should_print_minutes_instead_of_hours() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -142,7 +142,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_use_locale_for_decimal_separator() {
+    void should_use_locale_for_decimal_separator() {
         Stats counter = new Stats(Locale.GERMANY);
         counter.setStrict(true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -155,7 +155,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_failed_ambiguous_scenarios() {
+    void should_print_failed_ambiguous_scenarios() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -180,7 +180,7 @@ public class StatsTest {
     }
 
     @Test
-    public void should_print_failed_ambiguous_pending_undefined_scenarios_if_strict() {
+    void should_print_failed_ambiguous_pending_undefined_scenarios_if_strict() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

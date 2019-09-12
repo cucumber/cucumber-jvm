@@ -27,11 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("deprecation")
-public class CucumberOptionsAnnotationParserTest {
+ class CucumberOptionsAnnotationParserTest {
 
     @Test
-    public void create_strict() {
+     void create_strict() {
         RuntimeOptions runtimeOptions = parser().parse(Strict.class).build();
         assertTrue(runtimeOptions.isStrict());
     }
@@ -42,13 +41,13 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_non_strict() {
+     void create_non_strict() {
         RuntimeOptions runtimeOptions = parser().parse(NotStrict.class).build();
         assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
-    public void create_without_options() {
+     void create_without_options() {
         RuntimeOptions runtimeOptions = parser()
             .parse(WithoutOptions.class)
             .addDefaultSummaryPrinterIfNotPresent()
@@ -77,7 +76,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_without_options_with_base_class_without_options() {
+     void create_without_options_with_base_class_without_options() {
         Class<?> subClassWithMonoChromeTrueClass = WithoutOptionsWithBaseClassWithoutOptions.class;
         RuntimeOptions runtimeOptions = parser()
             .parse(subClassWithMonoChromeTrueClass)
@@ -97,7 +96,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_with_no_name() {
+     void create_with_no_name() {
         RuntimeOptions runtimeOptions = parser().parse(NoName.class).build();
 
         assertAll("Checking RuntimeOptions",
@@ -108,7 +107,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_with_multiple_names() {
+     void create_with_multiple_names() {
         RuntimeOptions runtimeOptions = parser().parse(MultipleNames.class).build();
 
         List<Pattern> filters = runtimeOptions.getNameFilters();
@@ -122,13 +121,13 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void testObjectFactory() {
+     void testObjectFactory() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithCustomObjectFactory.class).build();
         assertThat(runtimeOptions.getObjectFactoryClass(), is(equalTo(TestObjectFactory.class)));
     }
 
     @Test
-    public void create_with_snippets() {
+     void create_with_snippets() {
         RuntimeOptions runtimeOptions = parser().parse(Snippets.class).build();
         assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
     }
@@ -138,7 +137,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
+     void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
         RuntimeOptions runtimeOptions = parser()
             .parse(ClassWithNoSummaryPrinterPlugin.class)
             .addDefaultSummaryPrinterIfNotPresent()
@@ -149,7 +148,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void inherit_plugin_from_baseclass() {
+     void inherit_plugin_from_baseclass() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithFormatter.class).build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -162,7 +161,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void override_monochrome_flag_from_baseclass() {
+     void override_monochrome_flag_from_baseclass() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithMonoChromeTrue.class).build();
 
         assertTrue(runtimeOptions.isMonochrome());
@@ -179,14 +178,14 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_with_glue() {
+     void create_with_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithGlue.class).build();
 
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
     }
 
     @Test
-    public void create_with_extra_glue() {
+     void create_with_extra_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithExtraGlue.class).build();
 
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/hooks"), uri("classpath:io/cucumber/core/options")));
@@ -194,7 +193,7 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_with_extra_glue_in_subclass_of_extra_glue() {
+     void create_with_extra_glue_in_subclass_of_extra_glue() {
         RuntimeOptions runtimeOptions = parser()
             .parse(SubClassWithExtraGlueOfExtraGlue.class)
             .build();
@@ -204,14 +203,14 @@ public class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    public void create_with_extra_glue_in_subclass_of_glue() {
+     void create_with_extra_glue_in_subclass_of_glue() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithExtraGlueOfGlue.class).build();
 
         assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
     }
 
     @Test
-    public void cannot_create_with_glue_and_extra_glue() {
+     void cannot_create_with_glue_and_extra_glue() {
         Executable testMethod = () -> parser().parse(ClassWithGlueAndExtraGlue.class).build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("glue and extraGlue cannot be specified at the same time")));

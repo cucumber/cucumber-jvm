@@ -12,12 +12,12 @@ import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class ReadInjectionProviderClassNamesTest {
+class ReadInjectionProviderClassNamesTest {
 
     private final ReadInjectionProviderClassNames function = ReadInjectionProviderClassNames.INSTANCE;
 
     @Test
-    public void shouldReturnProviderFromCucumberNeedleProperties() {
+    void shouldReturnProviderFromCucumberNeedleProperties() {
         final Set<String> classNames = function.apply(loadBundle(CucumberNeedleConfiguration.RESOURCE_CUCUMBER_NEEDLE));
         assertThat(classNames, is(notNullValue()));
         assertThat(classNames.size(), is(1));
@@ -25,28 +25,28 @@ public class ReadInjectionProviderClassNamesTest {
     }
 
     @Test
-    public void shouldReturnEmptySetWhenResourceBundleIsNull() {
+    void shouldReturnEmptySetWhenResourceBundleIsNull() {
         final Set<String> classNames = function.apply(null);
         assertThat(classNames, is(notNullValue()));
         assertThat(classNames.isEmpty(), is(true));
     }
 
     @Test
-    public void shouldReturnEmptySetWhenPropertyIsNotSet() {
+    void shouldReturnEmptySetWhenPropertyIsNotSet() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/empty"));
         assertThat(classNames, is(notNullValue()));
         assertThat(classNames.isEmpty(), is(true));
     }
 
     @Test
-    public void shouldReturnEmptySetWhenPropertyIsEmpty() {
+    void shouldReturnEmptySetWhenPropertyIsEmpty() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/no-classname"));
         assertThat(classNames, is(notNullValue()));
         assertThat(classNames.isEmpty(), is(true));
     }
 
     @Test
-    public void shouldReturnOneTrimmedClassName() {
+    void shouldReturnOneTrimmedClassName() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/one-classname"));
         assertThat(classNames.size(), is(1));
         final String first = classNames.iterator().next();
@@ -54,7 +54,7 @@ public class ReadInjectionProviderClassNamesTest {
     }
 
     @Test
-    public void shouldReturnTwoTrimmedClassNames() {
+    void shouldReturnTwoTrimmedClassNames() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/two-classname"));
 
         assertAll("Checking function",

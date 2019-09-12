@@ -17,12 +17,12 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-public class SingletonRunnerSupplierTest {
+class SingletonRunnerSupplierTest {
 
     private SingletonRunnerSupplier runnerSupplier;
 
     @BeforeEach
-    public void before() {
+    void before() {
         ClassLoader classLoader = getClass().getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
@@ -36,12 +36,12 @@ public class SingletonRunnerSupplierTest {
     }
 
     @Test
-    public void should_create_a_runner() {
+    void should_create_a_runner() {
         assertThat(runnerSupplier.get(), is(notNullValue()));
     }
 
     @Test
-    public void should_return_the_same_runner_on_subsequent_calls() {
+    void should_return_the_same_runner_on_subsequent_calls() {
         assertThat(runnerSupplier.get(), is(equalTo(runnerSupplier.get())));
     }
 

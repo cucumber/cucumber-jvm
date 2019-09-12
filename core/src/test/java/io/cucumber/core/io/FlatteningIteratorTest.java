@@ -16,10 +16,10 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FlatteningIteratorTest {
+class FlatteningIteratorTest {
 
     @Test
-    public void flattens_iterators() {
+    void flattens_iterators() {
         final FlatteningIterator<Integer> fi = new FlatteningIterator<>();
         fi.push(asList(3, 4).iterator());
         fi.push(asList(1, 2).iterator());
