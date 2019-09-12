@@ -94,6 +94,7 @@ public @interface CucumberOptions {
 
     /**
      * Only run scenarios whose names match one of the provided regular expressions.
+     *
      * @return a list of regular expressions
      */
     String[] name() default {};
@@ -102,32 +103,6 @@ public @interface CucumberOptions {
      * @return the format of the generated snippets.
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
-
-    /**
-     * Use filename compatible names.
-     * <p>
-     * Make sure that the names of the test cases only is made up of
-     * [A-Za-Z0-9_] so that the names for certain can be used as file names.
-     * <p>
-     * Gradle for instance will use these names in the file names of
-     * the JUnit xml report files.
-     *
-     * @return true to enforce the use of well-formed file names
-     */
-    boolean useFileNameCompatibleName() default false;
-
-    /**
-     * Provide step notifications.
-     * <p>
-     * By default steps are not included in notifications and descriptions.
-     * This aligns test case in the Cucumber-JVM domain (Scenarios) with the
-     * test case in the JUnit domain (the leafs in the description tree),
-     * and works better with the report files of the notification listeners
-     * like maven surefire or gradle.
-     *
-     * @return true to include steps should be included in notifications
-     */
-    boolean stepNotifications() default false;
 
     /**
      * Specify a custom ObjectFactory.
