@@ -1,10 +1,10 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
-import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.plugin.event.WriteEvent;
 
 import java.util.ArrayList;
@@ -36,12 +36,13 @@ class Scenario implements io.cucumber.core.backend.Scenario {
     }
 
     @Override
-    public io.cucumber.core.backend.Status getStatus() {
+    public Status getStatus() {
         if (stepResults.isEmpty()) {
-            return io.cucumber.core.backend.Status.UNDEFINED;
+            return Status.UNDEFINED;
         }
 
-        return max(stepResults, comparing(Result::getStatus)).getStatus();
+        Result mostSevereResult = max(stepResults, comparing(Result::getStatus));
+        return Status.valueOf(mostSevereResult.getStatus().name());
     }
 
     @Override

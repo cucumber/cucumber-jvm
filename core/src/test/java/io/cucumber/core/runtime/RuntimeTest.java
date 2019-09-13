@@ -568,14 +568,12 @@ class RuntimeTest {
             .build()
             .run();
 
-
-        assertThat(stepDefinedEvents, contains(
-            mockedStepDefinition,
-            mockedScenarioScopedStepDefinition,
-            // Twice, once for each scenario
-            mockedStepDefinition,
-            mockedScenarioScopedStepDefinition
-        ));
+        assertThat(stepDefinedEvents.get(0).getPattern(), is(mockedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.get(1).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
+        // Twice, once for each scenario
+        assertThat(stepDefinedEvents.get(2).getPattern(), is(mockedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.get(3).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.size(), is(4));
 
         for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
             if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
@@ -673,7 +671,7 @@ class RuntimeTest {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
-    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
+    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition, StepDefinition {
 
         @Override
         public String getLocation() {
@@ -702,7 +700,7 @@ class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition implements io.cucumber.core.backend.StepDefinition, ScenarioScoped {
+    private static final class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         boolean disposed;
 
