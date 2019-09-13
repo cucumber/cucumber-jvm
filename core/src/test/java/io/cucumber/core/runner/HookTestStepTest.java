@@ -1,12 +1,11 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -15,6 +14,8 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.Collections;
 
+import static io.cucumber.core.backend.Status.PASSED;
+import static io.cucumber.core.backend.Status.SKIPPED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -74,14 +75,14 @@ class HookTestStepTest {
     void result_is_passed_when_step_definition_does_not_throw_exception() {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertFalse(skipNextStep);
-        assertThat(scenario.getStatus(), is(equalTo(Status.PASSED)));
+        assertThat(scenario.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
     void result_is_skipped_when_skip_step_is_skip_all_skipable() {
         boolean skipNextStep = step.run(testCase, bus, scenario, true);
         assertTrue(skipNextStep);
-        assertThat(scenario.getStatus(), is(equalTo(Status.SKIPPED)));
+        assertThat(scenario.getStatus(), is(equalTo(SKIPPED)));
     }
 
 }

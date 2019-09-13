@@ -2,7 +2,7 @@ package io.cucumber.core.feature;
 
 import gherkin.pickles.PickleString;
 
-public final class DocStringArgument implements Argument, io.cucumber.core.event.DocStringArgument {
+public final class DocStringArgument implements Argument, io.cucumber.plugin.event.DocStringArgument {
 
     private final PickleString docString;
 

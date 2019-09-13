@@ -105,6 +105,11 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -188,21 +193,22 @@
     </dependencyManagement>
 
     <modules>
-        <module>core</module>
-        <module>docstring</module>
-        <module>java</module>
-        <module>java8</module>
-        <module>kotlin-java8</module>
-        <module>testng</module>
-        <module>picocontainer</module>
-        <module>junit</module>
-        <module>spring</module>
-        <module>guice</module>
-        <module>weld</module>
-        <module>openejb</module>
-        <module>needle</module>
         <module>cdi2</module>
+        <module>core</module>
         <module>deltaspike</module>
+        <module>docstring</module>
+        <module>guice</module>
+        <module>java8</module>
+        <module>java</module>
+        <module>junit</module>
+        <module>kotlin-java8</module>
+        <module>needle</module>
+        <module>openejb</module>
+        <module>picocontainer</module>
+        <module>plugin</module>
+        <module>spring</module>
+        <module>testng</module>
+        <module>weld</module>
     </modules>
 
     <profiles>

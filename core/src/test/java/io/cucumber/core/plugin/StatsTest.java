@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.Status;
+import io.cucumber.plugin.event.Status;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;

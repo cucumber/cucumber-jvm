@@ -3,14 +3,15 @@ package io.cucumber.core.plugin;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseEvent;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseEvent;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.plugin.ConcurrentEventListener;
 
 import java.io.Closeable;
 import java.io.File;
@@ -50,7 +51,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final URL reportDir;
     private final NiceAppendable reportJs;
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
+    @SuppressWarnings("unused") // Used by PluginFactory
     public TimelineFormatter(final URL reportDir) {
         this(reportDir, createOutput(reportDir, "report.js"));
     }

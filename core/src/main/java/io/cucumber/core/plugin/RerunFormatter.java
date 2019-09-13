@@ -1,10 +1,12 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestRunFinished;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.StrictAware;
 
 import java.util.ArrayList;
 import java.util.Collection;

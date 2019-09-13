@@ -1,8 +1,12 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.event.Event;
-import io.cucumber.core.event.EventPublisher;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.StrictAware;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

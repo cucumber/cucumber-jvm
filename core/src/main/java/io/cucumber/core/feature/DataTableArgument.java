@@ -5,7 +5,7 @@ import gherkin.pickles.PickleTable;
 import java.util.AbstractList;
 import java.util.List;
 
-public final class DataTableArgument implements Argument, io.cucumber.core.event.DataTableArgument {
+public final class DataTableArgument implements Argument, io.cucumber.plugin.event.DataTableArgument {
 
     private final CellView cells;
     private final int line;

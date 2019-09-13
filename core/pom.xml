@@ -39,6 +39,10 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>docstring</artifactId>
         </dependency>
         <dependency>

@@ -9,7 +9,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.StepDefinedEvent;
+import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
@@ -216,7 +216,7 @@ final class CachingGlue implements Glue {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
             }
             stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
-            bus.send(new StepDefinedEvent(bus.getInstant(), stepDefinition));
+            bus.send(new StepDefinedEvent(bus.getInstant(), new StepDefinitionEvent(stepDefinition)));
         });
     }
 

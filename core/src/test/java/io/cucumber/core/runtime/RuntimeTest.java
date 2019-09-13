@@ -4,14 +4,14 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.Scenario;
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.StepDefinedEvent;
-import io.cucumber.core.event.StepDefinition;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.StepDefinition;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.CucumberFeature;
@@ -21,11 +21,11 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.plugin.ConcurrentEventListener;
-import io.cucumber.core.plugin.EventListener;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
-import io.cucumber.core.plugin.Plugin;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.core.runner.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
@@ -568,14 +568,12 @@ class RuntimeTest {
             .build()
             .run();
 
-
-        assertThat(stepDefinedEvents, contains(
-            mockedStepDefinition,
-            mockedScenarioScopedStepDefinition,
-            // Twice, once for each scenario
-            mockedStepDefinition,
-            mockedScenarioScopedStepDefinition
-        ));
+        assertThat(stepDefinedEvents.get(0).getPattern(), is(mockedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.get(1).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
+        // Twice, once for each scenario
+        assertThat(stepDefinedEvents.get(2).getPattern(), is(mockedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.get(3).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.size(), is(4));
 
         for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
             if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
@@ -673,7 +671,7 @@ class RuntimeTest {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
-    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
+    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition, StepDefinition {
 
         @Override
         public String getLocation() {
@@ -702,7 +700,7 @@ class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition implements io.cucumber.core.backend.StepDefinition, ScenarioScoped {
+    private static final class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         boolean disposed;
 

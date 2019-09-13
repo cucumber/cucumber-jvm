@@ -6,7 +6,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import io.cucumber.core.event.*;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.SummaryPrinter;
 
 import static java.util.Locale.ROOT;
 
