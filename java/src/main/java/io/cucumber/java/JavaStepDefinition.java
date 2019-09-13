@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -28,13 +27,8 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
 
     @SuppressWarnings("deprecation")
     @Override
-    public void execute(Object[] args) throws Throwable {
-        Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
-    }
-
-    @Override
-    public boolean isDefinedAt(StackTraceElement e) {
-        return e.getClassName().equals(method.getDeclaringClass().getName()) && e.getMethodName().equals(method.getName());
+    public void execute(Object[] args) {
+        Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
     @Override

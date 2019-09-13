@@ -1,19 +1,24 @@
 package io.cucumber.picocontainer;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.reflection.Reflections;
 import org.apiguardian.api.API;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
 @API(status = API.Status.STABLE)
 public final class PicoFactory implements ObjectFactory {
-    private MutablePicoContainer pico;
     private final Set<Class<?>> classes = new HashSet<>();
+    private MutablePicoContainer pico;
+
+    private static boolean isInstantiable(Class<?> clazz) {
+        boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
+    }
 
     public void start() {
         pico = new PicoBuilder()
@@ -32,7 +37,7 @@ public final class PicoFactory implements ObjectFactory {
     }
 
     public boolean addClass(Class<?> clazz) {
-        if (Reflections.isInstantiable(clazz) && classes.add(clazz)) {
+        if (isInstantiable(clazz) && classes.add(clazz)) {
             addConstructorDependencies(clazz);
         }
         return true;

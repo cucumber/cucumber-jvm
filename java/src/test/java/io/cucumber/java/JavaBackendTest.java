@@ -3,8 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +43,7 @@ class JavaBackendTest {
 
     @BeforeEach
     void createBackend() {
-        ClassLoader classLoader = currentThread().getContextClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        this.backend = new JavaBackend(factory, factory, resourceLoader);
+        this.backend = new JavaBackend(factory, factory, currentThread()::getContextClassLoader);
     }
 
     @Test

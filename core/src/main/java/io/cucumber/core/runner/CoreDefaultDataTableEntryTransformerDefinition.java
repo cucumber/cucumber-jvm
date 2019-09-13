@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
@@ -38,22 +39,19 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
     }
 
     @Override
+    public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+        return delegate.isDefinedAt(stackTraceElement);
+    }
+
+    @Override
     public String getLocation() {
         return delegate.getLocation();
     }
 
     private static class ScenarioCoreDefaultDataTableEntryTransformerDefinition extends CoreDefaultDataTableEntryTransformerDefinition implements ScenarioScoped {
 
-        private final ScenarioScoped delegate;
-
         ScenarioCoreDefaultDataTableEntryTransformerDefinition(DefaultDataTableEntryTransformerDefinition delegate) {
             super(delegate);
-            this.delegate = (ScenarioScoped) delegate;
-        }
-
-        @Override
-        public void disposeScenarioScope() {
-            delegate.disposeScenarioScope();
         }
     }
 

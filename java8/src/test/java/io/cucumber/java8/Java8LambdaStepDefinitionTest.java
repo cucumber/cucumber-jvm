@@ -1,6 +1,6 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.backend.CucumberBackendException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -16,37 +16,37 @@ class Java8LambdaStepDefinitionTest {
 
     @Test
     void should_calculate_parameters_count_from_body_with_one_param() {
-        StepdefBody.A1<String> body = p1 -> {
+        StepDefinitionBody.A1<String> body = p1 -> {
         };
-        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepDefinitionBody.A1.class, body);
         assertThat(stepDefinition.parameterInfos().size(), is(equalTo(1)));
     }
 
     @Test
     void should_calculate_parameters_count_from_body_with_two_params() {
-        StepdefBody.A2<String, String> body = (p1, p2) -> {
+        StepDefinitionBody.A2<String, String> body = (p1, p2) -> {
         };
-        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A2.class, body);
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepDefinitionBody.A2.class, body);
         assertThat(stepDefinition.parameterInfos().size(), is(equalTo(2)));
     }
 
     @Test
     void should_resolve_type_to_object() {
-        StepdefBody.A1 body = (p1) -> {
+        StepDefinitionBody.A1 body = (p1) -> {
         };
-        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepDefinitionBody.A1.class, body);
 
         assertThat(stepDefinition.parameterInfos().get(0).getType(), isA((Object.class)));
     }
 
     @Test
     void should_fail_for_param_with_non_generic_list() {
-        StepdefBody.A1<List> body = p1 -> {
+        StepDefinitionBody.A1<List> body = p1 -> {
         };
-        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepDefinitionBody.A1.class, body);
 
         Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
         )));
@@ -54,12 +54,12 @@ class Java8LambdaStepDefinitionTest {
 
     @Test
     void should_fail_for_param_with_generic_list() {
-        StepdefBody.A1<List<String>> body = p1 -> {
+        StepDefinitionBody.A1<List<String>> body = p1 -> {
         };
-        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepdefBody.A1.class, body);
+        Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepDefinitionBody.A1.class, body);
 
         Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
         )));

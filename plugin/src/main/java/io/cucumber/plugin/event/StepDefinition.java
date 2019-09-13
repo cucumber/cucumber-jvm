@@ -4,7 +4,15 @@ package io.cucumber.plugin.event;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
-public interface StepDefinition {
+public final class StepDefinition {
+
+    private final String location;
+    private final String pattern;
+
+    public StepDefinition(String location, String pattern) {
+        this.location = location;
+        this.pattern = pattern;
+    }
 
     /**
      * The source line where the step definition is defined.
@@ -12,10 +20,14 @@ public interface StepDefinition {
      *
      * @return The source line of the step definition.
      */
-    String getLocation();
+    public String getLocation() {
+        return location;
+    }
 
     /**
      * @return the pattern associated with this instance. Used for error reporting only.
      */
-    String getPattern();
+    public String getPattern(){
+        return pattern;
+    }
 }

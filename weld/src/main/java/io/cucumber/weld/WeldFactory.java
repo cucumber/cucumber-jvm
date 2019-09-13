@@ -1,6 +1,6 @@
 package io.cucumber.weld;
 
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -36,7 +36,7 @@ public final class WeldFactory implements ObjectFactory {
         try {
             containerInstance = new Weld().initialize();
         } catch (IllegalArgumentException e) {
-            throw new CucumberException(START_EXCEPTION_MESSAGE, e);
+            throw new CucumberBackendException(START_EXCEPTION_MESSAGE, e);
         }
     }
 

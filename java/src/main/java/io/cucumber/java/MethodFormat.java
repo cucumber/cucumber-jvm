@@ -1,6 +1,6 @@
-package io.cucumber.core.reflection;
+package io.cucumber.java;
 
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.backend.CucumberBackendException;
 
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
@@ -10,18 +10,12 @@ import java.util.regex.Pattern;
 
 /**
  * Helper class for formatting a method signature to a shorter form.
- *
- * @deprecated In v6. this class can be moved to cucumber-java.
- * It won't be used any where else.
  */
-@Deprecated
-public final class MethodFormat {
+final class MethodFormat {
+    static final MethodFormat FULL = new MethodFormat("%qc.%m(%a) in %s");
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("[^,<>]*\\.");
     private final MessageFormat format;
-
-    public static final MethodFormat SHORT = new MethodFormat("%c.%m(%a)");
-    public static final MethodFormat FULL = new MethodFormat("%qc.%m(%a) in %s");
 
     /**
      * @param format the format string to use. There are several pattern tokens that can be used:
@@ -41,20 +35,24 @@ public final class MethodFormat {
      */
     private MethodFormat(String format) {
         String pattern = format
-                .replaceAll("%M", "{0}")
-                .replaceAll("%r", "{1}")
-                .replaceAll("%qc", "{2}")
-                .replaceAll("%m", "{3}")
-                .replaceAll("%qa", "{4}")
-                .replaceAll("%qe", "{5}")
-                .replaceAll("%c", "{6}")
-                .replaceAll("%a", "{7}")
-                .replaceAll("%e", "{8}")
-                .replaceAll("%s", "{9}");
+            .replaceAll("%M", "{0}")
+            .replaceAll("%r", "{1}")
+            .replaceAll("%qc", "{2}")
+            .replaceAll("%m", "{3}")
+            .replaceAll("%qa", "{4}")
+            .replaceAll("%qe", "{5}")
+            .replaceAll("%c", "{6}")
+            .replaceAll("%a", "{7}")
+            .replaceAll("%e", "{8}")
+            .replaceAll("%s", "{9}");
         this.format = new MessageFormat(pattern);
     }
 
-    public String format(Method method) {
+    private static String removePackage(String qc) {
+        return PACKAGE_PATTERN.matcher(qc).replaceAll("");
+    }
+
+    String format(Method method) {
         String signature = method.toGenericString();
         Matcher matcher = METHOD_PATTERN.matcher(signature);
         if (matcher.find()) {
@@ -70,24 +68,20 @@ public final class MethodFormat {
             String s = getCodeSource(method);
 
             return format.format(new Object[]{
-                    M,
-                    r,
-                    qc,
-                    m,
-                    qa,
-                    qe,
-                    c,
-                    a,
-                    e,
-                    s
+                M,
+                r,
+                qc,
+                m,
+                qa,
+                qe,
+                c,
+                a,
+                e,
+                s
             });
         } else {
-            throw new CucumberException("Cucumber bug: Couldn't format " + signature);
+            throw new CucumberBackendException("Cucumber bug: Couldn't format " + signature);
         }
-    }
-
-    private static String removePackage(String qc) {
-        return PACKAGE_PATTERN.matcher(qc).replaceAll("");
     }
 
     private String getCodeSource(Method method) {

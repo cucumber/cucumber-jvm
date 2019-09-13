@@ -11,6 +11,7 @@ import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.core.snippets.TestSnippet;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -42,6 +43,7 @@ class HookTest {
     @Test
     void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         Backend backend = mock(Backend.class);
+        when(backend.getSnippet()).thenReturn(new TestSnippet());
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         final HookDefinition hook = mock(HookDefinition.class);
         TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);

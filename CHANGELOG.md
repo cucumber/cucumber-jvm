@@ -25,7 +25,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.dry-run
     - cucumber.execution.limit
     - cucumber.execution.order
-    - cucumber.execution.parallel.config.fixed.parallelism
     - cucumber.execution.strict
     - cucumber.execution.wip
     - cucumber.feature

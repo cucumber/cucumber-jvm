@@ -45,14 +45,6 @@ public final class Constants {
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
 
     /**
-     * Property name used to determine the desired parallelism for the
-     * {@link Runtime} configuration: {@value}
-     * <p>
-     * No default value; must be an integer.
-     */
-    public static final String EXECUTION_PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME = "cucumber.execution.parallel.config.fixed.parallelism";
-
-    /**
      * Property name used to enable strict execution: {@value}
      * <p>
      * When using strict execution Cucumber will treat undefined and pending

@@ -1,10 +1,10 @@
 package io.cucumber.java;
 
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.backend.CucumberBackendException;
 
 import java.lang.reflect.Method;
 
-final class InvalidMethodException extends CucumberException {
+final class InvalidMethodException extends CucumberBackendException {
 
     private InvalidMethodException(String message) {
         super(message);

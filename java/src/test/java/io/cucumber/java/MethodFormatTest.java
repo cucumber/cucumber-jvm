@@ -1,4 +1,4 @@
-package io.cucumber.core.reflection;
+package io.cucumber.java;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,12 +7,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("deprecation")
 class MethodFormatTest {
 
     private Method methodWithArgsAndException;
@@ -33,18 +30,11 @@ class MethodFormatTest {
 
     @Test
     void shouldUseSimpleFormatWhenMethodHasException() {
-        assertThat(MethodFormat.SHORT.format(methodWithArgsAndException), is(equalTo("MethodFormatTest.methodWithArgsAndException(String,Map)")));
+        assertThat(MethodFormat.FULL.format(methodWithoutArgs), startsWith("io.cucumber.java.MethodFormatTest.methodWithoutArgs()"));
     }
 
     @Test
     void shouldUseSimpleFormatWhenMethodHasNoException() {
-        assertThat(MethodFormat.SHORT.format(methodWithoutArgs), is(equalTo("MethodFormatTest.methodWithoutArgs()")));
+        assertThat(MethodFormat.FULL.format(methodWithArgsAndException), startsWith("io.cucumber.java.MethodFormatTest.methodWithArgsAndException(String,Map)"));
     }
-
-    @Test
-    void prints_code_source() {
-        String format = MethodFormat.FULL.format(methodWithoutArgs);
-        assertTrue(format.startsWith("io.cucumber.core.reflection.MethodFormatTest.methodWithoutArgs() in file:"));
-    }
-
 }

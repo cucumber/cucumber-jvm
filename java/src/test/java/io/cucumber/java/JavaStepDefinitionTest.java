@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Lookup;
 import org.junit.jupiter.api.Test;
 
@@ -41,8 +42,8 @@ class JavaStepDefinitionTest {
     void can_provide_location_of_step() throws Throwable {
         Method method = JavaStepDefinitionTest.class.getMethod("method_throws");
         JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", 0, lookup);
-        PendingException exception = assertThrows(PendingException.class, () -> definition.execute(new Object[0]));
-        Optional<StackTraceElement> match = stream(exception.getStackTrace()).filter(definition::isDefinedAt).findFirst();
+        CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class, () -> definition.execute(new Object[0]));
+        Optional<StackTraceElement> match = stream(exception.getInvocationTargetExceptionCause().getStackTrace()).filter(definition::isDefinedAt).findFirst();
         StackTraceElement stackTraceElement = match.get();
 
         assertAll("Checking StackTraceElement",

@@ -196,7 +196,7 @@ public final class Runtime {
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendServiceLoader(resourceLoader, objectFactorySupplier);
+                : new BackendServiceLoader(() -> this.classLoader, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {

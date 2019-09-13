@@ -26,7 +26,7 @@ import io.cucumber.plugin.EventListener;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.core.runner.ScenarioScoped;
+import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -574,14 +574,6 @@ class RuntimeTest {
         assertThat(stepDefinedEvents.get(2).getPattern(), is(mockedStepDefinition.getPattern()));
         assertThat(stepDefinedEvents.get(3).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
         assertThat(stepDefinedEvents.size(), is(4));
-
-        for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
-            if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
-                MockedScenarioScopedStepDefinition mocked = (MockedScenarioScopedStepDefinition) stepDefinedEvent;
-                assertTrue(mocked.disposed, "Scenario scoped step definition should be disposed of");
-            }
-        }
-
     }
 
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) {
@@ -671,7 +663,7 @@ class RuntimeTest {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
-    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition, StepDefinition {
+    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
 
         @Override
         public String getLocation() {
@@ -700,14 +692,7 @@ class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped, io.cucumber.core.backend.StepDefinition {
-
-        boolean disposed;
-
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
+    private static final class MockedScenarioScopedStepDefinition implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         @Override
         public String getLocation() {

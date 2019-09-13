@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.runtime.Invoker;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

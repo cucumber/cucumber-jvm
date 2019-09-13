@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.docstring.DocStringType;
 
 import java.lang.reflect.Method;
@@ -52,8 +51,8 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
     }
 
 
-    private Object execute(String content) throws Throwable {
-        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, content);
+    private Object execute(String content) {
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, content);
     }
 
     @Override

@@ -3,8 +3,6 @@ package io.cucumber.core.runner;
 import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.plugin.event.HookType;
-import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.CucumberStep;
@@ -12,6 +10,8 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -102,33 +102,38 @@ public final class Runner {
         List<PickleStepTestStep> testSteps = new ArrayList<>();
 
         for (CucumberStep step : pickle.getSteps()) {
-            PickleStepDefinitionMatch match;
-            try {
-                match = glue.stepDefinitionMatch(pickle.getUri(), step);
-                if (match == null) {
-                    List<String> snippets = new ArrayList<>();
-                    for (SnippetGenerator snippetGenerator : snippetGenerators) {
-                        List<String> snippet = snippetGenerator.getSnippet(step, runnerOptions.getSnippetType());
-                        snippets.addAll(snippet);
-                    }
-                    if (!snippets.isEmpty()) {
-                        bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getStepLine(), snippets));
-                    }
-                    match = new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
-                }
-            } catch (AmbiguousStepDefinitionsException e) {
-                match = new AmbiguousPickleStepDefinitionsMatch(pickle.getUri(), step, e);
-            } catch (Throwable t) {
-                match = new FailedPickleStepInstantiationMatch(pickle.getUri(), step, t);
-            }
-
-
+            PickleStepDefinitionMatch match = matchStepToStepDefinition(pickle, step);
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
             testSteps.add(new PickleStepTestStep(pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
         }
 
         return testSteps;
+    }
+
+    private PickleStepDefinitionMatch matchStepToStepDefinition(CucumberPickle pickle, CucumberStep step) {
+        try {
+            PickleStepDefinitionMatch match = glue.stepDefinitionMatch(pickle.getUri(), step);
+            if (match != null) {
+                return match;
+            }
+            List<String> snippets = generateSnippetsForStep(step);
+            if (!snippets.isEmpty()) {
+                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getStepLine(), snippets));
+            }
+            return new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
+        } catch (AmbiguousStepDefinitionsException e) {
+            return new AmbiguousPickleStepDefinitionsMatch(pickle.getUri(), step, e);
+        }
+    }
+
+    private List<String> generateSnippetsForStep(CucumberStep step) {
+        List<String> snippets = new ArrayList<>();
+        for (SnippetGenerator snippetGenerator : snippetGenerators) {
+            List<String> snippet = snippetGenerator.getSnippet(step, runnerOptions.getSnippetType());
+            snippets.addAll(snippet);
+        }
+        return snippets;
     }
 
     private List<HookTestStep> createTestStepsForBeforeHooks(List<String> tags) {

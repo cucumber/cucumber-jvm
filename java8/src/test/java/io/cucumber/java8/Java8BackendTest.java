@@ -30,9 +30,7 @@ class Java8BackendTest {
 
     @BeforeEach
     void createBackend() {
-        ClassLoader classLoader = currentThread().getContextClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        this.backend = new Java8Backend(factory, factory, resourceLoader);
+        this.backend = new Java8Backend(factory, factory, currentThread()::getContextClassLoader);
     }
 
     @Test

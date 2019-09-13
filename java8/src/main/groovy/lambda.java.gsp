@@ -1,15 +1,15 @@
 package io.cucumber.java8;
 
-import io.cucumber.java8.StepdefBody.A0;
-import io.cucumber.java8.StepdefBody.A1;
-import io.cucumber.java8.StepdefBody.A2;
-import io.cucumber.java8.StepdefBody.A3;
-import io.cucumber.java8.StepdefBody.A4;
-import io.cucumber.java8.StepdefBody.A5;
-import io.cucumber.java8.StepdefBody.A6;
-import io.cucumber.java8.StepdefBody.A7;
-import io.cucumber.java8.StepdefBody.A8;
-import io.cucumber.java8.StepdefBody.A9;
+import io.cucumber.java8.StepDefinitionBody.A0;
+import io.cucumber.java8.StepDefinitionBody.A1;
+import io.cucumber.java8.StepDefinitionBody.A2;
+import io.cucumber.java8.StepDefinitionBody.A3;
+import io.cucumber.java8.StepDefinitionBody.A4;
+import io.cucumber.java8.StepDefinitionBody.A5;
+import io.cucumber.java8.StepDefinitionBody.A6;
+import io.cucumber.java8.StepDefinitionBody.A7;
+import io.cucumber.java8.StepDefinitionBody.A8;
+import io.cucumber.java8.StepDefinitionBody.A9;
 
 import io.cucumber.java8.LambdaGlueRegistry;
 import io.cucumber.java8.Java8StepDefinition;

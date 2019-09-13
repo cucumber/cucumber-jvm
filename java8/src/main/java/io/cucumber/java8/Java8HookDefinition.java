@@ -2,7 +2,6 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Scenario;
-import io.cucumber.core.runtime.Invoker;
 
 import static java.util.Objects.requireNonNull;
 
@@ -26,16 +25,15 @@ final class Java8HookDefinition extends AbstractGlueDefinition implements HookDe
         this(tagExpression, order, timeoutMillis, (Object) hookNoArgsBody);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void execute(final Scenario scenario) throws Throwable {
+    public void execute(final Scenario scenario) {
         Object[] args;
         if (method.getParameterCount() == 0) {
             args = new Object[0];
         } else {
             args = new Object[]{new io.cucumber.java8.Scenario(scenario)};
         }
-        Invoker.invoke(body, method, timeoutMillis, args);
+        Invoker.invoke(this, body, method, args);
     }
 
     @Override

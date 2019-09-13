@@ -36,10 +36,11 @@ class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Object[] args) {
         assertEquals(parameterInfos.size(), args.length);
         this.args = Arrays.asList(args);
     }
+
 
     public List<Object> getArgs() {
         return args;
