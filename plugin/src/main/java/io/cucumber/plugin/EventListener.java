@@ -1,6 +1,6 @@
 package io.cucumber.plugin;
 
-import io.cucumber.event.EventPublisher;
+import io.cucumber.plugin.event.EventPublisher;
 import org.apiguardian.api.API;
 
 /**
@@ -9,10 +9,10 @@ import org.apiguardian.api.API;
  * <p>
  * When cucumber executes test in parallel or in a framework
  * that supports parallel execution (e.g. JUnit or TestNG)
- * {@link io.cucumber.event.Event}s are stored and published in
+ * {@link io.cucumber.plugin.event.Event}s are stored and published in
  * canonical order after the test run has completed.
  *
- * @see io.cucumber.event.Event
+ * @see io.cucumber.plugin.event.Event
  * @see ConcurrentEventListener
  */
 @API(status = API.Status.STABLE)

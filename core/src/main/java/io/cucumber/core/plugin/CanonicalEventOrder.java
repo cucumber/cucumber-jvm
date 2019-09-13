@@ -1,12 +1,12 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.event.Event;
-import io.cucumber.event.SnippetsSuggestedEvent;
-import io.cucumber.event.StepDefinedEvent;
-import io.cucumber.event.TestCaseEvent;
-import io.cucumber.event.TestRunFinished;
-import io.cucumber.event.TestRunStarted;
-import io.cucumber.event.TestSourceRead;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.TestCaseEvent;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceRead;
 
 import java.util.Comparator;
 import java.util.List;

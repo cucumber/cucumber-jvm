@@ -1,6 +1,6 @@
 package io.cucumber.java8;
 
-import io.cucumber.event.Status;
+import io.cucumber.plugin.event.Status;
 import org.apiguardian.api.API;
 
 import java.util.Collection;

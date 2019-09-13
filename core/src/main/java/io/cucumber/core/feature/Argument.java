@@ -1,6 +1,6 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.event.StepArgument;
+import io.cucumber.plugin.event.StepArgument;
 
 public interface Argument extends StepArgument {
 

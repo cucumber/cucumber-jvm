@@ -1,10 +1,10 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.event.PickleStepTestStep;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestCase;
-import io.cucumber.event.TestStepFinished;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.ClockStub;

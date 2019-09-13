@@ -1,9 +1,9 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestCase;
-import io.cucumber.event.TestCaseFinished;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;

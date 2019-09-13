@@ -1,14 +1,14 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.event.PickleStepTestStep;
-import io.cucumber.event.EventPublisher;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestCaseFinished;
-import io.cucumber.event.TestCaseStarted;
-import io.cucumber.event.TestRunFinished;
-import io.cucumber.event.TestSourceRead;
-import io.cucumber.event.TestStepFinished;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
@@ -188,10 +188,10 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         private final List<PickleStepTestStep> steps = new ArrayList<>();
         private final List<Result> results = new ArrayList<>();
         private final List<Result> hooks = new ArrayList<>();
-        private final io.cucumber.event.TestCase testCase;
+        private final io.cucumber.plugin.event.TestCase testCase;
         private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-        TestCase(io.cucumber.event.TestCase testCase) {
+        TestCase(io.cucumber.plugin.event.TestCase testCase) {
             this.testCase = testCase;
         }
 
@@ -200,7 +200,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             element.setAttribute("started-at", dateFormat.format(new Date()));
         }
 
-        private String calculateElementName(io.cucumber.event.TestCase testCase) {
+        private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {
             String testCaseName = testCase.getName();
             if (testCaseName.equals(previousTestCaseName)) {
                 return testCaseName + "_" + ++exampleNumber;

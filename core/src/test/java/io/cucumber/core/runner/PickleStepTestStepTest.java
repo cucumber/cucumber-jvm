@@ -1,10 +1,10 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestCaseEvent;
-import io.cucumber.event.TestStepFinished;
-import io.cucumber.event.TestStepStarted;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCaseEvent;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
@@ -21,11 +21,11 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import static io.cucumber.event.HookType.AFTER_STEP;
-import static io.cucumber.event.HookType.BEFORE_STEP;
-import static io.cucumber.event.Status.FAILED;
-import static io.cucumber.event.Status.PASSED;
-import static io.cucumber.event.Status.SKIPPED;
+import static io.cucumber.plugin.event.HookType.AFTER_STEP;
+import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
+import static io.cucumber.plugin.event.Status.FAILED;
+import static io.cucumber.plugin.event.Status.PASSED;
+import static io.cucumber.plugin.event.Status.SKIPPED;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
 import static java.time.Instant.ofEpochMilli;

@@ -1,6 +1,6 @@
 package io.cucumber.core.options;
 
-import io.cucumber.event.EventPublisher;
+import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;

@@ -1,14 +1,14 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.event.PickleStepTestStep;
-import io.cucumber.event.EventPublisher;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestCaseFinished;
-import io.cucumber.event.TestCaseStarted;
-import io.cucumber.event.TestRunFinished;
-import io.cucumber.event.TestSourceRead;
-import io.cucumber.event.TestStepFinished;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.core.exception.CucumberException;
 
 import io.cucumber.plugin.EventListener;
@@ -176,9 +176,9 @@ public final class JUnitFormatter implements EventListener, StrictAware {
 
         private final List<PickleStepTestStep> steps = new ArrayList<>();
         private final List<Result> results = new ArrayList<>();
-        private final io.cucumber.event.TestCase testCase;
+        private final io.cucumber.plugin.event.TestCase testCase;
 
-        TestCase(io.cucumber.event.TestCase testCase) {
+        TestCase(io.cucumber.plugin.event.TestCase testCase) {
             this.testCase = testCase;
         }
 
@@ -191,7 +191,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
-        private String calculateElementName(io.cucumber.event.TestCase testCase) {
+        private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {
             String testCaseName = testCase.getName();
             if (testCaseName.equals(previousTestCaseName)) {
                 return getUniqueTestNameForScenarioExample(testCaseName, ++exampleNumber);

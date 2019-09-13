@@ -1,8 +1,8 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.event.EventPublisher;
-import io.cucumber.event.SnippetsSuggestedEvent;
-import io.cucumber.event.TestRunFinished;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.StrictAware;

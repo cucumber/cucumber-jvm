@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
-import io.cucumber.event.EventPublisher;
-import io.cucumber.event.TestRunFinished;
-import io.cucumber.event.TestRunStarted;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.ConcurrentEventListener;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

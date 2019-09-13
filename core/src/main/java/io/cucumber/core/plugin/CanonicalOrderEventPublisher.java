@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.event.Event;
-import io.cucumber.event.TestRunFinished;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.core.eventbus.AbstractEventPublisher;
 
 import java.util.LinkedList;

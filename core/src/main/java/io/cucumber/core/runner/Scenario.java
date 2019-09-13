@@ -1,11 +1,11 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.event.EmbedEvent;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestCase;
+import io.cucumber.plugin.event.EmbedEvent;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.event.WriteEvent;
+import io.cucumber.plugin.event.WriteEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;

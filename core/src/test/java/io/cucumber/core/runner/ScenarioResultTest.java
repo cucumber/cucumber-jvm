@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.event.EmbedEvent;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.WriteEvent;
+import io.cucumber.plugin.event.EmbedEvent;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;

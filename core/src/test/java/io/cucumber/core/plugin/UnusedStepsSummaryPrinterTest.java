@@ -5,13 +5,13 @@ import java.time.Duration;
 
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.StepDefinedEvent;
-import io.cucumber.event.TestCase;
-import io.cucumber.event.TestRunFinished;
-import io.cucumber.event.TestStep;
-import io.cucumber.event.TestStepFinished;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestStep;
+import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

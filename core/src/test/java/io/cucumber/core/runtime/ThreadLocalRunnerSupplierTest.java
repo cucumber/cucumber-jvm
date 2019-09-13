@@ -7,8 +7,8 @@ import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.event.TestCase;
-import io.cucumber.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

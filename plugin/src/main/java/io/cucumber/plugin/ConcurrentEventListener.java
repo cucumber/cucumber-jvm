@@ -1,6 +1,6 @@
 package io.cucumber.plugin;
 
-import io.cucumber.event.EventPublisher;
+import io.cucumber.plugin.event.EventPublisher;
 import org.apiguardian.api.API;
 
 /**
@@ -9,7 +9,7 @@ import org.apiguardian.api.API;
  * <p>
  * When cucumber executes test in parallel or in a framework
  * that supports parallel execution (e.g. JUnit or TestNG)
- * {@link io.cucumber.event.TestCase} events from different
+ * {@link io.cucumber.plugin.event.TestCase} events from different
  * pickles may interleave.
  * <p>
  * This interface marks an {@link EventListener} as capable of
@@ -28,7 +28,7 @@ import org.apiguardian.api.API;
  * executing thread).</li>
  * </ol>
  *
- * @see io.cucumber.event.Event
+ * @see io.cucumber.plugin.event.Event
  */
 @API(status = API.Status.STABLE)
 public interface ConcurrentEventListener extends Plugin {

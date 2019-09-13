@@ -4,12 +4,12 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonPrimitive;
 import gherkin.deps.com.google.gson.JsonSerializer;
-import io.cucumber.event.EventPublisher;
-import io.cucumber.event.PickleStepTestStep;
-import io.cucumber.event.Result;
-import io.cucumber.event.Status;
-import io.cucumber.event.TestRunFinished;
-import io.cucumber.event.TestStepFinished;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 

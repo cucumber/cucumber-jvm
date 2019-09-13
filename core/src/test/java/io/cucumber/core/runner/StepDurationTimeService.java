@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.event.EventHandler;
+import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.EventListener;
-import io.cucumber.event.EventPublisher;
-import io.cucumber.event.TestStepStarted;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestStepStarted;
 
 import java.time.Clock;
 import java.time.Duration;

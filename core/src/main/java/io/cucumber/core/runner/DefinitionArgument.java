@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.event.Argument;
+import io.cucumber.plugin.event.Argument;
 import io.cucumber.core.stepexpression.ExpressionArgument;
 
 import java.util.ArrayList;
