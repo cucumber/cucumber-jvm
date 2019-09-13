@@ -14,7 +14,7 @@ class DuplicateDefaultParameterTransformers extends CucumberException {
 
     private static String createMessage(List<DefaultParameterTransformerDefinition> definitions) {
         return "There may not be more then one default parameter transformer. Found:" + definitions.stream()
-            .map(d -> d.getLocation(true))
+            .map(d -> d.getLocation())
             .collect(joining("\n - ", "\n - ", "\n"));
     }
 }

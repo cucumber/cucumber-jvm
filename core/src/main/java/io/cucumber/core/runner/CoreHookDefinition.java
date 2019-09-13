@@ -33,8 +33,8 @@ class CoreHookDefinition {
         return delegate;
     }
 
-    String getLocation(boolean detail) {
-        return delegate.getLocation(detail);
+    String getLocation() {
+        return delegate.getLocation();
     }
 
     int getOrder() {

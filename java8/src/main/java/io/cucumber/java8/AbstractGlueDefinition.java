@@ -21,7 +21,7 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         this.location = requireNonNull(location);
     }
 
-    public final String getLocation(boolean detail) {
+    public final String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 

@@ -40,7 +40,7 @@ class UnusedStepsSummaryPrinterTest {
 
     private static StepDefinition mockStepDef(String location, String pattern) {
         StepDefinition stepDef1 = mock(StepDefinition.class);
-        when(stepDef1.getLocation(false)).thenReturn(location);
+        when(stepDef1.getLocation()).thenReturn(location);
         when(stepDef1.getPattern()).thenReturn(pattern);
         return stepDef1;
     }

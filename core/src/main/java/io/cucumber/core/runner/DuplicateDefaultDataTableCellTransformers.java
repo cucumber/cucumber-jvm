@@ -14,7 +14,7 @@ class DuplicateDefaultDataTableCellTransformers extends CucumberException {
 
     private static String createMessage(List<DefaultDataTableCellTransformerDefinition> definitions) {
         return "There may not be more then one default table cell transformers. Found:" + definitions.stream()
-            .map(d -> d.getLocation(true))
+            .map(d -> d.getLocation())
             .collect(joining("\n - ", "\n - ", "\n"));
     }
 }

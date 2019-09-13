@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.event.TestCase;
 import io.cucumber.core.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;

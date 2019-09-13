@@ -83,12 +83,12 @@ class CachingGlueTest {
     void throws_duplicate_error_on_dupe_stepdefs() {
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
-        when(a.getLocation(true)).thenReturn("foo.bf:10");
+        when(a.getLocation()).thenReturn("foo.bf:10");
         glue.addStepDefinition(a);
 
         StepDefinition b = mock(StepDefinition.class);
         when(b.getPattern()).thenReturn("hello");
-        when(b.getLocation(true)).thenReturn("bar.bf:90");
+        when(b.getLocation()).thenReturn("bar.bf:90");
         glue.addStepDefinition(b);
 
         DuplicateStepDefinitionException exception = assertThrows(
@@ -444,7 +444,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked scenario scoped step definition";
         }
 
@@ -480,7 +480,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked data table type definition";
         }
 
@@ -506,7 +506,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked parameter type location";
         }
     }
@@ -526,7 +526,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked hook definition";
         }
 
@@ -565,7 +565,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked scenario scoped hook definition";
         }
 
@@ -594,7 +594,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked step location";
         }
 
@@ -634,7 +634,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked default parameter transformer";
         }
     }
@@ -654,7 +654,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked default data table cell transformer";
         }
     }
@@ -678,7 +678,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked default data table entry transformer";
         }
     }
@@ -692,7 +692,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked default data table entry transformer";
         }
 

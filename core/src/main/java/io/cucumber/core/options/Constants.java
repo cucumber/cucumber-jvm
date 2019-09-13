@@ -1,5 +1,7 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
+
 public final class Constants {
 
     /**
@@ -125,7 +127,7 @@ public final class Constants {
      * Property name used to select a specific object factory implementation:
      * {@value}
      *
-     * @see io.cucumber.core.backend.ObjectFactoryServiceLoader
+     * @see ObjectFactoryServiceLoader
      */
     public static final String OBJECT_FACTORY_PROPERTY_NAME = "cucumber.object-factory";
 

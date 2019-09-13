@@ -11,7 +11,6 @@ abstract class AbstractGlueDefinition {
 
     protected final Method method;
     protected final Lookup lookup;
-    private String shortFormat;
     private String fullFormat;
 
     AbstractGlueDefinition(Method method, Lookup lookup) {
@@ -19,15 +18,8 @@ abstract class AbstractGlueDefinition {
         this.lookup = requireNonNull(lookup);
     }
 
-    public final String getLocation(boolean detail) {
-        return detail ? getFullLocationLocation() : getShortFormatLocation();
-    }
-
-    private String getShortFormatLocation() {
-        if (shortFormat == null) {
-            shortFormat = MethodFormat.SHORT.format(method);
-        }
-        return shortFormat;
+    public final String getLocation() {
+        return getFullLocationLocation();
     }
 
     private String getFullLocationLocation() {

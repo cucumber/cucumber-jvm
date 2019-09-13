@@ -7,9 +7,9 @@ import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.backend.Snippet;
 
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -50,7 +50,7 @@ public class StubBackendProviderService implements BackendProviderService {
             return new StepDefinition() {
 
                 @Override
-                public String getLocation(boolean detail) {
+                public String getLocation() {
                     return null;
                 }
 

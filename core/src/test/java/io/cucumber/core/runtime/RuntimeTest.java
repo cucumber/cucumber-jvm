@@ -676,7 +676,7 @@ class RuntimeTest {
     private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked step definition";
         }
 
@@ -712,7 +712,7 @@ class RuntimeTest {
         }
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked scenario scoped step definition";
         }
 

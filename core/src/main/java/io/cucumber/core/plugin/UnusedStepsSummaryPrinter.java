@@ -33,7 +33,7 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 	}
 
 	private void handleStepDefinedEvent(StepDefinedEvent event) {
-		registeredSteps.put(event.getStepDefinition().getLocation(false), event.getStepDefinition().getPattern());
+		registeredSteps.put(event.getStepDefinition().getLocation(), event.getStepDefinition().getPattern());
 	}
 
 	private void handleTestStepFinished(TestStepFinished event) {
