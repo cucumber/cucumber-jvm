@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.plugin.event.Status;
 import org.apiguardian.api.API;
 
 import java.util.Collection;
@@ -86,4 +85,5 @@ public interface Scenario {
      * the Scenario Outline.
      */
     Integer getLine();
+
 }

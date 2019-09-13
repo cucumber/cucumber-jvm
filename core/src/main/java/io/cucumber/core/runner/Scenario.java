@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.Status;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.plugin.event.WriteEvent;
@@ -36,9 +36,9 @@ class Scenario implements io.cucumber.core.backend.Scenario {
     }
 
     @Override
-    public Status getStatus() {
+    public io.cucumber.core.backend.Status getStatus() {
         if (stepResults.isEmpty()) {
-            return Status.UNDEFINED;
+            return io.cucumber.core.backend.Status.UNDEFINED;
         }
 
         return max(stepResults, comparing(Result::getStatus)).getStatus();
