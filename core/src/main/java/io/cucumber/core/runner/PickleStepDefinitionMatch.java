@@ -20,7 +20,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final transient CucumberStep step;
 
     PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, CucumberStep step) {
-        super(arguments, stepDefinition.getLocation(false));
+        super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
@@ -59,7 +59,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
                 "It appears you did not register a data table type. The details are in the stacktrace below.", //TODO: Add doc URL
             stepDefinition.getPattern(),
-            stepDefinition.getLocation(true)
+            stepDefinition.getLocation()
         ), e);
     }
 
@@ -69,7 +69,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
             "Could not convert arguments for step [%s] defined at '%s'.\n" +
                 "The details are in the stacktrace below.",
             stepDefinition.getPattern(),
-            stepDefinition.getLocation(true)
+            stepDefinition.getLocation()
         ), e);
     }
 
@@ -85,7 +85,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
                 "However, the gherkin step has %s arguments%sStep text: %s",
             stepDefinition.getPattern(),
             parameterCount,
-            stepDefinition.getLocation(true),
+            stepDefinition.getLocation(),
             arguments.size(),
             formatArguments(arguments),
             step.getText()
@@ -149,7 +149,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     @Override
     public String getCodeLocation() {
-        return stepDefinition.getLocation(false);
+        return stepDefinition.getLocation();
     }
 
 }

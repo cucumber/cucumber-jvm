@@ -22,13 +22,14 @@ final class LambdaTypeResolver implements TypeResolver {
 
     @Override
     public Type resolve() {
-        if (net.jodah.typetools.TypeResolver.Unknown.class.equals(type)) {
-            return Object.class;
-        }
-        return requireNonMapOrListType(type);
+
+        return requireNonMapOrListType(getType());
     }
 
     public Type getType() {
+        if (net.jodah.typetools.TypeResolver.Unknown.class.equals(type)) {
+            return Object.class;
+        }
         return type;
     }
 

@@ -155,7 +155,7 @@ public class TestHelper {
                     }
 
                     @Override
-                    public String getLocation(boolean detail) {
+                    public String getLocation() {
                         return stepsToLocation.get(step.getText());
                     }
                 };
@@ -230,7 +230,7 @@ public class TestHelper {
             HookDefinition hook = mock(HookDefinition.class);
             when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {
-                when(hook.getLocation(anyBoolean())).thenReturn(hookLocation);
+                when(hook.getLocation()).thenReturn(hookLocation);
             }
             if (action != null) {
                 doAnswer(action).when(hook).execute(any());

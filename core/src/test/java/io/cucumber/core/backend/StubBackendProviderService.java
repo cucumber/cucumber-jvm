@@ -1,7 +1,6 @@
 package io.cucumber.core.backend;
 
 import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.snippets.Snippet;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.net.URI;

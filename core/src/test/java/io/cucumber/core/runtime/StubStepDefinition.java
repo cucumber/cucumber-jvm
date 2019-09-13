@@ -21,8 +21,8 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation(boolean detail) {
-        return "{stubbed location" + (detail ? " with details" : "") + "}";
+    public String getLocation() {
+        return "{stubbed location with details}";
     }
 
     @Override

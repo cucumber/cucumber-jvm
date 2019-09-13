@@ -1,4 +1,4 @@
-package io.cucumber.core.snippets;
+package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
 

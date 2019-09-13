@@ -1,7 +1,6 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 
 public final class SingletonObjectFactorySupplier implements ObjectFactorySupplier {
 

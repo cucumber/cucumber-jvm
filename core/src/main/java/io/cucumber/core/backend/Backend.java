@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.snippets.Snippet;
 import org.apiguardian.api.API;
 
 import java.net.URI;

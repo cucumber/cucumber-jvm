@@ -15,6 +15,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,7 +24,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class StepExpressionFactoryTest {
 
-    private static final TypeResolver UNKNOWN_TYPE = () -> Object.class;
+    private static final Supplier<Type> UNKNOWN_TYPE = () -> Object.class;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     static class Ingredient {

@@ -1,6 +1,6 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.backend.ObjectFactoryServiceLoader;
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.event.TestRunFinished;
 import io.cucumber.event.TestRunStarted;
 import io.cucumber.event.TestSourceRead;

@@ -7,7 +7,7 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.backend.Snippet;
 
 import java.net.URI;
 import java.util.List;

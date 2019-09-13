@@ -6,12 +6,11 @@ import org.apiguardian.api.API;
 public interface HookDefinition {
     /**
      * The source line where the step definition is defined.
-     * Example: foo/bar/Zap.brainfuck:42
+     * Example: com/example/app/Cucumber.test():42
      *
-     * @param detail true if extra detailed location information should be included.
      * @return The source line where the step definition is defined.
      */
-    String getLocation(boolean detail);
+    String getLocation();
 
     void execute(Scenario scenario) throws Throwable;
 

@@ -19,7 +19,7 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
 
     @Override
     public String getCodeLocation() {
-        return hookDefinition.getLocation(false);
+        return hookDefinition.getLocation();
     }
 
 }

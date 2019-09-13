@@ -16,9 +16,9 @@ class DuplicateStepDefinitionExceptionTest {
     @Test
     void can_report_duplicate_step_definitions() {
         final StepDefinition mockStepDefinitionA = mock(StepDefinition.class);
-        when(mockStepDefinitionA.getLocation(true)).thenReturn("StepDefinitionA_Location");
+        when(mockStepDefinitionA.getLocation()).thenReturn("StepDefinitionA_Location");
         final StepDefinition mockStepDefinitionB = mock(StepDefinition.class);
-        when(mockStepDefinitionB.getLocation(true)).thenReturn("StepDefinitionB_Location");
+        when(mockStepDefinitionB.getLocation()).thenReturn("StepDefinitionB_Location");
 
         DuplicateStepDefinitionException expectedThrown = new DuplicateStepDefinitionException(mockStepDefinitionA, mockStepDefinitionB);
         assertAll(

@@ -3,18 +3,19 @@ package io.cucumber.java8;
 import io.cucumber.datatable.DataTable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LambdaStepdefs implements io.cucumber.java8.En {
-    private static LambdaStepdefs lastInstance;
+public class LambdaStepDefinitions implements io.cucumber.java8.En {
+    private static LambdaStepDefinitions lastInstance;
 
     private final int outside = 41;
 
-    public LambdaStepdefs() {
+    public LambdaStepDefinitions() {
         Before((Scenario scenario) -> {
             assertNotSame(this, lastInstance);
             lastInstance = this;
@@ -71,37 +72,41 @@ public class LambdaStepdefs implements io.cucumber.java8.En {
             assertEquals(42, outside + 1);
         });
 
-        Given("I will give you {int} and {float} and {word} and {int}", (Integer a, Float b, String c,
-                                                                                 Integer d)
-            -> {
-            assertEquals((Integer) 1, a);
-            assertEquals((Float) 2.2f, b);
-            assertEquals("three", c);
-            assertEquals((Integer) 4, d);
+        Given("I will give you {int} and {float} and {word} and {int}",
+            (Integer a, Float b, String c, Integer d) -> {
+                assertEquals((Integer) 1, a);
+                assertEquals((Float) 2.2f, b);
+                assertEquals("three", c);
+                assertEquals((Integer) 4, d);
+            });
+
+        Given("A {optional} generic that is not a data table", (Optional<String> optional) ->{
+            assertEquals(Optional.of("string"), optional);
         });
 
         Given("A method reference that declares an exception$", this::methodThatDeclaresException);
         Given("A method reference with an argument {int}", this::methodWithAnArgument);
         Given("A method reference with an int argument {int}", this::methodWithAnIntArgument);
         Given("A constructor reference with an argument {string}", Contact::new);
-        Given("A static method reference with an argument {int}", LambdaStepdefs::staticMethodWithAnArgument);
+        Given("A static method reference with an argument {int}", LambdaStepDefinitions::staticMethodWithAnArgument);
         Given("A method reference to an arbitrary object of a particular type {string}", Contact::call);
         Given("A method reference to an arbitrary object of a particular type {string} with argument {string}", Contact::update);
-    }
-
-    private void methodThatDeclaresException() throws Throwable {
-    }
-    private void methodWithAnArgument(Integer cuckes) throws Throwable {
-        assertEquals(42, cuckes.intValue());
-    }
-    private void methodWithAnIntArgument(int cuckes) throws Throwable {
-        assertEquals(42, cuckes);
     }
 
     public static void staticMethodWithAnArgument(Integer cuckes) throws Throwable {
         assertEquals(42, cuckes.intValue());
     }
 
+    private void methodThatDeclaresException() throws Throwable {
+    }
+
+    private void methodWithAnArgument(Integer cuckes) throws Throwable {
+        assertEquals(42, cuckes.intValue());
+    }
+
+    private void methodWithAnIntArgument(int cuckes) throws Throwable {
+        assertEquals(42, cuckes);
+    }
 
     private void hookWithArgs(Scenario scenario) throws Throwable {
     }
@@ -115,16 +120,16 @@ public class LambdaStepdefs implements io.cucumber.java8.En {
 
         private final String number;
 
-        public Contact(String number){
+        public Contact(String number) {
             this.number = number;
             assertEquals("42", number);
         }
 
-        public void call(){
+        public void call() {
             assertEquals("42", number);
         }
 
-        public void update(String number){
+        public void update(String number) {
             assertEquals("42", this.number);
             assertEquals("314", number);
         }

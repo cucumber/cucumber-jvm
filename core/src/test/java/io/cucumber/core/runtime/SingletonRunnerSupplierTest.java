@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.backend.ObjectFactoryServiceLoader;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.io.MultiLoader;

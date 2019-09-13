@@ -10,7 +10,11 @@ import java.util.regex.Pattern;
 
 /**
  * Helper class for formatting a method signature to a shorter form.
+ *
+ * @deprecated In v6. this class can be moved to cucumber-java.
+ * It won't be used any where else.
  */
+@Deprecated
 public final class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("[^,<>]*\\.");

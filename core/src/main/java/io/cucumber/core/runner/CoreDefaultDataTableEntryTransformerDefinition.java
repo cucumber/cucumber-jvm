@@ -38,8 +38,8 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
     }
 
     @Override
-    public String getLocation(boolean detail) {
-        return delegate.getLocation(detail);
+    public String getLocation() {
+        return delegate.getLocation();
     }
 
     private static class ScenarioCoreDefaultDataTableEntryTransformerDefinition extends CoreDefaultDataTableEntryTransformerDefinition implements ScenarioScoped {

@@ -1,6 +1,7 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.runtime;
 
-import io.cucumber.core.backend.ObjectFactoryServiceLoader.DefaultJavaObjectFactory;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader.DefaultJavaObjectFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

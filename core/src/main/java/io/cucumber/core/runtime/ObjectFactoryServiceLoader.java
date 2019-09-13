@@ -1,5 +1,7 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.Options;
 import io.cucumber.core.exception.CucumberException;
 
 import java.lang.reflect.Constructor;
@@ -30,7 +32,7 @@ public final class ObjectFactoryServiceLoader {
      *
      * @return an instance of {@link ObjectFactory}
      */
-    public ObjectFactory loadObjectFactory() {
+    ObjectFactory loadObjectFactory() {
         Class<? extends ObjectFactory> objectFactoryClass = this.options.getObjectFactoryClass();
 
         final ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class);

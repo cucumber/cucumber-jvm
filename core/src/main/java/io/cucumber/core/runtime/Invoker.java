@@ -13,6 +13,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * @deprecated In v6. when timeout is removed this class can be moved to
+ * cucumber-java. cucumber-java8 doesn't need the try-catch around
+ * invoke nor are the measures taken in targetMethod relevant.
+ */
+@Deprecated
 public final class Invoker {
 
     private Invoker() {
@@ -66,10 +72,10 @@ public final class Invoker {
      * Invokes a method. Wraps {@link Method#invoke(Object, Object...)} to provide better error messages. Also attempts to
      * override visibility around the invocation.
      *
-     * @param target the target object
-     * @param method the method to invoke
+     * @param target        the target object
+     * @param method        the method to invoke
      * @param timeoutMillis how long to wait before a timeout exception is thrown
-     * @param args arguments to the method
+     * @param args          arguments to the method
      * @return return value from method invocation
      * @throws Throwable error thrown by method invocation
      * @deprecated timeout has been deprecated in favour of library solutions used by the end user.
@@ -86,7 +92,7 @@ public final class Invoker {
      *
      * @param target the target object
      * @param method the method to invoke
-     * @param args arguments to the method
+     * @param args   arguments to the method
      * @return return value from method invocation
      * @throws Throwable error thrown by method invocation
      */
