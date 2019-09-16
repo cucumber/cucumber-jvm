@@ -547,4 +547,8 @@ public interface LambdaGlue {
     default <T> void DataTableType(DataTableDefinitionBody<T> dataTableDefinitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(dataTableDefinitionBody));
     }
+
+    default void ParameterType(String name, String regex, ParameterDefinitionBody definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(definitionBody, regex, name));
+    }
 }

@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 
 interface LambdaGlueRegistry {
@@ -21,4 +22,6 @@ interface LambdaGlueRegistry {
     void addDocStringType(DocStringTypeDefinition docStringTypeDefinition);
 
     void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition);
+
+    void addParameterType(ParameterTypeDefinition parameterTypeDefinition);
 }

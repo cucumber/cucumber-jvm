@@ -1,0 +1,24 @@
+package io.cucumber.java8;
+
+import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.runtime.Invoker;
+import io.cucumber.cucumberexpressions.ParameterType;
+
+class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
+
+    private final ParameterType parameterType;
+
+    @Override
+    public ParameterType<?> parameterType() {
+        return parameterType;
+    }
+
+    Java8ParameterTypeDefinition(Object body, String regex, String name) {
+        super(body, new Exception().getStackTrace()[3]);
+        this.parameterType = new ParameterType(name, regex, this.method.getReturnType(), this::execute);
+    }
+
+    private Object execute(String parameterContent) throws Throwable {
+        return Invoker.invoke(body, method, parameterContent);
+    }
+}

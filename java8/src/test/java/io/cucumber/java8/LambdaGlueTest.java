@@ -4,6 +4,7 @@ import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.docstring.DocStringType;
 import java.lang.reflect.Method;
@@ -186,6 +187,11 @@ class LambdaGlueTest {
 
         @Override
         public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+
+        }
+
+        @Override
+        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
 
         }
     };

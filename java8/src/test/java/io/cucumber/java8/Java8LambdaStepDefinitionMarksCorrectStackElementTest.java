@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.MatcherAssert;
@@ -71,6 +72,11 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
         @Override
         public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+
+        }
+
+        @Override
+        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
 
         }
 
