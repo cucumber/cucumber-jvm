@@ -14,7 +14,7 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
         <jsoup.version>1.12.1</jsoup.version>
-        <xmlunit.version>1.6</xmlunit.version>
+        <xmlunit.version>2.6.3</xmlunit.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
@@ -51,8 +51,14 @@
         </dependency>
 
         <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-matchers</artifactId>
             <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>

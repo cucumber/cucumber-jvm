@@ -4,12 +4,8 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,8 +23,7 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
 
 final class TestNGFormatterTest {
 
@@ -57,7 +52,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>" +
             "            </class>" +
             "        </test>" +
             "    </suite>" +
@@ -81,7 +76,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
+            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
             "                    <exception class=\"The scenario has pending or undefined step(s)\">" +
             "                        <message><![CDATA[When step...................................................................undefined\n" +
             "Then step...................................................................undefined\n" +
@@ -113,7 +108,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>" +
             "            </class>" +
             "        </test>" +
             "    </suite>" +
@@ -138,7 +133,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
+            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
             "                    <exception class=\"io.cucumber.core.plugin.TestNGFormatterTest$TestNGException\">" +
             "                        <message><![CDATA[When step1..................................................................failed\n" +
             "Then step2..................................................................skipped\n" +
@@ -169,7 +164,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>" +
             "            </class>" +
             "        </test>" +
             "    </suite>" +
@@ -197,7 +192,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>" +
             "            </class>" +
             "        </test>" +
             "    </suite>" +
@@ -225,8 +220,8 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
-            "                <test-method name=\"scenario_2\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>" +
+            "                <test-method name=\"scenario_2\" status=\"SKIP\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>" +
             "            </class>" +
             "        </test>" +
             "    </suite>" +
@@ -261,11 +256,11 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"12\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"12\">" +
             "            <class name=\"feature_1\">" +
-            "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
-            "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00.004Z\"/>" +
+            "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.004Z\" finished-at=\"1970-01-01T00:00:00.008Z\"/>" +
             "            </class>" +
             "            <class name=\"feature_2\">" +
-            "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+            "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.008Z\" finished-at=\"1970-01-01T00:00:00.012Z\"/>" +
             "            </class>" +
             "        </test>" +
             "    </suite>" +
@@ -290,7 +285,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
+            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
             "                    <exception class=\"io.cucumber.core.plugin.TestNGFormatterTest$TestNGException\">" +
             "                        <message><![CDATA[When step...................................................................skipped\n" +
             "Then step...................................................................skipped\n" +
@@ -322,7 +317,7 @@ final class TestNGFormatterTest {
             "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
             "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
+            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
             "                    <exception class=\"io.cucumber.core.plugin.TestNGFormatterTest$TestNGException\">" +
             "                        <message><![CDATA[When step...................................................................passed\n" +
             "Then step...................................................................passed\n" +
@@ -336,18 +331,8 @@ final class TestNGFormatterTest {
             "</testng-results>", actual);
     }
 
-    private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, actual) {
-            @Override
-            public int differenceFound(Difference difference) {
-                if (difference.getControlNodeDetail().getNode().getNodeName().matches("started-at|finished-at")) {
-                    return 0;
-                }
-                return super.differenceFound(difference);
-            }
-        };
-        assertThat("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical(), is(equalTo(true)));
+    private static void assertXmlEqual(String expected, String actual) {
+        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
     }
 
     private String runFeaturesWithFormatter(boolean strict) throws IOException {
