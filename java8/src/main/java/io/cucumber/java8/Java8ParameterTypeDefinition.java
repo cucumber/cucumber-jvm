@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
+import java.util.Collections;
 
 class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
 
@@ -15,7 +16,7 @@ class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements Par
 
     Java8ParameterTypeDefinition(Object body, String regex, String name) {
         super(body, new Exception().getStackTrace()[3]);
-        this.parameterType = new ParameterType(name, regex, this.method.getReturnType(), this::execute);
+        this.parameterType = new ParameterType(name, Collections.singletonList(regex), this.method.getReturnType(), this::execute);
     }
 
     private Object execute(String parameterContent) throws Throwable {

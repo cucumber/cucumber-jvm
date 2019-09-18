@@ -216,19 +216,4 @@ class LambdaGlueTest {
         invoked.set(true);
     }
 
-    private void assertDocString(DocStringTypeDefinition docStringTypeDefinition, Class returnType, String contentType, String content) throws Throwable {
-        DocStringType docStringType = docStringTypeDefinition.docStringType();
-        Method getContentType = DocStringType.class.getDeclaredMethod("getContentType");
-        Method transform = DocStringType.class.getDeclaredMethod("transform", String.class);
-        Method getType = DocStringType.class.getDeclaredMethod("getType");
-        getContentType.setAccessible(true);
-        transform.setAccessible(true);
-        getType.setAccessible(true);
-        String actualContentType = (String) getContentType.invoke(docStringType);
-
-        Class actualReturnType = transform.invoke(docStringType, content).getClass();
-        assertThat(actualContentType, equalTo(contentType));
-        assertThat(actualReturnType, equalTo(returnType));
-    }
-
 }
