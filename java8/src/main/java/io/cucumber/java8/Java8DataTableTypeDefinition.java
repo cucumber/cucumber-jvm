@@ -8,6 +8,7 @@ import io.cucumber.datatable.TableTransformer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Map;
+import net.jodah.typetools.TypeResolver;
 
 final class Java8DataTableTypeDefinition extends AbstractGlueDefinition implements DataTableTypeDefinition {
     
@@ -19,7 +20,7 @@ final class Java8DataTableTypeDefinition extends AbstractGlueDefinition implemen
     }
 
     private DataTableType createDataTableType(Method method) {
-        Type returnType = method.getGenericReturnType();
+        Class returnType = TypeResolver.resolveRawArguments(DataTableDefinitionBody.class, body.getClass())[0];
         Type[] parameterTypes = method.getGenericParameterTypes();
         Type parameterType = parameterTypes[0];
 
