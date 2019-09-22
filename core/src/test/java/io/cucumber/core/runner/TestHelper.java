@@ -1,11 +1,10 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.plugin.event.Event;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.Argument;
 import io.cucumber.core.feature.CucumberFeature;
@@ -16,20 +15,24 @@ import io.cucumber.core.feature.DocStringArgument;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.Plugin;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TestFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.Plugin;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
 import org.mockito.stubbing.Answer;
 import org.opentest4j.TestAbortedException;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Clock;
@@ -59,10 +62,6 @@ import static org.mockito.Mockito.when;
 
 public class TestHelper {
 
-    public enum TimeServiceType {
-        REAL_TIME, FIXED_INCREMENT, FIXED_INCREMENT_ON_STEP_START
-    }
-
     private List<CucumberFeature> features = Collections.emptyList();
     private Map<String, Result> stepsToResult = Collections.emptyMap();
     private Map<String, String> stepsToLocation = Collections.emptyMap();
@@ -73,8 +72,163 @@ public class TestHelper {
     private Duration timeServiceIncrement = Duration.ZERO;
     private Object formatterUnderTest = null;
     private List<String> runtimeArgs = Collections.emptyList();
-
     private TestHelper() {
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Result result(String status) {
+        return result(fromLowerCaseName(status));
+    }
+
+    public static Result result(String status, Throwable error) {
+        return result(fromLowerCaseName(status), error);
+    }
+
+    private static Status fromLowerCaseName(String lowerCaseName) {
+        return Status.valueOf(lowerCaseName.toUpperCase(ROOT));
+    }
+
+    public static Result result(Status status) {
+        switch (status) {
+            case FAILED:
+                return result(status, mockAssertionFailedError());
+            case AMBIGUOUS:
+                return result(status, mockAmbiguousStepDefinitionException());
+            case PENDING:
+                return result(status, new TestPendingException());
+            default:
+                return result(status, null);
+        }
+    }
+
+    public static Result result(Status status, Throwable error) {
+        return new Result(status, Duration.ZERO, error);
+    }
+
+    public static Answer<Object> createWriteHookAction(final String output) {
+        return invocation -> {
+            Scenario scenario = (Scenario) invocation.getArguments()[0];
+            scenario.write(output);
+            return null;
+        };
+    }
+
+    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType) {
+        return createEmbedHookAction(data, mimeType, null);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
+        return invocation -> {
+            Scenario scenario = (Scenario) invocation.getArguments()[0];
+            if (name != null) {
+                scenario.embed(data, mimeType, name);
+            } else {
+                scenario.embed(data, mimeType);
+            }
+            return null;
+        };
+    }
+
+    private static TestAbortedException mockAssertionFailedError() {
+        class MockedTestAbortedException extends TestAbortedException {
+            MockedTestAbortedException() {
+                super("the message");
+            }
+
+            @Override
+            public void printStackTrace(PrintStream s) {
+                s.print("the stack trace");
+            }
+
+            @Override
+            public void printStackTrace(PrintWriter s) {
+                s.print("the stack trace");
+            }
+        }
+        return new MockedTestAbortedException();
+    }
+
+    private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
+        AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
+        Answer<Object> printStackTraceHandler = invocation -> {
+            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+            writer.print("the stack trace");
+            return null;
+        };
+        doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
+        when(exception.getMessage()).thenReturn("the message");
+        return exception;
+    }
+
+    public static SimpleEntry<String, Result> hookEntry(String type, Result result) {
+        return new SimpleEntry<>(type, result);
+    }
+
+    public void run() {
+
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
+
+
+        final BackendSupplier backendSupplier = new TestHelperBackendSupplier(
+            features,
+            stepsToResult,
+            stepsToLocation,
+            hooks,
+            hookLocations,
+            hookActions
+        );
+
+        final EventBus bus = createEventBus();
+
+        final FeatureSupplier featureSupplier = features.isEmpty()
+            ? null // assume feature paths passed in as args instead
+            : new TestFeatureSupplier(bus, features);
+
+        Runtime.Builder runtimeBuilder = Runtime.builder()
+            .withRuntimeOptions(
+                new CommandlineOptionsParser()
+                    .parse(runtimeArgs)
+                    .build()
+            )
+            .withClassLoader(classLoader)
+            .withResourceLoader(resourceLoader)
+            .withBackendSupplier(backendSupplier)
+            .withFeatureSupplier(featureSupplier)
+            .withEventBus(bus);
+
+        if (formatterUnderTest instanceof ConcurrentEventListener) {
+            ((ConcurrentEventListener) formatterUnderTest).setEventPublisher(bus);
+        } else if (formatterUnderTest instanceof EventListener) {
+            ((EventListener) formatterUnderTest).setEventPublisher(bus);
+        } else if (formatterUnderTest instanceof Plugin) {
+            runtimeBuilder.withAdditionalPlugins((Plugin) formatterUnderTest);
+        }
+
+        runtimeBuilder.build().run();
+    }
+
+    private EventBus createEventBus() {
+        EventBus bus = null;
+
+        if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
+            bus = new TimeServiceEventBus(Clock.systemUTC());
+        } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
+            final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
+            bus = new TimeServiceEventBus(timeService);
+            timeService.setEventPublisher(bus);
+        } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
+            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
+        }
+        return bus;
+    }
+
+    public enum TimeServiceType {
+        REAL_TIME, FIXED_INCREMENT, FIXED_INCREMENT_ON_STEP_START
     }
 
     public static final class TestHelperBackendSupplier extends TestBackendSupplier {
@@ -106,17 +260,6 @@ public class TestHelper {
             );
         }
 
-
-        @Override
-        public void loadGlue(Glue glue, List<URI> gluePaths) {
-            try {
-                mockSteps(glue, features, stepsToResult, stepsToLocation);
-                mockHooks(glue, hooks, hookLocations, hookActions);
-            } catch (Throwable throwable) {
-                throw new RuntimeException(throwable);
-            }
-        }
-
         private static void mockSteps(Glue glue, List<CucumberFeature> features,
                                       Map<String, Result> stepsToResult,
                                       final Map<String, String> stepsToLocation) {
@@ -138,17 +281,29 @@ public class TestHelper {
                 }
 
                 Type[] types = mapArgumentToTypes(step);
+                Located located = new Located() {
+                    @Override
+                    public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+                        return false;
+                    }
+
+                    @Override
+                    public String getLocation() {
+                        return "stubbed test helper location";
+                    }
+                };
+
                 StepDefinition stepDefinition = new StubStepDefinition(step.getText(), types) {
 
                     @Override
-                    public void execute(Object[] args) throws Throwable {
+                    public void execute(Object[] args) {
                         super.execute(args);
                         if (stepResult.getStatus().is(PENDING)) {
                             throw new TestPendingException();
                         } else if (stepResult.getStatus().is(FAILED)) {
-                            throw stepResult.getError();
+                            throw new CucumberInvocationTargetException(located, new InvocationTargetException(stepResult.getError()));
                         } else if (stepResult.getStatus().is(SKIPPED) && (stepResult.getError() != null)) {
-                            throw stepResult.getError();
+                            throw new CucumberInvocationTargetException(located, new InvocationTargetException(stepResult.getError()));
                         } else if (!stepResult.getStatus().is(PASSED) && !stepResult.getStatus().is(SKIPPED)) {
                             fail("Cannot mock step to the result: " + stepResult.getStatus());
                         }
@@ -164,11 +319,9 @@ public class TestHelper {
             }
         }
 
-
         private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
             return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, ZERO, null);
         }
-
 
         private static boolean containsStep(List<CucumberStep> steps, CucumberStep step) {
             for (CucumberStep definedSteps : steps) {
@@ -235,10 +388,25 @@ public class TestHelper {
             if (action != null) {
                 doAnswer(action).when(hook).execute(any());
             }
+            Located located = new Located() {
+                @Override
+                public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+                    return false;
+                }
+
+                @Override
+                public String getLocation() {
+                    return "test helper mocked location";
+                }
+            };
             if (hookEntry.getValue().getStatus().is(FAILED)) {
-                doThrow(hookEntry.getValue().getError()).when(hook).execute(any());
+                Throwable error = hookEntry.getValue().getError();
+                CucumberInvocationTargetException exception = new CucumberInvocationTargetException(located, new InvocationTargetException(error));
+                doThrow(exception).when(hook).execute(any());
             } else if (hookEntry.getValue().getStatus().is(PENDING)) {
-                doThrow(new TestPendingException()).when(hook).execute(any());
+                TestPendingException testPendingException = new TestPendingException();
+                CucumberInvocationTargetException exception = new CucumberInvocationTargetException(located, new InvocationTargetException(testPendingException));
+                doThrow(exception).when(hook).execute(any());
             }
             if ("before".equals(hookEntry.getKey())) {
                 beforeHooks.add(hook);
@@ -253,69 +421,16 @@ public class TestHelper {
             }
         }
 
-    }
-
-    public void run() {
-
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
-
-
-        final BackendSupplier backendSupplier = new TestHelperBackendSupplier(
-            features,
-            stepsToResult,
-            stepsToLocation,
-            hooks,
-            hookLocations,
-            hookActions
-        );
-
-        final EventBus bus = createEventBus();
-
-        final FeatureSupplier featureSupplier = features.isEmpty()
-            ? null // assume feature paths passed in as args instead
-            : new TestFeatureSupplier(bus, features);
-
-        Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(runtimeArgs)
-                    .build()
-            )
-            .withClassLoader(classLoader)
-            .withResourceLoader(resourceLoader)
-            .withBackendSupplier(backendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .withEventBus(bus);
-
-        if (formatterUnderTest instanceof ConcurrentEventListener) {
-            ((ConcurrentEventListener) formatterUnderTest).setEventPublisher(bus);
-        } else if (formatterUnderTest instanceof EventListener) {
-            ((EventListener) formatterUnderTest).setEventPublisher(bus);
-        } else if (formatterUnderTest instanceof Plugin) {
-            runtimeBuilder.withAdditionalPlugins((Plugin) formatterUnderTest);
+        @Override
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
+            try {
+                mockSteps(glue, features, stepsToResult, stepsToLocation);
+                mockHooks(glue, hooks, hookLocations, hookActions);
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
         }
 
-        runtimeBuilder.build().run();
-    }
-
-    private EventBus createEventBus() {
-        EventBus bus = null;
-
-        if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(Clock.systemUTC());
-        } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
-            final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
-            bus = new TimeServiceEventBus(timeService);
-            timeService.setEventPublisher(bus);
-        } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
-        }
-        return bus;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static final class Builder {
@@ -412,95 +527,6 @@ public class TestHelper {
         public TestHelper build() {
             return this.instance;
         }
-    }
-
-    public static Result result(String status) {
-        return result(fromLowerCaseName(status));
-    }
-
-    public static Result result(String status, Throwable error) {
-        return result(fromLowerCaseName(status), error);
-    }
-
-    private static Status fromLowerCaseName(String lowerCaseName) {
-        return Status.valueOf(lowerCaseName.toUpperCase(ROOT));
-    }
-
-    public static Result result(Status status) {
-        switch (status) {
-            case FAILED:
-                return result(status, mockAssertionFailedError());
-            case AMBIGUOUS:
-                return result(status, mockAmbiguousStepDefinitionException());
-            case PENDING:
-                return result(status, new TestPendingException());
-            default:
-                return result(status, null);
-        }
-    }
-
-    public static Result result(Status status, Throwable error) {
-        return new Result(status, Duration.ZERO, error);
-    }
-
-    public static Answer<Object> createWriteHookAction(final String output) {
-        return invocation -> {
-            Scenario scenario = (Scenario) invocation.getArguments()[0];
-            scenario.write(output);
-            return null;
-        };
-    }
-
-    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType) {
-        return createEmbedHookAction(data, mimeType, null);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
-        return invocation -> {
-            Scenario scenario = (Scenario) invocation.getArguments()[0];
-            if (name != null) {
-                scenario.embed(data, mimeType, name);
-            } else {
-                scenario.embed(data, mimeType);
-            }
-            return null;
-        };
-    }
-
-    private static TestAbortedException mockAssertionFailedError() {
-        class MockedTestAbortedException extends TestAbortedException{
-            MockedTestAbortedException(){
-                super("the message");
-            }
-
-            @Override
-            public void printStackTrace(PrintStream s) {
-                s.print("the stack trace");
-            }
-
-            @Override
-            public void printStackTrace(PrintWriter s) {
-                s.print("the stack trace");
-            }
-        }
-        return new MockedTestAbortedException();
-    }
-
-    private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
-        AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
-        Answer<Object> printStackTraceHandler = invocation -> {
-            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
-            writer.print("the stack trace");
-            return null;
-        };
-        doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
-        when(exception.getMessage()).thenReturn("the message");
-        return exception;
-    }
-
-    public static SimpleEntry<String, Result> hookEntry(String type, Result result) {
-        return new SimpleEntry<>(type, result);
     }
 
 }

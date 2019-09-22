@@ -8,6 +8,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,4 +57,16 @@ class PicoFactoryTest {
         assertTrue(steps.getBelly().isDisposed());
     }
 
+    @Test
+    void public_non_static_inner_classes_are_not_instantiable() {
+        ObjectFactory factory = new PicoFactory();
+        factory.addClass(NonStaticInnerClass.class);
+        factory.start();
+
+        assertThat(factory.getInstance(NonStaticInnerClass.class), nullValue());
+    }
+
+    @SuppressWarnings("InnerClassMayBeStatic")
+    public class NonStaticInnerClass {
+    }
 }

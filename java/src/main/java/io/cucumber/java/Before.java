@@ -23,18 +23,6 @@ public @interface Before {
     String value() default "";
 
     /**
-     * Duration in milliseconds this hook is allowed to run. Cucumber
-     * will mark the hook as failed when exceeded.
-     *
-     * When the maximum duration is exceeded the thread will
-     * receive an interrupt. Note: if the interrupt is ignored
-     * Cucumber will wait for the this hook to finish.
-     *
-     * @return timeout in milliseconds. 0 (default) means no restriction.
-     */
-    long timeout() default 0;
-
-    /**
      * @return the order in which this hook should run. Lower numbers are run first.
      * The default order is 10000.
      */

@@ -5,18 +5,17 @@ import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.io.MultiLoader;
 import io.cucumber.core.io.ResourceLoaderClassFinder;
-import io.cucumber.core.backend.Snippet;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static java.lang.Thread.currentThread;
+import java.util.function.Supplier;
 
 final class Java8Backend implements Backend {
 
@@ -27,10 +26,12 @@ final class Java8Backend implements Backend {
     private final List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
     private Glue glue;
 
-    Java8Backend(Lookup lookup, Container container, ResourceLoader resourceLoader) {
-        this.classFinder = new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader());
+    Java8Backend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderProvider) {
         this.container = container;
         this.lookup = lookup;
+        ClassLoader classLoader = classLoaderProvider.get();
+        MultiLoader resourceLoader = new MultiLoader(classLoader);
+        this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
     }
 
     @Override

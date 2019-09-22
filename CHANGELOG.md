@@ -25,7 +25,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.dry-run
     - cucumber.execution.limit
     - cucumber.execution.order
-    - cucumber.execution.parallel.config.fixed.parallelism
     - cucumber.execution.strict
     - cucumber.execution.wip
     - cucumber.feature
@@ -74,18 +73,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Adds dedicated `io.cucumber.docstring.DocString` object to use in step definitions
     - Adds `TypeRegistry.defineDocStringType`
     - Adds `@DocStringType` alternative for `TypeRegistry.defineDocStringType`
-
-### Deprecated
- * [Core] Deprecate `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
-   - Prefer using library based solutions
-    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
-    * [Awaitility](https://github.com/awaitility/awaitility)
-    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
     
 ### Removed
  - [Core] Remove deprecated tag syntax. 
  - [Core] Remove `StepDefinitionReporter` ([#1635](https://github.com/cucumber/cucumber-jvm/issues/1635) M.P. Korstanje, Tim te Beek)
    - Listen `StepDefined` events instead
+ * [Core] Remove `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
+   - Prefer using library based solutions
+    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
+    * [Awaitility](https://github.com/awaitility/awaitility)
+    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
  
 ### Fixed
  - [Java8] Set default before hook order to the same after hook (1000) 

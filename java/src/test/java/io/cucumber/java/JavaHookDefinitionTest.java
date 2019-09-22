@@ -38,7 +38,7 @@ public class JavaHookDefinitionTest {
     @Test
     void can_create_with_no_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
-        JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, lookup);
         definition.execute(scenario);
         assertTrue(invoked);
     }
@@ -52,7 +52,7 @@ public class JavaHookDefinitionTest {
     @Test
     void can_create_with_single_scenario_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
-        JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, lookup);
         definition.execute(scenario);
         assertTrue(invoked);
     }
@@ -67,7 +67,7 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_parameter", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(method, "", 0, 0, lookup)
+            () -> new JavaHookDefinition(method, "", 0, lookup)
         );
         assertThat(exception.getMessage(), startsWith("" +
             "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
@@ -86,7 +86,7 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_generic_parameter", List.class);
         assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(method, "", 0, 0, lookup)
+            () -> new JavaHookDefinition(method, "", 0, lookup)
         );
     }
 
@@ -100,7 +100,7 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("too_many_parameters", Scenario.class, String.class);
         assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(method, "", 0, 0, lookup)
+            () -> new JavaHookDefinition(method, "", 0, lookup)
         );
     }
 

@@ -1,6 +1,6 @@
 package io.cucumber.openejb;
 
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import org.apache.openejb.OpenEjbContainer;
 import org.apiguardian.api.API;
@@ -57,7 +57,7 @@ public final class OpenEJBObjectFactory implements ObjectFactory {
             object = type.newInstance();
             container.getContext().bind("inject", object);
         } catch (Exception e) {
-            throw new CucumberException("can't create " + type.getName(), e);
+            throw new CucumberBackendException("can't create " + type.getName(), e);
         }
         instances.put(type, object);
         return object;

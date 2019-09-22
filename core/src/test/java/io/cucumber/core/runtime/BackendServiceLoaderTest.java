@@ -18,23 +18,19 @@ class BackendServiceLoaderTest {
 
     @Test
     void should_create_a_backend() {
-        ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
+        BackendSupplier backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
 
     @Test
     void should_throw_an_exception_when_no_backend_could_be_found() {
-        ClassLoader classLoader = getClass().getClassLoader();
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(resourceLoader, objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
 
         Executable testMethod = () -> backendSupplier.get(emptyList()).iterator().next();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);

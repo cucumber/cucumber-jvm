@@ -1,7 +1,7 @@
 package io.cucumber.spring;
 
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.exception.CucumberException;
 import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -77,7 +77,7 @@ public final class SpringFactory implements ObjectFactory {
             checkNoComponentAnnotations(stepClass);
             if (dependsOnSpringContext(stepClass)) {
                 if (stepClassWithSpringContext != null) {
-                    throw new CucumberException(String.format("" +
+                    throw new CucumberBackendException(String.format("" +
                         "Glue class %1$s and %2$s both attempt to configure the spring context. Please ensure only one " +
                         "glue class configures the spring context", stepClass, stepClassWithSpringContext));
                 }
@@ -91,7 +91,7 @@ public final class SpringFactory implements ObjectFactory {
     private static void checkNoComponentAnnotations(Class<?> type) {
         for (Annotation annotation : type.getAnnotations()) {
             if (hasComponentAnnotation(annotation)) {
-                throw new CucumberException(String.format("" +
+                throw new CucumberBackendException(String.format("" +
                         "Glue class %1$s was annotated with @%2$s; marking it as a candidate for auto-detection by " +
                         "Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by " +
                         "spring may lead to duplicate bean definitions. Please remove the @%2$s annotation",
@@ -168,7 +168,7 @@ public final class SpringFactory implements ObjectFactory {
             try {
                 testContextManager.beforeTestClass();
             } catch (Exception e) {
-                throw new CucumberException(e.getMessage(), e);
+                throw new CucumberBackendException(e.getMessage(), e);
             }
         }
     }
@@ -200,7 +200,7 @@ public final class SpringFactory implements ObjectFactory {
             try {
                 testContextManager.afterTestClass();
             } catch (Exception e) {
-                throw new CucumberException(e.getMessage(), e);
+                throw new CucumberBackendException(e.getMessage(), e);
             }
         }
     }
@@ -210,7 +210,7 @@ public final class SpringFactory implements ObjectFactory {
         try {
             return beanFactory.getBean(type);
         } catch (BeansException e) {
-            throw new CucumberException(e.getMessage(), e);
+            throw new CucumberBackendException(e.getMessage(), e);
         }
     }
 

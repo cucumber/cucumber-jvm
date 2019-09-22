@@ -44,21 +44,6 @@ public @interface ${kw} {
     String value();
 
     /**
-     * Duration in milliseconds this step is allowed to run. Cucumber
-     * will mark the step as failed when exceeded.
-     *
-     * When the maximum  duration is exceeded the thread will
-     * receive an in interrupt. Note: if the interrupt is ignored
-     * cucumber will wait for the this hook to finish.
-     *
-     * @return timeout in milliseconds. 0 (default) means no restriction.
-     * @deprecated use a library based solution instead. E.g. Awaitility
-     * or JUnit 5s Assertions.assertTimeout.
-     */
-    @Deprecated
-    long timeout() default 0;
-
-    /**
      * Allows the use of multiple '${kw}'s on a single method.
      */
     @Target(ElementType.METHOD)

@@ -8,8 +8,8 @@ import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
@@ -17,6 +17,7 @@ import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -216,11 +217,19 @@ final class CachingGlue implements Glue {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
             }
             stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
-            bus.send(new StepDefinedEvent(bus.getInstant(), new StepDefinitionEvent(stepDefinition)));
+            bus.send(
+                new StepDefinedEvent(
+                    bus.getInstant(),
+                    new io.cucumber.plugin.event.StepDefinition(
+                        stepDefinition.getLocation(),
+                        stepDefinition.getPattern()
+                    )
+                )
+            );
         });
     }
 
-    PickleStepDefinitionMatch stepDefinitionMatch(String uri, CucumberStep step) {
+    PickleStepDefinitionMatch stepDefinitionMatch(String uri, CucumberStep step) throws AmbiguousStepDefinitionsException{
         PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(uri, step);
         if (cachedMatch != null) {
             return cachedMatch;
@@ -248,7 +257,7 @@ final class CachingGlue implements Glue {
         return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), featurePath, step);
     }
 
-    private PickleStepDefinitionMatch findStepDefinitionMatch(String uri, CucumberStep step) {
+    private PickleStepDefinitionMatch findStepDefinitionMatch(String uri, CucumberStep step) throws AmbiguousStepDefinitionsException {
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.isEmpty()) {
             return null;
@@ -295,8 +304,6 @@ final class CachingGlue implements Glue {
         while (glueIterator.hasNext()) {
             Object glue = glueIterator.next();
             if (glue instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScopedGlue = (ScenarioScoped) glue;
-                scenarioScopedGlue.disposeScenarioScope();
                 glueIterator.remove();
             }
         }

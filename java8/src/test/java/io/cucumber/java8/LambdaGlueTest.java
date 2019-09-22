@@ -15,7 +15,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("deprecation")
 class LambdaGlueTest {
 
     private HookDefinition beforeStepHook;
@@ -37,11 +36,7 @@ class LambdaGlueTest {
         assertHook(beforeHook, "taxExpression", DEFAULT_BEFORE_ORDER);
         lambdaGlue.Before(42, this::hookNoArgs);
         assertHook(beforeHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.Before(100L, this::hookNoArgs);
-        assertHook(beforeHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.Before("taxExpression", 42, this::hookNoArgs);
-        assertHook(beforeHook, "taxExpression", 42);
-        lambdaGlue.Before("taxExpression", 100L, 42, this::hookNoArgs);
         assertHook(beforeHook, "taxExpression", 42);
 
         lambdaGlue.Before(this::hook);
@@ -50,11 +45,7 @@ class LambdaGlueTest {
         assertHook(beforeHook, "taxExpression", DEFAULT_BEFORE_ORDER);
         lambdaGlue.Before(42, this::hook);
         assertHook(beforeHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.Before(100L, this::hook);
-        assertHook(beforeHook, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER);
         lambdaGlue.Before("taxExpression", 42, this::hook);
-        assertHook(beforeHook, "taxExpression", 42);
-        lambdaGlue.Before("taxExpression", 100L, 42, this::hook);
         assertHook(beforeHook, "taxExpression", 42);
     }
 
@@ -66,11 +57,7 @@ class LambdaGlueTest {
         assertHook(beforeStepHook, "taxExpression", DEFAULT_BEFORE_ORDER);
         lambdaGlue.BeforeStep(42, this::hookNoArgs);
         assertHook(beforeStepHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.BeforeStep(100L, this::hookNoArgs);
-        assertHook(beforeStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.BeforeStep("taxExpression", 42, this::hookNoArgs);
-        assertHook(beforeStepHook, "taxExpression", 42);
-        lambdaGlue.BeforeStep("taxExpression", 100L, 42, this::hookNoArgs);
         assertHook(beforeStepHook, "taxExpression", 42);
 
         lambdaGlue.BeforeStep(this::hook);
@@ -79,11 +66,7 @@ class LambdaGlueTest {
         assertHook(beforeStepHook, "taxExpression", DEFAULT_BEFORE_ORDER);
         lambdaGlue.BeforeStep(42, this::hook);
         assertHook(beforeStepHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.BeforeStep(100L, this::hook);
-        assertHook(beforeStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER);
         lambdaGlue.BeforeStep("taxExpression", 42, this::hook);
-        assertHook(beforeStepHook, "taxExpression", 42);
-        lambdaGlue.BeforeStep("taxExpression", 100L, 42, this::hook);
         assertHook(beforeStepHook, "taxExpression", 42);
     }
 
@@ -95,11 +78,7 @@ class LambdaGlueTest {
         assertHook(afterHook, "taxExpression", DEFAULT_AFTER_ORDER);
         lambdaGlue.After(42, this::hookNoArgs);
         assertHook(afterHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.After(100L, this::hookNoArgs);
-        assertHook(afterHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.After("taxExpression", 42, this::hookNoArgs);
-        assertHook(afterHook, "taxExpression", 42);
-        lambdaGlue.After("taxExpression", 100L, 42, this::hookNoArgs);
         assertHook(afterHook, "taxExpression", 42);
 
         lambdaGlue.After(this::hook);
@@ -108,11 +87,7 @@ class LambdaGlueTest {
         assertHook(afterHook, "taxExpression", DEFAULT_AFTER_ORDER);
         lambdaGlue.After(42, this::hook);
         assertHook(afterHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.After(100L, this::hook);
-        assertHook(afterHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.After("taxExpression", 42, this::hook);
-        assertHook(afterHook, "taxExpression", 42);
-        lambdaGlue.After("taxExpression", 100L, 42, this::hook);
         assertHook(afterHook, "taxExpression", 42);
     }
 
@@ -124,11 +99,7 @@ class LambdaGlueTest {
         assertHook(afterStepHook, "taxExpression", DEFAULT_AFTER_ORDER);
         lambdaGlue.AfterStep(42, this::hookNoArgs);
         assertHook(afterStepHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.AfterStep(100L, this::hookNoArgs);
-        assertHook(afterStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.AfterStep("taxExpression", 42, this::hookNoArgs);
-        assertHook(afterStepHook, "taxExpression", 42);
-        lambdaGlue.AfterStep("taxExpression", 100L, 42, this::hookNoArgs);
         assertHook(afterStepHook, "taxExpression", 42);
 
         lambdaGlue.AfterStep(this::hook);
@@ -137,11 +108,7 @@ class LambdaGlueTest {
         assertHook(afterStepHook, "taxExpression", DEFAULT_AFTER_ORDER);
         lambdaGlue.AfterStep(42, this::hook);
         assertHook(afterStepHook, EMPTY_TAG_EXPRESSION, 42);
-        lambdaGlue.AfterStep(100L, this::hook);
-        assertHook(afterStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.AfterStep("taxExpression", 42, this::hook);
-        assertHook(afterStepHook, "taxExpression", 42);
-        lambdaGlue.AfterStep("taxExpression", 100L, 42, this::hook);
         assertHook(afterStepHook, "taxExpression", 42);
     }
 
@@ -180,7 +147,7 @@ class LambdaGlueTest {
 
     };
 
-    private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) throws Throwable {
+    private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) {
         assertThat(hook.getTagExpression(), is(tagExpression));
         assertThat(hook.getOrder(), is(beforeOrder));
         hook.execute(scenario);

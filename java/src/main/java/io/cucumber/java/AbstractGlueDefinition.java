@@ -1,13 +1,13 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.reflection.MethodFormat;
 
 import java.lang.reflect.Method;
 
 import static java.util.Objects.requireNonNull;
 
-abstract class AbstractGlueDefinition {
+abstract class AbstractGlueDefinition implements Located {
 
     protected final Method method;
     protected final Lookup lookup;
@@ -18,6 +18,12 @@ abstract class AbstractGlueDefinition {
         this.lookup = requireNonNull(lookup);
     }
 
+    @Override
+    public boolean isDefinedAt(StackTraceElement e) {
+        return e.getClassName().equals(method.getDeclaringClass().getName()) && e.getMethodName().equals(method.getName());
+    }
+
+    @Override
     public final String getLocation() {
         return getFullLocationLocation();
     }

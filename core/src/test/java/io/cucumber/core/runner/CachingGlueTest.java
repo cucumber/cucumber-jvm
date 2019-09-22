@@ -9,6 +9,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.Scenario;
+import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
@@ -198,7 +199,7 @@ class CachingGlueTest {
     }
 
     @Test
-    void returns_null_if_no_matching_steps_found() {
+    void returns_null_if_no_matching_steps_found() throws AmbiguousStepDefinitionsException {
         StepDefinition stepDefinition = new MockedStepDefinition("pattern1");
         glue.addStepDefinition(stepDefinition);
 
@@ -209,7 +210,7 @@ class CachingGlueTest {
     }
 
     @Test
-    void returns_match_from_cache_if_single_found() {
+    void returns_match_from_cache_if_single_found() throws AmbiguousStepDefinitionsException {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -236,7 +237,7 @@ class CachingGlueTest {
     }
 
     @Test
-    void returns_match_from_cache_for_step_with_table() {
+    void returns_match_from_cache_for_step_with_table() throws AmbiguousStepDefinitionsException {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -267,7 +268,7 @@ class CachingGlueTest {
     }
 
     @Test
-    void returns_match_from_cache_for_ste_with_doc_string() {
+    void returns_match_from_cache_for_ste_with_doc_string() throws AmbiguousStepDefinitionsException {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
@@ -298,7 +299,7 @@ class CachingGlueTest {
     }
 
     @Test
-    void returns_fresh_match_from_cache_after_evicting_scenario_scoped() {
+    void returns_fresh_match_from_cache_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
         CucumberStep pickleStep1 = getPickleStep(stepText);
@@ -323,7 +324,7 @@ class CachingGlueTest {
     }
 
     @Test
-    void returns_no_match_after_evicting_scenario_scoped() {
+    void returns_no_match_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
         CucumberStep pickleStep1 = getPickleStep(stepText);
@@ -428,7 +429,6 @@ class CachingGlueTest {
     private static class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
 
         private final String pattern;
-        boolean disposed;
 
         MockedScenarioScopedStepDefinition(String pattern) {
             this.pattern = pattern;
@@ -436,11 +436,6 @@ class CachingGlueTest {
 
         MockedScenarioScopedStepDefinition() {
             this("mocked scenario scoped step definition");
-        }
-
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
         }
 
         @Override
@@ -472,37 +467,32 @@ class CachingGlueTest {
 
     private static class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
 
-        boolean disposed;
-
         @Override
         public DataTableType dataTableType() {
             return new DataTableType(Object.class, (DataTable table) -> new Object());
         }
 
         @Override
-        public String getLocation() {
-            return "mocked data table type definition";
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
         }
 
         @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
+        public String getLocation() {
+            return "mocked data table type definition";
         }
-
     }
 
     private static class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
 
-        boolean disposed;
-
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
-
         @Override
         public ParameterType<?> parameterType() {
             return new ParameterType<>("mock", "[ab]", Object.class, (String arg) -> new Object());
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
         }
 
         @Override
@@ -523,6 +513,11 @@ class CachingGlueTest {
 
         MockedHookDefinition(int order) {
             this.order = order;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
         }
 
         @Override
@@ -549,7 +544,6 @@ class CachingGlueTest {
     private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
         private final int order;
-        boolean disposed;
 
         MockedScenarioScopedHookDefinition() {
             this(0);
@@ -559,9 +553,10 @@ class CachingGlueTest {
             this.order = order;
         }
 
+
         @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
         }
 
         @Override
@@ -621,16 +616,14 @@ class CachingGlueTest {
 
     private static class MockedDefaultParameterTransformer implements DefaultParameterTransformerDefinition, ScenarioScoped {
 
-        boolean disposed;
-
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
-
         @Override
         public ParameterByTypeTransformer parameterByTypeTransformer() {
             return (fromValue, toValueType) -> new Object();
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
         }
 
         @Override
@@ -641,16 +634,14 @@ class CachingGlueTest {
 
     private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
-        boolean disposed;
-
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
-
         @Override
         public TableCellByTypeTransformer tableCellByTypeTransformer() {
             return (value, cellType) -> new Object();
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
         }
 
         @Override
@@ -660,12 +651,6 @@ class CachingGlueTest {
     }
 
     private static class MockedDefaultDataTableEntryTransformer implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
-        boolean disposed;
-
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
 
         @Override
         public boolean headersToProperties() {
@@ -678,13 +663,17 @@ class CachingGlueTest {
         }
 
         @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
         public String getLocation() {
             return "mocked default data table entry transformer";
         }
     }
 
     private static class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
-        boolean disposed;
 
         @Override
         public DocStringType docStringType() {
@@ -692,14 +681,15 @@ class CachingGlueTest {
         }
 
         @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
         public String getLocation() {
             return "mocked default data table entry transformer";
         }
 
-        @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
     }
 
 }

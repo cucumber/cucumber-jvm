@@ -17,11 +17,12 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class StubBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(Lookup lookup, Container container, ResourceLoader resourceLoader) {
+    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader) {
         return new StubBackend();
     }
 

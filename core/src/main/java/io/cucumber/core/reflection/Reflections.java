@@ -1,11 +1,11 @@
 package io.cucumber.core.reflection;
 
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.io.ClassFinder;
 
 import java.lang.reflect.Constructor;
-import java.net.URI;
 import java.lang.reflect.Modifier;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ public final class Reflections {
         this.classFinder = classFinder;
     }
 
-    public static boolean isInstantiable(Class<?> clazz) {
+    static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
         return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
     }
@@ -28,7 +28,7 @@ public final class Reflections {
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.isEmpty()) {
-            if(fallback != null) {
+            if (fallback != null) {
                 return fallback;
             }
             throw new NoInstancesException(parentType);

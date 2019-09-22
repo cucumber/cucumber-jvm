@@ -1,5 +1,11 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.CucumberBackendException;
+import io.cucumber.core.backend.CucumberInvocationTargetException;
+import io.cucumber.core.exception.CucumberException;
+
+import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
+
 final class HookDefinitionMatch implements StepDefinitionMatch {
     private final CoreHookDefinition hookDefinition;
 
@@ -9,7 +15,22 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
 
     @Override
     public void runStep(Scenario scenario) throws Throwable {
-        hookDefinition.execute(scenario);
+        try {
+            hookDefinition.execute(scenario);
+        } catch (CucumberBackendException e) {
+            throw couldNotInvokeHook(e);
+        } catch (CucumberInvocationTargetException e) {
+            throw removeFrameworkFrames(e);
+        }
+    }
+
+    private Throwable couldNotInvokeHook(CucumberBackendException e) {
+        return new CucumberException(String.format("" +
+                "Could not invoke hook defined at '%s'.\n" +
+                "It appears there was a problem with the hook definition.\n" +
+                "The details are in the stacktrace below.", //TODO: Add doc URL
+            hookDefinition.getLocation()
+        ), e);
     }
 
     @Override

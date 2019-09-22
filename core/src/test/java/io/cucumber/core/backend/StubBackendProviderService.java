@@ -1,14 +1,15 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.net.URI;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class StubBackendProviderService implements BackendProviderService {
+
     @Override
-    public Backend create(Lookup lookup, Container container, ResourceLoader resourceLoader) {
+    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader) {
         return new StubBackend();
     }
 
@@ -30,7 +31,7 @@ public class StubBackendProviderService implements BackendProviderService {
         }
 
         @Override
-        public Snippet getSnippet(){
+        public Snippet getSnippet() {
             return new TestSnippet();
         }
 

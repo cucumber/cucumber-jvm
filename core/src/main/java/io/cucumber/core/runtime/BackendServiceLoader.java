@@ -4,12 +4,12 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.ResourceLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.function.Supplier;
 
 /**
  * Supplies instances of {@link Backend} created by using a {@link ServiceLoader}
@@ -17,11 +17,11 @@ import java.util.ServiceLoader;
  */
 public final class BackendServiceLoader implements BackendSupplier {
 
-    private final ResourceLoader resourceLoader;
+    private final Supplier<ClassLoader> classLoaderSupplier;
     private final ObjectFactorySupplier objectFactorySupplier;
 
-    public BackendServiceLoader(ResourceLoader resourceLoader, ObjectFactorySupplier objectFactorySupplier) {
-        this.resourceLoader = resourceLoader;
+    public BackendServiceLoader(Supplier<ClassLoader> classLoaderSupplier, ObjectFactorySupplier objectFactorySupplier) {
+        this.classLoaderSupplier = classLoaderSupplier;
         this.objectFactorySupplier = objectFactorySupplier;
     }
 
@@ -42,7 +42,7 @@ public final class BackendServiceLoader implements BackendSupplier {
         List<Backend> backends = new ArrayList<>();
         for (BackendProviderService backendProviderService : serviceLoader) {
             ObjectFactory objectFactory = objectFactorySupplier.get();
-            backends.add(backendProviderService.create(objectFactory, objectFactory, resourceLoader));
+            backends.add(backendProviderService.create(objectFactory, objectFactory, classLoaderSupplier));
         }
         return backends;
     }

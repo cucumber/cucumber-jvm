@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 
 import java.lang.reflect.Method;
@@ -56,8 +55,8 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
         return transformer;
     }
 
-    private Object execute(String fromValue, Type toValueType) throws Throwable {
-        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+    private Object execute(String fromValue, Type toValueType) {
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

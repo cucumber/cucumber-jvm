@@ -42,6 +42,12 @@ class MethodScannerTest {
     }
 
     @Test
+    void scan_ignores_non_instantiable_class() {
+        MethodScanner.scan(NonStaticInnerClass.class, backend);
+        assertThat(scanResult, empty());
+    }
+
+    @Test
     void loadGlue_fails_when_class_is_not_method_declaring_class() {
         InvalidMethodException exception = assertThrows(InvalidMethodException.class, () -> MethodScanner.scan(ExtendedSteps.class, backend));
         assertThat(exception.getMessage(), is(
@@ -61,4 +67,10 @@ class MethodScannerTest {
         }
     }
 
+    @SuppressWarnings("InnerClassMayBeStatic")
+    public class NonStaticInnerClass {
+        @Before
+        public void m() {
+        }
+    }
 }
