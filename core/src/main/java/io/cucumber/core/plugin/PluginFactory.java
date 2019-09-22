@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;

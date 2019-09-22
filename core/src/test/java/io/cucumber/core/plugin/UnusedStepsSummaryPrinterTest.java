@@ -3,9 +3,15 @@ package io.cucumber.core.plugin;
 import java.time.Clock;
 import java.time.Duration;
 
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.event.*;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.StepDefinition;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestStep;
+import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,10 +20,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UnusedStepsSummaryPrinterTest {
+class UnusedStepsSummaryPrinterTest {
 
     @Test
-    public void verifyUnusedStepsPrinted() {
+    void verifyUnusedStepsPrinted() {
         StringBuilder out = new StringBuilder();
         UnusedStepsSummaryPrinter summaryPrinter = new UnusedStepsSummaryPrinter(out);
         TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC());
@@ -39,10 +45,7 @@ public class UnusedStepsSummaryPrinterTest {
     }
 
     private static StepDefinition mockStepDef(String location, String pattern) {
-        StepDefinition stepDef1 = mock(StepDefinition.class);
-        when(stepDef1.getLocation(false)).thenReturn(location);
-        when(stepDef1.getPattern()).thenReturn(pattern);
-        return stepDef1;
+        return new StepDefinition(location, pattern);
     }
 
     private static TestStep mockTestStep(String location) {

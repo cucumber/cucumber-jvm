@@ -15,23 +15,23 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class WeldFactoryTest {
+class WeldFactoryTest {
 
     private LogRecordListener logRecordListener;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         logRecordListener = new LogRecordListener();
         LoggerFactory.addListener(logRecordListener);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         LoggerFactory.removeListener(logRecordListener);
     }
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
 
         final ObjectFactory factory = new WeldFactory();
         factory.addClass(BellyStepdefs.class);
@@ -54,7 +54,7 @@ public class WeldFactoryTest {
     }
 
     @Test
-    public void stopCalledWithoutStart() {
+    void stopCalledWithoutStart() {
         ObjectFactory factory = new WeldFactory();
         factory.stop();
         assertThat(logRecordListener.getLogRecords().get(0).getMessage(),

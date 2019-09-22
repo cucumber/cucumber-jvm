@@ -148,7 +148,7 @@ public class GlueAdaptorTest {
         );
     }
 
-    @Given(value = "a step", timeout = 100)
+    @Given(value = "a step")
     @Given("repeated")
     public void step_definition() {
 

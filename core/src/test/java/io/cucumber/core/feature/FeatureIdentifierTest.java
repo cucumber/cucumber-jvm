@@ -11,10 +11,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FeatureIdentifierTest {
+class FeatureIdentifierTest {
 
     @Test
-    public void can_parse_feature_path_with_feature() {
+    void can_parse_feature_path_with_feature() {
         URI uri = FeatureIdentifier.parse(FeaturePath.parse("classpath:/path/to/file.feature"));
 
         assertAll("Checking uri",
@@ -24,7 +24,7 @@ public class FeatureIdentifierTest {
     }
 
     @Test
-    public void reject_feature_with_lines() {
+    void reject_feature_with_lines() {
         Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to/file.feature:10:40"));
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
@@ -33,7 +33,7 @@ public class FeatureIdentifierTest {
     }
 
     @Test
-    public void reject_directory_form() {
+    void reject_directory_form() {
         Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to"));
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(

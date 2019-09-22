@@ -1,12 +1,11 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.event.Status;
 import org.apiguardian.api.API;
 
 import java.util.Collection;
 
 @API(status = API.Status.STABLE)
-public final class Scenario implements io.cucumber.core.backend.Scenario {
+public final class Scenario {
 
     private final io.cucumber.core.backend.Scenario delegate;
 
@@ -14,15 +13,15 @@ public final class Scenario implements io.cucumber.core.backend.Scenario {
         this.delegate = delegate;
     }
 
-    public Collection<String> getSourceTagNames(){
+    public Collection<String> getSourceTagNames() {
         return delegate.getSourceTagNames();
     }
 
-    public Status getStatus(){
-        return delegate.getStatus();
+    public Status getStatus() {
+        return Status.valueOf(delegate.getStatus().name());
     }
 
-    public boolean isFailed(){
+    public boolean isFailed() {
         return delegate.isFailed();
     }
 
@@ -35,7 +34,7 @@ public final class Scenario implements io.cucumber.core.backend.Scenario {
         delegate.embed(data, mimeType, name);
     }
 
-    public void write(String text){
+    public void write(String text) {
         delegate.write(text);
     }
 

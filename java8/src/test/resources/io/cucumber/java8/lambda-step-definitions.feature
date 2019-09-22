@@ -15,11 +15,12 @@ Feature: Java8
   Scenario: Multi-param lambdas
     Given I will give you 1 and 2.2 and three and 4
 
-  Scenario: use a table
+  Scenario: use a table and generics
     Given this data table:
       | first  | last     |
       | Aslak  | Hellesøy |
       | Donald | Duck     |
+    And A string generic that is not a data table
 
   Scenario: using method references
     Given A method reference that declares an exception

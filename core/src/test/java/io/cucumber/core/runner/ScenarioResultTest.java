@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.WriteEvent;
+import io.cucumber.plugin.event.EmbedEvent;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -15,6 +15,10 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static io.cucumber.core.backend.Status.FAILED;
+import static io.cucumber.core.backend.Status.PASSED;
+import static io.cucumber.core.backend.Status.SKIPPED;
+import static io.cucumber.core.backend.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,13 +58,13 @@ class ScenarioResultTest {
 
     @Test
     void no_steps_is_undefined() {
-        assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED)));
+        assertThat(s.getStatus(), is(equalTo(UNDEFINED)));
     }
 
     @Test
     void one_passed_step_is_passed() {
         s.add(new Result(Status.PASSED, ZERO, null));
-        assertThat(s.getStatus(), is(equalTo(Status.PASSED)));
+        assertThat(s.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
@@ -72,7 +76,7 @@ class ScenarioResultTest {
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
         assertAll("Checking Scenario",
-            () -> assertThat(s.getStatus(), is(equalTo(Status.FAILED))),
+            () -> assertThat(s.getStatus(), is(equalTo(FAILED))),
             () -> assertTrue(s.isFailed())
         );
     }
@@ -83,7 +87,7 @@ class ScenarioResultTest {
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
         assertAll("Checking Scenario",
-            () -> assertThat(s.getStatus(), is(equalTo(Status.SKIPPED))),
+            () -> assertThat(s.getStatus(), is(equalTo(SKIPPED))),
             () -> assertFalse(s.isFailed())
         );
     }
@@ -96,7 +100,7 @@ class ScenarioResultTest {
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
         assertAll("Checking Scenario",
-            () -> assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED))),
+            () -> assertThat(s.getStatus(), is(equalTo(UNDEFINED))),
             () -> assertFalse(s.isFailed())
         );
     }
@@ -108,11 +112,12 @@ class ScenarioResultTest {
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
         assertAll("Checking Scenario",
-            () -> assertThat(s.getStatus(), is(equalTo(Status.UNDEFINED))),
+            () -> assertThat(s.getStatus(), is(equalTo(UNDEFINED))),
             () -> assertFalse(s.isFailed())
         );
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void embeds_data() {
         byte[] data = new byte[]{1, 2, 3};

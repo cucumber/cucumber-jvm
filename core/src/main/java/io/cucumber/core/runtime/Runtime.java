@@ -1,14 +1,5 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.backend.ObjectFactoryServiceLoader;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
@@ -24,10 +15,18 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.plugin.ConcurrentEventListener;
-import io.cucumber.core.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.plugin.event.EventHandler;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.Plugin;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -197,7 +196,7 @@ public final class Runtime {
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendServiceLoader(resourceLoader, objectFactorySupplier);
+                : new BackendServiceLoader(() -> this.classLoader, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {

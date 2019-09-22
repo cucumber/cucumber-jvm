@@ -1,16 +1,15 @@
 package io.cucumber.java;
 
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.reflection.MethodFormat;
+
+import io.cucumber.core.backend.CucumberBackendException;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-final class InvalidMethodSignatureException extends CucumberException {
+final class InvalidMethodSignatureException extends CucumberBackendException {
 
     private InvalidMethodSignatureException(String message) {
         super(message);

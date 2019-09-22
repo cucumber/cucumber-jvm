@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
@@ -14,8 +14,8 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.Collections;
 
-import static io.cucumber.core.event.HookType.AFTER_STEP;
-import static io.cucumber.core.event.HookType.BEFORE_STEP;
+import static io.cucumber.plugin.event.HookType.AFTER_STEP;
+import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.isA;

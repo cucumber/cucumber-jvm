@@ -1,18 +1,18 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.List;
 
-import static io.cucumber.core.event.Status.AMBIGUOUS;
-import static io.cucumber.core.event.Status.FAILED;
-import static io.cucumber.core.event.Status.PASSED;
-import static io.cucumber.core.event.Status.PENDING;
-import static io.cucumber.core.event.Status.SKIPPED;
-import static io.cucumber.core.event.Status.UNDEFINED;
+import static io.cucumber.plugin.event.Status.AMBIGUOUS;
+import static io.cucumber.plugin.event.Status.FAILED;
+import static io.cucumber.plugin.event.Status.PASSED;
+import static io.cucumber.plugin.event.Status.PENDING;
+import static io.cucumber.plugin.event.Status.SKIPPED;
+import static io.cucumber.plugin.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;

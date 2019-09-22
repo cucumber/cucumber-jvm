@@ -1,6 +1,6 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.event.CucumberStep;
+import io.cucumber.plugin.event.CucumberStep;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.runner.Runner;

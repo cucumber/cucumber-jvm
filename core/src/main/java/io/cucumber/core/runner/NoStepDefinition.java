@@ -8,7 +8,7 @@ import java.util.List;
 final class NoStepDefinition implements StepDefinition {
 
     @Override
-    public String getLocation(boolean detail) {
+    public String getLocation() {
         return null;
     }
 

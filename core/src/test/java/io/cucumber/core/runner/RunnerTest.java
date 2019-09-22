@@ -45,7 +45,7 @@ class RunnerTest {
     };
 
     @Test
-    void hooks_execute_when_world_exist() throws Throwable {
+    void hooks_execute_when_world_exist() {
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();
 
@@ -71,7 +71,7 @@ class RunnerTest {
     }
 
     @Test
-    void steps_are_skipped_after_failure() throws Throwable {
+    void steps_are_skipped_after_failure() {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step"));
         CucumberPickle pickleEventMatchingStepDefinitions = createPickleEventMatchingStepDefinitions(stepDefinition);
 
@@ -93,11 +93,12 @@ class RunnerTest {
     }
 
     @Test
-    void aftersteps_are_executed_after_failed_step() throws Throwable {
+    void aftersteps_are_executed_after_failed_step() {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step") {
 
             @Override
             public void execute(Object[] args) {
+                super.execute(args);
                 throw new RuntimeException();
             }
         });
@@ -122,7 +123,7 @@ class RunnerTest {
     }
 
     @Test
-    void aftersteps_executed_for_passed_step() throws Throwable {
+    void aftersteps_executed_for_passed_step() {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step"));
         CucumberPickle pickleEvent = createPickleEventMatchingStepDefinitions(stepDefinition);
 
@@ -147,7 +148,7 @@ class RunnerTest {
     }
 
     @Test
-    void hooks_execute_also_after_failure() throws Throwable {
+    void hooks_execute_also_after_failure() {
         final HookDefinition failingBeforeHook = addBeforeHook();
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(any(Scenario.class));
         final HookDefinition beforeHook = addBeforeHook();
@@ -201,7 +202,7 @@ class RunnerTest {
     }
 
     @Test
-    void hooks_not_executed_in_dry_run_mode() throws Throwable {
+    void hooks_not_executed_in_dry_run_mode() {
         RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
 
         final HookDefinition beforeHook = addBeforeHook();
@@ -225,7 +226,7 @@ class RunnerTest {
     }
 
     @Test
-    void hooks_not_executed_for_empty_pickles() throws Throwable {
+    void hooks_not_executed_for_empty_pickles() {
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();
         final HookDefinition afterStepHook = addAfterStepHook();

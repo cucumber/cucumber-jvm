@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CucumberFeatureTest {
+class CucumberFeatureTest {
 
     @Test
-    public void succeeds_if_no_features_are_found() {
+    void succeeds_if_no_features_are_found() {
         URI featurePath = URI.create("does/not/exist");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(Collections.emptyList());
@@ -27,7 +27,7 @@ public class CucumberFeatureTest {
     }
 
     @Test
-    public void gives_error_message_if_path_does_not_exist() {
+    void gives_error_message_if_path_does_not_exist() {
         URI featurePath = URI.create("path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + "path/bar.feature"));
@@ -39,7 +39,7 @@ public class CucumberFeatureTest {
     }
 
     @Test
-    public void gives_error_message_if_feature_on_class_path_does_not_exist() {
+    void gives_error_message_if_feature_on_class_path_does_not_exist() {
         URI featurePath = URI.create("classpath:path/bar.feature");
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(emptyList());

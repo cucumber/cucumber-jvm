@@ -1,6 +1,6 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.datatable.DataTable;
 
 import java.lang.reflect.Type;

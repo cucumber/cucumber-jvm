@@ -11,10 +11,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 //TODO: Merge with the existing test
-public class JsonParallelRuntimeTest {
+class JsonParallelRuntimeTest {
 
     @Test
-    public void testSingleFeature() {
+    void testSingleFeature() {
         StringBuilder parallel = new StringBuilder();
 
         Runtime.builder()
@@ -49,7 +49,7 @@ public class JsonParallelRuntimeTest {
     }
 
     @Test
-    public void testMultipleFeatures() {
+    void testMultipleFeatures() {
         StringBuilder parallel = new StringBuilder();
 
         Runtime.builder()

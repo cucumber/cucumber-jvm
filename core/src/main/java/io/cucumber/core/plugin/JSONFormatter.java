@@ -6,24 +6,26 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import io.cucumber.core.event.DataTableArgument;
-import io.cucumber.core.event.DocStringArgument;
-import io.cucumber.core.event.EmbedEvent;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.HookTestStep;
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.PickleStepTestStep;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.StepArgument;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseStarted;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestSourceRead;
-import io.cucumber.core.event.TestStep;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
-import io.cucumber.core.event.WriteEvent;
+import io.cucumber.plugin.event.DataTableArgument;
+import io.cucumber.plugin.event.Argument;
+import io.cucumber.plugin.event.DocStringArgument;
+import io.cucumber.plugin.event.EmbedEvent;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.HookTestStep;
+import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepArgument;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestStep;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
+import io.cucumber.plugin.event.WriteEvent;
+import io.cucumber.plugin.EventListener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -312,7 +314,7 @@ public final class JSONFormatter implements EventListener {
             PickleStepTestStep testStep = (PickleStepTestStep) step;
             if (!testStep.getDefinitionArgument().isEmpty()) {
                 List<Map<String, Object>> argumentList = new ArrayList<>();
-                for (io.cucumber.core.event.Argument argument : testStep.getDefinitionArgument()) {
+                for (Argument argument : testStep.getDefinitionArgument()) {
                     Map<String, Object> argumentMap = new HashMap<>();
                     if (argument.getValue() != null) {
                         argumentMap.put("val", argument.getValue());

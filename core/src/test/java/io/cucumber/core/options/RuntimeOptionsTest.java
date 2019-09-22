@@ -1,18 +1,16 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.event.EventPublisher;
+import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.core.io.Resource;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.plugin.ColorAware;
-import io.cucumber.core.plugin.EventListener;
-import io.cucumber.core.plugin.Plugin;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.plugin.StrictAware;
+import io.cucumber.plugin.StrictAware;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
@@ -22,11 +20,8 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Arrays;
@@ -38,7 +33,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -54,8 +48,6 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RuntimeOptionsTest {

@@ -4,4 +4,6 @@ public interface Argument {
 
     Object getValue();
 
+    String toString();
+
 }

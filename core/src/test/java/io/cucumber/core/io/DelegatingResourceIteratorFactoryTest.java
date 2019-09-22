@@ -9,10 +9,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.isA;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DelegatingResourceIteratorFactoryTest {
+class DelegatingResourceIteratorFactoryTest {
 
     @Test
-    public void should_load_test_resource_iterator() {
+    void should_load_test_resource_iterator() {
         ResourceIteratorFactory factory =
             new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
         URI url = URI.create(TestResourceIteratorFactory.TEST_URL);

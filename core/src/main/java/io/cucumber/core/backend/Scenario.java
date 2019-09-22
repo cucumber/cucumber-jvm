@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.event.Status;
 import org.apiguardian.api.API;
 
 import java.util.Collection;
@@ -10,7 +9,7 @@ import java.util.Collection;
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
  * <p>
  * Note: This class is not intended to be used to create reports. To create custom reports use
- * the {@code io.cucumber.core.plugin.Plugin} class. The plugin system provides a much richer access to Cucumbers then
+ * the {@code io.cucumber.plugin.Plugin} class. The plugin system provides a much richer access to Cucumbers then
  * hooks after could provide. For an example see {@code io.cucumber.core.plugin.PrettyFormatter}.
  */
 @API(status = API.Status.STABLE)
@@ -86,4 +85,5 @@ public interface Scenario {
      * the Scenario Outline.
      */
     Integer getLine();
+
 }

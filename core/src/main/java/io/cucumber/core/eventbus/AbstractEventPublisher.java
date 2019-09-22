@@ -1,8 +1,8 @@
 package io.cucumber.core.eventbus;
 
-import io.cucumber.core.event.Event;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.EventHandler;
+import io.cucumber.plugin.event.EventPublisher;
 
 import java.util.ArrayList;
 import java.util.HashMap;

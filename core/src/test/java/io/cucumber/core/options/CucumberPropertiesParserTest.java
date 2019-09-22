@@ -61,13 +61,6 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
-    void should_parse_parallel() {
-        properties.put(Constants.EXECUTION_PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, "12");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getThreads(), equalTo(12));
-    }
-
-    @Test
     void should_parse_strict() {
         properties.put(Constants.EXECUTION_STRICT_PROPERTY_NAME, "true");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();

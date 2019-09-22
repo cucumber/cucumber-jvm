@@ -2,7 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.event.Result;
+import io.cucumber.plugin.event.Result;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;

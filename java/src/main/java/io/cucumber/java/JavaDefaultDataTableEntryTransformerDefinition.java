@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
@@ -93,14 +92,14 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinit
         return headersToProperties;
     }
 
-    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
+    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) {
         Object[] args;
         if (method.getParameterTypes().length == 3) {
             args = new Object[]{fromValue, toValueType, cellTransformer};
         } else {
             args = new Object[]{fromValue, toValueType};
         }
-        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
 }

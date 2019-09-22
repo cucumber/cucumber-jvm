@@ -1,14 +1,14 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCaseEvent;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCaseEvent;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,11 +21,12 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import static io.cucumber.core.event.HookType.AFTER_STEP;
-import static io.cucumber.core.event.HookType.BEFORE_STEP;
-import static io.cucumber.core.event.Status.FAILED;
-import static io.cucumber.core.event.Status.PASSED;
-import static io.cucumber.core.event.Status.SKIPPED;
+import static io.cucumber.core.backend.Status.FAILED;
+import static io.cucumber.core.backend.Status.PASSED;
+import static io.cucumber.core.backend.Status.PENDING;
+import static io.cucumber.core.backend.Status.SKIPPED;
+import static io.cucumber.plugin.event.HookType.AFTER_STEP;
+import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
 import static java.time.Instant.ofEpochMilli;
@@ -60,9 +61,9 @@ class PickleStepTestStepTest {
     private final Scenario scenario = new Scenario(bus, testCase);
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
     private CoreHookDefinition afterHookDefinition = mock(CoreHookDefinition.class);
+    private final HookTestStep afterHook = new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
     private CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
     private final HookTestStep beforeHook = new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
-    private final HookTestStep afterHook = new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
         "uri",
         pickle.getSteps().get(0),
@@ -70,6 +71,9 @@ class PickleStepTestStepTest {
         singletonList(afterHook),
         definitionMatch
     );
+    private static ArgumentMatcher<Scenario> scenarioDoesNotHave(final Throwable type) {
+        return argument -> !type.equals(argument.getError());
+    }
 
     @BeforeEach
     void init() {
@@ -203,10 +207,6 @@ class PickleStepTestStepTest {
         assertThat(scenario.getError(), is(expectedError));
     }
 
-    private static ArgumentMatcher<Scenario> scenarioDoesNotHave(final Throwable type) {
-        return argument -> !type.equals(argument.getError());
-    }
-
     @Test
     void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
         doThrow(TestAbortedException.class).when(definitionMatch).runStep(any());
@@ -224,7 +224,7 @@ class PickleStepTestStepTest {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
 
-        assertThat(scenario.getStatus(), is(equalTo(Status.FAILED)));
+        assertThat(scenario.getStatus(), is(equalTo(FAILED)));
     }
 
     @Test
@@ -234,7 +234,7 @@ class PickleStepTestStepTest {
         boolean skipNextStep = step.run(testCase, bus, scenario, false);
         assertTrue(skipNextStep);
 
-        assertThat(scenario.getStatus(), is(equalTo(Status.PENDING)));
+        assertThat(scenario.getStatus(), is(equalTo(PENDING)));
     }
 
     @Test

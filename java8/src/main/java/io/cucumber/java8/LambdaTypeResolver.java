@@ -1,7 +1,7 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.TypeResolver;
-import io.cucumber.core.exception.CucumberException;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -22,13 +22,13 @@ final class LambdaTypeResolver implements TypeResolver {
 
     @Override
     public Type resolve() {
-        if (net.jodah.typetools.TypeResolver.Unknown.class.equals(type)) {
-            return Object.class;
-        }
-        return requireNonMapOrListType(type);
+        return requireNonMapOrListType(getType());
     }
 
     public Type getType() {
+        if (net.jodah.typetools.TypeResolver.Unknown.class.equals(type)) {
+            return Object.class;
+        }
         return type;
     }
 
@@ -37,7 +37,7 @@ final class LambdaTypeResolver implements TypeResolver {
             Class<?> argumentClass = (Class<?>) argumentType;
             if (List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
                 throw withLocation(
-                    new CucumberException(
+                    new CucumberBackendException(
                         format("Can't use %s in lambda step definition \"%s\". " +
                                 "Declare a DataTable argument instead and convert " +
                                 "manually with asList/asLists/asMap/asMaps",
@@ -47,7 +47,7 @@ final class LambdaTypeResolver implements TypeResolver {
         return argumentType;
     }
 
-    private CucumberException withLocation(CucumberException exception) {
+    private CucumberBackendException withLocation(CucumberBackendException exception) {
         exception.setStackTrace(new StackTraceElement[]{location});
         return exception;
     }

@@ -4,6 +4,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
 ### Added
+ * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
+   that wouldn't normally affect the timeline formatter. However, it did prevent some organisations from downloading the cucumber-core jar because nexus would block it.
  * [Core] Add `object-factory` option to CLI and `@CucumberOptions`. ([#1710](https://github.com/cucumber/cucumber-jvm/pull/1710) Ralph Kar)
  * [Java] Allow parameter types access to the test context ([#851](https://github.com/cucumber/cucumber-jvm/issues/851), [#1458](https://github.com/cucumber/cucumber-jvm/issues/1458) M.P. Korstanje)
    - Add `@ParameterType` alternative for `TypeRegistry.defineParameterType`
@@ -23,7 +25,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.dry-run
     - cucumber.execution.limit
     - cucumber.execution.order
-    - cucumber.execution.parallel.config.fixed.parallelism
     - cucumber.execution.strict
     - cucumber.execution.wip
     - cucumber.feature
@@ -72,18 +73,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Adds dedicated `io.cucumber.docstring.DocString` object to use in step definitions
     - Adds `TypeRegistry.defineDocStringType`
     - Adds `@DocStringType` alternative for `TypeRegistry.defineDocStringType`
-
-### Deprecated
- * [Core] Deprecate `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
-   - Prefer using library based solutions
-    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
-    * [Awaitility](https://github.com/awaitility/awaitility)
-    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
     
 ### Removed
  - [Core] Remove deprecated tag syntax. 
  - [Core] Remove `StepDefinitionReporter` ([#1635](https://github.com/cucumber/cucumber-jvm/issues/1635) M.P. Korstanje, Tim te Beek)
    - Listen `StepDefined` events instead
+ * [Core] Remove `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
+   - Prefer using library based solutions
+    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
+    * [Awaitility](https://github.com/awaitility/awaitility)
+    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
  
 ### Fixed
  - [Java8] Set default before hook order to the same after hook (1000) 
