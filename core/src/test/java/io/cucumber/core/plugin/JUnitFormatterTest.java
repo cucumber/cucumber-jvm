@@ -1,24 +1,18 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
+import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 import org.opentest4j.TestAbortedException;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -31,8 +25,8 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
+import static org.xmlunit.matchers.ValidationMatcher.valid;
 
 class JUnitFormatterTest {
 
@@ -43,30 +37,36 @@ class JUnitFormatterTest {
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
     private Duration stepDuration = null;
+    private boolean strict = false;
+
+    private static void assertXmlEqual(Object expected, Object actual) throws IOException {
+        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
+        assertThat(actual, valid(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/surefire-test-report-3.0.xsd")));
+    }
 
     @Test
     void featureSimpleTest() throws Exception {
         File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
-        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_1.report.xml", report);
+        assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_1.report.xml"), report);
     }
 
     @Test
     void featureWithBackgroundTest() throws Exception {
         File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_2.feature"));
-        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_2.report.xml", report);
+        assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_2.report.xml"), report);
     }
 
     @Test
     void featureWithOutlineTest() throws Exception {
         File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_3.feature"));
-        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_3.report.xml", report);
+        assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_3.report.xml"), report);
     }
 
     @Test
     void featureSimpleStrictTest() throws Exception {
         boolean strict = true;
         File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"), strict);
-        assertXmlEqual("io/cucumber/core/plugin//JUnitFormatterTest_1_strict.report.xml", report);
+        assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_1_strict.report.xml"), report);
     }
 
     @Test
@@ -86,13 +86,52 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
             "        <system-out><![CDATA[" +
             "Given first step............................................................passed\n" +
             "When second step............................................................passed\n" +
             "Then third step.............................................................passed\n" +
             "]]></system-out>\n" +
+            "    </testcase>\n" +
+            "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
+    void should_format_empty_scenario() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+            "Feature: feature name\n" +
+                "  Scenario: scenario name\n");
+        features.add(feature);
+        stepDuration = Duration.ofMillis(1L);
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
+            "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
+            "        <skipped message=\"The scenario has no steps\"/>\n" +
+            "    </testcase>\n" +
+            "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
+    void should_format_empty_scenario_strict() throws Throwable {
+        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+            "Feature: feature name\n" +
+                "  Scenario: scenario name\n");
+        features.add(feature);
+        stepDuration = Duration.ofMillis(1L);
+        strict = true;
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
+            "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
+            "        <failure message=\"The scenario has no steps\" type=\"java.lang.Exception\"/>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -111,13 +150,13 @@ class JUnitFormatterTest {
         stepsToResult.put("first step", result("skipped", exception));
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
-        stepDuration = Duration.ofMillis(1L);
+        stepDuration = Duration.ofMillis(1);
 
         String formatterOutput = runFeaturesWithFormatter();
 
         String stackTrace = getStackTrace(exception);
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
             "        <skipped message=\"" + stackTrace.replace("\n\t", "&#10;&#9;").replaceAll("\r", "&#13;") + "\"><![CDATA[" +
             "Given first step............................................................skipped\n" +
@@ -149,7 +188,7 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
             "        <skipped><![CDATA[" +
             "Given first step............................................................pending\n" +
@@ -178,16 +217,15 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
-            "        <failure message=\"the stack trace\"><![CDATA[" +
+            "        <failure message=\"the message\" type=\"io.cucumber.core.runner.TestHelper$1MockedTestAbortedException\"><![CDATA[" +
             "Given first step............................................................passed\n" +
             "When second step............................................................passed\n" +
             "Then third step.............................................................failed\n" +
             "\n" +
             "StackTrace:\n" +
-            "the stack trace" +
-            "]]></failure>\n" +
+            "the stack trace]]></failure>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -211,9 +249,9 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
-            "        <failure message=\"the stack trace\"><![CDATA[" +
+            "        <failure message=\"the message\" type=\"io.cucumber.core.runner.TestHelper$1MockedTestAbortedException\"><![CDATA[" +
             "Given first step............................................................skipped\n" +
             "When second step............................................................skipped\n" +
             "Then third step.............................................................skipped\n" +
@@ -244,7 +282,7 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
             "        <skipped><![CDATA[" +
             "Given first step............................................................skipped\n" +
@@ -275,9 +313,9 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
-            "        <failure message=\"the stack trace\"><![CDATA[" +
+            "        <failure message=\"the message\" type=\"io.cucumber.core.runner.TestHelper$1MockedTestAbortedException\"><![CDATA[" +
             "Given first step............................................................skipped\n" +
             "When second step............................................................skipped\n" +
             "Then third step.............................................................skipped\n" +
@@ -308,9 +346,9 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
-            "        <failure message=\"the stack trace\"><![CDATA[" +
+            "        <failure message=\"the message\" type=\"io.cucumber.core.runner.TestHelper$1MockedTestAbortedException\"><![CDATA[" +
             "Given first step............................................................passed\n" +
             "When second step............................................................passed\n" +
             "Then third step.............................................................passed\n" +
@@ -340,7 +378,7 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
             "        <system-out><![CDATA[" +
             "* first step................................................................passed\n" +
@@ -373,7 +411,7 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0.006\">\n" +
             "    <testcase classname=\"feature name\" name=\"outline_name\" time=\"0.003\">\n" +
             "        <system-out><![CDATA[" +
             "Given first step \"a\"........................................................passed\n" +
@@ -420,7 +458,7 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"4\" time=\"0.012\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"4\" time=\"0.012\">\n" +
             "    <testcase classname=\"feature name\" name=\"outline name\" time=\"0.003\">\n" +
             "        <system-out><![CDATA[" +
             "Given first step \"a\"........................................................passed\n" +
@@ -475,7 +513,7 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
+            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0.006\">\n" +
             "    <testcase classname=\"feature name\" name=\"outline name a\" time=\"0.003\">\n" +
             "        <system-out><![CDATA[" +
             "Given first step \"a\"........................................................passed\n" +
@@ -528,7 +566,7 @@ class JUnitFormatterTest {
     private String runFeaturesWithFormatter() throws IOException {
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final JUnitFormatter formatter = createJUnitFormatter(report);
-
+        formatter.setStrict(strict);
         TestHelper.builder()
             .withFormatterUnderTest(formatter)
             .withFeatures(features)
@@ -545,23 +583,6 @@ class JUnitFormatterTest {
         String formatterOutput = scanner.useDelimiter("\\A").next();
         scanner.close();
         return formatterOutput;
-    }
-
-    private void assertXmlEqual(String expectedPath, File actual) throws IOException, SAXException {
-        XMLUnit.setIgnoreWhitespace(true);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        InputStreamReader control = new InputStreamReader(
-            contextClassLoader.getResourceAsStream(expectedPath),
-            StandardCharsets.UTF_8
-        );
-        Diff diff = new Diff(control, new FileReader(actual));
-        assertThat("XML files are similar " + diff, diff.identical(), is(equalTo(true)));
-    }
-
-    private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, actual);
-        assertThat("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical(), is(equalTo(true)));
     }
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {

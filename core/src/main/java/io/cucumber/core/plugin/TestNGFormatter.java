@@ -7,6 +7,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.core.exception.CucumberException;
@@ -33,13 +34,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static java.time.Duration.ZERO;
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Locale.ROOT;
 
 public final class TestNGFormatter implements EventListener, StrictAware {
@@ -57,6 +58,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private String currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
+    private Instant started;
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
@@ -77,10 +79,15 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestRunStarted.class, this::handleTestRunStarted);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
+        publisher.registerHandlerFor(TestRunFinished.class, this::handleTestRunFinished);
+    }
+
+    private void handleTestRunStarted(TestRunStarted event) {
+        this.started = event.getInstant();
     }
 
     @Override
@@ -104,7 +111,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         root = document.createElement("test-method");
         clazz.appendChild(root);
         testCase = new TestCase(event.getTestCase());
-        testCase.start(root);
+        testCase.start(root, event.getInstant());
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -117,19 +124,21 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestCaseFinished(TestCaseFinished event) {
-        testCase.finish(document, root);
+        testCase.finish(document, root, event.getInstant());
     }
 
-    private void finishReport() {
+    private void handleTestRunFinished(TestRunFinished event) {
         try {
+            Instant finished = event.getInstant();
+            Duration duration = Duration.between(started, finished);
             results.setAttribute("total", String.valueOf(getElementsCountByAttribute(suite, "status", ".*")));
             results.setAttribute("passed", String.valueOf(getElementsCountByAttribute(suite, "status", "PASS")));
             results.setAttribute("failed", String.valueOf(getElementsCountByAttribute(suite, "status", "FAIL")));
             results.setAttribute("skipped", String.valueOf(getElementsCountByAttribute(suite, "status", "SKIP")));
             suite.setAttribute("name", TestNGFormatter.class.getName());
-            suite.setAttribute("duration-ms", getTotalDuration(suite.getElementsByTagName("test-method")));
+            suite.setAttribute("duration-ms", String.valueOf(duration.toMillis()));
             test.setAttribute("name", TestNGFormatter.class.getName());
-            test.setAttribute("duration-ms", getTotalDuration(suite.getElementsByTagName("test-method")));
+            test.setAttribute("duration-ms", String.valueOf(duration.toMillis()));
 
             TransformerFactory factory = TransformerFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -170,34 +179,20 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         return count;
     }
 
-    private String getTotalDuration(NodeList testCaseNodes) {
-        long totalDuration = 0;
-        for (int i = 0; i < testCaseNodes.getLength(); i++) {
-            try {
-                String duration = testCaseNodes.item(i).getAttributes().getNamedItem("duration-ms").getNodeValue();
-                totalDuration += Long.parseLong(duration);
-            } catch (NumberFormatException | NullPointerException e) {
-                throw new CucumberException(e);
-            }
-        }
-        return String.valueOf(totalDuration);
-    }
-
     final class TestCase {
 
         private final List<PickleStepTestStep> steps = new ArrayList<>();
         private final List<Result> results = new ArrayList<>();
         private final List<Result> hooks = new ArrayList<>();
         private final io.cucumber.plugin.event.TestCase testCase;
-        private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         TestCase(io.cucumber.plugin.event.TestCase testCase) {
             this.testCase = testCase;
         }
 
-        private void start(Element element) {
+        private void start(Element element, Instant instant) {
             element.setAttribute("name", calculateElementName(testCase));
-            element.setAttribute("started-at", dateFormat.format(new Date()));
+            element.setAttribute("started-at", ISO_INSTANT.format(instant));
         }
 
         private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {
@@ -211,9 +206,9 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             }
         }
 
-        void finish(Document doc, Element element) {
+        void finish(Document doc, Element element, Instant instant) {
             element.setAttribute("duration-ms", calculateTotalDurationString());
-            element.setAttribute("finished-at", dateFormat.format(new Date()));
+            element.setAttribute("finished-at", ISO_INSTANT.format(instant));
             StringBuilder stringBuilder = new StringBuilder();
             addStepAndResultListing(stringBuilder);
             Result skipped = null;
