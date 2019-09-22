@@ -16,7 +16,7 @@ final class RuntimeOptionsParserTest {
 
     @Test
     void testParseWithObjectFactoryArgument() {
-        RuntimeOptionsBuilder optionsBuilder = this.parser.parse(Arrays.asList("--object-factory", TestObjectFactory.class.getName()));
+        RuntimeOptionsBuilder optionsBuilder = parser.parse(Arrays.asList("--object-factory", TestObjectFactory.class.getName()));
         assertNotNull(optionsBuilder);
         RuntimeOptions options = optionsBuilder.build();
         assertNotNull(options);
