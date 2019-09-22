@@ -1,21 +1,20 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.core.exception.CucumberException;
-
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.StrictAware;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,10 +25,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import static java.util.Locale.ROOT;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,13 +33,18 @@ import java.io.Writer;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Locale.ROOT;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 public final class JUnitFormatter implements EventListener, StrictAware {
 
-    private static final long NANOS_PER_SECONDS = SECONDS.toNanos(1L);
+    private static final long MILLIS_PER_SECOND = SECONDS.toMillis(1L);
     private final Writer writer;
     private final Document document;
     private final Element rootElement;
@@ -55,6 +55,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private String currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
+    private Instant started;
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {
@@ -72,13 +73,24 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         return testCaseName + (testCaseName.contains(" ") ? " " : "_") + exampleNumber;
     }
 
+    private static String calculateTotalDurationString(Duration result) {
+        DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        double duration = (double) result.toMillis() / MILLIS_PER_SECOND;
+        return numberFormat.format(duration);
+    }
+
     @Override
     public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestRunStarted.class, this::handleTestRunStarted);
         publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
+        publisher.registerHandlerFor(TestRunFinished.class, this::handleTestRunFinished);
+    }
+
+    private void handleTestRunStarted(TestRunStarted event) {
+        this.started = event.getInstant();
     }
 
     @Override
@@ -101,7 +113,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         testCase.writeElement(root);
         rootElement.appendChild(root);
 
-        increaseAttributeValue(rootElement, "tests");
+        increaseTestCount(rootElement);
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -119,13 +131,15 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
     }
 
-    private void finishReport() {
+    private void handleTestRunFinished(TestRunFinished event) {
         try {
+            Instant finished = event.getInstant();
             // set up a transformer
             rootElement.setAttribute("name", JUnitFormatter.class.getName());
             rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
             rootElement.setAttribute("skipped", String.valueOf(rootElement.getElementsByTagName("skipped").getLength()));
-            rootElement.setAttribute("time", getTotalDuration(rootElement.getElementsByTagName("testcase")));
+            rootElement.setAttribute("errors", "0");
+            rootElement.setAttribute("time", calculateTotalDurationString(Duration.between(started, finished)));
 
             TransformerFactory factory = TransformerFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -148,28 +162,12 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
     }
 
-    private String getTotalDuration(NodeList testCaseNodes) {
-        double totalDurationSecondsForAllTimes = 0.0d;
-        for (int i = 0; i < testCaseNodes.getLength(); i++) {
-            try {
-                double testCaseTime =
-                    Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
-                totalDurationSecondsForAllTimes += testCaseTime;
-            } catch (NumberFormatException | NullPointerException e) {
-                throw new CucumberException(e);
-            }
-        }
-        DecimalFormat nfmt = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        nfmt.applyPattern("0.######");
-        return nfmt.format(totalDurationSecondsForAllTimes);
-    }
-
-    private void increaseAttributeValue(Element element, String attribute) {
+    private void increaseTestCount(Element element) {
         int value = 0;
-        if (element.hasAttribute(attribute)) {
-            value = Integer.parseInt(element.getAttribute(attribute));
+        if (element.hasAttribute("tests")) {
+            value = Integer.parseInt(element.getAttribute("tests"));
         }
-        element.setAttribute(attribute, String.valueOf(++value));
+        element.setAttribute("tests", String.valueOf(++value));
     }
 
     final class TestCase {
@@ -203,7 +201,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
 
         void addTestCaseElement(Document doc, Element tc, Result result) {
-            tc.setAttribute("time", calculateTotalDurationString(result));
+            tc.setAttribute("time", calculateTotalDurationString(result.getDuration()));
 
             StringBuilder sb = new StringBuilder();
             addStepAndResultListing(sb);
@@ -211,16 +209,17 @@ public final class JUnitFormatter implements EventListener, StrictAware {
             Status status = result.getStatus();
             if (status.is(Status.FAILED) || status.is(Status.AMBIGUOUS)) {
                 addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "failure", printStackTrace(result.getError()));
+                child = createFailure(doc, sb, result.getError().getMessage(), result.getError().getClass());
             } else if (status.is(Status.PENDING) || status.is(Status.UNDEFINED)) {
                 if (strict) {
-                    child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
+                    Throwable error = result.getError();
+                    child = createFailure(doc, sb, "The scenario has pending or undefined step(s)", error == null ? Exception.class : error.getClass());
                 } else {
                     child = createElement(doc, sb, "skipped");
                 }
             } else if (status.is(Status.SKIPPED) && result.getError() != null) {
                 addStackTrace(sb, result);
-                child = createElementWithMessage(doc, sb, "skipped", printStackTrace(result.getError()));
+                child = createSkipped(doc, sb, printStackTrace(result.getError()));
             } else {
                 child = createElement(doc, sb, "system-out");
             }
@@ -229,18 +228,16 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
 
         void handleEmptyTestCase(Document doc, Element tc, Result result) {
-            tc.setAttribute("time", calculateTotalDurationString(result));
+            tc.setAttribute("time", calculateTotalDurationString(result.getDuration()));
 
-            String resultType = strict ? "failure" : "skipped";
-            Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
+            Element child;
+            if (strict) {
+                child = createFailure(doc, new StringBuilder(), "The scenario has no steps", Exception.class);
+            } else {
+                child = createSkipped(doc, new StringBuilder(), "The scenario has no steps");
+            }
 
             tc.appendChild(child);
-        }
-
-        private String calculateTotalDurationString(Result result) {
-            DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-            numberFormat.applyPattern("0.######");
-            return numberFormat.format(((double) result.getDuration().toNanos() / NANOS_PER_SECONDS));
         }
 
         private void addStepAndResultListing(StringBuilder sb) {
@@ -275,9 +272,16 @@ public final class JUnitFormatter implements EventListener, StrictAware {
             return stringWriter.toString();
         }
 
-        private Element createElementWithMessage(Document doc, StringBuilder sb, String elementType, String message) {
-            Element child = createElement(doc, sb, elementType);
+        private Element createSkipped(Document doc, StringBuilder sb, String message) {
+            Element child = createElement(doc, sb, "skipped");
             child.setAttribute("message", message);
+            return child;
+        }
+
+        private Element createFailure(Document doc, StringBuilder sb, String message, Class<? extends Throwable> type) {
+            Element child = createElement(doc, sb, "failure");
+            child.setAttribute("message", message);
+            child.setAttribute("type", type.getName());
             return child;
         }
 
@@ -290,6 +294,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
             child.appendChild(doc.createCDATASection(normalizedLineEndings));
             return child;
         }
-
     }
+
 }

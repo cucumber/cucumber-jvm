@@ -36,7 +36,6 @@ class LambdaGlueTest {
         assertHook(beforeHook, "taxExpression", DEFAULT_BEFORE_ORDER);
         lambdaGlue.Before(42, this::hookNoArgs);
         assertHook(beforeHook, EMPTY_TAG_EXPRESSION, 42);
-        assertHook(beforeHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.Before("taxExpression", 42, this::hookNoArgs);
         assertHook(beforeHook, "taxExpression", 42);
 

@@ -30,6 +30,7 @@ import io.cucumber.plugin.event.Status;
 import org.mockito.stubbing.Answer;
 import org.opentest4j.TestAbortedException;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
@@ -133,16 +134,22 @@ public class TestHelper {
     }
 
     private static TestAbortedException mockAssertionFailedError() {
-        TestAbortedException error = mock(TestAbortedException.class);
-        Answer<Object> printStackTraceHandler = invocation -> {
-            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
-            writer.print("the stack trace");
-            return null;
-        };
-        doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
-        when(error.getStackTrace()).thenReturn(new StackTraceElement[0]);
-        when(error.getMessage()).thenReturn("the message");
-        return error;
+        class MockedTestAbortedException extends TestAbortedException {
+            MockedTestAbortedException() {
+                super("the message");
+            }
+
+            @Override
+            public void printStackTrace(PrintStream s) {
+                s.print("the stack trace");
+            }
+
+            @Override
+            public void printStackTrace(PrintWriter s) {
+                s.print("the stack trace");
+            }
+        }
+        return new MockedTestAbortedException();
     }
 
     private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
@@ -521,4 +528,5 @@ public class TestHelper {
             return this.instance;
         }
     }
+
 }
