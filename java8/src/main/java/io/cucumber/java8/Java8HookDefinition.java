@@ -8,21 +8,19 @@ import static java.util.Objects.requireNonNull;
 final class Java8HookDefinition extends AbstractGlueDefinition implements HookDefinition {
     private final String tagExpression;
     private final int order;
-    private final long timeoutMillis;
 
-    private Java8HookDefinition(String tagExpression, int order, long timeoutMillis, Object body) {
+    private Java8HookDefinition(String tagExpression, int order, Object body) {
         super(body, new Exception().getStackTrace()[3]);
         this.order = order;
-        this.timeoutMillis = timeoutMillis;
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
     }
 
-    Java8HookDefinition(String tagExpression, int order, long timeoutMillis, HookBody hookBody) {
-        this(tagExpression, order, timeoutMillis, (Object) hookBody);
+    Java8HookDefinition(String tagExpression, int order, HookBody hookBody) {
+        this(tagExpression, order, (Object) hookBody);
     }
 
-    Java8HookDefinition(String tagExpression, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
-        this(tagExpression, order, timeoutMillis, (Object) hookNoArgsBody);
+    Java8HookDefinition(String tagExpression, int order, HookNoArgsBody hookNoArgsBody) {
+        this(tagExpression, order, (Object) hookNoArgsBody);
     }
 
     @Override

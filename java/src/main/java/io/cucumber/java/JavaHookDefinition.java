@@ -11,14 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
-    private final long timeoutMillis;
     private final String tagExpression;
     private final int order;
     private final Lookup lookup;
 
-    JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
+    JavaHookDefinition(Method method, String tagExpression, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
-        this.timeoutMillis = timeoutMillis;
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
         this.lookup = lookup;

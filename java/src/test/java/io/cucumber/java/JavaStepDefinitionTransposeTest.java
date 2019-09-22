@@ -28,7 +28,7 @@ class JavaStepDefinitionTransposeTest {
     private boolean isTransposed(Method method) {
         Steps steps = new Steps();
         Lookup lookup = new SingletonFactory(steps);
-        StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", 0, lookup);
+        StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", lookup);
 
         return stepDefinition.parameterInfos().get(0).isTransposed();
     }

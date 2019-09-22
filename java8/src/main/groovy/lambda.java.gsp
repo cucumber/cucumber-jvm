@@ -49,26 +49,6 @@ public interface ${className} extends LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A0.class, body));
     }
 
-    /**
-     * Creates a new step definition.
-     *
-     * The timeout controls how long step is allowed to run. Cucumber
-     * will mark the step as failed when exceeded. When the maximum
-     * duration is exceeded the thread will receive an in interrupt.
-     * Note: if the interrupt is ignored cucumber will wait for the this
-     * step to finish.
-     *
-     * @param expression    the cucumber expression
-     * @param timeoutMillis timeout in milliseconds. 0 (default) means no restriction.
-     * @param body          a lambda expression with no parameters
-     * @deprecated use a library based solution instead. E.g. Awaitility
-     * or JUnit 5s Assertions.assertTimeout.
-     */
-    @Deprecated
-    default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A0 body) {
-        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, timeoutMillis, A0.class, body));
-    }
-
     <% (1..9).each { arity ->
       def ts = (1..arity).collect { n -> "T"+n }
       def genericSignature = ts.join(",") %>
@@ -83,29 +63,6 @@ public interface ${className} extends LambdaGlue {
     default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A${arity}<${genericSignature}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A${arity}.class, body));
     }
-
-    /**
-     * Creates a new step definition.
-     *
-     * The timeout controls how long step is allowed to run. Cucumber
-     * will mark the step as failed when exceeded. When the maximum
-     * duration is exceeded the thread will receive an in interrupt.
-     * Note: if the interrupt is ignored cucumber will wait for the this
-     * step to finish.
-     *
-     * @param expression    the cucumber expression
-     * @param timeoutMillis timeout in milliseconds. 0 (default) means no restriction.
-     * @param body          a lambda expression with ${arity} parameters
-     * <% (1..arity).each { i -> %>
-     * @param <T${i}> type of argument ${i} <% } %>
-     * @deprecated use a library based solution instead. E.g. Awaitility
-     * or JUnit 5s Assertions.assertTimeout.
-     */
-    @Deprecated
-    default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, long timeoutMillis, A${arity}<${genericSignature}> body) {
-        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, timeoutMillis, A${arity}.class, body));
-    }
-
     <% } %>
 <% } %>
 }

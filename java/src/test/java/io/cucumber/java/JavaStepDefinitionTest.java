@@ -29,7 +29,7 @@ class JavaStepDefinitionTest {
     @Test
     void can_define_step() throws Throwable {
         Method method = JavaStepDefinitionTest.class.getMethod("one_string_argument", String.class);
-        JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", 0, lookup);
+        JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", lookup);
         definition.execute(new Object[]{"one_string_argument"});
         assertThat(argument, is("one_string_argument"));
     }
@@ -41,7 +41,7 @@ class JavaStepDefinitionTest {
     @Test
     void can_provide_location_of_step() throws Throwable {
         Method method = JavaStepDefinitionTest.class.getMethod("method_throws");
-        JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", 0, lookup);
+        JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", lookup);
         CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class, () -> definition.execute(new Object[0]));
         Optional<StackTraceElement> match = stream(exception.getInvocationTargetExceptionCause().getStackTrace()).filter(definition::isDefinedAt).findFirst();
         StackTraceElement stackTraceElement = match.get();
