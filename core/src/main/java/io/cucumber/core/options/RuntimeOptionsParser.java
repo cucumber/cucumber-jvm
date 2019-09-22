@@ -158,22 +158,22 @@ final class RuntimeOptionsParser {
                 System.out.println(VERSION);
                 System.exit(0);
             } else if (arg.equals("--i18n")) {
-                String nextArg = args.remove(0);
+                String nextArg = removeArgFor(arg, args);
                 System.exit(printI18n(nextArg));
             } else if (arg.equals("--threads")) {
-                int threads = Integer.parseInt(args.remove(0));
+                int threads = Integer.parseInt(removeArgFor(arg, args));
                 if (threads < 1) {
                     throw new CucumberException("--threads must be > 0");
                 }
                 parsedOptions.setThreads(threads);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
-                String gluePath = args.remove(0);
+                String gluePath = removeArgFor(arg, args);
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-                parsedOptions.addTagFilter(args.remove(0));
+                parsedOptions.addTagFilter(removeArgFor(arg, args));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
-                parsedOptions.addPluginName(args.remove(0), arg.equals("--add-plugin"));
+                parsedOptions.addPluginName(removeArgFor(arg, args), arg.equals("--add-plugin"));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 parsedOptions.setDryRun(!arg.startsWith("--no-"));
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
@@ -181,24 +181,24 @@ final class RuntimeOptionsParser {
             } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
             } else if (arg.equals("--snippets")) {
-                String nextArg = args.remove(0);
+                String nextArg = removeArgFor(arg, args);
                 parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
             } else if (arg.equals("--name") || arg.equals("-n")) {
-                String nextArg = args.remove(0);
+                String nextArg = removeArgFor(arg, args);
                 Pattern pattern = Pattern.compile(nextArg);
                 parsedOptions.addNameFilter(pattern);
             } else if (arg.equals("--wip") || arg.equals("-w")) {
                 parsedOptions.setWip(true);
             } else if (arg.equals("--order")) {
-                parsedOptions.setPickleOrder(PickleOrderParser.parse(args.remove(0)));
+                parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals("--count")) {
-                int count = Integer.parseInt(args.remove(0));
+                int count = Integer.parseInt(removeArgFor(arg, args));
                 if (count < 1) {
                     throw new CucumberException("--count must be > 0");
                 }
                 parsedOptions.setCount(count);
             } else if (arg.equals("--object-factory")) {
-                String objectFactoryClassName = args.remove(0);
+                String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {
                 printUsage();
@@ -215,6 +215,14 @@ final class RuntimeOptionsParser {
             }
         }
         return parsedOptions;
+    }
+
+    private String removeArgFor(String arg, List<String> args) {
+        if (!args.isEmpty()) {
+            return args.remove(0);
+        }
+        printUsage();
+        throw new CucumberException("Missing argument for " + arg);
     }
 
 }
