@@ -1,7 +1,0 @@
-*.iml
-*.class
-local.properties
-.idea/
-bin/
-gen/
-out/

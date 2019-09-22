@@ -4,40 +4,50 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-picocontainer</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: PicoContainer</name>
 
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.picocontainer</project.Automatic-Module-Name>
+        <picocontainer.version>2.15</picocontainer.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
+            <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>gherkin</artifactId>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.picocontainer</groupId>
             <artifactId>picocontainer</artifactId>
-            <scope>compile</scope>
+            <version>${picocontainer.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -57,12 +67,12 @@
                         <configuration>
                             <target>
                                 <echo message="Running CLI test for picocontainer" />
-                                <java classname="cucumber.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
+                                <java classname="io.cucumber.core.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
                                     <arg value="--plugin" />
                                     <arg value="progress" />
                                     <arg value="--glue" />
-                                    <arg value="cucumber.runtime.java.picocontainer" />
-                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
+                                    <arg value="io.cucumber.picocontainer" />
+                                    <arg value="${basedir}/src/test/resources/io/cucumber/picocontainer" />
                                 </java>
                             </target>
                         </configuration>
@@ -71,4 +81,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

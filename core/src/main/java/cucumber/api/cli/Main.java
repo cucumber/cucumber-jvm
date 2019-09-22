@@ -1,39 +1,30 @@
 package cucumber.api.cli;
 
-import cucumber.runtime.ClassFinder;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.MultiLoader;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderClassFinder;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static java.util.Arrays.asList;
-
+/**
+ * @deprecated use {@link io.cucumber.core.cli.Main} instead.
+ */
+@Deprecated
 public class Main {
 
-    public static void main(String[] argv) throws Throwable {
-        byte exitstatus = run(argv, Thread.currentThread().getContextClassLoader());
-        System.exit(exitstatus);
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String[] argv) {
+        byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
+        System.exit(exitStatus);
     }
 
     /**
      * Launches the Cucumber-JVM command line.
      *
-     * @param argv        runtime options. See details in the {@code cucumber.api.cli.Usage.txt} resource.
+     * @param argv        runtime options. See details in the {@code io.cucumber.core.options.Usage.txt} resource.
      * @param classLoader classloader used to load the runtime
      * @return 0 if execution was successful, 1 if it was not (test failures)
-     * @throws IOException if resources couldn't be loaded during the run.
      */
-    public static byte run(String[] argv, ClassLoader classLoader) throws IOException {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new ArrayList<String>(asList(argv)));
-
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        Runtime runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
-        runtime.run();
-        return runtime.exitStatus();
+    public static byte run(String[] argv, ClassLoader classLoader) {
+        log.warn("You are using deprecated Main class. Please use io.cucumber.core.cli.Main");
+        return io.cucumber.core.cli.Main.run(argv, classLoader);
     }
 }

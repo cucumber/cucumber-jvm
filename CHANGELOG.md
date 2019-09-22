@@ -1,15 +1,470 @@
+
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [2.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
 ### Added
+ * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
+   that wouldn't normally affect the timeline formatter. However, it did prevent some organisations from downloading the cucumber-core jar because nexus would block it.
+ * [Core] Add `object-factory` option to CLI and `@CucumberOptions`. ([#1710](https://github.com/cucumber/cucumber-jvm/pull/1710) Ralph Kar)
+ * [Java] Allow parameter types access to the test context ([#851](https://github.com/cucumber/cucumber-jvm/issues/851), [#1458](https://github.com/cucumber/cucumber-jvm/issues/1458) M.P. Korstanje)
+   - Add `@ParameterType` alternative for `TypeRegistry.defineParameterType`
+   - Add `@DataTableType` alternative for `TypeRegistry.defineDataTableType`
+   - Add `@DefaultParameterTransformer` alternative for `TypeRegistry.setDefaultParameterTransformer`
+   - Add `@DefaultDataTableEntryTransformer` alternative for `TypeRegistry.setDefaultDataTableEntryTransformer`
+     - Converts title case headers to property names ([#1751](https://github.com/cucumber/cucumber-jvm/pull/1751) Anton Deriabin, M.P. Korstanje) 
+   - Add `@DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
+ * [Java] Support repeatable step definition annotations ([#1341](https://github.com/cucumber/cucumber-jvm/issues/1341), [#1467](https://github.com/cucumber/cucumber-jvm/pull/1467) M.P. Korstanje)
+ * [Core] Add name to `EmbedEvent` ([#1698](https://github.com/cucumber/cucumber-jvm/pull/1698) Konrad M.) 
+ * [TestNG] Print suggested snippets per scenario ([#1743](https://github.com/cucumber/cucumber-jvm/pull/1743) M.P. Korstanje)
+ * [JUnit] Print suggested snippets per scenario ([#1740](https://github.com/cucumber/cucumber-jvm/pull/1740) M.P. Korstanje)
+ * [DeltaSpike] Add ObjectFactory for Apache DeltaSpike ([#1616](https://github.com/cucumber/cucumber-jvm/pull/1616) Toepi)
+   - Supports generic CDI containers including Weld, OpenEJB and OpenWebBeans
+ * [Core] Add property based runtime options ([#1675](https://github.com/cucumber/cucumber-jvm/pull/1675), [#1741](https://github.com/cucumber/cucumber-jvm/pull/1741) M.P. Korstanje)
+    - cucumber.ansi-colors.disabled
+    - cucumber.execution.dry-run
+    - cucumber.execution.limit
+    - cucumber.execution.order
+    - cucumber.execution.strict
+    - cucumber.execution.wip
+    - cucumber.feature
+    - cucumber.filter.name
+    - cucumber.filter.tags
+    - cucumber.glue
+    - cucumber.object-factory
+    - cucumber.plugin
+    - cucumber.snippet-type
+
 ### Changed
-### Deprecated
+ * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449), [#1760](https://github.com/cucumber/cucumber-jvm/pull/1760) M.P. Korstanje)
+   - Adds `Automatic-Module-Name` to each module
+   - Roots packages in `io.cucumber.<module>`
+   - Use `find . -name '*.java' -exec sed -i 's/import cucumber.api/import io.cucumber/g' {} \; -exec sed -i 's/cucumber.CucumberOptions/cucumber.junit.CucumberOptions/g' {} \;` to adopt 90% of the new package structure
+   - Use @API Guardian annotations to mark the public API ([#1536](https://github.com/cucumber/cucumber-jvm/issues/1536) M.P. Korstanje)
+   - Limits the transitive use `cucumber-core` for regular users
+ * [All] Compile using source and target level 8 ([#1611](https://github.com/cucumber/cucumber-jvm/issues/1611) M.P. Korstanje)
+ * [Java8] Remove `cucumber-java8` dependency on `cucumber-java`
+   - To use both lambda and annotation based step definitions add a dependency on `cucumber-java` and `cucumber-java8`
+ * [Core] Load `Backend` implementations via SPI ([#1450](https://github.com/cucumber/cucumber-jvm/issues/1450), [#1463](https://github.com/cucumber/cucumber-jvm/issues/1463) John Patrick, M.P. Korstanje)
+ * [Core] Load `ObjectFactory` via SPI
+ * [Core] Share object factory  between all backend implementations
+    - [CDI2] No longer depends on `cucumber-java`
+    - [Guice] No longer depends on `cucumber-java`
+    - [Needle] No longer depends on `cucumber-java`
+    - [Pico] No longer depends on `cucumber-java`
+    - [Spring] No longer depends on `cucumber-java`
+    - [Weld] No longer depends on `cucumber-java`
+ * [Core] Use feature file language to parse numbers in the type registry
+   - Unless explicitly set using the `TypeRegistryConfigurer`
+ * [Core] Use Java Time API in Events ([#1620](https://github.com/cucumber/cucumber-jvm/pull/1620) Yatharth Zutshi)
+ * [Core] Upgrade `cucumber-expressions` to 8.0.0
+    - Simplify heuristics to distinguish between Cucumber Expressions and Regular Expressions ([#cucumber/515](https://github.com/cucumber/cucumber/issues/515), [#cucumber/581](https://github.com/cucumber/cucumber/pull/581), [#1581](https://github.com/cucumber/cucumber-jvm/issues/1581) M.P.Korstanje)
+    - Improve decimal number parsing ([#cucumber/600](https://github.com/cucumber/cucumber/issues/600), [#cucumber/605](https://github.com/cucumber/cucumber/pull/605), [#cucumber/669](https://github.com/cucumber/cucumber/issues/669), [#cucumber/672](https://github.com/cucumber/cucumber/pull/672), [#cucumber/675](https://github.com/cucumber/cucumber/pull/675), [#cucumber/677](https://github.com/cucumber/cucumber/pull/677) Aslak Hellesøy, Vincent Psarga, Luke Hill, M.P. Korstanje )
+    - Recognize look around as a non-capturing regex group ([#cucumber/481](https://github.com/cucumber/cucumber/issues/576), [#cucumber/593](https://github.com/cucumber/cucumber/pull/593) Luke Hill)
+    - Prefer type from method over type from ParameterType   ([#cucumber/658](https://github.com/cucumber/cucumber/pull/658) [#cucumber/659](https://github.com/cucumber/cucumber/pull/659) M.P. Korstanje)
+ * [Core] Upgrade `datatable` to 3.0.0 
+    - Empty cells are `null` values in `DataTable` ([1617](https://github.com/cucumber/cucumber-jvm/issues/1617) M.P. Korstanje)        
+    - Improve handling of tables without header ([#cucumber/540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
+    - Remove DataTableType convenience methods ([1643](https://github.com/cucumber/cucumber-jvm/issues/1643) M.P. Korstanje)  
+    - Changes to value type from `Class<?>` to `Type` and return type to `Object` in `TableEntryByTypeTransformer` and `TableCellByTypeTransformer`
+ * [TestNG] Upgrades `testng` to 7.0.0 ([#1743](https://github.com/cucumber/cucumber-jvm/pull/1743) M.P. Korstanje)
+ * [Core] Add dedicated DocStringTypeRegistry ([#1705](https://github.com/cucumber/cucumber-jvm/pull/1705), [#1745](https://github.com/cucumber/cucumber-jvm/pull/1745) Anton Deriabin, M.P. Korstanje)
+    - DocStrings will no longer be converted by table cell converters
+    - Adds dedicated `io.cucumber.docstring.DocString` object to use in step definitions
+    - Adds `TypeRegistry.defineDocStringType`
+    - Adds `@DocStringType` alternative for `TypeRegistry.defineDocStringType`
+    
 ### Removed
+ - [Core] Remove deprecated tag syntax. 
+ - [Core] Remove `StepDefinitionReporter` ([#1635](https://github.com/cucumber/cucumber-jvm/issues/1635) M.P. Korstanje, Tim te Beek)
+   - Listen `StepDefined` events instead
+ * [Core] Remove `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
+   - Prefer using library based solutions
+    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
+    * [Awaitility](https://github.com/awaitility/awaitility)
+    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
+ 
 ### Fixed
+ - [Java8] Set default before hook order to the same after hook (1000) 
+ - [Doc] Fixed various Javadoc issues ([#1586](https://github.com/cucumber/cucumber-jvm/pull/1586) Michiel Leegwater)
+ - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
+ - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765) M.P. Korstanje)
 
+## [4.7.2](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v4.7.2) (2019-08-28)
 
-## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (In Git)
+### Fixed
+ * [JUnit] JUnit will always print undefined steps (M.P. Korstanje) 
+ * [TestNG] TestNG will always print undefined steps (M.P. Korstanje)  
+ 
+## [4.7.1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.0...v4.7.1) (2019-07-28)
+
+### Fixed
+  *  [All] Add missing JPMS config ([#1709](https://github.com/cucumber/cucumber-jvm/pull/1709)  John Patrick)
+    - Add automatic module name for `core`
+    - Add automatic module name for `cd2`
+    - Add automatic module name for `guice`
+
+## [4.7.0](https://github.com/cucumber/cucumber-jvm/compare/v4.6.0...v4.7.0) (2019-07-20)
+
+### Added
+ * [Core] Add property to select io.cucumber.core.backend.ObjectFactory implementation  ([#1700](https://github.com/cucumber/cucumber-jvm/pull/1700) Ralph Kar)
+    - Use `cucumber.object-factory=com.example.CustomObjectFactory` in either `cucucmber.properties`, 
+      environment variables, or system properties  
+
+## [4.6.0](https://github.com/cucumber/cucumber-jvm/compare/v4.5.4...v4.6.0) (2019-07-16)
+
+### Added
+ * [Core] Allow to add names for embeddings ([#1692](https://github.com/cucumber/cucumber-jvm/pull/1693)  Dzieciak)
+
+## [4.5.4](https://github.com/cucumber/cucumber-jvm/compare/v4.5.3...v4.5.4) (2019-07-10)
+
+### Fixed
+ * [Core] Restore Scenario#getSourceTagNames() ([#1689](https://github.com/cucumber/cucumber-jvm/pull/1689)  Tommy Wo)
+
+## [4.5.3](https://github.com/cucumber/cucumber-jvm/compare/v4.5.2...v4.5.3) (2019-07-07)
+
+### Fixed
+ * [Core] Reference correct main class in deprecation warning (M.P. Korstanje)
+
+## [4.5.2](https://github.com/cucumber/cucumber-jvm/compare/v4.5.1...v4.5.2) (2019-07-02)
+
+### Fixed
+ * [Java] Fix ClassCastException on new Transpose annotation ([#1683](https://github.com/cucumber/cucumber-jvm/pull/1683)  Geoffroy Van Elsuve)
+
+## [4.5.1](https://github.com/cucumber/cucumber-jvm/compare/v4.5.0...v4.5.1) (2019-07-01)
+
+### Fixed
+ * [Java] Fix link to new steps in generated Java doc ([#1681](https://github.com/cucumber/cucumber-jvm/pull/1681) M.P. Korstanje)
+
+## [4.5.0](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...v4.5.0) (2019-06-30)
+
+### Changed
+ * [JUnit] JUnit will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Add `summary` and/or `progress` plugins to restore output 
+ * [TestNG] TestNG will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Add `summary` and/or `progress` plugins to restore output
+ * [Java] Use ServiceLoader for Guice, Needle, OpenEJB, Pico, Spring and Weld `ObjectFactory` implementations.
+    - Removes spurious deprecation warning.
+    - Moves `ObjectFactory` implements to `io.cucumber.<module-name>` package.
+
+### Deprecated
+ * [Core] Deprecate `cucumber.api.CucumberOptions` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Use `io.cucumber.junit.CucumberOptions` or `io.cucumber.testng.CucumberOptions` instead
+ * [Core] Deprecate `cucumber.api.cli.Main` ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
+    - Use `io.cucumber.core.cli.Main` instead
+ * [Core] Deprecate `cucumber.api.Scenario`
+    - Use `io.cucumber.core.api.Scenario` instead
+ * [Java] Deprecate `cucumber.api.java.*`
+    - Use `io.cucumber.java.*` instead
+ * [Java] Deprecate `cucumber.api.java8.*`
+    - Use `io.cucumber.java8.*` instead
+ * [JUnit] Deprecate `cucumber.api.junit.Cucumber`
+    - Use `io.cucumber.junit.Cucumber` instead. 
+ * [TestNG] Deprecate `cucumber.api.testng.TestNGCucumberRunner`
+    - Use `io.cucumber.testng.TestNGCucumberRunner` instead.
+ * [TestNG] Deprecate `cucumber.api.testng.AbstractTestNGCucumberTests`
+    - Use `io.cucumber.testng.AbstractTestNGCucumberTests` instead.
+ * [Needle] Deprecate `cucumber.api.needle.*` 
+    - Use `io.cucumber.needle.*` instead. 
+ * [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
+    - It is recommended to implement your own transaction hooks.
+    - Will allow the dependency on `spring-txn` to be removed.
+
+### Note
+Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and above that supports the new package structure. To use the latest snapshot version, refer [Follow the latest snapshot](https://github.com/cucumber/cucumber-eclipse#follow-the-latest-snapshot)
+ 
+
+## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.0.0) (2019-06-15)
+
+### Added
+ * [Core] Add StepDefinedEvent ([#1634](https://github.com/cucumber/cucumber-jvm/pull/1634) Tim te Beek, M.P. Korstanje) 
+ * [Core] Add CDI2 integration ([#1626](https://github.com/cucumber/cucumber-jvm/pull/1626) Romain Manni-Bucau)
+ * [Java] Use ServiceLoader for ObjectFactory ([#1615](https://github.com/cucumber/cucumber-jvm/pull/1615) Toepi, M.P. Korstanje)
+   - Object factories that implement `io.cucumber.core.backend.ObjectFactory` will be loaded via the ServiceLoader
+ * [Core] Add UnusedStepsSummaryPrinter ([#1648](https://github.com/cucumber/cucumber-jvm/pull/1648) Tim te Beek)
+   - Adds `--plugin unused` CLI option
+ * [Core] Add reverse and random scenario execution order ([#1645](https://github.com/cucumber/cucumber-jvm/pull/1645), [#1658](https://github.com/cucumber/cucumber-jvm/pull/1658) Grasshopper, M.P. Korstanje)
+   - Adds `--order reverse` CLI option
+   - Adds `--order random` and `--order random:<seed>` CLI options
+   - Adds `--limit <number of pickles>` CLI option
+
+### Changed
+ * [Core] Refactored usage formatter ([#1608](https://github.com/cucumber/cucumber-jvm/pull/1608) Marit van Dijk, M.P. Korstanje) 
+ * [Core] Merge cucumber-html into cucumber-core ([#1650](https://github.com/cucumber/cucumber-jvm/pull/1650) Grasshopper) 
+ * [Core] Upgrade `cucumber-expressions` version to 7.0.2
+   - Support Boolean in BuiltInParameterTransformer ([cucumber/#604](https://github.com/cucumber/cucumber/pull/604) Tommy Wo)
+ * [Core] Upgrade `dattable` version to 1.1.14
+   - Empty cell are converted to `null`'s for `Double` class ([cucumber/#1617](https://github.com/cucumber/cucumber/pull/1617) Georgii Kalnytskyi)
+
+### Deprecated
+ * [Core] Deprecated `StepDefinitionReporter` ([#1634](https://github.com/cucumber/cucumber-jvm/pull/1634) Tim te Beek, M.P. Korstanje) 
+ * [Java] Deprecated classpath scanning for ObjectFactory ([#1615](https://github.com/cucumber/cucumber-jvm/pull/1615) Toepi, M.P. Korstanje)
+    - Deprecated `cucumber.api.java.ObjectFactory` in favour of `io.cucumber.core.backend.ObjectFactory`.
+
+### Fixed
+ * [Core] Clear RuntimeOptions.featurePaths if rerun was used ([#1631](https://github.com/cucumber/cucumber-jvm/pull/1631) Tommy Wo) 
+ * [Core] Escape spaces in ZipResource path ([#1636](https://github.com/cucumber/cucumber-jvm/pull/1636) Bearded QA)
+ * [Core] Handle parallel execution exceptions ([#1629](https://github.com/cucumber/cucumber-jvm/pull/1623) Christoph Kutzinski, M.P. Korstanje)
+ * [Core] Use meaningful thread names ([#1623](https://github.com/cucumber/cucumber-jvm/pull/1623) Christoph Kutzinski)
+ * [Core] Parse UTF-8-BOM feature file ([#1654](https://github.com/cucumber/cucumber-jvm/pull/1654) Grasshopper) 
+ * [Core] Allow runner to register bus as concurrent or serial event source ([#1656](https://github.com/cucumber/cucumber-jvm/pull/1656) Tim te Beek, M.P. Korstanje)
+   - When using JUnit or the CLI the pretty formatter will print steps as the test progresses
+ * [Core] Efficiently write JSON to output ([#1663](https://github.com/cucumber/cucumber-jvm/pull/1663) M.P. Korstanje) 
+
+## [4.3.1](https://github.com/cucumber/cucumber-jvm/compare/v4.3.0...v4.3.1) (2019-05-05)
+
+### Fixed
+ * [Core] Fix filtering scenarios loaded from jar ([#1618](https://github.com/cucumber/cucumber-jvm/pull/1618) Denys Zhuravel)
+
+## [4.3.0](https://github.com/cucumber/cucumber-jvm/compare/v4.2.6...v4.3.0) (2019-04-11)
+
+### Added
+ * [Core] Improve CucumberOptions documentation ([#1573](https://github.com/cucumber/cucumber-jvm/pull/1573) M.P. Korstanje, Marit van Dijk)
+ * [Core] Add logger ([#1577](https://github.com/cucumber/cucumber-jvm/pull/1577) M.P. Korstanje)
+     - Errors and warnings are now logged via `java.util.Logging` system 
+     - Glue and feature path config is logged via `java.util.Logging` system
+ * [Core] Add real world timestamp to events ([#1591](https://github.com/cucumber/cucumber-jvm/pull/1591) [#1594](https://github.com/cucumber/cucumber-jvm/pull/1594) Yatharth Zutshi, M.P. Korstanje)
+     - Adds `start_timestamp` to json formatter output. Timestamp is in ISO8601 format.
+     - Fixes the `timeline` plugin visualizing tests as starting in 1970.     
+
+### Changed
+ * [Core] Simplify duplicate feature detection ([#1602](https://github.com/cucumber/cucumber-jvm/pull/1602) M.P. Korstanje) 
+ * [Spring] Remove split package ([#1603](https://github.com/cucumber/cucumber-jvm/pull/1603) M.P. Korstanje) 
+ * [Core] Upgrade cucumber-expressions to v6.2.2
+    * Limit explosion of generated expressions to 256 ([#cucumber/576](https://github.com/cucumber/cucumber/pull/576) M.P. Korstanje)
+    * Allow parameter-types in escaped optional groups ([#cucumber/572](https://github.com/cucumber/cucumber/pull/572), [#cucumber/561](https://github.com/cucumber/cucumber/pull/561) Luke Hill, Jayson Smith, M.P. Korstanje)
+    * Prefer expression with the longest non-empty match ([#cucumber/580](https://github.com/cucumber/cucumber/pull/580) M.P. Korstanje)
+    * Improve heuristics for creating Cucumber/Regular Expressions from strings ([#cucumber/518](https://github.com/cucumber/cucumber/pull/518) Aslak Hellesøy)
+ * [Kotlin-Java8] Upgrade Kotlin to v1.3.0 and more idiomatic Kotlin ([#1590](https://github.com/cucumber/cucumber-jvm/pull/1590) Marit van Dijk)
+
+### Fixed
+ * [Core] Add more details to ParserException ([#1600](https://github.com/cucumber/cucumber-jvm/pull/1600) Yatharth Zutshi) 
+ * [JUnit] Invoke `@BeforeClass` before `TestRunStarted` event ([#1578](https://github.com/cucumber/cucumber-jvm/pull/1578) M.P. Korstanje) 
+ 
+## [4.2.6](https://github.com/cucumber/cucumber-jvm/compare/v4.2.5...v4.2.6) (2019-03-06)
+
+### Fixed
+ * [Core] Fix concurrent access issues in JUnit and TestNG formatters ([#1576](https://github.com/cucumber/cucumber-jvm/pull/1576), [#1575](https://github.com/cucumber/cucumber-jvm/issues/1575) M.P. Korstanje, grasshopper7)
+ 
+## [4.2.5](https://github.com/cucumber/cucumber-jvm/compare/v4.2.4...v4.2.5) (2019-03-04)
+
+### Fixed
+ * [Core] Fix illegal argument exception when using root package as glue ([#1572](https://github.com/cucumber/cucumber-jvm/pull/1572) M.P. Korstanje)
+    * Correctly parses glue path `""` as the root package
+    * Correctly parses glue path `"classpath:"` as the root package
+    * Correctly parses feature identifier `"classpath:"` as the root package  
+
+## [4.2.4](https://github.com/cucumber/cucumber-jvm/compare/v4.2.3...v4.2.4) (2019-02-28)
+
+### Fixed
+ * [Core] Disambiguate between Windows drive letter and uri scheme ([#1568](https://github.com/cucumber/cucumber-jvm/issues/1568), [#1564](https://github.com/cucumber/cucumber-jvm/issues/1564) jsa34)
+
+## [4.2.3](https://github.com/cucumber/cucumber-jvm/compare/v4.2.2...v4.2.3) (2019-02-08)
+
+### Fixed
+ * [Build] Fix windows build ([#1552](https://github.com/cucumber/cucumber-jvm/pull/1552), [#1551](https://github.com/cucumber/cucumber-jvm/issues/1551) Alexey Mozhenin) 
+ * [Core] Formalize glue and feature paths ([#1544](https://github.com/cucumber/cucumber-jvm/pull/1544) M.P. Korstanje)
+     * Fixes Line filtering  on Windows ([#1547](https://github.com/cucumber/cucumber-jvm/issues/1547) grasshopper7)
+     * Invalid glue and feature paths are no longer silently ignored
+     * Explicit references to non-existing feature files are no longer silently ignored
+
+## [4.2.2](https://github.com/cucumber/cucumber-jvm/compare/v4.2.1...v4.2.2)
+
+### Fixed
+ * [Core] Fix class loading on Windows ([#1541](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
+   * Resolves inability to discover glue classes
+
+## [4.2.1](https://github.com/cucumber/cucumber-jvm/compare/v4.2.0...v4.2.1)
+
+### Added
+ * [TestNG] Update documentation for parallel execution ([#1501](https://github.com/cucumber/cucumber-jvm/issues/1486) Abhishek Singh)
+
+### Changed
+ *  [Core] Parse rerun file in RuntimeOptions ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
+
+### Deprecated
+   
+### Removed
+
+### Fixed
+ * [Core] Cache all matched step definitions ([#1528](https://github.com/cucumber/cucumber-jvm/pull/1528) Łukasz Suski)
+   * Significant speed up in matching steps to glue on Android
+ * [Build] No longer fails to build on OpenJDK 9 and 10. ([#1311](https://github.com/cucumber/cucumber-jvm/issues/1311) M.P. Korstanje)
+ * [Core] Error when an explicitly provided feature file does not exist. ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje) 
+    * `path/to/exisitng.feature` will pass
+    * `path/to/non/exisitng.feature` will error
+    * `path/to/empty/direcory` will pass
+  * [Core] Upgrade shaded jackson-databind to 2.9.8 (M.P. Korstanje)
+      * Fixes CVE-2018-19360 
+      * Fixes CVE-2018-14719 
+      * Fixes CVE-2018-14718 
+      * Fixes CVE-2018-14721 
+      * Fixes CVE-2018-14720 
+      * Fixes CVE-2018-19361 
+      * Fixes CVE-2018-19362
+
+## [4.2.0](https://github.com/cucumber/cucumber-jvm/compare/v4.1.1...v4.2.0) (2018-10-31) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-4-2-0)
+
+### Added
+ * [Core] Add anonymous parameter types ([#1478](https://github.com/cucumber/cucumber-jvm/issues/1478), [#1492](https://github.com/cucumber/cucumber-jvm/pull/1492) M.P. Korstanje)
+
+## [4.1.1](https://github.com/cucumber/cucumber-jvm/compare/v4.1.0...v4.1.1)
+
+### Fixed
+ * [Core] Upgrade datatables to 1.1.7 ([#1489](https://github.com/cucumber/cucumber-jvm/issues/1489), [#1490](https://github.com/cucumber/cucumber-jvm/issues/1490) M.P. Korstanje)
+    * Fix priority of default converters
+
+## [4.1.0](https://github.com/cucumber/cucumber-jvm/compare/v4.0.2...v4.1.0) 
+
+### Deprecated
+  * [Guice] Replace CucumberModules.SCENARIO with thread safe factory method ([#1486](https://github.com/cucumber/cucumber-jvm/issues/1486) James Bennett)
+
+### Fixed
+  * [Core] Use Locale.ROOT when transforming case of identifiers ([#1484](https://github.com/cucumber/cucumber-jvm/issues/1484) M.P. Korstanje) 
+
+## [4.0.2](https://github.com/cucumber/cucumber-jvm/compare/v4.0.1...v4.0.2) 
+
+### Fixed
+ * [Core] Fix concurrent execution problems in pretty formatter ([#1480](https://github.com/cucumber/cucumber-jvm/issues/1480) M.P. Korstanje) 
+ * [Core] Upgrade `cucumber-expressions` 6.1.1.  ([cucumber/#494](https://github.com/cucumber/cucumber/issues/494) Łukasz Suski) 
+ * [Java8] Apply identity transform to argument when target type is object ([#1477](https://github.com/cucumber/cucumber-jvm/pull/1477) M.P. Korstanje) 
+
+## [4.0.1](https://github.com/cucumber/cucumber-jvm/compare/v4.0.0...v4.0.1) 
+
+### Added
+ * [Core] Reduce plugin memory usage ([#1469](https://github.com/cucumber/cucumber-jvm/pull/1469) M.P. Korstanje) 
+
+### Changed
+ * [Core] Use the docstring content type from pickle in the json formatter ([#1265](https://github.com/cucumber/cucumber-jvm/pull/1265) Robert Wittams, M.P. Korstanje) 
+
+### Fixed
+ * [Java8] Apply identity transform when target type is unknown ([#1475](https://github.com/cucumber/cucumber-jvm/pull/1475) Daryl Piffre, M.P. Korstanje) 
+
+## [4.0.0](https://github.com/cucumber/cucumber-jvm/compare/v3.0.2...v4.0.0) (2018-09-24) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-4-0-0)
+
+### Added
+ * [Core] Added extraGlue option to `@CucumberOptions` ([#1439](https://github.com/cucumber/cucumber-jvm/pull/1439) Eduardo Kalinowski) 
+ * [Core] Support parallel execution of pickles ([#1389](https://github.com/cucumber/cucumber-jvm/pull/1389) Kiel Boatman, M.P. Korstanje) 
+    * When running with parallel support enabled all Plugins implementing `EventHandler`/`Formater` will receive events
+    after execution has completed in `Event.CANONICAL_ORDER`.
+    * Plugins implementations implementing `ConcurrentEventListener` will receive events in real time.
+    * Plugins implementations are synchronized on and will not receive concurrent events.
+    * Added the `--threads`  commandline argument for the CLI. 
+    * When `--threads` is used with a value greater then 1 parallel support is enabled for the CLI.
+    * JUnit/TestNG have parallel support enabled by default. Consult their respective documentation for parallel executions.
+ * [Spring] Add documentation for spring object factory ([#1405](https://github.com/cucumber/cucumber-jvm/pull/1405) Marit van Dijk) 
+ * [Core] Add --wip option ([#1381](https://github.com/cucumber/cucumber-jvm/pull/1381) Heziode)
+ * [Core] Upgrade gherkin to 5.1.0  ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
+ * [Weld] Document the need for a beans.xml per source root ([#923](https://github.com/cucumber/cucumber-jvm/pull/923) Harald Albers)
+ * [Core] Upgrade cucumber-expressions to [6.1.0](https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/CHANGELOG.md#610---2018-09-23) ([#1464](https://github.com/cucumber/cucumber-jvm/pull/1464) M.P. Korstanje)
+    * ParameterType.fromEnum(MyEnumClass.class) to make it easier to register enums.
+
+### Changed
+  * [Core] Upgrade datatable to 1.1.3 ([#1414](https://github.com/cucumber/cucumber-jvm/pull/1414) Łukasz Suski)
+    * Allows the registration of default TableEntryByTypeTransformer and TableCellByTypeTransformer
+    * Adds DataTableType#entry(Class) to easily map tables to List<SomeClass>.
+    * Adds DataTableType#cell(Class) to easily map cells to SomeOtherClass.
+  * [Core] Upgrade cucumber expressions to 6.0.0 ([#1377](https://github.com/cucumber/cucumber-jvm/pull/1377) Aslak Hellesøy)
+    * Throw an error if a parameter type is used inside optional text parenthesis, or with alternative text.
+    * Bugfix for nested capture groups.
+  * [Core] Refactor Runtime ([#1367](https://github.com/cucumber/cucumber-jvm/pull/1367) M.P. Korstanje, Marit van Dijk)
+    * Significant structural changes in the `cucumber.runtime` package
+  * [Examples] Simplify Gradle example ([#1394](https://github.com/cucumber/cucumber-jvm/pull/1394) Piotr Kubowicz)
+  * [Build] Use 1.7 as the source and target level for compilation ([#1147](https://github.com/cucumber/cucumber-jvm/pull/1147) M.P. Korstanje)
+  * [Core] Use fully classified name for PendingException ([#1398](https://github.com/cucumber/cucumber-jvm/pull/1398) Marit van Dijk)
+  * [Core] Update DataTable hint ([#1397](https://github.com/cucumber/cucumber-jvm/pull/1397) Marit van Dijk)
+  
+### Deprecated
+  * [Core] Deprecate Formatter interface ([#1407](https://github.com/cucumber/cucumber-jvm/pull/1407) Marit van Dijk)
+   
+### Removed
+  * [Android] Remove Cucumber-Android and move to separate project (Aslak Hellesøy)
+  * [TestNG] Remove TestNGReporter ([#1408](https://github.com/cucumber/cucumber-jvm/pull/1408) M.P. Korstanje)
+  * [OSGi] Jars are no longer packaged as OSGi bundles. The `osgi` module and `pax-exam` examples have been removed as well.
+    ([#1404](https://github.com/cucumber/cucumber-jvm/pull/1404)
+     [cucumber/cucumber#412](https://github.com/cucumber/cucumber/issues/412)
+     Aslak Hellesøy)
+  * [Core] Remove deprecated TestStep methods ([#1391](https://github.com/cucumber/cucumber-jvm/pull/1391) M.P. Korstanje)
+
+### Fixed
+  * [Core] Support quoted strings in cucumber.options ([#1453](https://github.com/cucumber/cucumber-jvm/pull/1453) John Patrick)
+  * [Core] Set scenario result as step finishes ([#1430](https://github.com/cucumber/cucumber-jvm/pull/1430) M.P. Korstanje)
+
+## [3.0.2](https://github.com/cucumber/cucumber-jvm/compare/v3.0.1...v3.0.2) (2017-11-11) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-3-0-2)
+
+### Fixed
+* [Android] Fix PatternSyntaxException ([#1370](https://github.com/cucumber/cucumber-jvm/pull/1370) M.P. Korstanje)
+
+## [3.0.1](https://github.com/cucumber/cucumber-jvm/compare/v3.0.0...v3.0.1)
+
+### Changed
+ * [Core] Upgrade cucumber expressions to 5.0.18 ([#1368](https://github.com/cucumber/cucumber-jvm/pull/1368) Aslak Hellesøy)
+     * Escape `/` with `\/` when a literal `/` is wanted (and not alternation)
+     
+### Fixed
+ * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
+
+## [3.0.0](https://github.com/cucumber/cucumber-jvm/compare/v2.4.0...v3.0.0) (2017-09-27) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-3-0-0)
+
+### Added
+ * [Core] Implement [cucumber expressions](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)
+   * Custom parameter types can be defined by implementing the `TypeRegistryConfigurer`.
+ * [Core] Add Before and AfterStep hooks ([#1323](https://github.com/cucumber/cucumber-jvm/pull/1323) Aniket, Björn Rasmusson, M.P. Korstanje)
+ * [Core, TestNG] Support the TestNG SkipException ([#1338](https://github.com/cucumber/cucumber-jvm/pull/1338), [#1340](https://github.com/cucumber/cucumber-jvm/pull/1340) Björn Rasmusson, M.P. Korstanje)
+
+### Changed
+ * [TestNG] Update testng version to 6.14.3 
+ * [OpenEJB] Update openejb-core version to 4.7.5
+ * [Core] Replace DataTable with [io.cucumber.datatable.DataTable](https://github.com/cucumber/cucumber/tree/master/datatable) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk)
+   * Custom data table types can be defined by implementing the `TypeRegistryConfigurer`.
+ * [Core] Include all hooks in the event stream generated by `--dry-run` ([#1323](https://github.com/cucumber/cucumber-jvm/pull/1323) Aniket, Björn Rasmusson, M.P. Korstanje)
+ * [Spring] Limit context configuration to a single class. ([#1240](https://github.com/cucumber/cucumber-jvm/pull/1240), [#1246](https://github.com/cucumber/cucumber-jvm/pull/1246) Björn Rasmusson, M.P. Korstanje)  
+ * [Core] The SummaryPrinter only depends on api classes ([#1361](https://github.com/cucumber/cucumber-jvm/pull/1361) Björn Rasmusson, M.P. Korstanje) 
+     * `print(Runtime runtime)` has been removed from `SummaryPrinter` it can be replaced by implementing `EventListener`
+
+### Deprecated
+ * [Core] Deprecate all methods but `TestStep.getCodeLocation` in favour of PickleStepTestStep and HookTestStep ([#1323](https://github.com/cucumber/cucumber-jvm/pull/1323) Aniket, Björn Rasmusson, M.P. Korstanje)
+
+### Removed
+ * [Core] Remove UnreportedStepExecutor ([#1362](https://github.com/cucumber/cucumber-jvm/pull/1362) M.P. Korstanje)
+ * [Core] Removed XStream and related functionality ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)
+   * `@Delimiter`, `@Format`, `@Transformer`,`@XStreamConverter`, `@XStreamConverters` and any other 
+     annotations from XStream will no longer work. These must be replaced by a `DataTableType` or `ParameterType`.
+ * [Core] Remove deprecated constructors of `TestStep` ([#1323](https://github.com/cucumber/cucumber-jvm/pull/1323) Aniket, Björn Rasmusson, M.P. Korstanje)
+ * [TestNG] Remove the support of mapping the whole test suite or each feature to TestNG tests ([#1339](https://github.com/cucumber/cucumber-jvm/pull/1339), [#1340](https://github.com/cucumber/cucumber-jvm/pull/1340) Björn Rasmusson, M.P. Korstanje)
+ * [JUnit] Remove the obsolete JUnit option `--allow-started-ignored` (Björn Rasmusson)
+ * [JUnit] Remove Cucumber.createRuntime method ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje) 
+ * [Core] Remove 'dummy' results from junit formatter ([#1331](https://github.com/cucumber/cucumber-jvm/pull/1331), [#1326](https://github.com/cucumber/cucumber-jvm/pull/1326) Christoph Kutzinski) 
+ * [Core] Remove the deprecated -f/--format option ([#1295](https://github.com/cucumber/cucumber-jvm/pull/1295) Björn Rasmusson, M.P. Korstanje)  
+
+### Fixed
+ * [Core] Remove excess hyphens in `--help` usage info ([#1347](https://github.com/cucumber/cucumber-jvm/pull/1347) Jano Svitok
+ * [Core] Fix runtime exit status for ambiguous scenarios ([#1342](https://github.com/cucumber/cucumber-jvm/pull/1342) Prashant Ramcharan)
+
+## [2.4.0](https://github.com/cucumber/cucumber-jvm/compare/v2.3.1...v2.4.0)
+
+### Added
+ * [JUnit] Add readme to cucumber-junit ([#1306](https://github.com/cucumber/cucumber-jvm/pull/1306) M.P. Korstanje)
+ * [Java] Add detail to DataTable hint in JavaSnippet ([#1298](https://github.com/cucumber/cucumber-jvm/pull/1298) Marit van Dijk)
+
+### Changed
+ * [Java] Remove 'throws Exception' from JavaSnippet ([#1308](https://github.com/cucumber/cucumber-jvm/pull/1308) Marit van Dijk)
+
+### Fixed
+ * [Android] Make test names passed to the instrumentation unique ([#1094](https://github.com/cucumber/cucumber-jvm/pull/1094) Christian Gnüchtel)
+ * [Core] Json Formatter: include the content type of doc strings ([#1309](https://github.com/cucumber/cucumber-jvm/pull/1309) Björn Rasmusson)
+
+## [2.3.1](https://github.com/cucumber/cucumber-jvm/compare/v2.3.0...v2.3.1) (2017-12-14)
+
+### Fixed
+ * [Core] Remove scenario scoped step definitions from step definition cache ([#1301](https://github.com/cucumber/cucumber-jvm/pull/1301) M.P. Korstanje)
+
+## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0) (2017-12-10) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-3-0)
+
+### Added
+ * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
+
+## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (2017-12-04) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-2-0)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
@@ -22,13 +477,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
  * [JUnit] `Cucumber.createRuntime` has been deprecated ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje)
 
-### Removed
 ### Fixed
  * [Core] Add missing feature tags in the JSON output ([#1288](https://github.com/cucumber/cucumber-jvm/pull/1284) Pierre Gentile)
  * [Core] Fix detection of XStreamsConverters annotation ([#1283](https://github.com/cucumber/cucumber-jvm/pull/1283), [#1284](https://github.com/cucumber/cucumber-jvm/pull/1284) Dmitrii Demin)
  * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282) M.P. Korstanje)
 
-## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0)
+## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0) (2017-10-28) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-1-0)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
@@ -44,6 +498,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Spring] Deprecate Spring context configuration by more than one class ([#1259](https://github.com/cucumber/cucumber-jvm/pull/1259) Björn Rasmusson)
 
 ### Removed
+ * [Scala, Groovy, Clojure, Jython, JRuby, Rhino, Gosu] Moved to own repositories (M.P. Korstanje)
 
 ### Fixed
  * [Java8] Fix Java8StepDefinition.isDefinedA ([#1254](https://github.com/cucumber/cucumber-jvm/pull/1254), [#1255](https://github.com/cucumber/cucumber-jvm/pull/1255) tts-ll, M.P. Korstanje)
@@ -51,7 +506,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
  * [Spring] Exception is thrown complaining about multiple matching beans ([#1225](https://github.com/cucumber/cucumber-jvm/pull/1225), [#1226](https://github.com/cucumber/cucumber-jvm/pull/1226), M.P. Korstanje)
 
-## [2.0.1](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17)
+## [2.0.1](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-1)
 
 ### Added
  * [Core] cucumber.api.TableConverter interface ([#1223](https://github.com/cucumber/cucumber-jvm/pull/1223) M.P. Korstanje) 
@@ -65,7 +520,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Scenario.isFailed always return false ([#1216](https://github.com/cucumber/cucumber-jvm/pull/1216), [#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
  * [Docs] Javadoc stylesheet issue ([#1212](https://github.com/cucumber/cucumber-jvm/pull/1212), [#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk)
 
-## [2.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v2.0.0) (2017-08-29)
+## [2.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v2.0.0) (2017-08-29) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-0)
+
 
 * [Java] Reduce Throwable to Exception in JavaSnippet ([#1207](https://github.com/cucumber/cucumber-jvm/issues/1207), [#1208](https://github.com/cucumber/cucumber-jvm/pull/1208) M.P. Korstanje)
 * [Core] Update the cucumber-html dependency to version 0.2.6 (Björn Rasmusson)

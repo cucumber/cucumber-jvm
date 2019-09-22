@@ -3,26 +3,40 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>java-wicket</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>java-wicket-main</artifactId>
     <name>Examples: Wicket application</name>
     <packaging>war</packaging>
+
     <build>
         <finalName>rentit</finalName>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.examples.java.wicket</project.Automatic-Module-Name>
+        <wicket.version>8.2.0</wicket.version>
+        <jetty.version>9.4.14.v20181114</jetty.version>
+        <jcl-over-slf4.version>1.7.25</jcl-over-slf4.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-core</artifactId>
+            <version>${wicket.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+            <version>${jcl-over-slf4.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -30,8 +44,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

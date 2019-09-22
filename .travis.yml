@@ -1,78 +1,35 @@
----
 language: java
-sudo: false # Use container based builds. They are faster and we do not need sudo.
+sudo: false
 
 cache:
   directories:
-    - $HOME/.m2
-before_cache:
-  - rm -f $HOME/.m2/repository/io/cucumber
-
-before_install:
-  - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
-  - tar zxvf apache-maven-3.3.9-bin.tar.gz
-  - chmod +x apache-maven-3.3.9/bin/mvn
-  - export M2_HOME=$PWD/apache-maven-3.3.9
-  - export PATH=$PWD/apache-maven-3.3.9/bin:${PATH}
-  - hash -r
+  - "$HOME/.m2"
 
 jobs:
   include:
-    # Stage Test - Job 1-2:  Builds against all available Jdks.
-    - stage: test
-      jdk: openjdk7
-      script: mvn -q install
-    - jdk: oraclejdk8
-      script: mvn -q install
-      after_success:
-        - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
-    # Stage Test - Job 3: Build java and scala doc
-    - jdk: oraclejdk8
-      env: JAVADOC=true
-      script:
-        - mvn clean install -DskipTests=true
-        - mvn javadoc:aggregate
-    # Stage Test - Job 4: Build Android Examples.
-    - jdk: oraclejdk8
-      env: ANDROID_EXAMPLES=true
-      language: android
-      android:
-        components:
-          - tools
-          - platform-tools
-          - tools # Note that the tools section appears twice on purpose as it’s required to get the newest Android SDK tools.
-          - build-tools-26.0.0
-          - android-21
-          - sys-img-armeabi-v7a-android-21
-      before_install:
-        # Keep android version in sync with  platform.sdk in android-examples.pom.
-        - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-        # Create and start the emulator. This takes some time.
-        - emulator -avd test -no-skin -no-audio -no-window &
-      install:
-        # Build the dependencies for the android examples while the emulator starts.
-        - mvn -q install --also-make --projects android,picocontainer -DskipTests=true -Dmaven.javadoc.skip=true
-      before_script:
-        - android-wait-for-emulator
-      script:
-        # Run Android tests without put. Travis will stop the build if it receives no output for 10 minutes.
-        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
+  # 1.1 Semver check
+  - stage: test
+    jdk: openjdk8
+    script: mvn verify -Pcheck-semantic-version -DskipTests=true
+    env: CHECK_SEMANTIC_VERSION=true
 
-    # Stage Deploy - Job 1: Builds and deploys all artifacts with java 8.
-    - stage: deploy
-      jdk: oraclejdk8
-      script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+  # 1.2 Check JDK 8,10,ea
+  - stage: test
+    jdk: openjdk8
+    script: mvn clean verify
+    after_success:
+      - mvn clean jacoco:prepare-agent test jacoco:report coveralls:report
+  - jdk: openjdk10
+    script: mvn -q verify
+  - jdk: openjdk11
+    script: mvn -q verify
 
-env:
-  global:
-  - secure: |-
-      rEtPzPG3bMKzx00AwDJq5tsp8LSCds5ePV6ZP+wgECP2BVIoD16zP8F6T0fY
-      QK/2etRW6pcernOGP8S3SQE4e5ZBT5sqYY0mhKlq2aiem3i3gAwEzZvdLjWV
-      1C6KyQplzdjKdaYWOre8YSXv5vxS3ZVS6NJc+0EQM3olTKV3flQ=
-  - secure: |-
-      BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
-      K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
-      969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
+  # 1.3 Check javadoc. We need to use this version to properly detect errors.
+  - jdk: oraclejdk11
+    env: JAVADOC=true
+    script:
+    - mvn clean verify -DskipTests=true
+    - mvn javadoc:aggregate
 
 branches:
   only:
