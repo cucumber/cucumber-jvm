@@ -1,13 +1,12 @@
 package io.cucumber.jupiter.engine;
 
-import io.cucumber.core.backend.ObjectFactoryServiceLoader;
-import io.cucumber.core.event.EventHandler;
-import io.cucumber.core.event.EventPublisher;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestRunFinished;
-import io.cucumber.core.event.TestRunStarted;
-import io.cucumber.core.event.TestSourceRead;
+import io.cucumber.plugin.event.EventHandler;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
@@ -20,6 +19,7 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
@@ -35,7 +35,7 @@ import org.opentest4j.TestAbortedException;
 
 import java.time.Clock;
 
-import static io.cucumber.core.event.Status.PASSED;
+import static io.cucumber.plugin.event.Status.PASSED;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
@@ -54,7 +54,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         this.options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(resourceLoader, objectFactorySupplier);
+        BackendSupplier backendSupplier = new BackendServiceLoader(() -> classLoader, objectFactorySupplier);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         new Plugins(new PluginFactory(), options);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, options);
