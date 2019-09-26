@@ -1,9 +1,9 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
-import io.cucumber.core.backend.Scenario;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -280,7 +280,7 @@ class RuntimeTest {
             .build();
         runtime.run();
 
-        ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
+        ArgumentCaptor<TestCaseState> capturedScenario = ArgumentCaptor.forClass(TestCaseState.class);
         verify(beforeHook).execute(capturedScenario.capture());
         assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
     }

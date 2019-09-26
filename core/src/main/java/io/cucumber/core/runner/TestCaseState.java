@@ -15,13 +15,13 @@ import static java.util.Collections.max;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
-class Scenario implements io.cucumber.core.backend.Scenario {
+class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     private final List<Result> stepResults = new ArrayList<>();
     private final EventBus bus;
     private final TestCase testCase;
 
-    Scenario(EventBus bus, TestCase testCase) {
+    TestCaseState(EventBus bus, TestCase testCase) {
         this.bus = requireNonNull(bus);
         this.testCase = requireNonNull(testCase);
     }
