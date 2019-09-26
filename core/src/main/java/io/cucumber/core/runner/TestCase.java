@@ -37,24 +37,24 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         boolean skipNextStep = this.dryRun;
         Instant start = bus.getInstant();
         bus.send(new TestCaseStarted(start, this));
-        Scenario scenario = new Scenario(bus, this);
+        TestCaseState state = new TestCaseState(bus, this);
 
         for (HookTestStep before : beforeHooks) {
-            skipNextStep |= before.run(this, bus, scenario, dryRun);
+            skipNextStep |= before.run(this, bus, state, dryRun);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            skipNextStep |= step.run(this, bus, scenario, skipNextStep);
+            skipNextStep |= step.run(this, bus, state, skipNextStep);
         }
 
         for (HookTestStep after : afterHooks) {
-            after.run(this, bus, scenario, dryRun);
+            after.run(this, bus, state, dryRun);
         }
 
         Instant stop = bus.getInstant();
         Duration duration = Duration.between(start, stop);
-        Status status = Status.valueOf(scenario.getStatus().name());
-        Result result = new Result(status, duration, scenario.getError());
+        Status status = Status.valueOf(state.getStatus().name());
+        Result result = new Result(status, duration, state.getError());
         bus.send(new TestCaseFinished(stop, this, result));
     }
 

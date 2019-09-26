@@ -1,5 +1,6 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,7 +113,7 @@ class LambdaGlueTest {
         assertHook(afterStepHook, "taxExpression", 42);
     }
 
-    private final io.cucumber.core.backend.Scenario scenario = Mockito.mock(io.cucumber.core.backend.Scenario.class);
+    private final TestCaseState state = Mockito.mock(TestCaseState.class);
 
     private final LambdaGlueRegistry lambdaGlueRegistry = new LambdaGlueRegistry() {
         @Override
@@ -150,7 +151,7 @@ class LambdaGlueTest {
     private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) {
         assertThat(hook.getTagExpression(), is(tagExpression));
         assertThat(hook.getOrder(), is(beforeOrder));
-        hook.execute(scenario);
+        hook.execute(state);
         assertTrue(invoked.get());
         invoked.set(false);
     }

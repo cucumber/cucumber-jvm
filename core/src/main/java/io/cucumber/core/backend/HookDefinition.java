@@ -5,7 +5,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface HookDefinition extends Located {
 
-    void execute(Scenario scenario);
+    void execute(TestCaseState state);
 
     String getTagExpression();
 

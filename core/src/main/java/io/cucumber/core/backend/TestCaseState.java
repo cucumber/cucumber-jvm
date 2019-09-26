@@ -13,7 +13,7 @@ import java.util.Collection;
  * hooks after could provide. For an example see {@code io.cucumber.core.plugin.PrettyFormatter}.
  */
 @API(status = API.Status.STABLE)
-public interface Scenario {
+public interface TestCaseState {
     /**
      * @return source_tag_names.
      */
@@ -43,13 +43,13 @@ public interface Scenario {
      *
      * @param data     what to embed, for example an image.
      * @param mimeType what is the data?
-     * @deprecated use {@link Scenario#embed(byte[], String, String)} instead.
+     * @deprecated use {@link TestCaseState#embed(byte[], String, String)} instead.
      */
     @Deprecated
     void embed(byte[] data, String mimeType);
 
     /**
-     * Like {@link Scenario#embed(byte[], String)}, but with name for the embedding.
+     * Like {@link TestCaseState#embed(byte[], String)}, but with name for the embedding.
      *
      * @param data     what to embed, for example an image.
      * @param mimeType what is the data?

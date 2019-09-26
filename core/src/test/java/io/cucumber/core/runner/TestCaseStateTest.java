@@ -12,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
-class ScenarioTest {
+class TestCaseStateTest {
 
     @Test
     void provides_the_uri_of_the_feature_file() {
@@ -21,8 +21,8 @@ class ScenarioTest {
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
         );
-        Scenario scenario = createScenario(feature);
-        assertThat(scenario.getUri(), is(equalTo("file:path/file.feature")));
+        TestCaseState state = createTestCaseState(feature);
+        assertThat(state.getUri(), is(equalTo("file:path/file.feature")));
     }
 
     @Test
@@ -33,8 +33,8 @@ class ScenarioTest {
             "     Given I have 4 cukes in my belly\n"
         );
 
-        Scenario scenario = createScenario(feature);
-        assertThat(scenario.getLine(), is(equalTo(2)));
+        TestCaseState state = createTestCaseState(feature);
+        assertThat(state.getLine(), is(equalTo(2)));
     }
 
     @Test
@@ -48,8 +48,8 @@ class ScenarioTest {
             "       | cuke  | \n"
         );
 
-        Scenario scenario = createScenario(feature);
-        assertThat(scenario.getLine(), is(equalTo(6)));
+        TestCaseState state = createTestCaseState(feature);
+        assertThat(state.getLine(), is(equalTo(6)));
     }
 
     @Test
@@ -60,9 +60,9 @@ class ScenarioTest {
             "     Given I have 4 cukes in my belly\n"
         );
 
-        Scenario scenario = createScenario(feature);
+        TestCaseState state = createTestCaseState(feature);
 
-        assertThat(scenario.getId(), is(equalTo("file:path/file.feature:2")));
+        assertThat(state.getId(), is(equalTo("file:path/file.feature:2")));
     }
 
     @Test
@@ -75,13 +75,13 @@ class ScenarioTest {
             "       | thing | \n" +
             "       | cuke  | \n"
         );
-        Scenario scenario = createScenario(feature);
+        TestCaseState state = createTestCaseState(feature);
 
-        assertThat(scenario.getId(), is(equalTo("file:path/file.feature:6")));
+        assertThat(state.getId(), is(equalTo("file:path/file.feature:6")));
     }
 
-    private Scenario createScenario(CucumberFeature feature) {
-        return new Scenario(mock(EventBus.class), new TestCase(
+    private TestCaseState createTestCaseState(CucumberFeature feature) {
+        return new TestCaseState(mock(EventBus.class), new TestCase(
             Collections.emptyList(),
             Collections.emptyList(),
             Collections.emptyList(),

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ScenarioResultTest {
+class TestCaseStateResultTest {
 
     private final CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
         "Feature: Test feature\n" +
@@ -40,7 +40,7 @@ class ScenarioResultTest {
         "     Given I have 4 cukes in my belly\n"
     );
     private final EventBus bus = mock(EventBus.class);
-    private final Scenario s = new Scenario(
+    private final TestCaseState s = new TestCaseState(
         bus,
         new TestCase(
             Collections.emptyList(),

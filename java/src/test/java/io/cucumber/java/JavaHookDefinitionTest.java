@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.Lookup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ public class JavaHookDefinitionTest {
     };
 
     @Mock
-    private io.cucumber.core.backend.Scenario scenario;
+    private TestCaseState state;
 
     private boolean invoked = false;
 
@@ -39,7 +40,7 @@ public class JavaHookDefinitionTest {
     void can_create_with_no_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
         JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, lookup);
-        definition.execute(scenario);
+        definition.execute(state);
         assertTrue(invoked);
     }
 
@@ -53,7 +54,7 @@ public class JavaHookDefinitionTest {
     void can_create_with_single_scenario_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
         JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, lookup);
-        definition.execute(scenario);
+        definition.execute(state);
         assertTrue(invoked);
     }
 

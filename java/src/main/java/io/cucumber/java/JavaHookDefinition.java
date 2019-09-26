@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.backend.Scenario;
 
 import java.lang.reflect.Method;
 
@@ -50,10 +50,10 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     }
 
     @Override
-    public void execute(Scenario scenario) {
+    public void execute(TestCaseState state) {
         Object[] args;
         if (method.getParameterTypes().length == 1) {
-            args = new Object[]{new io.cucumber.java.Scenario(scenario)};
+            args = new Object[]{new io.cucumber.java.Scenario(state)};
         } else {
             args = new Object[0];
         }

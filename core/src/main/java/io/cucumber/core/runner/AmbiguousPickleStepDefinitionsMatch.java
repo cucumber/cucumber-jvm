@@ -13,13 +13,13 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
     }
 
     @Override
-    public void runStep(Scenario scenario) throws AmbiguousStepDefinitionsException {
+    public void runStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
         throw exception;
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) throws AmbiguousStepDefinitionsException {
-        runStep(scenario);
+    public void dryRunStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
+        runStep(state);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.TestCaseState;
 import org.apiguardian.api.API;
 
 import java.util.Collection;
@@ -7,9 +8,9 @@ import java.util.Collection;
 @API(status = API.Status.STABLE)
 public final class Scenario {
 
-    private final io.cucumber.core.backend.Scenario delegate;
+    private final TestCaseState delegate;
 
-    Scenario(io.cucumber.core.backend.Scenario delegate) {
+    Scenario(TestCaseState delegate) {
         this.delegate = delegate;
     }
 

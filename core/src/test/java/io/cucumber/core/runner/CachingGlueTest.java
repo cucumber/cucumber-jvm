@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
@@ -8,7 +9,6 @@ import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.backend.Scenario;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.feature.CucumberFeature;
@@ -526,7 +526,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public void execute(Scenario scenario) {
+        public void execute(TestCaseState state) {
 
         }
 
@@ -565,7 +565,7 @@ class CachingGlueTest {
         }
 
         @Override
-        public void execute(Scenario scenario) {
+        public void execute(TestCaseState state) {
 
         }
 

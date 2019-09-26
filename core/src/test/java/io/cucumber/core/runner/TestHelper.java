@@ -110,8 +110,8 @@ public class TestHelper {
 
     public static Answer<Object> createWriteHookAction(final String output) {
         return invocation -> {
-            Scenario scenario = (Scenario) invocation.getArguments()[0];
-            scenario.write(output);
+            TestCaseState state = (TestCaseState) invocation.getArguments()[0];
+            state.write(output);
             return null;
         };
     }
@@ -123,11 +123,11 @@ public class TestHelper {
     @SuppressWarnings("deprecation")
     public static Answer<Object> createEmbedHookAction(final byte[] data, final String mimeType, final String name) {
         return invocation -> {
-            Scenario scenario = (Scenario) invocation.getArguments()[0];
+            TestCaseState state = (TestCaseState) invocation.getArguments()[0];
             if (name != null) {
-                scenario.embed(data, mimeType, name);
+                state.embed(data, mimeType, name);
             } else {
-                scenario.embed(data, mimeType);
+                state.embed(data, mimeType);
             }
             return null;
         };
