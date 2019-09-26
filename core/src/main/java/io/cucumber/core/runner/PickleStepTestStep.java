@@ -1,15 +1,15 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.event.Argument;
-import io.cucumber.core.event.StepArgument;
-import io.cucumber.core.event.TestCase;
+import io.cucumber.plugin.event.Argument;
+import io.cucumber.plugin.event.StepArgument;
+import io.cucumber.plugin.event.TestCase;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberStep;
 
 import java.util.Collections;
 import java.util.List;
 
-final class PickleStepTestStep extends TestStep implements io.cucumber.core.event.PickleStepTestStep {
+final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
     private final String uri;
     private final CucumberStep step;
     private final List<HookTestStep> afterStepHookSteps;
@@ -35,17 +35,17 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.core.even
     }
 
     @Override
-    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
         boolean skipNextStep = skipSteps;
 
         for (HookTestStep before : beforeStepHookSteps) {
-            skipNextStep |= before.run(testCase, bus, scenario, skipSteps);
+            skipNextStep |= before.run(testCase, bus, state, skipSteps);
         }
 
-        skipNextStep |= super.run(testCase, bus, scenario, skipNextStep);
+        skipNextStep |= super.run(testCase, bus, state, skipNextStep);
 
         for (HookTestStep after : afterStepHookSteps) {
-            skipNextStep |= after.run(testCase, bus, scenario, skipSteps);
+            skipNextStep |= after.run(testCase, bus, state, skipSteps);
         }
 
         return skipNextStep;

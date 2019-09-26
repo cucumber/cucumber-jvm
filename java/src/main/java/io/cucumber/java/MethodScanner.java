@@ -1,12 +1,10 @@
 package io.cucumber.java;
 
-import io.cucumber.core.runtime.Invoker;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 
-import static io.cucumber.core.reflection.Reflections.isInstantiable;
 import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
 
 final class MethodScanner {
@@ -26,6 +24,11 @@ final class MethodScanner {
         for (Method method : aClass.getMethods()) {
             scan(consumer, aClass, method);
         }
+    }
+
+    private static boolean isInstantiable(Class<?> clazz) {
+        boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
     }
 
     private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {

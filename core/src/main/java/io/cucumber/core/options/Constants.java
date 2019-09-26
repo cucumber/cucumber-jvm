@@ -1,5 +1,7 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
+
 public final class Constants {
 
     /**
@@ -41,14 +43,6 @@ public final class Constants {
      * By default features are executed in lexical file name order
      */
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
-
-    /**
-     * Property name used to determine the desired parallelism for the
-     * {@link Runtime} configuration: {@value}
-     * <p>
-     * No default value; must be an integer.
-     */
-    public static final String EXECUTION_PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME = "cucumber.execution.parallel.config.fixed.parallelism";
 
     /**
      * Property name used to enable strict execution: {@value}
@@ -94,17 +88,6 @@ public final class Constants {
     public static final String FEATURES_PROPERTY_NAME = "cucumber.features";
 
     /**
-     * Property name to set a file from which feature locations will be read: {@value}
-     * <p>
-     * Feature paths must be separated by a new line. The feature path is
-     * a uri or path e.g.: {@code path/to/feature/dir}.
-     *
-     * @see io.cucumber.core.feature.FeatureWithLines
-     * @see #FEATURES_PROPERTY_NAME
-     */
-    public static final String RERUN_FILE_PROPERTY_NAME = "cucumber.rerun-file";
-
-    /**
      * Property name used to set name filter: {@value}
      * <p>
      * Filters features based on the provided regex pattern.
@@ -136,7 +119,7 @@ public final class Constants {
      * Property name used to select a specific object factory implementation:
      * {@value}
      *
-     * @see io.cucumber.core.backend.ObjectFactoryServiceLoader
+     * @see ObjectFactoryServiceLoader
      */
     public static final String OBJECT_FACTORY_PROPERTY_NAME = "cucumber.object-factory";
 

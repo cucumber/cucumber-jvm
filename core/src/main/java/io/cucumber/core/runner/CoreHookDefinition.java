@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
@@ -26,7 +26,7 @@ class CoreHookDefinition {
         this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
     }
 
-    void execute(Scenario scenario) throws Throwable {
+    void execute(TestCaseState scenario) {
         delegate.execute(scenario);
     }
 
@@ -34,8 +34,8 @@ class CoreHookDefinition {
         return delegate;
     }
 
-    String getLocation(boolean detail) {
-        return delegate.getLocation(detail);
+    String getLocation() {
+        return delegate.getLocation();
     }
 
     int getOrder() {
@@ -47,16 +47,9 @@ class CoreHookDefinition {
     }
 
     static class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
-        private final ScenarioScoped delegate;
-
         private ScenarioScopedCoreHookDefinition(HookDefinition delegate) {
             super(delegate);
-            this.delegate = (ScenarioScoped) delegate;
         }
 
-        @Override
-        public void disposeScenarioScope() {
-            delegate.disposeScenarioScope();
-        }
     }
 }

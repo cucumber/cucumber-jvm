@@ -1,19 +1,13 @@
 package io.cucumber.examples.testng;
 
-import io.cucumber.core.api.Scenario;
-import io.cucumber.examples.testng.RpnCalculator;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
-import io.cucumber.java.DefaultDataTableEntryTransformer;
-import io.cucumber.java.ParameterType;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

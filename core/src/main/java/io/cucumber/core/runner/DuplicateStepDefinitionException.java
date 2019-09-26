@@ -3,8 +3,6 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
 
-import java.util.Objects;
-
 import static java.util.Objects.requireNonNull;
 
 final class DuplicateStepDefinitionException extends CucumberException {
@@ -18,8 +16,8 @@ final class DuplicateStepDefinitionException extends CucumberException {
         requireNonNull(b);
 
         return String.format("Duplicate step definitions in %s and %s",
-            a.getLocation(true),
-            b.getLocation(true)
+            a.getLocation(),
+            b.getLocation()
         );
     }
 

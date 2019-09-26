@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.joining;
  * <p>
  * A doc string is either empty or contains some content.
  * The content type is an optional description of the
- * content using a <a href=https://tools.ietf.org/html/rfc2616#section-3.7>media-type</.
+ * content using a <a href=https://tools.ietf.org/html/rfc2616#section-3.7>media-type</a>.
  * <p>
  * A DocString is immutable and thread safe.
  */

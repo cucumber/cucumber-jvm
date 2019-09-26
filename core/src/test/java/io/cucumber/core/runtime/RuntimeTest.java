@@ -1,17 +1,17 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
-import io.cucumber.core.event.HookType;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.StepDefinedEvent;
-import io.cucumber.core.event.StepDefinition;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestStepFinished;
+import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.StepDefinition;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.CucumberFeature;
@@ -21,12 +21,12 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.plugin.ConcurrentEventListener;
-import io.cucumber.core.plugin.EventListener;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
 import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
-import io.cucumber.core.plugin.Plugin;
-import io.cucumber.core.runner.ScenarioScoped;
+import io.cucumber.plugin.Plugin;
+import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -280,7 +280,7 @@ class RuntimeTest {
             .build();
         runtime.run();
 
-        ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
+        ArgumentCaptor<TestCaseState> capturedScenario = ArgumentCaptor.forClass(TestCaseState.class);
         verify(beforeHook).execute(capturedScenario.capture());
         assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
     }
@@ -568,22 +568,12 @@ class RuntimeTest {
             .build()
             .run();
 
-
-        assertThat(stepDefinedEvents, contains(
-            mockedStepDefinition,
-            mockedScenarioScopedStepDefinition,
-            // Twice, once for each scenario
-            mockedStepDefinition,
-            mockedScenarioScopedStepDefinition
-        ));
-
-        for (StepDefinition stepDefinedEvent : stepDefinedEvents) {
-            if (stepDefinedEvent instanceof MockedScenarioScopedStepDefinition) {
-                MockedScenarioScopedStepDefinition mocked = (MockedScenarioScopedStepDefinition) stepDefinedEvent;
-                assertTrue(mocked.disposed, "Scenario scoped step definition should be disposed of");
-            }
-        }
-
+        assertThat(stepDefinedEvents.get(0).getPattern(), is(mockedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.get(1).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
+        // Twice, once for each scenario
+        assertThat(stepDefinedEvents.get(2).getPattern(), is(mockedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.get(3).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
+        assertThat(stepDefinedEvents.size(), is(4));
     }
 
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) {
@@ -676,7 +666,7 @@ class RuntimeTest {
     private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
 
         @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked step definition";
         }
 
@@ -702,17 +692,10 @@ class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition implements io.cucumber.core.backend.StepDefinition, ScenarioScoped {
-
-        boolean disposed;
+    private static final class MockedScenarioScopedStepDefinition implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         @Override
-        public void disposeScenarioScope() {
-            this.disposed = true;
-        }
-
-        @Override
-        public String getLocation(boolean detail) {
+        public String getLocation() {
             return "mocked scenario scoped step definition";
         }
 

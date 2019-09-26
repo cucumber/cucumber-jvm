@@ -1,7 +1,6 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
 import java.util.Collections;
 import net.jodah.typetools.TypeResolver;
@@ -22,6 +21,6 @@ class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements Par
     }
 
     private Object execute(String parameterContent) throws Throwable {
-        return Invoker.invoke(body, method, parameterContent);
+        return Invoker.invoke(this, body, method, parameterContent);
     }
 }

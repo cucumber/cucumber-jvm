@@ -1,6 +1,6 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.runner.ScenarioScoped;
+import io.cucumber.core.backend.ScenarioScoped;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         this.location = requireNonNull(location);
     }
 
-    public final String getLocation(boolean detail) {
+    public final String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 
@@ -41,10 +41,5 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
                 "Expected single 'accept' method on body class, found '%s'", acceptMethods));
         }
         return acceptMethods.get(0);
-    }
-
-    @Override
-    public final void disposeScenarioScope() {
-        this.body = null;
     }
 }

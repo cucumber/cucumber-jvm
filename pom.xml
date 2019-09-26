@@ -42,15 +42,15 @@
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
-        <gherkin.version>5.1.0</gherkin.version>
+        <gherkin.version>5.2.0</gherkin.version>
         <cucumber-expressions.version>8.0.0</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
-        <junit-jupiter.version>5.5.1</junit-jupiter.version>
-        <junit-platform.version>1.5.1</junit-platform.version>
+        <junit-jupiter.version>5.5.2</junit-jupiter.version>
+        <junit-platform.version>1.5.2</junit-platform.version>
         <hamcrest.version>2.1</hamcrest.version>
         <mockito.version>3.0.0</mockito.version>
         <jackson-databind.version>2.9.9.3</jackson-databind.version>
@@ -77,12 +77,6 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.cucumber</groupId>
-                        <artifactId>gherkin-jvm-deps</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -107,6 +101,11 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>docstring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -194,21 +193,22 @@
     </dependencyManagement>
 
     <modules>
-        <module>core</module>
-        <module>docstring</module>
-        <module>java</module>
-        <module>java8</module>
-        <module>kotlin-java8</module>
-        <module>testng</module>
-        <module>picocontainer</module>
-        <module>junit</module>
-        <module>spring</module>
-        <module>guice</module>
-        <module>weld</module>
-        <module>openejb</module>
-        <module>needle</module>
         <module>cdi2</module>
+        <module>core</module>
         <module>deltaspike</module>
+        <module>docstring</module>
+        <module>guice</module>
+        <module>java8</module>
+        <module>java</module>
+        <module>junit</module>
+        <module>kotlin-java8</module>
+        <module>needle</module>
+        <module>openejb</module>
+        <module>picocontainer</module>
+        <module>plugin</module>
+        <module>spring</module>
+        <module>testng</module>
+        <module>weld</module>
     </modules>
 
     <profiles>

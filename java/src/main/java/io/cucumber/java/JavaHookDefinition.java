@@ -1,9 +1,8 @@
 package io.cucumber.java;
 
-import io.cucumber.core.api.Scenario;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.runtime.Invoker;
 
 import java.lang.reflect.Method;
 
@@ -12,14 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
-    private final long timeoutMillis;
     private final String tagExpression;
     private final int order;
     private final Lookup lookup;
 
-    JavaHookDefinition(Method method, String tagExpression, int order, long timeoutMillis, Lookup lookup) {
+    JavaHookDefinition(Method method, String tagExpression, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
-        this.timeoutMillis = timeoutMillis;
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
         this.lookup = lookup;
@@ -32,7 +29,8 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         }
 
         if (parameterTypes.length == 1) {
-            if (!(Object.class.equals(parameterTypes[0]) || Scenario.class.equals(parameterTypes[0]))) {
+            Class<?> parameterType = parameterTypes[0];
+            if (!(Object.class.equals(parameterType) || io.cucumber.java.Scenario.class.equals(parameterType))) {
                 throw createInvalidSignatureException(method);
             }
         }
@@ -46,22 +44,21 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             .addAnnotation(After.class)
             .addAnnotation(BeforeStep.class)
             .addAnnotation(AfterStep.class)
-            .addSignature("public void before_or_after(Scenario scenario)")
+            .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
             .addSignature("public void before_or_after()")
             .build();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void execute(Scenario scenario) throws Throwable {
+    public void execute(TestCaseState state) {
         Object[] args;
         if (method.getParameterTypes().length == 1) {
-            args = new Object[]{scenario};
+            args = new Object[]{new io.cucumber.java.Scenario(state)};
         } else {
             args = new Object[0];
         }
 
-        Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
+        Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
     @Override

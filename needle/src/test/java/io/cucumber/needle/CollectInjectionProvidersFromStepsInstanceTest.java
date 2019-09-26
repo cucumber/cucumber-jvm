@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -25,6 +24,18 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
 
         return result;
     };
+    @ObjectUnderTest
+    private A a;
+
+    @Test
+    void shouldAddInjectionProviders() throws Exception {
+        final InjectionProvider<?>[] injectionProviders = function.apply(this);
+        assertThat(injectionProviders.length, is(1));
+
+        new MyNeedleTestcase(injectionProviders).initMyTestcase(this);
+
+        assertThat(a.bar, is("bar"));
+    }
 
     private static class MyNeedleTestcase extends NeedleTestcase {
 
@@ -42,19 +53,6 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
         @Inject
         @Named("foo")
         private String bar;
-    }
-
-    @ObjectUnderTest
-    private A a;
-
-    @Test
-    public void shouldAddInjectionProviders() throws Exception {
-        final InjectionProvider<?>[] injectionProviders = function.apply(this);
-        assertThat(injectionProviders.length, is(1));
-
-        new MyNeedleTestcase(injectionProviders).initMyTestcase(this);
-
-        assertThat(a.bar, is("bar"));
     }
 
 }

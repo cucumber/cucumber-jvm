@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.runtime.Invoker;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -21,28 +20,23 @@ final class GlueAdaptor {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         if (annotationType.getAnnotation(StepDefinitionAnnotation.class) != null) {
             String expression = expression(annotation);
-            long timeoutMillis = timeoutMillis(annotation);
-            glue.addStepDefinition(new JavaStepDefinition(method, expression, timeoutMillis, lookup));
+            glue.addStepDefinition(new JavaStepDefinition(method, expression, lookup));
         } else if (annotationType.equals(Before.class)) {
             Before before = (Before) annotation;
             String tagExpression = before.value();
-            long timeout = before.timeout();
-            glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, before.order(), timeout, lookup));
+            glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, before.order(), lookup));
         } else if (annotationType.equals(After.class)) {
             After after = (After) annotation;
             String tagExpression = after.value();
-            long timeout = after.timeout();
-            glue.addAfterHook(new JavaHookDefinition(method, tagExpression, after.order(), timeout, lookup));
+            glue.addAfterHook(new JavaHookDefinition(method, tagExpression, after.order(), lookup));
         } else if (annotationType.equals(BeforeStep.class)) {
             BeforeStep beforeStep = (BeforeStep) annotation;
             String tagExpression = beforeStep.value();
-            long timeout = beforeStep.timeout();
-            glue.addBeforeStepHook(new JavaHookDefinition(method, tagExpression, beforeStep.order(), timeout, lookup));
+            glue.addBeforeStepHook(new JavaHookDefinition(method, tagExpression, beforeStep.order(), lookup));
         } else if (annotationType.equals(AfterStep.class)) {
             AfterStep afterStep = (AfterStep) annotation;
             String tagExpression = afterStep.value();
-            long timeout = afterStep.timeout();
-            glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, afterStep.order(), timeout, lookup));
+            glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, afterStep.order(), lookup));
         } else if (annotationType.equals(ParameterType.class)) {
             ParameterType parameterType = (ParameterType) annotation;
             String pattern = parameterType.value();
@@ -75,15 +69,4 @@ final class GlueAdaptor {
             throw new IllegalStateException(e);
         }
     }
-
-    private static long timeoutMillis(Annotation annotation) {
-        try {
-            Method regexpMethod = annotation.getClass().getMethod("timeout");
-            return (Long) Invoker.invoke(annotation, regexpMethod);
-        } catch (Throwable throwable) {
-            throw new IllegalStateException(throwable);
-        }
-    }
-
-
 }

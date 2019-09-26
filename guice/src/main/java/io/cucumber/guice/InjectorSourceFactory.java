@@ -26,7 +26,7 @@ final class InjectorSourceFactory {
     }
 
     private InjectorSource createDefaultScenarioModuleInjectorSource() {
-        return () -> Guice.createInjector(Stage.PRODUCTION, CucumberModules.SCENARIO);
+        return () -> Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule());
     }
 
     private InjectorSource instantiateUserSpecifiedInjectorSource(String injectorSourceClassName) {

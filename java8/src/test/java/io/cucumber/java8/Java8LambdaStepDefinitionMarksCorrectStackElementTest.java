@@ -2,6 +2,7 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
+import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
@@ -23,8 +25,8 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        Exception exception = assertThrows(Exception.class, () -> stepDefinition.execute(new Object[0]));
-        MatcherAssert.assertThat(exception, new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
+        CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class, () -> stepDefinition.execute(new Object[0]));
+        assertThat(exception.getInvocationTargetExceptionCause(), new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
             @Override
             protected boolean matchesSafely(Throwable item) {
                 return Arrays.stream(item.getStackTrace())

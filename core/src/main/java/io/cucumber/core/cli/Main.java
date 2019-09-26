@@ -23,7 +23,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public class Main {
 
-    public static void main(String[] argv) {
+    public static void main(String... argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
         System.exit(exitStatus);
     }
@@ -50,6 +50,8 @@ public class Main {
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(argv)
+            .addDefaultFormatterIfNotPresent()
+            .addDefaultSummaryPrinterIfNotPresent()
             .build(systemOptions);
 
 
