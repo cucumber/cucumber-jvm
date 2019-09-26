@@ -35,17 +35,17 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
         boolean skipNextStep = skipSteps;
 
         for (HookTestStep before : beforeStepHookSteps) {
-            skipNextStep |= before.run(testCase, bus, scenario, skipSteps);
+            skipNextStep |= before.run(testCase, bus, state, skipSteps);
         }
 
-        skipNextStep |= super.run(testCase, bus, scenario, skipNextStep);
+        skipNextStep |= super.run(testCase, bus, state, skipNextStep);
 
         for (HookTestStep after : afterStepHookSteps) {
-            skipNextStep |= after.run(testCase, bus, scenario, skipSteps);
+            skipNextStep |= after.run(testCase, bus, state, skipSteps);
         }
 
         return skipNextStep;

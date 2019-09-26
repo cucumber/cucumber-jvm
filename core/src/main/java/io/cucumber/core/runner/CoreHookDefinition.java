@@ -26,7 +26,7 @@ class CoreHookDefinition {
         this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
     }
 
-    void execute(Scenario scenario) throws Throwable {
+    void execute(TestCaseState scenario) {
         delegate.execute(scenario);
     }
 

@@ -11,13 +11,13 @@ final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch
     }
 
     @Override
-    public void runStep(Scenario scenario) {
+    public void runStep(TestCaseState state) {
         throw new UndefinedStepDefinitionException();
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) {
-        runStep(scenario);
+    public void dryRunStep(TestCaseState state) {
+        runStep(state);
     }
 
 }

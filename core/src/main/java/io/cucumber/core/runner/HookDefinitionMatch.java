@@ -14,9 +14,9 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
     }
 
     @Override
-    public void runStep(Scenario scenario) throws Throwable {
+    public void runStep(TestCaseState state) throws Throwable {
         try {
-            hookDefinition.execute(scenario);
+            hookDefinition.execute(state);
         } catch (CucumberBackendException e) {
             throw couldNotInvokeHook(e);
         } catch (CucumberInvocationTargetException e) {
@@ -34,7 +34,7 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) {
+    public void dryRunStep(TestCaseState state) {
         // Do nothing
     }
 

@@ -31,7 +31,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     @Override
-    public void runStep(Scenario scenario) throws Throwable {
+    public void runStep(TestCaseState state) throws Throwable {
         List<Argument> arguments = getArguments();
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
         if (parameterInfos != null && arguments.size() != parameterInfos.size()) {
@@ -110,7 +110,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) throws Throwable {
+    public void dryRunStep(TestCaseState state) throws Throwable {
         // Do nothing
     }
 

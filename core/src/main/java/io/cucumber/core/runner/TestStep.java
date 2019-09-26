@@ -37,30 +37,30 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
         Instant startTimeMillis = bus.getInstant();
         bus.send(new TestStepStarted(startTimeMillis, testCase, this));
         Status status;
         Throwable error = null;
         try {
-            status = executeStep(scenario, skipSteps);
+            status = executeStep(state, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
         }
         Instant stopTimeNanos = bus.getInstant();
         Result result = mapStatusToResult(status, error, Duration.between(startTimeMillis, stopTimeNanos));
-        scenario.add(result);
+        state.add(result);
         bus.send(new TestStepFinished(stopTimeNanos, testCase, this, result));
         return !result.getStatus().is(Status.PASSED);
     }
 
-    private Status executeStep(Scenario scenario, boolean skipSteps) throws Throwable {
+    private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
-            stepDefinitionMatch.runStep(scenario);
+            stepDefinitionMatch.runStep(state);
             return Status.PASSED;
         } else {
-            stepDefinitionMatch.dryRunStep(scenario);
+            stepDefinitionMatch.dryRunStep(state);
             return Status.SKIPPED;
         }
     }

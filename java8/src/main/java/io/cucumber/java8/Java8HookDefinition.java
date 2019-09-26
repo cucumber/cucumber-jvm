@@ -1,7 +1,7 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.Scenario;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,12 +24,12 @@ final class Java8HookDefinition extends AbstractGlueDefinition implements HookDe
     }
 
     @Override
-    public void execute(final Scenario scenario) {
+    public void execute(final TestCaseState state) {
         Object[] args;
         if (method.getParameterCount() == 0) {
             args = new Object[0];
         } else {
-            args = new Object[]{new io.cucumber.java8.Scenario(scenario)};
+            args = new Object[]{new io.cucumber.java8.Scenario(state)};
         }
         Invoker.invoke(this, body, method, args);
     }

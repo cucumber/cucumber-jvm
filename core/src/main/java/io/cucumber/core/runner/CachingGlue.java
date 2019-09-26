@@ -13,7 +13,7 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
@@ -181,15 +181,15 @@ final class CachingGlue implements Glue {
         return docStringTypeDefinitions;
     }
 
-    void prepareGlue(TypeRegistry typeRegistry) throws DuplicateStepDefinitionException {
-        parameterTypeDefinitions.forEach(ptd -> typeRegistry.defineParameterType(ptd.parameterType()));
-        dataTableTypeDefinitions.forEach(dtd -> typeRegistry.defineDataTableType(dtd.dataTableType()));
-        docStringTypeDefinitions.forEach(dtd -> typeRegistry.defineDocStringType(dtd.docStringType()));
+    void prepareGlue(StepTypeRegistry stepTypeRegistry) throws DuplicateStepDefinitionException {
+        parameterTypeDefinitions.forEach(ptd -> stepTypeRegistry.defineParameterType(ptd.parameterType()));
+        dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
+        docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
 
         if (defaultParameterTransformers.size() == 1) {
             DefaultParameterTransformerDefinition definition = defaultParameterTransformers.get(0);
             ParameterByTypeTransformer transformer = definition.parameterByTypeTransformer();
-            typeRegistry.setDefaultParameterTransformer(transformer);
+            stepTypeRegistry.setDefaultParameterTransformer(transformer);
         } else if (defaultParameterTransformers.size() > 1) {
             throw new DuplicateDefaultParameterTransformers(defaultParameterTransformers);
         }
@@ -197,7 +197,7 @@ final class CachingGlue implements Glue {
         if (defaultDataTableEntryTransformers.size() == 1) {
             DefaultDataTableEntryTransformerDefinition definition = defaultDataTableEntryTransformers.get(0);
             TableEntryByTypeTransformer transformer = definition.tableEntryByTypeTransformer();
-            typeRegistry.setDefaultDataTableEntryTransformer(transformer);
+            stepTypeRegistry.setDefaultDataTableEntryTransformer(transformer);
         } else if (defaultDataTableEntryTransformers.size() > 1) {
             throw new DuplicateDefaultDataTableEntryTransformers(defaultDataTableEntryTransformers);
         }
@@ -205,13 +205,13 @@ final class CachingGlue implements Glue {
         if (defaultDataTableCellTransformers.size() == 1) {
             DefaultDataTableCellTransformerDefinition definition = defaultDataTableCellTransformers.get(0);
             TableCellByTypeTransformer transformer = definition.tableCellByTypeTransformer();
-            typeRegistry.setDefaultDataTableCellTransformer(transformer);
+            stepTypeRegistry.setDefaultDataTableCellTransformer(transformer);
         } else if (defaultDataTableCellTransformers.size() > 1) {
             throw new DuplicateDefaultDataTableCellTransformers(defaultDataTableCellTransformers);
         }
 
         stepDefinitions.forEach(stepDefinition -> {
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);

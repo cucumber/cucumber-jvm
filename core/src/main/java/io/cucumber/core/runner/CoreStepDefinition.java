@@ -7,7 +7,7 @@ import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -22,22 +22,22 @@ final class CoreStepDefinition {
     private final StepDefinition stepDefinition;
     private final Type[] types;
 
-    CoreStepDefinition(StepDefinition stepDefinition, TypeRegistry typeRegistry) {
+    CoreStepDefinition(StepDefinition stepDefinition, StepTypeRegistry stepTypeRegistry) {
         this.stepDefinition = requireNonNull(stepDefinition);
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
-        this.expression = createExpression(parameterInfos, stepDefinition.getPattern(), typeRegistry);
+        this.expression = createExpression(parameterInfos, stepDefinition.getPattern(), stepTypeRegistry);
         this.argumentMatcher = new ArgumentMatcher(this.expression);
         this.types = getTypes(parameterInfos);
     }
 
-    private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, TypeRegistry typeRegistry) {
+    private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, StepTypeRegistry stepTypeRegistry) {
         if (parameterInfos == null || parameterInfos.isEmpty()) {
-            return new StepExpressionFactory(typeRegistry).createExpression(expression);
+            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression);
         } else {
             ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
             Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
             boolean transposed = parameterInfo.isTransposed();
-            return new StepExpressionFactory(typeRegistry).createExpression(expression, typeResolver, transposed);
+            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression, typeResolver, transposed);
         }
     }
 
