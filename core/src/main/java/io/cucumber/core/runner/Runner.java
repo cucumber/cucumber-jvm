@@ -9,7 +9,7 @@ import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 
@@ -55,12 +55,12 @@ public final class Runner {
 
     public void runPickle(CucumberPickle pickle) {
         try {
-            TypeRegistry typeRegistry = createTypeRegistryForPickle(pickle);
-            snippetGenerators = createSnippetGeneratorsForPickle(typeRegistry);
+            StepTypeRegistry stepTypeRegistry = createTypeRegistryForPickle(pickle);
+            snippetGenerators = createSnippetGeneratorsForPickle(stepTypeRegistry);
 
             buildBackendWorlds(); // Java8 step definitions will be added to the glue here
 
-            glue.prepareGlue(typeRegistry);
+            glue.prepareGlue(stepTypeRegistry);
 
             TestCase testCase = createTestCaseForPickle(pickle);
             testCase.run(bus);
@@ -70,21 +70,21 @@ public final class Runner {
         }
     }
 
-    private List<SnippetGenerator> createSnippetGeneratorsForPickle(TypeRegistry typeRegistry) {
+    private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {
         return backends.stream()
             .map(Backend::getSnippet)
-            .map(s -> new SnippetGenerator(s, typeRegistry.parameterTypeRegistry()))
+            .map(s -> new SnippetGenerator(s, stepTypeRegistry.parameterTypeRegistry()))
             .collect(Collectors.toList());
     }
 
-    private TypeRegistry createTypeRegistryForPickle(CucumberPickle pickle) {
+    private StepTypeRegistry createTypeRegistryForPickle(CucumberPickle pickle) {
         Locale locale = typeRegistryConfigurer.locale();
         if (locale == null) {
             locale = new Locale(pickle.getLanguage());
         }
-        TypeRegistry typeRegistry = new TypeRegistry(locale);
-        typeRegistryConfigurer.configureTypeRegistry(typeRegistry);
-        return typeRegistry;
+        StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(locale);
+        typeRegistryConfigurer.configureTypeRegistry(stepTypeRegistry);
+        return stepTypeRegistry;
     }
 
     private TestCase createTestCaseForPickle(CucumberPickle pickle) {

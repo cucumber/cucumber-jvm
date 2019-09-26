@@ -12,7 +12,7 @@ import io.cucumber.docstring.DocStringTypeRegistry;
 
 import java.util.Locale;
 
-public final class TypeRegistry implements io.cucumber.core.api.TypeRegistry {
+public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry {
 
     private final ParameterTypeRegistry parameterTypeRegistry;
 
@@ -21,7 +21,7 @@ public final class TypeRegistry implements io.cucumber.core.api.TypeRegistry {
     private final DocStringTypeRegistry docStringTypeRegistry;
 
 
-    public TypeRegistry(Locale locale) {
+    public StepTypeRegistry(Locale locale) {
         parameterTypeRegistry = new ParameterTypeRegistry(locale);
         dataTableTypeRegistry = new DataTableTypeRegistry(locale);
         docStringTypeRegistry = new DocStringTypeRegistry();
