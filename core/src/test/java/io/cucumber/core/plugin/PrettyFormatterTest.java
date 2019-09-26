@@ -6,7 +6,7 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
@@ -387,7 +387,7 @@ class PrettyFormatterTest {
     void should_mark_subsequent_arguments_in_steps() {
         Formats formats = new AnsiFormats();
 
-        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
         StepExpression expression = stepExpressionFactory.createExpression("text {string} text {string}");
 
@@ -406,7 +406,7 @@ class PrettyFormatterTest {
     void should_mark_nested_argument_as_part_of_full_argument() {
         Formats formats = new AnsiFormats();
 
-        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
         StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not yet )?confirmed)?$");
 
@@ -424,7 +424,7 @@ class PrettyFormatterTest {
     void should_mark_nested_arguments_as_part_of_enclosing_argument() {
         Formats formats = new AnsiFormats();
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
-        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
         StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not( yet)? )?confirmed)?$");
         String stepText = "the order is placed and not yet confirmed";

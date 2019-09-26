@@ -18,9 +18,9 @@ import static java.util.Locale.ENGLISH;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-class TypeRegistryTest {
+class StepTypeRegistryTest {
 
-    private final TypeRegistry registry = new TypeRegistry(ENGLISH);
+    private final StepTypeRegistry registry = new StepTypeRegistry(ENGLISH);
     private final ExpressionFactory expressionFactory = new ExpressionFactory(registry.parameterTypeRegistry());
 
     @Test

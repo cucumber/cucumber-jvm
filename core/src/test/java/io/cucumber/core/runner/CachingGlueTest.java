@@ -15,7 +15,7 @@ import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTable;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 class CachingGlueTest {
 
-    private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
     private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
 
     private static CucumberStep getPickleStep(String text) {
@@ -94,7 +94,7 @@ class CachingGlueTest {
 
         DuplicateStepDefinitionException exception = assertThrows(
             DuplicateStepDefinitionException.class,
-            () -> glue.prepareGlue(typeRegistry)
+            () -> glue.prepareGlue(stepTypeRegistry)
         );
         assertThat(exception.getMessage(), equalTo("Duplicate step definitions in foo.bf:10 and bar.bf:90"));
     }
@@ -106,7 +106,7 @@ class CachingGlueTest {
 
         DuplicateDefaultParameterTransformers exception = assertThrows(
             DuplicateDefaultParameterTransformers.class,
-            () -> glue.prepareGlue(typeRegistry)
+            () -> glue.prepareGlue(stepTypeRegistry)
         );
         assertThat(exception.getMessage(), equalTo("" +
             "There may not be more then one default parameter transformer. Found:\n" +
@@ -122,7 +122,7 @@ class CachingGlueTest {
 
         DuplicateDefaultDataTableEntryTransformers exception = assertThrows(
             DuplicateDefaultDataTableEntryTransformers.class,
-            () -> glue.prepareGlue(typeRegistry)
+            () -> glue.prepareGlue(stepTypeRegistry)
         );
         assertThat(exception.getMessage(), equalTo("" +
             "There may not be more then one default data table entry. Found:\n" +
@@ -138,7 +138,7 @@ class CachingGlueTest {
 
         DuplicateDefaultDataTableCellTransformers exception = assertThrows(
             DuplicateDefaultDataTableCellTransformers.class,
-            () -> glue.prepareGlue(typeRegistry)
+            () -> glue.prepareGlue(stepTypeRegistry)
         );
         assertThat(exception.getMessage(), equalTo("" +
             "There may not be more then one default table cell transformers. Found:\n" +
@@ -165,7 +165,7 @@ class CachingGlueTest {
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
 
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         assertAll("Checking Glue",
             () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(1))),
@@ -215,7 +215,7 @@ class CachingGlueTest {
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
@@ -242,7 +242,7 @@ class CachingGlueTest {
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
@@ -273,7 +273,7 @@ class CachingGlueTest {
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         String featurePath = "someFeature.feature";
         String stepText = "pattern1";
@@ -307,7 +307,7 @@ class CachingGlueTest {
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition1);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
@@ -317,7 +317,7 @@ class CachingGlueTest {
 
         StepDefinition stepDefinition2 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition2)));
@@ -332,7 +332,7 @@ class CachingGlueTest {
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition1);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
@@ -340,7 +340,7 @@ class CachingGlueTest {
 
         glue.removeScenarioScopedGlue();
 
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
         assertThat(pickleStepDefinitionMatch2, nullValue());
@@ -354,7 +354,7 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.addStepDefinition(stepDefinition3);
-        glue.prepareGlue(typeRegistry);
+        glue.prepareGlue(stepTypeRegistry);
 
         String featurePath = "someFeature.feature";
 

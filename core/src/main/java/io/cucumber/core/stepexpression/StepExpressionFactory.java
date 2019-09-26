@@ -2,6 +2,7 @@ package io.cucumber.core.stepexpression;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
@@ -14,12 +15,12 @@ import java.util.function.Supplier;
 
 public final class StepExpressionFactory {
 
-    private final io.cucumber.cucumberexpressions.ExpressionFactory expressionFactory;
+    private final ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
     private final DocStringTypeRegistryDocStringConverter docStringConverter;
 
-    public StepExpressionFactory(TypeRegistry registry) {
-        this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
+    public StepExpressionFactory(StepTypeRegistry registry) {
+        this.expressionFactory = new ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
         this.docStringConverter = new DocStringTypeRegistryDocStringConverter(registry.docStringTypeRegistry());
     }

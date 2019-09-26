@@ -1,11 +1,9 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.stepexpression.TypeRegistry;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringTypeRegistry;
 import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
-import io.cucumber.java.eo.Do;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

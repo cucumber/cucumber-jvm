@@ -4,7 +4,7 @@ import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CoreStepDefinitionTest {
 
-    private final TypeRegistry typeRegistry = new TypeRegistry(Locale.ENGLISH);
+    private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(Locale.ENGLISH);
 
     @Test
     void should_apply_identity_transform_to_doc_string_when_target_type_is_object() {
@@ -39,7 +39,7 @@ class CoreStepDefinitionTest {
             "       \"\"\"\n"
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, typeRegistry);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
         assertThat(arguments.get(0).getValue(), is(equalTo(DocString.create("content"))));
@@ -55,7 +55,7 @@ class CoreStepDefinitionTest {
             "      | content |\n"
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, typeRegistry);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
         assertThat(arguments.get(0).getValue(), is(equalTo(DataTable.create(singletonList(singletonList("content"))))));
     }
@@ -69,7 +69,7 @@ class CoreStepDefinitionTest {
             "       |  |\n"
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, typeRegistry);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
         assertEquals(DataTable.create(singletonList(singletonList(null))), arguments.get(0).getValue());
     }
@@ -193,7 +193,7 @@ class CoreStepDefinitionTest {
     @SuppressWarnings("unchecked")
     private <T> T runStepDef(Method method, boolean transposed, CucumberFeature feature) throws Throwable {
         StubStepDefinition stub = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stub, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
         CucumberStep stepWithTable = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = coreStepDefinition.matchedArguments(stepWithTable);
 

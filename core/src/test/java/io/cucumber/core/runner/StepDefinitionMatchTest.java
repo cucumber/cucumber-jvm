@@ -8,7 +8,7 @@ import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.core.stepexpression.TypeRegistry;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StepDefinitionMatchTest {
 
-    private final TypeRegistry typeRegistry = new TypeRegistry(ENGLISH);
+    private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
 
     @Test
     void executes_a_step() throws Throwable {
@@ -38,7 +38,7 @@ class StepDefinitionMatchTest {
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         stepDefinitionMatch.runStep(null);
@@ -54,7 +54,7 @@ class StepDefinitionMatchTest {
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
@@ -81,7 +81,7 @@ class StepDefinitionMatchTest {
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -111,7 +111,7 @@ class StepDefinitionMatchTest {
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -138,7 +138,7 @@ class StepDefinitionMatchTest {
         );
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -165,7 +165,7 @@ class StepDefinitionMatchTest {
             "I have a data table",
             UndefinedDataTableType.class
         );
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
@@ -185,7 +185,7 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_convert_exception_for_transfomer_and_capture_group_mismatch() {
-        typeRegistry.defineParameterType(new ParameterType<>(
+        stepTypeRegistry.defineParameterType(new ParameterType<>(
             "itemQuantity",
             "(few|some|lots of) (cukes|gherkins)",
             ItemQuantity.class,
@@ -199,7 +199,7 @@ class StepDefinitionMatchTest {
         );
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
@@ -223,11 +223,11 @@ class StepDefinitionMatchTest {
             "       | 15 | \n"
         );
 
-        typeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new));
+        stepTypeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new));
 
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, typeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
