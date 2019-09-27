@@ -329,12 +329,27 @@ public interface LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
     }
 
-    default void DocStringType(String contentType, DocStringDefinitionBody docStringDefinitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(docStringDefinitionBody, contentType));
+    /**
+     * Register doc string type.
+     * 
+     * @param contentType Name of the content type.
+     * @param body        a function that creates an instance of <code>type</code>
+     *                    from the doc string
+     * @see io.cucumber.docstring.DocStringType
+     */
+    default void DocStringType(String contentType, DocStringDefinitionBody body) {
+        LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(body, contentType));
     }
 
-    default <T> void DataTableType(DataTableDefinitionBody<T> dataTableDefinitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(dataTableDefinitionBody));
+    /**
+     * Register a data table type.
+     * 
+     * @param <T>  the data table type
+     * @param body a function that creates an instance of <code>type</code> from the
+     *             data table
+     */
+    default <T> void DataTableType(DataTableDefinitionBody<T> body) {
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
     }
 
     /**
