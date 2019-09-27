@@ -40,11 +40,12 @@ public class TypeDefinitionsStepdefs implements En{
 
         ParameterType("stringbuilder", ".*", (String str) -> new StringBuilder(str));
 
-        Given("kebab made from {parts}, defined by lambda", (String coordinates) -> {
+        Given("kebab made from {ingredients}, defined by lambda", (StringBuffer coordinates) -> {
             assertThat(coordinates.toString(), equalTo("-meat-veg-"));
         });
 
-        ParameterType("parts", "(.+), (.+)", (String x, String y) -> '-' + x + '-' + y + '-');
+        ParameterType("ingredients", "(.+) and (.+)",
+                (String x, String y) -> new StringBuffer().append('-').append(x).append('-').append(y).append('-'));
 
     }
 
