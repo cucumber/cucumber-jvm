@@ -20,5 +20,8 @@ Feature: Lambda type definition
   Scenario: define parameter type by lambda
     Given stringbuilder parameter, defined by lambda
 
+  Scenario: define Map.Entry parameter type by lambda
+    Given key-value pair abc: 123, defined by lambda
+
   Scenario: define multi argument parameter type by lambda
     Given kebab made from mushroom, meat and veg, defined by lambda
