@@ -8,6 +8,7 @@ import io.cucumber.datatable.DataTable;
 import java.awt.Point;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
@@ -44,13 +45,6 @@ public class TypeDefinitionsStepdefs implements En{
         ParameterType("stringbuilder", ".*", (String str) -> new StringBuilder(str));
 
         // ParameterType with two String arguments
-        Given("key-value pair {pair}, defined by lambda", (Map.Entry<String, String> coordinates) -> {
-            assertThat(coordinates.toString(), equalTo("abc=123"));
-        });
-
-        ParameterType("pair", "(.+): (.+)", (String x, String y) -> Map.entry(x, y));
-
-        // ParameterType with two Integer arguments
         Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
             assertThat(coordinates.toString(), equalTo("java.awt.Point[x=123,y=456]"));
         });
