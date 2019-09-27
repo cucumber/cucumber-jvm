@@ -329,20 +329,6 @@ public interface LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
     }
 
-    /**
-     * Defines and after step hook.
-     *
-     * @param tagExpression a tag expression, if the expression applies to the current scenario this hook will be executed
-     * @param timeoutMillis max amount of milliseconds this is allowed to run for
-     * @param order         the order in which this hook should run. Higher numbers are run first
-     * @param body          lambda to execute
-     * @deprecated use a library based solution instead. E.g. Awaitility or JUnit 5s Assertions.assertTimeout.
-     */
-    @Deprecated
-    default void AfterStep(String tagExpression, long timeoutMillis, int order, final HookNoArgsBody body) {
-        LambdaGlueRegistry.INSTANCE.get().addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
-    }
-
     default void DocStringType(String contentType, DocStringDefinitionBody docStringDefinitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(docStringDefinitionBody, contentType));
     }
