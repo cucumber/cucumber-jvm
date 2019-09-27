@@ -23,5 +23,8 @@ Feature: Lambda type definition
   Scenario: define Map.Entry parameter type by lambda
     Given key-value pair abc: 123, defined by lambda
 
+  Scenario: define Map.Entry parameter type by lambda
+    Given balloon coordinates 123,456, defined by lambda
+
   Scenario: define multi argument parameter type by lambda
     Given kebab made from mushroom, meat and veg, defined by lambda

@@ -50,6 +50,13 @@ public class TypeDefinitionsStepdefs implements En{
 
         ParameterType("pair", "(.+): (.+)", (String x, String y) -> Map.entry(x, y));
 
+        // ParameterType with two Integer arguments
+        Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
+            assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]"));
+        });
+
+        ParameterType("coordinates", "(.+),(.+)", (Integer x, Integer y) -> new Point(x, y));
+
         // ParameterType with three arguments
         Given("kebab made from {ingredients}, defined by lambda", (StringBuffer coordinates) -> {
             assertThat(coordinates.toString(), equalTo("-mushroom-meat-veg-"));
