@@ -337,37 +337,87 @@ public interface LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(dataTableDefinitionBody));
     }
 
+    /**
+     * Register parameter type.
+     * 
+     * @param <R>            the parameter type
+     *                       {@link io.cucumber.cucumberexpressions.ParameterType#getType()}
+     * @param name           used as the type name in typed expressions
+     *                       {@link io.cucumber.cucumberexpressions.ParameterType#getName()}
+     * @param regex          expression to match
+     * @param definitionBody converts String argument to the target parameter type
+     * @see io.cucumber.cucumberexpressions.ParameterType
+     * @see <a href=https://cucumber.io/docs/cucumber/cucumber-expressions>Cucumber
+     *      Expressions</a>
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A1<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * Register parameter type.
+     * 
+     * @param <R>            the parameter type.
+     *                       {@link io.cucumber.cucumberexpressions.ParameterType#getType()}
+     * @param name           used as the type name in typed expressions.
+     *                       {@link io.cucumber.cucumberexpressions.ParameterType#getName()}
+     * @param regex          expression to match. If the expression includes capture
+     *                       groups their captured strings will be provided as
+     *                       individual arguments.
+     * @param definitionBody converts String arguments to the target parameter type
+     * @see io.cucumber.cucumberexpressions.ParameterType
+     * @see <a href=https://cucumber.io/docs/cucumber/cucumber-expressions>Cucumber
+     *      Expressions</a>
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A2<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A3<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A4<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A5<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A6<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A7<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
 
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A8<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
+
+    /**
+     * @see LambdaGlue#ParameterType(String, String, io.cucumber.java8.ParameterDefinitionBody.A2)
+     */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A9<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
