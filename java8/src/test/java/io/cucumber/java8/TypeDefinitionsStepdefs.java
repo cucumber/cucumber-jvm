@@ -48,7 +48,7 @@ public class TypeDefinitionsStepdefs implements En{
             assertThat(coordinates.toString(), equalTo("abc=123"));
         });
 
-        ParameterType("pair", "(.+): (.+)", Map::entry);
+        ParameterType("pair", "(.+): (.+)", (String x, String y) -> Map.entry(x, y));
 
         // ParameterType with two Integer arguments
         Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
