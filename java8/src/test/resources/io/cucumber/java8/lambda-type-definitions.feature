@@ -19,3 +19,6 @@ Feature: Lambda type definition
 
   Scenario: define parameter type by lambda
     Given stringbuilder parameter, defined by lambda
+
+  Scenario: define multi argument parameter type by lambda
+    Given balloon coordinates 3,4, defined by lambda

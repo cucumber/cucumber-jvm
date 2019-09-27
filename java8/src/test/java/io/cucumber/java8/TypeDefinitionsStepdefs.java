@@ -4,6 +4,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import io.cucumber.datatable.DataTable;
+
+import java.awt.Point;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +39,12 @@ public class TypeDefinitionsStepdefs implements En{
         });
 
         ParameterType("stringbuilder", ".*", (String str) -> new StringBuilder(str));
+
+        Given("balloon coordinates {point}, defined by lambda", (Point coordinates) -> {
+            assertThat(coordinates.toString(), equalTo("Point[x=3,y=4]"));
+        });
+
+        ParameterType("point", "(.+),(.+)", (Integer x, Integer y) -> new Point(x, y));
 
     }
 

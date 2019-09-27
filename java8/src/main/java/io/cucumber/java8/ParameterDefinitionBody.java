@@ -1,7 +1,13 @@
 package io.cucumber.java8;
 
 
-@FunctionalInterface
-public interface ParameterDefinitionBody<T> {
-    T accept(String name) throws Throwable;
+public interface ParameterDefinitionBody<R> {
+    @FunctionalInterface
+    interface A1<R, T1> extends ParameterDefinitionBody<R> {
+        R accept(T1 p1) throws Throwable;
+    }
+    @FunctionalInterface
+    interface A2<R, T1, T2> extends ParameterDefinitionBody<R> {
+        R accept(T1 p1, T2 p2) throws Throwable;
+    }
 }

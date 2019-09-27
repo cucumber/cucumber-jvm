@@ -1,5 +1,7 @@
 package io.cucumber.java8;
 
+import io.cucumber.java8.ParameterDefinitionBody.A1;
+import io.cucumber.java8.ParameterDefinitionBody.A2;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
@@ -351,7 +353,11 @@ public interface LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(dataTableDefinitionBody));
     }
 
-    default void ParameterType(String name, String regex, ParameterDefinitionBody definitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(definitionBody, regex, name));
+    default <R, T1> void ParameterType(String name, String regex, ParameterDefinitionBody.A1<R, T1> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A1.class, definitionBody));
+    }
+
+    default <R, T1, T2> void ParameterType(String name, String regex, ParameterDefinitionBody.A2<R, T1, T2> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A2.class, definitionBody));
     }
 }
