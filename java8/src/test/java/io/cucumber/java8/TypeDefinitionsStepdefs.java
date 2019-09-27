@@ -40,11 +40,11 @@ public class TypeDefinitionsStepdefs implements En{
 
         ParameterType("stringbuilder", ".*", (String str) -> new StringBuilder(str));
 
-        Given("balloon coordinates {point}, defined by lambda", (Point coordinates) -> {
-            assertThat(coordinates.toString(), equalTo("Point[x=3,y=4]"));
+        Given("kebab made from {parts}, defined by lambda", (String coordinates) -> {
+            assertThat(coordinates.toString(), equalTo("-meat-veg-"));
         });
 
-        ParameterType("point", "(.+),(.+)", (Integer x, Integer y) -> new Point(x, y));
+        ParameterType("parts", "(.+), (.+)", (String x, String y) -> '-' + x + '-' + y + '-');
 
     }
 
