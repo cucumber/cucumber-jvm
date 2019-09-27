@@ -362,4 +362,27 @@ public interface LambdaGlue {
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A3<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
     }
+
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A4<R> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
+    }
+
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A5<R> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
+    }
+
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A6<R> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
+    }
+
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A7<R> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
+    }
+
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A8<R> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
+    }
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A9<R> definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition<>(name, regex, definitionBody));
+    }
 }
