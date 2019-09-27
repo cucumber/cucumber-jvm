@@ -1,8 +1,5 @@
 package io.cucumber.java8;
 
-import io.cucumber.java8.ParameterDefinitionBody.A1;
-import io.cucumber.java8.ParameterDefinitionBody.A2;
-import io.cucumber.java8.ParameterDefinitionBody.A3;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
@@ -355,14 +352,14 @@ public interface LambdaGlue {
     }
 
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A1<R> definitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A1.class, definitionBody));
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, definitionBody));
     }
 
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A2<R> definitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A2.class, definitionBody));
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, definitionBody));
     }
 
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A3<R> definitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A3.class, definitionBody));
+        LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, definitionBody));
     }
 }
