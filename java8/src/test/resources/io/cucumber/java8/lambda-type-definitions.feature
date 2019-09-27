@@ -21,4 +21,4 @@ Feature: Lambda type definition
     Given stringbuilder parameter, defined by lambda
 
   Scenario: define multi argument parameter type by lambda
-    Given kebab made from meat and veg, defined by lambda
+    Given kebab made from mushroom, meat and veg, defined by lambda
