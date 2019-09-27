@@ -52,10 +52,10 @@ public class TypeDefinitionsStepdefs implements En{
 
         // ParameterType with two Integer arguments
         Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
-            assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]"));
+            assertThat(coordinates.toString(), equalTo("java.awt.Point[x=123,y=456]"));
         });
 
-        ParameterType("coordinates", "(.+),(.+)", (Integer x, Integer y) -> new Point(x, y));
+        ParameterType("coordinates", "(.+),(.+)", (String x, String y) -> new Point(Integer.valueOf(x), Integer.valueOf(y)));
 
         // ParameterType with three arguments
         Given("kebab made from {ingredients}, defined by lambda", (StringBuffer coordinates) -> {

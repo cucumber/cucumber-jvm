@@ -5,17 +5,15 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface ParameterDefinitionBody {
     @FunctionalInterface
-    interface A1<R, T1> extends ParameterDefinitionBody {
-        R accept(T1 p1) throws Throwable;
+    interface A1<R> extends ParameterDefinitionBody {
+        R accept(String p1) throws Throwable;
     }
-
     @FunctionalInterface
-    interface A2<R, T1, T2> extends ParameterDefinitionBody {
-        R accept(T1 p1, T2 p2) throws Throwable;
+    interface A2<R> extends ParameterDefinitionBody {
+        R accept(String p1, String p2) throws Throwable;
     }
-
     @FunctionalInterface
-    interface A3<R, T1, T2, T3> extends ParameterDefinitionBody {
-        R accept(T1 p1, T2 p2, T3 p3) throws Throwable;
+    interface A3<R> extends ParameterDefinitionBody {
+        R accept(String p1, String p2, String p3) throws Throwable;
     }
 }

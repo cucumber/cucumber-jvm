@@ -354,15 +354,15 @@ public interface LambdaGlue {
         LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(dataTableDefinitionBody));
     }
 
-    default <R, T1> void ParameterType(String name, String regex, ParameterDefinitionBody.A1<R, T1> definitionBody) {
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A1<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A1.class, definitionBody));
     }
 
-    default <R, T1, T2> void ParameterType(String name, String regex, ParameterDefinitionBody.A2<R, T1, T2> definitionBody) {
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A2<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A2.class, definitionBody));
     }
 
-    default <R, T1, T2, T3> void ParameterType(String name, String regex, ParameterDefinitionBody.A3<R, T1, T2, T3> definitionBody) {
+    default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A3<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, A3.class, definitionBody));
     }
 }
