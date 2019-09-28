@@ -20,9 +20,6 @@ Feature: Lambda type definition
   Scenario: define parameter type by lambda
     Given stringbuilder parameter, defined by lambda
 
-  Scenario: define Map.Entry parameter type by lambda
-    Given key-value pair abc: 123, defined by lambda
-
   Scenario: define Point parameter type by lambda
     Given balloon coordinates 123,456, defined by lambda
 
