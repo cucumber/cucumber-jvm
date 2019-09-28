@@ -16,7 +16,7 @@ final class LinePredicate implements Predicate<CucumberPickle> {
 
     @Override
     public boolean test(CucumberPickle pickle) {
-        URI picklePath = URI.create(pickle.getUri());
+        URI picklePath = pickle.getUri();
         if (!lineFilters.containsKey(picklePath)) {
             return true;
         }

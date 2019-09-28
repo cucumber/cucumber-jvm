@@ -1,5 +1,6 @@
 package io.cucumber.testng;
 
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -8,9 +9,9 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.core.eventbus.EventBus;
 import org.testng.SkipException;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -124,10 +125,10 @@ final class TestCaseResultListener {
     }
 
     private static final class StepLocation implements Comparable<StepLocation> {
-        private final String uri;
+        private final URI uri;
         private final int line;
 
-        private StepLocation(String uri, int line) {
+        private StepLocation(URI uri, int line) {
             this.uri = uri;
             this.line = line;
         }

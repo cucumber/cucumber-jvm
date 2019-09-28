@@ -1,7 +1,10 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -10,14 +13,10 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.StrictAware;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
@@ -55,7 +55,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private Element root;
     private TestCase testCase;
     private boolean strict = false;
-    private String currentFeatureFile = null;
+    private URI currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;

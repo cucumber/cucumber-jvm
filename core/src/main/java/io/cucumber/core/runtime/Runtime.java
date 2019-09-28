@@ -17,6 +17,8 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.Result;
@@ -25,8 +27,6 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
-import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.Plugin;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public final class Runtime {
         final List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
 
         final List<Future<?>> executingPickles = features.stream()
@@ -99,7 +99,7 @@ public final class Runtime {
             .collect(collectingAndThen(toList(),
                 list -> pickleOrder.orderPickles(list).stream()))
             .limit(limit > 0 ? limit : Integer.MAX_VALUE)
-            .map(pickleEvent -> executor.submit(() -> runnerSupplier.get().runPickle(pickleEvent)))
+            .map(pickle -> executor.submit(() -> runnerSupplier.get().runPickle(pickle)))
             .collect(toList());
 
         executor.shutdown();

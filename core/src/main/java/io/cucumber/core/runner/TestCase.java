@@ -81,7 +81,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
-    public String getUri() {
+    public URI getUri() {
         return pickle.getUri();
     }
 
@@ -91,7 +91,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private String fileColonLine(Integer line) {
-        return URI.create(pickle.getUri()).getSchemeSpecificPart() + ":" + line;
+        return pickle.getUri().getSchemeSpecificPart() + ":" + line;
     }
 
     @Override

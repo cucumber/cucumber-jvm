@@ -9,6 +9,7 @@ import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +34,7 @@ class CanonicalEventOrderTest {
         return Instant.now();
     }
 
-    private static Event createTestCaseEvent(final String uri, final int line) {
+    private static Event createTestCaseEvent(final URI uri, final int line) {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
         given(testCase.getLine()).willReturn(line);
@@ -41,12 +42,12 @@ class CanonicalEventOrderTest {
     }
 
     private Event runStarted = new TestRunStarted(getInstant());
-    private Event testRead = new TestSourceRead(getInstant(), "uri", "source");
-    private Event suggested = new SnippetsSuggestedEvent(getInstant(), "uri", 0, Collections.emptyList());
-    private Event feature1Case1Started = createTestCaseEvent("feature1", 1);
-    private Event feature1Case2Started = createTestCaseEvent("feature1", 9);
-    private Event feature1Case3Started = createTestCaseEvent("feature1", 11);
-    private Event feature2Case1Started = createTestCaseEvent("feature2", 1);
+    private Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
+    private Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, Collections.emptyList());
+    private Event feature1Case1Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 1);
+    private Event feature1Case2Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 9);
+    private Event feature1Case3Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 11);
+    private Event feature2Case1Started = createTestCaseEvent(URI.create("file:path/to/2.feature"), 1);
     private Event runFinished = new TestRunFinished(getInstant());
 
     @Test

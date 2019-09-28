@@ -1,5 +1,7 @@
 package io.cucumber.testng;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
@@ -7,11 +9,10 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
+import java.net.URI;
 import java.time.Clock;
 
 import static io.cucumber.plugin.event.Status.AMBIGUOUS;
@@ -37,7 +38,7 @@ public class TestCaseResultListenerTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
 
-    private String uri = "file:path/to.feature";
+    private URI uri = URI.create("file:path/to.feature");
     private int line = 0;
     private Exception error = new Exception();
     private TestCase testCase = mock(TestCase.class);

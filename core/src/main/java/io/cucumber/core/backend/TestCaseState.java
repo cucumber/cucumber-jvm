@@ -2,6 +2,7 @@ package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
 
+import java.net.URI;
 import java.util.Collection;
 
 /**
@@ -77,7 +78,7 @@ public interface TestCaseState {
     /**
      * @return the uri of the Scenario.
      */
-    String getUri();
+    URI getUri();
 
     /**
      * @return the line in the feature file of the Scenario. If this is a Scenario

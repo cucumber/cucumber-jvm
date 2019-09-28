@@ -2,6 +2,7 @@ package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
 
+import java.net.URI;
 import java.util.List;
 
 @API(status = API.Status.STABLE)
@@ -22,5 +23,5 @@ public interface TestCase {
 
     List<TestStep> getTestSteps();
 
-    String getUri();
+    URI getUri();
 }

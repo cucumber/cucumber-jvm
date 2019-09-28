@@ -17,6 +17,7 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.opentest4j.TestAbortedException;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +66,7 @@ class PickleStepTestStepTest {
     private CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
     private final HookTestStep beforeHook = new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
-        "uri",
+        URI.create("file:path/to.feature"),
         pickle.getSteps().get(0),
         singletonList(beforeHook),
         singletonList(afterHook),
@@ -246,7 +247,7 @@ class PickleStepTestStepTest {
         );
 
         TestStep step = new PickleStepTestStep(
-            "file:path/to.feature",
+            URI.create("file:path/to.feature"),
             feature.getPickles().get(0).getSteps().get(0),
             definitionMatch
         );

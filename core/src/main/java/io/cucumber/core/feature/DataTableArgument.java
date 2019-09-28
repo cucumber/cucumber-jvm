@@ -15,6 +15,7 @@ public final class DataTableArgument implements Argument, io.cucumber.plugin.eve
         this.line = table.getLocation().getLine();
     }
 
+    @Override
     public List<List<String>> cells() {
         return cells;
     }

@@ -5,6 +5,7 @@ import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,7 +23,7 @@ class TestCaseStateTest {
             "     Given I have 4 cukes in my belly\n"
         );
         TestCaseState state = createTestCaseState(feature);
-        assertThat(state.getUri(), is(equalTo("file:path/file.feature")));
+        assertThat(state.getUri(), is(equalTo(URI.create("file:path/file.feature"))));
     }
 
     @Test

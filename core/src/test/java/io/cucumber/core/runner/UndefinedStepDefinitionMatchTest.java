@@ -5,6 +5,8 @@ import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.net.URI;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,7 +22,7 @@ class UndefinedStepDefinitionMatchTest {
     );
 
     private final UndefinedPickleStepDefinitionMatch match = new UndefinedPickleStepDefinitionMatch(
-        "file:path/to.feature",
+        URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(0)
     );
 

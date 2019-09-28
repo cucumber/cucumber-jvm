@@ -1,16 +1,17 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
 
@@ -40,7 +41,7 @@ class TestCaseTest {
     private CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
 
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
-        "uri",
+        URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(0),
         singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
         singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
@@ -51,7 +52,7 @@ class TestCaseTest {
     private CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
     private CoreHookDefinition afterStep1HookDefinition2 = mock(CoreHookDefinition.class);
     private final PickleStepTestStep testStep2 = new PickleStepTestStep(
-        "uri",
+        URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(1),
         singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
         singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),

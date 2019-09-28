@@ -2,15 +2,16 @@ package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class TestSourceRead extends TimeStampedEvent {
-    private final String uri;
+    private final URI uri;
     private final String source;
 
-    public TestSourceRead(Instant timeInstant, String uri, String source) {
+    public TestSourceRead(Instant timeInstant, URI uri, String source) {
         super(timeInstant);
         this.uri = Objects.requireNonNull(uri);
         this.source = Objects.requireNonNull(source);
@@ -20,7 +21,7 @@ public final class TestSourceRead extends TimeStampedEvent {
         return source;
     }
 
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 }
