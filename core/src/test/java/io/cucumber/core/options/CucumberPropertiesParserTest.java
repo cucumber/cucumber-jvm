@@ -61,13 +61,6 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
-    void should_parse_parallel() {
-        properties.put(Constants.EXECUTION_PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, "12");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getThreads(), equalTo(12));
-    }
-
-    @Test
     void should_parse_strict() {
         properties.put(Constants.EXECUTION_STRICT_PROPERTY_NAME, "true");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
@@ -172,7 +165,7 @@ class CucumberPropertiesParserTest {
     @Test
     void should_parse_rerun_file() throws IOException {
         Path path = mockFileResource("path/to.feature");
-        properties.put(Constants.RERUN_FILE_PROPERTY_NAME, path.toString());
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("file:path/to.feature")));
     }

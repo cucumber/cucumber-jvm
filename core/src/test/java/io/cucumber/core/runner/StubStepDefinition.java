@@ -31,15 +31,16 @@ class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation(boolean detail) {
-        return "{stubbed location" + (detail ? " with details" : "") + "}";
+    public String getLocation() {
+        return "{stubbed location with details}";
     }
 
     @Override
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Object[] args) {
         assertEquals(parameterInfos.size(), args.length);
         this.args = Arrays.asList(args);
     }
+
 
     public List<Object> getArgs() {
         return args;

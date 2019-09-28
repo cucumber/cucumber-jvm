@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
@@ -27,14 +26,14 @@ class UndefinedStepDefinitionMatchTest {
 
     @Test
     void throws_ambiguous_step_definitions_exception_when_run() {
-        Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        Executable testMethod = () -> match.runStep(mock(TestCaseState.class));
         UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }
 
     @Test
     void throws_ambiguous_step_definitions_exception_when_dry_run() {
-        Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        Executable testMethod = () -> match.dryRunStep(mock(TestCaseState.class));
         UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }

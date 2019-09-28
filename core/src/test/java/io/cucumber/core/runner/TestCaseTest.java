@@ -1,8 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
-import io.cucumber.core.event.TestCaseFinished;
-import io.cucumber.core.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
@@ -15,8 +14,8 @@ import org.mockito.Mockito;
 import java.time.Instant;
 import java.util.Collections;
 
-import static io.cucumber.core.event.HookType.AFTER_STEP;
-import static io.cucumber.core.event.HookType.BEFORE_STEP;
+import static io.cucumber.plugin.event.HookType.AFTER_STEP;
+import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.isA;
@@ -66,13 +65,13 @@ class TestCaseTest {
 
     @Test
     void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(TestCaseState.class));
 
         createTestCase(testStep1).run(bus);
 
         InOrder order = inOrder(bus, definitionMatch1);
         order.verify(bus).send(isA(TestCaseStarted.class));
-        order.verify(definitionMatch1).runStep(isA(Scenario.class));
+        order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
         order.verify(bus).send(isA(TestCaseFinished.class));
     }
 
@@ -82,47 +81,47 @@ class TestCaseTest {
         testCase.run(bus);
 
         InOrder order = inOrder(definitionMatch1, definitionMatch2);
-        order.verify(definitionMatch1).runStep(isA(Scenario.class));
-        order.verify(definitionMatch2).runStep(isA(Scenario.class));
+        order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
+        order.verify(definitionMatch2).runStep(isA(TestCaseState.class));
     }
 
     @Test
     void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(TestCaseState.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
         InOrder order = inOrder(beforeStep1HookDefinition1, definitionMatch1, afterStep1HookDefinition1);
-        order.verify(beforeStep1HookDefinition1).execute(isA(Scenario.class));
-        order.verify(definitionMatch1).runStep(isA(Scenario.class));
-        order.verify(afterStep1HookDefinition1).execute(isA(Scenario.class));
+        order.verify(beforeStep1HookDefinition1).execute(isA(TestCaseState.class));
+        order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
+        order.verify(afterStep1HookDefinition1).execute(isA(TestCaseState.class));
     }
 
 
     @Test
     void skip_hooks_of_step_after_skipped_step() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(TestCaseState.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
         InOrder order = inOrder(beforeStep1HookDefinition2, definitionMatch2, afterStep1HookDefinition2);
-        order.verify(beforeStep1HookDefinition2, never()).execute(isA(Scenario.class));
-        order.verify(definitionMatch2).dryRunStep(isA(Scenario.class));
-        order.verify(afterStep1HookDefinition2, never()).execute(isA(Scenario.class));
+        order.verify(beforeStep1HookDefinition2, never()).execute(isA(TestCaseState.class));
+        order.verify(definitionMatch2).dryRunStep(isA(TestCaseState.class));
+        order.verify(afterStep1HookDefinition2, never()).execute(isA(TestCaseState.class));
     }
 
     @Test
     void skip_steps_at_first_gherkin_step_after_non_passed_result() throws Throwable {
-        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(Scenario.class));
+        doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(TestCaseState.class));
 
         TestCase testCase = createTestCase(testStep1, testStep2);
         testCase.run(bus);
 
         InOrder order = inOrder(definitionMatch1, definitionMatch2);
-        order.verify(definitionMatch1).runStep(isA(Scenario.class));
-        order.verify(definitionMatch2).dryRunStep(isA(Scenario.class));
+        order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
+        order.verify(definitionMatch2).dryRunStep(isA(TestCaseState.class));
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {

@@ -1,7 +1,6 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.DocStringTypeDefinition;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.docstring.DocStringType;
 import net.jodah.typetools.TypeResolver;
 
@@ -24,6 +23,6 @@ final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implemen
     }
 
     private Object execute(String content) throws Throwable {
-        return Invoker.invoke(body, method, content);
+        return Invoker.invoke(this, body, method, content);
     }
 }

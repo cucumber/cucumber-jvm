@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 
-public final class CucumberStep implements io.cucumber.core.event.CucumberStep {
+public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep {
 
     private final PickleStep pickleStep;
     private final String keyWord;

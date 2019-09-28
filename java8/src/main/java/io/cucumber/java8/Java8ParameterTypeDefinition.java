@@ -1,10 +1,11 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.runtime.Invoker;
-import io.cucumber.cucumberexpressions.ParameterType;
 import java.util.Collections;
-import net.jodah.typetools.TypeResolver;
+
+import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.cucumberexpressions.ParameterType;
+
+import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
 
@@ -15,13 +16,13 @@ class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements Par
         return parameterType;
     }
 
-    Java8ParameterTypeDefinition(Object body, String regex, String name) {
+    <T extends ParameterDefinitionBody> Java8ParameterTypeDefinition(String name, String regex, Class<T> bodyClass, T body) {
         super(body, new Exception().getStackTrace()[3]);
-        Class returnType = TypeResolver.resolveRawArguments(ParameterDefinitionBody.class, body.getClass())[0];
+        Class<?> returnType = resolveRawArguments(bodyClass, body.getClass())[0];
         this.parameterType = new ParameterType(name, Collections.singletonList(regex), returnType, this::execute);
     }
 
-    private Object execute(String parameterContent) throws Throwable {
-        return Invoker.invoke(body, method, parameterContent);
+    private Object execute(String[] parameterContent) throws Throwable {
+        return Invoker.invoke(this, body, method, parameterContent);
     }
 }

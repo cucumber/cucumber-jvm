@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.lang.reflect.Method;
@@ -69,7 +68,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         return parameterType;
     }
 
-    private Object execute(String[] captureGroups) throws Throwable {
+    private Object execute(String[] captureGroups) {
         Object[] args;
 
         if (String[].class.equals(method.getParameterTypes()[0])) {
@@ -78,7 +77,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
             args = captureGroups;
         }
 
-        return Invoker.invoke(lookup.getInstance(method.getDeclaringClass()), method, args);
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
     }
 
 }

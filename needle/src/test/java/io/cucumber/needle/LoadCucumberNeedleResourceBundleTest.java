@@ -15,12 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LoadCucumberNeedleResourceBundleTest {
+class LoadCucumberNeedleResourceBundleTest {
 
     private final LoadResourceBundle function = LoadResourceBundle.INSTANCE;
 
     @Test
-    public void shouldReturnEmptyResourceBundleWhenResourceDoesNotExist() {
+    void shouldReturnEmptyResourceBundleWhenResourceDoesNotExist() {
         final ResourceBundle resourceBundle = function.apply("does-not-exist");
 
         assertAll("Checking LoadResourceBundle",
@@ -30,14 +30,14 @@ public class LoadCucumberNeedleResourceBundleTest {
     }
 
     @Test
-    public void shouldReturnExistingResourceBundle() {
+    void shouldReturnExistingResourceBundle() {
         final ResourceBundle resourceBundle = function.apply("empty");
         assertThat(resourceBundle, is(notNullValue()));
         assertTrue(resourceBundle.keySet().isEmpty());
     }
 
     @Test
-    public void shouldAlwaysReturnEmptyForEmptyResourceBundle() {
+    void shouldAlwaysReturnEmptyForEmptyResourceBundle() {
         final ResourceBundle resourceBundle = LoadResourceBundle.EMPTY_RESOURCE_BUNDLE;
 
         assertAll("Checking ResourceBundle",
@@ -48,21 +48,21 @@ public class LoadCucumberNeedleResourceBundleTest {
     }
 
     @Test
-    public void shouldFailWhenResourceNameIsNull() {
+    void shouldFailWhenResourceNameIsNull() {
         Executable testMethod = () -> function.apply(null);
         IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
     @Test
-    public void shouldFailWhenResourceNameIsEmpty() {
+    void shouldFailWhenResourceNameIsEmpty() {
         Executable testMethod = () -> function.apply("");
         IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));
     }
 
     @Test
-    public void shouldFailWhenResourceNameIsBlank() {
+    void shouldFailWhenResourceNameIsBlank() {
         Executable testMethod = () -> function.apply(" ");
         IllegalArgumentException expectedThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("resourceName must not be null or empty!")));

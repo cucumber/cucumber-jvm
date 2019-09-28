@@ -5,6 +5,7 @@ import java.text.Normalizer
 
 SimpleTemplateEngine engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src/main/groovy/annotation.java.gsp").getText()
+def packageInfoSource = new File(project.baseDir, "src/main/groovy/package-info.java.gsp").getText()
 
 static def normalize(s) {
     if (System.getProperty("java.version").startsWith("1.6")) {
@@ -13,24 +14,6 @@ static def normalize(s) {
         return Normalizer.normalize(s, Normalizer.Form.NFC)
     }
 }
-
-def localeFor(lang) {
-    languageAndCountry = lang.split("-")
-    if (languageAndCountry.length == 1) {
-        return new Locale(lang)
-    } else {
-        return new Locale(languageAndCountry[0], languageAndCountry[1])
-    }
-}
-
-// TODO: Need to add i18n.getName() and i18n.getNative() for better names.
-def package_info_java = """\
-/**
- * \${locale.getDisplayLanguage()}
- */
-package io.cucumber.java.\${normalized_language}; 
-"""
-
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
 def dialectProvider = new GherkinDialectProvider()
@@ -53,9 +36,9 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
         }
 
         // package-info.java
-        def locale = localeFor(dialect.language)
-        def binding = [ "locale": locale, "normalized_language": normalized_language ]
-        def html = engine.createTemplate(package_info_java).make(binding).toString()
+        def name = dialect.name + ((dialect.name == dialect.nativeName) ? '' : ' - ' + dialect.nativeName)
+        def binding = [ "normalized_language": normalized_language,  "language_name": name]
+        def html = engine.createTemplate(packageInfoSource).make(binding).toString()
         def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/${normalized_language}/package-info.java")
         file.write(html, "UTF-8")
     }

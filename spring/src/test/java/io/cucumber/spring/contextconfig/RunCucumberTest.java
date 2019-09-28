@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
     },
     features = {
         "classpath:io/cucumber/spring/stepdefInjection.feature",
-        "classpath:io/cucumber/spring/transaction.feature"
     }
 )
 public class RunCucumberTest {

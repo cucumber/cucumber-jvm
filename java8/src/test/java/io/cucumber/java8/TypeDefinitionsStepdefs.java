@@ -4,9 +4,14 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import io.cucumber.datatable.DataTable;
+
+import java.awt.Point;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 public class TypeDefinitionsStepdefs implements En{
     public TypeDefinitionsStepdefs() {
@@ -32,11 +37,27 @@ public class TypeDefinitionsStepdefs implements En{
             assertThat(authors.get(1), equalTo(tolstoy));
         });
 
+        // ParameterType with one argumentv
         Given("{stringbuilder} parameter, defined by lambda", (StringBuilder builder) -> {
             assertThat(builder.toString(), equalTo("stringbuilder"));
         });
 
         ParameterType("stringbuilder", ".*", (String str) -> new StringBuilder(str));
+
+        // ParameterType with two String arguments
+        Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
+            assertThat(coordinates.toString(), equalTo("java.awt.Point[x=123,y=456]"));
+        });
+
+        ParameterType("coordinates", "(.+),(.+)", (String x, String y) -> new Point(Integer.valueOf(x), Integer.valueOf(y)));
+
+        // ParameterType with three arguments
+        Given("kebab made from {ingredients}, defined by lambda", (StringBuffer coordinates) -> {
+            assertThat(coordinates.toString(), equalTo("-mushroom-meat-veg-"));
+        });
+
+        ParameterType("ingredients", "(.+), (.+) and (.+)", (String x, String y, String z) -> new StringBuffer().append('-')
+                .append(x).append('-').append(y).append('-').append(z).append('-'));
 
     }
 

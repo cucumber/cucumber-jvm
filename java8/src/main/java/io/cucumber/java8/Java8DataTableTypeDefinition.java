@@ -1,7 +1,6 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
-import io.cucumber.core.runtime.Invoker;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
@@ -44,6 +43,6 @@ final class Java8DataTableTypeDefinition extends AbstractGlueDefinition implemen
     }
 
     private Object execute(Object arg) throws Throwable {
-        return Invoker.invoke(body, method, arg);
+        return Invoker.invoke(this, body, method, arg);
     }
 }

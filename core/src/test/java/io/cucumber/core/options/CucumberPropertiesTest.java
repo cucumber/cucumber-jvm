@@ -11,12 +11,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class CucumberPropertiesTest {
+ class CucumberPropertiesTest {
 
     private CucumberProperties.CucumberPropertiesMap env = new CucumberProperties.CucumberPropertiesMap(Collections.emptyMap());
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         env.put("ENV_TEST", "from-bundle");
         env.put("a.b", "a.b");
         env.put("B_C", "B_C");
@@ -24,32 +24,32 @@ public class CucumberPropertiesTest {
     }
 
     @Test
-    public void looks_up_value_from_environment() {
+     void looks_up_value_from_environment() {
         assertThat(CucumberProperties.fromEnvironment().get("PATH"), is(notNullValue()));
     }
 
     @Test
-    public void returns_null_for_absent_key() {
+     void returns_null_for_absent_key() {
         assertThat(env.get("pxfj54#"), is(nullValue()));
     }
 
     @Test
-    public void looks_up_dotted_value_from_resource_bundle_with_dots() {
+     void looks_up_dotted_value_from_resource_bundle_with_dots() {
         assertThat(env.get("a.b"), is(equalTo("a.b")));
     }
 
     @Test
-    public void looks_up_underscored_value_from_resource_bundle_with_dots() {
+     void looks_up_underscored_value_from_resource_bundle_with_dots() {
         assertThat(env.get("b.c"), is(equalTo("B_C")));
     }
 
     @Test
-    public void looks_up_underscored_value_from_resource_bundle_with_underscores() {
+     void looks_up_underscored_value_from_resource_bundle_with_underscores() {
         assertThat(env.get("B_C"), is(equalTo("B_C")));
     }
 
     @Test
-    public void looks_up_value_by_exact_case_key() {
+     void looks_up_value_by_exact_case_key() {
         assertThat(env.get("c.D"), is(equalTo("C_D")));
     }
 

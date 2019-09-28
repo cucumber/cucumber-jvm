@@ -24,8 +24,8 @@ jobs:
   - jdk: openjdk11
     script: mvn -q verify
 
-  # 1.3 Check java doc
-  - jdk: openjdk8
+  # 1.3 Check javadoc. We need to use this version to properly detect errors.
+  - jdk: oraclejdk11
     env: JAVADOC=true
     script:
     - mvn clean verify -DskipTests=true

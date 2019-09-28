@@ -6,19 +6,19 @@ import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.snippets.Snippet;
+import io.cucumber.core.backend.Snippet;
 
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class StubBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(Lookup lookup, Container container, ResourceLoader resourceLoader) {
+    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader) {
         return new StubBackend();
     }
 

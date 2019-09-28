@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -27,7 +26,7 @@ class AmbiguousStepDefinitionMatchTest {
 
     @Test
     void throws_ambiguous_step_definitions_exception_when_run() {
-        Executable testMethod = () -> match.runStep(mock(Scenario.class));
+        Executable testMethod = () -> match.runStep(mock(TestCaseState.class));
         AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
             "\"I have 4 cukes in my belly\" matches more than one step definition:\n"
@@ -36,7 +35,7 @@ class AmbiguousStepDefinitionMatchTest {
 
     @Test
     void throws_ambiguous_step_definitions_exception_when_dry_run() {
-        Executable testMethod = () -> match.dryRunStep(mock(Scenario.class));
+        Executable testMethod = () -> match.dryRunStep(mock(TestCaseState.class));
         AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
             "\"I have 4 cukes in my belly\" matches more than one step definition:\n"

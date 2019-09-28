@@ -1,5 +1,7 @@
 package io.cucumber.core.snippets;
 
+import io.cucumber.core.backend.Snippet;
+
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.Map;

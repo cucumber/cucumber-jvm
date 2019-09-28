@@ -4,6 +4,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
 
 ### Added
+ * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
+   that wouldn't normally affect the timeline formatter. However, it did prevent some organisations from downloading the cucumber-core jar because nexus would block it.
+   ([#1759](https://github.com/cucumber/cucumber-jvm/issues/1759), [#1769](https://github.com/cucumber/cucumber-jvm/pull/1769) Vincent Pretre, Aslak Hellesøy)
  * [Core] Add `object-factory` option to CLI and `@CucumberOptions`. ([#1710](https://github.com/cucumber/cucumber-jvm/pull/1710) Ralph Kar)
  * [Java] Allow parameter types access to the test context ([#851](https://github.com/cucumber/cucumber-jvm/issues/851), [#1458](https://github.com/cucumber/cucumber-jvm/issues/1458) M.P. Korstanje)
    - Add `@ParameterType` alternative for `TypeRegistry.defineParameterType`
@@ -23,11 +26,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.dry-run
     - cucumber.execution.limit
     - cucumber.execution.order
-    - cucumber.execution.parallel.config.fixed.parallelism
     - cucumber.execution.strict
     - cucumber.execution.wip
     - cucumber.feature
-    - cucumber.rerun-file
     - cucumber.filter.name
     - cucumber.filter.tags
     - cucumber.glue
@@ -36,11 +37,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.snippet-type
 
 ### Changed
- * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449) M.P. Korstanje)
+ * [All] New package structure ([#1445](https://github.com/cucumber/cucumber-jvm/pull/1445), [#1448](https://github.com/cucumber/cucumber-jvm/issues/1448), [#1449](https://github.com/cucumber/cucumber-jvm/pull/1449), [#1760](https://github.com/cucumber/cucumber-jvm/pull/1760) M.P. Korstanje)
    - Adds `Automatic-Module-Name` to each module
    - Roots packages in `io.cucumber.<module>`
    - Use `find . -name '*.java' -exec sed -i 's/import cucumber.api/import io.cucumber/g' {} \; -exec sed -i 's/cucumber.CucumberOptions/cucumber.junit.CucumberOptions/g' {} \;` to adopt 90% of the new package structure
    - Use @API Guardian annotations to mark the public API ([#1536](https://github.com/cucumber/cucumber-jvm/issues/1536) M.P. Korstanje)
+   - Limits the transitive use `cucumber-core` for regular users
  * [All] Compile using source and target level 8 ([#1611](https://github.com/cucumber/cucumber-jvm/issues/1611) M.P. Korstanje)
  * [Java8] Remove `cucumber-java8` dependency on `cucumber-java`
    - To use both lambda and annotation based step definitions add a dependency on `cucumber-java` and `cucumber-java8`
@@ -72,18 +74,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Adds dedicated `io.cucumber.docstring.DocString` object to use in step definitions
     - Adds `TypeRegistry.defineDocStringType`
     - Adds `@DocStringType` alternative for `TypeRegistry.defineDocStringType`
-
-### Deprecated
- * [Core] Deprecate `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
-   - Prefer using library based solutions
-    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
-    * [Awaitility](https://github.com/awaitility/awaitility)
-    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
     
 ### Removed
  - [Core] Remove deprecated tag syntax. 
  - [Core] Remove `StepDefinitionReporter` ([#1635](https://github.com/cucumber/cucumber-jvm/issues/1635) M.P. Korstanje, Tim te Beek)
    - Listen `StepDefined` events instead
+ * [Core] Remove `timeout` ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
+   - Prefer using library based solutions
+    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
+    * [Awaitility](https://github.com/awaitility/awaitility)
+    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
  
 ### Fixed
  - [Java8] Set default before hook order to the same after hook (1000) 
@@ -170,6 +170,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Spring] Deprecate `cucumber.api.spring.SpringTransactionHooks`
     - It is recommended to implement your own transaction hooks.
     - Will allow the dependency on `spring-txn` to be removed.
+
+### Note
+Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and above that supports the new package structure. To use the latest snapshot version, refer [Follow the latest snapshot](https://github.com/cucumber/cucumber-eclipse#follow-the-latest-snapshot)
+ 
 
 ## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.0.0) (2019-06-15)
 

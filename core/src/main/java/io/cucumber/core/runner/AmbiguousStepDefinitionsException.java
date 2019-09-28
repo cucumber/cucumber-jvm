@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberStep;
 
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-final public class AmbiguousStepDefinitionsException extends CucumberException {
+final public class AmbiguousStepDefinitionsException extends Exception {
 
     private final List<PickleStepDefinitionMatch> matches;
 

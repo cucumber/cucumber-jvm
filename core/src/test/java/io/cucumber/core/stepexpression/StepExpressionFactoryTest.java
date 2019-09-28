@@ -15,6 +15,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,7 +24,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class StepExpressionFactoryTest {
 
-    private static final TypeResolver UNKNOWN_TYPE = () -> Object.class;
+    private static final Supplier<Type> UNKNOWN_TYPE = () -> Object.class;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     static class Ingredient {
@@ -35,12 +36,12 @@ class StepExpressionFactoryTest {
         }
     }
 
-    private final TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+    private final StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
     private final List<List<String>> table = asList(asList("name", "amount", "unit"), asList("chocolate", "2", "tbsp"));
     private final List<List<String>> tableTransposed = asList(asList("name", "chocolate"), asList("amount", "2"), asList("unit", "tbsp"));
 
 
-    private TableEntryTransformer<Ingredient> listBeanMapper(final TypeRegistry registry) {
+    private TableEntryTransformer<Ingredient> listBeanMapper(final StepTypeRegistry registry) {
         //Just pretend this is a bean mapper.
         return tableRow -> {
             Ingredient bean = new Ingredient();
@@ -52,7 +53,7 @@ class StepExpressionFactoryTest {
     }
 
 
-    private TableTransformer<Ingredient> beanMapper(final TypeRegistry registry) {
+    private TableTransformer<Ingredient> beanMapper(final StepTypeRegistry registry) {
         return table -> {
             Map<String, String> tableRow = table.transpose().asMaps().get(0);
             return listBeanMapper(registry).transform(tableRow);

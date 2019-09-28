@@ -1,11 +1,11 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Pending;
-import io.cucumber.core.event.Result;
-import io.cucumber.core.event.Status;
-import io.cucumber.core.event.TestCase;
-import io.cucumber.core.event.TestStepFinished;
-import io.cucumber.core.event.TestStepStarted;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.core.eventbus.EventBus;
 
 import java.time.Duration;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import static java.time.Duration.ZERO;
 
-abstract class TestStep implements io.cucumber.core.event.TestStep {
+abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
         "org.junit.AssumptionViolatedException",
         "org.junit.internal.AssumptionViolatedException",
@@ -37,30 +37,30 @@ abstract class TestStep implements io.cucumber.core.event.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    boolean run(TestCase testCase, EventBus bus, Scenario scenario, boolean skipSteps) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
         Instant startTimeMillis = bus.getInstant();
         bus.send(new TestStepStarted(startTimeMillis, testCase, this));
         Status status;
         Throwable error = null;
         try {
-            status = executeStep(scenario, skipSteps);
+            status = executeStep(state, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
         }
         Instant stopTimeNanos = bus.getInstant();
         Result result = mapStatusToResult(status, error, Duration.between(startTimeMillis, stopTimeNanos));
-        scenario.add(result);
+        state.add(result);
         bus.send(new TestStepFinished(stopTimeNanos, testCase, this, result));
         return !result.getStatus().is(Status.PASSED);
     }
 
-    private Status executeStep(Scenario scenario, boolean skipSteps) throws Throwable {
+    private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
-            stepDefinitionMatch.runStep(scenario);
+            stepDefinitionMatch.runStep(state);
             return Status.PASSED;
         } else {
-            stepDefinitionMatch.dryRunStep(scenario);
+            stepDefinitionMatch.dryRunStep(state);
             return Status.SKIPPED;
         }
     }

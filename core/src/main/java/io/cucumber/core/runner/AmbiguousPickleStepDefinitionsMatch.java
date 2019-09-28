@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.Scenario;
 import io.cucumber.core.feature.CucumberStep;
 
 import java.util.Collections;
@@ -14,13 +13,13 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
     }
 
     @Override
-    public void runStep(Scenario scenario) {
+    public void runStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
         throw exception;
     }
 
     @Override
-    public void dryRunStep(Scenario scenario) {
-        runStep(scenario);
+    public void dryRunStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
+        runStep(state);
     }
 
     @Override
