@@ -11,7 +11,7 @@
 
     <artifactId>docstring</artifactId>
     <packaging>jar</packaging>
-    <name>Docstring</name>
+    <name>Cucumber-JVM: Docstring</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.docstring</project.Automatic-Module-Name>
