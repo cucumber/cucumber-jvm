@@ -1,10 +1,13 @@
 package io.cucumber.core.feature;
 
+import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,11 +20,27 @@ public final class CucumberPickle {
     private final PickleEvent pickleEvent;
     private final List<CucumberStep> steps;
 
-    CucumberPickle(PickleEvent pickleEvent, GherkinDocument gherkinDocument) {
+    CucumberPickle(PickleEvent pickleEvent, GherkinDocument gherkinDocument, GherkinDialect dialect) {
         this.pickleEvent = pickleEvent;
-        this.steps = pickleEvent.pickle.getSteps().stream()
-            .map(pickleStep -> new CucumberStep(pickleStep, gherkinDocument))
-            .collect(Collectors.toList());
+        this.steps = createCucumberSteps(pickleEvent, gherkinDocument, dialect);
+    }
+
+    private static List<CucumberStep> createCucumberSteps(PickleEvent pickleEvent, GherkinDocument gherkinDocument, GherkinDialect dialect) {
+        List<CucumberStep> list = new ArrayList<>();
+        String previousGivenWhenThen = dialect.getGivenKeywords()
+            .stream()
+            .filter(s -> !StepType.isAstrix(s))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
+
+        for (PickleStep pickleStep : pickleEvent.pickle.getSteps()) {
+            CucumberStep cucumberStep = new CucumberStep(pickleStep, gherkinDocument, dialect, previousGivenWhenThen);
+            if (cucumberStep.getStepType().isGivenWhenThen()) {
+                previousGivenWhenThen = cucumberStep.getKeyWord();
+            }
+            list.add(cucumberStep);
+        }
+        return list;
     }
 
     public String getLanguage() {

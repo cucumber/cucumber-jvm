@@ -1,5 +1,6 @@
 package io.cucumber.core.feature;
 
+import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
@@ -9,18 +10,48 @@ import gherkin.pickles.PickleTable;
 public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep {
 
     private final PickleStep pickleStep;
-    private final String keyWord;
     private final Argument argument;
+    private final String keyWord;
+    private final StepType stepType;
+    private final String previousGwtKeyWord;
 
-    CucumberStep(PickleStep pickleStep, GherkinDocument gherkinDocument) {
+    CucumberStep(PickleStep pickleStep, GherkinDocument gherkinDocument, GherkinDialect dialect, String previousGwtKeyWord) {
         this.pickleStep = pickleStep;
-        this.keyWord = gherkinDocument.getFeature().getChildren().stream()
+        this.argument = extractArgument(pickleStep);
+        this.keyWord = extractKeyWord(gherkinDocument);
+        this.stepType = extractKeyWordType(keyWord, dialect);
+        this.previousGwtKeyWord = previousGwtKeyWord;
+    }
+
+    private String extractKeyWord(GherkinDocument gherkinDocument) {
+        return gherkinDocument.getFeature().getChildren().stream()
             .flatMap(scenarioDefinition -> scenarioDefinition.getSteps().stream())
             .filter(step -> step.getLocation().getLine() == getStepLine())
             .findFirst()
             .map(Step::getKeyword)
-            .orElse(null);
-        this.argument = extractArgument(pickleStep);
+            .orElseThrow(() ->  new IllegalStateException("GherkinDocument did not contain PickleStep"));
+    }
+
+    private StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
+        if(StepType.isAstrix(keyWord)){
+            return StepType.OTHER;
+        }
+        if (dialect.getGivenKeywords().contains(keyWord)) {
+            return StepType.GIVEN;
+        }
+        if (dialect.getWhenKeywords().contains(keyWord)) {
+            return StepType.WHEN;
+        }
+        if (dialect.getThenKeywords().contains(keyWord)) {
+            return StepType.THEN;
+        }
+        if (dialect.getAndKeywords().contains(keyWord)) {
+            return StepType.AND;
+        }
+        if (dialect.getButKeywords().contains(keyWord)) {
+            return StepType.BUT;
+        }
+        throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
     }
 
     private Argument extractArgument(PickleStep pickleStep) {
@@ -53,6 +84,14 @@ public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep
     @Override
     public String getKeyWord() {
         return keyWord;
+    }
+
+    public StepType getStepType() {
+        return stepType;
+    }
+
+    public String getPreviousGivenWhenThenKeyWord() {
+        return previousGwtKeyWord;
     }
 
     @Override

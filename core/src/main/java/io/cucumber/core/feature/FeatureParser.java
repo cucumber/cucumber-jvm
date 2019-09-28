@@ -1,6 +1,8 @@
 package io.cucumber.core.feature;
 
 import gherkin.AstBuilder;
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
 import gherkin.Parser;
 import gherkin.ParserException;
 import gherkin.TokenMatcher;
@@ -52,10 +54,12 @@ public class FeatureParser {
         if (gherkinDocument.getFeature() == null) {
             return Collections.emptyList();
         }
+        String language = gherkinDocument.getFeature().getLanguage();
+        GherkinDialect dialect = new GherkinDialectProvider().getDialect(language, null);
         return new Compiler().compile(gherkinDocument)
             .stream()
             .map(pickle -> new PickleEvent(resource.getPath().toString(), pickle))
-            .map(pickleEvent -> new CucumberPickle(pickleEvent, gherkinDocument))
+            .map(pickleEvent -> new CucumberPickle(pickleEvent, gherkinDocument, dialect))
             .collect(Collectors.toList());
     }
 }
