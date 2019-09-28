@@ -2,11 +2,12 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.feature.CucumberStep;
 
+import java.net.URI;
 import java.util.Collections;
 
 final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch {
 
-    UndefinedPickleStepDefinitionMatch(String uri, CucumberStep step) {
+    UndefinedPickleStepDefinitionMatch(URI uri, CucumberStep step) {
         super(Collections.emptyList(), new NoStepDefinition(), uri, step);
     }
 

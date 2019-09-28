@@ -7,7 +7,6 @@ import gherkin.Parser;
 import gherkin.ParserException;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
-import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.io.Resource;
@@ -34,8 +33,9 @@ public class FeatureParser {
             Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
             TokenMatcher matcher = new TokenMatcher();
             GherkinDocument gherkinDocument = parser.parse(source, matcher);
-            List<CucumberPickle> pickleEvents = compilePickles(gherkinDocument, resource);
-            return new CucumberFeature(gherkinDocument, path, source, pickleEvents);
+            GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+            List<CucumberPickle> pickles = compilePickles(gherkinDocument, dialectProvider, resource);
+            return new CucumberFeature(gherkinDocument, path, source, pickles);
         } catch (ParserException e) {
             throw new CucumberException("Failed to parse resource at: " + path.toString(), e);
         }
@@ -50,16 +50,15 @@ public class FeatureParser {
     }
 
 
-    private static List<CucumberPickle> compilePickles(GherkinDocument gherkinDocument, Resource resource) {
-        if (gherkinDocument.getFeature() == null) {
+    private static List<CucumberPickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, Resource resource) {
+        if (document.getFeature() == null) {
             return Collections.emptyList();
         }
-        String language = gherkinDocument.getFeature().getLanguage();
-        GherkinDialect dialect = new GherkinDialectProvider().getDialect(language, null);
-        return new Compiler().compile(gherkinDocument)
+        String language = document.getFeature().getLanguage();
+        GherkinDialect dialect = dialectProvider.getDialect(language, null);
+        return new Compiler().compile(document)
             .stream()
-            .map(pickle -> new PickleEvent(resource.getPath().toString(), pickle))
-            .map(pickleEvent -> new CucumberPickle(pickleEvent, gherkinDocument, dialect))
+            .map(pickle -> new CucumberPickle(pickle, resource.getPath(), document, dialect))
             .collect(Collectors.toList());
     }
 }

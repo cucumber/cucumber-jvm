@@ -14,6 +14,7 @@ import io.cucumber.datatable.DataTableType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -171,7 +172,7 @@ class StepDefinitionMatchTest {
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
             arguments,
             stepDefinition,
-            "file:test.feature",
+            URI.create("file:path/to.feature"),
             step
         );
 
@@ -261,7 +262,7 @@ class StepDefinitionMatchTest {
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
             arguments,
             stepDefinition,
-            "file:test.feature",
+            URI.create("file:path/to.feature"),
             step
         );
 
@@ -299,7 +300,7 @@ class StepDefinitionMatchTest {
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
             arguments,
             stepDefinition,
-            "file:test.feature",
+            URI.create("file:path/to.feature"),
             step
         );
 

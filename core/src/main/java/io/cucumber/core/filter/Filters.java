@@ -29,7 +29,7 @@ public final class Filters implements Predicate<CucumberPickle> {
     }
 
     @Override
-    public boolean test(CucumberPickle pickleEvent) {
-        return this.filter.test(pickleEvent);
+    public boolean test(CucumberPickle pickle) {
+        return this.filter.test(pickle);
     }
 }

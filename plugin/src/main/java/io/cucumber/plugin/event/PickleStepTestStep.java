@@ -2,6 +2,7 @@ package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -56,7 +57,7 @@ public interface PickleStepTestStep extends TestStep {
      *
      * @return a uri
      */
-    String getUri();
+    URI getUri();
 
     /**
      * The full text of the Gherkin step.

@@ -2,30 +2,33 @@ package io.cucumber.core.feature;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
-import gherkin.events.PickleEvent;
+import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Wraps {@link PickleEvent} to avoid exposing the gherkin library to all of
+ * Wraps {@link Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
 public final class CucumberPickle {
 
-    private final PickleEvent pickleEvent;
+    private final Pickle pickle;
     private final List<CucumberStep> steps;
+    private final URI uri;
 
-    CucumberPickle(PickleEvent pickleEvent, GherkinDocument gherkinDocument, GherkinDialect dialect) {
-        this.pickleEvent = pickleEvent;
-        this.steps = createCucumberSteps(pickleEvent, gherkinDocument, dialect);
+    CucumberPickle(Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
+        this.pickle = pickle;
+        this.uri = uri;
+        this.steps = createCucumberSteps(pickle, document, dialect);
     }
 
-    private static List<CucumberStep> createCucumberSteps(PickleEvent pickleEvent, GherkinDocument gherkinDocument, GherkinDialect dialect) {
+    private static List<CucumberStep> createCucumberSteps(Pickle pickle, GherkinDocument document, GherkinDialect dialect) {
         List<CucumberStep> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
             .stream()
@@ -33,8 +36,8 @@ public final class CucumberPickle {
             .findFirst()
             .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
-        for (PickleStep pickleStep : pickleEvent.pickle.getSteps()) {
-            CucumberStep cucumberStep = new CucumberStep(pickleStep, gherkinDocument, dialect, previousGivenWhenThen);
+        for (PickleStep step : pickle.getSteps()) {
+            CucumberStep cucumberStep = new CucumberStep(step, document, dialect, previousGivenWhenThen);
             if (cucumberStep.getStepType().isGivenWhenThen()) {
                 previousGivenWhenThen = cucumberStep.getKeyWord();
             }
@@ -44,11 +47,11 @@ public final class CucumberPickle {
     }
 
     public String getLanguage() {
-        return pickleEvent.pickle.getLanguage();
+        return pickle.getLanguage();
     }
 
     public String getName() {
-        return pickleEvent.pickle.getName();
+        return pickle.getName();
     }
 
     /**
@@ -59,7 +62,7 @@ public final class CucumberPickle {
      * @return line in the feature file
      */
     public int getLine() {
-        return pickleEvent.pickle.getLocations().get(0).getLine();
+        return pickle.getLocations().get(0).getLine();
     }
 
     /**
@@ -69,7 +72,7 @@ public final class CucumberPickle {
      * @return line in the feature file
      */
     public int getScenarioLine() {
-        List<PickleLocation> stepLocations = pickleEvent.pickle.getLocations();
+        List<PickleLocation> stepLocations = pickle.getLocations();
         return stepLocations.get(stepLocations.size() - 1).getLine();
     }
 
@@ -78,11 +81,11 @@ public final class CucumberPickle {
     }
 
     public List<String> getTags() {
-        return pickleEvent.pickle.getTags().stream().map(PickleTag::getName).collect(Collectors.toList());
+        return pickle.getTags().stream().map(PickleTag::getName).collect(Collectors.toList());
     }
 
-    public String getUri() {
-        return pickleEvent.uri;
+    public URI getUri() {
+        return uri;
     }
 
 

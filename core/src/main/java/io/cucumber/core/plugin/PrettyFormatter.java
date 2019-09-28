@@ -1,17 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.Argument;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestStep;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.TestCaseStarted;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestSourceRead;
-import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.event.TestStepStarted;
-import io.cucumber.plugin.event.WriteEvent;
 import gherkin.ast.Background;
 import gherkin.ast.Examples;
 import gherkin.ast.Feature;
@@ -21,6 +9,18 @@ import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.event.Argument;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestStep;
+import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
+import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -37,7 +37,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final NiceAppendable out;
     private Formats formats;
-    private String currentFeatureFile;
+    private URI currentFeatureFile;
     private TestCase currentTestCase;
     private ScenarioOutline currentScenarioOutline;
     private Examples currentExamples;
@@ -194,8 +194,8 @@ public final class PrettyFormatter implements EventListener, ColorAware {
         return definition.getKeyword() + ": " + definition.getName();
     }
 
-    private String getLocationText(String file, int line) {
-        String path = URI.create(file).getSchemeSpecificPart();
+    private String getLocationText(URI file, int line) {
+        String path = file.getSchemeSpecificPart();
         return getLocationText(path + ":" + line);
     }
 
@@ -230,7 +230,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
         return false;
     }
 
-    private void printFeature(String path) {
+    private void printFeature(URI path) {
         Feature feature = testSources.getFeature(path);
         printTags(feature.getTags());
         out.println(feature.getKeyword() + ": " + feature.getName());

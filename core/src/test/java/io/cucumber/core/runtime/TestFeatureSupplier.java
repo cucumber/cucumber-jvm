@@ -1,8 +1,8 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.plugin.event.TestSourceRead;
-import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.plugin.event.TestSourceRead;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ public class TestFeatureSupplier implements FeatureSupplier {
     @Override
     public List<CucumberFeature> get() {
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
         return features;
     }

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -52,7 +53,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private Element root;
     private TestCase testCase;
     private boolean strict = false;
-    private String currentFeatureFile = null;
+    private URI currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;

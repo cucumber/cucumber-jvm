@@ -1,9 +1,5 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
@@ -23,12 +19,16 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -202,7 +202,7 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
 
             bus.send(new TestRunStarted(bus.getInstant()));
             for (CucumberFeature feature : features) {
-                bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
+                bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));

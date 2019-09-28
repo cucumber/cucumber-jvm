@@ -14,6 +14,8 @@ import gherkin.ast.TableRow;
 import gherkin.ast.Tag;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.DataTableArgument;
 import io.cucumber.plugin.event.DocStringArgument;
 import io.cucumber.plugin.event.EmbedEvent;
@@ -30,8 +32,6 @@ import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.plugin.EventListener;
 
 import java.io.Closeable;
 import java.io.File;
@@ -41,6 +41,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public final class HTMLFormatter implements EventListener {
     private NiceAppendable jsOut;
 
     private boolean firstFeature = true;
-    private String currentFeatureFile;
+    private URI currentFeatureFile;
     private Map<String, Object> currentTestCaseMap;
     private ScenarioOutline currentScenarioOutline;
     private Examples currentExamples;

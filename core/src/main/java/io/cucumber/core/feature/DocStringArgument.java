@@ -10,10 +10,12 @@ public final class DocStringArgument implements Argument, io.cucumber.plugin.eve
         this.docString = docString;
     }
 
+    @Override
     public String getContent() {
         return docString.getContent();
     }
 
+    @Override
     public String getContentType() {
         return docString.getContentType();
     }

@@ -20,8 +20,8 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
 
         for (Object[] scenario : testNGCucumberRunner.provideScenarios()) {
-            PickleWrapper pickleEvent = (PickleWrapper) scenario[0];
-            testNGCucumberRunner.runScenario(pickleEvent.getPickle());
+            PickleWrapper wrapper = (PickleWrapper) scenario[0];
+            testNGCucumberRunner.runScenario(wrapper.getPickle());
         }
     }
 
@@ -33,11 +33,11 @@ public class TestNGCucumberRunnerTest {
         // the feature file only contains one scenario
         Assert.assertEquals(scenarios.length, 1);
         Object[] scenario = scenarios[0];
-        PickleWrapper pickleEvent = (PickleWrapper) scenario[0];
+        PickleWrapper wrapper = (PickleWrapper) scenario[0];
 
         assertThrows(
             UndefinedStepException.class,
-            () -> testNGCucumberRunner.runScenario(pickleEvent.getPickle())
+            () -> testNGCucumberRunner.runScenario(wrapper.getPickle())
         );
     }
 

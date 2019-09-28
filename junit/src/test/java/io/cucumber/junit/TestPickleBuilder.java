@@ -16,7 +16,7 @@ class TestPickleBuilder {
     private TestPickleBuilder() {
     }
 
-    static List<CucumberPickle> pickleEventsFromFeature(final String path, final String source) {
+    static List<CucumberPickle> picklesFromFeature(final String path, final String source) {
         return parseFeature(path, source).getPickles();
     }
 

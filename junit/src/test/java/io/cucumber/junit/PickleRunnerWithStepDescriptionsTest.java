@@ -1,17 +1,17 @@
 package io.cucumber.junit;
 
-import io.cucumber.plugin.event.CucumberStep;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.junit.PickleRunners.WithStepDescriptions;
+import io.cucumber.plugin.event.CucumberStep;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 
 import java.util.List;
 
-import static io.cucumber.junit.TestPickleBuilder.pickleEventsFromFeature;
+import static io.cucumber.junit.TestPickleBuilder.picklesFromFeature;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.mock;
@@ -20,7 +20,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() {
-        List<CucumberPickle> pickles = pickleEventsFromFeature("path/test.feature", "" +
+        List<CucumberPickle> pickles = picklesFromFeature("path/test.feature", "" +
             "Feature: FB\n" +
             "# Scenario with same step occurring twice\n" +
             "\n" +
@@ -108,7 +108,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameForDisplayName() {
-        List<CucumberPickle> pickles = pickleEventsFromFeature("featurePath", "" +
+        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -124,14 +124,14 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseStepKeyworkAndNameForChildName() {
-        List<CucumberPickle> pickleEvents = pickleEventsFromFeature("featurePath", "" +
+        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
-            pickleEvents.get(0),
+            pickles.get(0),
             createJunitOptions()
         );
 
@@ -140,7 +140,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<CucumberPickle> pickles = pickleEventsFromFeature("featurePath", "" +
+        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");

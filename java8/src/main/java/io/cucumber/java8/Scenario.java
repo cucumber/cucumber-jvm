@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.TestCaseState;
 import org.apiguardian.api.API;
 
+import java.net.URI;
 import java.util.Collection;
 
 @API(status = API.Status.STABLE)
@@ -47,7 +48,7 @@ public final class Scenario {
         return delegate.getId();
     }
 
-    public String getUri() {
+    public URI getUri() {
         return delegate.getUri();
     }
 

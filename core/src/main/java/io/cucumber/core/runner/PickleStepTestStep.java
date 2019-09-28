@@ -1,26 +1,27 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberStep;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
 final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
-    private final String uri;
+    private final URI uri;
     private final CucumberStep step;
     private final List<HookTestStep> afterStepHookSteps;
     private final List<HookTestStep> beforeStepHookSteps;
     private final PickleStepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(String uri, CucumberStep step, PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(URI uri, CucumberStep step, PickleStepDefinitionMatch definitionMatch) {
         this(uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
-    PickleStepTestStep(String uri,
+    PickleStepTestStep(URI uri,
                        CucumberStep step,
                        List<HookTestStep> beforeStepHookSteps,
                        List<HookTestStep> afterStepHookSteps,
@@ -65,7 +66,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 

@@ -11,6 +11,7 @@ import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +21,10 @@ import static io.cucumber.core.runner.StackManipulation.removeFrameworkFramesAnd
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final StepDefinition stepDefinition;
-    private final String uri;
+    private final URI uri;
     private final CucumberStep step;
 
-    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, CucumberStep step) {
+    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
@@ -153,7 +154,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     private StackTraceElement getStepLocation() {
-        return new StackTraceElement("✽", step.getText(), uri, step.getStepLine());
+        return new StackTraceElement("✽", step.getText(), uri.getSchemeSpecificPart(), step.getStepLine());
     }
 
     public Match getMatch() {

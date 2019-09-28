@@ -9,22 +9,22 @@ import gherkin.pickles.PickleTable;
 
 public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep {
 
-    private final PickleStep pickleStep;
+    private final PickleStep step;
     private final Argument argument;
     private final String keyWord;
     private final StepType stepType;
     private final String previousGwtKeyWord;
 
-    CucumberStep(PickleStep pickleStep, GherkinDocument gherkinDocument, GherkinDialect dialect, String previousGwtKeyWord) {
-        this.pickleStep = pickleStep;
-        this.argument = extractArgument(pickleStep);
-        this.keyWord = extractKeyWord(gherkinDocument);
+    CucumberStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord) {
+        this.step = step;
+        this.argument = extractArgument(step);
+        this.keyWord = extractKeyWord(document);
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
     }
 
-    private String extractKeyWord(GherkinDocument gherkinDocument) {
-        return gherkinDocument.getFeature().getChildren().stream()
+    private String extractKeyWord(GherkinDocument document) {
+        return document.getFeature().getChildren().stream()
             .flatMap(scenarioDefinition -> scenarioDefinition.getSteps().stream())
             .filter(step -> step.getLocation().getLine() == getStepLine())
             .findFirst()
@@ -72,8 +72,8 @@ public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep
 
     @Override
     public int getStepLine() {
-        int last = pickleStep.getLocations().size() - 1;
-        return pickleStep.getLocations().get(last).getLine();
+        int last = step.getLocations().size() - 1;
+        return step.getLocations().get(last).getLine();
     }
 
     @Override
@@ -96,6 +96,6 @@ public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep
 
     @Override
     public String getText() {
-        return pickleStep.getText();
+        return step.getText();
     }
 }

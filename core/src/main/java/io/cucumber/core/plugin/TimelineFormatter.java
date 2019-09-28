@@ -3,6 +3,8 @@ package io.cucumber.core.plugin;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseEvent;
@@ -10,8 +12,6 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestSourceRead;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.plugin.ConcurrentEventListener;
 
 import java.io.Closeable;
 import java.io.File;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -175,7 +176,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     private String getId(final TestCaseEvent testCaseEvent) {
         final TestCase testCase = testCaseEvent.getTestCase();
-        final String uri = testCase.getUri();
+        final URI uri = testCase.getUri();
         final TestSourcesModel.AstNode astNode = testSources.getAstNode(uri, testCase.getLine());
         return TestSourcesModel.calculateId(astNode);
     }
@@ -203,7 +204,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         TestData(final TestCaseStarted started, final Long threadId) {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
-            final String uri = testCase.getUri();
+            final URI uri = testCase.getUri();
             this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
             this.scenario = testCase.getName();
             this.startTime = started.getInstant().toEpochMilli();

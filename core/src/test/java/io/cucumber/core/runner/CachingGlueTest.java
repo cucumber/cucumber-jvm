@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
@@ -11,6 +10,7 @@ import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -25,6 +25,7 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.time.Clock;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -203,10 +204,9 @@ class CachingGlueTest {
         StepDefinition stepDefinition = new MockedStepDefinition("pattern1");
         glue.addStepDefinition(stepDefinition);
 
-        String featurePath = "someFeature.feature";
-
+        URI uri = URI.create("file:path/to.feature");
         CucumberStep pickleStep = getPickleStep("pattern");
-        assertThat(glue.stepDefinitionMatch(featurePath, pickleStep), is(nullValue()));
+        assertThat(glue.stepDefinitionMatch(uri, pickleStep), is(nullValue()));
     }
 
     @Test
@@ -217,12 +217,12 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition2);
         glue.prepareGlue(stepTypeRegistry);
 
-        String featurePath = "someFeature.feature";
+        URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
 
         CucumberStep pickleStep1 = getPickleStep(stepText);
 
-        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
 
@@ -232,7 +232,7 @@ class CachingGlueTest {
         assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         CucumberStep pickleStep2 = getPickleStep(stepText);
-        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
+        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep2);
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition1)));
     }
 
@@ -244,11 +244,11 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition2);
         glue.prepareGlue(stepTypeRegistry);
 
-        String featurePath = "someFeature.feature";
+        URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
 
         CucumberStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
-        PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         //check cache
@@ -261,7 +261,7 @@ class CachingGlueTest {
 
         //check second match
         CucumberStep pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
-        PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
+        PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
 
         //check arguments
         assertThat(((DataTable) match2.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 2")));
@@ -275,12 +275,12 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition2);
         glue.prepareGlue(stepTypeRegistry);
 
-        String featurePath = "someFeature.feature";
+        URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
 
         CucumberStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
 
-        PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         //check cache
@@ -293,14 +293,14 @@ class CachingGlueTest {
 
         //check second match
         CucumberStep pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
-        PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(featurePath, pickleStep2);
+        PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
         //check arguments
         assertThat(match2.getArguments().get(0).getValue(), is(equalTo("doc string 2")));
     }
 
     @Test
     void returns_fresh_match_from_cache_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
-        String featurePath = "someFeature.feature";
+        URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
         CucumberStep pickleStep1 = getPickleStep(stepText);
 
@@ -310,7 +310,7 @@ class CachingGlueTest {
         glue.prepareGlue(stepTypeRegistry);
 
 
-        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         glue.removeScenarioScopedGlue();
@@ -319,13 +319,13 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition2);
         glue.prepareGlue(stepTypeRegistry);
 
-        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition2)));
     }
 
     @Test
     void returns_no_match_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
-        String featurePath = "someFeature.feature";
+        URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
         CucumberStep pickleStep1 = getPickleStep(stepText);
 
@@ -335,14 +335,14 @@ class CachingGlueTest {
         glue.prepareGlue(stepTypeRegistry);
 
 
-        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
         glue.removeScenarioScopedGlue();
 
         glue.prepareGlue(stepTypeRegistry);
 
-        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(featurePath, pickleStep1);
+        PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch2, nullValue());
     }
 
@@ -356,11 +356,11 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition3);
         glue.prepareGlue(stepTypeRegistry);
 
-        String featurePath = "someFeature.feature";
+        URI uri = URI.create("file:path/to.feature");
 
-        checkAmbiguousCalled(featurePath);
+        checkAmbiguousCalled(uri);
         //try again to verify if we don't cache when there is ambiguous step
-        checkAmbiguousCalled(featurePath);
+        checkAmbiguousCalled(uri);
     }
 
     @Test
@@ -414,11 +414,11 @@ class CachingGlueTest {
         assertThat(hooks, contains(hookDefinition2, hookDefinition1, hookDefinition3));
     }
 
-    private void checkAmbiguousCalled(String featurePath) {
+    private void checkAmbiguousCalled(URI uri) {
         boolean ambiguousCalled = false;
         try {
 
-            glue.stepDefinitionMatch(featurePath, getPickleStep("pattern1"));
+            glue.stepDefinitionMatch(uri, getPickleStep("pattern1"));
         } catch (AmbiguousStepDefinitionsException e) {
             assertThat(e.getMatches().size(), is(equalTo(2)));
             ambiguousCalled = true;

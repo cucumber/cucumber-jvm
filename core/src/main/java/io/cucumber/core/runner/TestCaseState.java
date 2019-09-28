@@ -7,6 +7,7 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.WriteEvent;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -77,7 +78,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public String getUri() {
+    public URI getUri() {
         return testCase.getUri();
     }
 

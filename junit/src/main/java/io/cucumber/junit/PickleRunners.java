@@ -1,16 +1,17 @@
 package io.cucumber.junit;
 
-import io.cucumber.plugin.event.CucumberStep;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.plugin.event.CucumberStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -152,10 +153,10 @@ final class PickleRunners {
 
     static final class PickleId implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String uri;
+        private final URI uri;
         private final int pickleLine;
 
-        PickleId(String uri, int pickleLine) {
+        PickleId(URI uri, int pickleLine) {
             this.uri = uri;
             this.pickleLine = pickleLine;
         }
@@ -187,13 +188,13 @@ final class PickleRunners {
 
     private static final class PickleStepId implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String uri;
+        private final URI uri;
         private final int pickleLine;
         private int pickleStepLine;
 
-        PickleStepId(CucumberPickle pickleEvent, CucumberStep step) {
-            this.uri = pickleEvent.getUri();
-            this.pickleLine = pickleEvent.getLine();
+        PickleStepId(CucumberPickle pickle, CucumberStep step) {
+            this.uri = pickle.getUri();
+            this.pickleLine = pickle.getLine();
             this.pickleStepLine = step.getStepLine();
         }
 
