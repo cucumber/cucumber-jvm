@@ -8,10 +8,7 @@ import io.cucumber.datatable.DataTable;
 import java.awt.Point;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 public class TypeDefinitionsStepdefs implements En{
     public TypeDefinitionsStepdefs() {
