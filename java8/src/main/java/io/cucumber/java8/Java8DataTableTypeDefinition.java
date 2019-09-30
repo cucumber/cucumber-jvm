@@ -19,7 +19,7 @@ final class Java8DataTableTypeDefinition extends AbstractGlueDefinition implemen
     }
 
     private DataTableType createDataTableType(Method method) {
-        Class returnType = TypeResolver.resolveRawArguments(DataTableDefinitionBody.class, body.getClass())[0];
+        Class returnType = TypeResolver.resolveRawArguments(DataTableEntryDefinitionBody.class, body.getClass())[0];
         Type[] parameterTypes = method.getGenericParameterTypes();
         Type parameterType = parameterTypes[0];
 

@@ -348,7 +348,7 @@ public interface LambdaGlue {
      * @param body a function that creates an instance of <code>type</code> from the
      *             data table
      */
-    default <T> void DataTableType(DataTableDefinitionBody<T> body) {
+    default <T> void DataTableType(DataTableEntryDefinitionBody<T> body) {
         LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
     }
 
