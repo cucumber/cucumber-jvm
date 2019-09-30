@@ -5,6 +5,8 @@ import cucumber.api.PickleStepTestStep;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
+import cucumber.api.event.CommentAfterStepTextEvent;
+import cucumber.api.event.CommentBeforeStepTextEvent;
 import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
@@ -29,6 +31,8 @@ import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 final class PrettyFormatter implements EventListener, ColorAware {
@@ -43,6 +47,8 @@ final class PrettyFormatter implements EventListener, ColorAware {
     private ScenarioOutline currentScenarioOutline;
     private Examples currentExamples;
     private int locationIndentation;
+    private HashMap<String, ArrayList<String>> commentsBeforeStepText = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> commentsAfterStepText = new HashMap<String, ArrayList<String>>();
     private Mapper<Tag, String> tagNameMapper = new Mapper<Tag, String>() {
         @Override
         public String map(Tag tag) {
@@ -92,6 +98,20 @@ final class PrettyFormatter implements EventListener, ColorAware {
             finishReport();
         }
     };
+    
+    private EventHandler<CommentBeforeStepTextEvent> runCommentBeforeStepEventHandler = new EventHandler<CommentBeforeStepTextEvent>() {
+        @Override
+        public void receive(CommentBeforeStepTextEvent event) {
+            commentsBeforeStepText.computeIfAbsent(event.getStepText(), k -> new ArrayList<>()).add(event.getBefore());
+        }
+    };
+    
+    private EventHandler<CommentAfterStepTextEvent> runCommentAfterStepEventHandler = new EventHandler<CommentAfterStepTextEvent>() {
+        @Override
+        public void receive(CommentAfterStepTextEvent event) {
+            commentsAfterStepText.computeIfAbsent(event.getStepText(), k -> new ArrayList<>()).add(event.getAfter());
+        }
+    };
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public PrettyFormatter(Appendable out) {
@@ -107,6 +127,8 @@ final class PrettyFormatter implements EventListener, ColorAware {
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
         publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
         publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
+        publisher.registerHandlerFor(CommentBeforeStepTextEvent.class, runCommentBeforeStepEventHandler);
+        publisher.registerHandlerFor(CommentAfterStepTextEvent.class, runCommentAfterStepEventHandler);
     }
 
     @Override
@@ -207,9 +229,23 @@ final class PrettyFormatter implements EventListener, ColorAware {
         String stepText = testStep.getStepText();
         String locationPadding = createPaddingToLocation(STEP_INDENT, keyword + stepText);
         String formattedStepText = formatStepText(keyword, stepText, formats.get(result.getStatus().lowerCaseName()), formats.get(result.getStatus().lowerCaseName() + "_arg"), testStep.getDefinitionArgument());
-        out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
+//        out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
+        if (commentsBeforeStepText.get(stepText) != null) {
+            out.println(STEP_INDENT + formattedStepText + locationPadding + "# " + printComments(commentsBeforeStepText.get(stepText), " ") + " "
+                    + getLocationText(testStep.getCodeLocation()) + " " + printComments(commentsAfterStepText.get(stepText), " "));
+        } else {
+            out.println(
+                    STEP_INDENT + formattedStepText + locationPadding + "# " + getLocationText(testStep.getCodeLocation()));
+        }
     }
 
+    private String printComments(List<String> comments, String indent) {
+        if (comments != null && !comments.isEmpty()) {
+            return FixJava.join(comments, " ");
+        }
+        return "";
+    }
+    
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
         int beginIndex = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
@@ -249,9 +285,9 @@ final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private String getLocationText(String location) {
-        return formats.get("comment").text("# " + location);
+        return formats.get("comment").text(location);
     }
-
+    
     private StringBuffer stepText(PickleStepTestStep testStep) {
         String keyword = getStepKeyword(testStep);
         return new StringBuffer(keyword + testStep.getStepText());

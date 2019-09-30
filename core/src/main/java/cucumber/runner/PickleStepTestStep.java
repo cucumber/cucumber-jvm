@@ -1,6 +1,7 @@
 package cucumber.runner;
 
 import cucumber.api.TestCase;
+import cucumber.api.event.CommentEventSender;
 import cucumber.runtime.DefinitionArgument;
 import gherkin.pickles.PickleStep;
 
@@ -39,6 +40,10 @@ class PickleStepTestStep extends TestStep implements cucumber.api.PickleStepTest
         for (HookTestStep before : beforeStepHookSteps) {
             skipNextStep |= before.run(testCase, bus,  scenario, skipSteps);
         }
+        
+        CommentEventSender.getInstance().setBus(bus);
+        CommentEventSender.getInstance().setTestCase(testCase);
+        CommentEventSender.getInstance().setStepText(step.getText());
 
         skipNextStep |= super.run(testCase, bus,  scenario, skipNextStep);
 
