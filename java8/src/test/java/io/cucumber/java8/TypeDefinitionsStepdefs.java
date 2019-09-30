@@ -1,14 +1,13 @@
 package io.cucumber.java8;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import io.cucumber.datatable.DataTable;
 
-import java.awt.Point;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class TypeDefinitionsStepdefs implements En{
     public TypeDefinitionsStepdefs() {
@@ -43,7 +42,7 @@ public class TypeDefinitionsStepdefs implements En{
 
         // ParameterType with two String arguments
         Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
-            assertThat(coordinates.toString(), equalTo("java.awt.Point[x=123,y=456]"));
+            assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]"));
         });
 
         ParameterType("coordinates", "(.+),(.+)", (String x, String y) -> new Point(Integer.valueOf(x), Integer.valueOf(y)));
@@ -82,6 +81,20 @@ public class TypeDefinitionsStepdefs implements En{
         @Override
         public int hashCode() {
             return Objects.hash(name, surname, famousBook);
+        }
+    }
+
+    public static final class Point {
+        private final int x, y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "[x=" + x + ",y=" + y + "]";
         }
     }
 }
