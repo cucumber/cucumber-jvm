@@ -9,22 +9,18 @@ import io.cucumber.core.snippets.SnippetType;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public final class RuntimeOptionsBuilder {
     private final List<String> parsedTagFilters = new ArrayList<>();
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
-    private final Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
-    private final List<URI> parsedFeaturePaths = new ArrayList<>();
+    private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
     private final ParsedPluginData parsedPluginData = new ParsedPluginData();
-    private boolean parsedIsRerun = false;
+    private List<FeatureWithLines> parsedRerunPaths = null;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
     private Boolean parsedStrict = null;
@@ -35,28 +31,21 @@ public final class RuntimeOptionsBuilder {
     private Integer parsedCount = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
 
+    public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
+        if (parsedRerunPaths == null) {
+            parsedRerunPaths = new ArrayList<>();
+        }
+        parsedRerunPaths.addAll(featureWithLines);
+        return this;
+    }
+
     public RuntimeOptionsBuilder addFeature(FeatureWithLines featureWithLines) {
-        parsedFeaturePaths.add(featureWithLines.uri());
-        addLineFilters(featureWithLines);
+        parsedFeaturePaths.add(featureWithLines);
         return this;
     }
 
     public RuntimeOptionsBuilder addGlue(URI glue) {
         parsedGlue.add(glue);
-        return this;
-    }
-
-    private RuntimeOptionsBuilder addLineFilters(FeatureWithLines featureWithLines) {
-        URI key = featureWithLines.uri();
-        Set<Integer> lines = featureWithLines.lines();
-        if (lines.isEmpty()) {
-            return null;
-        }
-        if (this.parsedLineFilters.containsKey(key)) {
-            this.parsedLineFilters.get(key).addAll(lines);
-        } else {
-            this.parsedLineFilters.put(key, new TreeSet<>(lines));
-        }
         return this;
     }
 
@@ -112,17 +101,16 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setCount(this.parsedCount);
         }
 
-        if (this.parsedIsRerun || !this.parsedFeaturePaths.isEmpty()) {
-            runtimeOptions.setFeaturePaths(Collections.emptyList());
-            runtimeOptions.setLineFilters(Collections.emptyMap());
-        }
-        if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || !this.parsedLineFilters.isEmpty()) {
+        if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || hasFeaturesWithLineFilters()) {
             runtimeOptions.setTagExpressions(this.parsedTagFilters);
             runtimeOptions.setNameFilters(this.parsedNameFilters);
-            runtimeOptions.setLineFilters(this.parsedLineFilters);
         }
-        if (!this.parsedFeaturePaths.isEmpty()) {
-            runtimeOptions.setFeaturePaths(this.parsedFeaturePaths);
+        if (!this.parsedFeaturePaths.isEmpty() || this.parsedRerunPaths != null) {
+            List<FeatureWithLines> features = new ArrayList<>(this.parsedFeaturePaths);
+            if (parsedRerunPaths != null) {
+                features.addAll(this.parsedRerunPaths);
+            }
+            runtimeOptions.setFeaturePaths(features);
         }
 
         if (!this.parsedGlue.isEmpty()) {
@@ -139,6 +127,12 @@ public final class RuntimeOptionsBuilder {
         return runtimeOptions;
     }
 
+    private boolean hasFeaturesWithLineFilters() {
+        return parsedRerunPaths != null || !parsedFeaturePaths.stream()
+            .map(FeatureWithLines::lines)
+            .allMatch(Set::isEmpty);
+    }
+
     public RuntimeOptionsBuilder setCount(int count) {
         this.parsedCount = count;
         return this;
@@ -151,10 +145,6 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setDryRun() {
         return setDryRun(true);
-    }
-
-    public void setIsRerun(boolean isRerun) {
-        this.parsedIsRerun = isRerun;
     }
 
     public RuntimeOptionsBuilder setMonochrome(boolean monochrome) {
