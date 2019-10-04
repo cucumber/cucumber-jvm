@@ -91,6 +91,13 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
  - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765) M.P. Korstanje)
 
+## [4.7.3](https://github.com/cucumber/cucumber-jvm/compare/v4.7.2...v4.7.3) (2019-10-04)
+
+### Fixed
+* [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
+   that wouldn't normally affect the timeline formatter. However, it did prevent some organisations from downloading the cucumber-core jar because nexus would block it.
+   ([#1759](https://github.com/cucumber/cucumber-jvm/issues/1759), [#1769](https://github.com/cucumber/cucumber-jvm/pull/1769), [#1786](https://github.com/cucumber/cucumber-jvm/issues/1786) Vincent Pretre, Aslak Hellesøy, M.P. Korstanje)
+ 
 ## [4.7.2](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v4.7.2) (2019-08-28)
 
 ### Fixed
