@@ -125,11 +125,8 @@ final class RuntimeOptionsParser {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (arg.startsWith("@")) {
-                parsedOptions.setIsRerun(true);
                 URI rerunFile = FeaturePath.parse(arg.substring(1));
-                for (FeatureWithLines featureWithLines : rerunLoader.load(rerunFile)) {
-                    parsedOptions.addFeature(featureWithLines);
-                }
+                parsedOptions.addRerun(rerunLoader.load(rerunFile));
             } else if (!arg.isEmpty()) {
                 FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
                 parsedOptions.addFeature(featureWithLines);

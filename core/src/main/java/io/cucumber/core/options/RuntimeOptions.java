@@ -3,10 +3,13 @@ package io.cucumber.core.options;
 import cucumber.api.SnippetType;
 import cucumber.runtime.order.PickleOrder;
 import cucumber.runtime.order.StandardPickleOrders;
+import io.cucumber.core.model.FeatureWithLines;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,8 +25,7 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     private final List<URI> glue = new ArrayList<>();
     private final List<String> tagFilters = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
-    private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
-    private final SortedSet<URI> featurePaths = new TreeSet<>();
+    private final List<FeatureWithLines> featurePaths = new ArrayList<>();
 
     private final List<String> junitOptions = new ArrayList<>();
     private boolean dryRun;
@@ -103,7 +105,14 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
 
     @Override
     public List<URI> getFeaturePaths() {
-        return unmodifiableList(new ArrayList<>(featurePaths));
+        Set<URI> uris = new HashSet<>();
+        for (FeatureWithLines featurePath : featurePaths) {
+            URI uri = featurePath.uri();
+            uris.add(uri);
+        }
+        ArrayList<URI> toSort = new ArrayList<>(uris);
+        Collections.sort(toSort);
+        return unmodifiableList(toSort);
     }
 
     @Override
@@ -120,7 +129,7 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
         this.count = count;
     }
 
-    void setFeaturePaths(List<URI> featurePaths) {
+    void setFeaturePaths(List<FeatureWithLines> featurePaths) {
         this.featurePaths.clear();
         this.featurePaths.addAll(featurePaths);
     }
@@ -133,13 +142,6 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     void setJunitOptions(List<String> junitOptions) {
         this.junitOptions.clear();
         this.junitOptions.addAll(junitOptions);
-    }
-
-    void setLineFilters(Map<URI, Set<Integer>> lineFilters) {
-        this.lineFilters.clear();
-        for (URI path : lineFilters.keySet()) {
-            this.lineFilters.put(path, lineFilters.get(path));
-        }
     }
 
     void setNameFilters(List<Pattern> nameFilters) {
@@ -158,7 +160,19 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
 
     @Override
     public Map<URI, Set<Integer>> getLineFilters() {
-        return unmodifiableMap(new HashMap<>(lineFilters));
+        Map<URI, Set<Integer>> lineFilters = new HashMap<>();
+        for (FeatureWithLines featureWithLines : featurePaths) {
+            SortedSet<Integer> lines = featureWithLines.lines();
+            URI uri = featureWithLines.uri();
+            if (lines.isEmpty()) {
+                continue;
+            }
+            if(!lineFilters.containsKey(uri)){
+                lineFilters.put(uri, new TreeSet<Integer>());
+            }
+            lineFilters.get(uri).addAll(lines);
+        }
+        return unmodifiableMap(lineFilters);
     }
 
     @Override

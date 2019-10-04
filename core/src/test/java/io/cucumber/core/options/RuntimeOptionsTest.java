@@ -19,6 +19,7 @@ import gherkin.events.PickleEvent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,6 +39,7 @@ import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
@@ -395,6 +397,40 @@ public class RuntimeOptionsTest {
             .build(runtimeOptions);
         assertThat(options.getTagFilters(), emptyCollectionOf(String.class));
         assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)));
+    }
+
+    @Test
+    public void combines_tag_filters_from_env_if_rerun_file_specified_in_cli() throws IOException {
+        String rerunPath = "file:path/rerun.txt";
+        mockFileResource(resourceLoader, rerunPath, "file:this/should/be/rerun.feature" + ":12");
+
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(resourceLoader)
+            .parse("@" + rerunPath)
+            .build();
+
+        properties.setProperty("cucumber.options", "--tags @should_not_be_clobbered");
+        RuntimeOptions options = new EnvironmentOptionsParser()
+            .parse(new Env(properties))
+            .build(runtimeOptions);
+
+        assertThat(options.getTagFilters(), contains("@should_not_be_clobbered"));
+        assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)));
+    }
+
+    @Test
+    public void clobbers_line_filters_from_cli_if_tags_are_specified_in_env() {
+        properties.setProperty("cucumber.options", "--tags @should_not_be_clobbered");
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+            .parse("file:path/to.feature")
+            .build();
+
+        RuntimeOptions options = new EnvironmentOptionsParser()
+            .parse(new Env(properties))
+            .build(runtimeOptions);
+
+        assertThat(options.getTagFilters(), contains("@should_not_be_clobbered"));
+        assertThat(options.getLineFilters(), is(Collections.<URI, Set<Integer>>emptyMap()));
+        assertThat(options.getFeaturePaths(), contains(URI.create("file:path/to.feature")));
     }
 
     @Test
@@ -800,7 +836,7 @@ public class RuntimeOptionsTest {
         mockFileResource(resourceLoader, rerunPath, rerunFile);
 
         RuntimeOptions options = new CommandlineOptionsParser(resourceLoader)
-            .parse("@" +  rerunPath)
+            .parse("@" + rerunPath)
             .build();
 
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));

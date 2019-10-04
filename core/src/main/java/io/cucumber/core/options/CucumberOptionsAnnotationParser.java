@@ -101,11 +101,8 @@ public final class CucumberOptionsAnnotationParser {
         if (options != null && options.features().length != 0) {
             for (String feature : options.features()) {
                 if (feature.startsWith("@")) {
-                    args.setIsRerun(true);
                     URI rerunFile = FeaturePath.parse(feature.substring(1));
-                    for (FeatureWithLines featureWithLines : rerunLoader.load(rerunFile)) {
-                        args.addFeature(featureWithLines);
-                    }
+                    args.addRerun(rerunLoader.load(rerunFile));
                 } else {
                     FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
                     args.addFeature(featureWithLines);

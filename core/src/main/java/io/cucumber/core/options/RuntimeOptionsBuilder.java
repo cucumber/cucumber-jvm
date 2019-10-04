@@ -8,23 +8,18 @@ import io.cucumber.core.model.FeatureWithLines;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public final class RuntimeOptionsBuilder {
     private List<String> parsedTagFilters = new ArrayList<>();
     private List<Pattern> parsedNameFilters = new ArrayList<>();
-    private Map<URI, Set<Integer>> parsedLineFilters = new HashMap<>();
-    private List<URI> parsedFeaturePaths = new ArrayList<>();
+    private List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private List<URI> parsedGlue = new ArrayList<>();
     private ParsedPluginData parsedPluginData = new ParsedPluginData();
+    private List<FeatureWithLines> parsedRerunPaths = null;
     private List<String> parsedJunitOptions = new ArrayList<>();
-    private boolean parsedIsRerun = false;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
     private Boolean parsedStrict = null;
@@ -34,9 +29,16 @@ public final class RuntimeOptionsBuilder {
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
 
+    public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
+        if (parsedRerunPaths == null) {
+            parsedRerunPaths = new ArrayList<>();
+        }
+        parsedRerunPaths.addAll(featureWithLines);
+        return this;
+    }
+
     public RuntimeOptionsBuilder addFeature(FeatureWithLines featureWithLines) {
-        parsedFeaturePaths.add(featureWithLines.uri());
-        addLineFilters(featureWithLines);
+        parsedFeaturePaths.add(featureWithLines);
         return this;
     }
 
@@ -47,20 +49,6 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addJunitOption(String junitOption) {
         this.parsedJunitOptions.add(junitOption);
-        return this;
-    }
-
-    private RuntimeOptionsBuilder addLineFilters(FeatureWithLines featureWithLines) {
-        URI key = featureWithLines.uri();
-        Set<Integer> lines = featureWithLines.lines();
-        if (lines.isEmpty()) {
-            return null;
-        }
-        if (this.parsedLineFilters.containsKey(key)) {
-            this.parsedLineFilters.get(key).addAll(lines);
-        } else {
-            this.parsedLineFilters.put(key, new TreeSet<>(lines));
-        }
         return this;
     }
 
@@ -116,17 +104,16 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setCount(this.parsedCount);
         }
 
-        if (this.parsedIsRerun || !this.parsedFeaturePaths.isEmpty()) {
-            runtimeOptions.setFeaturePaths(Collections.<URI>emptyList());
-            runtimeOptions.setLineFilters(Collections.<URI, Set<Integer>>emptyMap());
-        }
-        if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || !this.parsedLineFilters.isEmpty()) {
+        if (!this.parsedTagFilters.isEmpty() || !this.parsedNameFilters.isEmpty() || hasFeaturesWithLineFilters()) {
             runtimeOptions.setTagFilters(this.parsedTagFilters);
             runtimeOptions.setNameFilters(this.parsedNameFilters);
-            runtimeOptions.setLineFilters(this.parsedLineFilters);
         }
-        if (!this.parsedFeaturePaths.isEmpty()) {
-            runtimeOptions.setFeaturePaths(this.parsedFeaturePaths);
+        if (!this.parsedFeaturePaths.isEmpty() || this.parsedRerunPaths != null) {
+            List<FeatureWithLines> features = new ArrayList<>(this.parsedFeaturePaths);
+            if (parsedRerunPaths != null) {
+                features.addAll(this.parsedRerunPaths);
+            }
+            runtimeOptions.setFeaturePaths(features);
         }
 
         if (!this.parsedGlue.isEmpty()) {
@@ -143,6 +130,18 @@ public final class RuntimeOptionsBuilder {
         return runtimeOptions;
     }
 
+    private boolean hasFeaturesWithLineFilters() {
+        if (parsedRerunPaths != null) {
+            return true;
+        }
+        for (FeatureWithLines parsedFeaturePath : parsedFeaturePaths) {
+            if (!parsedFeaturePath.lines().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public RuntimeOptionsBuilder setCount(int count) {
         this.parsedCount = count;
         return this;
@@ -155,10 +154,6 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setDryRun() {
         return setDryRun(true);
-    }
-
-    public void setIsRerun(boolean isRerun) {
-        this.parsedIsRerun = isRerun;
     }
 
     public RuntimeOptionsBuilder setMonochrome(boolean monochrome) {
