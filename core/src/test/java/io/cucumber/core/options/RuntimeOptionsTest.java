@@ -1,19 +1,19 @@
 package io.cucumber.core.options;
 
-import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.Plugin;
+import io.cucumber.plugin.StrictAware;
+import io.cucumber.plugin.event.EventPublisher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -32,10 +32,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -357,6 +360,39 @@ class RuntimeOptionsTest {
         assertAll("Checking RuntimeOptions",
             () -> assertThat(options.getTagExpressions(), emptyCollectionOf(String.class)),
             () -> assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)))
+        );
+    }
+
+    @Test
+    void combines_tag_filters_from_env_if_rerun_file_specified_in_cli() {
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+            .parse("@src/test/resources/io/cucumber/core/options/runtime-options-rerun.txt")
+            .build();
+
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
+            .build(runtimeOptions);
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
+            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)))
+        );
+    }
+
+    @Test
+    void clobbers_line_filters_from_cli_if_tags_are_specified_in_env() {
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+            .parse("file:path/to.feature")
+            .build();
+
+        RuntimeOptions options = new CucumberPropertiesParser()
+            .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
+            .build(runtimeOptions);
+
+        assertAll("Checking RuntimeOptions",
+            () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
+            () -> assertThat(options.getLineFilters(), is(emptyMap())),
+            () -> assertThat(options.getFeaturePaths(), contains(URI.create("file:path/to.feature")))
         );
     }
 
@@ -684,8 +720,6 @@ class RuntimeOptionsTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo("--count must be > 0")));
     }
-
-
 
     @Test
     void loads_no_features_when_rerun_file_specified_in_cucumber_options_property_is_empty() {

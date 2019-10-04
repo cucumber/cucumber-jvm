@@ -9,7 +9,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
@@ -22,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -161,20 +159,6 @@ class RerunFileTest {
         );
     }
 
-    @Test
-    void clobbers_tag_and_name_filters_from_cli_if_rerun_file_specified_in_cucumber_options_property() throws IOException {
-        Map<String, String> properties = mockFileResource("foo.feature:4");
-
-        RuntimeOptions options = new CommandlineOptionsParser()
-            .parse("--tags", "@should_be_clobbered", "--name", "should_be_clobbered")
-            .build();
-
-        RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
-            .parse(properties)
-            .build(options);
-
-        assertThat(runtimeOptions.getTagExpressions(), is(equalTo(Collections.emptyList())));
-    }
 
     @Test
     void loads_features_specified_in_rerun_file_with_empty_cucumber_options() throws Exception {

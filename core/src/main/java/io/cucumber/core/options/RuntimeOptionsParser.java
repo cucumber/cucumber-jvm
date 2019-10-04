@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
+import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -205,9 +206,8 @@ final class RuntimeOptionsParser {
                 throw new CucumberException("Unknown option: " + arg);
             } else if (!arg.isEmpty()) {
                 if (arg.startsWith("@")) {
-                    parsedOptions.setIsRerun(true);
                     Path rerunFile = Paths.get(arg.substring(1));
-                    OptionsFileParser.parseFeatureWithLinesFile(rerunFile).forEach(parsedOptions::addFeature);
+                    parsedOptions.addRerun(parseFeatureWithLinesFile(rerunFile));
                 } else {
                     FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
                     parsedOptions.addFeature(featureWithLines);

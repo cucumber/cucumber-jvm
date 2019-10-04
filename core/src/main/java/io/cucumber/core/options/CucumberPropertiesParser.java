@@ -92,8 +92,13 @@ public final class CucumberPropertiesParser {
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
-            splitAndThenFlatMap(s -> parseFeatureOrRerunFile(builder, s)),
+            splitAndThenFlatMap(CucumberPropertiesParser::parseFeatureFile),
             builder::addFeature
+        );
+        parseAll(properties,
+            FEATURES_PROPERTY_NAME,
+            splitAndMap(CucumberPropertiesParser::parseRerunFile),
+            builder::addRerun
         );
 
         parse(properties,
@@ -140,17 +145,19 @@ public final class CucumberPropertiesParser {
         return builder;
     }
 
-    private Stream<FeatureWithLines> parseFeatureOrRerunFile(RuntimeOptionsBuilder builder, String property) {
-        if(property.startsWith("@")){
-            return parseRerunFile(builder, property.substring(1)).stream();
+    private static Stream<FeatureWithLines> parseFeatureFile(String property) {
+        if (property.startsWith("@")) {
+            return Stream.empty();
         }
         return Stream.of(FeatureWithLines.parse(property));
     }
 
-    private Collection<FeatureWithLines> parseRerunFile(RuntimeOptionsBuilder builder, String property) {
-        builder.setIsRerun(true);
-        Path rerunFile = Paths.get(property);
-        return parseFeatureWithLinesFile(rerunFile);
+    private static Collection<FeatureWithLines> parseRerunFile(String property) {
+        if (property.startsWith("@")) {
+            Path rerunFile = Paths.get(property.substring(1));
+            return parseFeatureWithLinesFile(rerunFile);
+        }
+        return Collections.emptyList();
     }
 
     private <T> void parseAll(Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser, Consumer<T> setter) {

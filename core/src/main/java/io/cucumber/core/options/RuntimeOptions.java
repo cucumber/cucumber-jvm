@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -28,8 +30,7 @@ public final class RuntimeOptions implements
     private final List<URI> glue = new ArrayList<>();
     private final List<String> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
-    private final Map<URI, Set<Integer>> lineFilters = new HashMap<>();
-    private final SortedSet<URI> featurePaths = new TreeSet<>();
+    private final List<FeatureWithLines> featurePaths = new ArrayList<>();
 
     private boolean dryRun;
     private boolean strict = false;
@@ -97,7 +98,11 @@ public final class RuntimeOptions implements
 
     @Override
     public List<URI> getFeaturePaths() {
-        return unmodifiableList(new ArrayList<>(featurePaths));
+        return unmodifiableList(featurePaths.stream()
+            .map(FeatureWithLines::uri)
+            .sorted()
+            .distinct()
+            .collect(Collectors.toList()));
     }
 
     @Override
@@ -114,7 +119,7 @@ public final class RuntimeOptions implements
         this.count = count;
     }
 
-    void setFeaturePaths(List<URI> featurePaths) {
+    void setFeaturePaths(List<FeatureWithLines> featurePaths) {
         this.featurePaths.clear();
         this.featurePaths.addAll(featurePaths);
     }
@@ -122,13 +127,6 @@ public final class RuntimeOptions implements
     void setGlue(List<URI> parsedGlue) {
         glue.clear();
         glue.addAll(parsedGlue);
-    }
-
-    void setLineFilters(Map<URI, Set<Integer>> lineFilters) {
-        this.lineFilters.clear();
-        for (URI path : lineFilters.keySet()) {
-            this.lineFilters.put(path, lineFilters.get(path));
-        }
     }
 
     void setNameFilters(List<Pattern> nameFilters) {
@@ -147,7 +145,17 @@ public final class RuntimeOptions implements
 
     @Override
     public Map<URI, Set<Integer>> getLineFilters() {
-        return unmodifiableMap(new HashMap<>(lineFilters));
+        Map<URI, Set<Integer>> lineFilters = new HashMap<>();
+        featurePaths.forEach(featureWithLines -> {
+            SortedSet<Integer> lines = featureWithLines.lines();
+            URI uri = featureWithLines.uri();
+            if (lines.isEmpty()) {
+                return;
+            }
+            lineFilters.putIfAbsent(uri, new TreeSet<>());
+            lineFilters.get(uri).addAll(lines);
+        });
+        return unmodifiableMap(lineFilters);
     }
 
     @Override

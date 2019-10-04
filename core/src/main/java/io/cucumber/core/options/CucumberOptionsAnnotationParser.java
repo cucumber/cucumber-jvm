@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
+import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.util.Objects.requireNonNull;
 
 public final class CucumberOptionsAnnotationParser {
@@ -101,11 +102,8 @@ public final class CucumberOptionsAnnotationParser {
         if (options != null && options.features().length != 0) {
             for (String feature : options.features()) {
                 if (feature.startsWith("@")) {
-                    args.setIsRerun(true);
                     Path rerunFile = Paths.get(feature.substring(1));
-                    for (FeatureWithLines featureWithLines : OptionsFileParser.parseFeatureWithLinesFile(rerunFile)) {
-                        args.addFeature(featureWithLines);
-                    }
+                    args.addRerun(parseFeatureWithLinesFile(rerunFile));
                 } else {
                     FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
                     args.addFeature(featureWithLines);
