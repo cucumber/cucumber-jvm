@@ -89,7 +89,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Java8] Set default before hook order to the same after hook (1000) 
  - [Doc] Fixed various Javadoc issues ([#1586](https://github.com/cucumber/cucumber-jvm/pull/1586) Michiel Leegwater)
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
- - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765) M.P. Korstanje)
+ - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765), [#1785](https://github.com/cucumber/cucumber-jvm/issues/1785) M.P. Korstanje)
+
+## [4.7.4](https://github.com/cucumber/cucumber-jvm/compare/v4.7.3...v4.7.4) (2019-10-05)
+
+### Fixed
+*  [Core] Do not clobber line filters from rerun file ([#1789](https://github.com/cucumber/cucumber-jvm/pull/1789) M.P. Korstanje) 
 
 ## [4.7.3](https://github.com/cucumber/cucumber-jvm/compare/v4.7.2...v4.7.3) (2019-10-04)
 
