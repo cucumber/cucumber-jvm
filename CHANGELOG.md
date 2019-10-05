@@ -94,7 +94,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [4.7.4](https://github.com/cucumber/cucumber-jvm/compare/v4.7.3...v4.7.4) (2019-10-05)
 
 ### Fixed
-*  [Core] Do not clobber line filters from rerun file ([#1789](https://github.com/cucumber/cucumber-jvm/pull/1789) M.P. Korstanje) 
+*  [Core] Do not clobber line filters from rerun file ([#1789](https://github.com/cucumber/cucumber-jvm/pull/1789) M.P. Korstanje, Malte Engels) 
 
 ## [4.7.3](https://github.com/cucumber/cucumber-jvm/compare/v4.7.2...v4.7.3) (2019-10-04)
 
