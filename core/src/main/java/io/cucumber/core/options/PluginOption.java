@@ -51,6 +51,7 @@ public class PluginOption implements Options.Plugin {
         put("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter", PrettyFormatter.class);
         put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter", PrettyFormatter.class);
         put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter", PrettyFormatter.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter", PrettyFormatter.class);
     }};
 
     private final String pluginString;
