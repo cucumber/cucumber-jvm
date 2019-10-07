@@ -1,6 +1,9 @@
 package io.cucumber.docstring;
 
-final class CucumberDocStringException extends RuntimeException {
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE)
+public final class CucumberDocStringException extends RuntimeException {
 
     CucumberDocStringException(String message) {
         super(message);
