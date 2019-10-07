@@ -74,7 +74,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         ), e);
     }
 
-    private Throwable couldNotInvokeArgumentConversion(CucumberBackendException e) {
+    private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
                 "It appears there was a problem with a hook or transformer definition. " +
