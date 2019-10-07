@@ -11,6 +11,12 @@ Feature: Lambda type definition
       |name  | surname       | famousBook          |
       |Fedor | Dostoevsky    |Crime and Punishment |
 
+  Scenario: define data table by row transformer
+    Given data table, defined by lambda row transformer
+      | book                 | main character |
+      | Crime and Punishment | Raskolnikov    |
+      | War and Peace        | Bolkonsky      |
+
   Scenario: define  data table type by lambda
     Given data table, defined by lambda
       |name  | surname       | famousBook          |

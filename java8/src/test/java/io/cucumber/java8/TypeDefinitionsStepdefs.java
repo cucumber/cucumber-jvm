@@ -19,10 +19,22 @@ public class TypeDefinitionsStepdefs implements En{
             return new Author(entry.get("name"), entry.get("surname"), entry.get("famousBook"));
         });
 
+        DataTableType((List<String> row) -> {
+            return new Book(row.get(0), row.get(1));
+        });
+
         Given("single entry data table, defined by lambda", (Author author) -> {
             assertThat(author.name, equalTo("Fedor"));
             assertThat(author.surname, equalTo("Dostoevsky"));
             assertThat(author.famousBook, equalTo("Crime and Punishment"));
+        });
+
+        Given("data table, defined by lambda row transformer", (DataTable dataTable) -> {
+            List<Book> books = dataTable.subTable(1, 0).asList(Book.class); // throw away table headers
+            Book book1 = new Book("Crime and Punishment", "Raskolnikov");
+            Book book2 = new Book("War and Peace", "Bolkonsky");
+            assertThat(book1, equalTo(books.get(0)));
+            assertThat(book2, equalTo(books.get(1)));
         });
 
         Given("data table, defined by lambda", (DataTable dataTable) -> {
@@ -33,7 +45,7 @@ public class TypeDefinitionsStepdefs implements En{
             assertThat(authors.get(1), equalTo(tolstoy));
         });
 
-        // ParameterType with one argumentv
+        // ParameterType with one argument
         Given("{stringbuilder} parameter, defined by lambda", (StringBuilder builder) -> {
             assertThat(builder.toString(), equalTo("stringbuilder"));
         });
@@ -79,6 +91,15 @@ public class TypeDefinitionsStepdefs implements En{
         }
 
         @Override
+        public String toString() {
+            return "Author{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", famousBook='" + famousBook + '\'' +
+                '}';
+        }
+
+        @Override
         public int hashCode() {
             return Objects.hash(name, surname, famousBook);
         }
@@ -95,6 +116,41 @@ public class TypeDefinitionsStepdefs implements En{
         @Override
         public String toString() {
             return getClass().getSimpleName() + "[x=" + x + ",y=" + y + "]";
+        }
+    }
+
+    public static final class Book {
+        private final String name;
+        private final String mainCharacter;
+
+        public Book(String name, String mainCharacter) {
+            this.name = name;
+            this.mainCharacter = mainCharacter;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getMainCharacter() {
+            return mainCharacter;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Book book = (Book) o;
+            return Objects.equals(name, book.name) &&
+                Objects.equals(mainCharacter, book.mainCharacter);
+        }
+
+        @Override
+        public String toString() {
+            return "Book{" +
+                "name='" + name + '\'' +
+                ", mainCharacter='" + mainCharacter + '\'' +
+                '}';
         }
     }
 }
