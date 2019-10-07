@@ -1,6 +1,5 @@
 package io.cucumber.examples.testng;
 
-import io.cucumber.examples.testng.RpnCalculator;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

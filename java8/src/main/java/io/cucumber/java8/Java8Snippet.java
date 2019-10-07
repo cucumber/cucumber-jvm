@@ -10,6 +10,6 @@ final class Java8Snippet extends AbstractJavaSnippet {
             "{0}(\"{1}\", ({3}) -> '{'\n" +
             "    // {4}\n" +
             "{5}    throw new " + PendingException.class.getName() + "();\n" +
-            "'}');\n");
+            "'}');");
     }
 }

@@ -13,23 +13,23 @@ public final class StandardPickleOrders {
     }
 
     public static PickleOrder lexicalUriOrder() {
-        return pickleEvents -> {
-            pickleEvents.sort(new PickleUriComparator());
-            return pickleEvents;
+        return pickles -> {
+            pickles.sort(new PickleUriComparator());
+            return pickles;
         };
     }
 
     public static PickleOrder reverseLexicalUriOrder() {
-        return pickleEvents -> {
-            pickleEvents.sort(new PickleUriComparator().reversed());
-            return pickleEvents;
+        return pickles -> {
+            pickles.sort(new PickleUriComparator().reversed());
+            return pickles;
         };
     }
 
     public static PickleOrder random(final long seed) {
-        return pickleEvents -> {
-            Collections.shuffle(pickleEvents, new Random(seed));
-            return pickleEvents;
+        return pickles -> {
+            Collections.shuffle(pickles, new Random(seed));
+            return pickles;
         };
     }
 

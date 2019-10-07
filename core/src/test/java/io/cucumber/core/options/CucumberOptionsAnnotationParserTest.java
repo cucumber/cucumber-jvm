@@ -2,11 +2,11 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.plugin.Plugin;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
      void create_without_options() {
         RuntimeOptions runtimeOptions = parser()
             .parse(WithoutOptions.class)
-            .addDefaultSummaryPrinterIfNotPresent()
-            .addDefaultFormatterIfNotPresent()
+            .addDefaultSummaryPrinterIfAbsent()
+            .addDefaultFormatterIfAbsent()
             .build();
 
         assertAll("Checking RuntimeOptions",
@@ -80,8 +80,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         Class<?> subClassWithMonoChromeTrueClass = WithoutOptionsWithBaseClassWithoutOptions.class;
         RuntimeOptions runtimeOptions = parser()
             .parse(subClassWithMonoChromeTrueClass)
-            .addDefaultFormatterIfNotPresent()
-            .addDefaultSummaryPrinterIfNotPresent()
+            .addDefaultFormatterIfAbsent()
+            .addDefaultSummaryPrinterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
@@ -140,7 +140,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
      void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
         RuntimeOptions runtimeOptions = parser()
             .parse(ClassWithNoSummaryPrinterPlugin.class)
-            .addDefaultSummaryPrinterIfNotPresent()
+            .addDefaultSummaryPrinterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));

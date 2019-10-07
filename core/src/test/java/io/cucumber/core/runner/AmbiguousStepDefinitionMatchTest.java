@@ -6,6 +6,8 @@ import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.net.URI;
+
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -22,7 +24,7 @@ class AmbiguousStepDefinitionMatchTest {
     );
     private final CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
     private final AmbiguousStepDefinitionsException e = new AmbiguousStepDefinitionsException(step, emptyList());
-    private final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch("file:test.feature", step, e);
+    private final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch(URI.create("file:path/to.feature"), step, e);
 
     @Test
     void throws_ambiguous_step_definitions_exception_when_run() {

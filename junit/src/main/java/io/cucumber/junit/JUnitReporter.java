@@ -1,5 +1,7 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -9,13 +11,12 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -203,10 +204,10 @@ final class JUnitReporter {
     }
 
     private static final class StepLocation implements Comparable<StepLocation> {
-        private final String uri;
+        private final URI uri;
         private final int line;
 
-        private StepLocation(String uri, int line) {
+        private StepLocation(URI uri, int line) {
             this.uri = uri;
             this.line = line;
         }

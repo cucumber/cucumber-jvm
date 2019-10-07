@@ -2,12 +2,13 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.feature.CucumberStep;
 
+import java.net.URI;
 import java.util.Collections;
 
 final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
     private final AmbiguousStepDefinitionsException exception;
 
-    AmbiguousPickleStepDefinitionsMatch(String uri, CucumberStep step, AmbiguousStepDefinitionsException e) {
+    AmbiguousPickleStepDefinitionsMatch(URI uri, CucumberStep step, AmbiguousStepDefinitionsException e) {
         super(Collections.emptyList(), new NoStepDefinition(), uri, step);
         this.exception = e;
     }

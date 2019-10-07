@@ -42,9 +42,9 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         this.options = options;
         this.children = feature.getPickles().stream()
             .filter(filter).
-                map(pickleEvent -> options.stepNotifications()
-                    ? withStepDescriptions(runners, pickleEvent, options)
-                    : withNoStepDescriptions(feature.getName(), runners, pickleEvent, options))
+                map(pickle -> options.stepNotifications()
+                    ? withStepDescriptions(runners, pickle, options)
+                    : withNoStepDescriptions(feature.getName(), runners, pickle, options))
             .collect(toList());
     }
 

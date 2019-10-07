@@ -1,9 +1,5 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
@@ -24,12 +20,16 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
+import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 import org.testng.SkipException;
 
@@ -85,6 +85,7 @@ public final class TestNGCucumberRunner {
 
         runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
+            .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
         ClassLoader classLoader = clazz.getClassLoader();
@@ -111,26 +112,11 @@ public final class TestNGCucumberRunner {
         runner.runPickle(cucumberPickle);
         testCaseResultListener.finishExecutionUnit();
 
-        if (testCaseResultListener.isPassed()) {
-            return;
+        if (!testCaseResultListener.isPassed()) {
+            // null pointer is covered by isPassed
+            // noinspection ConstantConditions
+            throw testCaseResultListener.getError();
         }
-
-        // Log the reason we skipped the test. TestNG doesn't provide it by
-        // default
-        Throwable error = testCaseResultListener.getError();
-        if (error instanceof SkipException) {
-            SkipException skipException = (SkipException) error;
-            if (skipException.isSkip()) {
-                System.out.println(format("Skipped scenario: '%s'. %s",
-                    cucumberPickle.getName(),
-                    skipException.getMessage()
-                ));
-            }
-        }
-
-        // null pointer is covered by isPassed
-        // noinspection ConstantConditions
-        throw error;
     }
 
     public void finish() {
@@ -162,7 +148,7 @@ public final class TestNGCucumberRunner {
         List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri().toString(), feature.getSource()));
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
         return features;
     }

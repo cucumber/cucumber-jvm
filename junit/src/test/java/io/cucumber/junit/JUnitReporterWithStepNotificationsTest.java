@@ -1,5 +1,11 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.plugin.event.HookTestStep;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -10,12 +16,6 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.URI;
 import java.time.Clock;
 import java.util.List;
 
@@ -52,7 +53,7 @@ import static org.mockito.Mockito.when;
 class JUnitReporterWithStepNotificationsTest {
 
     private static final int scenarioLine = 0;
-    private static final String featureUri = "file:example.feature";
+    private static final URI featureUri = URI.create("file:example.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
     private final JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder().setStepNotifications(true).build());
     private final CucumberFeature feature = TestFeatureParser.parse("" +

@@ -1,6 +1,5 @@
 package io.cucumber.core.snippets;
 
-import io.cucumber.plugin.event.DataTableArgument;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.DocStringArgument;
@@ -9,6 +8,7 @@ import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.plugin.event.DataTableArgument;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public final class SnippetGenerator {
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
             snippets.add(snippet.template().format(new String[]{
-                    sanitize(step.getKeyWord()),
+                    sanitize(step.getStepType().isGivenWhenThen() ? step.getKeyWord() : step.getPreviousGivenWhenThenKeyWord()),
                     snippet.escapePattern(expression.getSource()),
                     functionName(expression.getSource(), functionNameGenerator),
                     snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),

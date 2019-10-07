@@ -266,8 +266,54 @@ class JavaSnippetTest {
         assertThat(snippetFor("Then it responds <param>"), is(equalTo(expected)));
     }
 
+    @Test
+    void generatesSnippetUsingFirstGivenWhenThenKeyWord() {
+        String expected = "" +
+            "@When(\"I have {int} cukes in my {string} belly\")\n" +
+            "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    throw new io.cucumber.java.PendingException();\n" +
+            "}\n";
+        assertThat(snippetForWhenAnd("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
+    }
+
+    @Test
+    void generatesSnippetDefaultsToGiven() {
+        String expected = "" +
+            "@Given(\"I have {int} cukes in my {string} belly\")\n" +
+            "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    throw new io.cucumber.java.PendingException();\n" +
+            "}\n";
+        assertThat(snippetForWildCard("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
+    }
+
     private String snippetFor(String stepText) {
         CucumberStep step = createStep(stepText);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
+    private String snippetForWhenAnd(String stepText) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    When some other step\n" +
+            "    And " + stepText + "\n";
+
+        CucumberFeature feature = TestFeatureParser.parse(source);
+        CucumberStep step = feature.getPickles().get(0).getSteps().get(1);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
+    private String snippetForWildCard(String stepText) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    * " + stepText + "\n";
+        CucumberFeature feature = TestFeatureParser.parse(source);
+        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }

@@ -30,17 +30,23 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
     private void print() {
         out.println();
         printStats();
-        out.println();
         printErrors();
         printSnippets();
+        out.println();
     }
 
     private void printStats() {
         stats.printStats(out);
+        out.println();
     }
 
     private void printErrors() {
-        for (Throwable error : stats.getErrors()) {
+        List<Throwable> errors = stats.getErrors();
+        if (errors.isEmpty()) {
+            return;
+        }
+        out.println();
+        for (Throwable error : errors) {
             error.printStackTrace(out);
             out.println();
         }
@@ -56,6 +62,7 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
         out.println();
         for (String snippet : snippets) {
             out.println(snippet);
+            out.println();
         }
     }
 

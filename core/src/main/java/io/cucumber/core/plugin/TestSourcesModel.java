@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.TestSourceRead;
 import gherkin.AstBuilder;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
@@ -16,14 +15,16 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.TableRow;
+import io.cucumber.plugin.event.TestSourceRead;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 final class TestSourcesModel {
-    private final Map<String, TestSourceRead> pathToReadEventMap = new HashMap<>();
-    private final Map<String, GherkinDocument> pathToAstMap = new HashMap<>();
-    private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<>();
+    private final Map<URI, TestSourceRead> pathToReadEventMap = new HashMap<>();
+    private final Map<URI, GherkinDocument> pathToAstMap = new HashMap<>();
+    private final Map<URI, Map<Integer, AstNode>> pathToNodeMap = new HashMap<>();
 
     private static Feature getFeatureForTestCase(AstNode astNode) {
         while (astNode.parent != null) {
@@ -78,11 +79,11 @@ final class TestSourcesModel {
         return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
     }
 
-    void addTestSourceReadEvent(String path, TestSourceRead event) {
+    void addTestSourceReadEvent(URI path, TestSourceRead event) {
         pathToReadEventMap.put(path, event);
     }
 
-    Feature getFeature(String path) {
+    Feature getFeature(URI path) {
         if (!pathToAstMap.containsKey(path)) {
             parseGherkinSource(path);
         }
@@ -92,11 +93,11 @@ final class TestSourcesModel {
         return null;
     }
 
-    ScenarioDefinition getScenarioDefinition(String path, int line) {
+    ScenarioDefinition getScenarioDefinition(URI path, int line) {
         return getScenarioDefinition(getAstNode(path, line));
     }
 
-    AstNode getAstNode(String path, int line) {
+    AstNode getAstNode(URI path, int line) {
         if (!pathToNodeMap.containsKey(path)) {
             parseGherkinSource(path);
         }
@@ -106,7 +107,7 @@ final class TestSourcesModel {
         return null;
     }
 
-    boolean hasBackground(String path, int line) {
+    boolean hasBackground(URI path, int line) {
         if (!pathToNodeMap.containsKey(path)) {
             parseGherkinSource(path);
         }
@@ -117,7 +118,7 @@ final class TestSourcesModel {
         return false;
     }
 
-    String getKeywordFromSource(String uri, int stepLine) {
+    String getKeywordFromSource(URI uri, int stepLine) {
         Feature feature = getFeature(uri);
         if (feature != null) {
             TestSourceRead event = getTestSourceReadEvent(uri);
@@ -132,14 +133,14 @@ final class TestSourcesModel {
         return "";
     }
 
-    private TestSourceRead getTestSourceReadEvent(String uri) {
+    private TestSourceRead getTestSourceReadEvent(URI uri) {
         if (pathToReadEventMap.containsKey(uri)) {
             return pathToReadEventMap.get(uri);
         }
         return null;
     }
 
-    String getFeatureName(String uri) {
+    String getFeatureName(URI uri) {
         Feature feature = getFeature(uri);
         if (feature != null) {
             return feature.getName();
@@ -147,7 +148,7 @@ final class TestSourcesModel {
         return "";
     }
 
-    private void parseGherkinSource(String path) {
+    private void parseGherkinSource(URI path) {
         if (!pathToReadEventMap.containsKey(path)) {
             return;
         }
