@@ -58,7 +58,7 @@ public final class HTMLFormatter implements EventListener {
     private static final String[] TEXT_ASSETS = new String[]{
         "/io/cucumber/core/plugin/html/formatter.js",
         "/io/cucumber/core/plugin/html/index.html",
-        "/io/cucumber/core/plugin/html/jquery-1.8.2.min.js",
+        "/io/cucumber/core/plugin/html/jquery-3.4.1.min.js",
         "/io/cucumber/core/plugin/html/style.css"
     };
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
