@@ -53,7 +53,7 @@
         <junit-platform.version>1.5.2</junit-platform.version>
         <hamcrest.version>2.1</hamcrest.version>
         <mockito.version>3.0.0</mockito.version>
-        <jackson-databind.version>2.9.9.3</jackson-databind.version>
+        <jackson-databind.version>2.10.0</jackson-databind.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>
