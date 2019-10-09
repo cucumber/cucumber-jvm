@@ -2,9 +2,12 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
+import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.io.ClassFinder;
@@ -105,7 +108,22 @@ final class Java8Backend implements Backend {
         @Override
         public void addAfterHookDefinition(HookDefinition afterHook) {
             glue.addAfterHook(afterHook);
+        }
 
+        @Override
+        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+            glue.addDocStringType(docStringTypeDefinition);
+
+        }
+
+        @Override
+        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+            glue.addDataTableType(dataTableTypeDefinition);
+        }
+
+        @Override
+        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
+            glue.addParameterType(parameterTypeDefinition);
         }
     }
 }

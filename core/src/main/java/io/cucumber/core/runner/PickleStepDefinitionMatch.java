@@ -10,6 +10,7 @@ import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
+import io.cucumber.docstring.CucumberDocStringException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
             }
         } catch (UndefinedDataTableTypeException e) {
             throw registerTypeInConfiguration(e);
-        } catch (CucumberExpressionException | CucumberDataTableException e) {
+        } catch (CucumberExpressionException | CucumberDataTableException | CucumberDocStringException e) {
             throw couldNotConvertArguments(e);
         } catch (CucumberBackendException e) {
             throw couldNotInvokeArgumentConversion(e);

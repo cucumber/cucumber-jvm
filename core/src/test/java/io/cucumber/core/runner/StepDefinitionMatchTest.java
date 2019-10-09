@@ -11,6 +11,7 @@ import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
+import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -225,6 +226,36 @@ class StepDefinitionMatchTest {
         );
 
         stepTypeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new));
+
+        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
+
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
+                "The details are in the stacktrace below."
+        )));
+    }
+
+    @Test
+    void throws_could_not_convert_exception_for_docstring() {
+        CucumberFeature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have some cukes in my belly\n" +
+            "       \"\"\"doc\n" +
+            "        converting this should throw an exception\n" +
+            "       \"\"\"\n"
+        );
+
+        stepTypeRegistry.defineDocStringType(new DocStringType(ItemQuantity.class, "doc", content -> {
+            throw new IllegalArgumentException(content);
+        }));
 
         CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
