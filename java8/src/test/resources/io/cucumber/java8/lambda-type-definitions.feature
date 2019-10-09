@@ -17,6 +17,17 @@ Feature: Lambda type definition
       | Crime and Punishment | Raskolnikov    |
       | War and Peace        | Bolkonsky      |
 
+  Scenario: define data table by cell transformer
+    Given data table, defined by lambda cell transformer
+      | book                 | main character |
+      | Crime and Punishment | Raskolnikov    |
+
+  Scenario: define data table by table transformer
+    Given data table, defined by lambda table transformer
+      | type                 | main character |
+      | tragedy              | Raskolnikov    |
+      | novel                | Bolkonsky      |
+
   Scenario: define  data table type by lambda
     Given data table, defined by lambda
       |name  | surname       | famousBook          |

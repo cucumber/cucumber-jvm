@@ -1,13 +1,15 @@
 package io.cucumber.java8;
 
-import io.cucumber.datatable.DataTable;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
+import io.cucumber.datatable.DataTable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TypeDefinitionsStepdefs implements En{
     public TypeDefinitionsStepdefs() {
@@ -23,6 +25,14 @@ public class TypeDefinitionsStepdefs implements En{
             return new Book(row.get(0), row.get(1));
         });
 
+        DataTableType((String cellName) -> {
+            return new Cell(cellName);
+        });
+
+        DataTableType((DataTable dataTable) -> {
+            return new Literature(dataTable);
+        });
+
         Given("single entry data table, defined by lambda", (Author author) -> {
             assertThat(author.name, equalTo("Fedor"));
             assertThat(author.surname, equalTo("Dostoevsky"));
@@ -35,6 +45,23 @@ public class TypeDefinitionsStepdefs implements En{
             Book book2 = new Book("War and Peace", "Bolkonsky");
             assertThat(book1, equalTo(books.get(0)));
             assertThat(book2, equalTo(books.get(1)));
+        });
+
+        Given("data table, defined by lambda cell transformer", (DataTable dataTable) -> {
+            List<List<Cell>> lists = dataTable.asLists(Cell.class);
+            Cell [] actual = lists.stream().flatMap(Collection::stream).toArray(Cell[]::new);
+            assertThat(actual[0], equalTo(new Cell("book")));
+            assertThat(actual[1], equalTo(new Cell("main character")));
+            assertThat(actual[2], equalTo(new Cell("Crime and Punishment")));
+            assertThat(actual[3], equalTo(new Cell("Raskolnikov")));
+        });
+
+        Given("data table, defined by lambda table transformer", (DataTable dataTable) -> {
+            List<String> types = Stream.of("tragedy", "novel").collect(Collectors.toList());
+            List<String> characters = Stream.of("Raskolnikov", "Bolkonsky").collect(Collectors.toList());
+            Literature expected = new Literature(types, characters);
+            Literature actual = new Literature(dataTable);
+            assertThat(actual, equalTo(expected));
         });
 
         Given("data table, defined by lambda", (DataTable dataTable) -> {
@@ -152,5 +179,63 @@ public class TypeDefinitionsStepdefs implements En{
                 ", mainCharacter='" + mainCharacter + '\'' +
                 '}';
         }
+    }
+
+    public static final class Cell {
+        private final String name;
+
+        public Cell(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Cell{" +
+                "name='" + name + '\'' +
+                '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Cell cell = (Cell) o;
+            return Objects.equals(name, cell.name);
+        }
+
+    }
+
+    public static final class Literature {
+        private final List<String> types;
+        private final List<String> characters;
+
+        public Literature(DataTable dataTable) {
+            dataTable = dataTable.subTable(1, 0); // throw away headers
+            types = dataTable.transpose().asLists().get(0);
+            characters = dataTable.transpose().asLists().get(1);
+        }
+
+        public Literature(List<String> types, List<String> characters) {
+            this.types = types;
+            this.characters = characters;
+        }
+
+        @Override
+        public String toString() {
+            return "Literature{" +
+                "types=" + types +
+                ", characters=" + characters +
+                '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Literature that = (Literature) o;
+            return types.containsAll(that.types) &&
+                characters.containsAll(that.characters);
+        }
+
     }
 }
