@@ -365,7 +365,7 @@ public interface LambdaGlue {
     /**
      * Register a data table type
      *
-     * @param body a function that creates an instance of <code>type<</code> from the data table
+     * @param body a function that creates an instance of <code>type</code> from the data table
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableCellDefinitionBody<T> body) {
@@ -375,7 +375,7 @@ public interface LambdaGlue {
     /**
      * Register a data table type
      *
-     * @param body a function that creates an instance of <code>type<</code> from the data table
+     * @param body a function that creates an instance of <code>type</code> from the data table
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableDefinitionBody<T> body) {
