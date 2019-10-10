@@ -91,6 +91,20 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
  - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765), [#1785](https://github.com/cucumber/cucumber-jvm/issues/1785) M.P. Korstanje)
 
+## [4.8.0](https://github.com/cucumber/cucumber-jvm/compare/v4.7.4...v4.8.0) (To be released)
+
+### Fixed
+* [Core] Update html report jQuery from 1.8.2 to 3.4.1 (#1794) 
+   ([#1794](https://github.com/cucumber/cucumber-jvm/issues/1794) A. Dale Clarke)
+
+### Deprecated
+* [Java] Deprecate `timout` in favour of library based solutions ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
+   - Prefer using library based solutions
+    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
+    * [Awaitility](https://github.com/awaitility/awaitility)
+    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
+
+
 ## [4.7.4](https://github.com/cucumber/cucumber-jvm/compare/v4.7.3...v4.7.4) (2019-10-05)
 
 ### Fixed
