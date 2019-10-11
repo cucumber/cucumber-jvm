@@ -80,8 +80,8 @@ import static java.util.stream.Collectors.toList;
  * @see CucumberOptions
  */
 @API(status = API.Status.STABLE)
-public final class Cucumber extends ParentRunner<FeatureRunner> {
-    private final List<FeatureRunner> children;
+public final class Cucumber extends ParentRunner<ParentRunner<?>> {
+    private final List<ParentRunner<?>> children;
     private final EventBus bus;
     private final List<CucumberFeature> features;
     private final Plugins plugins;
@@ -160,17 +160,17 @@ public final class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     @Override
-    protected List<FeatureRunner> getChildren() {
+    protected List<ParentRunner<?>> getChildren() {
         return children;
     }
 
     @Override
-    protected Description describeChild(FeatureRunner child) {
+    protected Description describeChild(ParentRunner<?> child) {
         return child.getDescription();
     }
 
     @Override
-    protected void runChild(FeatureRunner child, RunNotifier notifier) {
+    protected void runChild(ParentRunner<?> child, RunNotifier notifier) {
         child.run(notifier);
     }
 

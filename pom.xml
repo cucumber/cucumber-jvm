@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -331,18 +332,17 @@
                                     <patch>equivalent</patch>
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
-                            <revapi.java>
-                                <filter>
-                                    <packages>
-                                        <regex>true</regex>
-                                        <exclude>
-                                            <!--The logging dependencies for Spring are provided. This causes them to
-                                            be missing in the dependency hierarchy. A false positive. -->
-                                            <item>org\.springframework\..*</item>
-                                        </exclude>
-                                    </packages>
-                                </filter>
-                            </revapi.java>
+                            <revapi.filter>
+                                <elements>
+                                    <exclude>
+                                        <!--The logging dependencies for Spring are provided. This causes them to
+                                        be missing in the dependency hierarchy. A false positive. -->
+                                        <item>class org\.springframework\..*</item>
+                                        <item>.* io\.cucumber\.core\.runner\.AmbiguousStepDefinitionsException.*</item>
+                                        <item>.* io\.cucumber\.junit\..*</item>
+                                    </exclude>
+                                </elements>
+                            </revapi.filter>
                         </analysisConfiguration>
                     </configuration>
                 </plugin>

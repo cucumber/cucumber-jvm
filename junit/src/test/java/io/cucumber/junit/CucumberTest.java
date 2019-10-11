@@ -11,6 +11,7 @@ import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -53,14 +54,14 @@ class CucumberTest {
     void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
         assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().get(0).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
     void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
         assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().get(0).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
@@ -93,7 +94,7 @@ class CucumberTest {
     @Test
     void finds_no_features_when_explicit_feature_path_has_no_features() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
-        List<FeatureRunner> children = cucumber.getChildren();
+        List<ParentRunner<?>> children = cucumber.getChildren();
         assertThat(children, is(equalTo(emptyList())));
     }
 
