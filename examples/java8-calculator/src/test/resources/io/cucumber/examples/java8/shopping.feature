@@ -6,7 +6,7 @@ Feature: Shopping
       | milk  | 9     |
       | bread | 7     |
       | soap  | 5     |
-    When I pay 25
+    When I pay 25.0 USD
     Then my change should be 4
 
   Scenario: Count shopping list cost

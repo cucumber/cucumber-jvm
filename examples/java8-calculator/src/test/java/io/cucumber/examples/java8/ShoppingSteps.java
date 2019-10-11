@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,8 +30,8 @@ public class ShoppingSteps implements En {
             }
         });
 
-        When("I pay {price}", (Price price) -> {
-            calc.push(price.value);
+        When("I pay {amount}", (Amount amount) -> {
+            calc.push(amount.price);
             calc.push("-");
         });
 
@@ -60,7 +62,10 @@ public class ShoppingSteps implements En {
             ShoppingSteps.Price.fromString(row.get("price"))
         ));
 
-        ParameterType("price", "\\d+", Price::fromString);
+        ParameterType("amount", "\\d+\\.\\d+\\s[a-zA-Z]+", (String value) -> {
+            String [] arr = value.split("\\s");
+            return new Amount(new BigDecimal(arr[0]), Currency.getInstance(arr[1]));
+        });
 
         DocStringType("shopping_list", (String docstring) -> {
             return Stream.of(docstring.split("\\s"))
@@ -103,5 +108,15 @@ public class ShoppingSteps implements En {
             return new Price(Integer.parseInt(value));
         }
 
+    }
+
+    static final class Amount {
+        private final BigDecimal price;
+        private final Currency currency;
+
+        public Amount(BigDecimal price, Currency currency) {
+            this.price = price;
+            this.currency = currency;
+        }
     }
 }

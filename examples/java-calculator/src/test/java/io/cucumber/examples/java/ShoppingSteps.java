@@ -7,6 +7,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,9 +29,10 @@ public class ShoppingSteps {
         return new Grocery(entry.get("name"), ShoppingSteps.Price.fromString(entry.get("price")));
     }
 
-    @ParameterType(name = "price", value = "\\d+")
-    public Price definePrice(String value) {
-        return Price.fromString(value);
+    @ParameterType(name = "amount", value = "\\d+\\.\\d+\\s[a-zA-Z]+")
+    public Amount defineAmount(String value) {
+        String [] arr = value.split("\\s");
+        return new Amount(new BigDecimal(arr[0]), Currency.getInstance(arr[1]));
     }
 
     @DocStringType(contentType = "shopping_list")
@@ -45,9 +48,9 @@ public class ShoppingSteps {
         }
     }
 
-    @When("I pay {price}")
-    public void i_pay(Price amount) {
-        calc.push(amount.value);
+    @When("I pay {amount}")
+    public void i_pay(Amount amount) {
+        calc.push(amount.price);
         calc.push("-");
     }
 
@@ -133,5 +136,15 @@ public class ShoppingSteps {
             return new Price(Integer.parseInt(value));
         }
 
+    }
+
+    static final class Amount {
+        private final BigDecimal price;
+        private final Currency currency;
+
+        public Amount(BigDecimal price, Currency currency) {
+            this.price = price;
+            this.currency = currency;
+        }
     }
 }
