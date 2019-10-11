@@ -7,7 +7,8 @@ import java.util.Locale;
 /**
  * The type registry configurer allows to configure a new type registry and the locale.
  * @deprecated Please use annotation based configuration.
- * See {@link io.cucumber.examples.java.ShoppingSteps} and {@link io.cucumber.examples.java8.ShoppingSteps} for examples
+ * See <a href="https://github.com/cucumber/cucumber-jvm/blob/master/examples/java-calculator/src/test/java/io/cucumber/examples/java/ShoppingSteps.java">Annotation based example</a>
+ * See <a href="https://github.com/cucumber/cucumber-jvm/blob/master/examples/java8-calculator/src/test/java/io/cucumber/examples/java8/ShoppingSteps.java">Lambda based example</a>
  */
 @API(status = API.Status.DEPRECATED)
 @Deprecated
