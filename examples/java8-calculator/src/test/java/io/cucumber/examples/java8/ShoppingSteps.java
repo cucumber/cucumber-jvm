@@ -1,15 +1,22 @@
 package io.cucumber.examples.java8;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
-
+import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class ShoppingSteps implements En {
 
     private RpnCalculator calc = new RpnCalculator();
+
+    private List<Grocery> shoppingList;
+    private List<Grocery> shopStock;
+    private int groceriesPrice;
 
     public ShoppingSteps() {
 
@@ -21,13 +28,44 @@ public class ShoppingSteps implements En {
             }
         });
 
-        When("I pay {}", (Integer amount) -> {
-            calc.push(amount);
+        When("I pay {price}", (Price price) -> {
+            calc.push(price.value);
             calc.push("-");
         });
 
         Then("my change should be {}", (Integer change) -> {
             assertEquals(-calc.value().intValue(), change.intValue());
+        });
+
+        Given("the following shopping list:", (Grocery [] array) -> {
+            shoppingList = Arrays.asList(array);
+        });
+
+        Given("the shop has following groceries:", (DataTable dataTable) -> {
+            this.shopStock = dataTable.asList(Grocery.class);
+        });
+
+        When("I count shopping price", () -> shoppingList.forEach(grocery -> {
+            for (Grocery shopGrocery: shopStock) {
+                if (grocery.equals(shopGrocery)) {
+                    groceriesPrice += shopGrocery.price.value;
+                }
+            }
+        }));
+
+        Then("price would be {int}", (Integer totalPrice) -> assertEquals(groceriesPrice, totalPrice));
+
+        DataTableType((Map<String, String> row) -> new ShoppingSteps.Grocery(
+            row.get("name"),
+            ShoppingSteps.Price.fromString(row.get("price"))
+        ));
+
+        ParameterType("price", "\\d+", Price::fromString);
+
+        DocStringType("shopping_list", (String docstring) -> {
+            return Stream.of(docstring.split("\\s"))
+                .map(Grocery::new)
+                .toArray(Grocery[]::new);
         });
     }
 
@@ -35,10 +73,23 @@ public class ShoppingSteps implements En {
         private String name;
         private Price price;
 
+        public Grocery(String name) {
+            this.name = name;
+        }
+
         Grocery(String name, Price price) {
             this.name = name;
             this.price = price;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Grocery grocery = (Grocery) o;
+            return Objects.equals(name, grocery.name);
+        }
+
     }
 
     static final class Price {
