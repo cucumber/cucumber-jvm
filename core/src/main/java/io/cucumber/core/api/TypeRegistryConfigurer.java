@@ -10,7 +10,7 @@ import java.util.Locale;
  * See <a href="https://github.com/cucumber/cucumber-jvm/blob/master/examples/java-calculator/src/test/java/io/cucumber/examples/java/ShoppingSteps.java">Annotation based example</a>
  * See <a href="https://github.com/cucumber/cucumber-jvm/blob/master/examples/java8-calculator/src/test/java/io/cucumber/examples/java8/ShoppingSteps.java">Lambda based example</a>
  */
-@API(status = API.Status.DEPRECATED)
+@API(status = API.Status.STABLE)
 @Deprecated
 public interface TypeRegistryConfigurer {
     /**
