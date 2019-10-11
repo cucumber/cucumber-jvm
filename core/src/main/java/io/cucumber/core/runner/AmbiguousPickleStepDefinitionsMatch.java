@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.CucumberStep;
 
 import java.net.URI;

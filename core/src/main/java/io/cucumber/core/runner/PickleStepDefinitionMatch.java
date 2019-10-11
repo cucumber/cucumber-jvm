@@ -4,6 +4,7 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
