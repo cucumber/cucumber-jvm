@@ -1,7 +1,19 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...master) (In Git)
+
+### Added
+
+### Changed
+    
+### Removed
+ 
+### Fixed
+
+### Deprecated
+
+## [5.0.0-RC1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v5.0.0-RC1) (2019-10-19)
 
 ### Added
  * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
@@ -91,7 +103,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
  - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765), [#1785](https://github.com/cucumber/cucumber-jvm/issues/1785) M.P. Korstanje)
 
-## [4.8.0](https://github.com/cucumber/cucumber-jvm/compare/v4.7.4...v4.8.0) (To be released)
+## [4.8.0](https://github.com/cucumber/cucumber-jvm/compare/v4.7.4...v4.8.0) (2019-10-19)
 
 ### Fixed
 * [Core] Update html report jQuery from 1.8.2 to 3.4.1 (#1794) 
