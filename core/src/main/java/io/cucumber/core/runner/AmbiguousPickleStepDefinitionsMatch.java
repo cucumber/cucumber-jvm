@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.CucumberStep;
 
 import java.net.URI;
@@ -21,10 +22,5 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
     @Override
     public void dryRunStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
         runStep(state);
-    }
-
-    @Override
-    public Match getMatch() {
-        return exception.getMatches().get(0);
     }
 }

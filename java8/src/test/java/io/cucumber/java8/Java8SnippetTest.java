@@ -31,7 +31,7 @@ class Java8SnippetTest {
             "Given(\"I have {int} cukes in my {string} belly\", (Integer int1, String string) -> {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java8.PendingException();\n" +
-            "});\n";
+            "});";
         assertThat(getSnippet(feature), is(equalTo(expected)));
     }
 
@@ -54,7 +54,7 @@ class Java8SnippetTest {
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new io.cucumber.java8.PendingException();\n" +
-            "});\n";
+            "});";
         assertThat(getSnippet(feature), is(equalTo(expected)));
     }
 

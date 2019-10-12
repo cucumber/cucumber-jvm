@@ -1,7 +1,10 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,6 +144,20 @@ class LambdaGlueTest {
         @Override
         public void addAfterHookDefinition(HookDefinition afterHook) {
             LambdaGlueTest.this.afterHook = afterHook;
+        }
+
+        @Override
+        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+        }
+
+        @Override
+        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+
+        }
+
+        @Override
+        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
+
         }
     };
 

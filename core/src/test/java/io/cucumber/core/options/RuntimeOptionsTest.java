@@ -78,7 +78,7 @@ class RuntimeOptionsTest {
 
     @Test
     void has_version_from_properties_file() {
-        assertTrue(RuntimeOptionsParser.VERSION.matches("\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?"));
+        assertTrue(RuntimeOptionsParser.VERSION.matches("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
     }
 
     @Test

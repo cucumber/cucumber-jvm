@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
 
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;

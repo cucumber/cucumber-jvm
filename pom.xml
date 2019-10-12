@@ -7,7 +7,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0-RC2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -53,7 +53,7 @@
         <junit-platform.version>1.5.2</junit-platform.version>
         <hamcrest.version>2.1</hamcrest.version>
         <mockito.version>3.0.0</mockito.version>
-        <jackson-databind.version>2.9.9.3</jackson-databind.version>
+        <jackson-databind.version>2.10.0</jackson-databind.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>
@@ -320,7 +320,7 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.10.5</version>
+                    <version>0.11.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
@@ -338,18 +338,17 @@
                                     <patch>equivalent</patch>
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
-                            <revapi.java>
-                                <filter>
-                                    <packages>
-                                        <regex>true</regex>
-                                        <exclude>
-                                            <!--The logging dependencies for Spring are provided. This causes them to
-                                            be missing in the dependency hierarchy. A false positive. -->
-                                            <item>org\.springframework\..*</item>
-                                        </exclude>
-                                    </packages>
-                                </filter>
-                            </revapi.java>
+                            <revapi.filter>
+                                <elements>
+                                    <exclude>
+                                        <!--The logging dependencies for Spring are provided. This causes them to
+                                        be missing in the dependency hierarchy. A false positive. -->
+                                        <item>class org\.springframework\..*</item>
+                                        <item>.* io\.cucumber\.core\.runner\.AmbiguousStepDefinitionsException.*</item>
+                                        <item>.* io\.cucumber\.junit\..*</item>
+                                    </exclude>
+                                </elements>
+                            </revapi.filter>
                         </analysisConfiguration>
                     </configuration>
                 </plugin>

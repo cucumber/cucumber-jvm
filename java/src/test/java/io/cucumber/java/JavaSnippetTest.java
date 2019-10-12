@@ -29,7 +29,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 
@@ -49,7 +49,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_in_my_belly(Double double1, Size size) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("I have 4.2 cukes in my large belly", customParameterType), is(equalTo(expected)));
     }
 
@@ -70,7 +70,7 @@ class JavaSnippetTest {
             "public void i_have_bellies(java.util.List<io.cucumber.java.JavaSnippetTest$Size> sizes) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("I have large and small bellies", customParameterType), is(equalTo(expected)));
     }
 
@@ -81,7 +81,7 @@ class JavaSnippetTest {
             "public void before_after(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("before 5 after"), is(equalTo(expected)));
     }
 
@@ -92,7 +92,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_in_my_red_belly(Integer int1, String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("I have 4 cukes in: my \"big\" red-belly!"), is(equalTo(expected)));
     }
 
@@ -103,7 +103,7 @@ class JavaSnippetTest {
             "public void the_DI_system_receives_a_message_saying(String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(expected, snippetFor("the DI system receives a message saying \"{ dataIngestion: { feeds: [ feed: { merchantId: 666, feedId: 1, feedFileLocation: feed.csv } ] }\""), is(equalTo(expected)));
     }
 
@@ -114,7 +114,7 @@ class JavaSnippetTest {
             "public void is_there_an_error() {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("is there an error?:"), is(equalTo(expected)));
     }
 
@@ -125,7 +125,7 @@ class JavaSnippetTest {
             "public void a_z() {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("([a-z]*)?.+"), is(equalTo(expected)));
     }
 
@@ -136,7 +136,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_maybe_more(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("I have 5 cukes (maybe more)"), is(equalTo(expected)));
     }
 
@@ -147,7 +147,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_maybe_more(Integer int1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("I have 5 cukes [maybe more]"), is(equalTo(expected)));
     }
 
@@ -158,7 +158,7 @@ class JavaSnippetTest {
             "public void i_have(String docString) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetForDocString("I have:", "hello"), is(equalTo(expected)));
     }
 
@@ -178,13 +178,13 @@ class JavaSnippetTest {
             "public void i_have_a(String docString, String docString1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n" +
+            "}" +
             "\n" +
             "@Given(\"I have a {string}:\")\n" +
             "public void i_have_a(String string, String docString) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetForDocString("I have a \"Documentation String\":", "hello", customParameterType), is(equalTo(expected)));
     }
 
@@ -195,7 +195,7 @@ class JavaSnippetTest {
             "@Given(\"Then it responds ([\\\"]*)\")\n" +
             "public void Then_it_responds(String arg1) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
-            "}\n";
+            "}";
         assertThat(snippetFor("Then it responds UTF-8"), is(equalTo(expected)));
     }
 
@@ -212,7 +212,7 @@ class JavaSnippetTest {
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetForDataTable("I have:"), is(equalTo(expected)));
     }
 
@@ -238,7 +238,7 @@ class JavaSnippetTest {
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n" +
+            "}" +
             "\n" +
             "@Given(\"I have in table {string}:\")\n" +
             "public void i_have_in_table(String string, io.cucumber.datatable.DataTable dataTable) {\n" +
@@ -250,7 +250,7 @@ class JavaSnippetTest {
             "    //\n" +
             "    // For other transformations you can register a DataTableType.\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetForDataTable("I have in table \"M6\":", customParameterType), is(equalTo(expected)));
     }
 
@@ -261,7 +261,7 @@ class JavaSnippetTest {
             "public void then_it_responds_param() {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
 
         assertThat(snippetFor("Then it responds <param>"), is(equalTo(expected)));
     }
@@ -273,7 +273,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetForWhenAnd("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 
@@ -284,7 +284,7 @@ class JavaSnippetTest {
             "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
             "    // Write code here that turns the phrase above into concrete actions\n" +
             "    throw new io.cucumber.java.PendingException();\n" +
-            "}\n";
+            "}";
         assertThat(snippetForWildCard("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 

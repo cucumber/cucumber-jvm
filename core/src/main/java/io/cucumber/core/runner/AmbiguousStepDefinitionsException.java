@@ -7,7 +7,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-final public class AmbiguousStepDefinitionsException extends Exception {
+final class AmbiguousStepDefinitionsException extends Exception {
 
     private final List<PickleStepDefinitionMatch> matches;
 
@@ -29,7 +29,7 @@ final public class AmbiguousStepDefinitionsException extends Exception {
         return "\"" + text + "\"";
     }
 
-    public List<PickleStepDefinitionMatch> getMatches() {
+    List<PickleStepDefinitionMatch> getMatches() {
         return matches;
     }
 

@@ -1,7 +1,19 @@
 
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...master) (In Git)
+
+### Added
+
+### Changed
+    
+### Removed
+ 
+### Fixed
+
+### Deprecated
+
+## [5.0.0-RC1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v5.0.0-RC1) (2019-10-19)
 
 ### Added
  * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
@@ -15,6 +27,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Add `@DefaultDataTableEntryTransformer` alternative for `TypeRegistry.setDefaultDataTableEntryTransformer`
      - Converts title case headers to property names ([#1751](https://github.com/cucumber/cucumber-jvm/pull/1751) Anton Deriabin, M.P. Korstanje) 
    - Add `@DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
+   - Add `@DocStringType` alternative for `TypeRegistry.defineDocStringType`
+ * [Java8] Allow parameter types access to the test context ([#1768](https://github.com/cucumber/cucumber-jvm/issues/851) Anton Derabin, Tim te Beek)
+   - Add `ParameterType` alternative for `TypeRegistry.defineParameterType`
+   - Add `DataTableType` alternative for `TypeRegistry.defineDataTableType`
+   - Add `DocStringType` alternative for `TypeRegistry.defineDocStringType`
  * [Java] Support repeatable step definition annotations ([#1341](https://github.com/cucumber/cucumber-jvm/issues/1341), [#1467](https://github.com/cucumber/cucumber-jvm/pull/1467) M.P. Korstanje)
  * [Core] Add name to `EmbedEvent` ([#1698](https://github.com/cucumber/cucumber-jvm/pull/1698) Konrad M.) 
  * [TestNG] Print suggested snippets per scenario ([#1743](https://github.com/cucumber/cucumber-jvm/pull/1743) M.P. Korstanje)
@@ -28,7 +45,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.order
     - cucumber.execution.strict
     - cucumber.execution.wip
-    - cucumber.feature
+    - cucumber.features
     - cucumber.filter.name
     - cucumber.filter.tags
     - cucumber.glue
@@ -90,6 +107,20 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Doc] Fixed various Javadoc issues ([#1586](https://github.com/cucumber/cucumber-jvm/pull/1586) Michiel Leegwater)
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
  - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765), [#1785](https://github.com/cucumber/cucumber-jvm/issues/1785) M.P. Korstanje)
+
+## [4.8.0](https://github.com/cucumber/cucumber-jvm/compare/v4.7.4...v4.8.0) (2019-10-19)
+
+### Fixed
+* [Core] Update html report jQuery from 1.8.2 to 3.4.1 (#1794) 
+   ([#1794](https://github.com/cucumber/cucumber-jvm/issues/1794) A. Dale Clarke)
+
+### Deprecated
+* [Java] Deprecate `timout` in favour of library based solutions ([#1506](https://github.com/cucumber/cucumber-jvm/issues/1506), [#1694](https://github.com/cucumber/cucumber-jvm/issues/1694) M.P. Korstanje)
+   - Prefer using library based solutions
+    * [JUnit 5 `Assertions.assertTimeout*`](https://junit.org/junit5/docs/5.0.1/api/org/junit/jupiter/api/Assertions.html#assertTimeout-java.time.Duration-org.junit.jupiter.api.function.Executable-)
+    * [Awaitility](https://github.com/awaitility/awaitility)
+    * [Guava `TimeLimiter`](https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/TimeLimiter.java)
+
 
 ## [4.7.4](https://github.com/cucumber/cucumber-jvm/compare/v4.7.3...v4.7.4) (2019-10-05)
 

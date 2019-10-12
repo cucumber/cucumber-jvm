@@ -4,12 +4,14 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
+import io.cucumber.docstring.CucumberDocStringException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
             }
         } catch (UndefinedDataTableTypeException e) {
             throw registerTypeInConfiguration(e);
-        } catch (CucumberExpressionException | CucumberDataTableException e) {
+        } catch (CucumberExpressionException | CucumberDataTableException | CucumberDocStringException e) {
             throw couldNotConvertArguments(e);
         } catch (CucumberBackendException e) {
             throw couldNotInvokeArgumentConversion(e);
@@ -74,7 +76,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         ), e);
     }
 
-    private Throwable couldNotInvokeArgumentConversion(CucumberBackendException e) {
+    private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
                 "It appears there was a problem with a hook or transformer definition. " +
@@ -155,10 +157,6 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private StackTraceElement getStepLocation() {
         return new StackTraceElement("✽", step.getText(), uri.getSchemeSpecificPart(), step.getStepLine());
-    }
-
-    public Match getMatch() {
-        return this;
     }
 
     StepDefinition getStepDefinition() {

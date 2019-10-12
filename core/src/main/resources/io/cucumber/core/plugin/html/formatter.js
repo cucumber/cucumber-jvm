@@ -86,7 +86,7 @@ CucumberHTML.DOMFormatter = function(rootNode) {
     if (isLastStep) {
       if (currentSteps.find('.failed').length == 0) {
         // No failed steps. Collapse it.
-        currentElement.find('details').removeAttr('open');
+        currentElement.find('details').prop('open', false);
       } else {
         currentElement.find('details').attr('open', 'open');
       }
