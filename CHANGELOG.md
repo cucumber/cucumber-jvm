@@ -27,6 +27,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Add `@DefaultDataTableEntryTransformer` alternative for `TypeRegistry.setDefaultDataTableEntryTransformer`
      - Converts title case headers to property names ([#1751](https://github.com/cucumber/cucumber-jvm/pull/1751) Anton Deriabin, M.P. Korstanje) 
    - Add `@DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
+ * [Java8] Allow parameter types access to the test context ([#1768](https://github.com/cucumber/cucumber-jvm/issues/851) Anton Derabin, Tim te Beek)
+   - Add `ParameterType` alternative for `TypeRegistry.defineParameterType`
+   - Add `DataTableType` alternative for `TypeRegistry.defineDataTableType`
  * [Java] Support repeatable step definition annotations ([#1341](https://github.com/cucumber/cucumber-jvm/issues/1341), [#1467](https://github.com/cucumber/cucumber-jvm/pull/1467) M.P. Korstanje)
  * [Core] Add name to `EmbedEvent` ([#1698](https://github.com/cucumber/cucumber-jvm/pull/1698) Konrad M.) 
  * [TestNG] Print suggested snippets per scenario ([#1743](https://github.com/cucumber/cucumber-jvm/pull/1743) M.P. Korstanje)
@@ -40,7 +43,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - cucumber.execution.order
     - cucumber.execution.strict
     - cucumber.execution.wip
-    - cucumber.feature
+    - cucumber.features
     - cucumber.filter.name
     - cucumber.filter.tags
     - cucumber.glue
