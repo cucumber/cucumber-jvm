@@ -1,12 +1,14 @@
 package io.cucumber.jupiter.engine;
 
+import gherkin.ast.ScenarioOutline;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
-import java.util.List;
+import java.util.Iterator;
 
 import static io.cucumber.jupiter.engine.PickleDescriptor.createExample;
 
@@ -16,17 +18,23 @@ class ScenarioOutlineDescriptor extends AbstractTestDescriptor {
         super(uniqueId, name, source);
     }
 
-    static TestDescriptor create(List<CucumberPickle> pickles, FeatureOrigin source, TestDescriptor parent) {
-        CucumberPickle outlinePickle = pickles.get(0);
-        UniqueId uniqueId = source.outlineSegment(parent.getUniqueId(), pickles);
-        TestSource testSource = source.outlineSource(pickles);
-        TestDescriptor descriptor = new ScenarioOutlineDescriptor(uniqueId, outlinePickle.getName(), testSource);
+    static TestDescriptor createOutlineDescriptor(CucumberFeature feature, ScenarioOutline scenarioOutline, FeatureOrigin source, TestDescriptor parent) {
+        UniqueId uniqueId = source.outlineSegment(parent.getUniqueId(), scenarioOutline);
+        TestSource testSource = source.outlineSource(scenarioOutline);
+        TestDescriptor descriptor = new ScenarioOutlineDescriptor(uniqueId, scenarioOutline.getName(), testSource);
+
+        Iterator<CucumberPickle> iterator = feature.getPickles().stream()
+            .filter(cucumberPickle -> {
+                int pickleScenarioLine = cucumberPickle.getScenarioLine();
+                int scenarioLine = scenarioOutline.getLocation().getLine();
+                return pickleScenarioLine == scenarioLine;
+            }).iterator();
 
         int index = 1;
-        for (CucumberPickle pickleEvent : pickles) {
-            descriptor.addChild(createExample(pickleEvent, index++, source, descriptor));
+        while(iterator.hasNext()){
+            CucumberPickle cucumberPickle = iterator.next();
+            descriptor.addChild(createExample(cucumberPickle, index++, source, descriptor));
         }
-
         return descriptor;
     }
 

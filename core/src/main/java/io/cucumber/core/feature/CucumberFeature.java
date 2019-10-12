@@ -1,5 +1,6 @@
 package io.cucumber.core.feature;
 
+import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
 
 import java.net.URI;
@@ -38,6 +39,10 @@ public final class CucumberFeature {
 
     public String getSource() {
         return gherkinSource;
+    }
+
+    public Feature getGherkinFeature() {
+        return gherkinDocument.getFeature();
     }
 
     @Override

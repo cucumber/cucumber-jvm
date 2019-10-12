@@ -1,5 +1,8 @@
 package io.cucumber.jupiter.engine;
 
+import gherkin.ast.Location;
+import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestSource;
@@ -24,8 +27,8 @@ abstract class FeatureOrigin {
     private static FilePosition getPickleLocation(CucumberPickle location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
-    private static FilePosition getScenarioLocation(CucumberPickle location) {
-        return FilePosition.from(location.getScenarioLine(), location.getScenarioColumn());
+    private static FilePosition createFilePosition(Location location) {
+        return FilePosition.from(location.getLine(), location.getColumn());
     }
 
     static FeatureOrigin fromUri(URI uri) {
@@ -53,21 +56,20 @@ abstract class FeatureOrigin {
 
     abstract TestSource featureSource();
 
-    abstract TestSource scenarioSource(CucumberPickle pickleEvent);
+    abstract TestSource scenarioSource(ScenarioDefinition scenarioDefinition);
 
-    abstract TestSource outlineSource(List<CucumberPickle> pickleEvents);
+    abstract TestSource outlineSource(ScenarioOutline scenarioOutline);
 
     abstract TestSource exampleSource(CucumberPickle pickleEvent);
 
     abstract UniqueId featureSegment(UniqueId parent, CucumberFeature feature);
 
-    UniqueId scenarioSegment(UniqueId parent, CucumberPickle pickle) {
-        return parent.append(SCENARIO_SEGMENT_TYPE, String.valueOf(pickle.getLine()));
+    UniqueId scenarioSegment(UniqueId parent, ScenarioDefinition scenarioDefinition) {
+        return parent.append(SCENARIO_SEGMENT_TYPE, String.valueOf(scenarioDefinition.getLocation().getLine()));
     }
 
-    UniqueId outlineSegment(UniqueId parent, List<CucumberPickle> pickles) {
-        CucumberPickle firstPickle = pickles.get(0);
-        return parent.append(OUTLINE_SEGMENT_TYPE, String.valueOf(firstPickle.getScenarioLine()));
+    UniqueId outlineSegment(UniqueId parent, ScenarioOutline scenarioOutline) {
+        return parent.append(OUTLINE_SEGMENT_TYPE, String.valueOf(scenarioOutline.getLocation().getLine()));
     }
 
     UniqueId exampleSegment(UniqueId parent, CucumberPickle pickle) {
@@ -88,14 +90,13 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource scenarioSource(CucumberPickle pickleEvent) {
-            return FileSource.from(source.getFile(), getPickleLocation(pickleEvent));
+        TestSource scenarioSource(ScenarioDefinition scenarioDefinition) {
+            return FileSource.from(source.getFile(), createFilePosition(scenarioDefinition.getLocation()));
         }
 
         @Override
-        TestSource outlineSource(List<CucumberPickle> pickleEvents) {
-            CucumberPickle firstPickle = pickleEvents.get(0);
-            return FileSource.from(source.getFile(), getScenarioLocation(firstPickle));
+        TestSource outlineSource(ScenarioOutline scenarioOutline) {
+            return FileSource.from(source.getFile(), createFilePosition(scenarioOutline.getLocation()));
         }
 
         @Override
@@ -123,12 +124,12 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource scenarioSource(CucumberPickle pickleEvent) {
+        TestSource scenarioSource(ScenarioDefinition scenarioDefinition) {
             return source;
         }
 
         @Override
-        TestSource outlineSource(List<CucumberPickle> pickleEvents) {
+        TestSource outlineSource(ScenarioOutline scenarioOutline) {
             return source;
         }
 
@@ -147,7 +148,7 @@ abstract class FeatureOrigin {
 
         private final ClasspathResourceSource source;
 
-        public ClasspathFeatureOrigin(ClasspathResourceSource source) {
+        ClasspathFeatureOrigin(ClasspathResourceSource source) {
             this.source = source;
         }
 
@@ -157,14 +158,13 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource scenarioSource(CucumberPickle pickleEvent) {
-            return ClasspathResourceSource.from(source.getClasspathResourceName(), getPickleLocation(pickleEvent));
+        TestSource scenarioSource(ScenarioDefinition scenarioDefinition) {
+            return ClasspathResourceSource.from(source.getClasspathResourceName(), createFilePosition(scenarioDefinition.getLocation()));
         }
 
         @Override
-        TestSource outlineSource(List<CucumberPickle> pickleEvents) {
-            CucumberPickle firstPickle = pickleEvents.get(0);
-            return ClasspathResourceSource.from(source.getClasspathResourceName(), getScenarioLocation(firstPickle));
+        TestSource outlineSource(ScenarioOutline scenarioOutline) {
+            return ClasspathResourceSource.from(source.getClasspathResourceName(), createFilePosition(scenarioOutline.getLocation()));
         }
 
         @Override

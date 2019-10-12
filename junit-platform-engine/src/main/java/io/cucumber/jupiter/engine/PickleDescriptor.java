@@ -1,5 +1,7 @@
 package io.cucumber.jupiter.engine;
 
+import gherkin.ast.ScenarioDefinition;
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.jupiter.engine.resource.ClasspathSupport;
 import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestDescriptor;
@@ -29,9 +31,14 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         return new PickleDescriptor(uniqueId, "Example #" + index, testSource, pickleEvent);
     }
 
-    static PickleDescriptor createScenario(CucumberPickle pickle, FeatureOrigin source, TestDescriptor parent) {
-        UniqueId uniqueId = source.scenarioSegment(parent.getUniqueId(), pickle);
-        TestSource testSource = source.scenarioSource(pickle);
+    static TestDescriptor createScenario(CucumberFeature feature, ScenarioDefinition scenarioDefinition, FeatureOrigin source, TestDescriptor parent) {
+        UniqueId uniqueId = source.scenarioSegment(parent.getUniqueId(), scenarioDefinition);
+        TestSource testSource = source.scenarioSource(scenarioDefinition);
+        int scenarioLine = scenarioDefinition.getLocation().getLine();
+        CucumberPickle pickle = feature.getPickles().stream()
+            .filter(cucumberPickle -> {
+                return cucumberPickle.getScenarioLine() == scenarioLine;
+            }).findFirst().orElseThrow(() -> new IllegalStateException("No pickle for line " + scenarioLine));
         return new PickleDescriptor(uniqueId, pickle.getName(), testSource, pickle);
     }
 

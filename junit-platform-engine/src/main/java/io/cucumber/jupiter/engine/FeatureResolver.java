@@ -217,7 +217,7 @@ final class FeatureResolver {
     }
 
     private TestDescriptor resolveFeature(CucumberFeature feature) {
-        return FeatureDescriptor.create(feature, engineDescriptor);
+        return FeatureDescriptor.createOutlineDescriptor(feature, engineDescriptor);
     }
 
 }
