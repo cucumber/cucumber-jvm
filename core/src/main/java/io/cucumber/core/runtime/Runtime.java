@@ -109,7 +109,7 @@ public final class Runtime {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
-                log.error("Exception while executing pickle", e);
+                log.error(e, () -> "Exception while executing pickle");
                 thrown.add(e.getCause());
             } catch (InterruptedException e) {
                 executor.shutdownNow();

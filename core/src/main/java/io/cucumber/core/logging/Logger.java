@@ -1,5 +1,7 @@
 package io.cucumber.core.logging;
 
+import java.util.function.Supplier;
+
 /**
  * Logs messages to {@link java.util.logging.Logger}.
  * <p>
@@ -20,88 +22,88 @@ public interface Logger {
      * 
      * @param message The message to log.
      */
-    void error(String message);
+    void error(Supplier<String> message);
 
     /**
      * Log the {@code message} and {@code throwable} at error level.
-     * 
-     * @param message The message to log.
+     *
      * @param throwable The throwable to log.
+     * @param message The message to log.
      */
-    void error(String message, Throwable throwable);
+    void error(Throwable throwable, Supplier<String> message);
 
     /**
      * Log the {@code message} at warning level.
      * 
      * @param message The message to log.
      */
-    void warn(String message);
+    void warn(Supplier<String> message);
 
     /**
      * Log the {@code message} and {@code throwable} at warning level.
-     * 
-     * @param message The message to log.
+     *
      * @param throwable The throwable to log.
+     * @param message The message to log.
      */
-    void warn(String message, Throwable throwable);
+    void warn(Throwable throwable, Supplier<String> message);
 
     /**
      * Log the {@code message} at info level.
      * 
      * @param message The message to log.
      */
-    void info(String message);
+    void info(Supplier<String> message);
 
     /**
      * Log the {@code message} and {@code throwable} at info level.
-     * 
-     * @param message The message to log.
+     *
      * @param throwable The throwable to log.
+     * @param message The message to log.
      */
-    void info(String message, Throwable throwable);
+    void info(Throwable throwable, Supplier<String> message);
 
     /**
      * Log the {@code message} at config level.
      * 
      * @param message The message to log.
      */
-    void config(String message);
+    void config(Supplier<String> message);
 
     /**
      * Log the {@code message} and {@code throwable} at config level.
-     * 
-     * @param message The message to log.
+     *
      * @param throwable The throwable to log.
+     * @param message The message to log.
      */
-    void config(String message, Throwable throwable);
+    void config(Throwable throwable, Supplier<String> message);
 
     /**
      * Log the {@code message} at debug level.
      * 
      * @param message The message to log.
      */
-    void debug(String message);
+    void debug(Supplier<String> message);
 
     /**
      * Log {@code message} and {@code throwable} at debug level.
-     * 
-     * @param message The message to log.
+     *
      * @param throwable The throwable to log.
+     * @param message The message to log.
      */
-    void debug(String message, Throwable throwable);
+    void debug(Throwable throwable, Supplier<String> message);
 
     /**
      * Log the {@code message} at trace level.
      * 
      * @param message The message to log.
      */
-    void trace(String message);
+    void trace(Supplier<String> message);
 
     /**
      * Log the {@code message} and {@code throwable} at trace level.
-     * 
-     * @param message The message to log.
+     *
      * @param throwable The throwable to log.
+     * @param message The message to log.
      */
-    void trace(String message, Throwable throwable);
+    void trace(Throwable throwable, Supplier<String> message);
 }

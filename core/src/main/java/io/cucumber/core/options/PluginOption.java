@@ -100,7 +100,7 @@ public class PluginOption implements Options.Plugin {
     private static Class<? extends Plugin> parsePluginName(String pluginName) {
         Class<? extends Plugin> oldApiPlugin = OLD_INTELLIJ_IDEA_PLUGIN_CLASSES.get(pluginName);
         if (oldApiPlugin != null) {
-            log.warn("Incompatible IntelliJ IDEA Plugin detected. Falling back to pretty formatter");
+            log.warn(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to pretty formatter");
             return oldApiPlugin;
         }
 

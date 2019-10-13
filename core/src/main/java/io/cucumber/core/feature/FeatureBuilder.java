@@ -24,7 +24,7 @@ final class FeatureBuilder {
         CucumberFeature parsedFeature = FeatureParser.parseResource(resource);
         CucumberFeature existingFeature = sourceToFeature.get(parsedFeature.getSource());
         if (existingFeature != null) {
-            log.warn("Duplicate feature ignored. " + parsedFeature.getUri() + " was identical to " + existingFeature.getUri());
+            log.warn(() -> "Duplicate feature ignored. " + parsedFeature.getUri() + " was identical to " + existingFeature.getUri());
             return;
         }
         sourceToFeature.put(parsedFeature.getSource(), parsedFeature);

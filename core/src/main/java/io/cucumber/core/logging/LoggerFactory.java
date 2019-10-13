@@ -1,6 +1,7 @@
 package io.cucumber.core.logging;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -53,66 +54,66 @@ public final class LoggerFactory {
         }
 
         @Override
-        public void error(String message) {
+        public void error(Supplier<String> message) {
             log(Level.SEVERE, null, message);
         }
 
         @Override
-        public void error(String message, Throwable throwable) {
+        public void error(Throwable throwable, Supplier<String> message) {
             log(Level.SEVERE, throwable, message);
         }
 
         @Override
-        public void warn(String message) {
+        public void warn(Supplier<String> message) {
             log(Level.WARNING, null, message);
         }
 
         @Override
-        public void warn(String message, Throwable throwable) {
+        public void warn(Throwable throwable, Supplier<String> message) {
             log(Level.WARNING, throwable, message);
         }
 
         @Override
-        public void info(String message) {
+        public void info(Supplier<String> message) {
             log(Level.INFO, null, message);
         }
 
         @Override
-        public void info(String message, Throwable throwable) {
+        public void info(Throwable throwable, Supplier<String> message) {
             log(Level.INFO, throwable, message);
         }
 
         @Override
-        public void config(String message) {
+        public void config(Supplier<String> message) {
             log(Level.CONFIG, null, message);
         }
 
         @Override
-        public void config(String message, Throwable throwable) {
+        public void config(Throwable throwable, Supplier<String> message) {
             log(Level.CONFIG, throwable, message);
         }
 
         @Override
-        public void debug(String message) {
+        public void debug(Supplier<String> message) {
             log(Level.FINE, null, message);
         }
 
         @Override
-        public void debug(String message, Throwable throwable) {
+        public void debug(Throwable throwable, Supplier<String> message) {
             log(Level.FINE, throwable, message);
         }
 
         @Override
-        public void trace(String message) {
+        public void trace(Supplier<String> message) {
             log(Level.FINER, null, message);
         }
 
         @Override
-        public void trace(String message, Throwable throwable) {
+        public void trace(Throwable throwable, Supplier<String> message) {
             log(Level.FINER, throwable, message);
         }
 
-        private void log(Level level, Throwable throwable, String message) {
+        private void log(Level level, Throwable throwable, Supplier<String> message) {
             boolean loggable = julLogger.isLoggable(level);
             if (loggable || !listeners.isEmpty()) {
                 LogRecord logRecord = createLogRecord(level, throwable, message);
@@ -123,7 +124,7 @@ public final class LoggerFactory {
             }
         }
 
-        private LogRecord createLogRecord(Level level, Throwable throwable, String message) {
+        private LogRecord createLogRecord(Level level, Throwable throwable, Supplier<String> message) {
             StackTraceElement[] stack = new Throwable().getStackTrace();
             String sourceClassName = null;
             String sourceMethodName = null;
@@ -139,7 +140,7 @@ public final class LoggerFactory {
                 }
             }
 
-            LogRecord logRecord = new LogRecord(level, message);
+            LogRecord logRecord = new LogRecord(level, message == null ? null : message.get());
             logRecord.setLoggerName(name);
             logRecord.setThrown(throwable);
             logRecord.setSourceClassName(sourceClassName);

@@ -15,24 +15,23 @@ final class PickleOrderParser {
     private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
 
     static PickleOrder parse(String argument) {
-
         if ("reverse".equals(argument)) {
             return StandardPickleOrders.reverseLexicalUriOrder();
         }
 
         Matcher matcher = RANDOM_AND_SEED_PATTERN.matcher(argument);
-        if (matcher.matches()) {
-            long seed = Math.abs(new Random().nextLong());
-            String seedString = matcher.group(1);
-            if (seedString != null) {
-                seed = Long.parseLong(seedString);
-            } else {
-                log.info("Using random scenario order. Seed: " + seed);
-            }
-
-            return StandardPickleOrders.random(seed);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid order. Must be either reverse, random or random:<long>");
         }
 
-        throw new IllegalArgumentException("Invalid order. Must be either reverse, random or random:<long>");
+        final long seed;
+        String seedString = matcher.group(1);
+        if (seedString != null) {
+            seed = Long.parseLong(seedString);
+        } else {
+            seed = Math.abs(new Random().nextLong());
+            log.info(() -> "Using random scenario order. Seed: " + seed);
+        }
+        return StandardPickleOrders.random(seed);
     }
 }

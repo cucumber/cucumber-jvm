@@ -30,14 +30,14 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
     public List<CucumberFeature> get() {
         List<URI> featurePaths = featureOptions.getFeaturePaths();
 
-        log.debug("Loading features from " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
+        log.debug(() -> "Loading features from " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
         List<CucumberFeature> cucumberFeatures = featureLoader.load(featurePaths);
 
         if (cucumberFeatures.isEmpty()) {
             if (featurePaths.isEmpty()) {
-                log.warn("Got no path to feature directory or feature file");
+                log.warn(() -> "Got no path to feature directory or feature file");
             } else {
-                log.warn("No features found at " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
+                log.warn(() -> "No features found at " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
             }
         }
 
