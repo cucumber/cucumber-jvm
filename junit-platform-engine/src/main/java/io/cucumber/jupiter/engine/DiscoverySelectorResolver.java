@@ -45,7 +45,7 @@ class DiscoverySelectorResolver {
         applyPackagePredicate(packageFilter, engineDescriptor);
     }
 
-    void applyPackagePredicate(ClassFilter packagePredicate, TestDescriptor engineDescriptor) {
+    private void applyPackagePredicate(ClassFilter packagePredicate, TestDescriptor engineDescriptor) {
         engineDescriptor.accept(descriptor -> {
             if (descriptor instanceof PickleDescriptor
                 && !includePickle((PickleDescriptor) descriptor, packagePredicate)) {

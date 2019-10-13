@@ -3,7 +3,6 @@ package io.cucumber.jupiter.engine;
 import gherkin.ast.Examples;
 import gherkin.ast.Location;
 import gherkin.ast.Node;
-import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.TableRow;
 import io.cucumber.core.feature.CucumberFeature;
@@ -16,7 +15,6 @@ import org.junit.platform.engine.support.descriptor.FileSource;
 import org.junit.platform.engine.support.descriptor.UriSource;
 
 import java.net.URI;
-import java.util.List;
 
 abstract class FeatureOrigin {
 
@@ -31,6 +29,7 @@ abstract class FeatureOrigin {
     private static FilePosition getPickleLocation(CucumberPickle location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
+
     private static FilePosition createFilePosition(Location location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
