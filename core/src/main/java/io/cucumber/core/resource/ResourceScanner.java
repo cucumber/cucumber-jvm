@@ -1,6 +1,4 @@
-package io.cucumber.jupiter.engine.resource;
-
-import io.cucumber.core.io.Resource;
+package io.cucumber.core.resource;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -14,15 +12,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.jupiter.engine.resource.ClasspathSupport.DEFAULT_PACKAGE_NAME;
-import static io.cucumber.jupiter.engine.resource.ClasspathSupport.determinePackageName;
-import static io.cucumber.jupiter.engine.resource.ClasspathSupport.getRootUrisForPackage;
-import static io.cucumber.jupiter.engine.resource.ClasspathSupport.getUrisForResource;
-import static io.cucumber.jupiter.engine.resource.ClasspathSupport.requireValidPackageName;
-import static io.cucumber.jupiter.engine.resource.Resources.createClasspathResource;
-import static io.cucumber.jupiter.engine.resource.Resources.createClasspathRootResource;
-import static io.cucumber.jupiter.engine.resource.Resources.createPackageResource;
-import static io.cucumber.jupiter.engine.resource.Resources.createUriResource;
+import static io.cucumber.core.resource.Resources.createClasspathResource;
+import static io.cucumber.core.resource.Resources.createClasspathRootResource;
+import static io.cucumber.core.resource.Resources.createPackageResource;
+import static io.cucumber.core.resource.Resources.createUriResource;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -44,15 +37,15 @@ public class ResourceScanner<R> {
         requireNonNull(root, "root must not be null");
         requireNonNull(packageFilter, "packageFilter must not be null");
         BiFunction<Path, Path, Resource> createResource = createClasspathRootResource();
-        return findResourcesForUri(root, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
+        return findResourcesForUri(root, ClasspathSupport.DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
 
     public List<R> scanForResourcesInPackage(String basePackageName, Predicate<String> packageFilter) {
-        requireValidPackageName(basePackageName);
+        ClasspathSupport.requireValidPackageName(basePackageName);
         requireNonNull(packageFilter, "packageFilter must not be null");
         basePackageName = basePackageName.trim();
         BiFunction<Path, Path, Resource> createResource = createPackageResource(basePackageName);
-        List<URI> rootUrisForPackage = getRootUrisForPackage(getClassLoader(), basePackageName);
+        List<URI> rootUrisForPackage = ClasspathSupport.getRootUrisForPackage(getClassLoader(), basePackageName);
         return findResourcesForUris(rootUrisForPackage, basePackageName, packageFilter, createResource);
     }
 
@@ -60,25 +53,25 @@ public class ResourceScanner<R> {
         requireNonNull(resourceName, "resourceName must not be null");
         requireNonNull(packageFilter, "packageFilter must not be null");
         resourceName = resourceName.trim();
-        List<URI> urisForResource = getUrisForResource(getClassLoader(), resourceName);
+        List<URI> urisForResource = ClasspathSupport.getUrisForResource(getClassLoader(), resourceName);
         BiFunction<Path, Path, Resource> createResource = createClasspathResource(resourceName);
-        return findResourcesForUris(urisForResource, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
+        return findResourcesForUris(urisForResource, ClasspathSupport.DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
 
     public List<R> scanForResourcesPath(Path resourcePath) {
-        requireNonNull(resourcePath, "path must not be null");
+        requireNonNull(resourcePath, "resourcePath must not be null");
         List<R> resources = new ArrayList<>();
         pathScanner.findResourcesForPath(
             resourcePath,
             canLoad,
-            processResource(DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource(), resources::add)
+            processResource(ClasspathSupport.DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource(), resources::add)
         );
         return resources;
     }
 
     public List<R> scanForResourcesUri(URI resourcePath) {
-        requireNonNull(resourcePath, "path must not be null");
-        return findResourcesForUri(resourcePath, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
+        requireNonNull(resourcePath, "resourcePath must not be null");
+        return findResourcesForUri(resourcePath, ClasspathSupport.DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
     }
 
     private ClassLoader getClassLoader() {
@@ -105,7 +98,7 @@ public class ResourceScanner<R> {
 
     private Function<Path, Consumer<Path>> processResource(String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource, Consumer<R> consumer) {
         return baseDir -> path -> {
-            String packageName = determinePackageName(baseDir, basePackageName, path);
+            String packageName = ClasspathSupport.determinePackageName(baseDir, basePackageName, path);
             if (packageFilter.test(packageName)) {
                 createResource.andThen(loadResource).apply(baseDir, path).ifPresent(consumer);
             }

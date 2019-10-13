@@ -9,7 +9,7 @@ import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 import gherkin.pickles.Compiler;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.IOException;
 import java.net.URI;

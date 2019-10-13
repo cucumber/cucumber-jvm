@@ -1,12 +1,12 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.core.resource;
 
-class ClassLoaders {
+public class ClassLoaders {
 
     private ClassLoaders() {
 
     }
 
-    static ClassLoader getDefaultClassLoader() {
+    public static ClassLoader getDefaultClassLoader() {
         try {
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             if (contextClassLoader != null) {

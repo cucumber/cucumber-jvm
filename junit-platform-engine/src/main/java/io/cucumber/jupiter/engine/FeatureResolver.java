@@ -2,9 +2,10 @@ package io.cucumber.jupiter.engine;
 
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.io.Classpath;
-import io.cucumber.jupiter.engine.resource.ClassFilter;
-import io.cucumber.jupiter.engine.resource.ResourceScanner;
+import io.cucumber.core.resource.ClassFilter;
+import io.cucumber.core.resource.ClassLoaders;
+import io.cucumber.core.resource.Classpath;
+import io.cucumber.core.resource.ResourceScanner;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.TestDescriptor;

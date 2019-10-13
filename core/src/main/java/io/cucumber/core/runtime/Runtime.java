@@ -7,16 +7,13 @@ import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
@@ -139,7 +136,6 @@ public final class Runtime {
         private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
-        private ResourceLoader resourceLoader;
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = emptyList();
 
@@ -155,12 +151,6 @@ public final class Runtime {
             this.classLoader = classLoader;
             return this;
         }
-
-        public Builder withResourceLoader(final ResourceLoader resourceLoader) {
-            this.resourceLoader = resourceLoader;
-            return this;
-        }
-
         public Builder withBackendSupplier(final BackendSupplier backendSupplier) {
             this.backendSupplier = backendSupplier;
             return this;
@@ -182,12 +172,6 @@ public final class Runtime {
         }
 
         public Runtime build() {
-            final ResourceLoader resourceLoader = this.resourceLoader != null
-                ? this.resourceLoader
-                : new MultiLoader(this.classLoader);
-
-            final ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
-
             final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
 
             final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
@@ -210,6 +194,18 @@ public final class Runtime {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
 
+            ClasspathScanner classFinder = new ClasspathScanner(
+                () -> classLoader,
+                (s, classLoader1) -> {
+                    try {
+                        return java.util.Optional.ofNullable(classLoader1.loadClass(s));
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            );
+
+
             final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
@@ -221,7 +217,7 @@ public final class Runtime {
                 : new SameThreadExecutorService();
 
 
-            final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
+            final FeatureLoader featureLoader = new FeatureLoader();
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier

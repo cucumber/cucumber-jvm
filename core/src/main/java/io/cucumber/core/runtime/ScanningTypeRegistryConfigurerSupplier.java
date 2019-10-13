@@ -1,18 +1,18 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.api.TypeRegistryConfigurer;
-import io.cucumber.core.io.ClassFinder;
 import io.cucumber.core.reflection.Reflections;
+import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.runner.Options;
 
 import java.util.Locale;
 
 public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistryConfigurerSupplier {
 
-    private final ClassFinder classFinder;
+    private final ClasspathScanner classFinder;
     private final Options options;
 
-    public ScanningTypeRegistryConfigurerSupplier(ClassFinder classFinder, Options options) {
+    public ScanningTypeRegistryConfigurerSupplier(ClasspathScanner classFinder, Options options) {
         this.classFinder = classFinder;
         this.options = options;
     }

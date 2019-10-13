@@ -1,6 +1,6 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.BufferedReader;
 import java.io.IOException;

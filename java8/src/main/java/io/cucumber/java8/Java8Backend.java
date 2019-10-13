@@ -10,9 +10,6 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 
 import java.net.URI;
 import java.util.ArrayList;

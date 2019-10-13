@@ -4,7 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.io.Classpath;
+import io.cucumber.core.resource.Classpath;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.nio.file.Path;

@@ -1,4 +1,4 @@
-package io.cucumber.core.io;
+package io.cucumber.core.resource;
 
 import java.io.IOException;
 import java.io.InputStream;

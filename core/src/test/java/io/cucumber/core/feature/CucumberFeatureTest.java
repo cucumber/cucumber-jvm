@@ -1,6 +1,5 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.io.ResourceLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

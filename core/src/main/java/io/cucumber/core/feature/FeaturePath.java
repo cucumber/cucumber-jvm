@@ -5,8 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
-import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME;
-import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME;
+import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
 import static java.util.Objects.requireNonNull;
 
 /**

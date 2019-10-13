@@ -1,19 +1,24 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.io.Resource;
-import io.cucumber.core.io.ResourceLoader;
+import io.cucumber.core.resource.ClassLoaders;
+import io.cucumber.core.resource.Classpath;
+import io.cucumber.core.resource.ResourceScanner;
 
 import java.net.URI;
-import java.util.Iterator;
 import java.util.List;
+
+import static java.util.Optional.of;
 
 public final class FeatureLoader {
 
-    private static final String FEATURE_SUFFIX = ".feature";
-    private final ResourceLoader resourceLoader;
+    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
+        ClassLoaders::getDefaultClassLoader,
+        FeatureIdentifier::isFeature,
+        (resource) -> of(FeatureParser.parseResource(resource))
+    );
 
-    public FeatureLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+    public FeatureLoader() {
+
     }
 
     public List<CucumberFeature> load(List<URI> featurePaths) {
@@ -25,15 +30,18 @@ public final class FeatureLoader {
     }
 
     private void loadFromFeaturePath(FeatureBuilder builder, URI featurePath) {
-        Iterable<Resource> resources = resourceLoader.resources(featurePath, FEATURE_SUFFIX);
-
-        Iterator<Resource> iterator = resources.iterator();
-        if (FeatureIdentifier.isFeature(featurePath) && !iterator.hasNext()) {
+        List<CucumberFeature> cucumberFeatures;
+        if (Classpath.CLASSPATH_SCHEME.equals(featurePath.getScheme())) {
+            String resourcePath = Classpath.resourceName(featurePath);
+            cucumberFeatures = featureScanner.scanForClasspathResource(resourcePath, s -> true);
+        } else {
+            cucumberFeatures = featureScanner.scanForResourcesUri(featurePath);
+        }
+        if (FeatureIdentifier.isFeature(featurePath) && !cucumberFeatures.isEmpty()) {
             throw new IllegalArgumentException("Feature not found: " + featurePath);
         }
-        while (iterator.hasNext()) {
-            builder.parse(iterator.next());
-        }
+
+        builder.addAll(cucumberFeatures);
     }
 
 }

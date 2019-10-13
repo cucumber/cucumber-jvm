@@ -1,7 +1,7 @@
-package io.cucumber.jupiter.engine.resource;
+package io.cucumber.core.resource;
 
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
 import javax.lang.model.SourceVersion;
 import java.net.URI;
@@ -74,7 +74,7 @@ public class ClasspathSupport {
             basePackageName,
             determineSubpackageName(baseDir, classFile)
         )
-            .filter(value -> !value.isEmpty()) // Handle default package appropriately.
+            .filter(value -> !value.isEmpty()) // default package appropriately.
             .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
@@ -84,7 +84,7 @@ public class ClasspathSupport {
             determineSubpackageName(baseDir, resource),
             resource.getFileName().toString()
         )
-            .filter(value -> !value.isEmpty()) // Handle default package appropriately.
+            .filter(value -> !value.isEmpty()) // default package appropriately.
             .collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING));
     }
 

@@ -3,7 +3,7 @@ package io.cucumber.junit;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

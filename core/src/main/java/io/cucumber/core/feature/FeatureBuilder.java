@@ -1,6 +1,6 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 
@@ -22,11 +22,19 @@ final class FeatureBuilder {
 
     public void parse(Resource resource) {
         CucumberFeature parsedFeature = FeatureParser.parseResource(resource);
+        addUniqueFeatures(parsedFeature);
+    }
+
+    private void addUniqueFeatures(CucumberFeature parsedFeature) {
         CucumberFeature existingFeature = sourceToFeature.get(parsedFeature.getSource());
         if (existingFeature != null) {
             log.warn(() -> "Duplicate feature ignored. " + parsedFeature.getUri() + " was identical to " + existingFeature.getUri());
             return;
         }
         sourceToFeature.put(parsedFeature.getSource(), parsedFeature);
+    }
+
+    public void addAll(List<CucumberFeature> cucumberFeatures) {
+        cucumberFeatures.forEach(this::addUniqueFeatures);
     }
 }

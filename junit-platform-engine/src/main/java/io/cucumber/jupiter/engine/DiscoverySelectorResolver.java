@@ -1,6 +1,6 @@
 package io.cucumber.jupiter.engine;
 
-import io.cucumber.jupiter.engine.resource.ClassFilter;
+import io.cucumber.core.resource.ClassFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;

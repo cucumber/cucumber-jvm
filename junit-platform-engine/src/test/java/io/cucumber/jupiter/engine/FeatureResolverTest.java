@@ -1,7 +1,6 @@
 package io.cucumber.jupiter.engine;
 
-import io.cucumber.core.io.Classpath;
-import io.cucumber.jupiter.engine.resource.ClassFilter;
+import io.cucumber.core.resource.ClassFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;

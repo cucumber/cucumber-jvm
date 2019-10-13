@@ -4,17 +4,11 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.backend.Snippet;
 
 import java.net.URI;
 import java.util.List;
 import java.util.function.Supplier;
-
-import static java.lang.Thread.currentThread;
 
 final class JavaBackend implements Backend {
 

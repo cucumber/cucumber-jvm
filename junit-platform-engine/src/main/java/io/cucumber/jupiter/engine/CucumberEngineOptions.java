@@ -2,7 +2,6 @@ package io.cucumber.jupiter.engine;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.io.Classpath;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
 import io.cucumber.core.plugin.Options;
@@ -15,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.EXECUTION_STRICT_PROPERTY_NAME;

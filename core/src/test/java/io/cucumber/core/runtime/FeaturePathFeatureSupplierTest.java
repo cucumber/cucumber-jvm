@@ -3,7 +3,6 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.Options;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
 import org.junit.jupiter.api.AfterEach;

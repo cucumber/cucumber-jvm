@@ -7,7 +7,6 @@ import gherkin.ast.ScenarioOutline;
 import gherkin.ast.TableRow;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.io.Classpath;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -17,7 +16,7 @@ import org.junit.platform.engine.support.descriptor.UriSource;
 
 import java.net.URI;
 
-import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
 
 abstract class FeatureOrigin {
 

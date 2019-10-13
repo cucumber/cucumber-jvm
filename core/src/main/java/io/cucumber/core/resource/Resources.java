@@ -1,6 +1,4 @@
-package io.cucumber.jupiter.engine.resource;
-
-import io.cucumber.core.io.Resource;
+package io.cucumber.core.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 
-import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
-import static io.cucumber.jupiter.engine.resource.ClasspathSupport.determineFullyQualifiedResourceName;
+import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
 
 class Resources {
 
@@ -84,7 +81,7 @@ class Resources {
 
         PackageResource(Path baseDir, String packageName, Path resource) {
             String packagePath = ClasspathSupport.packagePath(packageName);
-            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + determineFullyQualifiedResourceName(baseDir, packagePath, resource));
+            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + ClasspathSupport.determineFullyQualifiedResourceName(baseDir, packagePath, resource));
             this.resource = resource;
         }
 

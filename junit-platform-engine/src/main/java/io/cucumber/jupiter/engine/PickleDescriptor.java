@@ -1,7 +1,7 @@
 package io.cucumber.jupiter.engine;
 
 import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.jupiter.engine.resource.ClasspathSupport;
+import io.cucumber.core.resource.ClasspathSupport;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;

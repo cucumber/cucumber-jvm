@@ -1,7 +1,7 @@
 package io.cucumber.core.reflection;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.ClassFinder;
+import io.cucumber.core.resource.ClasspathScanner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 
 public final class Reflections {
-    private final ClassFinder classFinder;
+    private final ClasspathScanner classFinder;
 
-    public Reflections(ClassFinder classFinder) {
+    public Reflections(ClasspathScanner classFinder) {
         this.classFinder = classFinder;
     }
 
@@ -39,13 +39,11 @@ public final class Reflections {
 
     private <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames, Class[] constructorParams, Object[] constructorArgs) {
         Collection<T> result = new HashSet<>();
-        for (URI packageName : packageNames) {
-            for (Class<? extends T> clazz : classFinder.getDescendants(parentType, packageName)) {
-                if (isInstantiable(clazz)) {
-                    result.add(newInstance(constructorParams, constructorArgs, clazz));
-                }
-            }
-        }
+        packageNames.forEach(uri ->
+            classFinder.scanForSubClassesInPackage(uri.getSchemeSpecificPart(), parentType).stream()
+                .filter(Reflections::isInstantiable)
+                .map(aClass -> newInstance(constructorParams, constructorArgs, aClass))
+                .forEach(result::add));
         return result;
     }
 

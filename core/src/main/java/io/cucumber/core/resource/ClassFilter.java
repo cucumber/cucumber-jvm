@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine.resource;
+package io.cucumber.core.resource;
 
 import java.util.function.Predicate;
 
