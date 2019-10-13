@@ -12,25 +12,25 @@ import java.util.function.BiFunction;
 import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.determineFullyQualifiedResourceName;
 
-public class Resources {
+class Resources {
 
     private Resources() {
 
     }
 
-    public static BiFunction<Path, Path, Resource> createPackageResource(String packageName) {
+    static BiFunction<Path, Path, Resource> createPackageResource(String packageName) {
         return (baseDir, resource) -> new PackageResource(baseDir, packageName, resource);
     }
 
-    public static BiFunction<Path, Path, Resource> createUriResource() {
+    static BiFunction<Path, Path, Resource> createUriResource() {
         return (baseDir, resource) -> new UriResource(resource);
     }
 
-    public static BiFunction<Path, Path, Resource> createClasspathRootResource() {
+    static BiFunction<Path, Path, Resource> createClasspathRootResource() {
         return ClasspathResource::new;
     }
 
-    public static BiFunction<Path, Path, Resource> createClasspathResource(String classpathResourceName) {
+    static BiFunction<Path, Path, Resource> createClasspathResource(String classpathResourceName) {
         return (baseDir, resource) -> new ClasspathResource(classpathResourceName, resource);
     }
 

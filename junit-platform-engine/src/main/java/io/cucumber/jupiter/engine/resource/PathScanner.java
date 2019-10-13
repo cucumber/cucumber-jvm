@@ -121,6 +121,7 @@ class PathScanner {
 
         private static final String FILE_URI_SCHEME = "file";
         private static final String JAR_URI_SCHEME = "jar";
+        private static final String JAR_URI_SCHEME_PREFIX = JAR_URI_SCHEME + ":";
         private static final String JAR_FILE_EXTENSION = ".jar";
         private static final String JAR_URI_SEPARATOR = "!";
 
@@ -143,7 +144,7 @@ class PathScanner {
                 return createForJarFileSystem(new URI(jarUri), fileSystem -> fileSystem.getPath(jarEntry));
             }
             if (hasFileUriSchemeWithJarExtension(uri)) {
-                return createForJarFileSystem(new URI(JAR_URI_SCHEME + ':' + uri),
+                return createForJarFileSystem(new URI(JAR_URI_SCHEME_PREFIX + uri),
                     fileSystem -> fileSystem.getRootDirectories().iterator().next());
             }
 

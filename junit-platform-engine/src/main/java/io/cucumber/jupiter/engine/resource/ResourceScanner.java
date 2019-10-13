@@ -1,7 +1,6 @@
 package io.cucumber.jupiter.engine.resource;
 
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
+import io.cucumber.core.io.Resource;
 import org.junit.platform.commons.util.PackageUtils;
 
 import java.net.URI;
@@ -20,138 +19,97 @@ import static io.cucumber.jupiter.engine.resource.ClasspathSupport.DEFAULT_PACKA
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.determinePackageName;
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.getRootUrisForPackage;
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.getUrisForResource;
-import static java.lang.String.format;
+import static io.cucumber.jupiter.engine.resource.Resources.createClasspathResource;
+import static io.cucumber.jupiter.engine.resource.Resources.createClasspathRootResource;
+import static io.cucumber.jupiter.engine.resource.Resources.createPackageResource;
+import static io.cucumber.jupiter.engine.resource.Resources.createUriResource;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
 public class ResourceScanner<R> {
 
     private static final Predicate<String> NULL_FILTER = x -> true;
-    private static final Logger logger = LoggerFactory.getLogger(PathScanner.ResourceFileVisitor.class);
     private final PathScanner pathScanner = new PathScanner();
     private final Supplier<ClassLoader> classLoaderSupplier;
-    private final ResourceProcessor<R> processor;
+    private final Predicate<Path> canLoad;
+    private final Function<Resource, Optional<R>> loadResource;
 
-
-    public ResourceScanner(Supplier<ClassLoader> classLoaderSupplier, Predicate<Path> canLoad, BiFunction<Path, Path, Optional<R>> load) {
-        this(classLoaderSupplier, new SimpleResourceProcessor<>(canLoad, load));
-    }
-
-    public ResourceScanner(Supplier<ClassLoader> classLoaderSupplier, Predicate<Path> canLoad, Function<Path, Optional<R>> load) {
-        this(classLoaderSupplier, canLoad, (baseDir, resource) -> load.apply(resource));
-    }
-
-
-    private ResourceScanner(Supplier<ClassLoader> classLoaderSupplier, ResourceProcessor<R> processor) {
+    public ResourceScanner(Supplier<ClassLoader> classLoaderSupplier, Predicate<Path> canLoad, Function<Resource, Optional<R>> loadResource) {
         this.classLoaderSupplier = classLoaderSupplier;
-        this.processor = processor;
+        this.canLoad = canLoad;
+        this.loadResource = loadResource;
     }
 
     public List<R> scanForResourcesInClasspathRoot(URI root, Predicate<String> packageFilter) {
         requireNonNull(root, "root must not be null");
         requireNonNull(packageFilter, "packageFilter must not be null");
-        return findResourcesForUri(root, DEFAULT_PACKAGE_NAME, packageFilter);
+        BiFunction<Path, Path, Resource> createResource = createClasspathRootResource();
+        return findResourcesForUri(root, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
 
     public List<R> scanForResourcesInPackage(String basePackageName, Predicate<String> packageFilter) {
         PackageUtils.assertPackageNameIsValid(basePackageName);
         requireNonNull(packageFilter, "packageFilter must not be null");
         basePackageName = basePackageName.trim();
-        return findResourcesForUris(getRootUrisForPackage(getClassLoader(), basePackageName), basePackageName, packageFilter);
+        BiFunction<Path, Path, Resource> createResource = createPackageResource(basePackageName);
+        List<URI> rootUrisForPackage = getRootUrisForPackage(getClassLoader(), basePackageName);
+        return findResourcesForUris(rootUrisForPackage, basePackageName, packageFilter, createResource);
     }
 
     public List<R> scanForClasspathResource(String resourceName, Predicate<String> packageFilter) {
         requireNonNull(resourceName, "resourceName must not be null");
         requireNonNull(packageFilter, "packageFilter must not be null");
         resourceName = resourceName.trim();
-        return findResourcesForUris(getUrisForResource(getClassLoader(), resourceName), DEFAULT_PACKAGE_NAME, packageFilter);
+        List<URI> urisForResource = getUrisForResource(getClassLoader(), resourceName);
+        BiFunction<Path, Path, Resource> createResource = createClasspathResource(resourceName);
+        return findResourcesForUris(urisForResource, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
 
     public List<R> scanForResourcesPath(Path resourcePath) {
         requireNonNull(resourcePath, "path must not be null");
-        List<R> classes = new ArrayList<>();
+        List<R> resources = new ArrayList<>();
         pathScanner.findResourcesForPath(
             resourcePath,
-            processor,
-            baseDir -> path -> processResourceFileSafely(baseDir, DEFAULT_PACKAGE_NAME, NULL_FILTER, path, classes::add)
+            canLoad,
+            processResource(DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource(), resources::add)
         );
-        return classes;
+        return resources;
     }
 
     public List<R> scanForResourcesUri(URI resourcePath) {
         requireNonNull(resourcePath, "path must not be null");
-        return findResourcesForUri(resourcePath, DEFAULT_PACKAGE_NAME, x -> true);
+        return findResourcesForUri(resourcePath, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
     }
-
 
     private ClassLoader getClassLoader() {
         return this.classLoaderSupplier.get();
     }
 
-    private List<R> findResourcesForUris(List<URI> baseUris, String basePackageName, Predicate<String> packageFilter) {
+    private List<R> findResourcesForUris(List<URI> baseUris, String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource) {
         return baseUris.stream()
-            .map(baseUri -> findResourcesForUri(baseUri, basePackageName, packageFilter))
+            .map(baseUri -> findResourcesForUri(baseUri, basePackageName, packageFilter, createResource))
             .flatMap(Collection::stream)
             .distinct()
             .collect(toList());
     }
 
-    private List<R> findResourcesForUri(URI baseUri, String basePackageName, Predicate<String> packageFilter) {
+    private List<R> findResourcesForUri(URI baseUri, String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource) {
         List<R> resources = new ArrayList<>();
         pathScanner.findResourcesForUri(
             baseUri,
-            processor,
-            baseDir -> resource -> processResourceFileSafely(baseDir, basePackageName, packageFilter, resource, resources::add)
+            canLoad,
+            processResource(basePackageName, packageFilter, createResource, resources::add)
         );
         return resources;
     }
 
-    private void processResourceFileSafely(Path baseDir, String basePackageName, Predicate<String> classFilter,
-                                           Path resource, Consumer<R> consumer) {
-        try {
-            String packageName = determinePackageName(baseDir, basePackageName, resource);
-            if (classFilter.test(packageName)) {
-                processor.apply(baseDir, resource).ifPresent(consumer);
+    private Function<Path, Consumer<Path>> processResource(String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource, Consumer<R> consumer) {
+        return baseDir -> path -> {
+            String packageName = determinePackageName(baseDir, basePackageName, path);
+            if (packageFilter.test(packageName)) {
+                createResource.andThen(loadResource).apply(baseDir, path).ifPresent(consumer);
             }
-        } catch (Throwable throwable) {
-            handleThrowable(resource, throwable);
-        }
-    }
-
-    private void handleThrowable(Path classFile, Throwable throwable) {
-        rethrowIfBlacklisted(throwable);
-        logGenericFeatureProcessingException(classFile, throwable);
-    }
-
-    private void logGenericFeatureProcessingException(Path featureFile, Throwable throwable) {
-        logger.debug(throwable, () -> format("Failed to load file for path [%s] during scanning.",
-            featureFile.toAbsolutePath()));
-    }
-
-    interface ResourceProcessor<R> extends Predicate<Path>, BiFunction<Path, Path, Optional<R>> {
-
-    }
-
-    private static class SimpleResourceProcessor<R> implements ResourceProcessor<R> {
-
-        private final Predicate<Path> canProcess;
-        private final BiFunction<Path, Path, Optional<R>> load;
-
-        private SimpleResourceProcessor(Predicate<Path> canProcess, BiFunction<Path, Path, Optional<R>> load) {
-            this.canProcess = canProcess;
-            this.load = load;
-        }
-
-        @Override
-        public Optional<R> apply(Path basePath, Path path) {
-            return load.apply(basePath, path);
-        }
-
-        @Override
-        public boolean test(Path path) {
-            return canProcess.test(path);
-        }
+        };
     }
 
 }
