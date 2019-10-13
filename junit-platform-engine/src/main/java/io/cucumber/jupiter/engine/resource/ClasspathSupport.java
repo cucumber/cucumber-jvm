@@ -3,16 +3,20 @@ package io.cucumber.jupiter.engine.resource;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
+import javax.lang.model.SourceVersion;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 public class ClasspathSupport {
@@ -23,10 +27,23 @@ public class ClasspathSupport {
     private static final String CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING = String.valueOf(CLASSPATH_RESOURCE_PATH_SEPARATOR);
     private static final char PACKAGE_SEPARATOR_CHAR = '.';
     private static final String PACKAGE_SEPARATOR_STRING = String.valueOf(PACKAGE_SEPARATOR_CHAR);
+    private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
 
     private ClasspathSupport() {
 
     }
+
+    static void requireValidPackageName(String packageName) {
+        requireNonNull(packageName, "packageName must not be null");
+        if (packageName.equals(DEFAULT_PACKAGE_NAME)) {
+            return;
+        }
+        boolean valid = Arrays.stream(DOT_PATTERN.split(packageName, -1)).allMatch(SourceVersion::isName);
+        if (!valid) {
+            throw new IllegalArgumentException("Invalid part(s) in package name: " + packageName);
+        }
+    }
+
 
     static List<URI> getUrisForResource(ClassLoader classLoader, String resourceName) {
         try {

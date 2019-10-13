@@ -33,7 +33,7 @@ class PathScanner {
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (Exception ex) {
-            logger.warn(ex, () -> "Error scanning files for URI " + baseUri);
+//            logger.warn(ex, () -> "Error scanning files for URI " + baseUri);
         }
     }
 
@@ -45,7 +45,7 @@ class PathScanner {
         try {
             Files.walkFileTree(baseDir, new ResourceFileVisitor(filter, consumer.apply(baseDir)));
         } catch (IOException ex) {
-            logger.warn(ex, () -> "I/O error scanning files in " + baseDir);
+//            logger.warn(ex, () -> "I/O error scanning files in " + baseDir);
         }
     }
 
@@ -71,14 +71,14 @@ class PathScanner {
 
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException ex) {
-            logger.warn(ex, () -> "I/O error visiting file: " + file);
+//            logger.warn(ex, () -> "I/O error visiting file: " + file);
             return CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException ex) {
             if (ex != null) {
-                logger.warn(ex, () -> "I/O error visiting directory: " + dir);
+//                logger.warn(ex, () -> "I/O error visiting directory: " + dir);
             }
             return CONTINUE;
         }

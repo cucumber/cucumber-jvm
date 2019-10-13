@@ -1,7 +1,6 @@
 package io.cucumber.jupiter.engine.resource;
 
 import io.cucumber.core.io.Resource;
-import org.junit.platform.commons.util.PackageUtils;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -19,6 +18,7 @@ import static io.cucumber.jupiter.engine.resource.ClasspathSupport.DEFAULT_PACKA
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.determinePackageName;
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.getRootUrisForPackage;
 import static io.cucumber.jupiter.engine.resource.ClasspathSupport.getUrisForResource;
+import static io.cucumber.jupiter.engine.resource.ClasspathSupport.requireValidPackageName;
 import static io.cucumber.jupiter.engine.resource.Resources.createClasspathResource;
 import static io.cucumber.jupiter.engine.resource.Resources.createClasspathRootResource;
 import static io.cucumber.jupiter.engine.resource.Resources.createPackageResource;
@@ -48,7 +48,7 @@ public class ResourceScanner<R> {
     }
 
     public List<R> scanForResourcesInPackage(String basePackageName, Predicate<String> packageFilter) {
-        PackageUtils.assertPackageNameIsValid(basePackageName);
+        requireValidPackageName(basePackageName);
         requireNonNull(packageFilter, "packageFilter must not be null");
         basePackageName = basePackageName.trim();
         BiFunction<Path, Path, Resource> createResource = createPackageResource(basePackageName);

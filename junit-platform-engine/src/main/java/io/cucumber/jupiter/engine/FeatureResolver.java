@@ -32,6 +32,11 @@ final class FeatureResolver {
     private static final String FEATURE_FILE_SUFFIX = ".feature";
 
     private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
+    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
+        ClassLoaders::getDefaultClassLoader,
+        FeatureResolver::isFeature,
+        (resource) -> of(FeatureParser.parseResource(resource))
+    );
 
     private final TestDescriptor engineDescriptor;
     private final ClassFilter packageFilter;
@@ -58,14 +63,6 @@ final class FeatureResolver {
         );
     }
 
-    private static ResourceScanner<CucumberFeature> scanner() {
-        return new ResourceScanner<>(
-            ClassLoaders::getDefaultClassLoader,
-            FeatureResolver::isFeature,
-            (resource) -> of(FeatureParser.parseResource(resource))
-        );
-    }
-
     private static boolean isFeature(Path path) {
         return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
     }
@@ -80,7 +77,7 @@ final class FeatureResolver {
     }
 
     private void resolvePath(Path path) {
-        scanner()
+        featureScanner
             .scanForResourcesPath(path)
             .stream()
             .map(this::resolveFeature)
@@ -103,7 +100,7 @@ final class FeatureResolver {
     void resolvePackageResource(PackageSelector selector) {
         String packageName = selector.getPackageName();
         try {
-            scanner()
+            featureScanner
                 .scanForResourcesInPackage(packageName, packageFilter::match)
                 .stream()
                 .map(this::resolveFeature)
@@ -117,7 +114,7 @@ final class FeatureResolver {
     void resolveClasspathResource(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
         try {
-            scanner()
+            featureScanner
                 .scanForClasspathResource(classpathResourceName, packageFilter::match)
                 .stream()
                 .map(this::resolveFeature)
@@ -130,7 +127,7 @@ final class FeatureResolver {
 
     void resolveClasspathRoot(ClasspathRootSelector selector) {
         try {
-            scanner()
+            featureScanner
                 .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter::match)
                 .stream()
                 .map(this::resolveFeature)
@@ -157,10 +154,10 @@ final class FeatureResolver {
         List<CucumberFeature> testDescriptorStream;
         if (FeatureOrigin.isClassPath(uri)) {
             String resourcePath = Classpath.resourceName(uri);
-            testDescriptorStream = scanner()
+            testDescriptorStream = featureScanner
                 .scanForClasspathResource(resourcePath, packageFilter::match);
         } else {
-            testDescriptorStream = scanner()
+            testDescriptorStream = featureScanner
                 .scanForResourcesUri(uri);
         }
         return testDescriptorStream
