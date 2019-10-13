@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class CucumberFeature {
     private final URI uri;
@@ -56,6 +57,10 @@ public final class CucumberFeature {
     @Override
     public int hashCode() {
         return Objects.hash(uri);
+    }
+
+    public Optional<CucumberPickle> getPickleAt(int line) {
+        return pickles.stream().filter(cucumberPickle -> cucumberPickle.getLine() == line).findFirst();
     }
 
     public static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {

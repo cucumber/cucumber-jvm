@@ -1,12 +1,18 @@
 package io.cucumber.jupiter.engine;
 
+import gherkin.ast.Examples;
+import gherkin.ast.Feature;
+import gherkin.ast.Scenario;
 import gherkin.ast.ScenarioOutline;
+import gherkin.ast.TableRow;
 import io.cucumber.core.feature.CucumberFeature;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
@@ -17,25 +23,77 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         this.feature = feature;
     }
 
-    static TestDescriptor createOutlineDescriptor(CucumberFeature feature, TestDescriptor parent) {
-        FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
-        UniqueId uniqueId = source.featureSegment(parent.getUniqueId(), feature);
-        TestSource testSource = source.featureSource();
-        TestDescriptor featureDescriptor = new FeatureDescriptor(uniqueId, feature.getName(), testSource, feature);
-        addFeatureElements(feature, source, featureDescriptor);
-        return featureDescriptor;
+    static TestDescriptor create(CucumberFeature cucumberFeature, TestDescriptor parent) {
+        FeatureOrigin source = FeatureOrigin.fromUri(cucumberFeature.getUri());
+        Feature feature = cucumberFeature.getGherkinFeature();
+        TestDescriptor descriptor = new FeatureDescriptor(
+            source.featureSegment(parent.getUniqueId(), cucumberFeature),
+            feature.getName(),
+            source.featureSource(),
+            cucumberFeature
+        );
+        parent.addChild(descriptor);
+        feature.getChildren().forEach(scenarioDefinition -> visit(cucumberFeature, descriptor, source, scenarioDefinition, 0));
+        return descriptor;
     }
 
-    private static void addFeatureElements(CucumberFeature feature, FeatureOrigin source, TestDescriptor featureDescriptor) {
-        feature.getGherkinFeature().getChildren().forEach(scenarioDefinition -> {
-            if (scenarioDefinition instanceof ScenarioOutline) {
-                ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
-                featureDescriptor.addChild(ScenarioOutlineDescriptor.createOutlineDescriptor(feature, scenarioOutline, source, featureDescriptor));
-            } else {
-                featureDescriptor.addChild(PickleDescriptor.createScenario(feature, scenarioDefinition, source, featureDescriptor));
+    private static void visit(CucumberFeature feature, TestDescriptor parent, FeatureOrigin source, gherkin.ast.Node node, int row) {
+        if (node instanceof Scenario) {
+            Scenario scenario = (Scenario) node;
+            feature.getPickleAt(scenario.getLocation().getLine())
+                .ifPresent(pickle -> {
+                    PickleDescriptor descriptor = new PickleDescriptor(
+                        source.scenarioSegment(parent.getUniqueId(), scenario),
+                        scenario.getName(),
+                        source.nodeSource(scenario),
+                        pickle
+                    );
+                    parent.addChild(descriptor);
+                });
+            return;
+        }
 
-            }
-        });
+        if (node instanceof TableRow) {
+            TableRow tableRow = (TableRow) node;
+            feature.getPickleAt(tableRow.getLocation().getLine())
+                .ifPresent(pickle -> {
+                    PickleDescriptor descriptor = new PickleDescriptor(
+                        source.exampleSegment(parent.getUniqueId(), tableRow),
+                        "Example #" + row,
+                        source.nodeSource(tableRow),
+                        pickle
+                    );
+                    parent.addChild(descriptor);
+                });
+            return;
+        }
+
+        if (node instanceof ScenarioOutline) {
+            ScenarioOutline scenarioOutline = (ScenarioOutline) node;
+            NodeDescriptor descriptor = new NodeDescriptor(
+                source.outlineSegment(parent.getUniqueId(), scenarioOutline),
+                scenarioOutline.getName(),
+                source.nodeSource(scenarioOutline)
+            );
+            parent.addChild(descriptor);
+            scenarioOutline.getExamples().forEach(examples -> visit(feature, descriptor, source, examples, row));
+            return;
+        }
+
+        if (node instanceof Examples) {
+            Examples examples = (Examples) node;
+            NodeDescriptor descriptor = new NodeDescriptor(
+                source.examplesSegment(parent.getUniqueId(), examples),
+                examples.getName(),
+                source.nodeSource(examples)
+            );
+            parent.addChild(descriptor);
+            AtomicInteger rowCounter = new AtomicInteger(1);
+            examples.getTableBody().forEach(tableRow -> visit(feature, descriptor, source, tableRow, rowCounter.getAndIncrement()));
+            return;
+        }
+
+        throw new IllegalStateException("Unsupported type" + node.getClass());
     }
 
     @Override
@@ -48,4 +106,5 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
     public Type getType() {
         return Type.CONTAINER;
     }
+
 }

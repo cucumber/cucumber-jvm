@@ -101,12 +101,13 @@ class FeatureResolverTest {
             asSet(create("@FeatureTag"), create("@Example1Tag"), create("@ScenarioOutlineTag")),
             example.getTags()
         );
-        assertEquals(of(from(featurePath, from(19, 8))), example.getSource());
+        assertEquals(of(from(featurePath, from(19, 7))), example.getSource());
         assertEquals(TEST, example.getType());
 
         assertEquals(
             id.append("feature", featureSegmentValue)
                 .append("outline", "11")
+                .append("examples", "17")
                 .append("example", "19"),
             example.getUniqueId()
         );
@@ -135,6 +136,6 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getExample() {
-        return getOutline().getChildren().iterator().next();
+        return getOutline().getChildren().iterator().next().getChildren().iterator().next();
     }
 }

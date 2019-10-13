@@ -14,13 +14,13 @@ Feature: A feature with scenario outlines
     Then <example> is used
 
     @Example1Tag
-    Examples:
-       | example |
-       | A |
-       | B |
+    Examples: With some text
+      | example |
+      | A       |
+      | B       |
 
     @Example2Tag
-    Examples:
+    Examples: With some other text
       | example |
-      | C |
-      | D |
+      | C       |
+      | D       |
