@@ -1,5 +1,6 @@
 package io.cucumber.jupiter.engine;
 
+import io.cucumber.core.io.Classpath;
 import io.cucumber.jupiter.engine.resource.ClassFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
 class FeatureResolverTest {
     private final String featurePath = "io/cucumber/jupiter/engine/feature-with-outline.feature";
-    private final String featureSegmentValue = "classpath:/" + featurePath;
+    private final String featureSegmentValue = Classpath.CLASSPATH_SCHEME_PREFIX + featurePath;
     private TestDescriptor testDescriptor;
     private UniqueId id;
 

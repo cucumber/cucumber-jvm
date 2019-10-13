@@ -7,6 +7,7 @@ import gherkin.ast.ScenarioOutline;
 import gherkin.ast.TableRow;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.io.Classpath;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -16,6 +17,8 @@ import org.junit.platform.engine.support.descriptor.UriSource;
 
 import java.net.URI;
 
+import static io.cucumber.core.io.Classpath.CLASSPATH_SCHEME_PREFIX;
+
 abstract class FeatureOrigin {
 
     static final String FEATURE_SEGMENT_TYPE = "feature";
@@ -23,8 +26,6 @@ abstract class FeatureOrigin {
     private static final String OUTLINE_SEGMENT_TYPE = "outline";
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
-    private static final String CLASSPATH_SCHEME = "classpath";
-    static final String CLASSPATH_PREFIX = CLASSPATH_SCHEME + ":";
 
     private static FilePosition getPickleLocation(CucumberPickle location) {
         return FilePosition.from(location.getLine(), location.getColumn());
@@ -35,7 +36,11 @@ abstract class FeatureOrigin {
     }
 
     static FeatureOrigin fromUri(URI uri) {
-        if (CLASSPATH_SCHEME.equals(uri.getScheme())) {
+        if (ClasspathResourceSource.CLASSPATH_SCHEME.equals(uri.getScheme())) {
+            if(!uri.getSchemeSpecificPart().startsWith("/")){
+                // ClasspathResourceSource.from expects all resources to start with /
+                uri = URI.create(CLASSPATH_SCHEME_PREFIX + "/" + uri.getSchemeSpecificPart());
+            }
             ClasspathResourceSource source = ClasspathResourceSource.from(uri);
             return new ClasspathFeatureOrigin(source);
         }
@@ -50,7 +55,7 @@ abstract class FeatureOrigin {
     }
 
     static boolean isClassPath(URI uri) {
-        return CLASSPATH_SCHEME.equals(uri.getScheme());
+        return ClasspathResourceSource.CLASSPATH_SCHEME.equals(uri.getScheme());
     }
 
     static boolean isFeatureSegment(UniqueId.Segment segment) {
