@@ -123,7 +123,7 @@ class GluePathTest {
         Executable testMethod = () -> GluePath.parse("C:\\com\\example\\app");
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "The glue path must have a classpath scheme"
+            "The glue path must have a classpath scheme C:/com/example/app"
         )));
     }
 
