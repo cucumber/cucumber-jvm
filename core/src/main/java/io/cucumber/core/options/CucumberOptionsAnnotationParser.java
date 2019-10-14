@@ -56,6 +56,7 @@ public final class CucumberOptionsAnnotationParser {
                 addGlue(options, args);
                 addFeatures(options, args);
                 addObjectFactory(options, args);
+                addGlueClasses(options, args);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -161,6 +162,14 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
+    private void addGlueClasses(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options.glueClasses().length > 0) {
+            for (Class<?> glueClass : options.glueClasses()) {
+                args.addGlueClass(glueClass);
+            }
+        }
+    }
+
     private boolean runningInEnvironmentWithoutAnsiSupport() {
         boolean intelliJidea = System.getProperty("idea.launcher.bin.path") != null;
         // TODO: What does Eclipse use?
@@ -199,5 +208,7 @@ public final class CucumberOptionsAnnotationParser {
         SnippetType snippets();
 
         Class<? extends ObjectFactory> objectFactory();
+
+        Class<?>[] glueClasses();
     }
 }

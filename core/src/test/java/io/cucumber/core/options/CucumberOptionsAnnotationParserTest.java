@@ -216,6 +216,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("glue and extraGlue cannot be specified at the same time")));
     }
 
+    @Test
+    void create_with_extra_glueClasses() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithMultipleGlues.class).build();
+    }
+
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
     private static class Snippets {
         // empty
@@ -314,6 +319,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         // empty
     }
 
+    @CucumberOptions(glueClasses = {TestGlueClassA.class, TestGlueClassB.class})
+    private static class ClassWithMultipleGlues {
+
+    }
+
     private static class CoreCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
         private final CucumberOptions annotation;
 
@@ -375,6 +385,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         public Class<? extends ObjectFactory> objectFactory() {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
+
+        @Override
+        public Class<?>[] glueClasses() {
+            return annotation.glueClasses();
+        }
     }
 
     private static class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
@@ -409,5 +424,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         }
 
     }
+
+    private static final class TestGlueClassA {}
+    private static final class TestGlueClassB {}
 
 }

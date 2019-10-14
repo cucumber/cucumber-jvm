@@ -31,6 +31,7 @@ public final class RuntimeOptions implements
     private final List<String> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
+    private final List<Class<?>> glueClasses = new ArrayList<>();
 
     private boolean dryRun;
     private boolean strict = false;

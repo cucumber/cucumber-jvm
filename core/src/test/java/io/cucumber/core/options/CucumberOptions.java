@@ -37,4 +37,5 @@ public @interface CucumberOptions {
 
     String[] junit() default {};
 
+    Class<?>[] glueClasses() default {};
 }
