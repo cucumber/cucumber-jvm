@@ -1,13 +1,13 @@
 package io.cucumber.core.gherkin5;
 
-import io.cucumber.core.gherkin.Argument;
-import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
+import gherkin.pickles.PickleString;
+import io.cucumber.core.gherkin.DocStringArgument;
 
-public final class DocStringArgument implements Argument, io.cucumber.plugin.event.DocStringArgument {
+public final class Gherkin5DocStringArgument implements DocStringArgument {
 
-    private final PickleDocString docString;
+    private final PickleString docString;
 
-    DocStringArgument(PickleDocString docString) {
+    Gherkin5DocStringArgument(PickleString docString) {
         this.docString = docString;
     }
 

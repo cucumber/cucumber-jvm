@@ -1,19 +1,19 @@
 package io.cucumber.core.gherkin5;
 
-import gherkin.pickles.PickleTable;
-import io.cucumber.core.gherkin.Argument;
+import io.cucumber.core.gherkin.DataTableArgument;
+import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
 
 import java.util.AbstractList;
 import java.util.List;
 
-public final class DataTableArgument implements Argument, io.cucumber.plugin.event.DataTableArgument {
+public final class Gherkin8DataTableArgument implements DataTableArgument {
 
     private final CellView cells;
     private final int line;
 
-    DataTableArgument(PickleTable table) {
+    Gherkin8DataTableArgument(PickleTable table) {
         this.cells = new CellView(table);
-        this.line = table.getLocation().getLine();
+        this.line = -1; // TODO;
     }
 
     @Override
@@ -38,19 +38,19 @@ public final class DataTableArgument implements Argument, io.cucumber.plugin.eve
             return new AbstractList<String>() {
                 @Override
                 public String get(int column) {
-                    return table.getRows().get(row).getCells().get(column).getValue();
+                    return table.getRows(row).getCells(column).getValue();
                 }
 
                 @Override
                 public int size() {
-                    return table.getRows().get(row).getCells().size();
+                    return table.getRows(row).getCellsCount();
                 }
             };
         }
 
         @Override
         public int size() {
-            return table.getRows().size();
+            return table.getRowsCount();
         }
     }
 }

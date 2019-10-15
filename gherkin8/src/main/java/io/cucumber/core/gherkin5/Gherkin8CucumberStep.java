@@ -88,11 +88,11 @@ public final class Gherkin8CucumberStep implements CucumberStep {
         PickleStepArgument argument = pickleStep.getArgument();
         if (argument.hasDocString()) {
             PickleDocString docString = argument.getDocString();
-            return new DocStringArgument(docString);
+            return new Gherkin8DocStringArgument(docString);
         }
         if (argument.hasDataTable()) {
             PickleTable table = argument.getDataTable();
-            return new DataTableArgument(table);
+            return new Gherkin8DataTableArgument(table);
         }
         return null;
     }

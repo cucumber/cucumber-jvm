@@ -64,11 +64,11 @@ public final class Gherkin5CucumberStep implements CucumberStep {
         gherkin.pickles.Argument argument = pickleStep.getArgument().get(0);
         if (argument instanceof PickleString) {
             PickleString docString = (PickleString) argument;
-            return new DocStringArgument(docString);
+            return new Gherkin5DocStringArgument(docString);
         }
         if (argument instanceof PickleTable) {
             PickleTable table = (PickleTable) argument;
-            return new DataTableArgument(table);
+            return new Gherkin5DataTableArgument(table);
         }
         return null;
     }

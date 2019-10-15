@@ -3,7 +3,7 @@ package io.cucumber.core.snippets;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.CucumberStep;
-import io.cucumber.core.gherkin5.DocStringArgument;
+import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -94,7 +94,7 @@ public final class SnippetGenerator {
             return arguments;
         } else if (arg instanceof DocStringArgument) {
             arguments.put(parameterName("docString", parameterNames), String.class);
-        } else if (arg instanceof io.cucumber.core.gherkin5.DataTableArgument) {
+        } else if (arg instanceof DataTableArgument) {
             arguments.put(parameterName("dataTable", parameterNames), DataTable.class);
         }
 
