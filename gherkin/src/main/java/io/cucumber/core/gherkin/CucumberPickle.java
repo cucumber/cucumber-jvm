@@ -1,4 +1,6 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin;
+
+import io.cucumber.core.gherkin.CucumberStep;
 
 import java.net.URI;
 import java.util.List;

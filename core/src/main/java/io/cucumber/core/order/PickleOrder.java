@@ -1,6 +1,6 @@
 package io.cucumber.core.order;
 
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberPickle;
 
 import java.util.List;
 

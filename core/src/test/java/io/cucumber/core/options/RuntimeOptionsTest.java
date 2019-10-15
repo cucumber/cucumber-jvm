@@ -1,8 +1,8 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;

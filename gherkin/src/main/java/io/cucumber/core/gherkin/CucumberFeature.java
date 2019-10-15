@@ -1,4 +1,4 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin;
 
 import java.net.URI;
 import java.util.Comparator;

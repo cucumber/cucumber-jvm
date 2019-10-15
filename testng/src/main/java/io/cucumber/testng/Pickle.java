@@ -1,6 +1,6 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberPickle;
 import org.apiguardian.api.API;
 
 /**

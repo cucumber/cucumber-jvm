@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;

@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;

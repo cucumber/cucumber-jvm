@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;

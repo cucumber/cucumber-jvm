@@ -1,8 +1,9 @@
 package io.cucumber.core.snippets;
 
 import io.cucumber.core.backend.Snippet;
-import io.cucumber.core.feature.CucumberStep;
-import io.cucumber.core.feature.DocStringArgument;
+import io.cucumber.core.gherkin.Argument;
+import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin5.DocStringArgument;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -88,12 +89,12 @@ public final class SnippetGenerator {
             arguments.put(parameterName, parameterType.getType());
         }
 
-        io.cucumber.core.feature.Argument arg = step.getArgument();
+        Argument arg = step.getArgument();
         if (arg == null) {
             return arguments;
         } else if (arg instanceof DocStringArgument) {
             arguments.put(parameterName("docString", parameterNames), String.class);
-        } else if (arg instanceof io.cucumber.core.feature.DataTableArgument) {
+        } else if (arg instanceof io.cucumber.core.gherkin5.DataTableArgument) {
             arguments.put(parameterName("dataTable", parameterNames), DataTable.class);
         }
 

@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberStep;
 
 import java.util.List;
 

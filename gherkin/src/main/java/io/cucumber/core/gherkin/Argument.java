@@ -1,4 +1,4 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin;
 
 import io.cucumber.plugin.event.StepArgument;
 

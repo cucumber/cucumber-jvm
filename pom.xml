@@ -149,6 +149,16 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-gherkin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-gherkin5</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
@@ -204,6 +214,8 @@
         <module>spring</module>
         <module>testng</module>
         <module>weld</module>
+        <module>gherkin</module>
+        <module>gherkin5</module>
     </modules>
 
     <profiles>

@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.cucumberexpressions.ParameterType;

@@ -1,5 +1,6 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.io.Resource;
 import io.cucumber.core.io.ResourceLoader;
 

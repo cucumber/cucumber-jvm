@@ -6,7 +6,7 @@ import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;

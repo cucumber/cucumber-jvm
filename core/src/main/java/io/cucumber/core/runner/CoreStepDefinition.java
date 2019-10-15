@@ -2,7 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;

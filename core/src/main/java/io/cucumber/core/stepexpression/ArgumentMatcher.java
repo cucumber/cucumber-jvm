@@ -1,8 +1,8 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.feature.CucumberStep;
-import io.cucumber.core.feature.DataTableArgument;
-import io.cucumber.core.feature.DocStringArgument;
+import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin5.DataTableArgument;
+import io.cucumber.core.gherkin5.DocStringArgument;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -17,7 +17,7 @@ public final class ArgumentMatcher {
     }
 
     public List<Argument> argumentsFrom(CucumberStep step, Type... types) {
-        io.cucumber.core.feature.Argument arg = step.getArgument();
+        io.cucumber.core.gherkin.Argument arg = step.getArgument();
         if (arg == null) {
             return expression.match(step.getText(), types);
         }

@@ -1,7 +1,7 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.plugin.event.CucumberStep;
@@ -61,7 +61,7 @@ final class PickleRunners {
 
         @Override
         protected List<CucumberStep> getChildren() {
-            // Casts io.cucumber.core.feature.CucumberStep
+            // Casts io.cucumber.core.gherkin.CucumberStep
             // to io.cucumber.core.event.CucumberStep
             return new ArrayList<>(pickle.getSteps());
         }

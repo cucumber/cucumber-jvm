@@ -1,6 +1,7 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.CucumberParserException;
 import org.junit.experimental.ParallelComputer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +68,7 @@ class CucumberTest {
     @Test
     void testThatParsingErrorsIsNicelyReported() {
         Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        CucumberParserException actualThrown = assertThrows(CucumberParserException.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat(
                 actualThrown.getMessage(),
@@ -82,7 +83,7 @@ class CucumberTest {
 
     @Test
     void testThatFileIsNotCreatedOnParsingError() {
-        assertThrows(CucumberException.class,
+        assertThrows(CucumberParserException.class,
             () -> new Cucumber(FormatterWithLexerErrorFeature.class)
         );
         assertFalse(

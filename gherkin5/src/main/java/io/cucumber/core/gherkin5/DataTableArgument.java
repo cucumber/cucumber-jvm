@@ -1,6 +1,7 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin5;
 
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.gherkin.Argument;
 
 import java.util.AbstractList;
 import java.util.List;

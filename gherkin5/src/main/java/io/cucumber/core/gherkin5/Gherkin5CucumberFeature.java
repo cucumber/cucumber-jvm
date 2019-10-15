@@ -1,6 +1,8 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin5;
 
 import gherkin.ast.GherkinDocument;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberPickle;
 
 import java.net.URI;
 import java.util.List;

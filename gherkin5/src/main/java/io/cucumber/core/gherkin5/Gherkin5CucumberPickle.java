@@ -1,4 +1,4 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin5;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
@@ -6,6 +6,9 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.StepType;
 
 import java.net.URI;
 import java.util.ArrayList;

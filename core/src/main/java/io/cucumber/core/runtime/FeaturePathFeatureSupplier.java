@@ -2,7 +2,7 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.feature.Options;
 

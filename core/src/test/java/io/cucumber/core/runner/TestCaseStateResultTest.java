@@ -5,7 +5,7 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

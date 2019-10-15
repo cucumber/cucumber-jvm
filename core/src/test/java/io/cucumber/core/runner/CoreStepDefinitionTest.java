@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;

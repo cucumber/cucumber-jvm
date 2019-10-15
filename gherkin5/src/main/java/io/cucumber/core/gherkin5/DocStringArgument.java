@@ -1,6 +1,7 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin5;
 
 import gherkin.pickles.PickleString;
+import io.cucumber.core.gherkin.Argument;
 
 public final class DocStringArgument implements Argument, io.cucumber.plugin.event.DocStringArgument {
 

@@ -4,7 +4,7 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonDeserializer;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.BeforeEach;

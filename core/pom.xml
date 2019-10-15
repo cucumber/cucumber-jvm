@@ -23,7 +23,13 @@
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>gherkin</artifactId>
+            <artifactId>cucumber-gherkin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-gherkin5</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>

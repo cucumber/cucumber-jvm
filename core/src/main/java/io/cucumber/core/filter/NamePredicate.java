@@ -1,6 +1,6 @@
 package io.cucumber.core.filter;
 
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberPickle;
 
 import java.util.List;
 import java.util.function.Predicate;

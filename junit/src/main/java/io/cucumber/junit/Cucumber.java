@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.io.ClassFinder;

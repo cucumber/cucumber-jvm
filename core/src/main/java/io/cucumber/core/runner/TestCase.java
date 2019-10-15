@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;

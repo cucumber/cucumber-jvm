@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

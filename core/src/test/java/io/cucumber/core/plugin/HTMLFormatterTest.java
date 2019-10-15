@@ -2,7 +2,7 @@ package io.cucumber.core.plugin;
 
 import gherkin.deps.com.google.gson.JsonParser;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.jsoup.Jsoup;

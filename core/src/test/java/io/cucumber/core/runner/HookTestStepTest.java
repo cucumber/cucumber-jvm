@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.TestStepFinished;

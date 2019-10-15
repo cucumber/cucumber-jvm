@@ -1,4 +1,4 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin5;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
@@ -6,6 +6,9 @@ import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.gherkin.Argument;
+import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.StepType;
 
 public final class Gherkin5CucumberStep implements CucumberStep {
 

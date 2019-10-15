@@ -11,7 +11,7 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
