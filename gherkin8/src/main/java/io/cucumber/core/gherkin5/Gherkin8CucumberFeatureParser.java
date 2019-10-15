@@ -12,11 +12,9 @@ import io.cucumber.gherkin.Parser;
 import io.cucumber.gherkin.ParserException;
 import io.cucumber.gherkin.pickles.PickleCompiler;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.ProtobufStreamIterable;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,5 +53,10 @@ public class Gherkin8CucumberFeatureParser implements CucumberFeatureParser {
     @Override
     public CucumberFeature parse(URI path, String source) {
         return parseGherkin5(path, source);
+    }
+
+    @Override
+    public String version() {
+        return "8";
     }
 }

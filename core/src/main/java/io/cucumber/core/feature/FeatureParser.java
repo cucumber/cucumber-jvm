@@ -7,6 +7,11 @@ import io.cucumber.core.io.Resource;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
 
 import static java.util.Objects.requireNonNull;
@@ -20,8 +25,14 @@ public class FeatureParser {
         requireNonNull(resource);
         URI path = resource.getPath();
         String source = read(resource);
-        ServiceLoader<CucumberFeatureParser> parser = ServiceLoader.load(CucumberFeatureParser.class);
-        return parser.iterator().next().parse(path, source);
+        ServiceLoader<CucumberFeatureParser> services = ServiceLoader.load(CucumberFeatureParser.class);
+        Iterator<CucumberFeatureParser> iterator = services.iterator();
+        List<CucumberFeatureParser> parser = new ArrayList<>();
+        while (iterator.hasNext()){
+            parser.add(iterator.next());
+        }
+        Comparator<CucumberFeatureParser> version = Comparator.comparing(CucumberFeatureParser::version);
+        return Collections.max(parser,version).parse(path, source);
     }
 
     private static String read(Resource resource) {

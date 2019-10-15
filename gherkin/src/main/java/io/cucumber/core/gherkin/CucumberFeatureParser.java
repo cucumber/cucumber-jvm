@@ -6,4 +6,6 @@ public interface CucumberFeatureParser {
 
     CucumberFeature parse(URI path, String source);
 
+    String version();
+
 }

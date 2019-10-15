@@ -24,6 +24,11 @@ public class Gherkin5CucumberFeatureParser implements CucumberFeatureParser {
         return parseGherkin5(path, source);
     }
 
+    @Override
+    public String version() {
+        return "5";
+    }
+
     private static CucumberFeature parseGherkin5(URI path, String source) {
         try {
             Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());

@@ -4,7 +4,6 @@ import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
@@ -13,7 +12,7 @@ import io.cucumber.messages.Messages.PickleStepArgument;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
 public final class Gherkin8CucumberStep implements CucumberStep {
 
@@ -31,19 +30,40 @@ public final class Gherkin8CucumberStep implements CucumberStep {
         this.previousGwtKeyWord = previousGwtKeyWord;
     }
 
+    private static Stream<? extends Step> extractChildren(FeatureChild featureChild) {
+        if (featureChild.hasScenario()) {
+            return featureChild.getScenario().getStepsList().stream();
+        }
+        if (featureChild.hasBackground()) {
+            return featureChild.getBackground().getStepsList().stream();
+        }
+        if (featureChild.hasRule()) {
+            return featureChild.getRule().getChildrenList().stream()
+                .flatMap(ruleChild -> {
+                    if (ruleChild.hasScenario()) {
+                        return ruleChild.getScenario().getStepsList().stream();
+                    }
+                    if (ruleChild.hasBackground()) {
+                        return ruleChild.getBackground().getStepsList().stream();
+                    }
+                    return Stream.empty();
+                });
+        }
+
+        return Stream.empty();
+    }
+
     private String extractKeyWord(GherkinDocument document) {
         return document.getFeature().getChildrenList().stream()
-            .map(FeatureChild::getScenario)
-            .map(GherkinDocument.Feature.Scenario::getStepsList)
-            .flatMap(Collection::stream)
+            .flatMap(Gherkin8CucumberStep::extractChildren)
             .filter(step -> step.getLocation().getLine() == getStepLine())
             .findFirst()
             .map(Step::getKeyword)
-            .orElseThrow(() ->  new IllegalStateException("GherkinDocument did not contain PickleStep"));
+            .orElseThrow(() -> new IllegalStateException("GherkinDocument did not contain PickleStep"));
     }
 
     private StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
-        if(StepType.isAstrix(keyWord)){
+        if (StepType.isAstrix(keyWord)) {
             return StepType.OTHER;
         }
         if (dialect.getGivenKeywords().contains(keyWord)) {
@@ -79,8 +99,7 @@ public final class Gherkin8CucumberStep implements CucumberStep {
 
     @Override
     public int getStepLine() {
-        int last = step.getLocationsList().size() - 1;
-        return step.getLocationsList().get(last).getLine();
+        return step.getLocationsList().get(0).getLine();
     }
 
     @Override
