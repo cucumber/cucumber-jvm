@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin5;
+package io.cucumber.core.gherkin8;
 
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.gherkin.CucumberStep;
