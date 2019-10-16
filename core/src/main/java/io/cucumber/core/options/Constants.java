@@ -165,6 +165,14 @@ public final class Constants {
      */
     public static final String SNIPPET_TYPE_PROPERTY_NAME = "cucumber.snippet-type";
 
+    /**
+     * Property name to set the glue classes
+     * A comma separated list of glue classes
+     *
+     * TODO: Improve docs
+     */
+    public static final String GLUE_CLASSES_PROPERTY_NAME = "cucumber.glue.classes";
+
     private Constants() {
 
     }

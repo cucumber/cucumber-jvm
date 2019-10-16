@@ -32,7 +32,7 @@ public final class RuntimeOptionsBuilder {
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
     private boolean addDefaultSummaryPrinterIfAbsent;
     private boolean addDefaultFormatterIfAbsent;
-    private List<Class<?>> glueClasses = new ArrayList<>();
+    private List<Class<?>> parsedGlueClasses = new ArrayList<>();
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -127,6 +127,10 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
         }
 
+        if (!parsedGlueClasses.isEmpty()) {
+            runtimeOptions.setGlueClasses(this.parsedGlueClasses);
+        }
+
         if(addDefaultFormatterIfAbsent) {
             runtimeOptions.addDefaultFormatterIfAbsent();
         }
@@ -207,7 +211,7 @@ public final class RuntimeOptionsBuilder {
     }
 
     public RuntimeOptionsBuilder addGlueClass(Class<?> glueClass) {
-        this.glueClasses.add(glueClass);
+        this.parsedGlueClasses.add(glueClass);
         return this;
     }
 

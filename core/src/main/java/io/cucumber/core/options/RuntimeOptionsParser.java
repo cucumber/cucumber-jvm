@@ -201,7 +201,7 @@ final class RuntimeOptionsParser {
             } else if (arg.equals("--object-factory")) {
                 String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
-            } else if (arg.startsWith("-")) {
+            }  else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else if (!arg.isEmpty()) {

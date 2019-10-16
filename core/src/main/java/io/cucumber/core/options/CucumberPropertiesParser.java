@@ -15,20 +15,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.*;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -142,8 +129,24 @@ public final class CucumberPropertiesParser {
             builder::setWip
         );
 
+        parseAll(properties,
+            GLUE_CLASSES_PROPERTY_NAME,
+            splitAndMap(parseGlueClasses),
+            builder::addGlueClass
+            );
+
         return builder;
     }
+
+    private Function<String, Class<?>> parseGlueClasses =  glueClass -> {
+        Class<?> objectFactoryClass;
+        try {
+            objectFactoryClass = Class.forName(glueClass);
+        } catch (ClassNotFoundException e) {
+            throw new CucumberException(String.format("Could not load the provided glue class:'%s'", glueClass), e);
+        }
+        return objectFactoryClass;
+    };
 
     private static Stream<FeatureWithLines> parseFeatureFile(String property) {
         if (property.startsWith("@")) {

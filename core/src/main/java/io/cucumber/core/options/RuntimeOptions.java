@@ -141,6 +141,11 @@ public final class RuntimeOptions implements
         glue.addAll(parsedGlue);
     }
 
+    void setGlueClasses(List<Class<?>> parsedGlue) {
+        glueClasses.clear();
+        glueClasses.addAll(parsedGlue);
+    }
+
     void setNameFilters(List<Pattern> nameFilters) {
         this.nameFilters.clear();
         this.nameFilters.addAll(nameFilters);
