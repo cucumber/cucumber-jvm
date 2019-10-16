@@ -1,4 +1,4 @@
-import gherkin.GherkinDialectProvider
+import io.cucumber.gherkin.GherkinDialectProvider
 import groovy.text.SimpleTemplateEngine
 
 SimpleTemplateEngine engine = new SimpleTemplateEngine()
@@ -6,7 +6,7 @@ SimpleTemplateEngine engine = new SimpleTemplateEngine()
 def unsupported = ["em"] // The generated files for Emoij do not compile.
 def dialectProvider = new GherkinDialectProvider()
 
-GherkinDialectProvider.DIALECTS.keySet().each { language ->
+dialectProvider.getLanguages().each { language ->
     def dialect = dialectProvider.getDialect(language, null)
     def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
     if (!unsupported.contains(normalized_language)) {
