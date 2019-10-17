@@ -17,6 +17,7 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.runtime.CucumberException;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.ast.Background;
@@ -28,6 +29,9 @@ import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 
@@ -153,15 +157,15 @@ final class PrettyFormatter implements EventListener, ColorAware {
     private void handleWrite(WriteEvent event) {
         out.println();
         try(BufferedReader lines = new BufferedReader(new StringReader(event.text))) {
-			String line;
-			while ((line = lines.readLine()) != null) {
-				out.println(STEP_SCENARIO_INDENT + line);
-			}
-		} catch (IOException e) {
-			throw new CucumberException(e);
-		}
-		out.println();
-	}
+            String line;
+            while ((line = lines.readLine()) != null) {
+                out.println(STEP_SCENARIO_INDENT + line);
+            }
+        } catch (IOException e) {
+            throw new CucumberException(e);
+        }
+        out.println();
+    }
 
     private void finishReport() {
         out.close();
