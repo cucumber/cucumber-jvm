@@ -162,7 +162,7 @@ final class PrettyFormatter implements EventListener, ColorAware {
 	} catch (IOException e) {
 		throw new CucumberException(e);
 	}
-		out.println();
+	out.println();
 	}
 
     private void finishReport() {
