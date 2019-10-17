@@ -154,16 +154,16 @@ final class PrettyFormatter implements EventListener, ColorAware {
         out.println();
         BufferedReader lines = new BufferedReader(new StringReader(event.text));
         try {
-			String line = lines.readLine();
-			while(line != null) {
-				out.println(STEP_SCENARIO_INDENT + line);
-				line = lines.readLine();
-			}
-		} catch (IOException e) {
-			throw new CucumberException(e);
+		String line = lines.readLine();
+		while(line != null) {
+			out.println(STEP_SCENARIO_INDENT + line);
+			line = lines.readLine();
 		}
-			out.println();
-		}
+	} catch (IOException e) {
+		throw new CucumberException(e);
+	}
+		out.println();
+	}
 
     private void finishReport() {
         out.close();
