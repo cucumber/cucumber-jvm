@@ -11,6 +11,7 @@ import io.cucumber.core.plugin.NullSummaryPrinter;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.plugin.PrettyFormatter;
 import io.cucumber.core.plugin.ProgressFormatter;
+import io.cucumber.core.plugin.ProtobufFormatterAdapter;
 import io.cucumber.core.plugin.RerunFormatter;
 import io.cucumber.core.plugin.TestNGFormatter;
 import io.cucumber.core.plugin.TimelineFormatter;
@@ -38,6 +39,7 @@ public class PluginOption implements Options.Plugin {
         put("null_summary", NullSummaryPrinter.class);
         put("pretty", PrettyFormatter.class);
         put("progress", ProgressFormatter.class);
+        put("protobuf", ProtobufFormatterAdapter.class);
         put("rerun", RerunFormatter.class);
         put("summary", DefaultSummaryPrinter.class);
         put("testng", TestNGFormatter.class);
