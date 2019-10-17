@@ -340,6 +340,8 @@
                                         <item>class org\.springframework\..*</item>
                                         <item>.* io\.cucumber\.core\.runner\.AmbiguousStepDefinitionsException.*</item>
                                         <item>.* io\.cucumber\.junit\..*</item>
+                                        <item>.* io\.cucumber\.junit\..*</item>
+                                        <item>.* io.cucumber.plugin.event.EmbedEvent::getMediaType().*</item>
                                     </exclude>
                                 </elements>
                             </revapi.filter>
