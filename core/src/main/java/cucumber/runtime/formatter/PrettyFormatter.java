@@ -34,7 +34,7 @@ import java.util.List;
 final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
-	private static final String STEP_SCENARIO_INDENT = "      ";
+    private static final String STEP_SCENARIO_INDENT = "      ";
     private static final String EXAMPLES_INDENT = "    ";
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final NiceAppendable out;
