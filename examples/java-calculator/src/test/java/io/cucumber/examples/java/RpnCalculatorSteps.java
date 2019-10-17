@@ -43,7 +43,7 @@ public class RpnCalculatorSteps {
 
     @After
     public void after(Scenario scenario) {
-        // result.write("HELLLLOO");
+        // scenario.write("HELLLLOO");
     }
 
     @Given("the previous entries:")

@@ -7,6 +7,7 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.Tag;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.Argument;
@@ -22,7 +23,10 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
@@ -34,6 +38,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";
+    private static final String STEP_SCENARIO_INDENT = "      ";
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final NiceAppendable out;
     private Formats formats;
@@ -100,7 +105,17 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private void handleWrite(WriteEvent event) {
-        out.println(event.getText());
+        out.println();
+        try(BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
+            String line;
+            while ((line = lines.readLine()) != null) {
+                out.println(STEP_SCENARIO_INDENT + line);
+            }
+        } catch (IOException e) {
+            throw new CucumberException(e);
+        }
+        out.println();
+
     }
 
     private void finishReport() {
