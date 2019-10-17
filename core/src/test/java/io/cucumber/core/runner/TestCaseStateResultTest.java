@@ -155,17 +155,17 @@ class TestCaseStateResultTest {
 
     private static final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
         private byte[] data;
-        private String mimeType;
+        private String mediaType;
 
-        EmbedEventMatcher(byte[] data, String mimeType) {
+        EmbedEventMatcher(byte[] data, String mediaType) {
             this.data = data;
-            this.mimeType = mimeType;
+            this.mediaType = mediaType;
         }
 
         @Override
         public boolean matches(EmbedEvent argument) {
             return (argument != null &&
-                Arrays.equals(argument.getData(), data) && argument.getMimeType().equals(mimeType));
+                Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
         }
     }
 

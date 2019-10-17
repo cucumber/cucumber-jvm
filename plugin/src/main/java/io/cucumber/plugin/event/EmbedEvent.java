@@ -8,20 +8,20 @@ import java.util.Objects;
 @API(status = API.Status.STABLE)
 public final class EmbedEvent extends TestCaseEvent {
     private final byte[] data;
-    private final String mimeType;
+    private final String mediaType;
     public final String name;
 
-    public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mimeType) {
+    public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mediaType) {
         super(timeInstant, testCase);
         this.data = Objects.requireNonNull(data);
-        this.mimeType = Objects.requireNonNull(mimeType);
+        this.mediaType = Objects.requireNonNull(mediaType);
         this.name = null;
     }
 
-    public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mimeType, String name) {
+    public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mediaType, String name) {
         super(timeInstant, testCase);
         this.data = data;
-        this.mimeType = mimeType;
+        this.mediaType = mediaType;
         this.name = name;
     }
 
@@ -29,8 +29,18 @@ public final class EmbedEvent extends TestCaseEvent {
         return data;
     }
 
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    /**
+     * @deprecated use {@link #getMediaType()}
+     *
+     * @return media type of the embedding.
+     */
+    @Deprecated
     public String getMimeType() {
-        return mimeType;
+        return mediaType;
     }
 
     public String getName() {
