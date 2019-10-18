@@ -4,6 +4,10 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...master) (In Git)
 
 ### Added
+ * [Java8] Add DefaultParameter transformer and friends ([#1812](https://github.com/cucumber/cucumber-jvm/issues/1812) M.P. Korstanje)
+   - Add `DefaultParameterTransformer` alternative for `TypeRegistry.setDefaultParameterTransformer`
+   - Add `DefaultDataTableEntryTransformer` alternative for `TypeRegistry.setDefaultDataTableEntryTransformer`
+   - Add `DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
 
 ### Changed
  * [Core] Indent write events in PrettyFormatter ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Alexandre Monterroso)
@@ -14,7 +18,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Deprecated
  * [Core] Deprecate TypeRegistryConfigurer ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Anton Deriabin)
-     - Use `@ParameterType` and friends instead.  
+     - Use `@ParameterType` and friends instead when using annotation glue.  
+     - Use `ParameterType` and friends instead when using lambda glue.  
  
 ## [5.0.0-RC1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v5.0.0-RC1) (2019-10-19)
 
