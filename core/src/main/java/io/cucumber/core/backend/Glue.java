@@ -15,9 +15,9 @@ public interface Glue {
 
     void addAfterStepHook(HookDefinition afterStepHook);
 
-    void addParameterType(ParameterTypeDefinition parameterTypeDefinition);
+    void addParameterType(ParameterTypeDefinition parameterType);
 
-    void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition);
+    void addDataTableType(DataTableTypeDefinition dataTableType);
 
     void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer);
 
@@ -25,5 +25,5 @@ public interface Glue {
 
     void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer);
 
-    void addDocStringType(DocStringTypeDefinition docStringTypeDefinition);
+    void addDocStringType(DocStringTypeDefinition docStringType);
 }

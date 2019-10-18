@@ -6,5 +6,5 @@ import org.apiguardian.api.API;
 @FunctionalInterface
 @API(status = API.Status.STABLE)
 public interface DataTableDefinitionBody<T> {
-    T accept(DataTable dataTable) throws Throwable;
+    T accept(DataTable table) throws Throwable;
 }

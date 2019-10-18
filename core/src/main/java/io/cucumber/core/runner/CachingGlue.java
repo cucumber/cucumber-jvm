@@ -97,13 +97,13 @@ final class CachingGlue implements Glue {
     }
 
     @Override
-    public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
-        parameterTypeDefinitions.add(parameterTypeDefinition);
+    public void addParameterType(ParameterTypeDefinition parameterType) {
+        parameterTypeDefinitions.add(parameterType);
     }
 
     @Override
-    public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
-        dataTableTypeDefinitions.add(dataTableTypeDefinition);
+    public void addDataTableType(DataTableTypeDefinition dataTableType) {
+        dataTableTypeDefinitions.add(dataTableType);
     }
 
     @Override
@@ -122,8 +122,8 @@ final class CachingGlue implements Glue {
     }
 
     @Override
-    public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
-        docStringTypeDefinitions.add(docStringTypeDefinition);
+    public void addDocStringType(DocStringTypeDefinition docStringType) {
+        docStringTypeDefinitions.add(docStringType);
     }
 
     Collection<CoreHookDefinition> getBeforeHooks() {

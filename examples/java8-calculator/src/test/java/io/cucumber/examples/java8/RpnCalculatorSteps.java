@@ -23,7 +23,6 @@ public class RpnCalculatorSteps implements En {
             calc.push("+");
         });
 
-
         Given("^I press (.+)$", (String what) -> calc.push(what));
 
         Then("the result is {double}", (Double expected) -> assertEquals(expected, calc.value()));
@@ -35,7 +34,6 @@ public class RpnCalculatorSteps implements En {
         After((Scenario scenario) -> {
             // result.write("HELLLLOO");
         });
-
 
         Given("the previous entries:", (DataTable dataTable) -> {
             List<Entry> entries = dataTable.asList(Entry.class);

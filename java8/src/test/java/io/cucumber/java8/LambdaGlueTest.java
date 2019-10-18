@@ -1,6 +1,9 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
@@ -33,7 +36,7 @@ class LambdaGlueTest {
     }
 
     @Test
-    void testBeforeHook() throws Throwable {
+    void testBeforeHook() {
         lambdaGlue.Before(this::hookNoArgs);
         assertHook(beforeHook, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER);
         lambdaGlue.Before("taxExpression", this::hookNoArgs);
@@ -54,7 +57,7 @@ class LambdaGlueTest {
     }
 
     @Test
-    void testBeforeStepHook() throws Throwable {
+    void testBeforeStepHook() {
         lambdaGlue.BeforeStep(this::hookNoArgs);
         assertHook(beforeStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER);
         lambdaGlue.BeforeStep("taxExpression", this::hookNoArgs);
@@ -75,7 +78,7 @@ class LambdaGlueTest {
     }
 
     @Test
-    void testAfterHook() throws Throwable {
+    void testAfterHook() {
         lambdaGlue.After(this::hookNoArgs);
         assertHook(afterHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.After("taxExpression", this::hookNoArgs);
@@ -147,16 +150,31 @@ class LambdaGlueTest {
         }
 
         @Override
-        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+        public void addDocStringType(DocStringTypeDefinition docStringType) {
         }
 
         @Override
-        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+        public void addDataTableType(DataTableTypeDefinition dataTableType) {
 
         }
 
         @Override
-        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
+        public void addParameterType(ParameterTypeDefinition parameterType) {
+
+        }
+
+        @Override
+        public void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer) {
+
+        }
+
+        @Override
+        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+
+        }
+
+        @Override
+        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
 
         }
     };
