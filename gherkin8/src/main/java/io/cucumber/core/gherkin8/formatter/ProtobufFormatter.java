@@ -80,7 +80,6 @@ public class ProtobufFormatter implements EventListener {
                 .setTimestamp(Messages.Timestamp.newBuilder()
                     .setSeconds(t.getInstant().getEpochSecond())
                     .setNanos(t.getInstant().getNano())
-
                 )
                 .setTestResult(Messages.TestResult.newBuilder()
                     .setStatus(STATUS.get(t.getResult().getStatus()))
@@ -110,6 +109,10 @@ public class ProtobufFormatter implements EventListener {
                 )
                 .setTestResult(Messages.TestResult.newBuilder()
                     .setStatus(STATUS.get(t.getResult().getStatus()))
+                    .setDuration(Messages.Duration.newBuilder()
+                        .setSeconds(t.getResult().getDuration().getSeconds())
+                        .setNanos(t.getResult().getDuration().getNano())
+                    )
                 )
             ).build());
     }
