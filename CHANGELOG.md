@@ -13,7 +13,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
 
 ### Deprecated
-
+ * [Core] Deprecate TypeRegistryConfigurer ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Anton Deriabin)
+     - Use `@ParameterType` and friends instead.  
+ 
 ## [5.0.0-RC1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v5.0.0-RC1) (2019-10-19)
 
 ### Added
