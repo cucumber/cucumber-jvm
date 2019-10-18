@@ -5,11 +5,15 @@ import io.cucumber.java8.En
 import io.cucumber.java8.Scenario
 import org.junit.jupiter.api.Assertions.*
 
-var lastInstance : LambdaStepdefs? = null
+var lastInstance: LambdaStepdefs? = null
 
 class LambdaStepdefs : En {
 
     init {
+        DataTableType { entry: Map<String, String> ->
+            Person(entry["first"], entry["last"])
+        }
+
         Before { scenario: Scenario ->
             assertNotSame(this, lastInstance)
             lastInstance = this
@@ -31,7 +35,7 @@ class LambdaStepdefs : En {
         }
 
         Given("this data table:") { peopleTable: DataTable ->
-            val people : List<Person> = peopleTable.asList(Person::class.java)
+            val people: List<Person> = peopleTable.asList(Person::class.java)
             assertEquals("Aslak", people[0].first)
             assertEquals("Hellesøy", people[0].last)
         }
