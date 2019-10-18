@@ -349,7 +349,7 @@ public interface LambdaGlue {
      *             data table
      */
     default <T> void DataTableType(DataTableEntryDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableEntryDefinition(body));
     }
 
     /**
@@ -359,7 +359,7 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableRowDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableRowDefinition(body));
     }
 
     /**
@@ -369,7 +369,7 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableCellDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableCellDefinition(body));
     }
 
     /**
@@ -379,7 +379,7 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableDefinition(body));
     }
 
     /**

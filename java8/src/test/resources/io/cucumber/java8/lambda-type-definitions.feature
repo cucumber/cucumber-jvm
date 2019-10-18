@@ -28,7 +28,7 @@ Feature: Lambda type definition
       | tragedy | Raskolnikov    |
       | novel   | Bolkonsky      |
 
-  Scenario: define  data table type by lambda
+  Scenario: define data table type by lambda
     Given data table, defined by lambda
       | name  | surname    | famousBook           |
       | Fedor | Dostoevsky | Crime and Punishment |

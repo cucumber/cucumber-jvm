@@ -59,7 +59,7 @@ public class TypeDefinitionsStepDefinitions implements En {
             List<String> types = Stream.of("tragedy", "novel").collect(Collectors.toList());
             List<String> characters = Stream.of("Raskolnikov", "Bolkonsky").collect(Collectors.toList());
             Literature expected = new Literature(types, characters);
-            Literature actual = new Literature(dataTable);
+            Literature actual = dataTable.convert(Literature.class, false);
             assertThat(actual, equalTo(expected));
         });
 
