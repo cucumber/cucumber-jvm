@@ -48,7 +48,9 @@ class Java8LambdaStepDefinitionTest {
         Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
+            "Can't use java.util.List in lambda step definition \"some step\". " +
+                "Declare a DataTable or DocString argument instead and convert " +
+                "manually with 'asList/asLists/asMap/asMaps' and 'convert' respectively"
         )));
     }
 
@@ -61,7 +63,9 @@ class Java8LambdaStepDefinitionTest {
         Executable testMethod = () -> stepDefinition.parameterInfos().get(0).getTypeResolver().resolve();
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Can't use java.util.List in lambda step definition \"some step\". Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"
+            "Can't use java.util.List in lambda step definition \"some step\". " +
+                "Declare a DataTable or DocString argument instead and convert " +
+                "manually with 'asList/asLists/asMap/asMaps' and 'convert' respectively"
         )));
     }
 
