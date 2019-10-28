@@ -91,14 +91,14 @@ public class GlueAdaptorTest {
         }
 
         @Override
-        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
-            GlueAdaptorTest.this.parameterTypeDefinition = parameterTypeDefinition;
+        public void addParameterType(ParameterTypeDefinition parameterType) {
+            GlueAdaptorTest.this.parameterTypeDefinition = parameterType;
 
         }
 
         @Override
-        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
-            GlueAdaptorTest.this.dataTableTypeDefinition = dataTableTypeDefinition;
+        public void addDataTableType(DataTableTypeDefinition dataTableType) {
+            GlueAdaptorTest.this.dataTableTypeDefinition = dataTableType;
 
         }
 
@@ -121,8 +121,8 @@ public class GlueAdaptorTest {
         }
 
         @Override
-        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
-            GlueAdaptorTest.this.docStringTypeDefinition = docStringTypeDefinition;
+        public void addDocStringType(DocStringTypeDefinition docStringType) {
+            GlueAdaptorTest.this.docStringTypeDefinition = docStringType;
         }
     };
 

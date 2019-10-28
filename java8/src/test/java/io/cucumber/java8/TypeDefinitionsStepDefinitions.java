@@ -1,9 +1,8 @@
 package io.cucumber.java8;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import io.cucumber.datatable.DataTable;
+
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -11,27 +10,27 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TypeDefinitionsStepdefs implements En{
-    public TypeDefinitionsStepdefs() {
+import static java.lang.Integer.parseInt;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+public class TypeDefinitionsStepDefinitions implements En {
+    public TypeDefinitionsStepDefinitions() {
         Given("docstring, defined by lambda",
             (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
         DocStringType("doc", (String docString) -> new StringBuilder(docString));
 
-        DataTableType((Map<String, String> entry) -> {
-            return new Author(entry.get("name"), entry.get("surname"), entry.get("famousBook"));
-        });
+        DataTableType((Map<String, String> entry) ->
+            new Author(entry.get("name"), entry.get("surname"), entry.get("famousBook")));
 
-        DataTableType((List<String> row) -> {
-            return new Book(row.get(0), row.get(1));
-        });
+        DataTableType((List<String> row) ->
+            new Book(row.get(0), row.get(1)));
 
-        DataTableType((String cellName) -> {
-            return new Cell(cellName);
-        });
+        DataTableType((String cellName) ->
+            new Cell(cellName));
 
-        DataTableType((DataTable dataTable) -> {
-            return new Literature(dataTable);
-        });
+        DataTableType((DataTable dataTable) ->
+            new Literature(dataTable));
 
         Given("single entry data table, defined by lambda", (Author author) -> {
             assertThat(author.name, equalTo("Fedor"));
@@ -49,7 +48,7 @@ public class TypeDefinitionsStepdefs implements En{
 
         Given("data table, defined by lambda cell transformer", (DataTable dataTable) -> {
             List<List<Cell>> lists = dataTable.asLists(Cell.class);
-            Cell [] actual = lists.stream().flatMap(Collection::stream).toArray(Cell[]::new);
+            Cell[] actual = lists.stream().flatMap(Collection::stream).toArray(Cell[]::new);
             assertThat(actual[0], equalTo(new Cell("book")));
             assertThat(actual[1], equalTo(new Cell("main character")));
             assertThat(actual[2], equalTo(new Cell("Crime and Punishment")));
@@ -60,39 +59,59 @@ public class TypeDefinitionsStepdefs implements En{
             List<String> types = Stream.of("tragedy", "novel").collect(Collectors.toList());
             List<String> characters = Stream.of("Raskolnikov", "Bolkonsky").collect(Collectors.toList());
             Literature expected = new Literature(types, characters);
-            Literature actual = new Literature(dataTable);
+            Literature actual = dataTable.convert(Literature.class, false);
             assertThat(actual, equalTo(expected));
         });
 
         Given("data table, defined by lambda", (DataTable dataTable) -> {
             List<Author> authors = dataTable.asList(Author.class);
-            Author dostoevsky = new Author("Fedor","Dostoevsky", "Crime and Punishment");
+            Author dostoevsky = new Author("Fedor", "Dostoevsky", "Crime and Punishment");
             Author tolstoy = new Author("Lev", "Tolstoy", "War and Peace");
             assertThat(authors.get(0), equalTo(dostoevsky));
             assertThat(authors.get(1), equalTo(tolstoy));
         });
 
         // ParameterType with one argument
-        Given("{stringbuilder} parameter, defined by lambda", (StringBuilder builder) -> {
-            assertThat(builder.toString(), equalTo("stringbuilder"));
-        });
+        Given("{string-builder} parameter, defined by lambda", (StringBuilder builder) ->
+            assertThat(builder.toString(), equalTo("string builder")));
 
-        ParameterType("stringbuilder", ".*", (String str) -> new StringBuilder(str));
+        ParameterType("string-builder", ".*", (String str) ->
+            new StringBuilder(str));
 
         // ParameterType with two String arguments
-        Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) -> {
-            assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]"));
-        });
+        Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) ->
+            assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]")));
 
-        ParameterType("coordinates", "(.+),(.+)", (String x, String y) -> new Point(Integer.valueOf(x), Integer.valueOf(y)));
+        ParameterType("coordinates", "(.+),(.+)", (String x, String y) -> new Point(parseInt(x), parseInt(y)));
 
         // ParameterType with three arguments
-        Given("kebab made from {ingredients}, defined by lambda", (StringBuffer coordinates) -> {
-            assertThat(coordinates.toString(), equalTo("-mushroom-meat-veg-"));
+        Given("kebab made from {ingredients}, defined by lambda", (StringBuilder ingredients) ->
+            assertThat(ingredients.toString(), equalTo("-mushroom-meat-veg-")));
+
+        ParameterType("ingredients", "(.+), (.+) and (.+)", (String x, String y, String z) ->
+            new StringBuilder().append('-').append(x).append('-').append(y).append('-').append(z).append('-'));
+
+        Given("kebab made from anonymous {}, defined by lambda", (StringBuilder coordinates) ->
+            assertThat(coordinates.toString(), equalTo("meat-class java.lang.StringBuilder")));
+
+        DefaultParameterTransformer((String fromValue, Type toValueType) ->
+            new StringBuilder().append(fromValue).append('-').append(toValueType));
+
+        Given("default data table cells, defined by lambda", (DataTable dataTable) -> {
+            List<List<StringBuilder>> cells = dataTable.asLists(StringBuilder.class);
+            assertThat(cells.get(0).get(0).toString(), equalTo("Kebab-class java.lang.StringBuilder"));
         });
 
-        ParameterType("ingredients", "(.+), (.+) and (.+)", (String x, String y, String z) -> new StringBuffer().append('-')
-                .append(x).append('-').append(y).append('-').append(z).append('-'));
+        DefaultDataTableCellTransformer((fromValue, toValueType) ->
+            new StringBuilder().append(fromValue).append('-').append(toValueType));
+
+        Given("default data table entries, defined by lambda", (DataTable dataTable) -> {
+            List<StringBuilder> cells = dataTable.asList(StringBuilder.class);
+            assertThat(cells.get(0).toString(), equalTo("{dinner=Kebab}-class java.lang.StringBuilder"));
+        });
+
+        DefaultDataTableEntryTransformer((fromValue, toValueType) ->
+            new StringBuilder().append(fromValue).append('-').append(toValueType));
 
     }
 

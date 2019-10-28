@@ -1,13 +1,15 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.backend.DataTableTypeDefinition;
-import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
+import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
+import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -68,17 +70,32 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
-        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
+        public void addDocStringType(DocStringTypeDefinition docStringType) {
 
         }
 
         @Override
-        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
+        public void addDataTableType(DataTableTypeDefinition dataTableType) {
 
         }
 
         @Override
-        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
+        public void addParameterType(ParameterTypeDefinition parameterType) {
+
+        }
+
+        @Override
+        public void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer) {
+
+        }
+
+        @Override
+        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+
+        }
+
+        @Override
+        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
 
         }
 

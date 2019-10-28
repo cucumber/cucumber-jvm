@@ -5,6 +5,7 @@ import io.cucumber.java8.En;
 import io.cucumber.java8.Scenario;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,7 +23,6 @@ public class RpnCalculatorSteps implements En {
             calc.push("+");
         });
 
-
         Given("^I press (.+)$", (String what) -> calc.push(what));
 
         Then("the result is {double}", (Double expected) -> assertEquals(expected, calc.value()));
@@ -35,7 +35,6 @@ public class RpnCalculatorSteps implements En {
             // result.write("HELLLLOO");
         });
 
-
         Given("the previous entries:", (DataTable dataTable) -> {
             List<Entry> entries = dataTable.asList(Entry.class);
             for (Entry entry : entries) {
@@ -44,6 +43,12 @@ public class RpnCalculatorSteps implements En {
                 calc.push(entry.operation);
             }
         });
+
+        DataTableType((Map<String, String> row) -> new RpnCalculatorSteps.Entry(
+            Integer.valueOf(row.get("first")),
+            Integer.valueOf(row.get("second")),
+            row.get("operation")
+        ));
 
     }
 

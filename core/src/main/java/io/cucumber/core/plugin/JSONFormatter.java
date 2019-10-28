@@ -124,7 +124,7 @@ public final class JSONFormatter implements EventListener {
     }
 
     private void handleEmbed(EmbedEvent event) {
-        addEmbeddingToHookMap(event.getData(), event.getMimeType(), event.getName());
+        addEmbeddingToHookMap(event.getData(), event.getMediaType(), event.getName());
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -291,17 +291,17 @@ public final class JSONFormatter implements EventListener {
         ((List<String>) currentStepOrHookMap.get("output")).add(text);
     }
 
-    private void addEmbeddingToHookMap(byte[] data, String mimeType, String name) {
+    private void addEmbeddingToHookMap(byte[] data, String mediaType, String name) {
         if (!currentStepOrHookMap.containsKey("embeddings")) {
             currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
         }
-        Map<String, Object> embedMap = createEmbeddingMap(data, mimeType, name);
+        Map<String, Object> embedMap = createEmbeddingMap(data, mediaType, name);
         ((List<Map<String, Object>>) currentStepOrHookMap.get("embeddings")).add(embedMap);
     }
 
-    private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType, String name) {
+    private Map<String, Object> createEmbeddingMap(byte[] data, String mediaType, String name) {
         Map<String, Object> embedMap = new HashMap<>();
-        embedMap.put("mime_type", mimeType);
+        embedMap.put("mime_type", mediaType); // Should be media-type but not worth migrating for
         embedMap.put("data", Base64.getEncoder().encodeToString(data));
         if (name != null) {
             embedMap.put("name", name);
