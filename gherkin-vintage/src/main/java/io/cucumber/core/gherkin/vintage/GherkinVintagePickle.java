@@ -13,6 +13,7 @@ import io.cucumber.core.gherkin.StepType;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
@@ -28,6 +29,7 @@ final class GherkinVintagePickle implements Pickle {
     private final List<Step> steps;
     private final URI uri;
     private final String keyWord;
+    private final String id;
 
     GherkinVintagePickle(gherkin.pickles.Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
         this.pickle = pickle;
@@ -38,6 +40,11 @@ final class GherkinVintagePickle implements Pickle {
             .map(ScenarioDefinition::getKeyword)
             .findFirst()
             .orElse("Scenario");
+        this.id = pickle.getName() + ":" + pickle.getLocations()
+            .stream()
+            .map(l -> String.valueOf(l.getLine()))
+            .collect(Collectors.joining(":"));
+
     }
 
     private static List<Step> createCucumberSteps(gherkin.pickles.Pickle pickle, GherkinDocument document, GherkinDialect dialect, String uri) {
@@ -104,11 +111,19 @@ final class GherkinVintagePickle implements Pickle {
 
     @Override
     public String getId() {
-        return pickle.getName() + ":" + pickle.getLocations()
-            .stream()
-            .map(l -> String.valueOf(l.getLine()))
-            .collect(Collectors.joining(":"));
+        return id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GherkinVintagePickle that = (GherkinVintagePickle) o;
+        return id.equals(that.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

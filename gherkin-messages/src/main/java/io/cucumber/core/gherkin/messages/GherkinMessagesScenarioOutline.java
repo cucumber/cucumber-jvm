@@ -5,21 +5,26 @@ import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.ScenarioOutline;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
 
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 final class GherkinMessagesScenarioOutline implements ScenarioOutline {
 
     private final Scenario scenario;
+    private final List<Examples> children;
 
     GherkinMessagesScenarioOutline(Scenario scenario) {
         this.scenario = scenario;
+        this.children = scenario.getExamplesList().stream()
+            .map(GherkinMessagesExamples::new)
+            .collect(Collectors.toList());
     }
 
 
     @Override
-    public Stream<Examples> children() {
-        return scenario.getExamplesList().stream()
-            .map(GherkinMessagesExamples::new);
+    public Collection<Examples> children() {
+        return children;
     }
 
     @Override
