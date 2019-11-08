@@ -189,7 +189,8 @@ class URLOutputStreamTest {
                 try {
                     // Every thread should wait command to run
                     countDownLatch.await();
-                    new URLOutputStream(tmp.toURI().toURL());
+                    try (URLOutputStream urlOutputStream = new URLOutputStream(tmp.toURI().toURL())) {
+                    }
                 } catch (IOException e) {
                     threadErrors.add("Thread" + curThreadNo + ": parent dir not created. " + e.getMessage());
                 } catch (InterruptedException e) {
