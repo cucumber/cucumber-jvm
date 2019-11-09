@@ -188,7 +188,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Java] Fix link to new steps in generated Java doc ([#1681](https://github.com/cucumber/cucumber-jvm/pull/1681) M.P. Korstanje)
 
-## [4.5.0](https://github.com/cucumber/cucumber-jvm/compare/v4.4.1...v4.5.0) (2019-06-30)
+## [4.5.0](https://github.com/cucumber/cucumber-jvm/compare/v4.4.0...v4.5.0) (2019-06-30)
 
 ### Changed
  * [JUnit] JUnit will no longer run in verbose mode by default ([#1670](https://github.com/cucumber/cucumber-jvm/pull/1670) M.P. Korstanje)
@@ -223,10 +223,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
     - Will allow the dependency on `spring-txn` to be removed.
 
 ### Note
-Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and above that supports the new package structure. To use the latest snapshot version, refer [Follow the latest snapshot](https://github.com/cucumber/cucumber-eclipse#follow-the-latest-snapshot)
+Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and
+above that supports the new package structure. To use the latest snapshot
+version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucumber-eclipse#follow-the-latest-snapshot)
  
 
-## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.0.0) (2019-06-15)
+## [4.4.0](https://github.com/cucumber/cucumber-jvm/compare/v4.3.1...v4.4.0) (2019-06-15)
 
 ### Added
  * [Core] Add StepDefinedEvent ([#1634](https://github.com/cucumber/cucumber-jvm/pull/1634) Tim te Beek, M.P. Korstanje) 
@@ -630,7 +632,7 @@ Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and a
   * After upgrading to 1.2.6 Maven will let users know that the `groupId` has
     changed from `info.cukes` to `io.cucumber`.
   
-## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12)
+## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12) - [Release Announcement](https://cucumber.io/blog/cucumber-jvm-1-2-5/)
 
 * [Java8] Fix closing over local variables ([#916](https://github.com/cucumber/cucumber-jvm/issues/916), [#924](https://github.com/cucumber/cucumber-jvm/pull/924), [#929](https://github.com/cucumber/cucumber-jvm/pull/929) Alexander Torstling, Aslak Hellesøy)
 * [Java8] Fix IllegalArgumentException on JDK 1.8.0_60 ([#912](https://github.com/cucumber/cucumber-jvm/issues/912), [#914](https://github.com/cucumber/cucumber-jvm/pull/914) Michael Wilkerson)
