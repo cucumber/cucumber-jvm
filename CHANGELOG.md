@@ -574,7 +574,6 @@ Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and a
 
 ## [2.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v2.0.0) (2017-08-29) - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-0)
 
-
 * [Java] Reduce Throwable to Exception in JavaSnippet ([#1207](https://github.com/cucumber/cucumber-jvm/issues/1207), [#1208](https://github.com/cucumber/cucumber-jvm/pull/1208) M.P. Korstanje)
 * [Core] Update the cucumber-html dependency to version 0.2.6 (Björn Rasmusson)
 * [Core] Fix PrettyFormatter exception on nested arguments ([#1200](https://github.com/cucumber/cucumber-jvm/pull/1200) Marit van Dijk, M.P. Korstanje) 
@@ -626,6 +625,11 @@ Use the snapshot version of the cucumber-eclipse plugin for cucumber 4.5.0 and a
   * NullPointerException from @Before tag ([#638](https://github.com/cucumber/cucumber-jvm/issues/638), [#701](https://github.com/cucumber/cucumber-jvm/issues/701))
 * [All] Change the maven groupId to io.cucumber (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
 
+## [1.2.6](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v1.2.6) (2019-11-09)
+* [All] Maven distribution relocation ([#1336](https://github.com/cucumber/cucumber-jvm/issues/1336) John Patrick, M.P. Korstanje)
+  * After upgrading to 1.2.6 Maven will let users know that the `groupId` has
+    changed from `info.cukes` to `io.cucumber`.
+  
 ## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12)
 
 * [Java8] Fix closing over local variables ([#916](https://github.com/cucumber/cucumber-jvm/issues/916), [#924](https://github.com/cucumber/cucumber-jvm/pull/924), [#929](https://github.com/cucumber/cucumber-jvm/pull/929) Alexander Torstling, Aslak Hellesøy)
