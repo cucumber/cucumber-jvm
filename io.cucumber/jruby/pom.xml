@@ -168,41 +168,41 @@ gherkin.I18n.all.each { i18n ->
                             </target>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>deploy-gem</id>
-                        <phase>deploy</phase>
-                        <configuration>
-                            <target unless="no.gem.deploy">
-                                <!-- install the jruby-openssl gem first! -->
-                                <echo message="installing jruby-openssl..." />
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
-                                    <env key="PATH" value="" />
-                                    <arg value="-S" />
-                                    <arg value="gem" />
-                                    <arg value="install" />
-                                    <arg value="jruby-openssl" />
-                                    <arg value="--no-rdoc" />
-                                    <arg value="--no-ri" />
-                                    <arg value="-i" />
-                                    <arg value="${basedir}/target/gems" />
-                                </java>
+<!--                    <execution>-->
+<!--                        <id>deploy-gem</id>-->
+<!--                        <phase>deploy</phase>-->
+<!--                        <configuration>-->
+<!--                            <target unless="no.gem.deploy">-->
+<!--                                &lt;!&ndash; install the jruby-openssl gem first! &ndash;&gt;-->
+<!--                                <echo message="installing jruby-openssl..." />-->
+<!--                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">-->
+<!--                                    <env key="PATH" value="" />-->
+<!--                                    <arg value="-S" />-->
+<!--                                    <arg value="gem" />-->
+<!--                                    <arg value="install" />-->
+<!--                                    <arg value="jruby-openssl" />-->
+<!--                                    <arg value="&#45;&#45;no-rdoc" />-->
+<!--                                    <arg value="&#45;&#45;no-ri" />-->
+<!--                                    <arg value="-i" />-->
+<!--                                    <arg value="${basedir}/target/gems" />-->
+<!--                                </java>-->
 
-                                <!-- publish the gem to rubygems.org -->
-                                <echo message="Publishing Gem" />
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
-                                    <env key="PATH" value="" />
-                                    <env key="GEM_PATH" value="${basedir}/target/gems" />
-                                    <arg value="-S" />
-                                    <arg value="gem" />
-                                    <arg value="push" />
-                                    <arg value="cucumber-jvm-${project.parent.version}-java.gem" />
-                                </java>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
+<!--                                &lt;!&ndash; publish the gem to rubygems.org &ndash;&gt;-->
+<!--                                <echo message="Publishing Gem" />-->
+<!--                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">-->
+<!--                                    <env key="PATH" value="" />-->
+<!--                                    <env key="GEM_PATH" value="${basedir}/target/gems" />-->
+<!--                                    <arg value="-S" />-->
+<!--                                    <arg value="gem" />-->
+<!--                                    <arg value="push" />-->
+<!--                                    <arg value="cucumber-jvm-${project.parent.version}-java.gem" />-->
+<!--                                </java>-->
+<!--                            </target>-->
+<!--                        </configuration>-->
+<!--                        <goals>-->
+<!--                            <goal>run</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
 
