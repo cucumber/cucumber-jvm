@@ -8,9 +8,9 @@
     <url>http://cukes.info/</url>
 
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-parent</artifactId>
+        <version>2.0.2</version>
     </parent>
 
     <distributionManagement>
