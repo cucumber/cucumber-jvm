@@ -20,7 +20,7 @@ import static io.cucumber.core.resource.Resources.createUriResource;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-public final class ResourceScanner implements UriResourceScanner {
+public final class ResourceScanner {
 
     private static final Predicate<String> NULL_FILTER = x -> true;
     private final PathScanner pathScanner = new PathScanner();
@@ -64,7 +64,6 @@ public final class ResourceScanner implements UriResourceScanner {
         return findResourcesForUris(urisForResource, ClasspathSupport.DEFAULT_PACKAGE_NAME, packageFilter, createThenLoad);
     }
 
-    @Override
     public <R> List<R> scanForResourcesPath(Path resourcePath, Function<Resource, Optional<R>> loadResource) {
         requireNonNull(resourcePath, "resourcePath must not be null");
         List<R> resources = new ArrayList<>();
