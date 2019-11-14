@@ -1,24 +1,22 @@
 package io.cucumber.core.feature;
 
 import io.cucumber.core.resource.ClassLoaders;
-import io.cucumber.core.resource.Classpath;
 import io.cucumber.core.resource.ResourceScanner;
+import io.cucumber.core.resource.UriResourceScanner;
 
 import java.net.URI;
 import java.util.List;
 
+import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
+import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.util.Optional.of;
 
 public final class FeatureLoader {
 
-    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
-        ClassLoaders::getDefaultClassLoader,
-        FeatureIdentifier::isFeature,
-        (resource) -> of(FeatureParser.parseResource(resource))
-    );
+    private final UriResourceScanner uriResourceScanner;
 
-    public FeatureLoader() {
-
+    public FeatureLoader(UriResourceScanner uriResourceScanner) {
+        this.uriResourceScanner = uriResourceScanner;
     }
 
     public List<CucumberFeature> load(List<URI> featurePaths) {
@@ -31,13 +29,8 @@ public final class FeatureLoader {
 
     private void loadFromFeaturePath(FeatureBuilder builder, URI featurePath) {
         List<CucumberFeature> cucumberFeatures;
-        if (Classpath.CLASSPATH_SCHEME.equals(featurePath.getScheme())) {
-            String resourcePath = Classpath.resourceName(featurePath);
-            cucumberFeatures = featureScanner.scanForClasspathResource(resourcePath, s -> true);
-        } else {
-            cucumberFeatures = featureScanner.scanForResourcesUri(featurePath);
-        }
-        if (FeatureIdentifier.isFeature(featurePath) && !cucumberFeatures.isEmpty()) {
+        cucumberFeatures = featureScanner.scanForResourcesUri(featurePath, (resource) -> of(parseResource(resource)));
+        if (isFeature(featurePath) && !cucumberFeatures.isEmpty()) {
             throw new IllegalArgumentException("Feature not found: " + featurePath);
         }
 

@@ -5,6 +5,7 @@ import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.logging.Logger;
@@ -14,6 +15,7 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClasspathScanner;
+import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
@@ -44,6 +46,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
 import static java.util.Comparator.comparing;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
@@ -63,7 +67,6 @@ public final class Runtime {
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
-
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
@@ -151,6 +154,7 @@ public final class Runtime {
             this.classLoader = classLoader;
             return this;
         }
+
         public Builder withBackendSupplier(final BackendSupplier backendSupplier) {
             this.backendSupplier = backendSupplier;
             return this;
@@ -198,7 +202,7 @@ public final class Runtime {
                 () -> classLoader,
                 (s, classLoader1) -> {
                     try {
-                        return java.util.Optional.ofNullable(classLoader1.loadClass(s));
+                        return of(classLoader1.loadClass(s));
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -217,7 +221,8 @@ public final class Runtime {
                 : new SameThreadExecutorService();
 
 
-            final FeatureLoader featureLoader = new FeatureLoader();
+
+            final FeatureLoader featureLoader = new FeatureLoader(featureScanner);
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier

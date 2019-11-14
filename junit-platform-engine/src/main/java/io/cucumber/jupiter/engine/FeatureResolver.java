@@ -1,10 +1,10 @@
 package io.cucumber.jupiter.engine;
 
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.resource.ClassFilter;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.Classpath;
+import io.cucumber.core.resource.Resource;
 import io.cucumber.core.resource.ResourceScanner;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -23,8 +23,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.lang.String.format;
 import static java.util.Optional.of;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
@@ -33,14 +35,14 @@ final class FeatureResolver {
     private static final String FEATURE_FILE_SUFFIX = ".feature";
 
     private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
-    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
+    private final ResourceScanner featureScanner = new ResourceScanner(
         ClassLoaders::getDefaultClassLoader,
-        FeatureResolver::isFeature,
-        (resource) -> of(FeatureParser.parseResource(resource))
+        FeatureResolver::isFeature
     );
 
     private final TestDescriptor engineDescriptor;
     private final ClassFilter packageFilter;
+    private Function<Resource, Optional<CucumberFeature>> parseFeature = resource -> of(parseResource(resource));
 
     private FeatureResolver(TestDescriptor engineDescriptor, ClassFilter packageFilter) {
         this.engineDescriptor = engineDescriptor;
@@ -79,7 +81,7 @@ final class FeatureResolver {
 
     private void resolvePath(Path path) {
         featureScanner
-            .scanForResourcesPath(path)
+            .scanForResourcesPath(path, parseFeature)
             .stream()
             .map(this::resolveFeature)
             .forEach(this::merge);
@@ -102,7 +104,7 @@ final class FeatureResolver {
         String packageName = selector.getPackageName();
         try {
             featureScanner
-                .scanForResourcesInPackage(packageName, packageFilter::match)
+                .scanForResourcesInPackage(packageName, packageFilter::match, parseFeature)
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
@@ -116,7 +118,7 @@ final class FeatureResolver {
         String classpathResourceName = selector.getClasspathResourceName();
         try {
             featureScanner
-                .scanForClasspathResource(classpathResourceName, packageFilter::match)
+                .scanForClasspathResource(classpathResourceName, packageFilter::match, parseFeature)
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
@@ -129,7 +131,7 @@ final class FeatureResolver {
     void resolveClasspathRoot(ClasspathRootSelector selector) {
         try {
             featureScanner
-                .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter::match)
+                .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter::match, parseFeature)
                 .stream()
                 .map(this::resolveFeature)
                 .forEach(this::merge);
@@ -156,10 +158,10 @@ final class FeatureResolver {
         if (FeatureOrigin.isClassPath(uri)) {
             String resourcePath = Classpath.resourceName(uri);
             testDescriptorStream = featureScanner
-                .scanForClasspathResource(resourcePath, packageFilter::match);
+                .scanForClasspathResource(resourcePath, packageFilter::match, parseFeature);
         } else {
             testDescriptorStream = featureScanner
-                .scanForResourcesUri(uri);
+                .scanForResourcesUri(uri, parseFeature);
         }
         return testDescriptorStream
             .stream()
