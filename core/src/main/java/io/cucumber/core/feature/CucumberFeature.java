@@ -3,7 +3,6 @@ package io.cucumber.core.feature;
 import gherkin.ast.GherkinDocument;
 
 import java.net.URI;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,10 +52,4 @@ public final class CucumberFeature {
         return Objects.hash(uri);
     }
 
-    public static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
-        @Override
-        public int compare(CucumberFeature a, CucumberFeature b) {
-            return a.getUri().compareTo(b.getUri());
-        }
-    }
 }
