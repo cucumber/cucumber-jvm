@@ -2,8 +2,13 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.snippets.SnippetType;
 
-class SnippetTypeParser {
-    static SnippetType parseSnippetType(String nextArg) {
+public final class SnippetTypeParser {
+
+    private SnippetTypeParser(){
+
+    }
+
+    public static SnippetType parseSnippetType(String nextArg) {
         SnippetType underscore;
         if ("underscore".equals(nextArg)) {
             underscore = SnippetType.UNDERSCORE;

@@ -1,9 +1,26 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.plugin.FormatterBuilder;
+import io.cucumber.core.plugin.FormatterSpy;
+import io.cucumber.core.runner.StepDurationTimeService;
+import io.cucumber.core.runner.TestBackendSupplier;
+import io.cucumber.core.runner.TestHelper;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -12,24 +29,6 @@ import io.cucumber.plugin.event.StepDefinition;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.feature.CucumberStep;
-import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.TestClasspathResourceLoader;
-import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.core.plugin.FormatterBuilder;
-import io.cucumber.core.plugin.FormatterSpy;
-import io.cucumber.plugin.Plugin;
-import io.cucumber.core.backend.ScenarioScoped;
-import io.cucumber.core.runner.StepDurationTimeService;
-import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -40,7 +39,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,13 +51,9 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,18 +76,10 @@ class RuntimeTest {
         StringBuilder out = new StringBuilder();
 
         Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        BackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
 
-            }
-        };
         FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
         Runtime.builder()
-            .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(jsonFormatter)
-            .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
             .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC"))))
             .withFeatureSupplier(featureSupplier)
             .build()
@@ -250,8 +236,11 @@ class RuntimeTest {
 
     @Test
     void should_pass_if_no_features_are_found() {
-        ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
-        Runtime runtime = createStrictRuntime(resourceLoader);
+        Runtime runtime = Runtime.builder()
+            .withRuntimeOptions(new RuntimeOptionsBuilder()
+                .setStrict(true)
+                .build())
+            .build();
 
         runtime.run();
 
@@ -461,7 +450,7 @@ class RuntimeTest {
             "    Given first step\n");
 
         ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
-            throw new RuntimeException("boom");
+            throw new RuntimeException("This exception is expected");
         });
 
         Executable testMethod = () -> TestHelper.builder()
@@ -472,8 +461,11 @@ class RuntimeTest {
             .build()
             .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "There were 3 exceptions:\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)"
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "There were 3 exceptions:\n" +
+                "  java.lang.RuntimeException(This exception is expected)\n" +
+                "  java.lang.RuntimeException(This exception is expected)\n" +
+                "  java.lang.RuntimeException(This exception is expected)"
         )));
     }
 
@@ -562,7 +554,6 @@ class RuntimeTest {
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(eventListener)
-            .withResourceLoader(TestClasspathResourceLoader.create(classLoader))
             .withEventBus(new TimeServiceEventBus(new StepDurationTimeService(ZERO)))
             .withFeatureSupplier(featureSupplier)
             .build()
@@ -590,47 +581,19 @@ class RuntimeTest {
         return formatterSpy.toString();
     }
 
-    private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        when(resourceLoader.resources(any(URI.class), eq(".feature"))).thenReturn(Collections.emptyList());
-        return resourceLoader;
-    }
-
     private Runtime createStrictRuntime() {
-        return createRuntime("-g", "anything", "--strict");
+        return Runtime.builder()
+            .withRuntimeOptions(
+                new RuntimeOptionsBuilder()
+                    .setStrict(true)
+                    .build()
+            )
+            .withEventBus(bus)
+            .build();
     }
 
     private Runtime createNonStrictRuntime() {
-        return createRuntime("-g", "anything");
-    }
-
-    private Runtime createStrictRuntime(ResourceLoader resourceLoader) {
-        return createRuntime(resourceLoader, Thread.currentThread().getContextClassLoader(), "-g", "anything", "--strict");
-    }
-
-    private Runtime createRuntime(String... runtimeArgs) {
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return createRuntime(resourceLoader, classLoader, runtimeArgs);
-    }
-
-    private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        BackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-
-            }
-        };
-
         return Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(runtimeArgs)
-                    .build()
-            )
-            .withClassLoader(classLoader)
-            .withResourceLoader(resourceLoader)
-            .withBackendSupplier(backendSupplier)
             .withEventBus(bus)
             .build();
     }

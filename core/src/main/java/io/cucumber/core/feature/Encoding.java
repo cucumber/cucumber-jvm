@@ -1,16 +1,18 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Utilities for reading the encoding of a file.
@@ -35,8 +37,10 @@ final class Encoding {
     }
 
     private static String read(Resource resource, String encoding) throws IOException {
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), encoding))){
-            return br.lines().collect(Collectors.joining(System.lineSeparator()));
+        try (InputStream is = resource.getInputStream()) {
+            InputStreamReader in = new InputStreamReader(is, encoding);
+            BufferedReader reader = new BufferedReader(in);
+            return reader.lines().collect(joining(lineSeparator()));
         }
     }
 

@@ -31,6 +31,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
 
+import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.joining;
 
@@ -106,7 +107,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
 
     private void handleWrite(WriteEvent event) {
         out.println();
-        try(BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
+        try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
             String line;
             while ((line = lines.readLine()) != null) {
                 out.println(STEP_SCENARIO_INDENT + line);
@@ -135,13 +136,13 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private void handleScenarioOutline(TestCaseStarted event) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.getTestCase().getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
+            ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
                 currentScenarioOutline = scenarioOutline;
                 printScenarioOutline(currentScenarioOutline);
             }
             if (currentExamples == null || !currentExamples.equals(astNode.parent.node)) {
-                currentExamples = (Examples)astNode.parent.node;
+                currentExamples = (Examples) astNode.parent.node;
                 printExamples(currentExamples);
             }
         } else {
@@ -210,7 +211,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private String getLocationText(URI file, int line) {
-        String path = file.getSchemeSpecificPart();
+        String path = relativize(file).getSchemeSpecificPart();
         return getLocationText(path + ":" + line);
     }
 
@@ -255,6 +256,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private void printTags(List<Tag> tags) {
         printTags(tags, "");
     }
+
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
             out.println(indent + tags.stream().map(Tag::getName).collect(joining(" ")));
@@ -338,4 +340,5 @@ public final class PrettyFormatter implements EventListener, ColorAware {
         error.printStackTrace(printWriter);
         return stringWriter.toString();
     }
+
 }

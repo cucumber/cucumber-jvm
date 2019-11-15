@@ -42,9 +42,9 @@ public final class Runner {
         this.objectFactory = objectFactory;
         this.typeRegistryConfigurer = typeRegistryConfigurer;
         List<URI> gluePaths = runnerOptions.getGlue();
-        log.debug("Loading glue from " + gluePaths);
+        log.debug(() -> "Loading glue from " + gluePaths);
         for (Backend backend : backends) {
-            log.debug("Loading glue for backend " + backend.getClass().getName());
+            log.debug(() -> "Loading glue for backend " + backend.getClass().getName());
             backend.loadGlue(this.glue, gluePaths);
         }
     }
