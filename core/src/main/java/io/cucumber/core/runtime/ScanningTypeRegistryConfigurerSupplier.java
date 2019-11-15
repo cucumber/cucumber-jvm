@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static java.util.stream.Collectors.toSet;
@@ -22,9 +23,9 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
     private final Reflections reflections;
     private final Options options;
 
-    public ScanningTypeRegistryConfigurerSupplier(ClassLoader classLoader, Options options) {
+    public ScanningTypeRegistryConfigurerSupplier(Supplier<ClassLoader> classLoader, Options options) {
         this.options = options;
-        this.reflections = new Reflections(new ClasspathScanner(() -> classLoader));
+        this.reflections = new Reflections(new ClasspathScanner(classLoader));
     }
 
     @Override
@@ -89,7 +90,7 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
                 .collect(toSet());
         }
 
-        private static  <T> T newInstance(Class<? extends T> clazz) {
+        private static <T> T newInstance(Class<? extends T> clazz) {
             Constructor<? extends T> constructor;
             try {
                 constructor = clazz.getConstructor();

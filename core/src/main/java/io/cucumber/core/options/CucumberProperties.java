@@ -5,7 +5,11 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 import static io.cucumber.core.options.Constants.CUCUMBER_PROPERTIES_FILE_NAME;
 

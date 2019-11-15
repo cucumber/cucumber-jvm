@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -16,7 +16,6 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 class RerunFormatterTest {
 

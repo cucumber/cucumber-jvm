@@ -22,7 +22,7 @@ class TestFeatureParser {
     private static CucumberFeature parse(final URI uri, final String source) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public URI getPath() {
+            public URI getUri() {
                 return uri;
             }
 

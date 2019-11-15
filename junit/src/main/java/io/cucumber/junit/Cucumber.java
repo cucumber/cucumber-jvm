@@ -38,6 +38,7 @@ import org.junit.runners.model.Statement;
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toList;
 
@@ -131,8 +132,8 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .build(junitEnvironmentOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
-        ClassLoader classLoader = clazz.getClassLoader();
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(runtimeOptions);
+        Supplier<ClassLoader> classLoader = clazz::getClassLoader;
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.

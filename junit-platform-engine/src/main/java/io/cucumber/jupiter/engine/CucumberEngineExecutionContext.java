@@ -1,13 +1,5 @@
 package io.cucumber.jupiter.engine;
 
-import io.cucumber.core.resource.ClassLoaders;
-import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
@@ -23,6 +15,13 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.plugin.event.EventHandler;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceRead;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.commons.util.ExceptionUtils;
@@ -31,6 +30,7 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import org.opentest4j.TestAbortedException;
 
 import java.time.Clock;
+import java.util.function.Supplier;
 
 import static io.cucumber.plugin.event.Status.PASSED;
 
@@ -43,17 +43,18 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
-        ClassLoader classLoader = ClassLoaders.getDefaultClassLoader();
+        Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         logger.debug(() -> "Parsing options");
         this.options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(() -> classLoader, objectFactorySupplier);
+        BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         new Plugins(new PluginFactory(), options);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
+
     void startTestRun() {
         logger.debug(() -> "Sending run test started event");
         bus.send(new TestRunStarted(bus.getInstant()));

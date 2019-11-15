@@ -37,6 +37,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
@@ -130,7 +131,7 @@ public final class Runtime {
     public static class Builder {
 
         private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
-        private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        private Supplier<ClassLoader> classLoader = Builder.class::getClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
         private FeatureSupplier featureSupplier;
@@ -144,7 +145,7 @@ public final class Runtime {
             return this;
         }
 
-        public Builder withClassLoader(final ClassLoader classLoader) {
+        public Builder withClassLoader(final Supplier<ClassLoader> classLoader) {
             this.classLoader = classLoader;
             return this;
         }
@@ -178,7 +179,7 @@ public final class Runtime {
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendServiceLoader(() -> this.classLoader, objectFactorySupplier);
+                : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
@@ -204,7 +205,7 @@ public final class Runtime {
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(runtimeOptions);
+                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
             final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();

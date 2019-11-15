@@ -1,10 +1,8 @@
 package io.cucumber.core.resource;
 
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
-
 import javax.lang.model.SourceVersion;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,22 +11,20 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Stream.of;
 
 public final class ClasspathSupport {
     public static final String CLASSPATH_SCHEME = "classpath";
     public static final String CLASSPATH_SCHEME_PREFIX = CLASSPATH_SCHEME + ":";
     static final String DEFAULT_PACKAGE_NAME = "";
-    private static final Logger logger = LoggerFactory.getLogger(ClasspathSupport.class);
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final char CLASSPATH_RESOURCE_PATH_SEPARATOR = '/';
-    private static final String CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING = String.valueOf(CLASSPATH_RESOURCE_PATH_SEPARATOR);
+    public static final String CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING = String.valueOf(CLASSPATH_RESOURCE_PATH_SEPARATOR);
     private static final char PACKAGE_SEPARATOR_CHAR = '.';
-    private static final String PACKAGE_SEPARATOR_STRING = String.valueOf(PACKAGE_SEPARATOR_CHAR);
+    public static final String PACKAGE_SEPARATOR_STRING = String.valueOf(PACKAGE_SEPARATOR_CHAR);
     private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
 
     private ClasspathSupport() {
@@ -56,9 +52,8 @@ public final class ClasspathSupport {
                 uris.add(resource.toURI());
             }
             return uris;
-        } catch (Exception ex) {
-            logger.warn(ex, () -> "Error reading URIs from class loader for resource name " + resourceName);
-            return emptyList();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -66,7 +61,7 @@ public final class ClasspathSupport {
         return getUrisForResource(classLoader, packagePath(basePackageName));
     }
 
-    static String packagePath(String packageName) {
+    public static String packagePath(String packageName) {
         return packageName.replace(PACKAGE_SEPARATOR_CHAR, CLASSPATH_RESOURCE_PATH_SEPARATOR);
     }
 
@@ -76,28 +71,24 @@ public final class ClasspathSupport {
         }
 
         String resourcePath = resourceUri.getSchemeSpecificPart();
-        if (resourcePath.startsWith("/")) {
+        if (resourcePath.startsWith(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING)) {
             return resourcePath.substring(1);
         }
         return resourcePath;
     }
 
     static String determinePackageName(Path baseDir, String basePackageName, Path classFile) {
-        return Stream.of(
-            basePackageName,
-            determineSubpackageName(baseDir, classFile)
-        )
-            .filter(value -> !value.isEmpty()) // default package appropriately.
+        String subPackageName = determineSubpackageName(baseDir, classFile);
+        return of(basePackageName, subPackageName)
+            .filter(value -> !value.isEmpty()) // default package
             .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
     static String determineFullyQualifiedResourceName(Path baseDir, String packagePath, Path resource) {
-        return Stream.of(
-            packagePath,
-            determineSubpackageName(baseDir, resource),
-            resource.getFileName().toString()
-        )
-            .filter(value -> !value.isEmpty()) // default package appropriately.
+        String subPackageName = determineSubpackageName(baseDir, resource);
+        String resourceName = resource.getFileName().toString();
+        return of(packagePath, subPackageName, resourceName)
+            .filter(value -> !value.isEmpty()) // default package .
             .collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING));
     }
 
@@ -108,12 +99,10 @@ public final class ClasspathSupport {
     }
 
     static String determineFullyQualifiedClassName(Path baseDir, String basePackageName, Path classFile) {
-        return Stream.of(
-            basePackageName,
-            determineSubpackageName(baseDir, classFile),
-            determineSimpleClassName(classFile)
-        )
-            .filter(value -> !value.isEmpty()) // Handle default package appropriately.
+        String subPackageName = determineSubpackageName(baseDir, classFile);
+        String simpleClassName = determineSimpleClassName(classFile);
+        return of(basePackageName, subPackageName, simpleClassName)
+            .filter(value -> !value.isEmpty()) // default package
             .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
@@ -136,5 +125,11 @@ public final class ClasspathSupport {
         return resourcePath.replace(CLASSPATH_RESOURCE_PATH_SEPARATOR, PACKAGE_SEPARATOR_CHAR);
     }
 
-
+    public static URI rootPackage() {
+        try {
+            return new URI(CLASSPATH_SCHEME, CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

@@ -30,8 +30,8 @@ import org.apiguardian.api.API;
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -82,8 +82,8 @@ public final class TestNGCucumberRunner {
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-        ClassLoader classLoader = clazz.getClassLoader();
-        featureSupplier = new FeaturePathFeatureSupplier(runtimeOptions);
+        Supplier<ClassLoader> classLoader = clazz::getClassLoader;
+        featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);

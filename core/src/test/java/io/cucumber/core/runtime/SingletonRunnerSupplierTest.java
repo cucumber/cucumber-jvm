@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
+import java.util.function.Supplier;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -18,7 +19,7 @@ class SingletonRunnerSupplierTest {
 
     @BeforeEach
     void before() {
-        ClassLoader classLoader = getClass().getClassLoader();
+        Supplier<ClassLoader> classLoader = SingletonRunnerSupplier.class::getClassLoader;
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);

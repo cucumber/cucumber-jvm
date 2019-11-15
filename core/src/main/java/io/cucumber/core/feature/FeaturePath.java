@@ -2,11 +2,10 @@ package io.cucumber.core.feature;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
-import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.rootPackage;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -33,13 +32,13 @@ public class FeaturePath {
 
     public static URI parse(String featureIdentifier) {
         requireNonNull(featureIdentifier, "featureIdentifier may not be null");
-        if(featureIdentifier.isEmpty()){
+        if (featureIdentifier.isEmpty()) {
             throw new IllegalArgumentException("featureIdentifier may not be empty");
         }
 
         // Legacy from the Cucumber Eclipse plugin
         // Older versions of Cucumber allowed it.
-        if(CLASSPATH_SCHEME_PREFIX.equals(featureIdentifier)){
+        if (CLASSPATH_SCHEME_PREFIX.equals(featureIdentifier)) {
             return rootPackage();
         }
 
@@ -47,7 +46,7 @@ public class FeaturePath {
             String standardized = replaceNonStandardPathSeparator(featureIdentifier);
             return parseAssumeFileScheme(standardized);
         }
-        
+
         if (isWindowsOS() && pathContainsWindowsDrivePattern(featureIdentifier)) {
             return parseAssumeFileScheme(featureIdentifier);
         }
@@ -59,31 +58,23 @@ public class FeaturePath {
         return parseAssumeFileScheme(featureIdentifier);
     }
 
-    private static URI rootPackage() {
-        try {
-            return new URI(CLASSPATH_SCHEME, "/" ,null);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
     private static URI parseProbableURI(String featureIdentifier) {
         URI uri = URI.create(featureIdentifier);
-        if("file".equals(uri.getScheme())){
+        if ("file".equals(uri.getScheme())) {
             return parseAssumeFileScheme(uri.getSchemeSpecificPart());
         }
         return uri;
     }
-    
-    private static boolean isWindowsOS() { 
+
+    private static boolean isWindowsOS() {
         String osName = System.getProperty("os.name");
         return normalize(osName).contains("windows");
     }
-    
+
     private static boolean pathContainsWindowsDrivePattern(String featureIdentifier) {
         return featureIdentifier.matches("^[a-zA-Z]:.*$");
     }
-    
+
     private static boolean probablyURI(String featureIdentifier) {
         return featureIdentifier.matches("^[a-zA-Z+.\\-]+:.*$");
     }
@@ -100,12 +91,12 @@ public class FeaturePath {
         File featureFile = new File(featureIdentifier);
         return featureFile.toURI();
     }
-    
+
     private static String normalize(final String value) {
         if (value == null) {
             return "";
         }
         return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
     }
-    
+
 }

@@ -1,10 +1,9 @@
 package io.cucumber.jupiter.engine;
 
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.resource.ClassFilter;
 import io.cucumber.core.resource.ClassLoaders;
-import io.cucumber.core.resource.ClasspathSupport;
 import io.cucumber.core.resource.ResourceScanner;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -25,17 +24,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.lang.String.format;
+import static java.util.Optional.of;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
 final class FeatureResolver {
-    private static final String FEATURE_FILE_SUFFIX = ".feature";
 
     private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
     private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
-        FeatureResolver::isFeature,
-        FeatureParser::parseResource
+        FeatureIdentifier::isFeature,
+        resource -> of(parseResource(resource))
     );
 
     private final TestDescriptor engineDescriptor;
@@ -61,10 +61,6 @@ final class FeatureResolver {
             existingParent -> descriptor.getChildren()
                 .forEach(child -> recursivelyMerge(child, existingParent))
         );
-    }
-
-    private static boolean isFeature(Path path) {
-        return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
     }
 
     void resolveDirectory(DirectorySelector selector) {

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.BiFunction;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
@@ -44,16 +43,18 @@ class Resources {
         }
 
         ClasspathResource(String classpathResourceName, Path baseDir, Path resource) {
-            if(baseDir.equals(resource)) {
+            if (baseDir.equals(resource)) {
                 this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
             } else {
-                this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + determineFullyQualifiedResourceName(baseDir, classpathResourceName, resource));
+                // classpathResourceName was a package
+                String fqn = determineFullyQualifiedResourceName(baseDir, classpathResourceName, resource);
+                this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + fqn);
             }
             this.resource = resource;
         }
 
         @Override
-        public URI getPath() {
+        public URI getUri() {
             return uri;
         }
 
@@ -71,7 +72,7 @@ class Resources {
         }
 
         @Override
-        public URI getPath() {
+        public URI getUri() {
             return resource.toUri();
         }
 
@@ -87,12 +88,13 @@ class Resources {
 
         PackageResource(Path baseDir, String packageName, Path resource) {
             String packagePath = ClasspathSupport.packagePath(packageName);
-            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + determineFullyQualifiedResourceName(baseDir, packagePath, resource));
+            String fqn = determineFullyQualifiedResourceName(baseDir, packagePath, resource);
+            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + fqn);
             this.resource = resource;
         }
 
         @Override
-        public URI getPath() {
+        public URI getUri() {
             return uri;
         }
 

@@ -83,7 +83,7 @@ class FeatureBuilderTest {
     private CucumberFeature createResourceMock(URI featurePath) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public URI getPath() {
+            public URI getUri() {
                 return featurePath;
             }
 

@@ -1,9 +1,16 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.resource.ClasspathSupport;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.PACKAGE_SEPARATOR_STRING;
+import static io.cucumber.core.resource.ClasspathSupport.rootPackage;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.Character.isJavaIdentifierStart;
 import static java.util.Objects.requireNonNull;
@@ -21,8 +28,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class GluePath {
 
-    private static final String CLASSPATH_SCHEME = "classpath";
-    private static final String CLASSPATH_SCHEME_PREFIX = CLASSPATH_SCHEME + ":";
 
     private GluePath() {
 
@@ -53,20 +58,12 @@ public class GluePath {
         return parseAssumeClasspathScheme(gluePath);
     }
 
-    private static URI rootPackage() {
-        try {
-            return new URI(CLASSPATH_SCHEME, "/", null);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
     private static boolean isProbablyPackage(String gluePath) {
-        return gluePath.contains(".") && !gluePath.contains("/");
+        return gluePath.contains(PACKAGE_SEPARATOR_STRING) && !gluePath.contains(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING);
     }
 
     private static String replacePackageSeparator(String gluePath) {
-        return gluePath.replace('.', '/');
+        return ClasspathSupport.packagePath(gluePath);
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {

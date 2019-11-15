@@ -27,7 +27,7 @@ class TestPickleBuilder {
     private static CucumberFeature parseFeature(final URI path, final String source) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public URI getPath() {
+            public URI getUri() {
                 return path;
             }
 

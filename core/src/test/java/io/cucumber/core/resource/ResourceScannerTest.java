@@ -1,0 +1,147 @@
+package io.cucumber.core.resource;
+
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.net.URI;
+import java.util.List;
+
+import static java.util.Optional.of;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+
+class ResourceScannerTest {
+
+    private final ResourceScanner<URI> resourceScanner = new ResourceScanner<>(
+        ResourceScannerTest.class::getClassLoader,
+        path -> path.getFileName().toString().endsWith("resource.txt"),
+        resource -> of(resource.getUri())
+    );
+
+    @Test
+    void scanForResourcesInClasspathRoot() {
+        URI classpathRoot = new File("src/test/resources/io/cucumber/core/resource/test").toURI();
+        List<URI> resources = resourceScanner.scanForResourcesInClasspathRoot(classpathRoot, aPackage -> true);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:resource.txt"),
+            URI.create("classpath:other-resource.txt")
+        ));
+    }
+
+    @Test
+    void scanForResourcesInClasspathRootJar() {
+        URI classpathRoot = new File("src/test/resources/io/cucumber/core/resource/test/jar-resource.jar").toURI();
+        List<URI> resources = resourceScanner.scanForResourcesInClasspathRoot(classpathRoot, aPackage -> true);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:jar-resource.txt"),
+            URI.create("classpath:com/example/package-jar-resource.txt")
+        ));
+    }
+
+    @Test
+    void scanForResourcesInClasspathRootWithPackage() {
+        URI classpathRoot = new File("src/test/resources").toURI();
+        List<URI> resources = resourceScanner.scanForResourcesInClasspathRoot(classpathRoot, aPackage -> true);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+        ));
+    }
+
+    @Test
+    void scanForResourcesInPackage() {
+        String basePackageName = "io.cucumber.core.resource.test";
+        List<URI> resources = resourceScanner.scanForResourcesInPackage(basePackageName, aPackage -> true);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+        ));
+    }
+
+    @Test
+    void scanForResourcesInSubPackage() {
+        String basePackageName = "io.cucumber.core.resource";
+        List<URI> resources = resourceScanner.scanForResourcesInPackage(basePackageName, aPackage -> true);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+        ));
+    }
+
+    @Test
+    void scanForClasspathResource() {
+        String resourceName = "io/cucumber/core/resource/test/resource.txt";
+        List<URI> resources = resourceScanner.scanForClasspathResource(resourceName, aPackage -> true);
+        assertThat(resources, contains(URI.create("classpath:io/cucumber/core/resource/test/resource.txt")));
+    }
+
+    @Test
+    void scanForClasspathPackageResource() {
+        String resourceName = "io/cucumber/core/resource";
+        List<URI> resources = resourceScanner.scanForClasspathResource(resourceName, aPackage -> true);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+        ));
+    }
+
+    @Test
+    void scanForResourcesPath() {
+        File file = new File("src/test/resources/io/cucumber/core/resource/test/resource.txt");
+        List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
+        assertThat(resources, contains(file.toURI()));
+    }
+
+    @Test
+    void scanForResourcesDirectory() {
+        File file = new File("src/test/resources/io/cucumber/core/resource");
+        List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
+        assertThat(resources, containsInAnyOrder(
+            new File("src/test/resources/io/cucumber/core/resource/test/resource.txt").toURI(),
+            new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI()
+        ));
+    }
+
+    @Test
+    void scanForResourcesFileUri() {
+        File file = new File("src/test/resources/io/cucumber/core/resource/test/resource.txt");
+        List<URI> resources = resourceScanner.scanForResourcesUri(file.toURI());
+        assertThat(resources, contains(file.toURI()));
+    }
+
+    @Test
+    void scanForResourcesJarUri() {
+        URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/jar-resource.jar").toURI();
+        URI resourceUri = URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "!/com/example/package-jar-resource.txt");
+        List<URI> resources = resourceScanner.scanForResourcesUri(resourceUri);
+        assertThat(resources, contains(resourceUri));
+    }
+
+    @Test
+    void scanForResourcesDirectoryUri() {
+        File file = new File("src/test/resources/io/cucumber/core/resource");
+        List<URI> resources = resourceScanner.scanForResourcesUri(file.toURI());
+        assertThat(resources, containsInAnyOrder(
+            new File("src/test/resources/io/cucumber/core/resource/test/resource.txt").toURI(),
+            new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI()
+        ));
+    }
+
+    @Test
+    void scanForResourcesClasspathUri() {
+        URI uri = URI.create("classpath:io/cucumber/core/resource/test/resource.txt");
+        List<URI> resources = resourceScanner.scanForResourcesUri(uri);
+        assertThat(resources, contains(uri));
+    }
+
+    @Test
+    void scanForResourcesClasspathPackageUri() {
+        URI uri = URI.create("classpath:io/cucumber/core/resource");
+        List<URI> resources = resourceScanner.scanForResourcesUri(uri);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+        ));
+    }
+}

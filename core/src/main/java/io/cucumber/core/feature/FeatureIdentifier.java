@@ -12,6 +12,8 @@ import java.nio.file.Path;
  */
 public class FeatureIdentifier {
 
+    private static final String FEATURE_FILE_SUFFIX = ".feature";
+
     private FeatureIdentifier() {
 
     }
@@ -28,10 +30,10 @@ public class FeatureIdentifier {
     }
 
     public static boolean isFeature(URI featureIdentifier) {
-        return featureIdentifier.getSchemeSpecificPart().endsWith(".feature");
+        return featureIdentifier.getSchemeSpecificPart().endsWith(FEATURE_FILE_SUFFIX);
     }
 
     public static boolean isFeature(Path path) {
-        return path.getFileName().toString().endsWith(".feature");
+        return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
     }
 }

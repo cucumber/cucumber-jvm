@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static io.cucumber.plugin.event.Status.FAILED;
 import static io.cucumber.plugin.event.Status.PASSED;
@@ -168,7 +169,7 @@ public class TestHelper {
 
     public void run() {
 
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final Supplier<ClassLoader> classLoader = TestHelper.class::getClassLoader;
 
         final BackendSupplier backendSupplier = new TestHelperBackendSupplier(
             features,
@@ -374,7 +375,7 @@ public class TestHelper {
                                      final List<HookDefinition> beforeHooks,
                                      final List<HookDefinition> afterHooks,
                                      final List<HookDefinition> beforeStepHooks,
-                                     final List<HookDefinition> afterStepHooks) throws Throwable {
+                                     final List<HookDefinition> afterStepHooks) {
             HookDefinition hook = mock(HookDefinition.class);
             when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {

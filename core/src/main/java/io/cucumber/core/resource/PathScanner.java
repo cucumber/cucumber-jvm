@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -20,6 +19,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyMap;
 
 class PathScanner {
@@ -34,12 +35,12 @@ class PathScanner {
     }
 
     void findResourcesForPath(Path baseDir, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
-        if (!Files.exists(baseDir)) {
+        if (!exists(baseDir)) {
             throw new IllegalArgumentException("baseDir must exist: " + baseDir);
         }
 
         try {
-            Files.walkFileTree(baseDir, new ResourceFileVisitor(filter, consumer.apply(baseDir)));
+            walkFileTree(baseDir, new ResourceFileVisitor(filter, consumer.apply(baseDir)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,15 +67,15 @@ class PathScanner {
         }
 
         @Override
-        public FileVisitResult visitFileFailed(Path file, IOException ex) {
-            logger.warn(ex, () -> "I/O error visiting file: " + file);
+        public FileVisitResult visitFileFailed(Path file, IOException e) {
+            logger.warn(e, () -> "IOException visiting file: " + file);
             return CONTINUE;
         }
 
         @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException ex) {
-            if (ex != null) {
-                logger.warn(ex, () -> "I/O error visiting directory: " + dir);
+        public FileVisitResult postVisitDirectory(Path dir, IOException e) {
+            if (e != null) {
+                logger.warn(e, () -> "IOException visiting directory: " + dir);
             }
             return CONTINUE;
         }
@@ -94,10 +95,9 @@ class PathScanner {
         }
 
         static CloseablePath create(URI uri) throws IOException, URISyntaxException {
-            JarUriFileSystemService jarUriFileSystemService = new JarUriFileSystemService();
 
-            if (jarUriFileSystemService.supports(uri)) {
-                return jarUriFileSystemService.create(uri);
+            if (JarUriFileSystemService.supports(uri)) {
+                return JarUriFileSystemService.create(uri);
             }
 
             return new CloseablePath(Paths.get(uri), NULL_CLOSEABLE);
@@ -128,11 +128,11 @@ class PathScanner {
             return new CloseablePath(path, fileSystem);
         }
 
-        boolean supports(URI uri) {
+        static boolean supports(URI uri) {
             return hasJarUriScheme(uri) || hasFileUriSchemeWithJarExtension(uri);
         }
 
-        CloseablePath create(URI uri) throws URISyntaxException, IOException {
+        static CloseablePath create(URI uri) throws URISyntaxException, IOException {
             if (hasJarUriScheme(uri)) {
                 String[] parts = uri.toString().split(JAR_URI_SEPARATOR);
                 String jarUri = parts[0];
@@ -147,14 +147,13 @@ class PathScanner {
             return null;
         }
 
-        private boolean hasFileUriSchemeWithJarExtension(URI uri) {
+        private static boolean hasFileUriSchemeWithJarExtension(URI uri) {
             return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_EXTENSION);
         }
 
-        private boolean hasJarUriScheme(URI uri) {
+        private static boolean hasJarUriScheme(URI uri) {
             return JAR_URI_SCHEME.equals(uri.getScheme());
         }
     }
-
 
 }

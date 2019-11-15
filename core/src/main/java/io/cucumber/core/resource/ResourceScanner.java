@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -13,6 +14,10 @@ import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.DEFAULT_PACKAGE_NAME;
+import static io.cucumber.core.resource.ClasspathSupport.determinePackageName;
+import static io.cucumber.core.resource.ClasspathSupport.getRootUrisForPackage;
+import static io.cucumber.core.resource.ClasspathSupport.getUrisForResource;
+import static io.cucumber.core.resource.ClasspathSupport.requireValidPackageName;
 import static io.cucumber.core.resource.ClasspathSupport.resourcePath;
 import static io.cucumber.core.resource.Resources.createClasspathResource;
 import static io.cucumber.core.resource.Resources.createClasspathRootResource;
@@ -27,9 +32,12 @@ public final class ResourceScanner<R> {
     private final PathScanner pathScanner = new PathScanner();
     private final Supplier<ClassLoader> classLoaderSupplier;
     private final Predicate<Path> canLoad;
-    private final Function<Resource, R> loadResource;
+    private final Function<Resource, Optional<R>> loadResource;
 
-    public ResourceScanner(Supplier<ClassLoader> classLoaderSupplier, Predicate<Path> canLoad, Function<Resource, R> loadResource) {
+    public ResourceScanner(Supplier<ClassLoader> classLoaderSupplier,
+                           Predicate<Path> canLoad,
+                           Function<Resource, Optional<R>> loadResource
+    ) {
         this.classLoaderSupplier = classLoaderSupplier;
         this.canLoad = canLoad;
         this.loadResource = loadResource;
@@ -43,11 +51,11 @@ public final class ResourceScanner<R> {
     }
 
     public List<R> scanForResourcesInPackage(String basePackageName, Predicate<String> packageFilter) {
-        ClasspathSupport.requireValidPackageName(basePackageName);
+        requireValidPackageName(basePackageName);
         requireNonNull(packageFilter, "packageFilter must not be null");
         basePackageName = basePackageName.trim();
         BiFunction<Path, Path, Resource> createResource = createPackageResource(basePackageName);
-        List<URI> rootUrisForPackage = ClasspathSupport.getRootUrisForPackage(getClassLoader(), basePackageName);
+        List<URI> rootUrisForPackage = getRootUrisForPackage(getClassLoader(), basePackageName);
         return findResourcesForUris(rootUrisForPackage, basePackageName, packageFilter, createResource);
     }
 
@@ -55,7 +63,7 @@ public final class ResourceScanner<R> {
         requireNonNull(resourceName, "resourceName must not be null");
         requireNonNull(packageFilter, "packageFilter must not be null");
         resourceName = resourceName.trim();
-        List<URI> urisForResource = ClasspathSupport.getUrisForResource(getClassLoader(), resourceName);
+        List<URI> urisForResource = getUrisForResource(getClassLoader(), resourceName);
         BiFunction<Path, Path, Resource> createResource = createClasspathResource(resourceName);
         return findResourcesForUris(urisForResource, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
@@ -84,7 +92,10 @@ public final class ResourceScanner<R> {
         return this.classLoaderSupplier.get();
     }
 
-    private List<R> findResourcesForUris(List<URI> baseUris, String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource) {
+    private List<R> findResourcesForUris(List<URI> baseUris,
+                                         String basePackageName,
+                                         Predicate<String> packageFilter,
+                                         BiFunction<Path, Path, Resource> createResource) {
         return baseUris.stream()
             .map(baseUri -> findResourcesForUri(baseUri, basePackageName, packageFilter, createResource))
             .flatMap(Collection::stream)
@@ -92,7 +103,10 @@ public final class ResourceScanner<R> {
             .collect(toList());
     }
 
-    private List<R> findResourcesForUri(URI baseUri, String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource) {
+    private List<R> findResourcesForUri(URI baseUri,
+                                        String basePackageName,
+                                        Predicate<String> packageFilter,
+                                        BiFunction<Path, Path, Resource> createResource) {
         List<R> resources = new ArrayList<>();
         pathScanner.findResourcesForUri(
             baseUri,
@@ -102,16 +116,18 @@ public final class ResourceScanner<R> {
         return resources;
     }
 
-    private Function<Path, Consumer<Path>> processResource(String basePackageName, Predicate<String> packageFilter, BiFunction<Path, Path, Resource> createResource, Consumer<R> consumer) {
+    private Function<Path, Consumer<Path>> processResource(String basePackageName,
+                                                           Predicate<String> packageFilter,
+                                                           BiFunction<Path, Path, Resource> createResource,
+                                                           Consumer<R> consumer) {
         return baseDir -> path -> {
-            String packageName = ClasspathSupport.determinePackageName(baseDir, basePackageName, path);
+            String packageName = determinePackageName(baseDir, basePackageName, path);
             if (packageFilter.test(packageName)) {
                 createResource
                     .andThen(loadResource)
-                    .andThen(resource -> {
-                        consumer.accept(resource);
-                        return resource;
-                    }).apply(baseDir, path);
+                    .apply(baseDir, path)
+                    .ifPresent(consumer);
+                ;
             }
         };
     }

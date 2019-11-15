@@ -1230,8 +1230,6 @@ class JSONFormatterTest {
         when(hook.getTagExpression()).thenReturn("");
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
 
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
         List<String> args = new ArrayList<>();
         args.add("--threads");
         args.add("4");
@@ -1252,7 +1250,6 @@ class JSONFormatterTest {
 
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Runtime.builder()
-            .withClassLoader(classLoader)
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(featurePaths)
@@ -1271,7 +1268,6 @@ class JSONFormatterTest {
     private String runFeaturesWithFormatter(final List<String> featurePaths) {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getTagExpression()).thenReturn("");
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
@@ -1285,7 +1281,6 @@ class JSONFormatterTest {
         Appendable stringBuilder = new StringBuilder();
 
         Runtime.builder()
-            .withClassLoader(classLoader)
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(featurePaths)

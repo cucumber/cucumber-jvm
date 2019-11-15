@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
+import java.util.function.Supplier;
 
 import static java.time.Instant.EPOCH;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,11 +28,11 @@ class ThreadLocalRunnerSupplierTest {
 
     @BeforeEach
     void before() {
-        ClassLoader classLoader = getClass().getClassLoader();
+        Supplier<ClassLoader> classLoader = ThreadLocalRunnerSupplierTest.class::getClassLoader;
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC());
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory, typeRegistryConfigurerSupplier);

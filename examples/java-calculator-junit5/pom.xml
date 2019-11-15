@@ -10,7 +10,7 @@
 
     <artifactId>java-calculator-junit5</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Junit5 Java Calculator</name>
+    <name>Examples: Java Calculator - Junit 5</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.junit5</project.Automatic-Module-Name>
@@ -44,37 +44,37 @@
 
     <build>
         <plugins>
-<!--            TODO: Enable. Calls system.exit-->
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>exec-maven-plugin</artifactId>-->
-<!--                <version>1.6.0</version>-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>org.junit.platform</groupId>-->
-<!--                        <artifactId>junit-platform-console</artifactId>-->
-<!--                        <version>${junit-platform.version}</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>test</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>java</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <mainClass>org.junit.platform.console.ConsoleLauncher</mainClass>-->
-<!--                    <classpathScope>test</classpathScope>-->
-<!--                    <arguments>-->
-<!--                        <argument>&#45;&#45;include-engine</argument>-->
-<!--                        <argument>cucumber</argument>-->
-<!--                        <argument>&#45;&#45;scan-classpath</argument>-->
-<!--                        <argument>${project.build.testOutputDirectory}</argument>-->
-<!--                    </arguments>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            TODO: Enable. Calls system.exit-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.codehaus.mojo</groupId>-->
+            <!--                <artifactId>exec-maven-plugin</artifactId>-->
+            <!--                <version>1.6.0</version>-->
+            <!--                <dependencies>-->
+            <!--                    <dependency>-->
+            <!--                        <groupId>org.junit.platform</groupId>-->
+            <!--                        <artifactId>junit-platform-console</artifactId>-->
+            <!--                        <version>${junit-platform.version}</version>-->
+            <!--                    </dependency>-->
+            <!--                </dependencies>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>test</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>java</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--                <configuration>-->
+            <!--                    <mainClass>org.junit.platform.console.ConsoleLauncher</mainClass>-->
+            <!--                    <classpathScope>test</classpathScope>-->
+            <!--                    <arguments>-->
+            <!--                        <argument>&#45;&#45;include-engine</argument>-->
+            <!--                        <argument>cucumber</argument>-->
+            <!--                        <argument>&#45;&#45;scan-classpath</argument>-->
+            <!--                        <argument>${project.build.testOutputDirectory}</argument>-->
+            <!--                    </arguments>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 </project>

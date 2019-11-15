@@ -2,11 +2,9 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureIdentifier;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.feature.Options;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 
 import java.net.URI;
@@ -14,9 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
+import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.util.Comparator.comparing;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -26,16 +27,17 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturePathFeatureSupplier.class);
 
-    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
-        ClassLoaders::getDefaultClassLoader,
-        FeatureIdentifier::isFeature,
-        FeatureParser::parseResource
-    );
+    private final ResourceScanner<CucumberFeature> featureScanner;
 
     private final Options featureOptions;
 
-    public FeaturePathFeatureSupplier(Options featureOptions) {
+    public FeaturePathFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions) {
         this.featureOptions = featureOptions;
+        this.featureScanner = new ResourceScanner<>(
+            classLoader,
+            FeatureIdentifier::isFeature,
+            resource -> of(parseResource(resource))
+        );
     }
 
     @Override
