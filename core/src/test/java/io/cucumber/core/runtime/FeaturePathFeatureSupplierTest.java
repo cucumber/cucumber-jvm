@@ -14,6 +14,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FeaturePathFeatureSupplierTest {
 
@@ -49,6 +50,28 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(featureOptions);
         supplier.get();
         assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("Got no path to feature directory or feature file"));
+    }
+
+    @Test
+    void throws_if_path_does_not_exist() {
+        Options featureOptions = () -> singletonList(FeaturePath.parse("file:does/not/exist"));
+        FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(featureOptions);
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            supplier::get
+        );
+        assertThat(exception.getMessage(), containsString("baseDir must exist"));
+    }
+
+    @Test
+    void throws_if_feature_does_not_exist() {
+        Options featureOptions = () -> singletonList(FeaturePath.parse("classpath:no-such.feature"));
+        FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(featureOptions);
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            supplier::get
+        );
+        assertThat(exception.getMessage(), containsString("feature not found"));
     }
 
 }
