@@ -19,7 +19,7 @@ import static io.cucumber.core.resource.Resources.createUriResource;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-public class ResourceScanner<R> {
+public final class ResourceScanner<R> {
 
     private static final Predicate<String> NULL_FILTER = x -> true;
     private final PathScanner pathScanner = new PathScanner();

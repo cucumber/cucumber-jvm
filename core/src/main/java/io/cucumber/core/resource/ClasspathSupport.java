@@ -19,7 +19,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-public class ClasspathSupport {
+public final class ClasspathSupport {
     public static final String CLASSPATH_SCHEME = "classpath";
     public static final String CLASSPATH_SCHEME_PREFIX = CLASSPATH_SCHEME + ":";
     static final String DEFAULT_PACKAGE_NAME = "";

@@ -1,6 +1,6 @@
 package io.cucumber.core.resource;
 
-public class ClassLoaders {
+public final class ClassLoaders {
 
     private ClassLoaders() {
 

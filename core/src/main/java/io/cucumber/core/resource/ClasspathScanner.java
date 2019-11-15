@@ -9,16 +9,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
-public class ClasspathScanner {
+public final class ClasspathScanner {
 
     private static final Logger logger = LoggerFactory.getLogger(PathScanner.ResourceFileVisitor.class);
 
@@ -47,15 +45,15 @@ public class ClasspathScanner {
         return !path.endsWith(MODULE_INFO_FILE_NAME);
     }
 
-   public  <T> List<Class<? extends T>> scanForSubClassesInPackage(String basePackageName, Class<T> parentClass) {
+    public <T> List<Class<? extends T>> scanForSubClassesInPackage(String basePackageName, Class<T> parentClass) {
         ClassFilter subclassOf = ClassFilter.of(aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass));
         return scanForClassesInPackage(basePackageName, subclassOf)
             .stream()
-            .map(aClass -> (Class<? extends T> ) aClass.asSubclass(parentClass))
+            .map(aClass -> (Class<? extends T>) aClass.asSubclass(parentClass))
             .collect(toList());
     }
 
-    public  List<Class<?>> scanForClassesInPackage(String basePackageName, ClassFilter classFilter) {
+    public List<Class<?>> scanForClassesInPackage(String basePackageName, ClassFilter classFilter) {
         ClasspathSupport.requireValidPackageName(basePackageName);
         requireNonNull(classFilter, "classFilter must not be null");
         basePackageName = basePackageName.trim();

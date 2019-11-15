@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import static java.util.Objects.requireNonNull;
 
 
-public class ClassFilter implements Predicate<Class<?>> {
+public final class ClassFilter implements Predicate<Class<?>> {
 
     private final Predicate<String> namePredicate;
     private final Predicate<Class<?>> classPredicate;
