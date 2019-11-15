@@ -11,7 +11,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.DEFAULT_PACKAGE_NAME;
+import static io.cucumber.core.resource.ClasspathSupport.resourcePath;
 import static io.cucumber.core.resource.Resources.createClasspathResource;
 import static io.cucumber.core.resource.Resources.createClasspathRootResource;
 import static io.cucumber.core.resource.Resources.createPackageResource;
@@ -71,6 +73,10 @@ public final class ResourceScanner<R> {
 
     public List<R> scanForResourcesUri(URI resourcePath) {
         requireNonNull(resourcePath, "resourcePath must not be null");
+        if (CLASSPATH_SCHEME.equals(resourcePath.getScheme())) {
+            return scanForClasspathResource(resourcePath(resourcePath), NULL_FILTER);
+        }
+
         return findResourcesForUri(resourcePath, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
     }
 

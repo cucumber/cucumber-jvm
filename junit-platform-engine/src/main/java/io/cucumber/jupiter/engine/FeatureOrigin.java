@@ -26,10 +26,6 @@ abstract class FeatureOrigin {
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
 
-    private static FilePosition getPickleLocation(CucumberPickle location) {
-        return FilePosition.from(location.getLine(), location.getColumn());
-    }
-
     private static FilePosition createFilePosition(Location location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
@@ -51,10 +47,6 @@ abstract class FeatureOrigin {
 
         return new UriFeatureOrigin(source);
 
-    }
-
-    static boolean isClassPath(URI uri) {
-        return ClasspathResourceSource.CLASSPATH_SCHEME.equals(uri.getScheme());
     }
 
     static boolean isFeatureSegment(UniqueId.Segment segment) {

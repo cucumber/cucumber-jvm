@@ -151,16 +151,8 @@ final class FeatureResolver {
     }
 
     private Stream<TestDescriptor> resolveUri(URI uri) {
-        List<CucumberFeature> testDescriptorStream;
-        if (FeatureOrigin.isClassPath(uri)) {
-            String resourcePath = ClasspathSupport.resourcePath(uri);
-            testDescriptorStream = featureScanner
-                .scanForClasspathResource(resourcePath, packageFilter::match);
-        } else {
-            testDescriptorStream = featureScanner
-                .scanForResourcesUri(uri);
-        }
-        return testDescriptorStream
+        return featureScanner
+            .scanForResourcesUri(uri)
             .stream()
             .map(this::resolveFeature);
     }

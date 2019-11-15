@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
-import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
-import static io.cucumber.core.resource.ClasspathSupport.resourcePath;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
@@ -59,13 +57,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         final FeatureBuilder builder = new FeatureBuilder();
 
         for (URI featurePath : featurePaths) {
-            List<CucumberFeature> found;
-            if (CLASSPATH_SCHEME.equals(featurePath.getScheme())) {
-                String resourcePath = resourcePath(featurePath);
-                found = featureScanner.scanForClasspathResource(resourcePath, s -> true);
-            } else {
-                found = featureScanner.scanForResourcesUri(featurePath);
-            }
+            List<CucumberFeature> found = featureScanner.scanForResourcesUri(featurePath);
             if (found.isEmpty() && isFeature(featurePath)) {
                 throw new IllegalArgumentException("Feature not found: " + featurePath);
             }
