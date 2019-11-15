@@ -1,12 +1,13 @@
 package io.cucumber.core.feature;
 
 import gherkin.ast.Feature;
+import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
 
 import java.net.URI;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Optional;
 
 public final class CucumberFeature {
@@ -63,10 +64,4 @@ public final class CucumberFeature {
         return pickles.stream().filter(cucumberPickle -> cucumberPickle.getLine() == line).findFirst();
     }
 
-    public static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
-        @Override
-        public int compare(CucumberFeature a, CucumberFeature b) {
-            return a.getUri().compareTo(b.getUri());
-        }
-    }
 }

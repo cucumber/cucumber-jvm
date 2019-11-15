@@ -5,7 +5,7 @@ import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"json:target/cucumber-report.json"})
+@CucumberOptions(plugin = {"json:target/cucumber-report.json", "pretty"})
 public class RunCucumberTest {
 
 }

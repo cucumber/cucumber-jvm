@@ -1,6 +1,9 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
@@ -19,9 +22,15 @@ interface LambdaGlueRegistry {
 
     void addAfterHookDefinition(HookDefinition afterHook);
 
-    void addDocStringType(DocStringTypeDefinition docStringTypeDefinition);
+    void addDocStringType(DocStringTypeDefinition docStringType);
 
-    void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition);
+    void addDataTableType(DataTableTypeDefinition dataTableType);
 
-    void addParameterType(ParameterTypeDefinition parameterTypeDefinition);
+    void addParameterType(ParameterTypeDefinition parameterType);
+
+    void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer);
+
+    void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer);
+
+    void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer);
 }

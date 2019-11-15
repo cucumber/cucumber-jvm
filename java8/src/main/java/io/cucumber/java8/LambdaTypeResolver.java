@@ -39,8 +39,8 @@ final class LambdaTypeResolver implements TypeResolver {
                 throw withLocation(
                     new CucumberBackendException(
                         format("Can't use %s in lambda step definition \"%s\". " +
-                                "Declare a DataTable argument instead and convert " +
-                                "manually with asList/asLists/asMap/asMaps",
+                                "Declare a DataTable or DocString argument instead and convert " +
+                                "manually with 'asList/asLists/asMap/asMaps' and 'convert' respectively",
                             argumentClass.getName(), expression)));
             }
         }

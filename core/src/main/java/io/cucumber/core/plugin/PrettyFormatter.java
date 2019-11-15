@@ -7,6 +7,7 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.Tag;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.Argument;
@@ -22,11 +23,12 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static io.cucumber.core.plugin.TestSourcesModel.relativize;
@@ -37,6 +39,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";
+    private static final String STEP_SCENARIO_INDENT = "      ";
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final NiceAppendable out;
     private Formats formats;
@@ -103,7 +106,17 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private void handleWrite(WriteEvent event) {
-        out.println(event.getText());
+        out.println();
+        try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
+            String line;
+            while ((line = lines.readLine()) != null) {
+                out.println(STEP_SCENARIO_INDENT + line);
+            }
+        } catch (IOException e) {
+            throw new CucumberException(e);
+        }
+        out.println();
+
     }
 
     private void finishReport() {
@@ -123,13 +136,13 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private void handleScenarioOutline(TestCaseStarted event) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.getTestCase().getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
+            ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
                 currentScenarioOutline = scenarioOutline;
                 printScenarioOutline(currentScenarioOutline);
             }
             if (currentExamples == null || !currentExamples.equals(astNode.parent.node)) {
-                currentExamples = (Examples)astNode.parent.node;
+                currentExamples = (Examples) astNode.parent.node;
                 printExamples(currentExamples);
             }
         } else {
@@ -243,6 +256,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     private void printTags(List<Tag> tags) {
         printTags(tags, "");
     }
+
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
             out.println(indent + tags.stream().map(Tag::getName).collect(joining(" ")));

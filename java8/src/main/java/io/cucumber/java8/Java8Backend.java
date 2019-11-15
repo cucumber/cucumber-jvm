@@ -3,6 +3,9 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.DataTableTypeDefinition;
+import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
+import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -111,19 +114,34 @@ final class Java8Backend implements Backend {
         }
 
         @Override
-        public void addDocStringType(DocStringTypeDefinition docStringTypeDefinition) {
-            glue.addDocStringType(docStringTypeDefinition);
+        public void addDocStringType(DocStringTypeDefinition docStringType) {
+            glue.addDocStringType(docStringType);
 
         }
 
         @Override
-        public void addDataTableType(DataTableTypeDefinition dataTableTypeDefinition) {
-            glue.addDataTableType(dataTableTypeDefinition);
+        public void addDataTableType(DataTableTypeDefinition dataTableType) {
+            glue.addDataTableType(dataTableType);
         }
 
         @Override
-        public void addParameterType(ParameterTypeDefinition parameterTypeDefinition) {
-            glue.addParameterType(parameterTypeDefinition);
+        public void addParameterType(ParameterTypeDefinition parameterType) {
+            glue.addParameterType(parameterType);
+        }
+
+        @Override
+        public void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer) {
+            glue.addDefaultParameterTransformer(defaultParameterTransformer);
+        }
+
+        @Override
+        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+            glue.addDefaultDataTableCellTransformer(defaultDataTableCellTransformer);
+        }
+
+        @Override
+        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
+            glue.addDefaultDataTableEntryTransformer(defaultDataTableEntryTransformer);
         }
     }
 }

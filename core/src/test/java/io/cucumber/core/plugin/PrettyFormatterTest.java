@@ -288,7 +288,9 @@ class PrettyFormatterTest {
 
         assertThat(formatterOutput, containsString("" +
             "  Scenario: scenario name # path/test.feature:2\n" +
-            "printed from hook\n" +
+            "\n" +
+            "      printed from hook\n" +
+            "\n" +
             "    Given first step      # path/step_definitions.java:3\n"));
     }
 
@@ -308,7 +310,8 @@ class PrettyFormatterTest {
 
         assertThat(formatterOutput, containsString("" +
             "    Given first step      # path/step_definitions.java:3\n" +
-            "printed from hook\n"));
+            "\n" +
+            "      printed from hook\n"));
     }
 
     @Test
@@ -330,9 +333,13 @@ class PrettyFormatterTest {
 
         assertThat(formatterOutput, containsString("" +
             "    Given first step      # path/step_definitions.java:3\n" +
-            "printed from afterstep hook\n" +
+            "\n" +
+            "      printed from afterstep hook\n" +
+            "\n" +
             "    When second step      # path/step_definitions.java:4\n" +
-            "printed from afterstep hook"));
+            "\n" +
+            "      printed from afterstep hook" +
+            "\n"));
     }
 
     @Test

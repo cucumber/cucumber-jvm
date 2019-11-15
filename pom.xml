@@ -345,7 +345,17 @@
                                         be missing in the dependency hierarchy. A false positive. -->
                                         <item>class org\.springframework\..*</item>
                                         <item>.* io\.cucumber\.core\.runner\.AmbiguousStepDefinitionsException.*</item>
+                                        <item>.* io\.cucumber\.core\.feature\.CucumberFeature\.CucumberFeatureUriComparator.*</item>
                                         <item>.* io\.cucumber\.junit\..*</item>
+                                        <item>.* io\.cucumber\.junit\..*</item>
+                                        <item>.* io.cucumber.plugin.event.EmbedEvent::getMediaType().*</item>
+                                        <item>.* io.cucumber.java8.DefaultDataTableEntryTransformerBody.*</item>
+                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>
+                                        <item>.* io.cucumber.java8.DefaultDataTableCellTransformerBody.*</item>
+                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>
+                                        <item>.* io.cucumber.java8.DefaultParameterTransformerBody.*</item>
+                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultParameterTransformer.*</item>
+                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableEntryTransformer.*</item>
                                     </exclude>
                                 </elements>
                             </revapi.filter>

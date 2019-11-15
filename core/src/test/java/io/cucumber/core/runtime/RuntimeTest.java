@@ -450,7 +450,7 @@ class RuntimeTest {
             "    Given first step\n");
 
         ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
-            throw new RuntimeException("boom");
+            throw new RuntimeException("This exception is expected");
         });
 
         Executable testMethod = () -> TestHelper.builder()
@@ -461,8 +461,11 @@ class RuntimeTest {
             .build()
             .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "There were 3 exceptions:\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)\n  java.lang.RuntimeException(boom)"
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "There were 3 exceptions:\n" +
+                "  java.lang.RuntimeException(This exception is expected)\n" +
+                "  java.lang.RuntimeException(This exception is expected)\n" +
+                "  java.lang.RuntimeException(This exception is expected)"
         )));
     }
 

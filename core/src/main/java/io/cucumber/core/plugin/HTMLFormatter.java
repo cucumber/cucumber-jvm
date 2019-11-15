@@ -165,17 +165,17 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private void handleEmbed(EmbedEvent event) {
-        String mimeType = event.getMimeType();
-        if (mimeType.startsWith("text/")) {
+        String mediaType = event.getMediaType();
+        if (mediaType.startsWith("text/")) {
             // just pass straight to the plugin to output in the html
-            jsFunctionCall("embedding", mimeType, new String(event.getData()), event.getName());
+            jsFunctionCall("embedding", mediaType, new String(event.getData()), event.getName());
         } else {
             // Creating a file instead of using data urls to not clutter the js file
-            String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
+            String extension = MIME_TYPES_EXTENSIONS.get(mediaType);
             if (extension != null) {
                 StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
                 writeBytesToURL(event.getData(), toUrl(fileName.toString()));
-                jsFunctionCall("embedding", mimeType, fileName, event.getName());
+                jsFunctionCall("embedding", mediaType, fileName, event.getName());
             }
         }
     }

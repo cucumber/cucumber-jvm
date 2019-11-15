@@ -331,7 +331,7 @@ public interface LambdaGlue {
 
     /**
      * Register doc string type.
-     * 
+     *
      * @param contentType Name of the content type.
      * @param body        a function that creates an instance of <code>type</code>
      *                    from the doc string
@@ -343,13 +343,13 @@ public interface LambdaGlue {
 
     /**
      * Register a data table type.
-     * 
+     *
      * @param <T>  the data table type
      * @param body a function that creates an instance of <code>type</code> from the
      *             data table
      */
     default <T> void DataTableType(DataTableEntryDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableEntryDefinition(body));
     }
 
     /**
@@ -359,7 +359,7 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableRowDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableRowDefinition(body));
     }
 
     /**
@@ -369,7 +369,7 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableCellDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableCellDefinition(body));
     }
 
     /**
@@ -379,21 +379,21 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableTypeDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableDefinition(body));
     }
 
     /**
      * Register parameter type.
-     * 
+     *
      * @param <R>            the parameter type
      *                       {@link io.cucumber.cucumberexpressions.ParameterType#getType()}
      * @param name           used as the type name in typed expressions
      *                       {@link io.cucumber.cucumberexpressions.ParameterType#getName()}
      * @param regex          expression to match
-     * @param definitionBody converts String argument to the target parameter type
+     * @param definitionBody converts {@code String} argument to the target parameter type
      * @see io.cucumber.cucumberexpressions.ParameterType
      * @see <a href=https://cucumber.io/docs/cucumber/cucumber-expressions>Cucumber
-     *      Expressions</a>
+     * Expressions</a>
      */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A1<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, ParameterDefinitionBody.A1.class, definitionBody));
@@ -401,7 +401,7 @@ public interface LambdaGlue {
 
     /**
      * Register parameter type.
-     * 
+     *
      * @param <R>            the parameter type.
      *                       {@link io.cucumber.cucumberexpressions.ParameterType#getType()}
      * @param name           used as the type name in typed expressions.
@@ -409,10 +409,10 @@ public interface LambdaGlue {
      * @param regex          expression to match. If the expression includes capture
      *                       groups their captured strings will be provided as
      *                       individual arguments.
-     * @param definitionBody converts String arguments to the target parameter type
+     * @param definitionBody converts {@code String} arguments to the target parameter type
      * @see io.cucumber.cucumberexpressions.ParameterType
      * @see <a href=https://cucumber.io/docs/cucumber/cucumber-expressions>Cucumber
-     *      Expressions</a>
+     * Expressions</a>
      */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A2<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, ParameterDefinitionBody.A2.class, definitionBody));
@@ -465,5 +465,32 @@ public interface LambdaGlue {
      */
     default <R> void ParameterType(String name, String regex, ParameterDefinitionBody.A9<R> definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addParameterType(new Java8ParameterTypeDefinition(name, regex, ParameterDefinitionBody.A9.class, definitionBody));
+    }
+
+    /**
+     * Register default parameter type transformer.
+     *
+     * @param definitionBody converts {@code String} argument to an instance of the {@code Type} argument
+     */
+    default void DefaultParameterTransformer(DefaultParameterTransformerBody definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addDefaultParameterTransformer(new Java8DefaultParameterTypeDefinition(definitionBody));
+    }
+
+    /**
+     * Register default data table cell transformer.
+     *
+     * @param definitionBody converts {@code String} argument to an instance of the {@code Type} argument
+     */
+    default void DefaultDataTableCellTransformer(DefaultDataTableCellTransformerBody definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableCellTransformer(new Java8DefaultDataTableCellTransformerDefinition(definitionBody));
+    }
+
+    /**
+     * Register default data table entry transformer.
+     *
+     * @param definitionBody converts {@code Map<String,String>} argument to an instance of the {@code Type} argument
+     */
+    default void DefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerBody definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableEntryTransformer(new Java8DefaultDataTableEntryTransformerDefinition(definitionBody));
     }
 }
