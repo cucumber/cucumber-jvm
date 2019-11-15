@@ -4,7 +4,6 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.io.Classpath;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.nio.file.Path;
@@ -12,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static java.util.Objects.requireNonNull;
 
 public final class CucumberOptionsAnnotationParser {
@@ -23,10 +23,10 @@ public final class CucumberOptionsAnnotationParser {
         String packageName = packageName(clazz);
 
         if (packageName.isEmpty()) {
-            return Classpath.CLASSPATH_SCHEME_PREFIX + "/";
+            return CLASSPATH_SCHEME_PREFIX + "/";
         }
 
-        return Classpath.CLASSPATH_SCHEME_PREFIX + packageName.replace('.', '/');
+        return CLASSPATH_SCHEME_PREFIX + "/" + packageName.replace('.', '/');
     }
 
     private static String packageName(Class clazz) {

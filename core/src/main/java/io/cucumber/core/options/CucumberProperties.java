@@ -5,7 +5,11 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 import static io.cucumber.core.options.Constants.CUCUMBER_PROPERTIES_FILE_NAME;
 
@@ -37,7 +41,7 @@ public final class CucumberProperties {
     public static Map<String, String> fromPropertiesFile() {
         InputStream resourceAsStream = CucumberProperties.class.getResourceAsStream("/" + CUCUMBER_PROPERTIES_FILE_NAME);
         if (resourceAsStream == null) {
-            log.debug(CUCUMBER_PROPERTIES_FILE_NAME + " file did not exist");
+            log.debug(() -> CUCUMBER_PROPERTIES_FILE_NAME + " file did not exist");
             return Collections.emptyMap();
         }
 
@@ -46,7 +50,7 @@ public final class CucumberProperties {
             properties.load(resourceAsStream);
             return CucumberPropertiesMap.create(properties);
         } catch (IOException e) {
-            log.error(CUCUMBER_PROPERTIES_FILE_NAME + " could not be loaded", e);
+            log.error(e, () -> CUCUMBER_PROPERTIES_FILE_NAME + " could not be loaded");
             throw new RuntimeException(e);
         }
     }

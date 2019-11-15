@@ -17,7 +17,9 @@ import gherkin.ast.Step;
 import gherkin.ast.TableRow;
 import io.cucumber.plugin.event.TestSourceRead;
 
+import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +79,24 @@ final class TestSourcesModel {
 
     static String convertToId(String name) {
         return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
+    }
+
+    static URI relativize(URI uri){
+        if(!"file".equals(uri.getScheme())){
+            return uri;
+        }
+        if (!uri.isAbsolute()) {
+            return uri;
+        }
+
+        try {
+            URI root = new File("").toURI();
+            URI relative = root.relativize(uri);
+            // Scheme is lost by relativize
+            return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     void addTestSourceReadEvent(URI path, TestSourceRead event) {

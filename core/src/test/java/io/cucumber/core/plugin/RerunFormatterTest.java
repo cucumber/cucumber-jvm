@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.Result;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -16,7 +16,6 @@ import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 class RerunFormatterTest {
 
@@ -26,7 +25,7 @@ class RerunFormatterTest {
 
     @Test
     void should_leave_report_empty_when_exit_code_is_zero() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: passed scenario\n" +
             "    Given passed step\n" +
@@ -41,12 +40,12 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("")));
+        assertThat(formatterOutput, is(""));
     }
 
     @Test
     void should_put_data_in_report_when_exit_code_is_non_zero() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: failed scenario\n" +
             "    Given failed step\n" +
@@ -61,7 +60,7 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(true);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2:4:6\n")));
+        assertThat(formatterOutput, is("classpath:path/test.feature:2:4:6\n"));
     }
 
     @Test
@@ -79,7 +78,7 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2\n")));
+        assertThat(formatterOutput, is("file:path/test.feature:2\n"));
     }
 
     @Test
@@ -98,12 +97,12 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:4\n")));
+        assertThat(formatterOutput, is("file:path/test.feature:4\n"));
     }
 
     @Test
     void should_use_example_row_location_when_scenario_outline_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: scenario name\n" +
             "    When executing <row> row\n" +
@@ -119,12 +118,12 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:8\n")));
+        assertThat(formatterOutput, is("classpath:path/test.feature:8\n"));
     }
 
     @Test
     void should_use_scenario_location_when_before_hook_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -138,12 +137,12 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2\n")));
+        assertThat(formatterOutput, is("classpath:path/test.feature:2\n"));
     }
 
     @Test
     void should_use_scenario_location_when_after_hook_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -157,12 +156,12 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2\n")));
+        assertThat(formatterOutput, is("classpath:path/test.feature:2\n"));
     }
 
     @Test
     void should_one_entry_for_feature_with_many_failing_scenarios() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario 1 name\n" +
             "    When first step\n" +
@@ -178,17 +177,17 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/test.feature:2:5\n")));
+        assertThat(formatterOutput, is("classpath:path/test.feature:2:5\n"));
     }
 
     @Test
     void should_one_entry_for_each_failing_feature() {
-        CucumberFeature feature1 = TestFeatureParser.parse("path/first.feature", "" +
+        CucumberFeature feature1 = TestFeatureParser.parse("classpath:path/first.feature", "" +
             "Feature: feature 1 name\n" +
             "  Scenario: scenario 1 name\n" +
             "    When first step\n" +
             "    Then second step\n");
-        CucumberFeature feature2 = TestFeatureParser.parse("path/second.feature", "" +
+        CucumberFeature feature2 = TestFeatureParser.parse("classpath:path/second.feature", "" +
             "Feature: feature 2 name\n" +
             "  Scenario: scenario 2 name\n" +
             "    When third step\n" +
@@ -202,7 +201,7 @@ class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
-        assertThat(formatterOutput, is(equalTo("file:path/first.feature:2\nfile:path/second.feature:2\n")));
+        assertThat(formatterOutput, is("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
     }
 
     private String runFeaturesWithFormatter(boolean isStrict) {

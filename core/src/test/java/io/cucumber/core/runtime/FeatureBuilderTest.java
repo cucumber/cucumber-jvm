@@ -1,10 +1,13 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.runtime;
 
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.resource.Resource;
+import io.cucumber.core.runtime.FeaturePathFeatureSupplier.FeatureBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 
@@ -12,23 +15,21 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class FeatureBuilderTest {
 
     private final FeatureBuilder builder = new FeatureBuilder();
 
     @Test
-    void ignores_identical_features_in_different_directories() throws IOException {
+    void ignores_identical_features_in_different_directories() {
         URI featurePath1 = URI.create("src/example.feature");
         URI featurePath2 = URI.create("build/example.feature");
 
-        Resource resource1 = createResourceMock(featurePath1);
-        Resource resource2 = createResourceMock(featurePath2);
+        CucumberFeature resource1 = createResourceMock(featurePath1);
+        CucumberFeature resource2 = createResourceMock(featurePath2);
 
-        builder.parse(resource1);
-        builder.parse(resource2);
+        builder.addUnique(resource1);
+        builder.addUnique(resource2);
 
         List<CucumberFeature> features = builder.build();
 
@@ -36,15 +37,15 @@ class FeatureBuilderTest {
     }
 
     @Test
-    void duplicate_content_with_different_file_names_are_intentionally_duplicated() throws IOException {
+    void duplicate_content_with_different_file_names_are_intentionally_duplicated() {
         URI featurePath1 = URI.create("src/feature1/example-first.feature");
         URI featurePath2 = URI.create("src/feature1/example-second.feature");
 
-        Resource resource1 = createResourceMock(featurePath1);
-        Resource resource2 = createResourceMock(featurePath2);
+        CucumberFeature resource1 = createResourceMock(featurePath1);
+        CucumberFeature resource2 = createResourceMock(featurePath2);
 
-        builder.parse(resource1);
-        builder.parse(resource2);
+        builder.addUnique(resource1);
+        builder.addUnique(resource2);
 
         List<CucumberFeature> features = builder.build();
 
@@ -57,18 +58,18 @@ class FeatureBuilderTest {
 
 
     @Test
-    void features_are_sorted_by_uri() throws IOException {
+    void features_are_sorted_by_uri() {
         URI featurePath1 = URI.create("c.feature");
         URI featurePath2 = URI.create("b.feature");
         URI featurePath3 = URI.create("a.feature");
 
-        Resource resource1 = createResourceMock(featurePath1);
-        Resource resource2 = createResourceMock(featurePath2);
-        Resource resource3 = createResourceMock(featurePath3);
+        CucumberFeature resource1 = createResourceMock(featurePath1);
+        CucumberFeature resource2 = createResourceMock(featurePath2);
+        CucumberFeature resource3 = createResourceMock(featurePath3);
 
-        builder.parse(resource1);
-        builder.parse(resource2);
-        builder.parse(resource3);
+        builder.addUnique(resource1);
+        builder.addUnique(resource2);
+        builder.addUnique(resource3);
 
         List<CucumberFeature> features = builder.build();
 
@@ -79,12 +80,18 @@ class FeatureBuilderTest {
         );
     }
 
-    private Resource createResourceMock(URI featurePath) throws IOException {
-        Resource resource = mock(Resource.class);
-        when(resource.getPath()).thenReturn(featurePath);
-        ByteArrayInputStream feature = new ByteArrayInputStream("Feature: Example".getBytes(UTF_8));
-        when(resource.getInputStream()).thenReturn(feature);
-        return resource;
+    private CucumberFeature createResourceMock(URI featurePath) {
+        return FeatureParser.parseResource(new Resource() {
+            @Override
+            public URI getUri() {
+                return featurePath;
+            }
+
+            @Override
+            public InputStream getInputStream() {
+                return new ByteArrayInputStream("Feature: Example".getBytes(UTF_8));
+            }
+        });
     }
 
 }

@@ -1,5 +1,6 @@
-package io.cucumber.core.reflection;
+package io.cucumber.core.runtime;
 
+import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier.TooManyInstancesException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

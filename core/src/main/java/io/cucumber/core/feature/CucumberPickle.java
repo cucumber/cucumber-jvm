@@ -62,7 +62,15 @@ public final class CucumberPickle {
      * @return line in the feature file
      */
     public int getLine() {
-        return pickle.getLocations().get(0).getLine();
+        return getPickleLocation().getLine();
+    }
+
+    public int getColumn() {
+        return getPickleLocation().getColumn();
+    }
+
+    private PickleLocation getPickleLocation() {
+        return pickle.getLocations().get(0);
     }
 
     /**
@@ -72,8 +80,16 @@ public final class CucumberPickle {
      * @return line in the feature file
      */
     public int getScenarioLine() {
+        return getScenarioLocation().getLine();
+    }
+
+    public int getScenarioColumn(){
+        return getScenarioLocation().getColumn();
+    }
+
+    private PickleLocation getScenarioLocation() {
         List<PickleLocation> stepLocations = pickle.getLocations();
-        return stepLocations.get(stepLocations.size() - 1).getLine();
+        return stepLocations.get(stepLocations.size() - 1);
     }
 
     public List<CucumberStep> getSteps() {
@@ -87,6 +103,5 @@ public final class CucumberPickle {
     public URI getUri() {
         return uri;
     }
-
 
 }

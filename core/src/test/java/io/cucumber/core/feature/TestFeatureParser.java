@@ -1,6 +1,6 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ public class TestFeatureParser {
     public static CucumberFeature parse(final URI uri, final String source) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public URI getPath() {
+            public URI getUri() {
                 return uri;
             }
 

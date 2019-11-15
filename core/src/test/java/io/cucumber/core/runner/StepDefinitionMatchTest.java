@@ -287,7 +287,7 @@ class StepDefinitionMatchTest {
             UndefinedDataTableType.class
         );
         List<Argument> arguments = Collections.singletonList(() -> {
-            throw new CucumberBackendException("boom!", new IllegalAccessException());
+            throw new CucumberBackendException("This exception is expected", new IllegalAccessException());
         });
 
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
@@ -318,7 +318,7 @@ class StepDefinitionMatchTest {
 
         StepDefinition stepDefinition = new StubStepDefinition(
             "I have a data table",
-            new CucumberBackendException("boom!", new IllegalAccessException()),
+            new CucumberBackendException("This exception is expected!", new IllegalAccessException()),
             String.class,
             String.class
         );

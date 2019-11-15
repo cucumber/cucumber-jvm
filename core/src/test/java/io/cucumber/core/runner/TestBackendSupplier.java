@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Backend;
-import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.backend.Snippet;
+import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.util.Collection;
@@ -28,6 +28,7 @@ public abstract class TestBackendSupplier implements Backend, BackendSupplier {
 
     @Override
     public Collection<? extends Backend> get() {
-        return  Collections.singleton(this);
+        return Collections.singleton(this);
     }
+
 }

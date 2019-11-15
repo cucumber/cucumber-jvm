@@ -14,7 +14,7 @@ import java.util.logging.LogRecord;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class LoggerFactoryTest {
+class LoggerFactoryTest {
 
     private final Exception exception = new Exception();
     private LogRecord logged;
@@ -78,50 +78,50 @@ public class LoggerFactoryTest {
 
     @Test
     void error() {
-        logger.error("Error");
+        logger.error(() -> "Error");
         assertThat(logged, logRecord("Error", Level.SEVERE, null));
-        logger.error("Error", exception);
+        logger.error(exception, () -> "Error");
         assertThat(logged, logRecord("Error", Level.SEVERE, exception));
     }
 
     @Test
     void warn() {
-        logger.warn("Warn");
+        logger.warn(() -> "Warn");
         assertThat(logged, logRecord("Warn", Level.WARNING, null));
-        logger.warn("Warn", exception);
+        logger.warn(exception, () -> "Warn");
         assertThat(logged, logRecord("Warn", Level.WARNING, exception));
     }
 
     @Test
     void info() {
-        logger.info("Info");
+        logger.info(() -> "Info");
         assertThat(logged, logRecord("Info", Level.INFO, null));
-        logger.info("Info", exception);
+        logger.info(exception, () -> "Info");
         assertThat(logged, logRecord("Info", Level.INFO, exception));
     }
 
     @Test
     void config() {
-        logger.config("Config");
+        logger.config(() -> "Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, null));
-        logger.config("Config", exception);
+        logger.config(exception, () -> "Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, exception));
     }
 
 
     @Test
     void debug() {
-        logger.debug("Debug");
+        logger.debug(() -> "Debug");
         assertThat(logged, logRecord("Debug", Level.FINE, null));
-        logger.debug("Debug", exception);
+        logger.debug(exception, () -> "Debug");
         assertThat(logged, logRecord("Debug", Level.FINE, exception));
     }
 
     @Test
     void trace() {
-        logger.trace("Trace");
+        logger.trace(() -> "Trace");
         assertThat(logged, logRecord("Trace", Level.FINER, null));
-        logger.trace("Trace", exception);
+        logger.trace(exception, () -> "Trace");
         assertThat(logged, logRecord("Trace", Level.FINER, exception));
     }
 
