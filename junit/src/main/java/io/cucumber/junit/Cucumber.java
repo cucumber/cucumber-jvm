@@ -3,7 +3,6 @@ package io.cucumber.junit;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
@@ -133,9 +132,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         // Parse the features early. Don't proceed when there are lexer errors
         ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(runtimeOptions);
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
@@ -145,8 +142,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()

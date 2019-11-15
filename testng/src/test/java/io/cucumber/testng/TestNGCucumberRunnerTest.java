@@ -50,7 +50,7 @@ public class TestNGCucumberRunnerTest {
             pickleWrapper.getPickle();
             Assert.fail("CucumberException not thrown");
         } catch (CucumberException e) {
-            Assert.assertEquals(e.getMessage(), "Failed to parse resource at: classpath:/io/cucumber/error/parse-error.feature");
+            Assert.assertEquals(e.getMessage(), "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature");
         }
     }
 

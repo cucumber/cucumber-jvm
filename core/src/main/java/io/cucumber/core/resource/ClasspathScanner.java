@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 public class ClasspathScanner {
@@ -30,13 +31,8 @@ public class ClasspathScanner {
 
     private final Supplier<ClassLoader> classLoaderSupplier;
 
-    private final BiFunction<String, ClassLoader, Optional<Class<?>>> loadClass;
-
-    public ClasspathScanner(Supplier<ClassLoader> classLoaderSupplier,
-                            BiFunction<String, ClassLoader, Optional<Class<?>>> loadClass) {
-
+    public ClasspathScanner(Supplier<ClassLoader> classLoaderSupplier) {
         this.classLoaderSupplier = classLoaderSupplier;
-        this.loadClass = loadClass;
     }
 
     private static boolean isClassFile(Path file) {
@@ -97,7 +93,8 @@ public class ClasspathScanner {
         try {
             String fullyQualifiedClassName = ClasspathSupport.determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
             if (classFilter.match(fullyQualifiedClassName)) {
-                loadClass.apply(fullyQualifiedClassName, getClassLoader())
+                Optional.of(getClassLoader()
+                    .loadClass(fullyQualifiedClassName))
                     .filter(classFilter)
                     .ifPresent(classConsumer);
             }

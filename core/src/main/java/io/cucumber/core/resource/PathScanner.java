@@ -24,16 +24,12 @@ import static java.util.Collections.emptyMap;
 
 class PathScanner {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceFileVisitor.class);
-
     void findResourcesForUri(URI baseUri, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
         try (CloseablePath closeablePath = CloseablePath.create(baseUri)) {
             Path baseDir = closeablePath.getPath();
             findResourcesForPath(baseDir, filter, consumer);
-        } catch (IllegalArgumentException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            logger.warn(ex, () -> "Error scanning files for URI " + baseUri);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -44,8 +40,8 @@ class PathScanner {
 
         try {
             Files.walkFileTree(baseDir, new ResourceFileVisitor(filter, consumer.apply(baseDir)));
-        } catch (IOException ex) {
-            logger.warn(ex, () -> "I/O error scanning files in " + baseDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -19,14 +19,12 @@ class SingletonRunnerSupplierTest {
     @BeforeEach
     void before() {
         ClassLoader classLoader = getClass().getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
         EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory, typeRegistryConfigurerSupplier);
     }
 

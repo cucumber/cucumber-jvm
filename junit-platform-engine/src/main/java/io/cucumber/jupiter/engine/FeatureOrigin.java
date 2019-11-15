@@ -16,7 +16,7 @@ import org.junit.platform.engine.support.descriptor.UriSource;
 
 import java.net.URI;
 
-import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 
 abstract class FeatureOrigin {
 
@@ -36,7 +36,7 @@ abstract class FeatureOrigin {
 
     static FeatureOrigin fromUri(URI uri) {
         if (ClasspathResourceSource.CLASSPATH_SCHEME.equals(uri.getScheme())) {
-            if(!uri.getSchemeSpecificPart().startsWith("/")){
+            if (!uri.getSchemeSpecificPart().startsWith("/")) {
                 // ClasspathResourceSource.from expects all resources to start with /
                 uri = URI.create(CLASSPATH_SCHEME_PREFIX + "/" + uri.getSchemeSpecificPart());
             }

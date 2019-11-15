@@ -177,9 +177,7 @@ class FeatureRunnerTest {
         EventBus bus = new TimeServiceEventBus(clockStub);
         Filters filters = new Filters(runtimeOptions);
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+        ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory, typeRegistrySupplier);
         return FeatureRunner.create(cucumberFeature, filters, runnerSupplier, junitOption);
     }

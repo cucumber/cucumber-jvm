@@ -5,6 +5,7 @@ import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.net.URI;
 
 import static java.util.Arrays.asList;
@@ -70,7 +71,7 @@ class LinePredicateTest {
     @Test
     void does_not_matches_pickles_not_on_any_line_of_the_predicate() {
         LinePredicate predicate = new LinePredicate(singletonMap(
-            URI.create("file:path/file.feature"),
+            new File("path/file.feature").toURI(),
             singletonList(4)
         ));
         assertFalse(predicate.test(pickle));

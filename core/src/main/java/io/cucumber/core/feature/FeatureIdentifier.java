@@ -32,6 +32,6 @@ public class FeatureIdentifier {
     }
 
     public static boolean isFeature(Path path) {
-        return path.getFileName().endsWith(".feature");
+        return path.getFileName().toString().endsWith(".feature");
     }
 }

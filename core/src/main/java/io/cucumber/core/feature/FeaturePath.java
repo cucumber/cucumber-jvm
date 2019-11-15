@@ -5,8 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
-import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME;
-import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -68,7 +68,11 @@ public class FeaturePath {
     }
 
     private static URI parseProbableURI(String featureIdentifier) {
-        return URI.create(featureIdentifier);
+        URI uri = URI.create(featureIdentifier);
+        if("file".equals(uri.getScheme())){
+            return parseAssumeFileScheme(uri.getSchemeSpecificPart());
+        }
+        return uri;
     }
     
     private static boolean isWindowsOS() { 
@@ -94,18 +98,7 @@ public class FeaturePath {
 
     private static URI parseAssumeFileScheme(String featureIdentifier) {
         File featureFile = new File(featureIdentifier);
-        if (featureFile.isAbsolute()) {
-            return featureFile.toURI();
-        }
-
-        try {
-            URI root = new File("").toURI();
-            URI relative = root.relativize(featureFile.toURI());
-            // Scheme is lost by relativize
-            return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        return featureFile.toURI();
     }
     
     private static String normalize(final String value) {

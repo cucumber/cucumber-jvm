@@ -12,7 +12,6 @@ import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.feature.CucumberStep;
 import io.cucumber.core.feature.DataTableArgument;
 import io.cucumber.core.feature.DocStringArgument;
-import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
@@ -170,8 +169,6 @@ public class TestHelper {
     public void run() {
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
-
 
         final BackendSupplier backendSupplier = new TestHelperBackendSupplier(
             features,
@@ -195,7 +192,6 @@ public class TestHelper {
                     .build()
             )
             .withClassLoader(classLoader)
-            .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)
             .withFeatureSupplier(featureSupplier)
             .withEventBus(bus);

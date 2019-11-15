@@ -69,20 +69,20 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_features() {
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "com/example.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
-            URI.create("file:com/example.feature")
+            URI.create("classpath:com/example.feature")
         ));
     }
 
     @Test
     void should_parse_features_list() {
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "com/example/app.feature, com/example/other.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example/app.feature, classpath:com/example/other.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
-            URI.create("file:com/example/app.feature"),
-            URI.create("file:com/example/other.feature")
+            URI.create("classpath:com/example/app.feature"),
+            URI.create("classpath:com/example/other.feature")
         ));
     }
 
@@ -164,10 +164,10 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_rerun_file() throws IOException {
-        Path path = mockFileResource("path/to.feature");
+        Path path = mockFileResource("classpath:path/to.feature");
         properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("file:path/to.feature")));
+        assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("classpath:path/to.feature")));
     }
 
     private Path mockFileResource(String... contents) throws IOException {

@@ -22,11 +22,14 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
+import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.joining;
 
@@ -195,7 +198,7 @@ public final class PrettyFormatter implements EventListener, ColorAware {
     }
 
     private String getLocationText(URI file, int line) {
-        String path = file.getSchemeSpecificPart();
+        String path = relativize(file).getSchemeSpecificPart();
         return getLocationText(path + ":" + line);
     }
 
@@ -323,4 +326,5 @@ public final class PrettyFormatter implements EventListener, ColorAware {
         error.printStackTrace(printWriter);
         return stringWriter.toString();
     }
+
 }

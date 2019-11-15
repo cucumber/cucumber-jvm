@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.BiFunction;
 
-import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.determineFullyQualifiedResourceName;
 
 class Resources {
 
@@ -28,7 +30,7 @@ class Resources {
     }
 
     static BiFunction<Path, Path, Resource> createClasspathResource(String classpathResourceName) {
-        return (baseDir, resource) -> new ClasspathResource(classpathResourceName, resource);
+        return (baseDir, resource) -> new ClasspathResource(classpathResourceName, baseDir, resource);
     }
 
     private static class ClasspathResource implements Resource {
@@ -41,8 +43,12 @@ class Resources {
             this.resource = resource;
         }
 
-        ClasspathResource(String classpathResourceName, Path resource) {
-            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
+        ClasspathResource(String classpathResourceName, Path baseDir, Path resource) {
+            if(baseDir.equals(resource)) {
+                this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
+            } else {
+                this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + determineFullyQualifiedResourceName(baseDir, classpathResourceName, resource));
+            }
             this.resource = resource;
         }
 
@@ -81,7 +87,7 @@ class Resources {
 
         PackageResource(Path baseDir, String packageName, Path resource) {
             String packagePath = ClasspathSupport.packagePath(packageName);
-            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + ClasspathSupport.determineFullyQualifiedResourceName(baseDir, packagePath, resource));
+            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + determineFullyQualifiedResourceName(baseDir, packagePath, resource));
             this.resource = resource;
         }
 

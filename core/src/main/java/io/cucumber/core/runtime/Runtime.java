@@ -5,8 +5,6 @@ import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.feature.FeatureIdentifier;
-import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -14,8 +12,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.resource.ClasspathScanner;
-import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
@@ -46,8 +42,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
 import static java.util.Comparator.comparing;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
@@ -198,19 +192,7 @@ public final class Runtime {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
 
-            ClasspathScanner classFinder = new ClasspathScanner(
-                () -> classLoader,
-                (s, classLoader1) -> {
-                    try {
-                        return of(classLoader1.loadClass(s));
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            );
-
-
-            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
                 ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier)
@@ -220,13 +202,9 @@ public final class Runtime {
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
-
-
-            final FeatureLoader featureLoader = new FeatureLoader(featureScanner);
-
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+                : new FeaturePathFeatureSupplier(runtimeOptions);
 
             final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();

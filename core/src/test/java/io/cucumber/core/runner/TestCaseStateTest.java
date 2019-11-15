@@ -5,6 +5,7 @@ import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Collections;
 
@@ -23,7 +24,7 @@ class TestCaseStateTest {
             "     Given I have 4 cukes in my belly\n"
         );
         TestCaseState state = createTestCaseState(feature);
-        assertThat(state.getUri(), is(equalTo(URI.create("file:path/file.feature"))));
+        assertThat(state.getUri(), is(new File("path/file.feature").toURI()));
     }
 
     @Test
@@ -35,7 +36,7 @@ class TestCaseStateTest {
         );
 
         TestCaseState state = createTestCaseState(feature);
-        assertThat(state.getLine(), is(equalTo(2)));
+        assertThat(state.getLine(), is(2));
     }
 
     @Test
@@ -50,7 +51,7 @@ class TestCaseStateTest {
         );
 
         TestCaseState state = createTestCaseState(feature);
-        assertThat(state.getLine(), is(equalTo(6)));
+        assertThat(state.getLine(), is(6));
     }
 
     @Test
@@ -63,7 +64,7 @@ class TestCaseStateTest {
 
         TestCaseState state = createTestCaseState(feature);
 
-        assertThat(state.getId(), is(equalTo("file:path/file.feature:2")));
+        assertThat(state.getId(), is(new File("path/file.feature:2").toURI().toString()));
     }
 
     @Test
@@ -78,7 +79,7 @@ class TestCaseStateTest {
         );
         TestCaseState state = createTestCaseState(feature);
 
-        assertThat(state.getId(), is(equalTo("file:path/file.feature:6")));
+        assertThat(state.getId(), is(new File("path/file.feature:6").toURI().toString()));
     }
 
     private TestCaseState createTestCaseState(CucumberFeature feature) {

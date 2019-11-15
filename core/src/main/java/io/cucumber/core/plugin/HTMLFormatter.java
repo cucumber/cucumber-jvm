@@ -195,7 +195,7 @@ public final class HTMLFormatter implements EventListener {
     private void handleStartOfFeature(TestCase testCase) {
         if (currentFeatureFile == null || !currentFeatureFile.equals(testCase.getUri())) {
             currentFeatureFile = testCase.getUri();
-            jsFunctionCall("uri", currentFeatureFile);
+            jsFunctionCall("uri", TestSourcesModel.relativize(currentFeatureFile));
             jsFunctionCall("feature", createFeature(testCase));
         }
     }

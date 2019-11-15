@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -28,7 +29,7 @@ import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
 class FeatureResolverTest {
     private final String featurePath = "io/cucumber/jupiter/engine/feature-with-outline.feature";
-    private final String featureSegmentValue = Classpath.CLASSPATH_SCHEME_PREFIX + featurePath;
+    private final String featureSegmentValue = CLASSPATH_SCHEME_PREFIX + featurePath;
     private TestDescriptor testDescriptor;
     private UniqueId id;
 

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.resource.Classpath.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.EXECUTION_STRICT_PROPERTY_NAME;
@@ -40,7 +40,7 @@ class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options,
         return configurationParameters.get(PLUGIN_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
             .map(String::trim)
             .map(PluginOption::parse)
-            .map(pluginOption -> (Plugin)pluginOption)
+            .map(pluginOption -> (Plugin) pluginOption)
             .collect(Collectors.toList()))
             .orElse(Collections.emptyList());
     }

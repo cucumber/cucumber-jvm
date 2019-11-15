@@ -1,6 +1,9 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.runtime;
 
+import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.resource.Resource;
+import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
+import io.cucumber.core.runtime.FeaturePathFeatureSupplier.FeatureBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;

@@ -4,7 +4,6 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.feature.FeatureLoader;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
@@ -84,9 +83,7 @@ public final class TestNGCucumberRunner {
             .build(environmentOptions);
 
         ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+        featureSupplier = new FeaturePathFeatureSupplier(runtimeOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
@@ -94,8 +91,7 @@ public final class TestNGCucumberRunner {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 

@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.util.Locale.ROOT;
 
 public final class JSONFormatter implements EventListener {
@@ -139,7 +140,7 @@ public final class JSONFormatter implements EventListener {
 
     private Map<String, Object> createFeatureMap(TestCase testCase) {
         Map<String, Object> featureMap = new HashMap<>();
-        featureMap.put("uri", testCase.getUri());
+        featureMap.put("uri", relativize(testCase.getUri()));
         featureMap.put("elements", new ArrayList<Map<String, Object>>());
         Feature feature = testSources.getFeature(testCase.getUri());
         if (feature != null) {

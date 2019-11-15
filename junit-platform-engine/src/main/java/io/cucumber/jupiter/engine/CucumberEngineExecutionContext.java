@@ -44,9 +44,6 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
         ClassLoader classLoader = ClassLoaders.getDefaultClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-
         logger.debug(() -> "Parsing options");
         this.options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
@@ -54,7 +51,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         BackendSupplier backendSupplier = new BackendServiceLoader(() -> classLoader, objectFactorySupplier);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         new Plugins(new PluginFactory(), options);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, options);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
     void startTestRun() {

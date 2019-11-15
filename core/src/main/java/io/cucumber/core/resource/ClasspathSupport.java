@@ -20,8 +20,10 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 public class ClasspathSupport {
+    public static final String CLASSPATH_SCHEME = "classpath";
+    public static final String CLASSPATH_SCHEME_PREFIX = CLASSPATH_SCHEME + ":";
     static final String DEFAULT_PACKAGE_NAME = "";
-    private static final Logger logger = LoggerFactory.getLogger(PathScanner.ResourceFileVisitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClasspathSupport.class);
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final char CLASSPATH_RESOURCE_PATH_SEPARATOR = '/';
     private static final String CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING = String.valueOf(CLASSPATH_RESOURCE_PATH_SEPARATOR);
@@ -68,6 +70,17 @@ public class ClasspathSupport {
         return packageName.replace(PACKAGE_SEPARATOR_CHAR, CLASSPATH_RESOURCE_PATH_SEPARATOR);
     }
 
+    public static String resourcePath(URI resourceUri) {
+        if (!CLASSPATH_SCHEME.equals(resourceUri.getScheme())) {
+            throw new IllegalArgumentException("uri must have classpath scheme " + resourceUri);
+        }
+
+        String resourcePath = resourceUri.getSchemeSpecificPart();
+        if (resourcePath.startsWith("/")) {
+            return resourcePath.substring(1);
+        }
+        return resourcePath;
+    }
 
     static String determinePackageName(Path baseDir, String basePackageName, Path classFile) {
         return Stream.of(
@@ -119,8 +132,9 @@ public class ClasspathSupport {
         return resourceName(packagePath);
     }
 
-    private static String resourceName(String resourcePath) {
+    public static String resourceName(String resourcePath) {
         return resourcePath.replace(CLASSPATH_RESOURCE_PATH_SEPARATOR, PACKAGE_SEPARATOR_CHAR);
     }
+
 
 }
