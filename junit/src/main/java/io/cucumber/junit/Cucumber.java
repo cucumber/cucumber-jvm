@@ -132,7 +132,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .build(junitEnvironmentOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
-        Supplier<ClassLoader> classLoader = clazz::getClassLoader;
+        Supplier<ClassLoader> classLoader = Thread.currentThread()::getContextClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
         this.features = featureSupplier.get();
 

@@ -84,8 +84,13 @@ public final class ClasspathSupport {
             .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
+    private static String determineSubpackageResourceName(Path baseDir, Path resource) {
+        Path relativePath = baseDir.relativize(resource.getParent());
+        return relativePath.toString();
+    }
+
     static String determineFullyQualifiedResourceName(Path baseDir, String packagePath, Path resource) {
-        String subPackageName = determineSubpackageName(baseDir, resource);
+        String subPackageName = determineSubpackageResourceName(baseDir, resource);
         String resourceName = resource.getFileName().toString();
         return of(packagePath, subPackageName, resourceName)
             .filter(value -> !value.isEmpty()) // default package .
