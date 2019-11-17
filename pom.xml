@@ -342,6 +342,12 @@
                                         <item>.* io\.cucumber\.core\.feature\.CucumberFeature\.CucumberFeatureUriComparator.*</item>
                                         <item>.* io\.cucumber\.junit\..*</item>
                                         <item>.* io\.cucumber\.junit\..*</item>
+                                        <item>.* io.cucumber.core.runtime.*</item>
+                                        <item>.* io.cucumber.core.feature.*</item>
+                                        <item>.* io.cucumber.core.logging.*</item>
+                                        <item>.* io.cucumber.core.io.*</item>
+                                        <item>.* io.cucumber.core.reflection.*</item>
+                                        <item>.* io.cucumber.core.resource.*</item>
                                         <item>.* io.cucumber.plugin.event.EmbedEvent::getMediaType().*</item>
                                         <item>.* io.cucumber.java8.DefaultDataTableEntryTransformerBody.*</item>
                                         <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>

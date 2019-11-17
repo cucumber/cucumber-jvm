@@ -1,8 +1,6 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

@@ -9,7 +9,7 @@ import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 import gherkin.pickles.Compiler;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,7 +26,7 @@ public class FeatureParser {
 
     public static CucumberFeature parseResource(Resource resource) {
         requireNonNull(resource);
-        URI path = resource.getPath();
+        URI uri = resource.getUri();
         String source = read(resource);
 
         try {
@@ -35,9 +35,9 @@ public class FeatureParser {
             GherkinDocument gherkinDocument = parser.parse(source, matcher);
             GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
             List<CucumberPickle> pickles = compilePickles(gherkinDocument, dialectProvider, resource);
-            return new CucumberFeature(gherkinDocument, path, source, pickles);
+            return new CucumberFeature(gherkinDocument, uri, source, pickles);
         } catch (ParserException e) {
-            throw new CucumberException("Failed to parse resource at: " + path.toString(), e);
+            throw new CucumberException("Failed to parse resource at: " + uri.toString(), e);
         }
     }
 
@@ -45,7 +45,7 @@ public class FeatureParser {
         try {
             return Encoding.readFile(resource);
         } catch (IOException e) {
-            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
+            throw new CucumberException("Failed to read resource:" + resource.getUri(), e);
         }
     }
 
@@ -58,7 +58,7 @@ public class FeatureParser {
         GherkinDialect dialect = dialectProvider.getDialect(language, null);
         return new Compiler().compile(document)
             .stream()
-            .map(pickle -> new CucumberPickle(pickle, resource.getPath(), document, dialect))
+            .map(pickle -> new CucumberPickle(pickle, resource.getUri(), document, dialect))
             .collect(Collectors.toList());
     }
 }

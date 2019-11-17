@@ -9,7 +9,6 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.io.ResourceLoader;
 
 import java.lang.reflect.Type;
 import java.net.URI;

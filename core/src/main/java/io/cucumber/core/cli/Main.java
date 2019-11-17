@@ -57,7 +57,7 @@ public class Main {
 
         final Runtime runtime = Runtime.builder()
             .withRuntimeOptions(runtimeOptions)
-            .withClassLoader(classLoader)
+            .withClassLoader(() -> classLoader)
             .build();
 
         runtime.run();

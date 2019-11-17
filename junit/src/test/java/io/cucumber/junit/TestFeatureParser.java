@@ -3,7 +3,7 @@ package io.cucumber.junit;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ class TestFeatureParser {
     private static CucumberFeature parse(final URI uri, final String source) {
         return FeatureParser.parseResource(new Resource() {
             @Override
-            public URI getPath() {
+            public URI getUri() {
                 return uri;
             }
 

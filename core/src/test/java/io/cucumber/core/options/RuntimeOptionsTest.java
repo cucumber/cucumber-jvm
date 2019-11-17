@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Arrays;
@@ -92,7 +93,7 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("somewhere_else")
             .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else")));
+        assertThat(options.getFeaturePaths(), contains(new File("somewhere_else").toURI()));
     }
 
     @Test
@@ -101,9 +102,9 @@ class RuntimeOptionsTest {
             .parse("somewhere_else.feature:3")
             .build();
 
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature"))),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), singleton(3)))
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(new File("somewhere_else.feature").toURI())),
+            () -> assertThat(options.getLineFilters(), hasEntry(new File("somewhere_else.feature").toURI(), singleton(3)))
         );
     }
 
@@ -112,20 +113,20 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("somewhere_else.feature:3:5")
             .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
+        assertThat(options.getFeaturePaths(), contains(new File("somewhere_else.feature").toURI()));
         Set<Integer> lines = new HashSet<>(asList(3, 5));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), lines));
+        assertThat(options.getLineFilters(), hasEntry(new File("somewhere_else.feature").toURI(), lines));
     }
 
 
     @Test
     void combines_line_filters_from_repeated_features() {
         RuntimeOptions options = new CommandlineOptionsParser()
-            .parse("somewhere_else.feature:3", "somewhere_else.feature:5")
+            .parse("classpath:somewhere_else.feature:3", "classpath:somewhere_else.feature:5")
             .build();
-        assertThat(options.getFeaturePaths(), contains(uri("file:somewhere_else.feature")));
+        assertThat(options.getFeaturePaths(), contains(uri("classpath:somewhere_else.feature")));
         Set<Integer> lines = new HashSet<>(asList(3, 5));
-        assertThat(options.getLineFilters(), hasEntry(uri("file:somewhere_else.feature"), lines));
+        assertThat(options.getLineFilters(), hasEntry(uri("classpath:somewhere_else.feature"), lines));
     }
 
     @Test
@@ -147,7 +148,7 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("--glue", "somewhere")
             .build();
-        assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
+        assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
     }
 
     @Test
@@ -193,7 +194,7 @@ class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
-        assertAll("Checking Plugins",
+        assertAll(
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
             () -> assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))))
         );
@@ -293,7 +294,7 @@ class RuntimeOptionsTest {
 
     @Test
     void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
-        properties.put(OPTIONS_PROPERTY_NAME, "--glue lookatme this_clobbers_feature_paths");
+        properties.put(OPTIONS_PROPERTY_NAME, "--glue lookatme classpath:this_clobbers_feature_paths");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("--strict", "--glue", "somewhere", "somewhere_else")
             .build();
@@ -302,9 +303,9 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
 
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:this_clobbers_feature_paths"))),
-            () -> assertThat(options.getGlue(), contains(uri("classpath:lookatme"))),
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(uri("classpath:this_clobbers_feature_paths"))),
+            () -> assertThat(options.getGlue(), contains(uri("classpath:/lookatme"))),
             () -> assertTrue(options.isStrict())
         );
     }
@@ -318,7 +319,7 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getGlue(), contains(uri("classpath:somewhere")));
+        assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
     }
 
     @Test
@@ -357,9 +358,9 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(options.getTagExpressions(), emptyCollectionOf(String.class)),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)))
+            () -> assertThat(options.getLineFilters(), hasEntry(new File("this/should/be/rerun.feature").toURI(), singleton(12)))
         );
     }
 
@@ -373,9 +374,9 @@ class RuntimeOptionsTest {
             .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
             .build(runtimeOptions);
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
-            () -> assertThat(options.getLineFilters(), hasEntry(uri("file:this/should/be/rerun.feature"), singleton(12)))
+            () -> assertThat(options.getLineFilters(), hasEntry(new File("this/should/be/rerun.feature").toURI(), singleton(12)))
         );
     }
 
@@ -389,10 +390,10 @@ class RuntimeOptionsTest {
             .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
             .build(runtimeOptions);
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
             () -> assertThat(options.getLineFilters(), is(emptyMap())),
-            () -> assertThat(options.getFeaturePaths(), contains(URI.create("file:path/to.feature")))
+            () -> assertThat(options.getFeaturePaths(), contains(new File("path/to.feature").toURI()))
         );
     }
 
@@ -410,14 +411,14 @@ class RuntimeOptionsTest {
 
     @Test
     void clobbers_features_from_cli_if_features_specified_in_cucumber_options_property() {
-        properties.put(OPTIONS_PROPERTY_NAME, "new newer");
+        properties.put(OPTIONS_PROPERTY_NAME, "classpath:new classpath:newer");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse(asList("old", "older"))
+            .parse(asList("classpath:old", "classpath:older"))
             .build();
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer")));
+        assertThat(options.getFeaturePaths(), contains(uri("classpath:new"), uri("classpath:newer")));
     }
 
     @Test
@@ -429,25 +430,25 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getFeaturePaths(), contains(uri("file:path/file.feature")));
+        assertThat(options.getFeaturePaths(), contains(new File("path/file.feature").toURI()));
     }
 
     @Test
     void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         properties.put(OPTIONS_PROPERTY_NAME, "--plugin pretty");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse(asList("old", "older"))
+            .parse(asList("classpath:old", "classpath:older"))
             .build();
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
             .build(runtimeOptions);
-        assertThat(options.getFeaturePaths(), contains(uri("file:old"), uri("file:older")));
+        assertThat(options.getFeaturePaths(), contains(uri("classpath:old"), uri("classpath:older")));
 
     }
 
     @Test
     void clobbers_line_filters_from_cli_if_features_specified_in_cucumber_options_property() {
-        properties.put(OPTIONS_PROPERTY_NAME, "new newer");
+        properties.put(OPTIONS_PROPERTY_NAME, "classpath:new classpath:newer");
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(asList("--tags", "@keep_this", "path/file1.feature:1"))
             .build();
@@ -455,8 +456,8 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
 
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(uri("file:new"), uri("file:newer"))),
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(uri("classpath:new"), uri("classpath:newer"))),
             () -> assertThat(options.getTagExpressions(), contains("@keep_this"))
         );
     }

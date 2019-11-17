@@ -57,8 +57,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         assertAll("Checking RuntimeOptions",
             () -> assertFalse(runtimeOptions.isStrict()),
             () -> assertThat(runtimeOptions.getObjectFactoryClass(), is(nullValue())),
-            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options"))),
-            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options")))
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
+            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options")))
         );
 
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
@@ -87,8 +87,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
 
         assertAll("Checking Plugins",
-            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:io/cucumber/core/options"))),
-            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:io/cucumber/core/options"))),
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
+            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(plugins.getPlugins(), hasSize(2)),
             () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
             () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter")
@@ -181,14 +181,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
      void create_with_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
     }
 
     @Test
      void create_with_extra_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithExtraGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/hooks"), uri("classpath:io/cucumber/core/options")));
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/app/features/hooks"), uri("classpath:/io/cucumber/core/options")));
 
     }
 
@@ -199,14 +199,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
             .build();
 
         assertThat(runtimeOptions.getGlue(),
-            contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/hooks"), uri("classpath:io/cucumber/core/options")));
+            contains(uri("classpath:/app/features/user/hooks"), uri("classpath:/app/features/hooks"), uri("classpath:/io/cucumber/core/options")));
     }
 
     @Test
      void create_with_extra_glue_in_subclass_of_glue() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithExtraGlueOfGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:app/features/user/hooks"), uri("classpath:app/features/user/registration"), uri("classpath:app/features/hooks")));
+        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/app/features/user/hooks"), uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
     }
 
     @Test
