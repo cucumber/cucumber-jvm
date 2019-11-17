@@ -82,7 +82,7 @@ public final class TestNGCucumberRunner {
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-        Supplier<ClassLoader> classLoader = clazz::getClassLoader;
+        Supplier<ClassLoader> classLoader = Thread.currentThread()::getContextClassLoader;
         featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());

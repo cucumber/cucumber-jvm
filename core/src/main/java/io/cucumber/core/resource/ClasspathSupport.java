@@ -7,11 +7,11 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.of;
@@ -21,8 +21,8 @@ public final class ClasspathSupport {
     public static final String CLASSPATH_SCHEME_PREFIX = CLASSPATH_SCHEME + ":";
     static final String DEFAULT_PACKAGE_NAME = "";
     private static final String CLASS_FILE_SUFFIX = ".class";
-    private static final char CLASSPATH_RESOURCE_PATH_SEPARATOR = '/';
-    public static final String CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING = String.valueOf(CLASSPATH_RESOURCE_PATH_SEPARATOR);
+    public static final char RESOURCE_SEPARATOR_CHAR = '/';
+    public static final String RESOURCE_SEPARATOR_STRING = String.valueOf(RESOURCE_SEPARATOR_CHAR);
     private static final char PACKAGE_SEPARATOR_CHAR = '.';
     public static final String PACKAGE_SEPARATOR_STRING = String.valueOf(PACKAGE_SEPARATOR_CHAR);
     private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
@@ -36,7 +36,7 @@ public final class ClasspathSupport {
         if (packageName.equals(DEFAULT_PACKAGE_NAME)) {
             return;
         }
-        boolean valid = Arrays.stream(DOT_PATTERN.split(packageName, -1)).allMatch(SourceVersion::isName);
+        boolean valid = stream(DOT_PATTERN.split(packageName, -1)).allMatch(SourceVersion::isName);
         if (!valid) {
             throw new IllegalArgumentException("Invalid part(s) in package name: " + packageName);
         }
@@ -62,7 +62,7 @@ public final class ClasspathSupport {
     }
 
     public static String packagePath(String packageName) {
-        return packageName.replace(PACKAGE_SEPARATOR_CHAR, CLASSPATH_RESOURCE_PATH_SEPARATOR);
+        return packageName.replace(PACKAGE_SEPARATOR_CHAR, RESOURCE_SEPARATOR_CHAR);
     }
 
     public static String resourcePath(URI resourceUri) {
@@ -71,7 +71,7 @@ public final class ClasspathSupport {
         }
 
         String resourcePath = resourceUri.getSchemeSpecificPart();
-        if (resourcePath.startsWith(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING)) {
+        if (resourcePath.startsWith(RESOURCE_SEPARATOR_STRING)) {
             return resourcePath.substring(1);
         }
         return resourcePath;
@@ -84,12 +84,17 @@ public final class ClasspathSupport {
             .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
+    private static String determineSubpackageResourceName(Path baseDir, Path resource) {
+        Path relativePath = baseDir.relativize(resource.getParent());
+        return relativePath.toString();
+    }
+
     static String determineFullyQualifiedResourceName(Path baseDir, String packagePath, Path resource) {
-        String subPackageName = determineSubpackageName(baseDir, resource);
+        String subPackageName = determineSubpackageResourceName(baseDir, resource);
         String resourceName = resource.getFileName().toString();
         return of(packagePath, subPackageName, resourceName)
             .filter(value -> !value.isEmpty()) // default package .
-            .collect(joining(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING));
+            .collect(joining(RESOURCE_SEPARATOR_STRING));
     }
 
     private static String determineSubpackageName(Path baseDir, Path classFile) {
@@ -122,12 +127,12 @@ public final class ClasspathSupport {
     }
 
     public static String resourceName(String resourcePath) {
-        return resourcePath.replace(CLASSPATH_RESOURCE_PATH_SEPARATOR, PACKAGE_SEPARATOR_CHAR);
+        return resourcePath.replace(RESOURCE_SEPARATOR_CHAR, PACKAGE_SEPARATOR_CHAR);
     }
 
     public static URI rootPackage() {
         try {
-            return new URI(CLASSPATH_SCHEME, CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING, null);
+            return new URI(CLASSPATH_SCHEME, RESOURCE_SEPARATOR_STRING, null);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }

@@ -1,5 +1,6 @@
 package io.cucumber.core.resource;
 
+import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -7,9 +8,11 @@ import java.net.URI;
 import java.util.List;
 
 import static java.util.Optional.of;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ResourceScannerTest {
 
@@ -117,6 +120,32 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesUri(resourceUri);
         assertThat(resources, contains(resourceUri));
     }
+
+
+    @Test
+    void scanForResourcesNestedJarUri() {
+        URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/spring-resource.jar").toURI();
+        URI resourceUri = URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "!/BOOT-INF/lib/jar-resource.jar!/com/example/package-jar-resource.txt");
+
+        CucumberException exception = assertThrows(
+            CucumberException.class,
+            () -> resourceScanner.scanForResourcesUri(resourceUri)
+        );
+        assertThat(exception.getMessage(), containsString("Cucumber currently doesn't support classpath scanning in nested jars."));
+
+    }
+
+    @Test
+    void scanForResourcesNestedJarUriUnPackaged() {
+        URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/spring-resource.jar").toURI();
+        URI resourceUri = URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "!/BOOT-INF/classes!/com/example/");
+
+        List<URI> resources = resourceScanner.scanForResourcesUri(resourceUri);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "!/BOOT-INF/classes/com/example/resource.txt")
+        ));
+    }
+
 
     @Test
     void scanForResourcesDirectoryUri() {

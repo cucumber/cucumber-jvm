@@ -1,5 +1,6 @@
 package io.cucumber.core.resource;
 
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 
@@ -26,12 +27,20 @@ import static java.util.Collections.emptyMap;
 class PathScanner {
 
     void findResourcesForUri(URI baseUri, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
-        try (CloseablePath closeablePath = CloseablePath.create(baseUri)) {
+        try (CloseablePath closeablePath = open(baseUri)) {
             Path baseDir = closeablePath.getPath();
             findResourcesForPath(baseDir, filter, consumer);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private CloseablePath open(URI uri) throws IOException, URISyntaxException {
+        if (JarUriFileSystemService.supports(uri)) {
+            return JarUriFileSystemService.open(uri);
+        }
+
+        return CloseablePath.open(uri);
     }
 
     void findResourcesForPath(Path baseDir, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
@@ -94,12 +103,7 @@ class PathScanner {
             this.delegate = delegate;
         }
 
-        static CloseablePath create(URI uri) throws IOException, URISyntaxException {
-
-            if (JarUriFileSystemService.supports(uri)) {
-                return JarUriFileSystemService.create(uri);
-            }
-
+        static CloseablePath open(URI uri) {
             return new CloseablePath(Paths.get(uri), NULL_CLOSEABLE);
         }
 
@@ -118,7 +122,7 @@ class PathScanner {
         private static final String FILE_URI_SCHEME = "file";
         private static final String JAR_URI_SCHEME = "jar";
         private static final String JAR_URI_SCHEME_PREFIX = JAR_URI_SCHEME + ":";
-        private static final String JAR_FILE_EXTENSION = ".jar";
+        private static final String JAR_FILE_SUFFIX = ".jar";
         private static final String JAR_URI_SEPARATOR = "!";
 
         private static CloseablePath createForJarFileSystem(URI jarUri, Function<FileSystem, Path> pathProvider)
@@ -132,23 +136,54 @@ class PathScanner {
             return hasJarUriScheme(uri) || hasFileUriSchemeWithJarExtension(uri);
         }
 
-        static CloseablePath create(URI uri) throws URISyntaxException, IOException {
+        static CloseablePath open(URI uri) throws URISyntaxException, IOException {
             if (hasJarUriScheme(uri)) {
-                String[] parts = uri.toString().split(JAR_URI_SEPARATOR);
-                String jarUri = parts[0];
-                String jarEntry = parts[1];
-                return createForJarFileSystem(new URI(jarUri), fileSystem -> fileSystem.getPath(jarEntry));
+                return handleJarUriScheme(uri);
             }
             if (hasFileUriSchemeWithJarExtension(uri)) {
-                return createForJarFileSystem(new URI(JAR_URI_SCHEME_PREFIX + uri),
-                    fileSystem -> fileSystem.getRootDirectories().iterator().next());
+                return handleFileUriSchemeWithJarExtension(uri);
+            }
+            throw new IllegalArgumentException("Unsupported uri " + uri.toString());
+        }
+
+        private static CloseablePath handleFileUriSchemeWithJarExtension(URI uri) throws IOException, URISyntaxException {
+            return createForJarFileSystem(new URI(JAR_URI_SCHEME_PREFIX + uri),
+                fileSystem -> fileSystem.getRootDirectories().iterator().next());
+        }
+
+        private static CloseablePath handleJarUriScheme(URI uri) throws IOException, URISyntaxException {
+            String[] parts = uri.toString().split(JAR_URI_SEPARATOR);
+            // Regular jar schemes
+            if (parts.length <= 2) {
+                String jarUri = parts[0];
+                String jarPath = parts.length == 2 ? parts[1] : "/";
+                return createForJarFileSystem(new URI(jarUri), fileSystem -> fileSystem.getPath(jarPath));
             }
 
-            return null;
+            // Spring boot jar scheme
+            String jarUri = parts[0];
+            String jarEntry = parts[1];
+            String subEntry = parts[2];
+            if (jarEntry.endsWith(JAR_FILE_SUFFIX)) {
+                throw nestedJarEntriesAreUnsupported(uri);
+            }
+            return createForJarFileSystem(new URI(jarUri), fileSystem -> fileSystem.getPath(jarEntry + subEntry));
+        }
+
+        private static CucumberException nestedJarEntriesAreUnsupported(URI uri) {
+            return new CucumberException("" +
+                "The resource " + uri + " is located in a nested jar.\n" +
+                "\n" +
+                "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
+                "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
+                "Feel free to send a pull request to make this possible!\n" +
+                "\n" +
+                "You can avoid this error by unpacking your application before executing."
+            );
         }
 
         private static boolean hasFileUriSchemeWithJarExtension(URI uri) {
-            return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_EXTENSION);
+            return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_SUFFIX);
         }
 
         private static boolean hasJarUriScheme(URI uri) {
