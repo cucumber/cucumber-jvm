@@ -140,11 +140,10 @@ class ResourceScannerTest {
         URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/spring-resource.jar").toURI();
         URI resourceUri = URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "!/BOOT-INF/classes!/com/example/");
 
-        CucumberException exception = assertThrows(
-            CucumberException.class,
-            () -> resourceScanner.scanForResourcesUri(resourceUri)
-        );
-        assertThat(exception.getMessage(), containsString("Cucumber currently doesn't support classpath scanning in nested jars."));
+        List<URI> resources = resourceScanner.scanForResourcesUri(resourceUri);
+        assertThat(resources, containsInAnyOrder(
+            URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "!/BOOT-INF/classes/com/example/resource.txt")
+        ));
     }
 
 

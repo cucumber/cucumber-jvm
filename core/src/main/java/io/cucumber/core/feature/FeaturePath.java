@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.Locale;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
+import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_CHAR;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackage;
 import static java.util.Objects.requireNonNull;
 
@@ -80,11 +81,12 @@ public class FeaturePath {
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
-        return featureIdentifier.replace(File.separatorChar, '/');
+        return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
     }
 
     private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
-        return File.separatorChar != '/' && featureIdentifier.contains(File.separator);
+        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
+            && featureIdentifier.contains(File.separator);
     }
 
     private static URI parseAssumeFileScheme(String featureIdentifier) {

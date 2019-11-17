@@ -6,10 +6,11 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.core.resource.ClasspathSupport.PACKAGE_SEPARATOR_STRING;
+import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_CHAR;
+import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_STRING;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackage;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.Character.isJavaIdentifierStart;
@@ -59,7 +60,8 @@ public class GluePath {
     }
 
     private static boolean isProbablyPackage(String gluePath) {
-        return gluePath.contains(PACKAGE_SEPARATOR_STRING) && !gluePath.contains(CLASSPATH_RESOURCE_PATH_SEPARATOR_STRING);
+        return gluePath.contains(PACKAGE_SEPARATOR_STRING)
+            && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
     }
 
     private static String replacePackageSeparator(String gluePath) {
@@ -67,11 +69,12 @@ public class GluePath {
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
-        return featureIdentifier.replace(File.separatorChar, '/');
+        return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
     }
 
     private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
-        return File.separatorChar != '/' && featureIdentifier.contains(File.separator);
+        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
+            && featureIdentifier.contains(File.separator);
     }
 
     private static URI parseAssumeClasspathScheme(String gluePath) {

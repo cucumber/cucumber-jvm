@@ -8,10 +8,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Add `DefaultParameterTransformer` alternative for `TypeRegistry.setDefaultParameterTransformer`
    - Add `DefaultDataTableEntryTransformer` alternative for `TypeRegistry.setDefaultDataTableEntryTransformer`
    - Add `DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
-
+ * [Core] Limited support for classpath scanning in SpringBoot jars ([#1821](https://github.com/cucumber/cucumber-jvm/pull/1821) M.P. Korstanje)
+   - Enables scanning of glue and features in `BOOT-INF/classes`.
+   
 ### Changed
  * [Core] Indent write events in PrettyFormatter ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Alexandre Monterroso)
- 
+ * [Core] Include name in duplicate feature detection ([#1819](https://github.com/cucumber/cucumber-jvm/pull/1819) M.P. Korstanje)
+ * [Core] Replace ResourceIterable with standard Java solutions ([#1820](https://github.com/cucumber/cucumber-jvm/pull/1820) M.P. Korstanje)
+   - Uses `FileSystem` to open URI's allowing features to be read from any file
+     system supported by the JVM.
+
 ### Removed
  
 ### Fixed
