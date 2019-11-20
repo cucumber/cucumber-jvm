@@ -1,7 +1,7 @@
-package io.cucumber.spring.commonglue;
+package cucumber.runtime.java.spring.deprecatedglue;
 
-import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
 
 public class UnusedGlue {
     public UnusedGlue() {

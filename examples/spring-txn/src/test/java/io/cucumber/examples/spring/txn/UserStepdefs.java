@@ -2,7 +2,6 @@ package io.cucumber.examples.spring.txn;
 
 import io.cucumber.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -30,9 +29,5 @@ public class UserStepdefs {
             m.setAuthor(user);
             messageRepository.save(m);
         }
-        assertTrue(
-            TransactionSynchronizationManager.isActualTransactionActive(),
-            "No transaction is active"
-        );
     }
 }
