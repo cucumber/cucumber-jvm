@@ -9,6 +9,7 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 <dependency>
     <groupId>io.cucumber</groupId>
     <artifactId>cucumber-junit-platform-engine</artifactId>
+    <version>${cucumber.version}</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -24,6 +25,16 @@ discovery of non-class based test. As a work around you can use the antrun plugi
 Console Launcher.
 
 ```xml
+<dependencies>
+    ....
+    <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+        <version>${junit-platform.version}</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
 <build>
     <plugins>
         <plugin>
