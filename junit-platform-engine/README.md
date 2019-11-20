@@ -70,6 +70,33 @@ Console Launcher.
     </plugins>
 </build>
 ```
+## Maven Surefire / Gradle Test workaround ##
+
+Gradle Test ([gradle/#4773](https://github.com/gradle/gradle/issues/4773)) does not yet support discovery of non-class
+based test. As a work around you can use a custom task to start the the JUnit Platform Console Launcher.
+
+```groovy
+
+tasks {
+
+	val consoleLauncherTest by registering(JavaExec::class) {
+		dependsOn(testClasses)
+		val reportsDir = file("$buildDir/test-results")
+		outputs.dir(reportsDir)
+		classpath = sourceSets["test"].runtimeClasspath
+		main = "org.junit.platform.console.ConsoleLauncher"
+		args("--scan-classpath")
+		args("--include-engine", "cucumber")
+		args("--reports-dir", reportsDir)
+	}
+
+	test {
+		dependsOn(consoleLauncherTest)
+		exclude("**/*")
+	}
+}
+```
+
 
 ## Parallel execution ## 
 

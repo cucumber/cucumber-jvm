@@ -73,6 +73,8 @@
                                     <arg value="cucumber"/>
                                     <arg value="--scan-classpath"/>
                                     <arg value="${project.build.testOutputDirectory}"/>
+                                    <arg value="--reports-dir"/>
+                                    <arg value="${project.build.directory}/cucumber-reports"/>
                                 </java>
                             </target>
                         </configuration>
