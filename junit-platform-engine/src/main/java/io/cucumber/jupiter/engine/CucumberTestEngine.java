@@ -24,12 +24,12 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
 	@Override
 	public Optional<String> getGroupId() {
-		return Optional.of("io.cucucumber");
+		return Optional.of("io.cucumber");
 	}
 
 	@Override
 	public Optional<String> getArtifactId() {
-		return Optional.of("cucucumber-junit-jupiter");
+		return Optional.of("cucumber-junit-platform-engine");
 	}
 
 
