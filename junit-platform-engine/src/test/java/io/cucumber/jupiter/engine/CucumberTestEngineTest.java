@@ -23,16 +23,6 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    void groupId() {
-        assertEquals(Optional.of("io.cucucumber"), engine.getGroupId());
-    }
-
-    @Test
-    void artifactId() {
-        assertEquals(Optional.of("cucucumber-junit-jupiter"), engine.getArtifactId());
-    }
-
-    @Test
     void version() {
         assertEquals(Optional.of("DEVELOPMENT"), engine.getVersion());
     }
