@@ -1,11 +1,11 @@
 package io.cucumber.examples.spring.txn;
 
-import io.cucumber.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.cucumber.java.en.Given;
+
 
 public class UserStepdefs {
     @Autowired

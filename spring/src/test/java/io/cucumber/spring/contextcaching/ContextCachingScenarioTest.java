@@ -1,7 +1,8 @@
-package cucumber.runtime.java.spring.contextcaching;
+package io.cucumber.spring.contextcaching;
 
-import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
+
+import io.cucumber.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 public class ContextCachingScenarioTest {

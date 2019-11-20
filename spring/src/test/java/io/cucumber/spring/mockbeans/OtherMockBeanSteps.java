@@ -1,8 +1,9 @@
-package cucumber.runtime.java.spring.mockbeans;
+package io.cucumber.spring.mockbeans;
 
-import cucumber.api.java.en.Then;
-import cucumber.runtime.java.spring.beans.Belly;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import io.cucumber.java.en.Then;
+import io.cucumber.spring.beans.Belly;
 
 import static org.junit.Assert.assertEquals;
 

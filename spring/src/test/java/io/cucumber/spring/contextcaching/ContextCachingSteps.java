@@ -1,7 +1,10 @@
-package cucumber.runtime.java.spring.contextcaching;
+package io.cucumber.spring.contextcaching;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -12,11 +15,11 @@ public class ContextCachingSteps {
     @Autowired
     ContextCounter contextCounter;
 
-    @cucumber.api.java.en.When("I run a scenario")
+    @When("I run a scenario")
     public void runningScenario() {
     }
 
-    @cucumber.api.java.en.Then("there should be only one Spring context")
+    @Then("there should be only one Spring context")
     public void oneContext() {
         assertThat(contextCounter.getContextCount(), is(1));
     }

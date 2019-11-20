@@ -1,12 +1,5 @@
 package io.cucumber.spring;
 
-import cucumber.api.java.ObjectFactory;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.spring.CucumberTestContextManager;
-import io.cucumber.core.backend.CucumberBackendException;
-import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.exception.CucumberException;
-
 import org.apiguardian.api.API;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.BootstrapWith;
@@ -24,6 +17,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import io.cucumber.core.backend.CucumberBackendException;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.exception.CucumberException;
 
 import static java.util.Arrays.asList;
 

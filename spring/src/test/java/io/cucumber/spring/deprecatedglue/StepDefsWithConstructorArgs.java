@@ -1,10 +1,9 @@
-package cucumber.runtime.java.spring.deprecatedglue;
+package io.cucumber.spring.deprecatedglue;
 
-import cucumber.api.java.en.Given;
-import cucumber.runtime.java.spring.beans.BellyBean;
+import io.cucumber.java.en.Given;
+import io.cucumber.spring.beans.BellyBean;
 
 public class StepDefsWithConstructorArgs {
-
 
     private final BellyBean bellyBean;
 

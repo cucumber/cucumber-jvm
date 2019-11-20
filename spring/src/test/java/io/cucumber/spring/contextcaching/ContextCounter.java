@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring.contextcaching;
+package io.cucumber.spring.contextcaching;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package io.cucumber.spring;
 
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextManager;

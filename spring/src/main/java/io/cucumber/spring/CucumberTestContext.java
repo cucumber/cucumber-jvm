@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package io.cucumber.spring;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;

@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring.contextcaching;
+package io.cucumber.spring.contextcaching;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
