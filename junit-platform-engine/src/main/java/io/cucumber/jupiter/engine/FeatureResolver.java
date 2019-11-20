@@ -64,12 +64,7 @@ final class FeatureResolver {
     }
 
     void resolveDirectory(DirectorySelector selector) {
-        try {
-            resolvePath(selector.getPath());
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features in directory '%s'.", selector.getRawPath()));
-        }
+        resolvePath(selector.getPath());
     }
 
     private void resolvePath(Path path) {
@@ -85,53 +80,33 @@ final class FeatureResolver {
     }
 
     void resolveFile(FileSelector selector) {
-        try {
-            resolvePath(selector.getPath());
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features in file '%s'.", selector.getRawPath()));
-        }
+        resolvePath(selector.getPath());
     }
 
     void resolvePackageResource(PackageSelector selector) {
         String packageName = selector.getPackageName();
-        try {
-            featureScanner
-                .scanForResourcesInPackage(packageName, packageFilter::match)
-                .stream()
-                .map(this::resolveFeature)
-                .forEach(this::merge);
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features in package '%s'.", packageName));
-        }
+        featureScanner
+            .scanForResourcesInPackage(packageName, packageFilter::match)
+            .stream()
+            .map(this::resolveFeature)
+            .forEach(this::merge);
     }
 
     void resolveClasspathResource(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
-        try {
-            featureScanner
-                .scanForClasspathResource(classpathResourceName, packageFilter::match)
-                .stream()
-                .map(this::resolveFeature)
-                .forEach(this::merge);
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve feature '%s'.", classpathResourceName));
-        }
+        featureScanner
+            .scanForClasspathResource(classpathResourceName, packageFilter::match)
+            .stream()
+            .map(this::resolveFeature)
+            .forEach(this::merge);
     }
 
     void resolveClasspathRoot(ClasspathRootSelector selector) {
-        try {
-            featureScanner
-                .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter::match)
-                .stream()
-                .map(this::resolveFeature)
-                .forEach(this::merge);
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features in classpath root '%s'.", selector.getClasspathRoot()));
-        }
+        featureScanner
+            .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter::match)
+            .stream()
+            .map(this::resolveFeature)
+            .forEach(this::merge);
     }
 
     void resolveUri(UriSelector selector) {
@@ -160,20 +135,14 @@ final class FeatureResolver {
             return;
         }
 
-        try {
-            uniqueId.getSegments()
-                .stream()
-                .filter(FeatureOrigin::isFeatureSegment)
-                .map(UniqueId.Segment::getValue)
-                .map(URI::create)
-                .flatMap(this::resolveUri)
-                .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
-                .forEach(this::merge);
-        } catch (Throwable e) {
-            //TODO: Check if we need to catch these.
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features for '%s'.", uniqueIdSelector.getUniqueId()));
-        }
+        uniqueId.getSegments()
+            .stream()
+            .filter(FeatureOrigin::isFeatureSegment)
+            .map(UniqueId.Segment::getValue)
+            .map(URI::create)
+            .flatMap(this::resolveUri)
+            .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
+            .forEach(this::merge);
     }
 
     private TestDescriptor pruneDescription(TestDescriptor descriptor, UniqueId toKeep) {

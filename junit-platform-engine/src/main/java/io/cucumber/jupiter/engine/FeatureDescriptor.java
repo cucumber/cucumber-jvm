@@ -50,7 +50,6 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
                     );
                     parent.addChild(descriptor);
                 });
-            return;
         }
 
         if (node instanceof TableRow) {
@@ -65,7 +64,6 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
                     );
                     parent.addChild(descriptor);
                 });
-            return;
         }
 
         if (node instanceof ScenarioOutline) {
@@ -90,10 +88,8 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
             parent.addChild(descriptor);
             AtomicInteger rowCounter = new AtomicInteger(1);
             examples.getTableBody().forEach(tableRow -> visit(feature, descriptor, source, tableRow, rowCounter.getAndIncrement()));
-            return;
         }
 
-        throw new IllegalStateException("Unsupported type" + node.getClass());
     }
 
     @Override
