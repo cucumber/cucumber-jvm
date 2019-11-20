@@ -15,37 +15,30 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
-import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
-import org.junit.platform.commons.util.ExceptionUtils;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
-import org.opentest4j.TestAbortedException;
 
 import java.time.Clock;
 import java.util.function.Supplier;
 
-import static io.cucumber.plugin.event.Status.PASSED;
+import static io.cucumber.jupiter.engine.TestCaseResultObserver.observe;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     private static final Logger logger = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final EventBus bus;
-    private final CucumberEngineOptions options;
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         logger.debug(() -> "Parsing options");
-        this.options = new CucumberEngineOptions(configurationParameters);
+        CucumberEngineOptions options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
@@ -80,10 +73,6 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         bus.send(new TestRunFinished(bus.getInstant()));
     }
 
-    private TestCaseResultObserver observe(EventPublisher bus) {
-        return new TestCaseResultObserver(bus);
-    }
-
     private Runner getRunner() {
         try {
             return runnerSupplier.get();
@@ -93,44 +82,5 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         }
     }
 
-    private class TestCaseResultObserver implements AutoCloseable {
-
-        private final EventPublisher bus;
-        private Result result;
-        private final EventHandler<TestCaseFinished> testCaseFinished = new EventHandler<TestCaseFinished>() {
-            @Override
-            public void receive(TestCaseFinished event) {
-                result = event.getResult();
-            }
-        };
-
-        TestCaseResultObserver(EventPublisher bus) {
-            this.bus = bus;
-            bus.registerHandlerFor(TestCaseFinished.class, testCaseFinished);
-        }
-
-        @Override
-        public void close() {
-            bus.removeHandlerFor(TestCaseFinished.class, testCaseFinished);
-        }
-
-        void assertTestCasePassed() {
-            if (result.getStatus().is(PASSED)) {
-                return;
-            }
-            Throwable error = result.getError();
-            if (result.getStatus().isOk(options.isStrict())) {
-                // TODO: Fix strict mode
-                // TODO: Include snippet here for undefined steps
-                // TODO: Return and throw in caller. See JUNIT.
-                // TODO: Distinguish between TestSkippedException and TestAbortedException
-                if (error == null) {
-                    throw new TestAbortedException();
-                }
-                throw new TestAbortedException(error.getMessage(), error);
-            } else {
-                ExceptionUtils.throwAsUncheckedException(error);
-            }
-        }
-    }
 }
+

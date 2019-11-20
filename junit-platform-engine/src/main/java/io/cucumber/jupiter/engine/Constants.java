@@ -3,7 +3,6 @@ package io.cucumber.jupiter.engine;
 import org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy;
 import org.junit.platform.engine.support.hierarchical.ParallelExecutionConfigurationStrategy;
 
-import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_CUSTOM_CLASS_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_DYNAMIC_FACTOR_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_FIXED_PARALLELISM_PROPERTY_NAME;
@@ -18,17 +17,6 @@ public final class Constants {
      * Ansi colors are enabled by default.
      */
     public static final String ANSI_COLORS_DISABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
-
-
-    /**
-     * Property name used to enable strict execution: {@value}
-     * <p>
-     * When using strict execution Cucumber will treat undefined and pending
-     * steps as errors.
-     * <p>
-     * By default, strict execution is disabled
-     */
-    public static final String EXECUTION_STRICT_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
 
     /**
      * Property name used to enable dry-run: {@value}
@@ -73,6 +61,13 @@ public final class Constants {
      */
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 
+    /**
+     * Property name to select custom object factory implementation: {@value}
+     * <p>
+     * By default, if a single object factory is available on the class path
+     * that object factory will be used.
+     */
+    public static final String OBJECT_FACTORY_PROPERTY_NAME = io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 
     /**
      * Property name to control naming convention for generated snippets: {@value}

@@ -4,9 +4,11 @@ import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+
 import static io.cucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.EXECUTION_STRICT_PROPERTY_NAME;
+import static io.cucumber.jupiter.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static java.util.Arrays.asList;
@@ -20,46 +22,91 @@ class CucumberEngineOptionsTest {
 
     @Test
     void getPluginNames() {
+        MapConfigurationParameters html = new MapConfigurationParameters(
+            PLUGIN_PROPERTY_NAME,
+            "html:path/to/report.html"
+        );
+
         assertEquals(
             singletonList("html:path/to/report.html"),
-            new CucumberEngineOptions(
-                new MapConfigurationParameters(PLUGIN_PROPERTY_NAME, "html:path/to/report.html")
-            ).plugins().stream().map(Options.Plugin::pluginString).collect(toList())
+            new CucumberEngineOptions(html).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList())
+        );
+
+        CucumberEngineOptions htmlAndJson = new CucumberEngineOptions(
+            new MapConfigurationParameters(PLUGIN_PROPERTY_NAME, "html:path/with spaces/to/report.html, json:path/with spaces/to/report.json")
         );
         assertEquals(
             asList("html:path/with spaces/to/report.html", "json:path/with spaces/to/report.json"),
-            new CucumberEngineOptions(
-                new MapConfigurationParameters(PLUGIN_PROPERTY_NAME, "html:path/with spaces/to/report.html, json:path/with spaces/to/report.json")
-            ).plugins().stream().map(Options.Plugin::pluginString).collect(toList())
+            htmlAndJson.plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList())
         );
     }
 
     @Test
     void isStrict() {
-        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_STRICT_PROPERTY_NAME, "true")).isStrict());
-        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_STRICT_PROPERTY_NAME, "false")).isStrict());
+        MapConfigurationParameters someConfig = new MapConfigurationParameters(
+            "some key", "some value"
+        );
+        assertTrue(new CucumberEngineOptions(someConfig).isStrict());
     }
 
     @Test
     void isMonochrome() {
-        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(ANSI_COLORS_DISABLED_PROPERTY_NAME, "true")).isMonochrome());
-        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(ANSI_COLORS_DISABLED_PROPERTY_NAME, "false")).isMonochrome());
+        MapConfigurationParameters ansiColors = new MapConfigurationParameters(
+            ANSI_COLORS_DISABLED_PROPERTY_NAME,
+            "true"
+        );
+        assertTrue(new CucumberEngineOptions(ansiColors).isMonochrome());
+
+        MapConfigurationParameters noAnsiColors = new MapConfigurationParameters(
+            ANSI_COLORS_DISABLED_PROPERTY_NAME,
+            "false"
+        );
+        assertFalse(new CucumberEngineOptions(noAnsiColors).isMonochrome());
     }
 
     @Test
     void getGlue() {
-        //TODO: Implement test
+        MapConfigurationParameters glue = new MapConfigurationParameters(
+            GLUE_PROPERTY_NAME,
+            "com.example.app, com.example.glue"
+        );
+        assertEquals(
+            asList(URI.create("classpath:/com/example/app"), URI.create("classpath:/com/example/glue")),
+            new CucumberEngineOptions(glue).getGlue()
+        );
     }
 
     @Test
     void isDryRun() {
-        assertTrue(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_DRY_RUN_PROPERTY_NAME, "true")).isDryRun());
-        assertFalse(new CucumberEngineOptions(new MapConfigurationParameters(EXECUTION_DRY_RUN_PROPERTY_NAME, "false")).isDryRun());
+        MapConfigurationParameters dryRun = new MapConfigurationParameters(
+            EXECUTION_DRY_RUN_PROPERTY_NAME,
+            "true"
+        );
+        assertTrue(new CucumberEngineOptions(dryRun).isDryRun());
+
+        MapConfigurationParameters noDryRun = new MapConfigurationParameters(
+            EXECUTION_DRY_RUN_PROPERTY_NAME,
+            "false"
+        );
+        assertFalse(new CucumberEngineOptions(noDryRun).isDryRun());
     }
 
     @Test
     void getSnippetType() {
-        assertEquals(SnippetType.UNDERSCORE, new CucumberEngineOptions(new MapConfigurationParameters(SNIPPET_TYPE_PROPERTY_NAME, "underscore")).getSnippetType());
-        assertEquals(SnippetType.CAMELCASE, new CucumberEngineOptions(new MapConfigurationParameters(SNIPPET_TYPE_PROPERTY_NAME, "camelcase")).getSnippetType());
+        MapConfigurationParameters underscore = new MapConfigurationParameters(
+            SNIPPET_TYPE_PROPERTY_NAME,
+            "underscore"
+        );
+        assertEquals(SnippetType.UNDERSCORE, new CucumberEngineOptions(underscore).getSnippetType());
+
+        MapConfigurationParameters camelcase = new MapConfigurationParameters(
+            SNIPPET_TYPE_PROPERTY_NAME,
+            "camelcase"
+        );
+        assertEquals(SnippetType.CAMELCASE, new CucumberEngineOptions(camelcase).getSnippetType());
     }
 }

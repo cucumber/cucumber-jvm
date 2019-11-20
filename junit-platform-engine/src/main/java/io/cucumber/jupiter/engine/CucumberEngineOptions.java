@@ -2,6 +2,7 @@ package io.cucumber.jupiter.engine;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
 import io.cucumber.core.plugin.Options;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.EXECUTION_STRICT_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.GLUE_PROPERTY_NAME;
+import static io.cucumber.jupiter.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
@@ -32,7 +33,7 @@ class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options,
 
     @Override
     public boolean isStrict() {
-        return configurationParameters.getBoolean(EXECUTION_STRICT_PROPERTY_NAME).orElse(false);
+        return true;
     }
 
     @Override
@@ -47,7 +48,9 @@ class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options,
 
     @Override
     public boolean isMonochrome() {
-        return configurationParameters.getBoolean(ANSI_COLORS_DISABLED_PROPERTY_NAME).orElse(false);
+        return configurationParameters
+            .getBoolean(ANSI_COLORS_DISABLED_PROPERTY_NAME)
+            .orElse(false);
     }
 
     @Override
@@ -56,13 +59,16 @@ class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options,
             .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
             .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
             .stream()
+            .map(String::trim)
             .map(GluePath::parse)
             .collect(Collectors.toList());
     }
 
     @Override
     public boolean isDryRun() {
-        return configurationParameters.getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME).orElse(false);
+        return configurationParameters
+            .getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME)
+            .orElse(false);
     }
 
     @Override
@@ -74,7 +80,9 @@ class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options,
 
     @Override
     public Class<? extends ObjectFactory> getObjectFactoryClass() {
-        return null;
+        return configurationParameters
+            .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
+            .orElse(null);
     }
 
 }
