@@ -13,13 +13,58 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 </dependency>
 ```
 
-This will allow the IntelliJ IDEA, Eclipse, Maven Surefire, ect to discover, select and execute Cucumber scenarios. 
+This will allow the IntelliJ IDEA, Eclipse, Maven, Gradle, ect, to discover, select and execute Cucumber scenarios. 
+
+## Maven Surefire / Gradle Test ##
+
+//TODO: Create issue with Surefire for support
+
+Maven Surefire () and Gradle Test ([gradle/#4773](https://github.com/gradle/gradle/issues/4773)) does not yet support
+discovery of non-class based test. As a work around you can use the antrun plugin to start the the JUnit Platform
+Console Launcher.
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+                <execution>
+                    <!--Work around. Surefire does not use JUnits Test Engine discovery functionality -->
+                    <id>CLI-test</id>
+                    <phase>integration-test</phase>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                    <configuration>
+                        <target>
+                            <echo message="Running JUnit Platform CLI"/>
+                            <java classname="org.junit.platform.console.ConsoleLauncher"
+                                  fork="true"
+                                  failonerror="true"
+                                  newenvironment="true"
+                                  maxmemory="512m"
+                                  classpathref="maven.test.classpath">
+                                <arg value="--include-engine"/>
+                                <arg value="cucumber"/>
+                                <arg value="--scan-classpath"/>
+                                <arg value="${project.build.testOutputDirectory}"/>
+                            </java>
+                        </target>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
 
 ## Parallel execution ## 
 
-By default, Cucumber tests are run sequentially in a single thread. Running tests in parallel, e.g. to speed up 
-execution, is available as an opt-in feature. To enable parallel execution, simply set the set the 
-`cucumber.execution.parallel.enabled` configuration parameter to `true`, e.g. in `junit-platform.properties`.
+By default, Cucumber tests are run sequentially in a single thread. Running tests in parallel is available as an opt-in
+feature. To enable parallel execution, set the set the `cucumber.execution.parallel.enabled` configuration parameter
+to `true`, e.g. in `junit-platform.properties`.
 
 ## Configuration Options ##
 
