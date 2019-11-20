@@ -16,7 +16,7 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 
 This will allow the IntelliJ IDEA, Eclipse, Maven, Gradle, ect, to discover, select and execute Cucumber scenarios. 
 
-## Maven Surefire / Gradle Test ##
+## Maven Surefire / Gradle Test workaround ##
 
 //TODO: Create issue with Surefire for support
 
