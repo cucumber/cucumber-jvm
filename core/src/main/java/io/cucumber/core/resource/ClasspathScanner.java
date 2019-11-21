@@ -90,13 +90,13 @@ public final class ClasspathScanner {
                                                              Predicate<Class<?>> classFilter,
                                                              Consumer<Class<?>> classConsumer) {
         return baseDir -> classFile -> {
+            String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
             try {
-                String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
                 Optional.of(getClassLoader().loadClass(fqn))
                     .filter(classFilter)
                     .ifPresent(classConsumer);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException(e);
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                throw new IllegalArgumentException("Failed to load " + fqn, e);
             }
         };
     }
