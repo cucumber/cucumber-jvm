@@ -1,8 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberLocation;
 import io.cucumber.core.gherkin.Located;
-import io.cucumber.core.gherkin.CucumberFeature;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -16,6 +16,7 @@ import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX
 
 abstract class FeatureOrigin {
 
+    private static final String RULE_SEGMENT_TYPE = "rule";
     private static final String FEATURE_SEGMENT_TYPE = "feature";
     private static final String SCENARIO_SEGMENT_TYPE = "scenario";
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
@@ -53,6 +54,10 @@ abstract class FeatureOrigin {
     abstract TestSource nodeSource(Located node);
 
     abstract UniqueId featureSegment(UniqueId parent, CucumberFeature feature);
+
+    UniqueId ruleSegment(UniqueId parent, Located rule){
+        return parent.append(RULE_SEGMENT_TYPE, String.valueOf(rule.getLocation().getLine()));
+    }
 
     UniqueId scenarioSegment(UniqueId parent, Located scenarioDefinition) {
         return parent.append(SCENARIO_SEGMENT_TYPE, String.valueOf(scenarioDefinition.getLocation().getLine()));

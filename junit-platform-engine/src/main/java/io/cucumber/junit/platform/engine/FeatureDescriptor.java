@@ -3,6 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.gherkin.CucumberExample;
 import io.cucumber.core.gherkin.CucumberExamples;
 import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberRule;
 import io.cucumber.core.gherkin.CucumberScenario;
 import io.cucumber.core.gherkin.CucumberScenarioOutline;
 import io.cucumber.core.gherkin.Located;
@@ -47,6 +48,17 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
                     );
                     parent.addChild(descriptor);
                 });
+        }
+
+        if (node instanceof CucumberRule) {
+            NodeDescriptor descriptor = new NodeDescriptor(
+                source.ruleSegment(parent.getUniqueId(), node),
+                getNameOrKeyWord(node),
+                source.nodeSource(node)
+            );
+            parent.addChild(descriptor);
+            CucumberRule scenarioOutline = (CucumberRule) node;
+            scenarioOutline.children().forEach(section -> visit(feature, descriptor, source, section));
         }
 
         if (node instanceof CucumberScenarioOutline) {
