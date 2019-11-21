@@ -89,7 +89,7 @@ class FeatureResolverTest {
         assertEquals(CONTAINER, outline.getType());
         assertEquals(
             id.append("feature", featureSegmentValue)
-                .append("outline", "11"),
+                .append("scenario", "11"),
             outline.getUniqueId()
         );
     }
@@ -107,7 +107,7 @@ class FeatureResolverTest {
 
         assertEquals(
             id.append("feature", featureSegmentValue)
-                .append("outline", "11")
+                .append("scenario", "11")
                 .append("examples", "17")
                 .append("example", "19"),
             example.getUniqueId()

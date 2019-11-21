@@ -22,7 +22,8 @@ abstract class FeatureOrigin {
 
     static final String FEATURE_SEGMENT_TYPE = "feature";
     private static final String SCENARIO_SEGMENT_TYPE = "scenario";
-    private static final String OUTLINE_SEGMENT_TYPE = "outline";
+    // Scenario outline and Scenario will become synonyms in the future
+    private static final String OUTLINE_SEGMENT_TYPE = "scenario";
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
 
