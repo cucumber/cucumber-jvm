@@ -1,18 +1,17 @@
 package io.cucumber.jupiter.engine;
 
-import gherkin.ast.Examples;
-import gherkin.ast.Feature;
-import gherkin.ast.Scenario;
-import gherkin.ast.ScenarioOutline;
-import gherkin.ast.TableRow;
+import io.cucumber.core.feature.CucumberExample;
+import io.cucumber.core.feature.CucumberExamples;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberScenario;
+import io.cucumber.core.feature.CucumberScenarioOutline;
+import io.cucumber.core.feature.Located;
+import io.cucumber.core.feature.Named;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
@@ -25,71 +24,71 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
 
     static TestDescriptor create(CucumberFeature cucumberFeature, TestDescriptor parent) {
         FeatureOrigin source = FeatureOrigin.fromUri(cucumberFeature.getUri());
-        Feature feature = cucumberFeature.getGherkinFeature();
         TestDescriptor descriptor = new FeatureDescriptor(
             source.featureSegment(parent.getUniqueId(), cucumberFeature),
-            feature.getName(),
+            getNameOrKeyWord(cucumberFeature),
             source.featureSource(),
             cucumberFeature
         );
         parent.addChild(descriptor);
-        feature.getChildren().forEach(scenarioDefinition -> visit(cucumberFeature, descriptor, source, scenarioDefinition, 0));
+        cucumberFeature.children().forEach(scenarioDefinition -> visit(cucumberFeature, descriptor, source, scenarioDefinition));
         return descriptor;
     }
 
-    private static void visit(CucumberFeature feature, TestDescriptor parent, FeatureOrigin source, gherkin.ast.Node node, int row) {
-        if (node instanceof Scenario) {
-            Scenario scenario = (Scenario) node;
-            feature.getPickleAt(scenario.getLocation().getLine())
+    private static <T extends Located & Named> void visit(CucumberFeature feature, TestDescriptor parent, FeatureOrigin source, T node) {
+        if (node instanceof CucumberScenario) {
+            feature.getPickleAt(node.getLocation())
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
-                        source.scenarioSegment(parent.getUniqueId(), scenario),
-                        scenario.getName(),
-                        source.nodeSource(scenario),
+                        source.scenarioSegment(parent.getUniqueId(), node),
+                        getNameOrKeyWord(node),
+                        source.nodeSource(node),
                         pickle
                     );
                     parent.addChild(descriptor);
                 });
         }
 
-        if (node instanceof TableRow) {
-            TableRow tableRow = (TableRow) node;
-            feature.getPickleAt(tableRow.getLocation().getLine())
+        if (node instanceof CucumberScenarioOutline) {
+            NodeDescriptor descriptor = new NodeDescriptor(
+                source.scenarioSegment(parent.getUniqueId(), node),
+                getNameOrKeyWord(node),
+                source.nodeSource(node)
+            );
+            parent.addChild(descriptor);
+            CucumberScenarioOutline scenarioOutline = (CucumberScenarioOutline) node;
+            scenarioOutline.children().forEach(section -> visit(feature, descriptor, source, section));
+        }
+
+        if (node instanceof CucumberExamples) {
+            NodeDescriptor descriptor = new NodeDescriptor(
+                source.examplesSegment(parent.getUniqueId(), node),
+                getNameOrKeyWord(node),
+                source.nodeSource(node)
+            );
+            parent.addChild(descriptor);
+            CucumberExamples examples = (CucumberExamples) node;
+            examples.children().forEach(example -> visit(feature, descriptor, source, example));
+        }
+
+        if (node instanceof CucumberExample) {
+            feature.getPickleAt(node.getLocation())
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
-                        source.exampleSegment(parent.getUniqueId(), tableRow),
-                        "Example #" + row,
-                        source.nodeSource(tableRow),
+                        source.exampleSegment(parent.getUniqueId(), node),
+                        getNameOrKeyWord(node),
+                        source.nodeSource(node),
                         pickle
                     );
                     parent.addChild(descriptor);
                 });
         }
 
-        if (node instanceof ScenarioOutline) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline) node;
-            NodeDescriptor descriptor = new NodeDescriptor(
-                source.outlineSegment(parent.getUniqueId(), scenarioOutline),
-                scenarioOutline.getName(),
-                source.nodeSource(scenarioOutline)
-            );
-            parent.addChild(descriptor);
-            scenarioOutline.getExamples().forEach(examples -> visit(feature, descriptor, source, examples, row));
-            return;
-        }
+    }
 
-        if (node instanceof Examples) {
-            Examples examples = (Examples) node;
-            NodeDescriptor descriptor = new NodeDescriptor(
-                source.examplesSegment(parent.getUniqueId(), examples),
-                examples.getName(),
-                source.nodeSource(examples)
-            );
-            parent.addChild(descriptor);
-            AtomicInteger rowCounter = new AtomicInteger(1);
-            examples.getTableBody().forEach(tableRow -> visit(feature, descriptor, source, tableRow, rowCounter.getAndIncrement()));
-        }
-
+    private static <T extends Located & Named> String getNameOrKeyWord(T node) {
+        String name = node.getName();
+        return name.isEmpty() ? node.getKeyWord() : name;
     }
 
     @Override

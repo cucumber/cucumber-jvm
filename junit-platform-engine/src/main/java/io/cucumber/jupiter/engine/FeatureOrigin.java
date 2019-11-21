@@ -1,11 +1,8 @@
 package io.cucumber.jupiter.engine;
 
-import gherkin.ast.Examples;
-import gherkin.ast.Location;
-import gherkin.ast.Node;
-import gherkin.ast.ScenarioOutline;
-import gherkin.ast.TableRow;
 import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.feature.CucumberLocation;
+import io.cucumber.core.feature.Located;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -21,12 +18,10 @@ abstract class FeatureOrigin {
 
     private static final String FEATURE_SEGMENT_TYPE = "feature";
     private static final String SCENARIO_SEGMENT_TYPE = "scenario";
-    // Scenario outline and Scenario will become synonyms in Gherkin
-    private static final String OUTLINE_SEGMENT_TYPE = "scenario";
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
 
-    private static FilePosition createFilePosition(Location location) {
+    private static FilePosition createFilePosition(CucumberLocation location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
 
@@ -55,23 +50,19 @@ abstract class FeatureOrigin {
 
     abstract TestSource featureSource();
 
-    abstract TestSource nodeSource(Node scenarioDefinition);
+    abstract TestSource nodeSource(Located node);
 
     abstract UniqueId featureSegment(UniqueId parent, CucumberFeature feature);
 
-    UniqueId scenarioSegment(UniqueId parent, Node scenarioDefinition) {
+    UniqueId scenarioSegment(UniqueId parent, Located scenarioDefinition) {
         return parent.append(SCENARIO_SEGMENT_TYPE, String.valueOf(scenarioDefinition.getLocation().getLine()));
     }
 
-    UniqueId outlineSegment(UniqueId parent, ScenarioOutline scenarioOutline) {
-        return parent.append(OUTLINE_SEGMENT_TYPE, String.valueOf(scenarioOutline.getLocation().getLine()));
-    }
-
-    UniqueId examplesSegment(UniqueId parent, Examples examples) {
+    UniqueId examplesSegment(UniqueId parent, Located examples) {
         return parent.append(EXAMPLES_SEGMENT_TYPE, String.valueOf(examples.getLocation().getLine()));
     }
 
-    UniqueId exampleSegment(UniqueId parent, TableRow tableRow) {
+    UniqueId exampleSegment(UniqueId parent, Located tableRow) {
         return parent.append(EXAMPLE_SEGMENT_TYPE, String.valueOf(tableRow.getLocation().getLine()));
     }
 
@@ -89,7 +80,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource nodeSource(Node node) {
+        TestSource nodeSource(Located node) {
             return FileSource.from(source.getFile(), createFilePosition(node.getLocation()));
         }
 
@@ -113,7 +104,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource nodeSource(Node node) {
+        TestSource nodeSource(Located node) {
             return source;
         }
 
@@ -137,7 +128,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource nodeSource(Node node) {
+        TestSource nodeSource(Located node) {
             return ClasspathResourceSource.from(source.getClasspathResourceName(), createFilePosition(node.getLocation()));
         }
 

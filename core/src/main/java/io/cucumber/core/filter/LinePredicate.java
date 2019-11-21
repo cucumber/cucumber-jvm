@@ -21,7 +21,7 @@ final class LinePredicate implements Predicate<CucumberPickle> {
             return true;
         }
         for (Integer line : lineFilters.get(picklePath)) {
-            if (line == pickle.getLine() || line == pickle.getScenarioLine()) {
+            if (line == pickle.getLocation().getLine() || line == pickle.getScenarioLocation().getLine()) {
                 return true;
             }
         }

@@ -24,3 +24,15 @@ Feature: A feature with scenario outlines
       | example |
       | C       |
       | D       |
+
+  @ScenarioOutlineTag
+  Scenario Outline: A scenario outline with one example
+    Given a scenario outline
+    When it is executed
+    Then <example> is used
+
+    @Example1Tag
+    Examples:
+      | example |
+      | A       |
+      | B       |

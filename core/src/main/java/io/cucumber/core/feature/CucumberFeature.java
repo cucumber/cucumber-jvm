@@ -1,16 +1,15 @@
 package io.cucumber.core.feature;
 
-import gherkin.ast.Feature;
-import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
+import gherkin.ast.ScenarioOutline;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Optional;
+import java.util.stream.Stream;
 
-public final class CucumberFeature {
+public final class CucumberFeature implements Located, Named, Container<CucumberScenarioDefinition> {
     private final URI uri;
     private final List<CucumberPickle> pickles;
     private final GherkinDocument gherkinDocument;
@@ -23,12 +22,35 @@ public final class CucumberFeature {
         this.pickles = pickles;
     }
 
+    @Override
+    public Stream<CucumberScenarioDefinition> children() {
+        return gherkinDocument.getFeature().getChildren()
+            .stream()
+            .map(scenarioDefinition -> {
+                if (scenarioDefinition instanceof ScenarioOutline) {
+                    ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
+                    return new CucumberScenarioOutline(scenarioOutline);
+                }
+                return new CucumberScenario(scenarioDefinition);
+            });
+    }
+
     public String getKeyword() {
         return gherkinDocument.getFeature().getKeyword();
     }
 
+    @Override
+    public CucumberLocation getLocation() {
+        return CucumberLocation.from(gherkinDocument.getFeature().getLocation());
+    }
+
     public List<CucumberPickle> getPickles() {
         return pickles;
+    }
+
+    @Override
+    public String getKeyWord() {
+        return gherkinDocument.getFeature().getKeyword();
     }
 
     public String getName() {
@@ -41,10 +63,6 @@ public final class CucumberFeature {
 
     public String getSource() {
         return gherkinSource;
-    }
-
-    public Feature getGherkinFeature() {
-        return gherkinDocument.getFeature();
     }
 
     @Override
@@ -60,8 +78,8 @@ public final class CucumberFeature {
         return Objects.hash(uri);
     }
 
-    public Optional<CucumberPickle> getPickleAt(int line) {
-        return pickles.stream().filter(cucumberPickle -> cucumberPickle.getLine() == line).findFirst();
+    public Optional<CucumberPickle> getPickleAt(CucumberLocation line) {
+        return pickles.stream().filter(cucumberPickle -> cucumberPickle.getLocation().equals(line)).findFirst();
     }
 
 }
