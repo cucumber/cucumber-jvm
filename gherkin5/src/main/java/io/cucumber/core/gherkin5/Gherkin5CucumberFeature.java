@@ -1,12 +1,19 @@
 package io.cucumber.core.gherkin5;
 
 import gherkin.ast.GherkinDocument;
+import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.CucumberLocation;
 import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Node;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
 
 public final class Gherkin5CucumberFeature implements CucumberFeature {
     private final URI uri;
@@ -22,13 +29,42 @@ public final class Gherkin5CucumberFeature implements CucumberFeature {
     }
 
     @Override
+    public Stream<Node> children() {
+        return gherkinDocument.getFeature().getChildren().stream()
+            .map(scenarioDefinition -> {
+                if (scenarioDefinition instanceof ScenarioOutline) {
+                    ScenarioOutline outline = (ScenarioOutline) scenarioDefinition;
+                    return new Gherkin5CucumberScenarioOutline(outline);
+                }
+                return new Gherkin5CucumberScenario(scenarioDefinition);
+            }).map(Node.class::cast);
+    }
+
+    @Override
     public String getKeyword() {
         return gherkinDocument.getFeature().getKeyword();
     }
 
     @Override
+    public Optional<CucumberPickle> getPickleAt(CucumberLocation location) {
+        return pickles.stream()
+            .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
+            .findFirst();
+    }
+
+    @Override
+    public CucumberLocation getLocation() {
+        return from(gherkinDocument.getFeature().getLocation());
+    }
+
+    @Override
     public List<CucumberPickle> getPickles() {
         return pickles;
+    }
+
+    @Override
+    public String getKeyWord() {
+        return null;
     }
 
     @Override

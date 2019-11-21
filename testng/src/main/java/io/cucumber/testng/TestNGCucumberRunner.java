@@ -2,14 +2,9 @@ package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.feature.FeatureLoader;
-import io.cucumber.core.filter.Filters;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -17,6 +12,7 @@ import io.cucumber.core.options.CucumberPropertiesParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
@@ -35,8 +31,8 @@ import org.apiguardian.api.API;
 import java.time.Clock;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -87,10 +83,8 @@ public final class TestNGCucumberRunner {
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-        ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-        featureSupplier = new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
@@ -98,8 +92,7 @@ public final class TestNGCucumberRunner {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 

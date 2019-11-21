@@ -3,9 +3,9 @@ package io.cucumber.core.gherkin5;
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
 import gherkin.pickles.Pickle;
-import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.core.gherkin.CucumberLocation;
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
@@ -14,6 +14,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Wraps {@link Pickle} to avoid exposing the gherkin library to all of
@@ -59,28 +62,16 @@ public final class Gherkin5CucumberPickle implements CucumberPickle {
         return pickle.getName();
     }
 
-    /**
-     * Returns the line in feature file of the Scenario this pickle was created
-     * from. If this pickle was created from a Scenario Outline this line is the
-     * line in the Example section used to fill in the place holders.
-     *
-     * @return line in the feature file
-     */
+
     @Override
-    public int getLine() {
-        return pickle.getLocations().get(0).getLine();
+    public CucumberLocation getLocation() {
+        return from(pickle.getLocations().get(0));
     }
 
-    /**
-     * Returns the line in feature file of the Scenario this pickle was created
-     * from. If this pickle was created from a Scenario Outline this line is the
-     *
-     * @return line in the feature file
-     */
     @Override
-    public int getScenarioLine() {
-        List<PickleLocation> stepLocations = pickle.getLocations();
-        return stepLocations.get(stepLocations.size() - 1).getLine();
+    public CucumberLocation getScenarioLocation() {
+        int last = pickle.getLocations().size() - 1;
+        return from(pickle.getLocations().get(last));
     }
 
     @Override
@@ -90,7 +81,9 @@ public final class Gherkin5CucumberPickle implements CucumberPickle {
 
     @Override
     public List<String> getTags() {
-        return pickle.getTags().stream().map(PickleTag::getName).collect(Collectors.toList());
+        return pickle.getTags().stream()
+            .map(PickleTag::getName)
+            .collect(toList());
     }
 
     @Override

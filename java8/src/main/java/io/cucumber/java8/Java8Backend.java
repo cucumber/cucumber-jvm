@@ -13,9 +13,8 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
+import io.cucumber.core.resource.ClasspathScanner;
+import io.cucumber.core.resource.ClasspathSupport;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ final class Java8Backend implements Backend {
 
     private final Lookup lookup;
     private final Container container;
-    private final ClassFinder classFinder;
+    private final ClasspathScanner classFinder;
 
     private final List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
     private Glue glue;
@@ -35,9 +34,7 @@ final class Java8Backend implements Backend {
     Java8Backend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderProvider) {
         this.container = container;
         this.lookup = lookup;
-        ClassLoader classLoader = classLoaderProvider.get();
-        MultiLoader resourceLoader = new MultiLoader(classLoader);
-        this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        this.classFinder = new ClasspathScanner(classLoaderProvider);
     }
 
     @Override
@@ -45,7 +42,10 @@ final class Java8Backend implements Backend {
         this.glue = glue;
         // Scan for Java8 style glue (lambdas)
         gluePaths.stream()
-            .map(packageName -> classFinder.getDescendants(LambdaGlue.class, packageName))
+            .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+            .map(ClasspathSupport::resourcePath)
+            .map(ClasspathSupport::resourceName)
+            .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
             .flatMap(Collection::stream)
             .filter(glueClass -> !glueClass.isInterface())
             .filter(glueClass -> glueClass.getConstructors().length > 0)

@@ -3,20 +3,16 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.feature.FeatureLoader;
-import io.cucumber.core.filter.Filters;
-import io.cucumber.core.io.ClassFinder;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.ResourceLoaderClassFinder;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
@@ -42,6 +38,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
@@ -66,7 +63,6 @@ public final class Runtime {
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
-
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
@@ -109,7 +105,7 @@ public final class Runtime {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
-                log.error("Exception while executing pickle", e);
+                log.error(e, () -> "Exception while executing pickle");
                 thrown.add(e.getCause());
             } catch (InterruptedException e) {
                 executor.shutdownNow();
@@ -136,10 +132,9 @@ public final class Runtime {
     public static class Builder {
 
         private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
-        private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
-        private ResourceLoader resourceLoader;
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = emptyList();
 
@@ -151,13 +146,8 @@ public final class Runtime {
             return this;
         }
 
-        public Builder withClassLoader(final ClassLoader classLoader) {
+        public Builder withClassLoader(final Supplier<ClassLoader> classLoader) {
             this.classLoader = classLoader;
-            return this;
-        }
-
-        public Builder withResourceLoader(final ResourceLoader resourceLoader) {
-            this.resourceLoader = resourceLoader;
             return this;
         }
 
@@ -182,12 +172,6 @@ public final class Runtime {
         }
 
         public Runtime build() {
-            final ResourceLoader resourceLoader = this.resourceLoader != null
-                ? this.resourceLoader
-                : new MultiLoader(this.classLoader);
-
-            final ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, this.classLoader);
-
             final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
 
             final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
@@ -196,7 +180,7 @@ public final class Runtime {
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                 ? this.backendSupplier
-                : new BackendServiceLoader(() -> this.classLoader, objectFactorySupplier);
+                : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
@@ -210,7 +194,7 @@ public final class Runtime {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
 
-            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classFinder, runtimeOptions);
+            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
                 ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier)
@@ -220,12 +204,9 @@ public final class Runtime {
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
-
-            final FeatureLoader featureLoader = new FeatureLoader(resourceLoader);
-
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(featureLoader, runtimeOptions);
+                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
             final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();

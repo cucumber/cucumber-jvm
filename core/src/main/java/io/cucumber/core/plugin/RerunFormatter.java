@@ -14,6 +14,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.cucumber.core.feature.FeatureWithLines.create;
+import static io.cucumber.core.plugin.TestSourcesModel.relativize;
+
 /**
  * Formatter for reporting all failed test cases and print their locations
  * Failed means: results that make the exit code non-zero.
@@ -58,7 +61,7 @@ public final class RerunFormatter implements EventListener, StrictAware {
 
     private void finishReport() {
         for (Map.Entry<URI, Collection<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
-            FeatureWithLines featureWithLines = FeatureWithLines.create(entry.getKey(), entry.getValue());
+            FeatureWithLines featureWithLines = create(relativize(entry.getKey()), entry.getValue());
             out.println(featureWithLines.toString());
         }
 

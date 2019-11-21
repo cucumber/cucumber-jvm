@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -57,7 +58,7 @@ class GuiceFactoryTest {
 
         Executable testMethod = () -> factory.start();
         ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalToCompressingWhiteSpace(
             "Guice configuration errors:\n\n" +
                 "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
                 "  while locating io.cucumber.guice.ScenarioScope\n\n" +

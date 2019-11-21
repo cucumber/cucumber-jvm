@@ -3,7 +3,7 @@ package io.cucumber.core.feature;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberFeatureParser;
-import io.cucumber.core.io.Resource;
+import io.cucumber.core.resource.Resource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +23,7 @@ public class FeatureParser {
 
     public static CucumberFeature parseResource(Resource resource) {
         requireNonNull(resource);
-        URI path = resource.getPath();
+        URI uri = resource.getUri();
         String source = read(resource);
         ServiceLoader<CucumberFeatureParser> services = ServiceLoader.load(CucumberFeatureParser.class);
         Iterator<CucumberFeatureParser> iterator = services.iterator();
@@ -32,14 +32,14 @@ public class FeatureParser {
             parser.add(iterator.next());
         }
         Comparator<CucumberFeatureParser> version = Comparator.comparing(CucumberFeatureParser::version);
-        return Collections.max(parser,version).parse(path, source);
+        return Collections.max(parser,version).parse(uri, source);
     }
 
     private static String read(Resource resource) {
         try {
             return Encoding.readFile(resource);
         } catch (IOException e) {
-            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
+            throw new CucumberException("Failed to read resource:" + resource.getUri(), e);
         }
     }
 

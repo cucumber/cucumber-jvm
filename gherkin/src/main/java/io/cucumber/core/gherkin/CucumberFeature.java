@@ -1,24 +1,19 @@
 package io.cucumber.core.gherkin;
 
 import java.net.URI;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
-public interface CucumberFeature {
+public interface CucumberFeature extends Node, Container<Node> {
+
     String getKeyword();
 
-    List<CucumberPickle> getPickles();
+    Optional<CucumberPickle> getPickleAt(CucumberLocation location);
 
-    String getName();
+    List<CucumberPickle> getPickles();
 
     URI getUri();
 
     String getSource();
 
-    class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
-        @Override
-        public int compare(CucumberFeature a, CucumberFeature b) {
-            return a.getUri().compareTo(b.getUri());
-        }
-    }
 }

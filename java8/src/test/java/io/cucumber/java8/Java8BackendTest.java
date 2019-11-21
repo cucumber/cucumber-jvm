@@ -2,8 +2,6 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.io.MultiLoader;
-import io.cucumber.core.io.ResourceLoader;
 import io.cucumber.java8.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -11,8 +11,6 @@ import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.DocStringArgument;
-import io.cucumber.core.io.ResourceLoader;
-import io.cucumber.core.io.TestClasspathResourceLoader;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
@@ -45,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static io.cucumber.plugin.event.Status.FAILED;
 import static io.cucumber.plugin.event.Status.PASSED;
@@ -72,6 +71,7 @@ public class TestHelper {
     private Duration timeServiceIncrement = Duration.ZERO;
     private Object formatterUnderTest = null;
     private List<String> runtimeArgs = Collections.emptyList();
+
     private TestHelper() {
     }
 
@@ -170,9 +170,7 @@ public class TestHelper {
 
     public void run() {
 
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ResourceLoader resourceLoader = TestClasspathResourceLoader.create(classLoader);
-
+        final Supplier<ClassLoader> classLoader = TestHelper.class::getClassLoader;
 
         final BackendSupplier backendSupplier = new TestHelperBackendSupplier(
             features,
@@ -196,7 +194,6 @@ public class TestHelper {
                     .build()
             )
             .withClassLoader(classLoader)
-            .withResourceLoader(resourceLoader)
             .withBackendSupplier(backendSupplier)
             .withFeatureSupplier(featureSupplier)
             .withEventBus(bus);
@@ -379,7 +376,7 @@ public class TestHelper {
                                      final List<HookDefinition> beforeHooks,
                                      final List<HookDefinition> afterHooks,
                                      final List<HookDefinition> beforeStepHooks,
-                                     final List<HookDefinition> afterStepHooks) throws Throwable {
+                                     final List<HookDefinition> afterStepHooks) {
             HookDefinition hook = mock(HookDefinition.class);
             when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {

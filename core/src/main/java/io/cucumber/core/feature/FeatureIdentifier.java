@@ -1,5 +1,6 @@
 package io.cucumber.core.feature;
 import java.net.URI;
+import java.nio.file.Path;
 
 /**
  * Identifies a single feature.
@@ -10,6 +11,8 @@ import java.net.URI;
  * @see FeatureWithLines
  */
 public class FeatureIdentifier {
+
+    private static final String FEATURE_FILE_SUFFIX = ".feature";
 
     private FeatureIdentifier() {
 
@@ -27,7 +30,10 @@ public class FeatureIdentifier {
     }
 
     public static boolean isFeature(URI featureIdentifier) {
-        return featureIdentifier.getSchemeSpecificPart().endsWith(".feature");
+        return featureIdentifier.getSchemeSpecificPart().endsWith(FEATURE_FILE_SUFFIX);
     }
 
+    public static boolean isFeature(Path path) {
+        return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
+    }
 }

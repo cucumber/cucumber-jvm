@@ -47,7 +47,7 @@ public final class WeldFactory implements ObjectFactory {
                 containerInstance.close();
             }
         } catch (NullPointerException npe) {
-            log.error(STOP_EXCEPTION_MESSAGE, npe);
+            log.error(npe, () -> STOP_EXCEPTION_MESSAGE);
         }
     }
 

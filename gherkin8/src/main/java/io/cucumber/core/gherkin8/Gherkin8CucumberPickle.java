@@ -1,5 +1,6 @@
 package io.cucumber.core.gherkin8;
 
+import io.cucumber.core.gherkin.CucumberLocation;
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
@@ -65,27 +66,16 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
         return pickle.getName();
     }
 
-    /**
-     * Returns the line in feature file of the Scenario this pickle was created
-     * from. If this pickle was created from a Scenario Outline this line is the
-     * line in the Example section used to fill in the place holders.
-     *
-     * @return line in the feature file
-     */
+
     @Override
-    public int getLine() {
-        return cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getLocation().getLine();
+    public CucumberLocation getLocation() {
+        Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getLocation();
+        return Gherkin8CucumberLocation.from(location);
     }
 
-    /**
-     * Returns the line in feature file of the Scenario this pickle was created
-     * from. If this pickle was created from a Scenario Outline this line is the
-     *
-     * @return line in the feature file
-     */
     @Override
-    public int getScenarioLine() {
-        throw new UnsupportedOperationException("Not supported");
+    public CucumberLocation getScenarioLocation() {
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override

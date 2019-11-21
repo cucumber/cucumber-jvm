@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-examples</artifactId>
+        <version>5.0.0-RC2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>java-calculator-junit5</artifactId>
+    <packaging>jar</packaging>
+    <name>Examples: Calculator - Junit 5</name>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.examples.junit5</project.Automatic-Module-Name>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-console</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!--Work around. Surefire does not use JUnits Test Engine discovery functionality -->
+                        <id>CLI-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Running JUnit Platform CLI"/>
+                                <java classname="org.junit.platform.console.ConsoleLauncher"
+                                      fork="true"
+                                      failonerror="true"
+                                      newenvironment="true"
+                                      maxmemory="512m"
+                                      classpathref="maven.test.classpath">
+                                    <arg value="--include-engine"/>
+                                    <arg value="cucumber"/>
+                                    <arg value="--scan-classpath"/>
+                                    <arg value="${project.build.testOutputDirectory}"/>
+                                    <arg value="--reports-dir"/>
+                                    <arg value="${project.build.directory}/cucumber-reports"/>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

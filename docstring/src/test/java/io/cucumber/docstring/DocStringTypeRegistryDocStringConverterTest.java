@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -119,12 +120,12 @@ class DocStringTypeRegistryDocStringConverterTest {
             () -> converter.convert(docString, JsonNode.class)
         );
 
-        assertThat(exception.getMessage(), is("" +
+        assertThat(exception.getMessage(), is(equalToCompressingWhiteSpace("" +
             "'json' could not transform\n" +
             "      \"\"\"json\n" +
             "      {\"hello\":\"world\"}\n" +
             "      \"\"\""
-        ));
+        )));
     }
 
 }

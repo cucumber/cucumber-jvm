@@ -4,6 +4,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -34,20 +35,20 @@ class RerunFileTest {
     @Test
     void loads_features_specified_in_rerun_file() throws Exception {
         mockFileResource(
-            "file:path/bar.feature:2\n" +
-                "file:path/foo.feature:4\n");
+            "path/bar.feature:2\n" +
+                "path/foo.feature:4\n");
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(
-                URI.create("file:path/bar.feature"),
-                URI.create("file:path/foo.feature")
+                new File("path/bar.feature").toURI(),
+                new File("path/foo.feature").toURI()
             )),
-            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2))),
-            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)))
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(new File("path/bar.feature").toURI(), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(new File("path/foo.feature").toURI(), singleton(4)))
         );
     }
 
@@ -59,7 +60,7 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
             () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
         );
@@ -73,7 +74,7 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
             () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
         );
@@ -87,7 +88,7 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
             () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
         );
@@ -101,26 +102,26 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), hasSize(0)),
             () -> assertThat(runtimeOptions.getLineFilters(), equalTo(emptyMap()))
         );
     }
 
     @Test
-    void last_new_line_is_optinal() throws Exception {
+    void last_new_line_is_optional() throws Exception {
         mockFileResource(
-            "file:path/bar.feature:2\npath/foo.feature:4"
+            "classpath:path/bar.feature:2\nclasspath:path/foo.feature:4"
         );
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:path/bar.feature"), URI.create("file:path/foo.feature"))),
-            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2))),
-            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:path/foo.feature"), singleton(4)))
+        assertAll(
+            () -> assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("classpath:path/bar.feature"), URI.create("classpath:path/foo.feature"))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("classpath:path/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("classpath:path/foo.feature"), singleton(4)))
         );
     }
 
@@ -133,7 +134,7 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"))),
             () -> assertThat(runtimeOptions.getLineFilters(), hasEntry(URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"), singleton(2)))
         );
@@ -149,7 +150,7 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
+        assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(
                 URI.create("file:/home/users/mp/My%20Documents/tests/bar.feature"),
                 URI.create("file:/home/users/mp/My%20Documents/tests/foo.feature")
@@ -168,26 +169,26 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
 
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(URI.create("file:path/bar.feature"))),
-            () -> assertThat(options.getLineFilters(), hasEntry(URI.create("file:path/bar.feature"), singleton(2)))
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(new File("path/bar.feature").toURI())),
+            () -> assertThat(options.getLineFilters(), hasEntry(new File("path/bar.feature").toURI(), singleton(2)))
         );
     }
 
     @Test
     void clobbers_features_from_rerun_file_specified_in_cli_if_features_specified_in_cucumber_options_property() throws Exception {
-        mockFileResource("file:path/bar.feature:2\n");
+        mockFileResource("path/bar.feature:2\n");
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse("@" + rerunPath)
             .build();
 
         RuntimeOptions options = new CucumberPropertiesParser()
-            .parse(singletonMap(OPTIONS_PROPERTY_NAME, "file:path/foo.feature"))
+            .parse(singletonMap(OPTIONS_PROPERTY_NAME, "path/foo.feature"))
             .build(runtimeOptions);
 
-        assertAll("Checking RuntimeOptions",
-            () -> assertThat(options.getFeaturePaths(), contains(URI.create("file:path/foo.feature"))),
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(new File("path/foo.feature").toURI())),
             () -> assertThat(options.getLineFilters().size(), CoreMatchers.is(0))
         );
     }
@@ -198,7 +199,7 @@ class RerunFileTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("@" + rerunPath)
             .build();
-        assertThat(options.getFeaturePaths(), contains(URI.create("file:path/file.feature")));
+        assertThat(options.getFeaturePaths(), contains(new File("path/file.feature").toURI()));
     }
 
     private Map<String, String> mockFileResource(String... contents) throws IOException {
