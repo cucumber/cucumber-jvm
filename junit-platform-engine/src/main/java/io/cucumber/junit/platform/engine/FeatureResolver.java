@@ -2,7 +2,6 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureIdentifier;
-import io.cucumber.core.resource.ClassFilter;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import org.junit.platform.commons.logging.Logger;
@@ -22,6 +21,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.feature.FeatureParser.parseResource;
@@ -39,14 +39,14 @@ final class FeatureResolver {
     );
 
     private final TestDescriptor engineDescriptor;
-    private final ClassFilter packageFilter;
+    private final Predicate<String> packageFilter;
 
-    private FeatureResolver(TestDescriptor engineDescriptor, ClassFilter packageFilter) {
+    private FeatureResolver(TestDescriptor engineDescriptor, Predicate<String> packageFilter) {
         this.engineDescriptor = engineDescriptor;
         this.packageFilter = packageFilter;
     }
 
-    static FeatureResolver createFeatureResolver(TestDescriptor engineDescriptor, ClassFilter packageFilter) {
+    static FeatureResolver createFeatureResolver(TestDescriptor engineDescriptor, Predicate<String> packageFilter) {
         return new FeatureResolver(engineDescriptor, packageFilter);
     }
 
@@ -86,7 +86,7 @@ final class FeatureResolver {
     void resolvePackageResource(PackageSelector selector) {
         String packageName = selector.getPackageName();
         featureScanner
-            .scanForResourcesInPackage(packageName, packageFilter::match)
+            .scanForResourcesInPackage(packageName, packageFilter)
             .stream()
             .map(this::resolveFeature)
             .forEach(this::merge);
@@ -95,7 +95,7 @@ final class FeatureResolver {
     void resolveClasspathResource(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
         featureScanner
-            .scanForClasspathResource(classpathResourceName, packageFilter::match)
+            .scanForClasspathResource(classpathResourceName, packageFilter)
             .stream()
             .map(this::resolveFeature)
             .forEach(this::merge);
@@ -103,7 +103,7 @@ final class FeatureResolver {
 
     void resolveClasspathRoot(ClasspathRootSelector selector) {
         featureScanner
-            .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter::match)
+            .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
             .stream()
             .map(this::resolveFeature)
             .forEach(this::merge);

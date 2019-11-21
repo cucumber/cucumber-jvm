@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.resource.ClassFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
@@ -40,7 +39,7 @@ class FeatureResolverTest {
         EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
         id = UniqueId.forEngine(engine.getId());
         testDescriptor = engine.discover(discoveryRequest, id);
-        FeatureResolver featureResolver = createFeatureResolver(testDescriptor, ClassFilter.of(aClass -> true, aClass -> true));
+        FeatureResolver featureResolver = createFeatureResolver(testDescriptor, aPackage -> true);
         featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
     }
 
