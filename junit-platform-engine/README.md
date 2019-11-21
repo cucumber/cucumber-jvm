@@ -16,9 +16,7 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 
 This will allow the IntelliJ IDEA, Eclipse, Maven, Gradle, ect, to discover, select and execute Cucumber scenarios. 
 
-## Maven Surefire / Gradle Test workaround ##
-
-//TODO: Create issue with Surefire for support
+## Maven Surefire workaround ##
 
 Maven Surefire () and Gradle Test ([gradle/#4773](https://github.com/gradle/gradle/issues/4773)) does not yet support
 discovery of non-class based test. As a work around you can use the antrun plugin to start the the JUnit Platform
@@ -70,7 +68,7 @@ Console Launcher.
     </plugins>
 </build>
 ```
-## Maven Surefire / Gradle Test workaround ##
+## Gradle Test workaround ##
 
 Gradle Test ([gradle/#4773](https://github.com/gradle/gradle/issues/4773)) does not yet support discovery of non-class
 based test. As a work around you can use a custom task to start the the JUnit Platform Console Launcher.
@@ -96,7 +94,6 @@ tasks {
 	}
 }
 ```
-
 
 ## Parallel execution ## 
 
