@@ -1,4 +1,3 @@
-
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
 ## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...master) (In Git)
@@ -10,6 +9,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Add `DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
  * [Core] Limited support for classpath scanning in SpringBoot jars ([#1821](https://github.com/cucumber/cucumber-jvm/pull/1821) M.P. Korstanje)
    - Enables scanning of glue and features in `BOOT-INF/classes`.
+ * [JUnit] Implement Cucumber as a Junit Platform Engine ([#1530](https://github.com/cucumber/cucumber-jvm/pull/1530) M.P. Korstanje)
    
 ### Changed
  * [Core] Indent write events in PrettyFormatter ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Alexandre Monterroso)
