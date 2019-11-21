@@ -12,6 +12,7 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
@@ -131,7 +132,7 @@ public final class Runtime {
     public static class Builder {
 
         private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
-        private Supplier<ClassLoader> classLoader = Builder.class::getClassLoader;
+        private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
         private FeatureSupplier featureSupplier;

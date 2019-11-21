@@ -11,6 +11,7 @@ import io.cucumber.core.options.CucumberPropertiesParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
@@ -132,7 +133,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .build(junitEnvironmentOptions);
 
         // Parse the features early. Don't proceed when there are lexer errors
-        Supplier<ClassLoader> classLoader = Thread.currentThread()::getContextClassLoader;
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
         this.features = featureSupplier.get();
 
