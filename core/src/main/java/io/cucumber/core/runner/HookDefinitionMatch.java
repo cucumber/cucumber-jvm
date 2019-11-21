@@ -4,8 +4,14 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.stepexpression.Argument;
+import io.cucumber.messages.Messages;
+
+import java.util.Collections;
+import java.util.List;
 
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
+import static java.util.Collections.emptyList;
 
 final class HookDefinitionMatch implements StepDefinitionMatch {
     private final CoreHookDefinition hookDefinition;
@@ -44,4 +50,13 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
         return hookDefinition.getLocation();
     }
 
+    @Override
+    public String getPickleStepId() {
+        return "__HookDefinitionMatch_FAKE_ID__";
+    }
+
+    @Override
+    public Iterable<Messages.StepMatchArgument> getStepMatchArguments() {
+        return emptyList();
+    }
 }

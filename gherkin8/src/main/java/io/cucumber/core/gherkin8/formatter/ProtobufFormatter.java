@@ -1,7 +1,6 @@
 package io.cucumber.core.gherkin8.formatter;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin8.Gherkin8DataTableArgument;
 import io.cucumber.core.plugin.ProtobufFormat;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.gherkin.IdGenerator;
@@ -9,11 +8,9 @@ import io.cucumber.messages.Messages;
 import io.cucumber.messages.internal.com.google.protobuf.util.JsonFormat;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.HookTestStep;
-import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestStep;
+import io.cucumber.plugin.event.TestCaseDefined;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +18,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -40,7 +36,7 @@ public class ProtobufFormatter implements EventListener {
     private final OutputStream outputStream;
     private final Writer writer;
     private final ProtobufFormat format;
-//    private Map<String, String> pickleIdByUriAndLine = new HashMap<>();
+    //    private Map<String, String> pickleIdByUriAndLine = new HashMap<>();
     private final JsonFormat.Printer jsonPrinter = JsonFormat.printer().omittingInsignificantWhitespace().includingDefaultValueFields();
     private final IdGenerator idGenerator = new IdGenerator.UUID();
     private final Map<TestCase, String> testCaseStartedIdByTestCase = new HashMap<>();
@@ -54,11 +50,31 @@ public class ProtobufFormatter implements EventListener {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(io.cucumber.plugin.event.TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(io.cucumber.plugin.event.TestCaseDefined.class, this::handleTestCaseDefined);
         publisher.registerHandlerFor(io.cucumber.plugin.event.TestCaseStarted.class, this::handleTestCaseStarted);
-//        publisher.registerHandlerFor(io.cucumber.plugin.event.TestStepMatched.class, this::handleTestStepMatched);
         publisher.registerHandlerFor(io.cucumber.plugin.event.TestStepFinished.class, this::handleTestStepFinished);
         publisher.registerHandlerFor(io.cucumber.plugin.event.TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(io.cucumber.plugin.event.TestRunFinished.class, this::handleTestRunFinished);
+    }
+
+    private void handleTestCaseDefined(TestCaseDefined t) {
+        write(Messages.Envelope.newBuilder()
+            .setTestCase(Messages.TestCase.newBuilder()
+                .setId(t.getId())
+                .setPickleId(t.getTestCase().getPickleId())
+                .addAllTestSteps(t.getTestCase().getTestSteps()
+                    .stream()
+                    .map(testStep -> Messages.TestCase.TestStep.newBuilder()
+                        .setId(testStep.getId())
+                        .setPickleStepId(testStep.getPickleStepId())
+                        .addAllStepMatchArguments(testStep.getStepMatchArguments()
+                        )
+                        .build()
+                    )
+                    .collect(Collectors.toList())
+                )
+            )
+            .build());
     }
 
     private void handleTestSourceRead(io.cucumber.plugin.event.TestSourceRead t) {
@@ -102,7 +118,7 @@ public class ProtobufFormatter implements EventListener {
             ).build());
     }
 
-//    private void handleTestStepMatched(io.cucumber.plugin.event.TestStepMatched t) {
+    //    private void handleTestStepMatched(io.cucumber.plugin.event.TestStepMatched t) {
 //        write(t.getMessage());
 //    }
 //

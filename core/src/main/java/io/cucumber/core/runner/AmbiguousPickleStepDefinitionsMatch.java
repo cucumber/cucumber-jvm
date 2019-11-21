@@ -10,7 +10,7 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
     private final AmbiguousStepDefinitionsException exception;
 
     AmbiguousPickleStepDefinitionsMatch(URI uri, CucumberStep step, AmbiguousStepDefinitionsException e) {
-        super(Collections.emptyList(), new NoStepDefinition(), uri, step);
+        super(Collections.emptyList(), Collections.emptyList(), new NoStepDefinition(), uri, step);
         this.exception = e;
     }
 

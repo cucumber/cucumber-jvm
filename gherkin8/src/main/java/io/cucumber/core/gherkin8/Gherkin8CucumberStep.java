@@ -118,4 +118,9 @@ public final class Gherkin8CucumberStep implements CucumberStep {
     public String getText() {
         return pickleStep.getText();
     }
+
+    @Override
+    public String getPickleStepId() {
+        return pickleStep.getId();
+    }
 }

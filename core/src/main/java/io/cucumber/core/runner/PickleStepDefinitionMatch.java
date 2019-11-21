@@ -12,6 +12,7 @@ import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.docstring.CucumberDocStringException;
+import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private final URI uri;
     private final CucumberStep step;
 
-    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
-        super(arguments, stepDefinition.getLocation());
+    PickleStepDefinitionMatch(Iterable<StepMatchArgument> stepMatchArguments, List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
+        super(stepMatchArguments, arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
@@ -166,6 +167,11 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     @Override
     public String getCodeLocation() {
         return stepDefinition.getLocation();
+    }
+
+    @Override
+    public String getPickleStepId() {
+        return step.getPickleStepId();
     }
 
 }

@@ -4,6 +4,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCaseDefined;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
@@ -38,6 +39,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
         Instant start = bus.getInstant();
+        bus.send(new TestCaseDefined(start, this));
+
         String testCaseStartedId = UUID.randomUUID().toString();
         bus.send(new TestCaseStarted(start, this));
         TestCaseState state = new TestCaseState(bus, this);

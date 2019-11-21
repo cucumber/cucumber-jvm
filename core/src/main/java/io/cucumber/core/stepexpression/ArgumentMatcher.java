@@ -3,6 +3,7 @@ package io.cucumber.core.stepexpression;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.DocStringArgument;
+import io.cucumber.messages.Messages;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -46,4 +47,7 @@ public final class ArgumentMatcher {
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
     }
 
+    public Iterable<Messages.StepMatchArgument> getStepMatchArguments(CucumberStep step, Type[] types) {
+        return expression.getStepMatchArguments(step.getText(), types);
+    }
 }

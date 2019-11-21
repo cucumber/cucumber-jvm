@@ -1,10 +1,13 @@
 package io.cucumber.core.stepexpression;
 
 import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.Group;
+import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class StepExpression {
 
@@ -24,6 +27,28 @@ public final class StepExpression {
             return null;
         }
         return wrapPlusOne(match);
+    }
+
+    public Iterable<StepMatchArgument> getStepMatchArguments(String text, Type[] types) {
+        List<io.cucumber.cucumberexpressions.Argument<?>> arguments = expression.match(text, types);
+        if (arguments == null) {
+            return null;
+        }
+        return arguments.stream().map(arg -> StepMatchArgument.newBuilder()
+            .setParameterTypeName(arg.getParameterType().getName())
+            .setGroup(makeMessageGroup(arg.getGroup()))
+            .build()
+        ).collect(Collectors.toList());
+    }
+
+    private static StepMatchArgument.Group makeMessageGroup(Group group) {
+        StepMatchArgument.Group.Builder builder = StepMatchArgument.Group.newBuilder();
+        if (group.getValue() != null) {
+            builder.setValue(group.getValue());
+        }
+        return builder
+            .addAllChildren(group.getChildren().stream().map(StepExpression::makeMessageGroup).collect(Collectors.toList()))
+            .build();
     }
 
     public String getSource() {
@@ -54,7 +79,6 @@ public final class StepExpression {
         return list;
     }
 
-
     private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
         List<Argument> copy = new ArrayList<>(match.size() + 1);
         for (io.cucumber.cucumberexpressions.Argument<?> argument : match) {
@@ -62,5 +86,4 @@ public final class StepExpression {
         }
         return copy;
     }
-
 }

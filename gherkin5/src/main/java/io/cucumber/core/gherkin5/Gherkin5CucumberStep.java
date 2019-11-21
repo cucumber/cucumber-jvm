@@ -103,4 +103,9 @@ public final class Gherkin5CucumberStep implements CucumberStep {
     public String getText() {
         return step.getText();
     }
+
+    @Override
+    public String getPickleStepId() {
+        throw new UnsupportedOperationException();
+    }
 }
