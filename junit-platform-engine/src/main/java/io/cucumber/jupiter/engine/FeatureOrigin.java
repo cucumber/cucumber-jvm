@@ -6,7 +6,6 @@ import gherkin.ast.Node;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.TableRow;
 import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -20,9 +19,9 @@ import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX
 
 abstract class FeatureOrigin {
 
-    static final String FEATURE_SEGMENT_TYPE = "feature";
+    private static final String FEATURE_SEGMENT_TYPE = "feature";
     private static final String SCENARIO_SEGMENT_TYPE = "scenario";
-    // Scenario outline and Scenario will become synonyms in the future
+    // Scenario outline and Scenario will become synonyms in Gherkin
     private static final String OUTLINE_SEGMENT_TYPE = "scenario";
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";

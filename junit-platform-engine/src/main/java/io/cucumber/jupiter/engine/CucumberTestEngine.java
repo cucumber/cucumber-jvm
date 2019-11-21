@@ -10,29 +10,27 @@ import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTe
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
 
-import java.util.Optional;
-
 import static io.cucumber.jupiter.engine.Constants.PARALLEL_CONFIG_PREFIX;
 import static io.cucumber.jupiter.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 
 public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEngineExecutionContext> {
 
     @Override
-	public String getId() {
-		return "cucumber";
-	}
+    public String getId() {
+        return "cucumber";
+    }
 
-	@Override
-	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-		CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId);
-		new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
-		return engineDescriptor;
-	}
+    @Override
+    public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
+        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId);
+        new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
+        return engineDescriptor;
+    }
 
-	@Override
-	protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-		return new CucumberEngineExecutionContext(request.getConfigurationParameters());
-	}
+    @Override
+    protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
+        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
+    }
 
     @Override
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {

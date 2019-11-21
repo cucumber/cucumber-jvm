@@ -5,7 +5,6 @@ import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
-import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.platform.engine.ConfigurationParameters;
 
@@ -23,7 +22,10 @@ import static io.cucumber.jupiter.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.jupiter.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
-class CucumberEngineOptions implements Options, io.cucumber.core.runner.Options, io.cucumber.core.backend.Options {
+class CucumberEngineOptions implements
+    io.cucumber.core.plugin.Options,
+    io.cucumber.core.runner.Options,
+    io.cucumber.core.backend.Options {
 
     private final ConfigurationParameters configurationParameters;
 
