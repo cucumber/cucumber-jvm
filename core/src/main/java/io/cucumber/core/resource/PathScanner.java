@@ -127,7 +127,7 @@ class PathScanner {
 
         private static CloseablePath createForJarFileSystem(URI jarUri, Function<FileSystem, Path> pathProvider)
             throws IOException {
-            FileSystem fileSystem = FileSystems.newFileSystem(jarUri, emptyMap());
+            FileSystem fileSystem = FileSystems.getFileSystem(jarUri);
             Path path = pathProvider.apply(fileSystem);
             return new CloseablePath(path, fileSystem);
         }
