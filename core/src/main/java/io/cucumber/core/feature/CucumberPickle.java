@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Wraps {@link Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-public final class CucumberPickle {
+public final class CucumberPickle implements Located {
 
     private final Pickle pickle;
     private final List<CucumberStep> steps;
@@ -50,46 +50,32 @@ public final class CucumberPickle {
         return pickle.getLanguage();
     }
 
-    public String getName() {
-        return pickle.getName();
-    }
-
     /**
-     * Returns the line in feature file of the Scenario this pickle was created
+     * Returns the location in feature file of the Scenario this pickle was created
      * from. If this pickle was created from a Scenario Outline this line is the
      * line in the Example section used to fill in the place holders.
      *
      * @return line in the feature file
      */
-    public int getLine() {
-        return getPickleLocation().getLine();
+    @Override
+    public CucumberLocation getLocation() {
+        return CucumberLocation.from(pickle.getLocations().get(0));
     }
 
-    public int getColumn() {
-        return getPickleLocation().getColumn();
-    }
-
-    private PickleLocation getPickleLocation() {
-        return pickle.getLocations().get(0);
+    public String getName() {
+        return pickle.getName();
     }
 
     /**
-     * Returns the line in feature file of the Scenario this pickle was created
+     * Returns the location in feature file of the Scenario this pickle was created
      * from. If this pickle was created from a Scenario Outline this line is the
      *
      * @return line in the feature file
      */
-    public int getScenarioLine() {
-        return getScenarioLocation().getLine();
-    }
-
-    public int getScenarioColumn(){
-        return getScenarioLocation().getColumn();
-    }
-
-    private PickleLocation getScenarioLocation() {
+    public CucumberLocation getScenarioLocation() {
         List<PickleLocation> stepLocations = pickle.getLocations();
-        return stepLocations.get(stepLocations.size() - 1);
+        PickleLocation scenarioLocation = stepLocations.get(stepLocations.size() - 1);
+        return CucumberLocation.from(scenarioLocation);
     }
 
     public List<CucumberStep> getSteps() {

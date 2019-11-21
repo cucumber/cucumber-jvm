@@ -162,7 +162,7 @@ final class PickleRunners {
         }
 
         PickleId(CucumberPickle pickle) {
-            this(pickle.getUri(), pickle.getLine());
+            this(pickle.getUri(), pickle.getLocation().getLine());
         }
 
         @Override
@@ -194,7 +194,7 @@ final class PickleRunners {
 
         PickleStepId(CucumberPickle pickle, CucumberStep step) {
             this.uri = pickle.getUri();
-            this.pickleLine = pickle.getLine();
+            this.pickleLine = pickle.getLocation().getLine();
             this.pickleStepLine = step.getStepLine();
         }
 
