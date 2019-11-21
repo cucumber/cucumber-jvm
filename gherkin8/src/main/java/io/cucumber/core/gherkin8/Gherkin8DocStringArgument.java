@@ -3,7 +3,7 @@ package io.cucumber.core.gherkin8;
 import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
 
-public final class Gherkin8DocStringArgument implements DocStringArgument {
+final class Gherkin8DocStringArgument implements DocStringArgument {
 
     private final PickleDocString docString;
 

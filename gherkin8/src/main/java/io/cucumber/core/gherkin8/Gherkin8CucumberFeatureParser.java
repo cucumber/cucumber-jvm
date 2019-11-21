@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Gherkin8CucumberFeatureParser implements CucumberFeatureParser {
+public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParser {
 
     private final CucumberQuery cucumberQuery = new CucumberQuery();
 

@@ -13,7 +13,7 @@ import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
 
 import java.util.stream.Stream;
 
-public final class Gherkin8CucumberStep implements CucumberStep {
+final class Gherkin8CucumberStep implements CucumberStep {
 
     private final PickleStep pickleStep;
     private final Argument argument;

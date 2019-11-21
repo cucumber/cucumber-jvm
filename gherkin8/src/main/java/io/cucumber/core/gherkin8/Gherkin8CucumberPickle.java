@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Wraps {@link Messages.Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-public final class Gherkin8CucumberPickle implements CucumberPickle {
+final class Gherkin8CucumberPickle implements CucumberPickle {
 
     private final Messages.Pickle pickle;
     private final List<CucumberStep> steps;
@@ -69,13 +69,15 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
 
     @Override
     public CucumberLocation getLocation() {
+        //TODO: This returns the location of the scenario. Not the location of the pickle (check with example table)
         Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getLocation();
         return Gherkin8CucumberLocation.from(location);
     }
 
     @Override
     public CucumberLocation getScenarioLocation() {
-        throw new UnsupportedOperationException("TODO");
+        Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getLocation();
+        return Gherkin8CucumberLocation.from(location);
     }
 
     @Override
