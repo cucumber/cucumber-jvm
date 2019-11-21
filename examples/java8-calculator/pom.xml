@@ -10,7 +10,7 @@
 
     <artifactId>java8-calculator</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Java8 Calculator - Junit 4</name>
+    <name>Examples: Calculator - Lambda</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.java8</project.Automatic-Module-Name>

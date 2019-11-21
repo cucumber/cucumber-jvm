@@ -10,7 +10,7 @@
 
     <artifactId>java-calculator</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Java Calculator - JUnit 4</name>
+    <name>Examples: Calculator - Annotations</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.java</project.Automatic-Module-Name>
