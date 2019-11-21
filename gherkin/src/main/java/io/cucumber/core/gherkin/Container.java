@@ -2,7 +2,7 @@ package io.cucumber.core.gherkin;
 
 import java.util.stream.Stream;
 
-public interface Container<T extends Located & Named> {
+public interface Container<T> {
 
     Stream<T> children();
 }
