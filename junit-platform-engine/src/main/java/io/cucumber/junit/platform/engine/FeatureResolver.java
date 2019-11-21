@@ -141,7 +141,7 @@ final class FeatureResolver {
             .map(UniqueId.Segment::getValue)
             .map(URI::create)
             .flatMap(this::resolveUri)
-            .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
+            .map(descriptor -> pruneDescription(descriptor, uniqueId))
             .forEach(this::merge);
     }
 
