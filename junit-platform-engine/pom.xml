@@ -13,8 +13,7 @@
     <name>Cucumber-JVM: JUnit Platform Engine</name>
 
     <properties>
-        <!--        TODO: Better name-->
-        <project.Automatic-Module-Name>io.cucumber.jupiter.engine</project.Automatic-Module-Name>
+        <project.Automatic-Module-Name>io.cucumber.junit.platform.engine</project.Automatic-Module-Name>
     </properties>
 
     <dependencies>

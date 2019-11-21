@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.plugin.event.EventHandler;

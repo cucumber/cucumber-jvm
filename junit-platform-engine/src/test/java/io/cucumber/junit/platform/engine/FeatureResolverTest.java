@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.resource.ClassFilter;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
-import static io.cucumber.jupiter.engine.FeatureResolver.createFeatureResolver;
+import static io.cucumber.junit.platform.engine.FeatureResolver.createFeatureResolver;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
@@ -28,7 +28,7 @@ import static org.junit.platform.engine.support.descriptor.ClasspathResourceSour
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
 class FeatureResolverTest {
-    private final String featurePath = "io/cucumber/jupiter/engine/feature-with-outline.feature";
+    private final String featurePath = "io/cucumber/junit/platform/engine/feature-with-outline.feature";
     private final String featureSegmentValue = CLASSPATH_SCHEME_PREFIX + featurePath;
     private TestDescriptor testDescriptor;
     private UniqueId id;

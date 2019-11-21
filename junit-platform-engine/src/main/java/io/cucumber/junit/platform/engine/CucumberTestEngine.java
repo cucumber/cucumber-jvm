@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
@@ -10,8 +10,8 @@ import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTe
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
 
-import static io.cucumber.jupiter.engine.Constants.PARALLEL_CONFIG_PREFIX;
-import static io.cucumber.jupiter.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 
 public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEngineExecutionContext> {
 

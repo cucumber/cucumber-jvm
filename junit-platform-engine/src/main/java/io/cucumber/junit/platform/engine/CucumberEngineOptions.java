@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.GluePath;
@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
-import static io.cucumber.jupiter.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.GLUE_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.PLUGIN_PROPERTY_NAME;
-import static io.cucumber.jupiter.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
 class CucumberEngineOptions implements
     io.cucumber.core.plugin.Options,

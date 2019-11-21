@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.CucumberExample;
 import io.cucumber.core.feature.CucumberExamples;

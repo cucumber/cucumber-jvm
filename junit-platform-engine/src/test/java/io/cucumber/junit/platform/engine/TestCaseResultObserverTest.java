@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -26,7 +26,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-import static io.cucumber.jupiter.engine.TestCaseResultObserver.observe;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,7 +36,7 @@ class TestCaseResultObserverTest {
 
     private final URI uri = URI.create("classpath:io/cucumber/jupiter/engine.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
-    private final TestCaseResultObserver observer = observe(bus);
+    private final TestCaseResultObserver observer = TestCaseResultObserver.observe(bus);
 
     private final TestCase testCase = new TestCase() {
         @Override

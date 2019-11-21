@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
@@ -70,7 +70,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithClasspathResourceSelector() {
-        DiscoverySelector resource = selectClasspathResource("io/cucumber/jupiter/engine/single.feature");
+        DiscoverySelector resource = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(1, testDescriptor.getChildren().size());
@@ -78,8 +78,8 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithMultipleClasspathResourceSelector() {
-        DiscoverySelector resource1 = selectClasspathResource("io/cucumber/jupiter/engine/single.feature");
-        DiscoverySelector resource2 = selectClasspathResource("io/cucumber/jupiter/engine/feature-with-outline.feature");
+        DiscoverySelector resource1 = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
+        DiscoverySelector resource2 = selectClasspathResource("io/cucumber/junit/platform/engine/feature-with-outline.feature");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource1, resource2);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(2, testDescriptor.getChildren().size());

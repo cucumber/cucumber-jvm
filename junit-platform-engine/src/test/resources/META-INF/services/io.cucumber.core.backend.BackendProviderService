@@ -1,1 +1,1 @@
-io.cucumber.jupiter.engine.StubBackendProviderService
+io.cucumber.junit.platform.engine.StubBackendProviderService

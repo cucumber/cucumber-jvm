@@ -1,4 +1,4 @@
-package io.cucumber.jupiter.engine;
+package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
@@ -25,8 +25,6 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
 import java.util.function.Supplier;
-
-import static io.cucumber.jupiter.engine.TestCaseResultObserver.observe;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
@@ -60,7 +58,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     void runTestCase(CucumberPickle pickle) {
         Runner runner = getRunner();
-        try (TestCaseResultObserver observer = observe(runner.getBus())) {
+        try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus())) {
             logger.debug(() -> "Executing test case " + pickle.getName());
             runner.runPickle(pickle);
             logger.debug(() -> "Finished test case " + pickle.getName());
