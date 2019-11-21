@@ -6,7 +6,7 @@ import io.cucumber.core.gherkin.DataTableArgument;
 import java.util.AbstractList;
 import java.util.List;
 
-public final class Gherkin5DataTableArgument implements DataTableArgument {
+final class Gherkin5DataTableArgument implements DataTableArgument {
 
     private final CellView cells;
     private final int line;

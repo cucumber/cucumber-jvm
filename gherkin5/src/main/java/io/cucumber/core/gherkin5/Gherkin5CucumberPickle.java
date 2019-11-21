@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
  * Wraps {@link Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-public final class Gherkin5CucumberPickle implements CucumberPickle {
+final class Gherkin5CucumberPickle implements CucumberPickle {
 
     private final Pickle pickle;
     private final List<CucumberStep> steps;

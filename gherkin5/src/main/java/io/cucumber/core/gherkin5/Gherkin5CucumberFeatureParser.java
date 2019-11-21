@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Gherkin5CucumberFeatureParser implements CucumberFeatureParser {
+public final class Gherkin5CucumberFeatureParser implements CucumberFeatureParser {
     @Override
     public CucumberFeature parse(URI path, String source) {
         return parseGherkin5(path, source);

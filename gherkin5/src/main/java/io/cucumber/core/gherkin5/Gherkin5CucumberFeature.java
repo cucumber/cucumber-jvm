@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
 
-public final class Gherkin5CucumberFeature implements CucumberFeature {
+final class Gherkin5CucumberFeature implements CucumberFeature {
     private final URI uri;
     private final List<CucumberPickle> pickles;
     private final GherkinDocument gherkinDocument;

@@ -10,7 +10,7 @@ import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
 
-public final class Gherkin5CucumberStep implements CucumberStep {
+final class Gherkin5CucumberStep implements CucumberStep {
 
     private final PickleStep step;
     private final Argument argument;

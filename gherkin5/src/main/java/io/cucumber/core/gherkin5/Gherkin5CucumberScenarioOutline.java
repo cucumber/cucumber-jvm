@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
 
-public final class Gherkin5CucumberScenarioOutline implements CucumberScenarioOutline {
+final class Gherkin5CucumberScenarioOutline implements CucumberScenarioOutline {
 
     private final ScenarioOutline scenarioOutline;
 

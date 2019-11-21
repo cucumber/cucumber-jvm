@@ -3,7 +3,7 @@ package io.cucumber.core.gherkin5;
 import gherkin.pickles.PickleString;
 import io.cucumber.core.gherkin.DocStringArgument;
 
-public final class Gherkin5DocStringArgument implements DocStringArgument {
+final class Gherkin5DocStringArgument implements DocStringArgument {
 
     private final PickleString docString;
 

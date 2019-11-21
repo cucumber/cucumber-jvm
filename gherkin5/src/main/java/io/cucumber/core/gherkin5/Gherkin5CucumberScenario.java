@@ -6,7 +6,7 @@ import io.cucumber.core.gherkin.CucumberScenario;
 
 import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
 
-public final class Gherkin5CucumberScenario implements CucumberScenario {
+final class Gherkin5CucumberScenario implements CucumberScenario {
 
     private final ScenarioDefinition scenarioDefinition;
 
