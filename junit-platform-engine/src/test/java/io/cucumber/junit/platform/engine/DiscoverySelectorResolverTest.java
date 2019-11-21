@@ -96,7 +96,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithUriSelector() {
-        URI uri = new File("src/test/resources/io/cucumber/jupiter/engine/feature-with-outline.feature").toURI();
+        URI uri = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature").toURI();
         DiscoverySelector resource = selectUri(uri);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
@@ -105,7 +105,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithFileSelector() {
-        DiscoverySelector resource = selectFile("src/test/resources/io/cucumber/jupiter/engine/single.feature");
+        DiscoverySelector resource = selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(1, testDescriptor.getChildren().size());
@@ -113,7 +113,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithDirectorySelector() {
-        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/jupiter/engine");
+        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(2, testDescriptor.getChildren().size());
@@ -121,7 +121,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithPackageSelector() {
-        DiscoverySelector resource = selectPackage("io.cucumber.jupiter.engine");
+        DiscoverySelector resource = selectPackage("io.cucumber.junit.platform.engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(2, testDescriptor.getChildren().size());
@@ -129,7 +129,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithUniqueIdSelectorFromClasspath() {
-        DiscoverySelector resource = selectPackage("io.cucumber.jupiter.engine");
+        DiscoverySelector resource = selectPackage("io.cucumber.junit.platform.engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
 
@@ -145,7 +145,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithUniqueIdSelectorFromFileUri() {
-        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/jupiter/engine");
+        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
 
@@ -186,10 +186,10 @@ class DiscoverySelectorResolverTest {
     void resolveRequestWithMultipleUniqueIdSelector() {
         Set<UniqueId> selectors = new HashSet<>();
 
-        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/jupiter/engine/feature-with-outline.feature");
+        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
         selectSomePickle(resource).ifPresent(selectors::add);
 
-        DiscoverySelector resource2 = selectDirectory("src/test/resources/io/cucumber/jupiter/engine/single.feature");
+        DiscoverySelector resource2 = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine/single.feature");
         selectSomePickle(resource2).ifPresent(selectors::add);
 
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(

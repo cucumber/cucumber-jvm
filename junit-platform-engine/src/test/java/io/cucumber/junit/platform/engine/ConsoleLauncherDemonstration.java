@@ -8,8 +8,8 @@ public class ConsoleLauncherDemonstration {
         ConsoleLauncher.main(
             "--exclude-engine=junit-jupiter",
             "--config=cucumber.execution.strict=true",
-//            "--select-directory", "junit-platform-engine/src/test/resources/io/cucumber/jupiter/engine/"
-            "--exclude-package=io.cucumber.jupiter.engine.test",
+//            "--select-directory", "junit-platform-engine/src/test/resources/io/cucumber/junit/platform/engine/"
+            "--exclude-package=io.cucumber.junit.platform.engine.test",
             "--select-package=io"
 
         );

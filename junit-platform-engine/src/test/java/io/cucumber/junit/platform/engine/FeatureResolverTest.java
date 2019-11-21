@@ -74,7 +74,7 @@ class FeatureResolverTest {
         );
 
         PickleDescriptor pickleDescriptor = (PickleDescriptor) scenario;
-        assertEquals(Optional.of("io.cucumber.jupiter.engine"), pickleDescriptor.getPackage());
+        assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());
     }
 
     @Test
@@ -114,7 +114,7 @@ class FeatureResolverTest {
         );
 
         PickleDescriptor pickleDescriptor = (PickleDescriptor) example;
-        assertEquals(Optional.of("io.cucumber.jupiter.engine"), pickleDescriptor.getPackage());
+        assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());
     }
 
     private Set<TestTag> asSet(TestTag... tags) {

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TestCaseResultObserverTest {
 
-    private final URI uri = URI.create("classpath:io/cucumber/jupiter/engine.feature");
+    private final URI uri = URI.create("classpath:io/cucumber/junit/platform/engine.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
     private final TestCaseResultObserver observer = TestCaseResultObserver.observe(bus);
 
