@@ -24,4 +24,8 @@ public interface TestCase {
     List<TestStep> getTestSteps();
 
     URI getUri();
+
+    String getPickleId();
+
+    String getId();
 }

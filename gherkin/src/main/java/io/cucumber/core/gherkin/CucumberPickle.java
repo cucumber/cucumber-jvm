@@ -1,7 +1,5 @@
 package io.cucumber.core.gherkin;
 
-import io.cucumber.core.gherkin.CucumberStep;
-
 import java.net.URI;
 import java.util.List;
 
@@ -19,4 +17,6 @@ public interface CucumberPickle {
     List<String> getTags();
 
     URI getUri();
+
+    String getId();
 }

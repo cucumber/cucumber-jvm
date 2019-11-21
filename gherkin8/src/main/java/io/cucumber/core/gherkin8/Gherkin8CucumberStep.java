@@ -4,7 +4,6 @@ import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
 import io.cucumber.messages.Messages.Pickle.PickleStep;
@@ -16,18 +15,20 @@ import java.util.stream.Stream;
 
 public final class Gherkin8CucumberStep implements CucumberStep {
 
-    private final PickleStep step;
+    private final PickleStep pickleStep;
     private final Argument argument;
     private final String keyWord;
     private final StepType stepType;
     private final String previousGwtKeyWord;
+    private final int stepLine;
 
-    Gherkin8CucumberStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord) {
-        this.step = step;
-        this.argument = extractArgument(step);
-        this.keyWord = extractKeyWord(document);
+    Gherkin8CucumberStep(PickleStep pickleStep, GherkinDialect dialect, String previousGwtKeyWord, int stepLine, String keyword) {
+        this.pickleStep = pickleStep;
+        this.argument = extractArgument(pickleStep);
+        this.keyWord = keyword;
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
+        this.stepLine = stepLine;
     }
 
     private static Stream<? extends Step> extractChildren(FeatureChild featureChild) {
@@ -51,15 +52,6 @@ public final class Gherkin8CucumberStep implements CucumberStep {
         }
 
         return Stream.empty();
-    }
-
-    private String extractKeyWord(GherkinDocument document) {
-        return document.getFeature().getChildrenList().stream()
-            .flatMap(Gherkin8CucumberStep::extractChildren)
-            .filter(step -> step.getLocation().getLine() == getStepLine())
-            .findFirst()
-            .map(Step::getKeyword)
-            .orElseThrow(() -> new IllegalStateException("GherkinDocument did not contain PickleStep"));
     }
 
     private StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
@@ -99,7 +91,7 @@ public final class Gherkin8CucumberStep implements CucumberStep {
 
     @Override
     public int getStepLine() {
-        return step.getLocationsList().get(0).getLine();
+        return stepLine;
     }
 
     @Override
@@ -124,6 +116,6 @@ public final class Gherkin8CucumberStep implements CucumberStep {
 
     @Override
     public String getText() {
-        return step.getText();
+        return pickleStep.getText();
     }
 }

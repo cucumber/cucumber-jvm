@@ -21,4 +21,5 @@ public interface TestStep {
     String getCodeLocation();
 
 
+    String getId();
 }

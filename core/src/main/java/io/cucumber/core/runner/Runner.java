@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -88,6 +89,7 @@ public final class Runner {
     }
 
     private TestCase createTestCaseForPickle(CucumberPickle pickle) {
+        String testCaseId = UUID.randomUUID().toString();
         if (pickle.getSteps().isEmpty()) {
             return new TestCase(emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
         }
@@ -105,6 +107,7 @@ public final class Runner {
             PickleStepDefinitionMatch match = matchStepToStepDefinition(pickle, step);
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
+            String testStepId = UUID.randomUUID().toString();
             testSteps.add(new PickleStepTestStep(pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
         }
 

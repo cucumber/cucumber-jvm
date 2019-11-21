@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final CucumberPickle pickle;
@@ -20,6 +21,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
+    private final String id = UUID.randomUUID().toString();
 
     TestCase(List<PickleStepTestStep> testSteps,
              List<HookTestStep> beforeHooks,
@@ -36,6 +38,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
         Instant start = bus.getInstant();
+        String testCaseStartedId = UUID.randomUUID().toString();
         bus.send(new TestCaseStarted(start, this));
         TestCaseState state = new TestCaseState(bus, this);
 
@@ -83,6 +86,16 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     @Override
     public URI getUri() {
         return pickle.getUri();
+    }
+
+    @Override
+    public String getPickleId() {
+        return pickle.getId();
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override

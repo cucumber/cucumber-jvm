@@ -23,6 +23,6 @@ public final class Gherkin8DocStringArgument implements DocStringArgument {
 
     @Override
     public int getLine() {
-        return docString.getLocation().getLine();
+        throw new UnsupportedOperationException("Not supported");
     }
 }

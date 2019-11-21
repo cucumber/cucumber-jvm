@@ -98,5 +98,13 @@ public final class Gherkin5CucumberPickle implements CucumberPickle {
         return uri;
     }
 
+    @Override
+    public String getId() {
+        return pickle.getName() + pickle.getLocations()
+            .stream()
+            .map(l -> String.valueOf(l.getLine()))
+            .collect(Collectors.joining(":"));
+    }
+
 
 }
