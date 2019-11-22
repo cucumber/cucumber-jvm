@@ -61,7 +61,7 @@ class FeatureResolverTest {
         TestDescriptor scenario = getScenario();
         assertEquals("A scenario", scenario.getDisplayName());
         assertEquals(
-            asSet(create("@FeatureTag"), create("@ScenarioTag")),
+            asSet(create("FeatureTag"), create("ScenarioTag")),
             scenario.getTags()
         );
         assertEquals(of(from(featurePath, from(5, 3))), scenario.getSource());
@@ -98,7 +98,7 @@ class FeatureResolverTest {
         TestDescriptor example = getExample();
         assertEquals("Example #1", example.getDisplayName());
         assertEquals(
-            asSet(create("@FeatureTag"), create("@Example1Tag"), create("@ScenarioOutlineTag")),
+            asSet(create("FeatureTag"), create("Example1Tag"), create("ScenarioOutlineTag")),
             example.getTags()
         );
         assertEquals(of(from(featurePath, from(19, 7))), example.getSource());

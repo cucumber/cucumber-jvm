@@ -143,8 +143,18 @@ features are selected from the classpath.
 
 ## Tags
 
-Cucumber tags are mapped to JUnit tags. See the relevant documentation on how to
-select tags:
+Cucumber tags are mapped to JUnit tags. Note that the `@` symbol is not part of
+the JUnit tag. So the scenario below is tagged with `Smoke` and `Sanity`. 
+
+```gherkin
+@Smoke @Sanity
+Scenario: A tagged scenario
+  Given I tag a scenario 
+  When I select tests with that tag for execution 
+  Then my tagged scenario is executed
+```
+ 
+See the relevant documentation on how to select tags:
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 * [JUnit 5 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
