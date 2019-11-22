@@ -69,8 +69,9 @@ final class Gherkin8CucumberPickle implements CucumberPickle {
 
     @Override
     public CucumberLocation getLocation() {
-        //TODO: This returns the location of the scenario. Not the location of the pickle (check with example table)
-        Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getLocation();
+        List<String> sourceIds = pickle.getSourceIdsList();
+        String sourceId = sourceIds.get(sourceIds.size() -1);
+        Messages.Location location = cucumberQuery.getLocation(sourceId);
         return Gherkin8CucumberLocation.from(location);
     }
 
