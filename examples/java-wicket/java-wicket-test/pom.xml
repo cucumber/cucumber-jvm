@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>java-wicket</artifactId>
-        <version>5.0.0-RC2-SNAPSHOT</version>
+        <version>5.0.0-RC2</version>
     </parent>
     <artifactId>java-wicket-test</artifactId>
     <name>Examples: Wicket application tested with Selenium</name>
