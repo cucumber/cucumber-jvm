@@ -12,6 +12,7 @@ import io.cucumber.core.options.CucumberPropertiesParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
@@ -82,7 +83,7 @@ public final class TestNGCucumberRunner {
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-        Supplier<ClassLoader> classLoader = Thread.currentThread()::getContextClassLoader;
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC());

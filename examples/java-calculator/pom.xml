@@ -4,12 +4,12 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>5.0.0-RC2-SNAPSHOT</version>
+        <version>5.0.0-RC3-SNAPSHOT</version>
     </parent>
 
     <artifactId>java-calculator</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Java Calculator</name>
+    <name>Examples: Calculator - Annotation</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.java</project.Automatic-Module-Name>

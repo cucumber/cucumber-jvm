@@ -87,7 +87,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     @Override
     public Integer getLine() {
-        return pickle.getLine();
+        return pickle.getLocation().getLine();
     }
 
     private String fileColonLine(Integer line) {
