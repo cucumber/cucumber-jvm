@@ -45,7 +45,7 @@
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
         <gherkin5.version>5.2.0</gherkin5.version>
-        <gherkin8.version>8.2.0</gherkin8.version>
+        <gherkin8.version>8.2.1</gherkin8.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
