@@ -32,6 +32,7 @@ import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
@@ -208,6 +209,14 @@ class DiscoverySelectorResolverTest {
                 .map(TestDescriptor::getUniqueId)
                 .collect(toSet())
         );
+    }
+
+    @Test
+    void resolveRequestWithClassSelector() {
+        DiscoverySelector resource = selectClass(RunCucumberTest.class);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(2, testDescriptor.getChildren().size());
     }
 
     private Optional<UniqueId> selectSomePickle(DiscoverySelector resource) {

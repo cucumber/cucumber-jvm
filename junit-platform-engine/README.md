@@ -1,7 +1,7 @@
 Cucumber JUnit Platform Engine
 ==============================
 
-Use JUnit Platform to execute cucumber scenarios.
+Use JUnit Platform to execute Cucumber scenarios.
 
 Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 
@@ -17,11 +17,33 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 This will allow the IntelliJ IDEA, Eclipse, Maven, Gradle, ect, to discover,
 select and execute Cucumber scenarios. 
 
-## Maven Surefire workaround ##
+## Surefire and Gradle workarounds
 
-Maven Surefire does not yet support discovery of non-class based test as a
-workaround you can use the antrun plugin to start the the JUnit Platform 
+Maven Surefire and Gradle do not yet support discovery of non-class based tests
+(see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
+[SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
+workaround you can either use the `@Cucumber` annotation or the JUnit Platform
 Console Launcher.
+
+### Use the @Cucumber annotation ###
+
+Cucumber will scan the package of a class annotated with `@Cucumber` for feature
+files.  
+
+```java
+package com.example.app;
+
+import io.cucumber.junit.platform.engine.Cucumber;
+
+@Cucumber
+public class RunCucumberTest {
+}
+```
+
+### Use the JUnit Console Launcher ###
+
+As a workaround you can use the JUnit Platform Console Launcher by using either
+the Maven Antrun plugin or the Gradle JavaExec task.
 
 ```xml
 <dependencies>
@@ -69,12 +91,6 @@ Console Launcher.
     </plugins>
 </build>
 ```
-## Gradle Test workaround ##
-
-Gradle Test does not yet support discovery of non-class based test ([gradle/#4773](https://github.com/gradle/gradle/issues/4773)). 
-As a work around you can use a custom task to start the the JUnit Platform
-Console Launcher.
-
 ```groovy
 
 tasks {
@@ -115,6 +131,7 @@ For supported values see [Constants](src/main/java/io/cucumber/junit/platform/en
 Supported `DiscoverySelector`s are:
 * `ClasspathRootSelector`
 * `ClasspathResourceSelector`
+* `ClassSelector`
 * `PackageSelector`
 * `FileSelector`
 * `DirectorySelector`

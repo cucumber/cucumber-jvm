@@ -8,6 +8,7 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.DirectorySelector;
@@ -63,6 +64,14 @@ final class FeatureResolver {
         );
     }
 
+    void resolveClass(ClassSelector classSelector) {
+        Class<?> javaClass = classSelector.getJavaClass();
+        Cucumber annotation = javaClass.getAnnotation(Cucumber.class);
+        if (annotation != null) {
+            resolvePackageResource(javaClass.getPackage().getName());
+        }
+    }
+
     void resolveDirectory(DirectorySelector selector) {
         resolvePath(selector.getPath());
     }
@@ -84,7 +93,10 @@ final class FeatureResolver {
     }
 
     void resolvePackageResource(PackageSelector selector) {
-        String packageName = selector.getPackageName();
+        resolvePackageResource(selector.getPackageName());
+    }
+
+    private void resolvePackageResource(String packageName) {
         featureScanner
             .scanForResourcesInPackage(packageName, packageFilter)
             .stream()
