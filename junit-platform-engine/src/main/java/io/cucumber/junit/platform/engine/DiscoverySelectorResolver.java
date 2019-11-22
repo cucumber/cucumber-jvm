@@ -3,6 +3,7 @@ package io.cucumber.junit.platform.engine;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.DirectorySelector;
@@ -35,6 +36,7 @@ class DiscoverySelectorResolver {
 
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClasspathResource);
+        request.getSelectorsByType(ClassSelector.class).forEach(featureResolver::resolveClass);
         request.getSelectorsByType(PackageSelector.class).forEach(featureResolver::resolvePackageResource);
         request.getSelectorsByType(FileSelector.class).forEach(featureResolver::resolveFile);
         request.getSelectorsByType(DirectorySelector.class).forEach(featureResolver::resolveDirectory);
