@@ -1,6 +1,18 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...master) (In Git)
+
+### Added
+   
+### Changed
+
+### Removed
+ 
+### Fixed
+
+### Deprecated
+     
+## [5.0.0-RC2](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...v5.0.0-RC2) (2019-11-22)
 
 ### Added
  * [Java8] Add DefaultParameter transformer and friends ([#1812](https://github.com/cucumber/cucumber-jvm/issues/1812) M.P. Korstanje)
@@ -9,18 +21,14 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Add `DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
  * [Core] Limited support for classpath scanning in SpringBoot jars ([#1821](https://github.com/cucumber/cucumber-jvm/pull/1821) M.P. Korstanje)
    - Enables scanning of glue and features in `BOOT-INF/classes`.
- * [JUnit] Implement Cucumber as a Junit Platform Engine ([#1530](https://github.com/cucumber/cucumber-jvm/pull/1530) M.P. Korstanje)
+ * [JUnit] Implement Cucumber as a Junit Platform Engine ([#1530](https://github.com/cucumber/cucumber-jvm/pull/1530), [#1824](https://github.com/cucumber/cucumber-jvm/pull/1824) M.P. Korstanje)
    
 ### Changed
  * [Core] Indent write events in PrettyFormatter ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Alexandre Monterroso)
- * [Core] Include name in duplicate feature detection ([#1819](https://github.com/cucumber/cucumber-jvm/pull/1819) M.P. Korstanje)
+ * [Core] Include file name in duplicate feature detection ([#1819](https://github.com/cucumber/cucumber-jvm/pull/1819) M.P. Korstanje)
  * [Core] Replace ResourceIterable with standard Java solutions ([#1820](https://github.com/cucumber/cucumber-jvm/pull/1820) M.P. Korstanje)
    - Uses `FileSystem` to open URI's allowing features to be read from any file
      system supported by the JVM.
-
-### Removed
- 
-### Fixed
 
 ### Deprecated
  * [Core] Deprecate TypeRegistryConfigurer ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Anton Deriabin)
