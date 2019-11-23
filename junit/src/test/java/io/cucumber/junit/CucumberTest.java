@@ -73,10 +73,6 @@ class CucumberTest {
             () -> assertThat(
                 actualThrown.getMessage(),
                 is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))
-            ),
-            () -> assertThat(
-                actualThrown.getCause().getClass().getName(),
-                is("gherkin.ParserException$CompositeParserException")
             )
         );
     }

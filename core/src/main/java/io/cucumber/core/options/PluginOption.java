@@ -11,7 +11,6 @@ import io.cucumber.core.plugin.NullSummaryPrinter;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.plugin.PrettyFormatter;
 import io.cucumber.core.plugin.ProgressFormatter;
-import io.cucumber.core.plugin.ProtobufFormatterAdapter;
 import io.cucumber.core.plugin.RerunFormatter;
 import io.cucumber.core.plugin.TestNGFormatter;
 import io.cucumber.core.plugin.TimelineFormatter;
@@ -21,6 +20,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
+import io.cucumber.plugin.protobuf.ProtobufFormatter;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -39,7 +39,7 @@ public class PluginOption implements Options.Plugin {
         put("null_summary", NullSummaryPrinter.class);
         put("pretty", PrettyFormatter.class);
         put("progress", ProgressFormatter.class);
-        put("protobuf", ProtobufFormatterAdapter.class);
+        put("protobuf", ProtobufFormatter.class);
         put("rerun", RerunFormatter.class);
         put("summary", DefaultSummaryPrinter.class);
         put("testng", TestNGFormatter.class);

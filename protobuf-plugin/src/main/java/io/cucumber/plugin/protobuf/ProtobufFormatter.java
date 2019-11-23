@@ -1,7 +1,5 @@
-package io.cucumber.core.gherkin8.formatter;
+package io.cucumber.plugin.protobuf;
 
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.plugin.ProtobufFormat;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.gherkin.IdGenerator;
 import io.cucumber.messages.Messages;
@@ -12,6 +10,9 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseDefined;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 
-public class ProtobufFormatter implements EventListener {
+public final class ProtobufFormatter implements EventListener {
     private static final Map<Status, Messages.TestResult.Status> STATUS = new HashMap<Status, Messages.TestResult.Status>() {{
         put(Status.FAILED, Messages.TestResult.Status.FAILED);
         put(Status.PASSED, Messages.TestResult.Status.PASSED);
@@ -35,15 +36,15 @@ public class ProtobufFormatter implements EventListener {
     }};
     private final OutputStream outputStream;
     private final Writer writer;
-    private final ProtobufFormat format;
     //    private Map<String, String> pickleIdByUriAndLine = new HashMap<>();
     private final JsonFormat.Printer jsonPrinter = JsonFormat.printer().omittingInsignificantWhitespace().includingDefaultValueFields();
     private final IdGenerator idGenerator = new IdGenerator.UUID();
     private final Map<TestCase, String> testCaseStartedIdByTestCase = new HashMap<>();
+    private final ProtobufFormat format;
 
-    public ProtobufFormatter(OutputStream outputStream, ProtobufFormat format) {
-        this.outputStream = outputStream;
-        this.format = format;
+    public ProtobufFormatter(File file) throws FileNotFoundException {
+        this.format = file.getPath().endsWith(".ndjson") ? ProtobufFormat.NDJSON : ProtobufFormat.PROTOBUF;
+        this.outputStream = new FileOutputStream(file);
         this.writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
     }
 
@@ -147,7 +148,7 @@ public class ProtobufFormatter implements EventListener {
             outputStream.close();
             writer.close();
         } catch (IOException e) {
-            throw new CucumberException("Failed to close stream", e);
+            throw new IllegalStateException("Failed to close stream", e);
         }
     }
 
@@ -168,7 +169,7 @@ public class ProtobufFormatter implements EventListener {
                     writer.flush();
                     break;
                 default:
-                    throw new CucumberException("Unsupported format: " + format.name());
+                    throw new IllegalStateException("Unsupported format: " + format.name());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

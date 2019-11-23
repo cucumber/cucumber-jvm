@@ -21,7 +21,6 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-plugin</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

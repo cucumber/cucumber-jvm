@@ -2,43 +2,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
+        <groupId>io.cucumber</groupId>
         <version>5.0.0-RC2-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>cucumber-protobuf-plugin</artifactId>
+    <name>Cucumber-JVM: Protobuf</name>
+    <description>Reports Cucumber Execution in Protobuf format</description>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.core.gherkin8</project.Automatic-Module-Name>
+        <project.Automatic-Module-Name>io.cucumber.plugin.protobuf</project.Automatic-Module-Name>
     </properties>
 
-    <artifactId>cucumber-gherkin8</artifactId>
-    <packaging>jar</packaging>
-    <name>Cucumber-JVM: Gherkin 8</name>
-
     <dependencies>
+
+        <dependency>
+            <groupId>com.eclipsesource.minimal-json</groupId>
+            <artifactId>minimal-json</artifactId>
+            <version>0.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>messages</artifactId>
+            <version>7.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-plugin</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
             <version>${gherkin8.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-gherkin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

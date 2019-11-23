@@ -29,6 +29,12 @@ public final class StepExpression {
         return wrapPlusOne(match);
     }
 
+    // TODO: Don't use Cucumber messages internally.
+    //  1. Protobuf formatter should  follow the ports and adaptor pattern and
+    //  take it's information from  the same events as other plugins. Using
+    //  protobuf internally is another Yak.
+    //  2. This ends up exposing Cucumber messages as part of the public API.
+    //  This makes it harder to do semver.
     public Iterable<StepMatchArgument> getStepMatchArguments(String text, Type[] types) {
         List<io.cucumber.cucumberexpressions.Argument<?>> arguments = expression.match(text, types);
         if (arguments == null) {

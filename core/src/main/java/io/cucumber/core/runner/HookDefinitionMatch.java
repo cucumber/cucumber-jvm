@@ -52,6 +52,7 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
 
     @Override
     public String getPickleStepId() {
+        // TODO: Only expose this value on CucumberStep as returned by PickleStepTestStep.getStep()
         return "__HookDefinitionMatch_FAKE_ID__";
     }
 
