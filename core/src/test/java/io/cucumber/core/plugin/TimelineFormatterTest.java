@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TimelineFormatterTest {
 
-    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator.comparing(o -> o.id);
+    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator.comparing(o -> o.scenario);
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/core/plugin/timeline";
     private static final String REPORT_JS = "report.js";
@@ -72,7 +72,7 @@ class TimelineFormatterTest {
         "    When bg_2\n" +
         "    Then bg_3\n" +
         "  @TagB @TagC\n" +
-        "  Scenario: Scenario 1\n" +
+        "  Scenario: Scenario 3\n" +
         "    Given step_10\n" +
         "    When step_20\n" +
         "    Then step_30");
@@ -83,7 +83,7 @@ class TimelineFormatterTest {
         "    Given bg_1\n" +
         "    When bg_2\n" +
         "    Then bg_3\n" +
-        "  Scenario: Scenario 1\n" +
+        "  Scenario: Scenario 4\n" +
         "    Given step_10\n" +
         "    When step_20\n" +
         "    Then step_50");
@@ -194,8 +194,8 @@ class TimelineFormatterTest {
     private TimelineFormatter.TestData[] getExpectedTestData(Long groupId) {
         String expectedJson = ("[\n" +
             "  {\n" +
-            "    \"id\": \"failing-feature;scenario-1\",\n" +
             "    \"feature\": \"Failing Feature\",\n" +
+            "    \"scenario\": \"Scenario 1\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 6000,\n" +
             "    \"group\": groupId,\n" +
@@ -204,8 +204,8 @@ class TimelineFormatterTest {
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
-            "    \"id\": \"failing-feature;scenario-2\",\n" +
             "    \"feature\": \"Failing Feature\",\n" +
+            "    \"scenario\": \"Scenario 2\",\n" +
             "    \"start\": 6000,\n" +
             "    \"end\": 12000,\n" +
             "    \"group\": groupId,\n" +
@@ -214,7 +214,17 @@ class TimelineFormatterTest {
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
-            "    \"id\": \"pending-feature;scenario-1\",\n" +
+            "    \"feature\": \"Successful Feature\",\n" +
+            "    \"scenario\": \"Scenario 3\",\n" +
+            "    \"start\": 18000,\n" +
+            "    \"end\": 24000,\n" +
+            "    \"group\": groupId,\n" +
+            "    \"content\": \"\",\n" +
+            "    \"tags\": \"@tagb,@tagc,\",\n" +
+            "    \"className\": \"passed\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"scenario\": \"Scenario 4\",\n" +
             "    \"feature\": \"Pending Feature\",\n" +
             "    \"start\": 12000,\n" +
             "    \"end\": 18000,\n" +
@@ -222,16 +232,6 @@ class TimelineFormatterTest {
             "    \"content\": \"\",\n" +
             "    \"tags\": \"\",\n" +
             "    \"className\": \"undefined\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"id\": \"successful-feature;scenario-1\",\n" +
-            "    \"feature\": \"Successful Feature\",\n" +
-            "    \"start\": 18000,\n" +
-            "    \"end\": 24000,\n" +
-            "    \"group\": groupId,\n" +
-            "    \"content\": \"\",\n" +
-            "    \"tags\": \"@tagb,@tagc,\",\n" +
-            "    \"className\": \"passed\"\n" +
             "  }\n" +
             "]").replaceAll("groupId", groupId.toString());
 
@@ -290,7 +290,6 @@ class TimelineFormatterTest {
             final int idx = i;
 
             assertAll("Checking TimelineFormatter.TestData",
-                () -> assertThat(String.format("id on item %s, was not as expected", idx), actual.id, is(equalTo(expected.id))),
                 () -> assertThat(String.format("feature on item %s, was not as expected", idx), actual.feature, is(equalTo(expected.feature))),
                 () -> assertThat(String.format("className on item %s, was not as expected", idx), actual.className, is(equalTo(expected.className))),
                 () -> assertThat(String.format("content on item %s, was not as expected", idx), actual.content, is(equalTo(expected.content))),

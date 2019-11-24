@@ -1,9 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.resource.Resource;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -30,10 +28,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -47,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.feature.FeatureParser.parseResource;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ZERO;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Locale.ROOT;
@@ -67,7 +62,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private Map<URI, String> featuresNames = new HashMap<>();
+    private final Map<URI, String> featuresNames = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
@@ -187,24 +182,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         }
 
         return count;
-    }
-
-    private static class TestSourceReadResource implements Resource {
-        private final TestSourceRead event;
-
-        TestSourceReadResource(TestSourceRead event) {
-            this.event = event;
-        }
-
-        @Override
-        public URI getUri() {
-            return event.getUri();
-        }
-
-        @Override
-        public InputStream getInputStream() {
-            return new ByteArrayInputStream(event.getSource().getBytes(UTF_8));
-        }
     }
 
     final class TestCase {

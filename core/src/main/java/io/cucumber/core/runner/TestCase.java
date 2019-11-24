@@ -22,6 +22,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
+    //TODO: Primitive obsession. Lets use UUIDs here.
     private final String id = UUID.randomUUID().toString();
 
     TestCase(List<PickleStepTestStep> testSteps,

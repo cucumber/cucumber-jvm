@@ -93,7 +93,7 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
 
     @Override
     public String getId() {
-        return pickle.getName() + pickle.getLocations()
+        return pickle.getName() + ":" + pickle.getLocations()
             .stream()
             .map(l -> String.valueOf(l.getLine()))
             .collect(Collectors.joining(":"));
