@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -37,9 +38,12 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -49,7 +53,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private final Writer writer;
     private final Document document;
     private final Element rootElement;
-    private final TestSourcesModel testSources = new TestSourcesModel();
     private Element root;
     private TestCase testCase;
     private boolean strict = false;
@@ -57,6 +60,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
+    private final Map<URI, String> featuresNames = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {
@@ -100,7 +104,8 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.getUri(), event);
+        CucumberFeature cucumberFeature = parseResource(new TestSourceReadResource(event));
+        featuresNames.put(cucumberFeature.getUri(), cucumberFeature.getName());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -186,7 +191,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
 
         void writeElement(Element tc) {
-            tc.setAttribute("classname", testSources.getFeatureName(currentFeatureFile));
+            tc.setAttribute("classname", featuresNames.get(currentFeatureFile));
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
@@ -248,7 +253,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
-                sb.append(getKeywordFromSource(steps.get(i).getStepLine()));
+                sb.append(steps.get(i).getStep().getKeyWord());
                 sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");
@@ -256,10 +261,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
                 sb.append(resultStatus);
                 sb.append("\n");
             }
-        }
-
-        private String getKeywordFromSource(int stepLine) {
-            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private void addStackTrace(StringBuilder sb, Result failed) {
