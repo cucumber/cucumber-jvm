@@ -1,6 +1,9 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.resource.Resource;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -27,8 +30,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -37,8 +42,12 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static io.cucumber.core.feature.FeatureParser.parseResource;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ZERO;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Locale.ROOT;
@@ -50,7 +59,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private final Element results;
     private final Element suite;
     private final Element test;
-    private final TestSourcesModel testSources = new TestSourcesModel();
     private Element clazz;
     private Element root;
     private TestCase testCase;
@@ -59,6 +67,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
+    private Map<URI, String> featuresNames = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
@@ -96,7 +105,8 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.getUri(), event);
+        CucumberFeature cucumberFeature = parseResource(new TestSourceReadResource(event));
+        featuresNames.put(cucumberFeature.getUri(), cucumberFeature.getName());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -105,7 +115,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             previousTestCaseName = "";
             exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", testSources.getFeature(event.getTestCase().getUri()).getName());
+            clazz.setAttribute("name", featuresNames.get(event.getTestCase().getUri()));
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
@@ -177,6 +187,24 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         }
 
         return count;
+    }
+
+    private static class TestSourceReadResource implements Resource {
+        private final TestSourceRead event;
+
+        TestSourceReadResource(TestSourceRead event) {
+            this.event = event;
+        }
+
+        @Override
+        public URI getUri() {
+            return event.getUri();
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return new ByteArrayInputStream(event.getSource().getBytes(UTF_8));
+        }
     }
 
     final class TestCase {
@@ -268,7 +296,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
-                sb.append(getKeywordFromSource(steps.get(i).getStepLine()));
+                sb.append(steps.get(i).getStep().getKeyWord());
                 sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");
@@ -276,10 +304,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
                 sb.append(resultStatus);
                 sb.append("\n");
             }
-        }
-
-        private String getKeywordFromSource(int stepLine) {
-            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private Element createException(Document doc, String clazz, String message, String stacktrace) {
