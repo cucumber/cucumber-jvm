@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
  * Some build tools do not support the {@link org.junit.platform.engine.discovery.DiscoverySelectors}
  * used by Cucumber. As a work around Cucumber will scan the package of the
  * annotated class for feature files and execute them.
+ *
+ * @see CucumberTestEngine
  */
 @API(status = API.Status.STABLE)
 @Retention(RetentionPolicy.RUNTIME)
