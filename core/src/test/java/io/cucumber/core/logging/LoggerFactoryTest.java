@@ -3,18 +3,18 @@ package io.cucumber.core.logging;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class LoggerFactoryTest {
+class LoggerFactoryTest {
 
     private final Exception exception = new Exception();
     private LogRecord logged;
@@ -49,8 +49,8 @@ public class LoggerFactoryTest {
         };
     }
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         Handler handler = new Handler() {
             @Override
             public void publish(LogRecord record) {
@@ -77,51 +77,51 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void error() {
-        logger.error("Error");
+    void error() {
+        logger.error(() -> "Error");
         assertThat(logged, logRecord("Error", Level.SEVERE, null));
-        logger.error("Error", exception);
+        logger.error(exception, () -> "Error");
         assertThat(logged, logRecord("Error", Level.SEVERE, exception));
     }
 
     @Test
-    public void warn() {
-        logger.warn("Warn");
+    void warn() {
+        logger.warn(() -> "Warn");
         assertThat(logged, logRecord("Warn", Level.WARNING, null));
-        logger.warn("Warn", exception);
+        logger.warn(exception, () -> "Warn");
         assertThat(logged, logRecord("Warn", Level.WARNING, exception));
     }
 
     @Test
-    public void info() {
-        logger.info("Info");
+    void info() {
+        logger.info(() -> "Info");
         assertThat(logged, logRecord("Info", Level.INFO, null));
-        logger.info("Info", exception);
+        logger.info(exception, () -> "Info");
         assertThat(logged, logRecord("Info", Level.INFO, exception));
     }
 
     @Test
-    public void config() {
-        logger.config("Config");
+    void config() {
+        logger.config(() -> "Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, null));
-        logger.config("Config", exception);
+        logger.config(exception, () -> "Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, exception));
     }
 
 
     @Test
-    public void debug() {
-        logger.debug("Debug");
+    void debug() {
+        logger.debug(() -> "Debug");
         assertThat(logged, logRecord("Debug", Level.FINE, null));
-        logger.debug("Debug", exception);
+        logger.debug(exception, () -> "Debug");
         assertThat(logged, logRecord("Debug", Level.FINE, exception));
     }
 
     @Test
-    public void trace() {
-        logger.trace("Trace");
+    void trace() {
+        logger.trace(() -> "Trace");
         assertThat(logged, logRecord("Trace", Level.FINER, null));
-        logger.trace("Trace", exception);
+        logger.trace(exception, () -> "Trace");
         assertThat(logged, logRecord("Trace", Level.FINER, exception));
     }
 

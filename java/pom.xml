@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>5.0.0-RC3-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-java</artifactId>
@@ -16,6 +16,10 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -23,13 +27,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -49,71 +64,7 @@
                         <configuration>
                             <target>
                                 <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
-
-                                <groovy><![CDATA[
-import groovy.text.SimpleTemplateEngine
-import gherkin.GherkinDialect
-import gherkin.GherkinDialectProvider
-
-def engine = new SimpleTemplateEngine()
-def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java.txt").getText()
-
-def normalize(s) {
-  if(System.getProperty("java.version").startsWith("1.6")) {
-    return s
-  } else {
-    return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFC)
-  }
-}
-
-def localeFor(lang) {
-  languageAndCountry = lang.split("-")
-  if (languageAndCountry.length == 1) {
-    return new Locale(lang)
-  } else {
-    return new Locale(languageAndCountry[0], languageAndCountry[1])
-  }
-}
-
-// TODO: Need to add i18n.getName() and i18n.getNative() for better names.
-def package_html = """\
-<body>
-<p>
-    \${locale.getDisplayLanguage()}
-</p>
-</body>
-"""
-
-def unsupported = ["em"] // The generated files for Emoij do not compile.
-def dialectProvider = new GherkinDialectProvider()
-
-GherkinDialectProvider.DIALECTS.keySet().each { language ->
-  def dialect = dialectProvider.getDialect(language, null)
-  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
-  if (!unsupported.contains(normalized_language)) {
-    dialect.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.unique().each { kw ->
-      def normalized_kw = normalize(kw.replaceAll("[\\s',!\u00AD]", ""))
-      def binding = ["lang":normalized_language, "kw":normalized_kw]
-      def template = engine.createTemplate(templateSource).make(binding)
-      def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${normalized_language}${File.separator}${normalized_kw}.java")
-      if(!file.exists()) {
-        // Haitian has two translations that only differ by case - Sipozeke and SipozeKe
-        // Some file systems are unable to distiguish between them and overwrite the other one :-(
-        file.parentFile.mkdirs()
-        file.write(template.toString(), "UTF-8")
-      }
-    }
-
-    // html
-    def locale = localeFor(dialect.language)
-    def binding = ["locale":locale]
-    def html = engine.createTemplate(package_html).make(binding).toString()
-    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${normalized_language}${File.separator}package.html")
-    file.write(html, "UTF-8")
-  }
-}
-        ]]></groovy>
-
+                                <groovy src="src/main/groovy/generate-annotations.groovy" />
                             </target>
                         </configuration>
                     </execution>
@@ -137,6 +88,34 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Use very specific exclusions to avoid excluding non-generated sources by accident -->
+                    <excludes>
+                        <!-- ISO 639-1 Language -->
+                        <exclude>**/io/cucumber/java/??/*</exclude>
+                        <!-- ISO 639-1 Language variants -->
+                        <exclude>**/io/cucumber/java/??_*/*</exclude>
+                        <!-- ISO 639-3 Language -->
+                        <exclude>**/io/cucumber/java/???/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.outputDirectory}/generated-sources/i18n/java</sourceDirectory>
+                    </sourceDirectories>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.java</project.Automatic-Module-Name>
+    </properties>
 </project>

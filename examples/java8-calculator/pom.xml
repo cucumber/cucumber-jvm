@@ -4,12 +4,16 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>5.0.0-RC3-SNAPSHOT</version>
     </parent>
 
     <artifactId>java8-calculator</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Java8 Calculator</name>
+    <name>Examples: Calculator - Lambda</name>
+
+    <properties>
+        <project.Automatic-Module-Name>io.cucumber.examples.java8</project.Automatic-Module-Name>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -23,25 +27,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
