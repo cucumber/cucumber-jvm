@@ -55,7 +55,6 @@ public final class ClasspathScanner {
             .collect(toList());
     }
 
-
     public List<Class<?>> scanForClassesInPackage(String basePackageName) {
         return scanForClassesInPackage(basePackageName, NULL_FILTER);
     }
@@ -96,7 +95,7 @@ public final class ClasspathScanner {
                     .filter(classFilter)
                     .ifPresent(classConsumer);
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                throw new IllegalArgumentException("Failed to load " + fqn, e);
+                throw new IllegalArgumentException("Unable to load " + fqn, e);
             }
         };
     }

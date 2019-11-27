@@ -36,7 +36,7 @@ git commit -am "Prepare for release X.Y.Z"
 Now release everything:
 
 ```
-mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
+mvn release:clean release:prepare -P-examples -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
 ```
 
 Travis will now deploy everything. Once travis is done go into [Nexus](https://oss.sonatype.org/) and inspect, 
@@ -117,5 +117,5 @@ for example:
 # Deploy the release #
 
 ```
-mvn release:perform -Psign-source-javadoc -DskipTests=true
+mvn release:perform -P-examples -Psign-source-javadoc -DskipTests=true
 ```

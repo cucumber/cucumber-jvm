@@ -13,6 +13,21 @@ import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorSe
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 
+/**
+ * The Cucumber {@link org.junit.platform.engine.TestEngine TestEngine}.
+ * <p>
+ * Supports discovery and execution of {@code .feature} files using the
+ * following selectors:
+ * <ul>
+ *     <li>{@link org.junit.platform.engine.discovery.ClasspathRootSelector}</li>
+ *     <li>{@link org.junit.platform.engine.discovery.ClasspathResourceSelector}</li>
+ *     <li>{@link org.junit.platform.engine.discovery.PackageSelector}</li>
+ *     <li>{@link org.junit.platform.engine.discovery.FileSelector}</li>
+ *     <li>{@link org.junit.platform.engine.discovery.DirectorySelector}</li>
+ *     <li>{@link org.junit.platform.engine.discovery.UniqueIdSelector}</li>
+ *     <li>{@link org.junit.platform.engine.discovery.UriSelector}</li>
+ * </ul>
+ */
 public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEngineExecutionContext> {
 
     @Override

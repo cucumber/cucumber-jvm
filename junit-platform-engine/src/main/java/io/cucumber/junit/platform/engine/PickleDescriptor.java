@@ -9,9 +9,14 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.hierarchical.Node;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
@@ -33,12 +38,23 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         return context;
     }
 
+    /**
+     * Returns the set of {@linkplain TestTag tags} for a pickle.
+     * <p>
+     * Note that Cucumber will remove the {code @} symbol from all Gherkin tags.
+     * So a scenario tagged with {@code @Smoke} becomes a test tagged with
+     * {@code Smoke}.
+     *
+     * @return the set of tags
+     */
     @Override
     public Set<TestTag> getTags() {
         return pickleEvent.getTags().stream()
+            .map(tag -> tag.substring(1))
             .filter(TestTag::isValid)
             .map(TestTag::create)
-            .collect(Collectors.toSet());
+            // Retain input order
+            .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
     }
 
     Optional<String> getPackage() {
