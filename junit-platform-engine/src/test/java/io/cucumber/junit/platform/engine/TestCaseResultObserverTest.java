@@ -164,7 +164,7 @@ class TestCaseResultObserverTest {
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         assertThrows(
-            TestSkippedException.class,
+            TestAbortedException.class,
             observer::assertTestCasePassed
         );
     }

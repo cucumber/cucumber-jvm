@@ -10,7 +10,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
-import org.opentest4j.TestSkippedException;
+import org.opentest4j.TestAbortedException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ class TestCaseResultObserver implements AutoCloseable {
         }
         Throwable error = result.getError();
         if (status.is(SKIPPED) && error == null) {
-            throw new TestSkippedException();
+            throw new TestAbortedException();
         }
 
         if (status.is(UNDEFINED)) {
