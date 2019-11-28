@@ -46,6 +46,11 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        public String getKeyword() {
+            return "Scenario";
+        }
+
+        @Override
         public String getName() {
             return "Mocked test case";
         }

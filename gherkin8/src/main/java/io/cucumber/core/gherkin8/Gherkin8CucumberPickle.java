@@ -57,6 +57,11 @@ final class Gherkin8CucumberPickle implements CucumberPickle {
     }
 
     @Override
+    public String getKeyword() {
+        return cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getKeyword();
+    }
+
+    @Override
     public String getLanguage() {
         return pickle.getLanguage();
     }

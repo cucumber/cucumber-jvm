@@ -15,8 +15,14 @@ public interface TestCase {
      */
     Integer getLine();
 
+    String getKeyword();
+
     String getName();
 
+    /**
+     * @deprecated use other accessor to reconstruct the scenario designation
+     */
+    @Deprecated
     String getScenarioDesignation();
 
     List<String> getTags();

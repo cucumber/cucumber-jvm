@@ -107,6 +107,11 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return pickle.getLocation().getLine();
     }
 
+    @Override
+    public String getKeyword() {
+        return pickle.getKeyword();
+    }
+
     private String fileColonLine(Integer line) {
         return pickle.getUri().getSchemeSpecificPart() + ":" + line;
     }

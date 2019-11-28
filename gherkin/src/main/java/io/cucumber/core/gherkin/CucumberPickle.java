@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface CucumberPickle {
 
+    String getKeyword();
+
     String getLanguage();
 
     String getName();

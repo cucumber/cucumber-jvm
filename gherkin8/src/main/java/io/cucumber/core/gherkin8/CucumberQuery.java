@@ -79,12 +79,12 @@ public class CucumberQuery {
         }
     }
 
-    public Step getGherkinStep(String id) {
-        return requireNonNull(gherkinStepById.get(requireNonNull(id)));
+    public Step getGherkinStep(String sourceId) {
+        return requireNonNull(gherkinStepById.get(requireNonNull(sourceId)));
     }
 
-    public Scenario getGherkinScenario(String id) {
-        return requireNonNull(gherkinScenarioById.get(requireNonNull(id)));
+    public Scenario getGherkinScenario(String sourceId) {
+        return requireNonNull(gherkinScenarioById.get(requireNonNull(sourceId)));
     }
 
     public Location getLocation(String sourceId) {

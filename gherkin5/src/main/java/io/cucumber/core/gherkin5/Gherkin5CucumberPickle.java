@@ -2,6 +2,7 @@ package io.cucumber.core.gherkin5;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
+import gherkin.ast.ScenarioDefinition;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
@@ -27,11 +28,17 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
     private final Pickle pickle;
     private final List<CucumberStep> steps;
     private final URI uri;
+    private final String keyWord;
 
     Gherkin5CucumberPickle(Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
         this.pickle = pickle;
         this.uri = uri;
         this.steps = createCucumberSteps(pickle, document, dialect);
+        this.keyWord = document.getFeature().getChildren().stream()
+            .filter(scenarioDefinition -> scenarioDefinition.getLocation().getLine() == getScenarioLocation().getLine())
+            .map(ScenarioDefinition::getKeyword)
+            .findFirst()
+            .orElse("Scenario");
     }
 
     private static List<CucumberStep> createCucumberSteps(Pickle pickle, GherkinDocument document, GherkinDialect dialect) {
@@ -50,6 +57,11 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
             list.add(cucumberStep);
         }
         return list;
+    }
+
+    @Override
+    public String getKeyword() {
+        return keyWord;
     }
 
     @Override
