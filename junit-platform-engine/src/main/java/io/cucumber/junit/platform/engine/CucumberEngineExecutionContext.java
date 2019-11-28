@@ -41,8 +41,13 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
         this.bus = new TimeServiceEventBus(Clock.systemUTC());
-        new Plugins(new PluginFactory(), options);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
+        Plugins plugins = new Plugins(new PluginFactory(), options);
+        if (options.isParallelExecutionEnabled()) {
+            plugins.setSerialEventBusOnEventListenerPlugins(bus);
+        } else {
+            plugins.setEventBusOnEventListenerPlugins(bus);
+        }
         this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 

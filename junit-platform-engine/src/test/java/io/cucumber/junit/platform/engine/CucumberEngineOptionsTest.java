@@ -104,4 +104,24 @@ class CucumberEngineOptionsTest {
         );
         assertEquals(SnippetType.CAMELCASE, new CucumberEngineOptions(camelcase).getSnippetType());
     }
+
+    @Test
+    void isParallelExecutionEnabled() {
+        MapConfigurationParameters enabled = new MapConfigurationParameters(
+            Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
+            "true"
+        );
+        assertTrue(new CucumberEngineOptions(enabled).isParallelExecutionEnabled());
+
+        MapConfigurationParameters disabled = new MapConfigurationParameters(
+            Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
+            "false"
+        );
+        assertFalse(new CucumberEngineOptions(disabled).isParallelExecutionEnabled());
+        MapConfigurationParameters absent = new MapConfigurationParameters(
+            "some key", "some value"
+        );
+        assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
+
+    }
 }
