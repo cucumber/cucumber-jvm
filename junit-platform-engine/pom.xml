@@ -16,21 +16,35 @@
         <project.Automatic-Module-Name>io.cucumber.junit.platform.engine</project.Automatic-Module-Name>
     </properties>
 
+    <profiles>
+        <profile>
+            <!-- IDEA doesn't calculate shaded dependencies correctly and tries
+                 to include both gherkin 5 and gherkin 8. Manually excluded here
+                 for development -->
+            <id>idea-exclude-gherkin5</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>cucumber-core</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.cucumber</groupId>
+                            <artifactId>gherkin</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>io.cucumber</groupId>
+                            <artifactId>cucumber-gherkin5</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
-            <exclusions>
-<!--                TODO: Remove before release.-->
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>gherkin</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-gherkin5</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
