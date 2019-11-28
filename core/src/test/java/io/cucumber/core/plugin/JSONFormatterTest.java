@@ -15,6 +15,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
+import uk.co.datumedge.hamcrest.json.JSONModalComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,6 @@ class JSONFormatterTest {
             .next();
         assertThat(actual, sameJSONAs(expected));
     }
-
 
     @Test
     void featureWithOutlineTestParallel() throws Exception {

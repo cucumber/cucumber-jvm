@@ -28,5 +28,9 @@
             <artifactId>messages</artifactId>
             <version>7.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-expressions</artifactId>
+        </dependency>
     </dependencies>
 </project>

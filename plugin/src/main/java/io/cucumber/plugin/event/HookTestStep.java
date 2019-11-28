@@ -18,5 +18,4 @@ public interface HookTestStep extends TestStep {
      * @return the hook type.
      */
     HookType getHookType();
-
 }

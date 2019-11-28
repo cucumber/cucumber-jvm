@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.GherkinDocumentParsed;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.plugin.event.TestCaseEvent;
@@ -59,6 +60,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
     private static final class FixedEventOrderComparator implements Comparator<Event> {
 
         private final List<Class<? extends Event>> fixedOrder = asList(
+            GherkinDocumentParsed.class,
             TestRunStarted.class,
             TestSourceRead.class,
             SnippetsSuggestedEvent.class,
@@ -75,7 +77,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
         private int requireInFixOrder(Class<? extends Event> o) {
             int index = findInFixedOrder(o);
             if (index < 0) {
-                throw new IllegalStateException(o + "was not in " + fixedOrder);
+                throw new IllegalStateException(o + " was not in " + fixedOrder);
             }
             return index;
         }

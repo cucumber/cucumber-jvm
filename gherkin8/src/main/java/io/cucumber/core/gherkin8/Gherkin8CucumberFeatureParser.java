@@ -3,7 +3,6 @@ package io.cucumber.core.gherkin8;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberFeatureParser;
 import io.cucumber.core.gherkin.CucumberParserException;
-import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
 import io.cucumber.gherkin.GherkinDocumentBuilder;
@@ -22,7 +21,7 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
 
     private final CucumberQuery cucumberQuery = new CucumberQuery();
 
-    private static List<CucumberPickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, URI path, CucumberQuery cucumberQuery) {
+    private static List<Gherkin8CucumberPickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, URI path, CucumberQuery cucumberQuery) {
         if (document.getFeature() == null) {
             return Collections.emptyList();
         }
@@ -46,7 +45,7 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
             GherkinDocument gherkinDocument = parser.parse(source).setUri(path.toString()).build();
             cucumberQuery.update(gherkinDocument);
             GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-            List<CucumberPickle> pickles = compilePickles(gherkinDocument, dialectProvider, path, cucumberQuery);
+            List<Gherkin8CucumberPickle> pickles = compilePickles(gherkinDocument, dialectProvider, path, cucumberQuery);
             return new Gherkin8CucumberFeature(gherkinDocument, path, source, pickles);
         } catch (ParserException e) {
             throw new CucumberParserException("Failed to parse resource at: " + path.toString(), e);

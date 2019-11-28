@@ -33,7 +33,7 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
     Gherkin5CucumberPickle(Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
         this.pickle = pickle;
         this.uri = uri;
-        this.steps = createCucumberSteps(pickle, document, dialect);
+        this.steps = createCucumberSteps(pickle, document, dialect, uri.toString());
         this.keyWord = document.getFeature().getChildren().stream()
             .filter(scenarioDefinition -> scenarioDefinition.getLocation().getLine() == getScenarioLocation().getLine())
             .map(ScenarioDefinition::getKeyword)
@@ -41,7 +41,7 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
             .orElse("Scenario");
     }
 
-    private static List<CucumberStep> createCucumberSteps(Pickle pickle, GherkinDocument document, GherkinDialect dialect) {
+    private static List<CucumberStep> createCucumberSteps(Pickle pickle, GherkinDocument document, GherkinDialect dialect, String uri) {
         List<CucumberStep> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
             .stream()
@@ -50,7 +50,7 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
             .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (PickleStep step : pickle.getSteps()) {
-            CucumberStep cucumberStep = new Gherkin5CucumberStep(step, document, dialect, previousGivenWhenThen);
+            CucumberStep cucumberStep = new Gherkin5CucumberStep(step, document, dialect, previousGivenWhenThen, uri);
             if (cucumberStep.getStepType().isGivenWhenThen()) {
                 previousGivenWhenThen = cucumberStep.getKeyWord();
             }

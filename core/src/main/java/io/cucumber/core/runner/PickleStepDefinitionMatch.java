@@ -168,10 +168,4 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     public String getCodeLocation() {
         return stepDefinition.getLocation();
     }
-
-    @Override
-    public String getPickleStepId() {
-        return step.getPickleStepId();
-    }
-
 }

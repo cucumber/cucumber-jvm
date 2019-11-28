@@ -107,4 +107,7 @@ final class Gherkin8CucumberPickle implements CucumberPickle {
     }
 
 
+    public Messages.Pickle getPickle() {
+        return pickle;
+    }
 }

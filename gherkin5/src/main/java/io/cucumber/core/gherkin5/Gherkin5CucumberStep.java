@@ -10,6 +10,8 @@ import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
 
+import java.util.stream.Collectors;
+
 final class Gherkin5CucumberStep implements CucumberStep {
 
     private final PickleStep step;
@@ -17,13 +19,15 @@ final class Gherkin5CucumberStep implements CucumberStep {
     private final String keyWord;
     private final StepType stepType;
     private final String previousGwtKeyWord;
+    private final String uri;
 
-    Gherkin5CucumberStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord) {
+    Gherkin5CucumberStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
         this.step = step;
         this.argument = extractArgument(step);
         this.keyWord = extractKeyWord(document);
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
+        this.uri = uri;
     }
 
     private String extractKeyWord(GherkinDocument document) {
@@ -106,6 +110,7 @@ final class Gherkin5CucumberStep implements CucumberStep {
 
     @Override
     public String getPickleStepId() {
-        throw new UnsupportedOperationException();
+        String lineNumbers = this.step.getLocations().stream().map(s -> String.valueOf(s.getLine())).collect(Collectors.joining(":"));
+        return uri + ":" + lineNumbers;
     }
 }

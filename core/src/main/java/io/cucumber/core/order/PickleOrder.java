@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface PickleOrder {
 
-	List<CucumberPickle> orderPickles(List<CucumberPickle> pickles);
+	List<? extends CucumberPickle> orderPickles(List<? extends CucumberPickle> pickles);
 }

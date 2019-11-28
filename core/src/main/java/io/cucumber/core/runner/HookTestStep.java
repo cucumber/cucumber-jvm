@@ -6,7 +6,7 @@ final class HookTestStep extends TestStep implements io.cucumber.plugin.event.Ho
     private final HookType hookType;
 
     HookTestStep(HookType hookType, HookDefinitionMatch definitionMatch) {
-        super(definitionMatch);
+        super(null, definitionMatch);
         this.hookType = hookType;
     }
 

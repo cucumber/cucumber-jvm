@@ -15,6 +15,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.plugin.event.GherkinDocumentParsed;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -58,6 +59,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     void beforeFeature(CucumberFeature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
+        bus.send(new GherkinDocumentParsed(bus.getInstant(), feature));
         bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
     }
 

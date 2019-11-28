@@ -10,7 +10,5 @@ interface StepDefinitionMatch {
 
     String getCodeLocation();
 
-    String getPickleStepId();
-
     Iterable<Messages.StepMatchArgument> getStepMatchArguments();
 }

@@ -39,7 +39,6 @@ class CanonicalEventOrderTest {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
         given(testCase.getLine()).willReturn(line);
-        String testCaseStartedId = UUID.randomUUID().toString();
         return new TestCaseStarted(getInstant(), testCase);
     }
 

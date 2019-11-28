@@ -17,6 +17,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.GherkinDocumentParsed;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -86,6 +87,7 @@ public final class Runtime {
         final List<CucumberFeature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
+            bus.send(new GherkinDocumentParsed(bus.getInstant(), feature));
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
 

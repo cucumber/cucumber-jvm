@@ -2,7 +2,6 @@ package io.cucumber.core.gherkin8;
 
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberLocation;
-import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.gherkin.Node;
 import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
@@ -15,11 +14,11 @@ import java.util.stream.Stream;
 
 final class Gherkin8CucumberFeature implements CucumberFeature {
     private final URI uri;
-    private final List<CucumberPickle> pickles;
+    private final List<Gherkin8CucumberPickle> pickles;
     private final GherkinDocument gherkinDocument;
     private final String gherkinSource;
 
-    Gherkin8CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<CucumberPickle> pickles) {
+    Gherkin8CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Gherkin8CucumberPickle> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
@@ -55,14 +54,14 @@ final class Gherkin8CucumberFeature implements CucumberFeature {
     }
 
     @Override
-    public Optional<CucumberPickle> getPickleAt(CucumberLocation location) {
+    public Optional<Gherkin8CucumberPickle> getPickleAt(CucumberLocation location) {
         return pickles.stream()
             .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
             .findFirst();
     }
 
     @Override
-    public List<CucumberPickle> getPickles() {
+    public List<Gherkin8CucumberPickle> getPickles() {
         return pickles;
     }
 
@@ -99,4 +98,7 @@ final class Gherkin8CucumberFeature implements CucumberFeature {
         return Objects.hash(uri);
     }
 
+    public GherkinDocument getGherkinDocument() {
+        return gherkinDocument;
+    }
 }

@@ -89,7 +89,6 @@ public final class Runner {
     }
 
     private TestCase createTestCaseForPickle(CucumberPickle pickle) {
-        String testCaseId = UUID.randomUUID().toString();
         if (pickle.getSteps().isEmpty()) {
             return new TestCase(emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
         }

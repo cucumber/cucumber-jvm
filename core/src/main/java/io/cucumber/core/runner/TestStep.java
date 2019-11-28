@@ -30,8 +30,10 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private final StepDefinitionMatch stepDefinitionMatch;
     private final String id = UUID.randomUUID().toString();
+    private final String pickleStepId;
 
-    TestStep(StepDefinitionMatch stepDefinitionMatch) {
+    TestStep(String pickleStepId, StepDefinitionMatch stepDefinitionMatch) {
+        this.pickleStepId = pickleStepId;
         this.stepDefinitionMatch = stepDefinitionMatch;
     }
 
@@ -47,7 +49,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     @Override
     public String getPickleStepId() {
-        return stepDefinitionMatch.getPickleStepId();
+        return pickleStepId;
     }
 
     @Override

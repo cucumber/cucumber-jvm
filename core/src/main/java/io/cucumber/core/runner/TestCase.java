@@ -42,7 +42,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         Instant start = bus.getInstant();
         bus.send(new TestCaseDefined(start, this));
 
-        String testCaseStartedId = UUID.randomUUID().toString();
         bus.send(new TestCaseStarted(start, this));
         TestCaseState state = new TestCaseState(bus, this);
 

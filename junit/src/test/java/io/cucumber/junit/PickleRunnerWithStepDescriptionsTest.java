@@ -20,7 +20,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() {
-        List<CucumberPickle> pickles = picklesFromFeature("path/test.feature", "" +
+        List<? extends CucumberPickle> pickles = picklesFromFeature("path/test.feature", "" +
             "Feature: FB\n" +
             "# Scenario with same step occurring twice\n" +
             "\n" +
@@ -108,7 +108,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameForDisplayName() {
-        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
+        List<? extends CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -124,7 +124,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseStepKeyworkAndNameForChildName() {
-        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
+        List<? extends CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -140,7 +140,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
+        List<? extends CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
