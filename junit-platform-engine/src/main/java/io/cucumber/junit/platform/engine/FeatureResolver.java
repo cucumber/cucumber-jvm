@@ -26,9 +26,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.feature.FeatureParser.parseResource;
-import static java.lang.String.format;
 import static java.util.Optional.of;
-import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
 final class FeatureResolver {
 
@@ -123,14 +121,8 @@ final class FeatureResolver {
 
     void resolveUri(UriSelector selector) {
         URI uri = selector.getUri();
-
-        try {
-            resolveUri(uri)
-                .forEach(this::merge);
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features for uri '%s'.", uri));
-        }
+        resolveUri(uri)
+            .forEach(this::merge);
     }
 
     private Stream<TestDescriptor> resolveUri(URI uri) {

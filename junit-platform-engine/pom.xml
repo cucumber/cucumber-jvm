@@ -19,6 +19,15 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>gherkin</artifactId>
+                </exclusion> <exclusion>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>cucumber-gherkin5</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
