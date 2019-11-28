@@ -113,10 +113,6 @@ final class TestSourcesModel {
         return null;
     }
 
-    ScenarioDefinition getScenarioDefinition(URI path, int line) {
-        return getScenarioDefinition(getAstNode(path, line));
-    }
-
     AstNode getAstNode(URI path, int line) {
         if (!pathToNodeMap.containsKey(path)) {
             parseGherkinSource(path);
@@ -136,36 +132,6 @@ final class TestSourcesModel {
             return getBackgroundForTestCase(astNode) != null;
         }
         return false;
-    }
-
-    String getKeywordFromSource(URI uri, int stepLine) {
-        Feature feature = getFeature(uri);
-        if (feature != null) {
-            TestSourceRead event = getTestSourceReadEvent(uri);
-            String trimmedSourceLine = event.getSource().split("\n")[stepLine - 1].trim();
-            GherkinDialect dialect = new GherkinDialectProvider(feature.getLanguage()).getDefaultDialect();
-            for (String keyword : dialect.getStepKeywords()) {
-                if (trimmedSourceLine.startsWith(keyword)) {
-                    return keyword;
-                }
-            }
-        }
-        return "";
-    }
-
-    private TestSourceRead getTestSourceReadEvent(URI uri) {
-        if (pathToReadEventMap.containsKey(uri)) {
-            return pathToReadEventMap.get(uri);
-        }
-        return null;
-    }
-
-    String getFeatureName(URI uri) {
-        Feature feature = getFeature(uri);
-        if (feature != null) {
-            return feature.getName();
-        }
-        return "";
     }
 
     private void parseGherkinSource(URI path) {
