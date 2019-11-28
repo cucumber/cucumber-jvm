@@ -24,12 +24,13 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
     private final Messages.Pickle pickle;
     private final List<CucumberStep> steps;
     private final URI uri;
-    private final CucumberQuery cucumberQuery = new CucumberQuery();
+    private final CucumberQuery cucumberQuery;
 
-    Gherkin8CucumberPickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect) {
+    Gherkin8CucumberPickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery) {
         this.pickle = pickle;
         this.uri = uri;
-        this.steps = createCucumberSteps(pickle, dialect, cucumberQuery);
+        this.cucumberQuery = cucumberQuery;
+        this.steps = createCucumberSteps(pickle, dialect, this.cucumberQuery);
     }
 
     private static List<CucumberStep> createCucumberSteps(Messages.Pickle pickle, GherkinDialect dialect, CucumberQuery cucumberQuery) {

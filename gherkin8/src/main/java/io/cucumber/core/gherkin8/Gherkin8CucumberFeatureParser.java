@@ -23,6 +23,7 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
     @Override
     public CucumberFeature parse(URI path, String source) {
         try {
+            CucumberQuery cucumberQuery = new CucumberQuery();
             GherkinDocument gherkinDocument = null;
             GherkinDialect dialect = null;
             List<Messages.Envelope> envelopes = Gherkin.fromSources(
@@ -36,13 +37,14 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
             for (Messages.Envelope envelope : envelopes) {
                 if (envelope.hasGherkinDocument()) {
                     gherkinDocument = envelope.getGherkinDocument();
+                    cucumberQuery.update(gherkinDocument);
                     GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
                     String language = gherkinDocument.getFeature().getLanguage();
                     dialect = dialectProvider.getDialect(language, null);
                 }
                 if (envelope.hasPickle()) {
                     Messages.Pickle pickle = envelope.getPickle();
-                    pickles.add(new Gherkin8CucumberPickle(pickle, path, dialect));
+                    pickles.add(new Gherkin8CucumberPickle(pickle, path, dialect, cucumberQuery));
                 }
             }
             return new Gherkin8CucumberFeature(gherkinDocument, path, source, pickles);
