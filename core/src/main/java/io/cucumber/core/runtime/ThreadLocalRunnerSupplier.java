@@ -100,12 +100,12 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public synchronized <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+        public synchronized <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
             delegate.registerHandlerFor(eventType, handler);
         }
 
         @Override
-        public synchronized <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+        public synchronized <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
             delegate.removeHandlerFor(eventType, handler);
         }
 

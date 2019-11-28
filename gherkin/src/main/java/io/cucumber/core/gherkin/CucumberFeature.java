@@ -8,9 +8,9 @@ public interface CucumberFeature extends Node, Container<Node>, io.cucumber.plug
 
     String getKeyword();
 
-    Optional<? extends CucumberPickle> getPickleAt(CucumberLocation location);
+    Optional<CucumberPickle> getPickleAt(CucumberLocation location);
 
-    List<? extends CucumberPickle> getPickles();
+    List<CucumberPickle> getPickles();
 
     URI getUri();
 

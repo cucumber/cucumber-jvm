@@ -26,7 +26,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>messages</artifactId>
-            <version>7.0.0</version>
+            <version>7.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>

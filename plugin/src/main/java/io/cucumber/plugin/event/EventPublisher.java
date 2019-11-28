@@ -29,7 +29,7 @@ public interface EventPublisher {
      * @param <T>       the event type
      * @see Event
      */
-    <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler);
+    <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler);
 
     /**
      * Unregister an event handler for a specific event
@@ -38,6 +38,6 @@ public interface EventPublisher {
      * @param handler   the event handler
      * @param <T>       the event type
      */
-    <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler);
+    <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler);
 
 }

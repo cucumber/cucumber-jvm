@@ -19,17 +19,16 @@ import java.util.stream.Collectors;
  * Wraps {@link Messages.Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-final class Gherkin8CucumberPickle implements CucumberPickle {
+public final class Gherkin8CucumberPickle implements CucumberPickle {
 
     private final Messages.Pickle pickle;
     private final List<CucumberStep> steps;
     private final URI uri;
-    private final CucumberQuery cucumberQuery;
+    private final CucumberQuery cucumberQuery = new CucumberQuery();
 
-    Gherkin8CucumberPickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+    Gherkin8CucumberPickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect) {
         this.pickle = pickle;
         this.uri = uri;
-        this.cucumberQuery = cucumberQuery;
         this.steps = createCucumberSteps(pickle, dialect, cucumberQuery);
     }
 

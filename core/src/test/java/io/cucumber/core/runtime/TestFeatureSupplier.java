@@ -2,7 +2,6 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.plugin.event.GherkinDocumentParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.util.Arrays;
@@ -24,7 +23,6 @@ public class TestFeatureSupplier implements FeatureSupplier {
     @Override
     public List<CucumberFeature> get() {
         for (CucumberFeature feature : features) {
-            bus.send(new GherkinDocumentParsed(bus.getInstant(), feature));
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
         return features;

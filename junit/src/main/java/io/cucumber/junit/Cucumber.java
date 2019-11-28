@@ -22,7 +22,6 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
-import io.cucumber.plugin.event.GherkinDocumentParsed;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -198,7 +197,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
             bus.send(new TestRunStarted(bus.getInstant()));
             for (CucumberFeature feature : features) {
-                bus.send(new GherkinDocumentParsed(bus.getInstant(), feature));
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             }
             runFeatures.evaluate();

@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractEventPublisher implements EventPublisher {
-    protected final Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<>();
+    protected final Map<Class<?>, List<EventHandler>> handlers = new HashMap<>();
 
     @Override
-    public final <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+    public final <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         if (handlers.containsKey(eventType)) {
             handlers.get(eventType).add(handler);
         } else {
@@ -24,7 +24,7 @@ public abstract class AbstractEventPublisher implements EventPublisher {
     }
 
     @Override
-    public final <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+    public final <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         if (handlers.containsKey(eventType)) {
             handlers.get(eventType).remove(handler);
         }
