@@ -42,6 +42,12 @@ import java.util.Map;
 import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.util.Locale.ROOT;
 
+/**
+ * @deprecated Use the {@code message} formatter in combination with the
+ * <a href="https://github.com/cucumber/cucumber/tree/master/json-formatter">json formatter</a>.
+ * Or migrate the consumer of the json files to consume the messages protocol.
+ */
+@Deprecated
 public final class JSONFormatter implements EventListener {
     private static final String before = "before";
     private static final String after = "after";

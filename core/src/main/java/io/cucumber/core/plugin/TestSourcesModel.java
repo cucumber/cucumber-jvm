@@ -1,8 +1,6 @@
 package io.cucumber.core.plugin;
 
 import gherkin.AstBuilder;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
 import gherkin.Parser;
 import gherkin.ParserException;
 import gherkin.TokenMatcher;
@@ -15,6 +13,7 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.TableRow;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.File;
@@ -81,8 +80,8 @@ final class TestSourcesModel {
         return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
     }
 
-    static URI relativize(URI uri){
-        if(!"file".equals(uri.getScheme())){
+    static URI relativize(URI uri) {
+        if (!"file".equals(uri.getScheme())) {
             return uri;
         }
         if (!uri.isAbsolute()) {
@@ -150,7 +149,16 @@ final class TestSourcesModel {
             }
             pathToNodeMap.put(path, nodeMap);
         } catch (ParserException e) {
-            // Ignore exceptions
+            // This works because the TestSourceRead event is emitted after
+            // parsing. So if we couldn't parse the feature, it will throw
+            // before emitting the event. So if we can't parse it now, it was
+            // not parsed by the Gherkin 5 parser.
+            throw new CucumberException("" +
+                "You are using a plugin that does not support Gherkin 8+.\n" +
+                "Try to remove the html and/or json formatters. See the\n" +
+                "Cucumber-JVM 5.0.0 release announcement for more information.",
+                e
+            );
         }
     }
 

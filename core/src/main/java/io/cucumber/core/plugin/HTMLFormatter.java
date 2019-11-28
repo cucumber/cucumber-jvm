@@ -51,6 +51,11 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
+/**
+ * @deprecated Use the {@code message} formatter in combination with the
+ * <a href="https://github.com/cucumber/cucumber/tree/master/html-formatter">html formatter</a>.
+ */
+@Deprecated
 public final class HTMLFormatter implements EventListener {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";

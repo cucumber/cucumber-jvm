@@ -6,9 +6,11 @@ import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
 final class Gherkin8DocStringArgument implements DocStringArgument {
 
     private final PickleDocString docString;
+    private final int line;
 
-    Gherkin8DocStringArgument(PickleDocString docString) {
+    Gherkin8DocStringArgument(PickleDocString docString, int line) {
         this.docString = docString;
+        this.line = line;
     }
 
     @Override
@@ -23,6 +25,6 @@ final class Gherkin8DocStringArgument implements DocStringArgument {
 
     @Override
     public int getLine() {
-        throw new UnsupportedOperationException("Not supported");
+        return line;
     }
 }

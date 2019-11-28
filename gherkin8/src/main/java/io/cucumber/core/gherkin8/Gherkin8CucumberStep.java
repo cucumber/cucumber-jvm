@@ -80,7 +80,8 @@ final class Gherkin8CucumberStep implements CucumberStep {
         PickleStepArgument argument = pickleStep.getArgument();
         if (argument.hasDocString()) {
             PickleDocString docString = argument.getDocString();
-            return new Gherkin8DocStringArgument(docString);
+            //TODO: Fix this work around
+            return new Gherkin8DocStringArgument(docString, stepLine + 1);
         }
         if (argument.hasDataTable()) {
             PickleTable table = argument.getDataTable();
