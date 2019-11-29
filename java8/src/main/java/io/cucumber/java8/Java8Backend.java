@@ -50,9 +50,8 @@ final class Java8Backend implements Backend {
             .filter(glueClass -> !glueClass.isInterface())
             .filter(glueClass -> glueClass.getConstructors().length > 0)
             .forEach(glueClass -> {
-                if (container.addClass(glueClass)) {
-                    lambdaGlueClasses.add(glueClass);
-                }
+                container.addClass(glueClass);
+                lambdaGlueClasses.add(glueClass);
             });
     }
 

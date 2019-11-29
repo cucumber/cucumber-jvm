@@ -55,7 +55,7 @@ public class CalculatorSteps{
 ## Hooks
 
 Declare hooks that will be executed before/after each scenario/step by annotating a method. The method may declare an
-argument of type `io.cucumber.core.api.Scenario`.
+argument of type `io.cucumber.java.Scenario`.
 
  * `@Before` 
  * `@After`
