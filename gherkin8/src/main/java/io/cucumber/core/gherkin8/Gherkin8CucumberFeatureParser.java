@@ -47,7 +47,7 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
                     pickles.add(new Gherkin8CucumberPickle(pickle, path, dialect, cucumberQuery));
                 }
             }
-            return new Gherkin8CucumberFeature(gherkinDocument, path, source, pickles);
+            return new Gherkin8CucumberFeature(gherkinDocument, path, source, pickles, envelopes);
         } catch (ParserException e) {
             throw new CucumberParserException("Failed to parse resource at: " + path.toString(), e);
         }

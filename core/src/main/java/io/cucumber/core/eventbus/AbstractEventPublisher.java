@@ -31,7 +31,7 @@ public abstract class AbstractEventPublisher implements EventPublisher {
     }
 
 
-    protected void send(Event event) {
+    protected <T> void send(T event) {
         if (handlers.containsKey(Event.class)) {
             for (EventHandler handler : handlers.get(Event.class)) {
                 //noinspection unchecked: protected by registerHandlerFor
@@ -39,16 +39,17 @@ public abstract class AbstractEventPublisher implements EventPublisher {
             }
         }
 
-        if (handlers.containsKey(event.getClass())) {
-            for (EventHandler handler : handlers.get(event.getClass())) {
+        Class<?> eventClass = event.getClass();
+        if (handlers.containsKey(eventClass)) {
+            for (EventHandler handler : handlers.get(eventClass)) {
                 //noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
     }
 
-    protected void sendAll(Iterable<Event> events) {
-        for (Event event : events) {
+    protected <T> void sendAll(Iterable<T> events) {
+        for (T event : events) {
             send(event);
         }
     }

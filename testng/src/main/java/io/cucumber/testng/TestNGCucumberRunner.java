@@ -141,6 +141,7 @@ public final class TestNGCucumberRunner {
         bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.sendAll(feature.getMessages());
         }
         return features;
     }

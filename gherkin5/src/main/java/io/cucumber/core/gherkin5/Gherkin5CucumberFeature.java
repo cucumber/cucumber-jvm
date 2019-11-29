@@ -6,6 +6,7 @@ import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberLocation;
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.core.gherkin.Node;
+import io.cucumber.messages.Messages;
 
 import java.net.URI;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static java.util.Collections.emptyList;
 
 final class Gherkin5CucumberFeature implements CucumberFeature {
     private final URI uri;
@@ -80,6 +82,11 @@ final class Gherkin5CucumberFeature implements CucumberFeature {
     @Override
     public String getSource() {
         return gherkinSource;
+    }
+
+    @Override
+    public Iterable<Messages.Envelope> getMessages() {
+        return emptyList();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.core.eventbus.AbstractEventBus;
 import io.cucumber.core.eventbus.EventBus;
@@ -62,7 +61,7 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public void send(final Event event) {
+        public <T> void send(final T event) {
             super.send(event);
             parent.send(event);
         }
@@ -90,12 +89,12 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public synchronized void send(final Event event) {
+        public synchronized <T> void send(final T event) {
             delegate.send(event);
         }
 
         @Override
-        public synchronized void sendAll(final Iterable<Event> events) {
+        public synchronized <T> void sendAll(final Iterable<T> events) {
             delegate.sendAll(events);
         }
 

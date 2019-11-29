@@ -1,9 +1,9 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.filter.Filters;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -22,6 +22,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -37,6 +38,7 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -195,12 +197,25 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
 
+            Messages.Envelope testRunStarted = Messages.Envelope.newBuilder()
+                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                    .setTimestamp(toTimestamp(bus.getInstant()))
+                ).build();
+            bus.send(testRunStarted);
             bus.send(new TestRunStarted(bus.getInstant()));
             for (CucumberFeature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+                bus.sendAll(feature.getMessages());
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
         }
+    }
+
+    private Messages.Timestamp toTimestamp(Instant instant) {
+        return Messages.Timestamp.newBuilder()
+            .setSeconds(instant.getEpochSecond())
+            .setNanos(instant.getNano())
+            .build();
     }
 }

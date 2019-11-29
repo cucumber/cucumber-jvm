@@ -1,6 +1,7 @@
 package io.cucumber.plugin.protobuf;
 
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.messages.internal.com.google.protobuf.util.JsonFormat;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -39,10 +40,10 @@ public final class ProtobufFormatter implements EventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(io.cucumber.messages.Messages.Envelope.class, this::writeMessage);
+        publisher.registerHandlerFor(Envelope.class, this::writeMessage);
     }
 
-    private void writeMessage(io.cucumber.messages.Messages.Envelope envelope) {
+    private void writeMessage(Envelope envelope) {
         write(envelope);
     }
 
@@ -152,7 +153,7 @@ public final class ProtobufFormatter implements EventListener {
 //        }
 //    }
 
-    private void write(Messages.Envelope m) {
+    private void write(Envelope m) {
         try {
             switch (format) {
                 case PROTOBUF:
