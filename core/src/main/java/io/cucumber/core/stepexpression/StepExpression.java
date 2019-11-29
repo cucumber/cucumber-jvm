@@ -53,6 +53,7 @@ public final class StepExpression {
             builder.setValue(group.getValue());
         }
         return builder
+            .setStart(group.getStart())
             .addAllChildren(group.getChildren().stream().map(StepExpression::makeMessageGroup).collect(Collectors.toList()))
             .build();
     }
