@@ -23,12 +23,14 @@ public final class ObjectFactoryServiceLoader {
     /**
      * Loads an instance of {@link ObjectFactory} using the {@link ServiceLoader} mechanism.
      * <p>
-     * Will load an instance of the class provided by {@link Options#getObjectFactoryClass()}.
+     * Will load an instance of the class provided by
+     * {@link Options#getObjectFactoryClass()}. If
+     * {@link Options#getObjectFactoryClass()} does not provide a class and
+     * there is exactly one {@code ObjectFactory} instance available that
+     * instance will be used.
      * <p>
-     * If {@link Options#getObjectFactoryClass()} does not provide a class and there is exactly
-     * one {@code ObjectFactory} instance available that instance will be used.
-     * <p>
-     * Otherwise a default object factory with no dependency injection capabilities will be used.
+     * Otherwise {@link DefaultJavaObjectFactory} with no dependency injection
+     * capabilities will be used.
      *
      * @return an instance of {@link ObjectFactory}
      */
@@ -51,7 +53,11 @@ public final class ObjectFactoryServiceLoader {
             }
         }
 
-        throw new CucumberException("Could not find object factory " + objectFactoryClass);
+        throw new CucumberException("" +
+            "Could not find object factory " + objectFactoryClass.getName() + ".\n" +
+            "Cucumber uses SPI to discover object factory implementations.\n" +
+            "Has the class been registered with SPI and is it available on the classpath?"
+        );
     }
 
     private static ObjectFactory loadSingleObjectFactoryOrDefault(ServiceLoader<ObjectFactory> loader) {
@@ -80,6 +86,11 @@ public final class ObjectFactoryServiceLoader {
             "In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n";
     }
 
+    /**
+     * Creates glue instances. Does not provide Dependency Injection.
+     * <p>
+     * All glue classes must have a public no-argument constructor.
+     */
     static class DefaultJavaObjectFactory implements ObjectFactory {
         private final Map<Class<?>, Object> instances = new HashMap<>();
 

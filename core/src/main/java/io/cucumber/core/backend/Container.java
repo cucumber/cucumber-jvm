@@ -5,10 +5,12 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface Container {
     /**
-     * Collects glue classes in the classpath. Called once on init.
+     * Add a glue class to the test context.
+     * <p>
+     * Invoked after creation but before {@link ObjectFactory#start()}.
      *
-     * @param glueClass Glue class containing cucumber.api annotations (Before, Given, When, ...)
-     * @return true if steps and hook definitions in this class should be used, false if they should be ignored.
+     * @param glueClass glue class to add to the text context.
+     * @return should always return true, should be ignored.
      */
     boolean addClass(Class<?> glueClass);
 }
