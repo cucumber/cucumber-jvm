@@ -120,11 +120,28 @@ tests in parallel is available as an opt-in feature. To enable parallel
 execution, set the set the `cucumber.execution.parallel.enabled` configuration
 parameter to `true`, e.g. in `junit-platform.properties`.
 
+Cucumber supports JUnits `ParallelExecutionConfigurationStrategy` see the
+configuration options below.
+
 ## Configuration Options ##
 
 Cucumber receives its configuration from the JUnit platform. To see how these
 can be supplied see the JUnit documentation [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/user-guide/index.html#running-tests-config-params). 
-For supported values see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
+For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
+
+```
+cucumber.ansi-colors.disabled=true|false
+cucumber.execution.dry-run=true|false
+cucumber.glue=com.example.app, com.example.widget
+cucumber.glue=cucumber.plugin=pretty, json:path/to/report.json
+cucumber.object-factory=com.example.MyObjectFactory
+cucumber.snippet-type=underscore|camelcase
+cucumber.execution.parallel.enabled=true|false
+cucumber.execution.parallel.config.strategy=dynamic|fixed|custom
+cucumber.execution.parallel.config.fixed.parallelism=100
+cucumber.execution.parallel.config.dynamic.factor=3.14
+cucumber.execution.parallel.config.custom.class=com.example.MyCustomParallelStrategy
+```
 
 ## Supported Discovery Selectors and Filters ## 
 
