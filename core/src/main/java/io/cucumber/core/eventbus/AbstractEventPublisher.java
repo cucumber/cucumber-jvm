@@ -32,16 +32,15 @@ public abstract class AbstractEventPublisher implements EventPublisher {
 
 
     protected <T> void send(T event) {
-        if (handlers.containsKey(Event.class)) {
+        if (handlers.containsKey(Event.class) && event instanceof Event) {
             for (EventHandler handler : handlers.get(Event.class)) {
                 //noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
 
-        Class<?> eventClass = event.getClass();
-        if (handlers.containsKey(eventClass)) {
-            for (EventHandler handler : handlers.get(eventClass)) {
+        if (handlers.containsKey(event.getClass())) {
+            for (EventHandler handler : handlers.get(event.getClass())) {
                 //noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }

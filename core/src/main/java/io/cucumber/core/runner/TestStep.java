@@ -14,6 +14,9 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static io.cucumber.core.messages.MessageHelpers.toDuration;
+import static io.cucumber.core.messages.MessageHelpers.toStatus;
+import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
@@ -57,10 +60,12 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return stepDefinitionMatch.getStepMatchArguments();
     }
 
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
-        Instant startTimeMillis = bus.getInstant();
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, String testCaseStartedId) {
+        Instant startTime = bus.getInstant();
 
-        bus.send(new TestStepStarted(startTimeMillis, testCase, this));
+        bus.send(new TestStepStarted(startTime, testCase, this));
+        sendTestStepStarted(bus, testCaseStartedId, startTime);
+
         Status status;
         Throwable error = null;
         try {
@@ -69,11 +74,37 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             error = t;
             status = mapThrowableToStatus(t);
         }
-        Instant stopTimeNanos = bus.getInstant();
-        Result result = mapStatusToResult(status, error, Duration.between(startTimeMillis, stopTimeNanos));
+        Instant stopTime = bus.getInstant();
+        Duration duration = Duration.between(startTime, stopTime);
+        Result result = mapStatusToResult(status, error, duration);
         state.add(result);
-        bus.send(new TestStepFinished(stopTimeNanos, testCase, this, result));
+        bus.send(new TestStepFinished(stopTime, testCase, this, result));
+
+        sendTestStepFinished(bus, testCaseStartedId, stopTime, duration, result);
+
         return !result.getStatus().is(Status.PASSED);
+    }
+
+    private void sendTestStepStarted(EventBus bus, String testCaseStartedId, Instant startTime) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestStepStarted(Messages.TestStepStarted.newBuilder()
+                .setTestCaseStartedId(testCaseStartedId)
+                .setTestStepId(getId())
+                .setTimestamp(toTimestamp(startTime))
+            ).build());
+    }
+
+    private void sendTestStepFinished(EventBus bus, String testCaseStartedId, Instant stopTime, Duration duration, Result result) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestStepFinished(Messages.TestStepFinished.newBuilder()
+                .setTestCaseStartedId(testCaseStartedId)
+                .setTestStepId(getId())
+                .setTimestamp(toTimestamp(stopTime))
+                .setTestResult(Messages.TestResult.newBuilder()
+                    .setStatus(toStatus(result.getStatus()))
+                    .setDuration(toDuration(duration))
+                )
+            ).build());
     }
 
     private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {

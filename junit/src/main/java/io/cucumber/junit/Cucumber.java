@@ -38,11 +38,11 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -197,25 +197,29 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
 
-            Messages.Envelope testRunStarted = Messages.Envelope.newBuilder()
-                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                    .setTimestamp(toTimestamp(bus.getInstant()))
-                ).build();
-            bus.send(testRunStarted);
             bus.send(new TestRunStarted(bus.getInstant()));
+            sendTestRunStartedMessage();
             for (CucumberFeature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
                 bus.sendAll(feature.getMessages());
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
+            sendTestRunFinishedMessage();
         }
     }
 
-    private Messages.Timestamp toTimestamp(Instant instant) {
-        return Messages.Timestamp.newBuilder()
-            .setSeconds(instant.getEpochSecond())
-            .setNanos(instant.getNano())
-            .build();
+    private void sendTestRunStartedMessage() {
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(toTimestamp(bus.getInstant())))
+            .build());
+    }
+
+    private void sendTestRunFinishedMessage() {
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(toTimestamp(bus.getInstant())))
+            .build());
     }
 }

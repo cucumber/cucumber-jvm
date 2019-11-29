@@ -45,6 +45,7 @@ class HookTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState state = new TestCaseState(bus, testCase);
     private HookTestStep step = new HookTestStep(HookType.AFTER_STEP, definitionMatch);
+    private final String testCaseStartedId = "some-test-case-started-id";
 
     @BeforeEach
     void init() {
@@ -53,7 +54,7 @@ class HookTestStepTest {
 
     @Test
     void run_does_run() throws Throwable {
-        step.run(testCase, bus, state, false);
+        step.run(testCase, bus, state, false, testCaseStartedId);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -63,7 +64,7 @@ class HookTestStepTest {
 
     @Test
     void run_does_dry_run() throws Throwable {
-        step.run(testCase, bus, state, true);
+        step.run(testCase, bus, state, true, testCaseStartedId);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -73,14 +74,14 @@ class HookTestStepTest {
 
     @Test
     void result_is_passed_when_step_definition_does_not_throw_exception() {
-        boolean skipNextStep = step.run(testCase, bus, state, false);
+        boolean skipNextStep = step.run(testCase, bus, state, false, testCaseStartedId);
         assertFalse(skipNextStep);
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
     void result_is_skipped_when_skip_step_is_skip_all_skipable() {
-        boolean skipNextStep = step.run(testCase, bus, state, true);
+        boolean skipNextStep = step.run(testCase, bus, state, true, testCaseStartedId);
         assertTrue(skipNextStep);
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
     }
