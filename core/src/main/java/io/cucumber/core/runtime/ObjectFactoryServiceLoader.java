@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -71,19 +73,26 @@ public final class ObjectFactoryServiceLoader {
         }
 
         if (objectFactories.hasNext()) {
-            System.out.println(getMultipleObjectFactoryLogMessage());
-            objectFactory = new DefaultJavaObjectFactory();
+            ObjectFactory extraObjectFactory = objectFactories.next();
+            throw new CucumberException(getMultipleObjectFactoryLogMessage(objectFactory, extraObjectFactory));
         }
         return objectFactory;
     }
 
-    private static String getMultipleObjectFactoryLogMessage() {
+    private static String getMultipleObjectFactoryLogMessage(ObjectFactory... objectFactories) {
+        String factoryNames = Stream.of(objectFactories)
+            .map(Object::getClass)
+            .map(Class::getName)
+            .collect(Collectors.joining(", "));
+
         return "More than one Cucumber ObjectFactory was found in the classpath\n" +
             "\n" +
-            "You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n" +
-            "your dependencies. When this happens, Cucumber falls back to instantiating the\n" +
-            "DefaultJavaObjectFactory implementation which doesn't provide IoC.\n" +
-            "In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n";
+            "Found: " + factoryNames +"\n" +
+            "\n" +
+            "You may have included, for instance, cucumber-spring AND cucumber-guice as part of\n" +
+            "your dependencies. When this happens, Cucumber can't decide which to use.\n" +
+            "In order to enjoy dependency injection features, either remove the unnecessary dependencies" +
+            "from your classpath or use the `cucumber.object-factory` property or `@CucumberOptions(objectFactory=...)` to select one.\n";
     }
 
     /**
@@ -121,7 +130,7 @@ public final class ObjectFactoryServiceLoader {
                 instances.put(type, instance);
                 return instance;
             } catch (NoSuchMethodException e) {
-                throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need DI, put cucumber-picocontainer on the classpath", type), e);
+                throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need dependency injection, put cucumber-picocontainer on the classpath", type), e);
             } catch (Exception e) {
                 throw new CucumberException(String.format("Failed to instantiate %s", type), e);
             }
