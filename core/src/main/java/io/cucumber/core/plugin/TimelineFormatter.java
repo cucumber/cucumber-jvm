@@ -179,7 +179,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private String getId(final TestCaseEvent testCaseEvent) {
-        return testCaseEvent.getTestCase().getId();
+        return testCaseEvent.getTestCase().getId().toString();
     }
 
     class TestData {

@@ -32,13 +32,14 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final List<HookTestStep> afterHooks;
     //TODO: Generator
     //TODO: Primitive obsession. Lets use UUIDs here.
-    private final String id = UUID.randomUUID().toString();
+    private final UUID id;
 
-    TestCase(List<PickleStepTestStep> testSteps,
+    TestCase(UUID id, List<PickleStepTestStep> testSteps,
              List<HookTestStep> beforeHooks,
              List<HookTestStep> afterHooks,
              CucumberPickle pickle,
              boolean dryRun) {
+        this.id = id;
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
@@ -52,7 +53,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
         Instant start = bus.getInstant();
         //TODO: Generator
-        String executionId = UUID.randomUUID().toString();
+        UUID executionId = bus.createId();
         emitTestCaseStarted(bus, start, executionId);
 
         TestCaseState state = new TestCaseState(bus, this);
@@ -104,7 +105,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -130,7 +131,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private void emitTestCaseMessage(EventBus bus) {
         bus.send(Envelope.newBuilder()
             .setTestCase(Messages.TestCase.newBuilder()
-                .setId(id)
+                .setId(id.toString())
                 .setPickleId(pickle.getId())
                 .addAllTestSteps(getTestSteps()
                     .stream()
@@ -156,16 +157,16 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         );
     }
 
-    private void emitTestCaseStarted(EventBus bus, Instant start, String executionId) {
+    private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
         bus.send(new TestCaseStarted(start, this));
         bus.send(Envelope.newBuilder()
             .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
-                .setId(executionId)
-                .setTestCaseId(id)
+                .setId(executionId.toString())
+                .setTestCaseId(id.toString())
                 .setTimestamp(toTimestamp(start))).build());
     }
 
-    private void emitTestCaseFinished(EventBus bus, String executionId, Instant stop, Duration duration, Status status, Result result) {
+    private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {
         bus.send(new TestCaseFinished(stop, this, result));
         Messages.TestResult.Builder testResultBuilder = Messages.TestResult.newBuilder()
             .setStatus(toStatus(status))
@@ -177,7 +178,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
         bus.send(Envelope.newBuilder()
             .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
-                .setTestCaseStartedId(executionId)
+                .setTestCaseStartedId(executionId.toString())
                 .setTimestamp(toTimestamp(stop))
                 .setTestResult(testResultBuilder
                 )

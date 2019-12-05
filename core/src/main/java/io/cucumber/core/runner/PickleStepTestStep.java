@@ -10,6 +10,7 @@ import io.cucumber.plugin.event.TestCase;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
     private final URI uri;
@@ -36,17 +37,17 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, String testCaseStartedId) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID testExecutionId) {
         boolean skipNextStep = skipSteps;
 
         for (HookTestStep before : beforeStepHookSteps) {
-            skipNextStep |= before.run(testCase, bus, state, skipSteps, testCaseStartedId);
+            skipNextStep |= before.run(testCase, bus, state, skipSteps, testExecutionId);
         }
 
-        skipNextStep |= super.run(testCase, bus, state, skipNextStep, testCaseStartedId);
+        skipNextStep |= super.run(testCase, bus, state, skipNextStep, testExecutionId);
 
         for (HookTestStep after : afterStepHookSteps) {
-            skipNextStep |= after.run(testCase, bus, state, skipSteps, testCaseStartedId);
+            skipNextStep |= after.run(testCase, bus, state, skipSteps, testExecutionId);
         }
 
         return skipNextStep;

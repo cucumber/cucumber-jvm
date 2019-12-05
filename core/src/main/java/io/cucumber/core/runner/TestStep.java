@@ -55,11 +55,11 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return pickleStepId;
     }
 
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, String testCaseStartedId) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID textExecutionId) {
         Instant startTime = bus.getInstant();
 
         bus.send(new TestStepStarted(startTime, testCase, this));
-        sendTestStepStarted(bus, testCaseStartedId, startTime);
+        sendTestStepStarted(bus, textExecutionId, startTime);
 
         Status status;
         Throwable error = null;
@@ -75,24 +75,24 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         state.add(result);
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
-        sendTestStepFinished(bus, testCaseStartedId, stopTime, duration, result);
+        sendTestStepFinished(bus, textExecutionId, stopTime, duration, result);
 
         return !result.getStatus().is(Status.PASSED);
     }
 
-    private void sendTestStepStarted(EventBus bus, String testCaseStartedId, Instant startTime) {
+    private void sendTestStepStarted(EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepStarted(Messages.TestStepStarted.newBuilder()
-                .setTestCaseStartedId(testCaseStartedId)
+                .setTestCaseStartedId(textExecutionId.toString())
                 .setTestStepId(getId())
                 .setTimestamp(toTimestamp(startTime))
             ).build());
     }
 
-    private void sendTestStepFinished(EventBus bus, String testCaseStartedId, Instant stopTime, Duration duration, Result result) {
+    private void sendTestStepFinished(EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepFinished(Messages.TestStepFinished.newBuilder()
-                .setTestCaseStartedId(testCaseStartedId)
+                .setTestCaseStartedId(textExecutionId.toString())
                 .setTestStepId(getId())
                 .setTimestamp(toTimestamp(stopTime))
                 .setTestResult(Messages.TestResult.newBuilder()

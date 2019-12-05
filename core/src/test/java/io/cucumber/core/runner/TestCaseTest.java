@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 
 import static io.cucumber.plugin.event.HookType.AFTER_STEP;
 import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
 
 class TestCaseTest {
 
@@ -61,7 +63,8 @@ class TestCaseTest {
 
     @BeforeEach
     void init() {
-        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
+        when(bus.getInstant()).thenReturn(Instant.now());
+        when(bus.createId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
@@ -126,7 +129,7 @@ class TestCaseTest {
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
+        return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
     }
 
     private CucumberPickle pickle() {

@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 
 import static io.cucumber.core.backend.Status.PASSED;
 import static io.cucumber.core.backend.Status.SKIPPED;
@@ -36,6 +37,7 @@ class HookTestStepTest {
     private final CoreHookDefinition hookDefintion = mock(CoreHookDefinition.class);
     private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = new TestCase(
+        UUID.randomUUID(),
         Collections.emptyList(),
         Collections.emptyList(),
         Collections.emptyList(),
@@ -45,7 +47,7 @@ class HookTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState state = new TestCaseState(bus, testCase);
     private HookTestStep step = new HookTestStep(HookType.AFTER_STEP, definitionMatch);
-    private final String testCaseStartedId = "some-test-case-started-id";
+    private final UUID testExecutionId = UUID.randomUUID();
 
     @BeforeEach
     void init() {
@@ -54,7 +56,7 @@ class HookTestStepTest {
 
     @Test
     void run_does_run() throws Throwable {
-        step.run(testCase, bus, state, false, testCaseStartedId);
+        step.run(testCase, bus, state, false, testExecutionId);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -64,7 +66,7 @@ class HookTestStepTest {
 
     @Test
     void run_does_dry_run() throws Throwable {
-        step.run(testCase, bus, state, true, testCaseStartedId);
+        step.run(testCase, bus, state, true, testExecutionId);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -74,14 +76,14 @@ class HookTestStepTest {
 
     @Test
     void result_is_passed_when_step_definition_does_not_throw_exception() {
-        boolean skipNextStep = step.run(testCase, bus, state, false, testCaseStartedId);
+        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
         assertFalse(skipNextStep);
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
     void result_is_skipped_when_skip_step_is_skip_all_skipable() {
-        boolean skipNextStep = step.run(testCase, bus, state, true, testCaseStartedId);
+        boolean skipNextStep = step.run(testCase, bus, state, true, testExecutionId);
         assertTrue(skipNextStep);
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
     }

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -90,13 +91,13 @@ public final class Runner {
 
     private TestCase createTestCaseForPickle(CucumberPickle pickle) {
         if (pickle.getSteps().isEmpty()) {
-            return new TestCase(emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
+            return new TestCase(bus.createId(), emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
         List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
         List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
-        return new TestCase(testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
+        return new TestCase(bus.createId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
     }
 
     private List<PickleStepTestStep> createTestStepsForPickleSteps(CucumberPickle pickle) {

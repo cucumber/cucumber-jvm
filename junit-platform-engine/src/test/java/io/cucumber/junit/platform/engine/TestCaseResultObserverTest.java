@@ -75,8 +75,8 @@ class TestCaseResultObserverTest {
         }
 
         @Override
-        public String getId() {
-            return "mocked";
+        public UUID getId() {
+            return UUID.randomUUID();
         }
     };
     private PickleStepTestStep testStep = new PickleStepTestStep() {

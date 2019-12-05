@@ -1,12 +1,12 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.WriteEvent;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatcher;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.UUID;
 
 import static io.cucumber.core.backend.Status.FAILED;
 import static io.cucumber.core.backend.Status.PASSED;
@@ -43,6 +44,7 @@ class TestCaseStateResultTest {
     private final TestCaseState s = new TestCaseState(
         bus,
         new TestCase(
+            UUID.randomUUID(),
             Collections.emptyList(),
             Collections.emptyList(),
             Collections.emptyList(),

@@ -1,12 +1,13 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.CucumberFeature;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -82,6 +83,7 @@ class TestCaseStateTest {
 
     private TestCaseState createTestCaseState(CucumberFeature feature) {
         return new TestCaseState(mock(EventBus.class), new TestCase(
+            UUID.randomUUID(),
             Collections.emptyList(),
             Collections.emptyList(),
             Collections.emptyList(),
