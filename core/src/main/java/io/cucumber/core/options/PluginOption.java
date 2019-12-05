@@ -20,7 +20,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
-import io.cucumber.plugin.protobuf.ProtobufFormatter;
+import io.cucumber.core.plugin.MessageFormatter;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -39,7 +39,7 @@ public class PluginOption implements Options.Plugin {
         put("null_summary", NullSummaryPrinter.class);
         put("pretty", PrettyFormatter.class);
         put("progress", ProgressFormatter.class);
-        put("protobuf", ProtobufFormatter.class);
+        put("message", MessageFormatter.class);
         put("rerun", RerunFormatter.class);
         put("summary", DefaultSummaryPrinter.class);
         put("testng", TestNGFormatter.class);

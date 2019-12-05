@@ -111,11 +111,6 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-protobuf-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -231,7 +226,6 @@
         <module>openejb</module>
         <module>picocontainer</module>
         <module>plugin</module>
-        <module>protobuf-plugin</module>
         <module>spring</module>
         <module>testng</module>
         <module>weld</module>
