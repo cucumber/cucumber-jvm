@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class TestFeatureParser {
     public static CucumberFeature parse(final String source) {
@@ -18,7 +19,7 @@ public class TestFeatureParser {
     }
 
     public static CucumberFeature parse(final URI uri, final String source) {
-        return FeatureParser.parseResource(new Resource() {
+        return new FeatureParser(UUID::randomUUID).parseResource(new Resource() {
             @Override
             public URI getUri() {
                 return uri;

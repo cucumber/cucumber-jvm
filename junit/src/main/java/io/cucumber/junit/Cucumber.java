@@ -1,6 +1,7 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
@@ -135,14 +136,16 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .setStrict(runtimeOptions.isStrict())
             .build(junitEnvironmentOptions);
 
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+
         // Parse the features early. Don't proceed when there are lexer errors
+        FeatureParser parser = new FeatureParser(bus::createId);
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);

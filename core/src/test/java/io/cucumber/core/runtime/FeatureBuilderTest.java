@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class FeatureBuilderTest {
 
+    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
     private final FeatureBuilder builder = new FeatureBuilder();
 
     @Test
@@ -81,7 +83,7 @@ class FeatureBuilderTest {
     }
 
     private CucumberFeature createResourceMock(URI featurePath) {
-        return FeatureParser.parseResource(new Resource() {
+        return parser.parseResource(new Resource() {
             @Override
             public URI getUri() {
                 return featurePath;

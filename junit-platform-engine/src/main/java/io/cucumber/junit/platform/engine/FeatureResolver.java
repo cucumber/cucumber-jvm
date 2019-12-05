@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureIdentifier;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
@@ -22,18 +23,19 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.util.Optional.of;
 
 final class FeatureResolver {
 
+    private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
     private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
-        resource -> of(parseResource(resource))
+        resource -> of(featureParser.parseResource(resource))
     );
 
     private final TestDescriptor engineDescriptor;

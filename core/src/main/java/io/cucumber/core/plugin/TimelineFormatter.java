@@ -4,6 +4,7 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -27,8 +28,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
-import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
@@ -53,6 +54,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final URL reportDir;
     private final NiceAppendable reportJs;
     private final Map<URI, String> featuresNames = new HashMap<>();
+    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
 
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -74,7 +76,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        CucumberFeature cucumberFeature = parseResource(new TestSourceReadResource(event));
+        CucumberFeature cucumberFeature = parser.parseResource(new TestSourceReadResource(event));
         featuresNames.put(cucumberFeature.getUri(), cucumberFeature.getName());
     }
 

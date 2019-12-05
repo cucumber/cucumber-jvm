@@ -2,6 +2,7 @@ package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
@@ -66,7 +67,7 @@ public final class TestNGCucumberRunner {
      * @param clazz Which has the {@link CucumberOptions}
      *              and {@link org.testng.annotations.Test} annotations
      */
-    public TestNGCucumberRunner(Class clazz) {
+    public TestNGCucumberRunner(Class<?> clazz) {
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
@@ -81,20 +82,24 @@ public final class TestNGCucumberRunner {
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        runtimeOptions = new CucumberPropertiesParser()
+        this.runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
-        featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
-
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        FeatureParser parser = new FeatureParser(bus::createId);
+        this.featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
+
         this.filters = new Filters(runtimeOptions);
+
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }

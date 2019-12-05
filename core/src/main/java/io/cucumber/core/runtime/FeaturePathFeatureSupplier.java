@@ -1,6 +1,7 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.feature.FeatureIdentifier;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.feature.Options;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.logging.Logger;
@@ -12,10 +13,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
-import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.util.Comparator.comparing;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
@@ -31,12 +32,12 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
     private final Options featureOptions;
 
-    public FeaturePathFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions) {
+    public FeaturePathFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions,  FeatureParser parser) {
         this.featureOptions = featureOptions;
         this.featureScanner = new ResourceScanner<>(
             classLoader,
             FeatureIdentifier::isFeature,
-            resource -> of(parseResource(resource))
+            resource -> of(parser.parseResource(resource))
         );
     }
 

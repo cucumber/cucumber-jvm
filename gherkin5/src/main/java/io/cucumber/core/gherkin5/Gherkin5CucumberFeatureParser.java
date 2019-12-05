@@ -16,11 +16,13 @@ import io.cucumber.core.gherkin.CucumberPickle;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public final class Gherkin5CucumberFeatureParser implements CucumberFeatureParser {
     @Override
-    public CucumberFeature parse(URI path, String source) {
+    public CucumberFeature parse(URI path, String source, Supplier<UUID> idGenerator) {
         return parseGherkin5(path, source);
     }
 

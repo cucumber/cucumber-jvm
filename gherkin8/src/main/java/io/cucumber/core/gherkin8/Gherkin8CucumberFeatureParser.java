@@ -7,16 +7,15 @@ import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
-import io.cucumber.gherkin.IdGenerator;
 import io.cucumber.gherkin.ParserException;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 import static io.cucumber.gherkin.Gherkin.makeSourceEnvelope;
 import static java.util.Collections.singletonList;
@@ -25,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParser {
 
     @Override
-    public CucumberFeature parse(URI path, String source) {
+    public CucumberFeature parse(URI path, String source, Supplier<UUID> idGenerator) {
         try {
             CucumberQuery cucumberQuery = new CucumberQuery();
 
@@ -38,8 +37,7 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
                 true,
                 true,
                 true,
-                // TODO: Pass in
-                new IdGenerator.UUID()
+                () -> idGenerator.get().toString()
             ).collect(toList());
 
             GherkinDialect dialect = null;

@@ -3,6 +3,7 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
@@ -206,9 +207,11 @@ public final class Runtime {
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
+            final FeatureParser parser = new FeatureParser(eventBus::createId);
+
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
+                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
             final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();

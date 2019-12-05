@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.CucumberFeature;
 import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.resource.Resource;
 
 import java.io.ByteArrayInputStream;
@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 class TestPickleBuilder {
 
@@ -25,7 +26,7 @@ class TestPickleBuilder {
     }
 
     private static CucumberFeature parseFeature(final URI path, final String source) {
-        return FeatureParser.parseResource(new Resource() {
+        return new FeatureParser(UUID::randomUUID).parseResource(new Resource() {
             @Override
             public URI getUri() {
                 return path;
