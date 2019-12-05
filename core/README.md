@@ -8,8 +8,8 @@ sub modules together e.g. `cucumber-junit` and `cucumber-java`.
 
 ## Backend ##
 
-Backends consists of two components an a Backend and ObjectFactory. Together
-they are responsible for discovering glue classes, registering step definitions
+Backends consists of two components, a `Backend` and `ObjectFactory`. They are
+respectively responsible for discovering glue classes, registering step definitions
 and creating instances of said glue classes.
 
 ## Plugin ##
