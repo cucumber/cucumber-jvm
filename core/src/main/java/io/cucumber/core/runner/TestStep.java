@@ -55,11 +55,6 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return pickleStepId;
     }
 
-    @Override
-    public Iterable<Messages.StepMatchArgument> getStepMatchArguments() {
-        return stepDefinitionMatch.getStepMatchArguments();
-    }
-
     boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, String testCaseStartedId) {
         Instant startTime = bus.getInstant();
 

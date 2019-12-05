@@ -31,29 +31,6 @@ final class Gherkin8CucumberStep implements CucumberStep {
         this.stepLine = stepLine;
     }
 
-    private static Stream<? extends Step> extractChildren(FeatureChild featureChild) {
-        if (featureChild.hasScenario()) {
-            return featureChild.getScenario().getStepsList().stream();
-        }
-        if (featureChild.hasBackground()) {
-            return featureChild.getBackground().getStepsList().stream();
-        }
-        if (featureChild.hasRule()) {
-            return featureChild.getRule().getChildrenList().stream()
-                .flatMap(ruleChild -> {
-                    if (ruleChild.hasScenario()) {
-                        return ruleChild.getScenario().getStepsList().stream();
-                    }
-                    if (ruleChild.hasBackground()) {
-                        return ruleChild.getBackground().getStepsList().stream();
-                    }
-                    return Stream.empty();
-                });
-        }
-
-        return Stream.empty();
-    }
-
     private StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
         if (StepType.isAstrix(keyWord)) {
             return StepType.OTHER;

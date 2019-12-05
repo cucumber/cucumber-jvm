@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: Make util more local to consumers
 public class MessageHelpers {
     private static final Map<Status, Messages.TestResult.Status> STATUS = new HashMap<Status, Messages.TestResult.Status>() {{
         put(Status.FAILED, Messages.TestResult.Status.FAILED);
@@ -26,13 +27,14 @@ public class MessageHelpers {
         return STATUS.get(status);
     }
 
+    //TODO: This should be in messages
     public static Messages.Timestamp toTimestamp(Instant instant) {
         return Messages.Timestamp.newBuilder()
             .setSeconds(instant.getEpochSecond())
             .setNanos(instant.getNano())
             .build();
     }
-
+    //TODO: This should be in messages
     public static Messages.Duration toDuration(Duration duration) {
         return Messages.Duration.newBuilder()
             .setSeconds(duration.getSeconds())

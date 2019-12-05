@@ -15,7 +15,6 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
-import uk.co.datumedge.hamcrest.json.JSONModalComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
@@ -1244,7 +1244,7 @@ class JSONFormatterTest {
 
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
         Appendable stringBuilder = new StringBuilder();
 
@@ -1276,7 +1276,7 @@ class JSONFormatterTest {
 
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
         Appendable stringBuilder = new StringBuilder();
 

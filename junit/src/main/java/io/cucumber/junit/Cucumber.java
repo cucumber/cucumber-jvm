@@ -39,6 +39,7 @@ import org.junit.runners.model.Statement;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -141,7 +142,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);

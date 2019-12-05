@@ -10,5 +10,4 @@ interface StepDefinitionMatch {
 
     String getCodeLocation();
 
-    Iterable<Messages.StepMatchArgument> getStepMatchArguments();
 }

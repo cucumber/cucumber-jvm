@@ -14,6 +14,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         );
 
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(plugins.getPlugins(), hasSize(2)),
@@ -84,7 +85,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
             .addDefaultSummaryPrinterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
@@ -143,7 +144,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
             .addDefaultSummaryPrinterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
         assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
     }
 
@@ -151,7 +152,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
      void inherit_plugin_from_baseclass() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithFormatter.class).build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
         List<Plugin> pluginList = plugins.getPlugins();
 
         assertAll("Checking Plugin",

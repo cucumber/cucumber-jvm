@@ -44,6 +44,7 @@
         <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
+        <messages.version>7.0.1-SNAPSHOT</messages.version>
         <gherkin5.version>5.2.0</gherkin5.version>
         <gherkin8.version>8.2.2-SNAPSHOT</gherkin8.version>
 
@@ -77,6 +78,11 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>tag-expressions</artifactId>
                 <version>${tag-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>messages</artifactId>
+                <version>${messages.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>

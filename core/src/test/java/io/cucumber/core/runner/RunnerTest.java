@@ -20,6 +20,7 @@ import org.mockito.InOrder;
 import java.net.URI;
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.when;
 class RunnerTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final TypeRegistryConfigurer typeRegistryConfigurer = typeRegistry -> {
     };
 

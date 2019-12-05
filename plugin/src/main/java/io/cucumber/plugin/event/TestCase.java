@@ -31,7 +31,5 @@ public interface TestCase {
 
     URI getUri();
 
-    String getPickleId();
-
     String getId();
 }

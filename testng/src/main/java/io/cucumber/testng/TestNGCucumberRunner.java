@@ -30,6 +30,7 @@ import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -86,7 +87,7 @@ public final class TestNGCucumberRunner {
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
 
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);

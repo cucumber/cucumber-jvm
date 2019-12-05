@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static io.cucumber.plugin.event.Status.FAILED;
@@ -213,13 +214,13 @@ public class TestHelper {
         EventBus bus = null;
 
         if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(Clock.systemUTC());
+            bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
             final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
-            bus = new TimeServiceEventBus(timeService);
+            bus = new TimeServiceEventBus(timeService, UUID::randomUUID);
             timeService.setEventPublisher(bus);
         } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
+            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID);
         }
         return bus;
     }

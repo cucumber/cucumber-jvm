@@ -30,7 +30,6 @@ import static java.util.Optional.of;
 
 final class FeatureResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
     private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,

@@ -24,7 +24,6 @@ public class TestFeatureSupplier implements FeatureSupplier {
     public List<CucumberFeature> get() {
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-            bus.sendAll(feature.getMessages());
         }
         return features;
     }

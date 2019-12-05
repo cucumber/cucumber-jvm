@@ -17,6 +17,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.when;
 class HookOrderTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("I have 4 cukes in my belly");
     private final CucumberFeature feature = TestFeatureParser.parse("" +

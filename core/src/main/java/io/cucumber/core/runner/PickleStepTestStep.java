@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
@@ -82,6 +83,10 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     @Override
     public List<Argument> getDefinitionArgument() {
         return DefinitionArgument.createArguments(definitionMatch.getArguments());
+    }
+
+    public Iterable<Messages.StepMatchArgument> getStepMatchArguments() {
+        return definitionMatch.getStepMatchArguments();
     }
 
     @Override

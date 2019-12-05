@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Locale.ENGLISH;
@@ -45,7 +46,7 @@ import static org.mockito.Mockito.when;
 class CachingGlueTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
-    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
+    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
     private static CucumberStep getPickleStep(String text) {
         CucumberFeature feature = TestFeatureParser.parse("" +

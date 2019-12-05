@@ -23,12 +23,16 @@ import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFramesAndAppendStepLocation;
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
+
+    //TODO: Wrong spot, dupes argument
+    private final Iterable<StepMatchArgument> stepMatchArguments;
     private final StepDefinition stepDefinition;
     private final URI uri;
     private final CucumberStep step;
 
     PickleStepDefinitionMatch(Iterable<StepMatchArgument> stepMatchArguments, List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
         super(stepMatchArguments, arguments, stepDefinition.getLocation());
+        this.stepMatchArguments = stepMatchArguments;
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
@@ -150,6 +154,10 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
             arguments.add(argument.toString());
         }
         return arguments;
+    }
+
+    public Iterable<StepMatchArgument> getStepMatchArguments() {
+        return stepMatchArguments;
     }
 
     public String getPattern() {

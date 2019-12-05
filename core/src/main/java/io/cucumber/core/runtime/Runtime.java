@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -87,6 +88,7 @@ public final class Runtime {
         bus.send(new TestRunStarted(bus.getInstant()));
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.sendAll(feature.getMessages());
         }
 
         final List<Future<?>> executingPickles = features.stream()
@@ -101,7 +103,7 @@ public final class Runtime {
         executor.shutdown();
 
         List<Throwable> thrown = new ArrayList<>();
-        for (Future executingPickle : executingPickles) {
+        for (Future<?> executingPickle : executingPickles) {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
@@ -131,7 +133,7 @@ public final class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
+        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;

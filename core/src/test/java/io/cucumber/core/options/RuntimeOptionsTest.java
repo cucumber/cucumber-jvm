@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -157,7 +158,7 @@ class RuntimeOptionsTest {
             .parse("--plugin", "html:target/some/dir", "--glue", "somewhere")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(ClockStub.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.HTMLFormatter"));
     }
@@ -169,7 +170,7 @@ class RuntimeOptionsTest {
             .addDefaultFormatterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.ProgressFormatter"));
     }
@@ -181,7 +182,7 @@ class RuntimeOptionsTest {
             .addDefaultSummaryPrinterIfAbsent()
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
     }
@@ -192,7 +193,7 @@ class RuntimeOptionsTest {
             .parse("--plugin", "null_summary", "--glue", "somewhere")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
@@ -206,7 +207,7 @@ class RuntimeOptionsTest {
             .parse("--plugin", "org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.PrettyPrinter"))));
     }
@@ -474,7 +475,7 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter"))),
@@ -494,7 +495,7 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))),
@@ -513,7 +514,7 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))),
@@ -532,7 +533,7 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
@@ -552,7 +553,7 @@ class RuntimeOptionsTest {
             .parse(properties)
             .build(runtimeOptions);
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter"))),
@@ -612,7 +613,7 @@ class RuntimeOptionsTest {
             .parse("--monochrome", "--plugin", AwareFormatter.class.getName())
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertThat(formatter.isMonochrome(), is(true));
@@ -624,7 +625,7 @@ class RuntimeOptionsTest {
             .parse("--strict", "--plugin", AwareFormatter.class.getName())
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC()));
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
         assertThat(formatter.isStrict(), is(true));

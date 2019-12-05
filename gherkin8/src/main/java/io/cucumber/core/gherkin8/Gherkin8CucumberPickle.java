@@ -42,7 +42,7 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
             .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (PickleStep pickleStep : pickle.getStepsList()) {
-            String gherkinStepId = pickleStep.getSourceIds(0);
+            String gherkinStepId = pickleStep.getAstNodeIds(0);
             Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
             int stepLine = gherkinStep.getLocation().getLine();
             String keyword = gherkinStep.getKeyword();
@@ -58,7 +58,7 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
 
     @Override
     public String getKeyword() {
-        return cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getKeyword();
+        return cucumberQuery.getGherkinScenario(pickle.getAstNodeIds(0)).getKeyword();
     }
 
     @Override
@@ -74,7 +74,7 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
 
     @Override
     public CucumberLocation getLocation() {
-        List<String> sourceIds = pickle.getSourceIdsList();
+        List<String> sourceIds = pickle.getAstNodeIdsList();
         String sourceId = sourceIds.get(sourceIds.size() -1);
         Messages.Location location = cucumberQuery.getLocation(sourceId);
         return Gherkin8CucumberLocation.from(location);
@@ -82,7 +82,7 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
 
     @Override
     public CucumberLocation getScenarioLocation() {
-        Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getSourceIds(0)).getLocation();
+        Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getAstNodeIds(0)).getLocation();
         return Gherkin8CucumberLocation.from(location);
     }
 

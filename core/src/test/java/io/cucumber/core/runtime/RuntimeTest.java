@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static io.cucumber.core.runner.TestHelper.result;
@@ -63,7 +64,7 @@ class RuntimeTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     @Test
     void runs_feature_with_json_formatter() {
@@ -80,7 +81,7 @@ class RuntimeTest {
         FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
         Runtime.builder()
             .withAdditionalPlugins(jsonFormatter)
-            .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC"))))
+            .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();
@@ -554,7 +555,7 @@ class RuntimeTest {
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(eventListener)
-            .withEventBus(new TimeServiceEventBus(new StepDurationTimeService(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new StepDurationTimeService(ZERO), UUID::randomUUID))
             .withFeatureSupplier(featureSupplier)
             .build()
             .run();

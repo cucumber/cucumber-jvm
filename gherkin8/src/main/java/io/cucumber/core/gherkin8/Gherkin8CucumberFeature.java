@@ -107,7 +107,4 @@ public final class Gherkin8CucumberFeature implements CucumberFeature {
         return Objects.hash(uri);
     }
 
-    public GherkinDocument getGherkinDocument() {
-        return gherkinDocument;
-    }
 }

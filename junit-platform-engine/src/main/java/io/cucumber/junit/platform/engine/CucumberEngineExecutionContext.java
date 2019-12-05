@@ -24,6 +24,7 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
@@ -40,7 +41,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         if (options.isParallelExecutionEnabled()) {

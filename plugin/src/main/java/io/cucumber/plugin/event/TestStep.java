@@ -1,6 +1,5 @@
 package io.cucumber.plugin.event;
 
-import io.cucumber.messages.Messages;
 import org.apiguardian.api.API;
 
 /**
@@ -25,5 +24,4 @@ public interface TestStep {
 
     String getPickleStepId();
 
-    Iterable<Messages.StepMatchArgument> getStepMatchArguments();
 }

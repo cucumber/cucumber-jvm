@@ -32,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URI;
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 
 import static java.time.Duration.ZERO;
 import static java.time.Instant.now;
@@ -54,7 +55,7 @@ class JUnitReporterWithStepNotificationsTest {
 
     private static final int scenarioLine = 0;
     private static final URI featureUri = URI.create("file:example.feature");
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder().setStepNotifications(true).build());
     private final CucumberFeature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
@@ -109,7 +110,7 @@ class JUnitReporterWithStepNotificationsTest {
 
     @Test
     void ignores_steps_when_step_notification_are_disabled() {
-        EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
             .setStepNotifications(false)
             .build());
@@ -257,7 +258,7 @@ class JUnitReporterWithStepNotificationsTest {
 
     @Test
     void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step_in_strict_mode() {
-        EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
             .setStepNotifications(true)
             .setStrict(true)

@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.util.Collections.singleton;
@@ -174,7 +175,7 @@ class FeatureRunnerTest {
         };
         BackendSupplier backendSupplier = () -> singleton(new StubBackendProviderService.StubBackend());
 
-        EventBus bus = new TimeServiceEventBus(clockStub);
+        EventBus bus = new TimeServiceEventBus(clockStub, UUID::randomUUID);
         Filters filters = new Filters(runtimeOptions);
         Supplier<ClassLoader> classLoader = FeatureRunnerTest.class::getClassLoader;
         ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);

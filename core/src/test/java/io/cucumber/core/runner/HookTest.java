@@ -18,6 +18,7 @@ import org.mockito.InOrder;
 
 import java.time.Clock;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 class HookTest {
 
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final CucumberFeature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
