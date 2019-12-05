@@ -1,8 +1,6 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.stepexpression.Argument;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.util.List;
 
@@ -13,7 +11,7 @@ abstract class Match {
     private final List<Argument> arguments;
     private final String location;
 
-    Match(Iterable<Messages.StepMatchArgument> stepMatchArguments, List<Argument> arguments, String location) {
+    Match(List<Argument> arguments, String location) {
         requireNonNull(arguments, "argument may not be null");
         this.arguments = arguments;
         this.location = location;

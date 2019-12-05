@@ -54,10 +54,6 @@ final class CoreStepDefinition {
         return argumentMatcher.argumentsFrom(step, types);
     }
 
-    Iterable<StepMatchArgument> getStepMatchArguments(CucumberStep step) {
-        return argumentMatcher.getStepMatchArguments(step, types);
-    }
-
     private static Type[] getTypes(List<ParameterInfo> parameterInfos) {
         if (parameterInfos == null) {
             return new Type[0];

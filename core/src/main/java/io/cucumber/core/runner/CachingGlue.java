@@ -256,8 +256,7 @@ final class CachingGlue implements Glue {
         // the step text. As such the step definition arguments can not be cached and
         // must be recreated each time.
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-        return new PickleStepDefinitionMatch(stepMatchArguments, arguments, coreStepDefinition.getStepDefinition(), uri, step);
+        return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step);
     }
 
     private PickleStepDefinitionMatch findStepDefinitionMatch(URI uri, CucumberStep step) throws AmbiguousStepDefinitionsException {
@@ -281,8 +280,7 @@ final class CachingGlue implements Glue {
         for (CoreStepDefinition coreStepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = coreStepDefinition.matchedArguments(step);
             if (arguments != null) {
-                Iterable<StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-                result.add(new PickleStepDefinitionMatch(stepMatchArguments, arguments, coreStepDefinition.getStepDefinition(), uri, step));
+                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step));
             }
         }
         return result;

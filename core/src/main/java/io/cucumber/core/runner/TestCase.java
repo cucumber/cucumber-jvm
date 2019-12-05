@@ -4,6 +4,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.CucumberPickle;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -135,26 +136,54 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
                 .setPickleId(pickle.getId())
                 .addAllTestSteps(getTestSteps()
                     .stream()
-                    .map(testStep -> {
-                            Messages.TestCase.TestStep.Builder testStepBuilder = Messages.TestCase.TestStep
-                                .newBuilder()
-                                .setId(testStep.getId());
-
-                            if (testStep instanceof HookTestStep) {
-                                testStepBuilder.setHookId(testStep.getId());
-                            } else if (testStep instanceof PickleStepTestStep) {
-                                PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
-                                testStepBuilder
-                                    .setPickleStepId(testStep.getPickleStepId())
-                                    .addAllStepMatchArguments(pickleStep.getStepMatchArguments());
-                            }
-                            return testStepBuilder.build();
-                        }
-                    )
+                    .map(this::createTestStep)
                     .collect(toList())
                 )
             ).build()
         );
+    }
+
+    private Messages.TestCase.TestStep createTestStep(TestStep testStep) {
+        Messages.TestCase.TestStep.Builder testStepBuilder = Messages.TestCase.TestStep
+            .newBuilder()
+            .setId(testStep.getId());
+
+        if (testStep instanceof HookTestStep) {
+            testStepBuilder.setHookId(testStep.getId());
+        } else if (testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
+            testStepBuilder
+                .setPickleStepId(testStep.getPickleStepId())
+                .addAllStepMatchArguments(getStepMatchArguments(pickleStep));
+        }
+
+        return testStepBuilder.build();
+    }
+
+    public Iterable<Messages.StepMatchArgument> getStepMatchArguments(PickleStepTestStep pickleStep) {
+        return pickleStep.getDefinitionArgument().stream()
+            .map(arg -> Messages.StepMatchArgument.newBuilder()
+                .setParameterTypeName(arg.getParameterTypeName())
+                .setGroup(makeMessageGroup(arg.getGroup()))
+                .build()
+            ).collect(toList());
+    }
+
+    private static Messages.StepMatchArgument.Group makeMessageGroup(Group group) {
+        Messages.StepMatchArgument.Group.Builder builder = Messages.StepMatchArgument.Group.newBuilder();
+        if (group == null) {
+            return builder.build();
+        }
+
+        if (group.getValue() != null) {
+            builder.setValue(group.getValue());
+        }
+        return builder
+            .setStart(group.getStart())
+            .addAllChildren(group.getChildren().stream()
+                .map(TestCase::makeMessageGroup)
+                .collect(toList()))
+            .build();
     }
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {

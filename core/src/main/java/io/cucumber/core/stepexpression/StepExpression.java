@@ -1,13 +1,10 @@
 package io.cucumber.core.stepexpression;
 
 import io.cucumber.cucumberexpressions.Expression;
-import io.cucumber.cucumberexpressions.Group;
-import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class StepExpression {
 
@@ -27,35 +24,6 @@ public final class StepExpression {
             return null;
         }
         return wrapPlusOne(match);
-    }
-
-    // TODO: Don't use Cucumber messages internally.
-    //  1. Protobuf formatter should  follow the ports and adaptor pattern and
-    //  take it's information from  the same events as other plugins. Using
-    //  protobuf internally is another Yak.
-    //  2. This ends up exposing Cucumber messages as part of the public API.
-    //  This makes it harder to do semver.
-    public Iterable<StepMatchArgument> getStepMatchArguments(String text, Type[] types) {
-        List<io.cucumber.cucumberexpressions.Argument<?>> arguments = expression.match(text, types);
-        if (arguments == null) {
-            return null;
-        }
-        return arguments.stream().map(arg -> StepMatchArgument.newBuilder()
-            .setParameterTypeName(arg.getParameterType().getName())
-            .setGroup(makeMessageGroup(arg.getGroup()))
-            .build()
-        ).collect(Collectors.toList());
-    }
-
-    private static StepMatchArgument.Group makeMessageGroup(Group group) {
-        StepMatchArgument.Group.Builder builder = StepMatchArgument.Group.newBuilder();
-        if (group.getValue() != null) {
-            builder.setValue(group.getValue());
-        }
-        return builder
-            .setStart(group.getStart())
-            .addAllChildren(group.getChildren().stream().map(StepExpression::makeMessageGroup).collect(Collectors.toList()))
-            .build();
     }
 
     public String getSource() {

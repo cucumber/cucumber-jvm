@@ -47,7 +47,4 @@ public final class ArgumentMatcher {
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
     }
 
-    public Iterable<Messages.StepMatchArgument> getStepMatchArguments(CucumberStep step, Type[] types) {
-        return expression.getStepMatchArguments(step.getText(), types);
-    }
 }

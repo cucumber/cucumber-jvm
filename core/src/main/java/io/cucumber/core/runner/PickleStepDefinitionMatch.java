@@ -12,7 +12,6 @@ import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.docstring.CucumberDocStringException;
-import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,15 +23,12 @@ import static io.cucumber.core.runner.StackManipulation.removeFrameworkFramesAnd
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
-    //TODO: Wrong spot, dupes argument
-    private final Iterable<StepMatchArgument> stepMatchArguments;
     private final StepDefinition stepDefinition;
     private final URI uri;
     private final CucumberStep step;
 
-    PickleStepDefinitionMatch(Iterable<StepMatchArgument> stepMatchArguments, List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
-        super(stepMatchArguments, arguments, stepDefinition.getLocation());
-        this.stepMatchArguments = stepMatchArguments;
+    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
+        super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
@@ -154,10 +150,6 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
             arguments.add(argument.toString());
         }
         return arguments;
-    }
-
-    public Iterable<StepMatchArgument> getStepMatchArguments() {
-        return stepMatchArguments;
     }
 
     public String getPattern() {
