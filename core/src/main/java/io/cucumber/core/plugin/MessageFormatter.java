@@ -14,7 +14,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-// TODO: Move back to core
 public final class MessageFormatter implements EventListener {
     private final OutputStream outputStream;
     private final Writer writer;

@@ -31,8 +31,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
-    //TODO: Generator
-    //TODO: Primitive obsession. Lets use UUIDs here.
     private final UUID id;
 
     TestCase(UUID id, List<PickleStepTestStep> testSteps,
@@ -53,7 +51,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         emitTestCaseMessage(bus);
 
         Instant start = bus.getInstant();
-        //TODO: Generator
         UUID executionId = bus.createId();
         emitTestCaseStarted(bus, start, executionId);
 
