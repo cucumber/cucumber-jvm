@@ -15,6 +15,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -26,6 +27,8 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import java.time.Clock;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
@@ -55,6 +58,10 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     void startTestRun() {
         logger.debug(() -> "Sending run test started event");
         bus.send(new TestRunStarted(bus.getInstant()));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+            .build());
     }
 
     void beforeFeature(CucumberFeature feature) {
@@ -76,6 +83,10 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     void finishTestRun() {
         logger.debug(() -> "Sending test run finished event");
         bus.send(new TestRunFinished(bus.getInstant()));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+            .build());
     }
 
     private Runner getRunner() {

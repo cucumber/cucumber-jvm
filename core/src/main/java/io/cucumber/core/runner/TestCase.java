@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static io.cucumber.core.messages.MessageHelpers.toDuration;
-import static io.cucumber.core.messages.MessageHelpers.toStatus;
-import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
+import static io.cucumber.core.runner.TestResultStatus.from;
+import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
@@ -163,14 +163,14 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
                 .setId(executionId.toString())
                 .setTestCaseId(id.toString())
-                .setTimestamp(toTimestamp(start))).build());
+                .setTimestamp(javaInstantToTimestamp(start))).build());
     }
 
     private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {
         bus.send(new TestCaseFinished(stop, this, result));
         Messages.TestResult.Builder testResultBuilder = Messages.TestResult.newBuilder()
-            .setStatus(toStatus(status))
-            .setDuration(toDuration(duration));
+            .setStatus(from(status))
+            .setDuration(javaDurationToDuration(duration));
 
         if (result.getError() != null) {
             testResultBuilder.setMessage(toString(result.getError()));
@@ -179,7 +179,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         bus.send(Envelope.newBuilder()
             .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
                 .setTestCaseStartedId(executionId.toString())
-                .setTimestamp(toTimestamp(stop))
+                .setTimestamp(javaInstantToTimestamp(stop))
                 .setTestResult(testResultBuilder
                 )
             ).build());

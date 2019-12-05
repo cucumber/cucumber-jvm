@@ -43,7 +43,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -198,29 +198,30 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
 
-            bus.send(new TestRunStarted(bus.getInstant()));
-            sendTestRunStartedMessage();
+            emitTestRunStarted();
             for (CucumberFeature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
                 bus.sendAll(feature.getMessages());
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
-            sendTestRunFinishedMessage();
+            emitTestRunFinished();
+        }
+
+        private void emitTestRunStarted() {
+            bus.send(new TestRunStarted(bus.getInstant()));
+            bus.send(Messages.Envelope.newBuilder()
+                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                    .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                .build());
+        }
+
+        private void emitTestRunFinished() {
+            bus.send(Messages.Envelope.newBuilder()
+                .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                    .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                .build());
         }
     }
 
-    private void sendTestRunStartedMessage() {
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(toTimestamp(bus.getInstant())))
-            .build());
-    }
-
-    private void sendTestRunFinishedMessage() {
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(toTimestamp(bus.getInstant())))
-            .build());
-    }
 }

@@ -14,9 +14,9 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static io.cucumber.core.messages.MessageHelpers.toDuration;
-import static io.cucumber.core.messages.MessageHelpers.toStatus;
-import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
+import static io.cucumber.core.runner.TestResultStatus.from;
+import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
@@ -85,7 +85,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             .setTestStepStarted(Messages.TestStepStarted.newBuilder()
                 .setTestCaseStartedId(textExecutionId.toString())
                 .setTestStepId(getId())
-                .setTimestamp(toTimestamp(startTime))
+                .setTimestamp(javaInstantToTimestamp(startTime))
             ).build());
     }
 
@@ -94,10 +94,10 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             .setTestStepFinished(Messages.TestStepFinished.newBuilder()
                 .setTestCaseStartedId(textExecutionId.toString())
                 .setTestStepId(getId())
-                .setTimestamp(toTimestamp(stopTime))
+                .setTimestamp(javaInstantToTimestamp(stopTime))
                 .setTestResult(Messages.TestResult.newBuilder()
-                    .setStatus(toStatus(result.getStatus()))
-                    .setDuration(toDuration(duration))
+                    .setStatus(from(result.getStatus()))
+                    .setDuration(javaDurationToDuration(duration))
                 )
             ).build());
     }

@@ -23,6 +23,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -34,6 +35,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -113,7 +115,7 @@ public final class TestNGCucumberRunner {
     }
 
     public void finish() {
-        bus.send(new TestRunFinished(bus.getInstant()));
+        emitTestRunFinished();
     }
 
     /**
@@ -139,11 +141,28 @@ public final class TestNGCucumberRunner {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
         List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getInstant()));
+        emitTestRunStarted();
         for (CucumberFeature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             bus.sendAll(feature.getMessages());
         }
         return features;
+    }
+
+
+    private void emitTestRunStarted() {
+        bus.send(new TestRunStarted(bus.getInstant()));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+            .build());
+    }
+
+    private void emitTestRunFinished() {
+        bus.send(new TestRunFinished(bus.getInstant()));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+            .build());
     }
 }
