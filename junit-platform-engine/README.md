@@ -133,7 +133,7 @@ For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engin
 cucumber.ansi-colors.disabled=true|false
 cucumber.execution.dry-run=true|false
 cucumber.glue=com.example.app, com.example.widget
-cucumber.plugin=cucumber.plugin=pretty, json:path/to/report.json
+cucumber.plugin=pretty, json:path/to/report.json
 cucumber.object-factory=com.example.MyObjectFactory
 cucumber.snippet-type=underscore|camelcase
 cucumber.execution.parallel.enabled=true|false

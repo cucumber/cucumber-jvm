@@ -5,11 +5,15 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Added
    
 ### Changed
+ * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
 
 ### Removed
  
 ### Fixed
-
+ * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
+ * [JUnit] Send events to configured Plugins (M.P. Korstanje)
+ * [JUnit] Mark `Constants` as part of the public API (M.P. Korstanje)
+ 
 ### Deprecated
      
 ## [5.0.0-RC2](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...v5.0.0-RC2) (2019-11-22)
