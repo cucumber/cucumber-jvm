@@ -1,9 +1,12 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.cli.Main;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.filter.Filters;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -78,6 +81,9 @@ import static java.util.stream.Collectors.toList;
  */
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
+
+    private static final Logger log = LoggerFactory.getLogger(Cucumber.class);
+
     private final List<ParentRunner<?>> children;
     private final EventBus bus;
     private final List<CucumberFeature> features;
@@ -91,7 +97,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
      * @param clazz the class with the @RunWith annotation.
      * @throws org.junit.runners.model.InitializationError if there is another problem
      */
-    public Cucumber(Class clazz) throws InitializationError {
+    public Cucumber(Class<?> clazz) throws InitializationError {
         super(clazz);
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
@@ -113,6 +119,14 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .parse(CucumberProperties.fromSystemProperties())
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
+
+
+        if (!runtimeOptions.isStrict()) {
+            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
+                "This default will change to --strict and --non-strict will be removed.\n" +
+                "You can use --strict or @CucumberOptions(strict = true) to suppress this warning"
+            );
+        }
 
         // Next parse the junit options
         JUnitOptions junitPropertiesFileOptions = new JUnitOptionsParser()

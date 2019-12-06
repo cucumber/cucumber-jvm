@@ -1,5 +1,7 @@
 package io.cucumber.core.cli;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberProperties;
@@ -22,6 +24,8 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public class Main {
+
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String... argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
@@ -54,6 +58,12 @@ public class Main {
             .addDefaultSummaryPrinterIfAbsent()
             .build(systemOptions);
 
+        if (!runtimeOptions.isStrict()) {
+            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
+                "This default will change to --strict and --non-strict will be removed.\n" +
+                "You can use --strict to suppress this warning"
+            );
+        }
 
         final Runtime runtime = Runtime.builder()
             .withRuntimeOptions(runtimeOptions)
