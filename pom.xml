@@ -361,6 +361,7 @@
                                         <item>.* io.cucumber.java8.DefaultParameterTransformerBody.*</item>
                                         <item>.* io.cucumber.java8.LambdaGlue::DefaultParameterTransformer.*</item>
                                         <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableEntryTransformer.*</item>
+                                        <item>.* io.cucumber.testng.TestNGCucumberRunner.*</item>
                                     </exclude>
                                 </elements>
                             </revapi.filter>

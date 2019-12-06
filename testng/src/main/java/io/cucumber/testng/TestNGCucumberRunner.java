@@ -5,6 +5,8 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.CucumberPickle;
 import io.cucumber.core.filter.Filters;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -50,6 +52,8 @@ import static java.util.stream.Collectors.toList;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(TestNGCucumberRunner.class);
+
     private final EventBus bus;
     private final Predicate<CucumberPickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
@@ -63,7 +67,7 @@ public final class TestNGCucumberRunner {
      * @param clazz Which has the {@link CucumberOptions}
      *              and {@link org.testng.annotations.Test} annotations
      */
-    public TestNGCucumberRunner(Class clazz) {
+    public TestNGCucumberRunner(Class<?> clazz) {
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
@@ -82,6 +86,14 @@ public final class TestNGCucumberRunner {
             .parse(CucumberProperties.fromSystemProperties())
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
+
+
+        if (!runtimeOptions.isStrict()) {
+            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
+                "This default will change to --strict and --non-strict will be removed.\n" +
+                "You can use --strict or @CucumberOptions(strict = true) to suppress this warning"
+            );
+        }
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
