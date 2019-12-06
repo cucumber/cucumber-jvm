@@ -105,8 +105,4 @@ public final class Gherkin8Pickle implements Pickle {
         return pickle.getId();
     }
 
-
-    public Messages.Pickle getPickle() {
-        return pickle;
-    }
 }

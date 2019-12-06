@@ -5,7 +5,7 @@ import io.cucumber.core.gherkin.Examples;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Rule;
 import io.cucumber.core.gherkin.Scenario;
-import io.cucumber.core.gherkin.CucumberScenarioOutline;
+import io.cucumber.core.gherkin.ScenarioOutline;
 import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Named;
 import org.junit.platform.engine.TestDescriptor;
@@ -38,7 +38,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
 
     private static <T extends Located & Named> void visit(Feature feature, TestDescriptor parent, FeatureOrigin source, T node) {
         if (node instanceof Scenario) {
-            feature.getPickleAt(node.getLocation())
+            feature.getPickleAt(node)
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
                         source.scenarioSegment(parent.getUniqueId(), node),
@@ -61,14 +61,14 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
             rule.children().forEach(section -> visit(feature, descriptor, source, section));
         }
 
-        if (node instanceof CucumberScenarioOutline) {
+        if (node instanceof ScenarioOutline) {
             NodeDescriptor descriptor = new NodeDescriptor(
                 source.scenarioSegment(parent.getUniqueId(), node),
                 getNameOrKeyWord(node),
                 source.nodeSource(node)
             );
             parent.addChild(descriptor);
-            CucumberScenarioOutline scenarioOutline = (CucumberScenarioOutline) node;
+            ScenarioOutline scenarioOutline = (ScenarioOutline) node;
             scenarioOutline.children().forEach(section -> visit(feature, descriptor, source, section));
         }
 
@@ -84,7 +84,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         }
 
         if (node instanceof Example) {
-            feature.getPickleAt(node.getLocation())
+            feature.getPickleAt(node)
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
                         source.exampleSegment(parent.getUniqueId(), node),

@@ -3,6 +3,7 @@ package io.cucumber.core.gherkin5;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Node;
@@ -36,7 +37,7 @@ final class Gherkin5Feature implements Feature {
             .map(scenarioDefinition -> {
                 if (scenarioDefinition instanceof ScenarioOutline) {
                     ScenarioOutline outline = (ScenarioOutline) scenarioDefinition;
-                    return new Gherkin5CucumberScenarioOutline(outline);
+                    return new Gherkin5ScenarioOutline(outline);
                 }
                 return new Gherkin5Scenario(scenarioDefinition);
             }).map(Node.class::cast);
@@ -48,7 +49,8 @@ final class Gherkin5Feature implements Feature {
     }
 
     @Override
-    public Optional<Pickle> getPickleAt(Location location) {
+    public Optional<Pickle> getPickleAt(Located located) {
+        Location location = located.getLocation();
         return pickles.stream()
             .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
             .findFirst();

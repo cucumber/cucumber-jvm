@@ -10,7 +10,7 @@ public interface Feature extends Node, Container<Node> {
 
     String getKeyword();
 
-    Optional<Pickle> getPickleAt(Location location);
+    Optional<Pickle> getPickleAt(Located located);
 
     List<Pickle> getPickles();
 

@@ -1,6 +1,7 @@
 package io.cucumber.core.gherkin8;
 
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Node;
@@ -40,7 +41,7 @@ public final class Gherkin8Feature implements Feature {
 
                 Scenario scenario = featureChild.getScenario();
                 if (scenario.getExamplesCount() > 0) {
-                    return new Gherkin8CucumberScenarioOutline(scenario);
+                    return new Gherkin8ScenarioOutline(scenario);
                 } else {
                     return new Gherkin8Scenario(scenario);
                 }
@@ -58,7 +59,8 @@ public final class Gherkin8Feature implements Feature {
     }
 
     @Override
-    public Optional<Pickle> getPickleAt(Location location) {
+    public Optional<Pickle> getPickleAt(Located located) {
+        Location location = located.getLocation();
         return pickles.stream()
             .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
             .findFirst();

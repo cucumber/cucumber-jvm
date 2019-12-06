@@ -23,7 +23,7 @@ final class Gherkin8Rule implements Rule {
             .map(ruleChild -> {
                 Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
                 if (scenario.getExamplesCount() > 0) {
-                    return new Gherkin8CucumberScenarioOutline(scenario);
+                    return new Gherkin8ScenarioOutline(scenario);
                 } else {
                     return new Gherkin8Scenario(scenario);
                 }

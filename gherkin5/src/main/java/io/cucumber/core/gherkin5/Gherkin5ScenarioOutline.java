@@ -1,19 +1,18 @@
 package io.cucumber.core.gherkin5;
 
-import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.gherkin.Examples;
 import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.CucumberScenarioOutline;
+import io.cucumber.core.gherkin.ScenarioOutline;
 
 import java.util.stream.Stream;
 
 import static io.cucumber.core.gherkin5.Gherkin5Location.from;
 
-final class Gherkin5CucumberScenarioOutline implements CucumberScenarioOutline {
+final class Gherkin5ScenarioOutline implements ScenarioOutline {
 
-    private final ScenarioOutline scenarioOutline;
+    private final gherkin.ast.ScenarioOutline scenarioOutline;
 
-    Gherkin5CucumberScenarioOutline(ScenarioOutline scenarioOutline) {
+    Gherkin5ScenarioOutline(gherkin.ast.ScenarioOutline scenarioOutline) {
         this.scenarioOutline = scenarioOutline;
     }
 
