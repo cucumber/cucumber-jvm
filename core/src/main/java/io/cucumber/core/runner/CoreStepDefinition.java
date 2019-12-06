@@ -8,7 +8,6 @@ import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
-import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.lang.reflect.Type;
 import java.util.List;

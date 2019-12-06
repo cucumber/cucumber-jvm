@@ -2,7 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.exception.CucumberException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -67,7 +66,8 @@ final class GlueAdaptor {
             Method expressionMethod = annotation.getClass().getMethod("value");
             return (String) Invoker.invoke(annotation, expressionMethod);
         } catch (NoSuchMethodException e) {
-            throw new CucumberException(e);
+            // Should never happen.
+            throw new IllegalStateException(e);
         }
     }
 }
