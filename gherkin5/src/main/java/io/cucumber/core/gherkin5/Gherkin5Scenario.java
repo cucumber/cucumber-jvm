@@ -1,21 +1,21 @@
 package io.cucumber.core.gherkin5;
 
 import gherkin.ast.ScenarioDefinition;
-import io.cucumber.core.gherkin.CucumberLocation;
-import io.cucumber.core.gherkin.CucumberScenario;
+import io.cucumber.core.gherkin.Location;
+import io.cucumber.core.gherkin.Scenario;
 
-import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static io.cucumber.core.gherkin5.Gherkin5Location.from;
 
-final class Gherkin5CucumberScenario implements CucumberScenario {
+final class Gherkin5Scenario implements Scenario {
 
     private final ScenarioDefinition scenarioDefinition;
 
-    Gherkin5CucumberScenario(ScenarioDefinition scenarioDefinition) {
+    Gherkin5Scenario(ScenarioDefinition scenarioDefinition) {
         this.scenarioDefinition = scenarioDefinition;
     }
 
     @Override
-    public CucumberLocation getLocation() {
+    public Location getLocation() {
         return from(scenarioDefinition.getLocation());
     }
 

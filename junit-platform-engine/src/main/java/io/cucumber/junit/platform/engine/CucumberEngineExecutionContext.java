@@ -1,8 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
@@ -64,13 +64,13 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
             .build());
     }
 
-    void beforeFeature(CucumberFeature feature) {
+    void beforeFeature(Feature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
         bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         bus.sendAll(feature.getMessages());
     }
 
-    void runTestCase(CucumberPickle pickle) {
+    void runTestCase(Pickle pickle) {
         Runner runner = getRunner();
         try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus())) {
             logger.debug(() -> "Executing test case " + pickle.getName());

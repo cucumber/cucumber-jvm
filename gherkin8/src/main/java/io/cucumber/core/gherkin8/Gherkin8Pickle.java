@@ -1,12 +1,11 @@
 package io.cucumber.core.gherkin8;
 
-import io.cucumber.core.gherkin.CucumberLocation;
-import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Location;
+import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
 import io.cucumber.messages.Messages.Pickle.PickleStep;
 import io.cucumber.messages.Messages.Pickle.PickleTag;
 
@@ -19,22 +18,22 @@ import java.util.stream.Collectors;
  * Wraps {@link Messages.Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-public final class Gherkin8CucumberPickle implements CucumberPickle {
+public final class Gherkin8Pickle implements Pickle {
 
     private final Messages.Pickle pickle;
-    private final List<CucumberStep> steps;
+    private final List<Step> steps;
     private final URI uri;
     private final CucumberQuery cucumberQuery;
 
-    Gherkin8CucumberPickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+    Gherkin8Pickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery) {
         this.pickle = pickle;
         this.uri = uri;
         this.cucumberQuery = cucumberQuery;
         this.steps = createCucumberSteps(pickle, dialect, this.cucumberQuery);
     }
 
-    private static List<CucumberStep> createCucumberSteps(Messages.Pickle pickle, GherkinDialect dialect, CucumberQuery cucumberQuery) {
-        List<CucumberStep> list = new ArrayList<>();
+    private static List<Step> createCucumberSteps(Messages.Pickle pickle, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+        List<Step> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
             .stream()
             .filter(s -> !StepType.isAstrix(s))
@@ -43,15 +42,15 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
 
         for (PickleStep pickleStep : pickle.getStepsList()) {
             String gherkinStepId = pickleStep.getAstNodeIds(0);
-            Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
+            Messages.GherkinDocument.Feature.Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
             int stepLine = gherkinStep.getLocation().getLine();
             String keyword = gherkinStep.getKeyword();
 
-            CucumberStep cucumberStep = new Gherkin8CucumberStep(pickleStep, dialect, previousGivenWhenThen, stepLine, keyword);
-            if (cucumberStep.getStepType().isGivenWhenThen()) {
-                previousGivenWhenThen = cucumberStep.getKeyWord();
+            Step step = new Gherkin8Step(pickleStep, dialect, previousGivenWhenThen, stepLine, keyword);
+            if (step.getStepType().isGivenWhenThen()) {
+                previousGivenWhenThen = step.getKeyWord();
             }
-            list.add(cucumberStep);
+            list.add(step);
         }
         return list;
     }
@@ -73,21 +72,21 @@ public final class Gherkin8CucumberPickle implements CucumberPickle {
 
 
     @Override
-    public CucumberLocation getLocation() {
+    public Location getLocation() {
         List<String> sourceIds = pickle.getAstNodeIdsList();
         String sourceId = sourceIds.get(sourceIds.size() -1);
         Messages.Location location = cucumberQuery.getLocation(sourceId);
-        return Gherkin8CucumberLocation.from(location);
+        return Gherkin8Location.from(location);
     }
 
     @Override
-    public CucumberLocation getScenarioLocation() {
+    public Location getScenarioLocation() {
         Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getAstNodeIds(0)).getLocation();
-        return Gherkin8CucumberLocation.from(location);
+        return Gherkin8Location.from(location);
     }
 
     @Override
-    public List<CucumberStep> getSteps() {
+    public List<Step> getSteps() {
         return steps;
     }
 

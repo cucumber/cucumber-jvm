@@ -2,17 +2,16 @@ package io.cucumber.core.gherkin5;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
-import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.core.gherkin.Argument;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 
 import java.util.stream.Collectors;
 
-final class Gherkin5CucumberStep implements CucumberStep {
+final class Gherkin5Step implements Step {
 
     private final PickleStep step;
     private final Argument argument;
@@ -21,7 +20,7 @@ final class Gherkin5CucumberStep implements CucumberStep {
     private final String previousGwtKeyWord;
     private final String uri;
 
-    Gherkin5CucumberStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
+    Gherkin5Step(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
         this.step = step;
         this.argument = extractArgument(step);
         this.keyWord = extractKeyWord(document);
@@ -35,7 +34,7 @@ final class Gherkin5CucumberStep implements CucumberStep {
             .flatMap(scenarioDefinition -> scenarioDefinition.getSteps().stream())
             .filter(step -> step.getLocation().getLine() == getStepLine())
             .findFirst()
-            .map(Step::getKeyword)
+            .map(gherkin.ast.Step::getKeyword)
             .orElseThrow(() ->  new IllegalStateException("GherkinDocument did not contain PickleStep"));
     }
 

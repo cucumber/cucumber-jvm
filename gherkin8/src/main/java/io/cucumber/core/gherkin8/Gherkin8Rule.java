@@ -1,19 +1,18 @@
 package io.cucumber.core.gherkin8;
 
-import io.cucumber.core.gherkin.CucumberLocation;
-import io.cucumber.core.gherkin.CucumberRule;
+import io.cucumber.core.gherkin.Location;
+import io.cucumber.core.gherkin.Rule;
 import io.cucumber.core.gherkin.Node;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.Rule;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
 
 import java.util.stream.Stream;
 
-final class Gherkin8CucumberRule implements CucumberRule {
+final class Gherkin8Rule implements Rule {
 
-    private final Rule rule;
+    private final Messages.GherkinDocument.Feature.FeatureChild.Rule rule;
 
-    Gherkin8CucumberRule(Rule rule) {
+    Gherkin8Rule(Messages.GherkinDocument.Feature.FeatureChild.Rule rule) {
         this.rule = rule;
     }
 
@@ -26,7 +25,7 @@ final class Gherkin8CucumberRule implements CucumberRule {
                 if (scenario.getExamplesCount() > 0) {
                     return new Gherkin8CucumberScenarioOutline(scenario);
                 } else {
-                    return new Gherkin8CucumberScenario(scenario);
+                    return new Gherkin8Scenario(scenario);
                 }
             });
     }
@@ -42,7 +41,7 @@ final class Gherkin8CucumberRule implements CucumberRule {
     }
 
     @Override
-    public CucumberLocation getLocation() {
-        return Gherkin8CucumberLocation.from(rule.getLocation());
+    public Location getLocation() {
+        return Gherkin8Location.from(rule.getLocation());
     }
 }

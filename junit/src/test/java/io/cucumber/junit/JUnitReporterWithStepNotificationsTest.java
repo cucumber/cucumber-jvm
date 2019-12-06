@@ -2,8 +2,8 @@ package io.cucumber.junit;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.plugin.event.HookTestStep;
@@ -57,12 +57,12 @@ class JUnitReporterWithStepNotificationsTest {
     private static final URI featureUri = URI.create("file:example.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder().setStepNotifications(true).build());
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given step name\n"
     );
-    private final CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+    private final Step step = feature.getPickles().get(0).getSteps().get(0);
     @Mock
     private TestCase testCase;
     @Mock
@@ -76,7 +76,7 @@ class JUnitReporterWithStepNotificationsTest {
     @Captor
     private ArgumentCaptor<Failure> failureArgumentCaptor;
 
-    private static PickleStepTestStep mockTestStep(CucumberStep step) {
+    private static PickleStepTestStep mockTestStep(Step step) {
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
         lenient().when(testStep.getStepText()).thenReturn(step.getText());
         lenient().when(testStep.getStepLine()).thenReturn(scenarioLine);

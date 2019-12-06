@@ -2,7 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 class TestCaseStateResultTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+    private final Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"

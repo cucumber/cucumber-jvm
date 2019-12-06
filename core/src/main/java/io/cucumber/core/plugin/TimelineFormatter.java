@@ -5,7 +5,7 @@ import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCase;
@@ -76,8 +76,8 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        CucumberFeature cucumberFeature = parser.parseResource(new TestSourceReadResource(event));
-        featuresNames.put(cucumberFeature.getUri(), cucumberFeature.getName());
+        Feature feature = parser.parseResource(new TestSourceReadResource(event));
+        featuresNames.put(feature.getUri(), feature.getName());
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {

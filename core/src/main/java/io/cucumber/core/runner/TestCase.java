@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.plugin.event.Group;
@@ -26,7 +26,7 @@ import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
-    private final CucumberPickle pickle;
+    private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
@@ -36,7 +36,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     TestCase(UUID id, List<PickleStepTestStep> testSteps,
              List<HookTestStep> beforeHooks,
              List<HookTestStep> afterHooks,
-             CucumberPickle pickle,
+             Pickle pickle,
              boolean dryRun) {
         this.id = id;
         this.testSteps = testSteps;

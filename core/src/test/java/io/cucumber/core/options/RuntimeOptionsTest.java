@@ -1,12 +1,11 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.ColorAware;
@@ -660,8 +659,8 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse(Collections.emptyList())
             .build();
-        CucumberPickle a = createPickle("file:path/file1.feature", "a");
-        CucumberPickle b = createPickle("file:path/file2.feature", "b");
+        Pickle a = createPickle("file:path/file1.feature", "a");
+        Pickle b = createPickle("file:path/file2.feature", "b");
         assertThat(options.getPickleOrder()
             .orderPickles(Arrays.asList(a, b)), contains(a, b));
     }
@@ -671,8 +670,8 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("--order", "reverse")
             .build();
-        CucumberPickle a = createPickle("file:path/file1.feature", "a");
-        CucumberPickle b = createPickle("file:path/file2.feature", "b");
+        Pickle a = createPickle("file:path/file1.feature", "a");
+        Pickle b = createPickle("file:path/file2.feature", "b");
         assertThat(options.getPickleOrder()
             .orderPickles(Arrays.asList(a, b)), contains(b, a));
     }
@@ -689,15 +688,15 @@ class RuntimeOptionsTest {
         RuntimeOptions options = new CommandlineOptionsParser()
             .parse("--order", "random:5000")
             .build();
-        CucumberPickle a = createPickle("file:path/file1.feature", "a");
-        CucumberPickle b = createPickle("file:path/file2.feature", "b");
-        CucumberPickle c = createPickle("file:path/file3.feature", "c");
+        Pickle a = createPickle("file:path/file1.feature", "a");
+        Pickle b = createPickle("file:path/file2.feature", "b");
+        Pickle c = createPickle("file:path/file3.feature", "c");
         assertThat(options.getPickleOrder()
             .orderPickles(Arrays.asList(a, b, c)), contains(c, a, b));
     }
 
-    private CucumberPickle createPickle(String uri, String name) {
-        CucumberFeature feature = TestFeatureParser.parse(uri, "" +
+    private Pickle createPickle(String uri, String name) {
+        Feature feature = TestFeatureParser.parse(uri, "" +
             "Feature: Test feature\n" +
             "  Scenario: " + name + "\n" +
             "     Given I have 4 cukes in my belly\n"

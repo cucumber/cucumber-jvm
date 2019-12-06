@@ -3,7 +3,7 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.feature.Options;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ResourceScanner;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
@@ -28,7 +27,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturePathFeatureSupplier.class);
 
-    private final ResourceScanner<CucumberFeature> featureScanner;
+    private final ResourceScanner<Feature> featureScanner;
 
     private final Options featureOptions;
 
@@ -42,9 +41,9 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
     }
 
     @Override
-    public List<CucumberFeature> get() {
+    public List<Feature> get() {
         List<URI> featurePaths = featureOptions.getFeaturePaths();
-        List<CucumberFeature> features = loadFeatures(featurePaths);
+        List<Feature> features = loadFeatures(featurePaths);
         if (features.isEmpty()) {
             if (featurePaths.isEmpty()) {
                 log.warn(() -> "Got no path to feature directory or feature file");
@@ -55,12 +54,12 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         return features;
     }
 
-    private List<CucumberFeature> loadFeatures(List<URI> featurePaths) {
+    private List<Feature> loadFeatures(List<URI> featurePaths) {
         log.debug(() -> "Loading features from " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
         final FeatureBuilder builder = new FeatureBuilder();
 
         for (URI featurePath : featurePaths) {
-            List<CucumberFeature> found = featureScanner.scanForResourcesUri(featurePath);
+            List<Feature> found = featureScanner.scanForResourcesUri(featurePath);
             if (found.isEmpty() && isFeature(featurePath)) {
                 throw new IllegalArgumentException("Feature not found: " + featurePath);
             }
@@ -72,22 +71,22 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
     static final class FeatureBuilder {
 
-        private final Map<String, Map<String, CucumberFeature>> sourceToFeature = new HashMap<>();
-        private final List<CucumberFeature> features = new ArrayList<>();
+        private final Map<String, Map<String, Feature>> sourceToFeature = new HashMap<>();
+        private final List<Feature> features = new ArrayList<>();
 
-        List<CucumberFeature> build() {
-            List<CucumberFeature> cucumberFeatures = new ArrayList<>(features);
-            cucumberFeatures.sort(comparing(CucumberFeature::getUri));
-            return cucumberFeatures;
+        List<Feature> build() {
+            List<Feature> features = new ArrayList<>(this.features);
+            features.sort(comparing(Feature::getUri));
+            return features;
         }
 
-        void addUnique(CucumberFeature parsedFeature) {
+        void addUnique(Feature parsedFeature) {
             String parsedFileName = getFileName(parsedFeature);
 
-            Map<String, CucumberFeature> existingFeatures = sourceToFeature.get(parsedFeature.getSource());
+            Map<String, Feature> existingFeatures = sourceToFeature.get(parsedFeature.getSource());
             if (existingFeatures != null) {
                 // Same contents but different file names was probably intentional
-                CucumberFeature existingFeature = existingFeatures.get(parsedFileName);
+                Feature existingFeature = existingFeatures.get(parsedFileName);
                 if (existingFeature != null) {
                     log.error(() -> "" +
                         "Duplicate feature found: " +
@@ -110,7 +109,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
             features.add(parsedFeature);
         }
 
-        private String getFileName(CucumberFeature feature) {
+        private String getFileName(Feature feature) {
             String uri = feature.getUri().getSchemeSpecificPart();
             int i = uri.lastIndexOf("/");
             return i > 0 ? uri.substring(i) : uri;

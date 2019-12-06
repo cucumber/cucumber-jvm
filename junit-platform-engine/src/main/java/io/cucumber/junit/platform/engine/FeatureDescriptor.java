@@ -1,10 +1,10 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.gherkin.CucumberExample;
-import io.cucumber.core.gherkin.CucumberExamples;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberRule;
-import io.cucumber.core.gherkin.CucumberScenario;
+import io.cucumber.core.gherkin.Example;
+import io.cucumber.core.gherkin.Examples;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Rule;
+import io.cucumber.core.gherkin.Scenario;
 import io.cucumber.core.gherkin.CucumberScenarioOutline;
 import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Named;
@@ -16,28 +16,28 @@ import org.junit.platform.engine.support.hierarchical.Node;
 
 class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    private final CucumberFeature feature;
+    private final Feature feature;
 
-    private FeatureDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberFeature feature) {
+    private FeatureDescriptor(UniqueId uniqueId, String name, TestSource source, Feature feature) {
         super(uniqueId, name, source);
         this.feature = feature;
     }
 
-    static TestDescriptor create(CucumberFeature cucumberFeature, TestDescriptor parent) {
-        FeatureOrigin source = FeatureOrigin.fromUri(cucumberFeature.getUri());
+    static TestDescriptor create(Feature feature, TestDescriptor parent) {
+        FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
         TestDescriptor descriptor = new FeatureDescriptor(
-            source.featureSegment(parent.getUniqueId(), cucumberFeature),
-            getNameOrKeyWord(cucumberFeature),
+            source.featureSegment(parent.getUniqueId(), feature),
+            getNameOrKeyWord(feature),
             source.featureSource(),
-            cucumberFeature
+            feature
         );
         parent.addChild(descriptor);
-        cucumberFeature.children().forEach(scenarioDefinition -> visit(cucumberFeature, descriptor, source, scenarioDefinition));
+        feature.children().forEach(scenarioDefinition -> visit(feature, descriptor, source, scenarioDefinition));
         return descriptor;
     }
 
-    private static <T extends Located & Named> void visit(CucumberFeature feature, TestDescriptor parent, FeatureOrigin source, T node) {
-        if (node instanceof CucumberScenario) {
+    private static <T extends Located & Named> void visit(Feature feature, TestDescriptor parent, FeatureOrigin source, T node) {
+        if (node instanceof Scenario) {
             feature.getPickleAt(node.getLocation())
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
@@ -50,15 +50,15 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
                 });
         }
 
-        if (node instanceof CucumberRule) {
+        if (node instanceof Rule) {
             NodeDescriptor descriptor = new NodeDescriptor(
                 source.ruleSegment(parent.getUniqueId(), node),
                 getNameOrKeyWord(node),
                 source.nodeSource(node)
             );
             parent.addChild(descriptor);
-            CucumberRule scenarioOutline = (CucumberRule) node;
-            scenarioOutline.children().forEach(section -> visit(feature, descriptor, source, section));
+            Rule rule = (Rule) node;
+            rule.children().forEach(section -> visit(feature, descriptor, source, section));
         }
 
         if (node instanceof CucumberScenarioOutline) {
@@ -72,18 +72,18 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
             scenarioOutline.children().forEach(section -> visit(feature, descriptor, source, section));
         }
 
-        if (node instanceof CucumberExamples) {
+        if (node instanceof Examples) {
             NodeDescriptor descriptor = new NodeDescriptor(
                 source.examplesSegment(parent.getUniqueId(), node),
                 getNameOrKeyWord(node),
                 source.nodeSource(node)
             );
             parent.addChild(descriptor);
-            CucumberExamples examples = (CucumberExamples) node;
+            Examples examples = (Examples) node;
             examples.children().forEach(example -> visit(feature, descriptor, source, example));
         }
 
-        if (node instanceof CucumberExample) {
+        if (node instanceof Example) {
             feature.getPickleAt(node.getLocation())
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(

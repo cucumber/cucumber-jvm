@@ -1,7 +1,7 @@
 package io.cucumber.core.gherkin8;
 
-import io.cucumber.core.gherkin.CucumberExamples;
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Examples;
+import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.CucumberScenarioOutline;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
 
@@ -17,9 +17,9 @@ final class Gherkin8CucumberScenarioOutline implements CucumberScenarioOutline {
 
 
     @Override
-    public Stream<CucumberExamples> children() {
+    public Stream<Examples> children() {
         return scenario.getExamplesList().stream()
-            .map(Gherkin8CucumberExamples::new);
+            .map(Gherkin8Examples::new);
     }
 
     @Override
@@ -33,7 +33,7 @@ final class Gherkin8CucumberScenarioOutline implements CucumberScenarioOutline {
     }
 
     @Override
-    public CucumberLocation getLocation() {
-        return Gherkin8CucumberLocation.from(scenario.getLocation());
+    public Location getLocation() {
+        return Gherkin8Location.from(scenario.getLocation());
     }
 }

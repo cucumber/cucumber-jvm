@@ -4,8 +4,8 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -55,7 +55,7 @@ import static java.util.stream.Collectors.toList;
 public final class TestNGCucumberRunner {
 
     private final EventBus bus;
-    private final Predicate<CucumberPickle> filters;
+    private final Predicate<Pickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
@@ -104,11 +104,11 @@ public final class TestNGCucumberRunner {
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 
-    public void runScenario(Pickle pickle) throws Throwable {
+    public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        CucumberPickle cucumberPickle = pickle.getCucumberPickle();
+        Pickle cucumberPickle = pickle.getPickle();
         runner.runPickle(cucumberPickle);
         testCaseResultListener.finishExecutionUnit();
 
@@ -133,7 +133,7 @@ public final class TestNGCucumberRunner {
                 .flatMap(feature -> feature.getPickles().stream()
                     .filter(filters)
                     .map(cucumberPickle -> new Object[]{
-                        new PickleWrapperImpl(new Pickle(cucumberPickle)),
+                        new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
                         new FeatureWrapperImpl(feature)}))
                 .collect(toList())
                 .toArray(new Object[0][0]);
@@ -142,12 +142,12 @@ public final class TestNGCucumberRunner {
         }
     }
 
-    private List<CucumberFeature> getFeatures() {
+    private List<Feature> getFeatures() {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
-        List<CucumberFeature> features = featureSupplier.get();
+        List<Feature> features = featureSupplier.get();
         emitTestRunStarted();
-        for (CucumberFeature feature : features) {
+        for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             bus.sendAll(feature.getMessages());
         }

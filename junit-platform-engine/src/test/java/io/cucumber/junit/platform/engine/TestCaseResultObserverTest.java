@@ -3,7 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Argument;
-import io.cucumber.plugin.event.CucumberStep;
+import io.cucumber.plugin.event.Step;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
@@ -80,7 +80,7 @@ class TestCaseResultObserverTest {
         }
     };
     private PickleStepTestStep testStep = new PickleStepTestStep() {
-        CucumberStep cucumberStep = new CucumberStep() {
+        Step step = new Step() {
             @Override
             public StepArgument getArgument() {
                 return null;
@@ -108,8 +108,8 @@ class TestCaseResultObserverTest {
         }
 
         @Override
-        public CucumberStep getStep() {
-            return cucumberStep;
+        public Step getStep() {
+            return step;
         }
 
         @Override
@@ -119,12 +119,12 @@ class TestCaseResultObserverTest {
 
         @Override
         public StepArgument getStepArgument() {
-            return cucumberStep.getArgument();
+            return step.getArgument();
         }
 
         @Override
         public int getStepLine() {
-            return cucumberStep.getStepLine();
+            return step.getStepLine();
         }
 
         @Override
@@ -134,7 +134,7 @@ class TestCaseResultObserverTest {
 
         @Override
         public String getStepText() {
-            return cucumberStep.getText();
+            return step.getText();
         }
 
         @Override

@@ -8,10 +8,10 @@ import gherkin.ParserException;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 import gherkin.pickles.Compiler;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberFeatureParser;
-import io.cucumber.core.gherkin.CucumberParserException;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.FeatureParser;
+import io.cucumber.core.gherkin.FeatureParserException;
+import io.cucumber.core.gherkin.Pickle;
 
 import java.net.URI;
 import java.util.Collections;
@@ -20,9 +20,9 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public final class Gherkin5CucumberFeatureParser implements CucumberFeatureParser {
+public final class Gherkin5FeatureParser implements FeatureParser {
     @Override
-    public CucumberFeature parse(URI path, String source, Supplier<UUID> idGenerator) {
+    public Feature parse(URI path, String source, Supplier<UUID> idGenerator) {
         return parseGherkin5(path, source);
     }
 
@@ -31,21 +31,21 @@ public final class Gherkin5CucumberFeatureParser implements CucumberFeatureParse
         return "5";
     }
 
-    private static CucumberFeature parseGherkin5(URI path, String source) {
+    private static Feature parseGherkin5(URI path, String source) {
         try {
             Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
             TokenMatcher matcher = new TokenMatcher();
             GherkinDocument gherkinDocument = parser.parse(source, matcher);
             GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-            List<CucumberPickle> pickles = compilePickles(gherkinDocument, dialectProvider, path);
-            return new Gherkin5CucumberFeature(gherkinDocument, path, source, pickles);
+            List<Pickle> pickles = compilePickles(gherkinDocument, dialectProvider, path);
+            return new Gherkin5Feature(gherkinDocument, path, source, pickles);
         } catch (ParserException e) {
-            throw new CucumberParserException("Failed to parse resource at: " + path.toString(), e);
+            throw new FeatureParserException("Failed to parse resource at: " + path.toString(), e);
         }
     }
 
 
-    private static List<CucumberPickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, URI path) {
+    private static List<Pickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, URI path) {
         if (document.getFeature() == null) {
             return Collections.emptyList();
         }
@@ -53,7 +53,7 @@ public final class Gherkin5CucumberFeatureParser implements CucumberFeatureParse
         GherkinDialect dialect = dialectProvider.getDialect(language, null);
         return new Compiler().compile(document)
             .stream()
-            .map(pickle -> new Gherkin5CucumberPickle(pickle, path, document, dialect))
+            .map(pickle -> new Gherkin5Pickle(pickle, path, document, dialect))
             .collect(Collectors.toList());
     }
 }

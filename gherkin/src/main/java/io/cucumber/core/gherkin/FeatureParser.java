@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public interface CucumberFeatureParser {
+public interface FeatureParser {
 
-    CucumberFeature parse(URI path, String source, Supplier<UUID> idGenerator);
+    Feature parse(URI path, String source, Supplier<UUID> idGenerator);
 
     String version();
 

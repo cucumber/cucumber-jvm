@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 class TestCaseTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n" +
@@ -133,8 +133,8 @@ class TestCaseTest {
         return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
     }
 
-    private CucumberPickle pickle() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+    private Pickle pickle() {
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"

@@ -6,13 +6,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-public interface CucumberFeature extends Node, Container<Node>, io.cucumber.plugin.event.CucumberFeature {
+public interface Feature extends Node, Container<Node> {
 
     String getKeyword();
 
-    Optional<CucumberPickle> getPickleAt(CucumberLocation location);
+    Optional<Pickle> getPickleAt(Location location);
 
-    List<CucumberPickle> getPickles();
+    List<Pickle> getPickles();
 
     URI getUri();
 

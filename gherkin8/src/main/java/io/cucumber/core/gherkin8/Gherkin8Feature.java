@@ -1,8 +1,8 @@
 package io.cucumber.core.gherkin8;
 
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberLocation;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Location;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Node;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
@@ -14,14 +14,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public final class Gherkin8CucumberFeature implements CucumberFeature {
+public final class Gherkin8Feature implements Feature {
     private final URI uri;
-    private final List<CucumberPickle> pickles;
+    private final List<Pickle> pickles;
     private final List<Messages.Envelope> envelopes;
     private final GherkinDocument gherkinDocument;
     private final String gherkinSource;
 
-    Gherkin8CucumberFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<CucumberPickle> pickles, List<Messages.Envelope> envelopes) {
+    Gherkin8Feature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Pickle> pickles, List<Messages.Envelope> envelopes) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
@@ -35,14 +35,14 @@ public final class Gherkin8CucumberFeature implements CucumberFeature {
             .filter(featureChild -> featureChild.hasRule() || featureChild.hasScenario())
             .map(featureChild -> {
                 if (featureChild.hasRule()) {
-                    return new Gherkin8CucumberRule(featureChild.getRule());
+                    return new Gherkin8Rule(featureChild.getRule());
                 }
 
                 Scenario scenario = featureChild.getScenario();
                 if (scenario.getExamplesCount() > 0) {
                     return new Gherkin8CucumberScenarioOutline(scenario);
                 } else {
-                    return new Gherkin8CucumberScenario(scenario);
+                    return new Gherkin8Scenario(scenario);
                 }
             });
     }
@@ -53,19 +53,19 @@ public final class Gherkin8CucumberFeature implements CucumberFeature {
     }
 
     @Override
-    public CucumberLocation getLocation() {
-        return Gherkin8CucumberLocation.from(gherkinDocument.getFeature().getLocation());
+    public Location getLocation() {
+        return Gherkin8Location.from(gherkinDocument.getFeature().getLocation());
     }
 
     @Override
-    public Optional<CucumberPickle> getPickleAt(CucumberLocation location) {
+    public Optional<Pickle> getPickleAt(Location location) {
         return pickles.stream()
             .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
             .findFirst();
     }
 
     @Override
-    public List<CucumberPickle> getPickles() {
+    public List<Pickle> getPickles() {
         return pickles;
     }
 
@@ -98,7 +98,7 @@ public final class Gherkin8CucumberFeature implements CucumberFeature {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Gherkin8CucumberFeature that = (Gherkin8CucumberFeature) o;
+        Gherkin8Feature that = (Gherkin8Feature) o;
         return uri.equals(that.uri);
     }
 

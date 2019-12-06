@@ -3,8 +3,8 @@ package io.cucumber.junit;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -84,7 +84,7 @@ import static java.util.stream.Collectors.toList;
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private final List<ParentRunner<?>> children;
     private final EventBus bus;
-    private final List<CucumberFeature> features;
+    private final List<Feature> features;
     private final Plugins plugins;
 
     private boolean multiThreadingAssumed = false;
@@ -152,7 +152,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
-        Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
+        Predicate<Pickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
             .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
             .filter(runner -> !runner.isEmpty())
@@ -202,7 +202,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             }
 
             emitTestRunStarted();
-            for (CucumberFeature feature : features) {
+            for (Feature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
                 bus.sendAll(feature.getMessages());
             }

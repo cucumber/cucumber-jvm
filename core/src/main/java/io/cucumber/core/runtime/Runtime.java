@@ -5,8 +5,8 @@ import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
@@ -59,7 +59,7 @@ public final class Runtime {
     private final ExitStatus exitStatus;
 
     private final RunnerSupplier runnerSupplier;
-    private final Predicate<CucumberPickle> filter;
+    private final Predicate<Pickle> filter;
     private final int limit;
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
@@ -68,7 +68,7 @@ public final class Runtime {
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
-                    final Predicate<CucumberPickle> filter,
+                    final Predicate<Pickle> filter,
                     final int limit,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
@@ -85,9 +85,9 @@ public final class Runtime {
     }
 
     public void run() {
-        final List<CucumberFeature> features = featureSupplier.get();
+        final List<Feature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
-        for (CucumberFeature feature : features) {
+        for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             bus.sendAll(feature.getMessages());
         }
@@ -213,7 +213,7 @@ public final class Runtime {
                 ? this.featureSupplier
                 : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
-            final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
+            final Predicate<Pickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
 

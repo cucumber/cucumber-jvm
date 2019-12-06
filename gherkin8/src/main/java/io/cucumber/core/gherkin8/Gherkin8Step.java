@@ -1,7 +1,7 @@
 package io.cucumber.core.gherkin8;
 
 import io.cucumber.core.gherkin.Argument;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.messages.Messages.Pickle.PickleStep;
@@ -9,7 +9,7 @@ import io.cucumber.messages.Messages.PickleStepArgument;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
 
-final class Gherkin8CucumberStep implements CucumberStep {
+final class Gherkin8Step implements Step {
 
     private final PickleStep pickleStep;
     private final Argument argument;
@@ -18,7 +18,7 @@ final class Gherkin8CucumberStep implements CucumberStep {
     private final String previousGwtKeyWord;
     private final int stepLine;
 
-    Gherkin8CucumberStep(PickleStep pickleStep, GherkinDialect dialect, String previousGwtKeyWord, int stepLine, String keyword) {
+    Gherkin8Step(PickleStep pickleStep, GherkinDialect dialect, String previousGwtKeyWord, int stepLine, String keyword) {
         this.pickleStep = pickleStep;
         this.argument = extractArgument(pickleStep);
         this.keyWord = keyword;

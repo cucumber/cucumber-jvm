@@ -3,7 +3,7 @@ package io.cucumber.core.gherkin;
 import java.net.URI;
 import java.util.List;
 
-public interface CucumberPickle {
+public interface Pickle {
 
     String getKeyword();
 
@@ -18,7 +18,7 @@ public interface CucumberPickle {
      *
      * @return location in the feature file
      */
-    CucumberLocation getLocation();
+    Location getLocation();
 
 
     /**
@@ -28,9 +28,9 @@ public interface CucumberPickle {
      *
      * @return location in the feature file
      */
-    CucumberLocation getScenarioLocation();
+    Location getScenarioLocation();
 
-    List<CucumberStep> getSteps();
+    List<Step> getSteps();
 
     List<String> getTags();
 

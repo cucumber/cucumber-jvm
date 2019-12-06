@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
@@ -13,17 +13,17 @@ import java.util.UUID;
 
 final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
     private final URI uri;
-    private final CucumberStep step;
+    private final Step step;
     private final List<HookTestStep> afterStepHookSteps;
     private final List<HookTestStep> beforeStepHookSteps;
     private final PickleStepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(UUID id, URI uri, CucumberStep step, PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(UUID id, URI uri, Step step, PickleStepDefinitionMatch definitionMatch) {
         this(id, uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
     PickleStepTestStep(UUID id, URI uri,
-                       CucumberStep step,
+                       Step step,
                        List<HookTestStep> beforeStepHookSteps,
                        List<HookTestStep> afterStepHookSteps,
                        PickleStepDefinitionMatch definitionMatch) {
@@ -61,7 +61,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    public CucumberStep getStep() {
+    public Step getStep() {
         return step;
     }
 

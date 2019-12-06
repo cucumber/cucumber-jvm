@@ -1,6 +1,6 @@
 package io.cucumber.core.gherkin;
 
-public interface CucumberStep extends io.cucumber.plugin.event.CucumberStep {
+public interface Step extends io.cucumber.plugin.event.Step {
     @Override
     int getStepLine();
 

@@ -3,12 +3,11 @@ package io.cucumber.core.gherkin5;
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
-import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import io.cucumber.core.gherkin.CucumberLocation;
-import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Location;
+import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 
 import java.net.URI;
@@ -16,21 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static io.cucumber.core.gherkin5.Gherkin5Location.from;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Wraps {@link Pickle} to avoid exposing the gherkin library to all of
+ * Wraps {@link gherkin.pickles.Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-final class Gherkin5CucumberPickle implements CucumberPickle {
+final class Gherkin5Pickle implements Pickle {
 
-    private final Pickle pickle;
-    private final List<CucumberStep> steps;
+    private final gherkin.pickles.Pickle pickle;
+    private final List<Step> steps;
     private final URI uri;
     private final String keyWord;
 
-    Gherkin5CucumberPickle(Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
+    Gherkin5Pickle(gherkin.pickles.Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
         this.pickle = pickle;
         this.uri = uri;
         this.steps = createCucumberSteps(pickle, document, dialect, uri.toString());
@@ -41,8 +40,8 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
             .orElse("Scenario");
     }
 
-    private static List<CucumberStep> createCucumberSteps(Pickle pickle, GherkinDocument document, GherkinDialect dialect, String uri) {
-        List<CucumberStep> list = new ArrayList<>();
+    private static List<Step> createCucumberSteps(gherkin.pickles.Pickle pickle, GherkinDocument document, GherkinDialect dialect, String uri) {
+        List<Step> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
             .stream()
             .filter(s -> !StepType.isAstrix(s))
@@ -50,7 +49,7 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
             .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (PickleStep step : pickle.getSteps()) {
-            CucumberStep cucumberStep = new Gherkin5CucumberStep(step, document, dialect, previousGivenWhenThen, uri);
+            Step cucumberStep = new Gherkin5Step(step, document, dialect, previousGivenWhenThen, uri);
             if (cucumberStep.getStepType().isGivenWhenThen()) {
                 previousGivenWhenThen = cucumberStep.getKeyWord();
             }
@@ -76,18 +75,18 @@ final class Gherkin5CucumberPickle implements CucumberPickle {
 
 
     @Override
-    public CucumberLocation getLocation() {
+    public Location getLocation() {
         return from(pickle.getLocations().get(0));
     }
 
     @Override
-    public CucumberLocation getScenarioLocation() {
+    public Location getScenarioLocation() {
         int last = pickle.getLocations().size() - 1;
         return from(pickle.getLocations().get(last));
     }
 
     @Override
-    public List<CucumberStep> getSteps() {
+    public List<Step> getSteps() {
         return steps;
     }
 

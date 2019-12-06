@@ -1,6 +1,6 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.resource.Resource;
 
 import java.io.ByteArrayInputStream;
@@ -10,15 +10,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class TestFeatureParser {
-    public static CucumberFeature parse(final String source) {
+    public static Feature parse(final String source) {
         return parse("file:test.feature", source);
     }
 
-    public static CucumberFeature parse(final String uri, final String source) {
+    public static Feature parse(final String uri, final String source) {
         return parse(FeatureIdentifier.parse(uri), source);
     }
 
-    public static CucumberFeature parse(final URI uri, final String source) {
+    public static Feature parse(final URI uri, final String source) {
         return new FeatureParser(UUID::randomUUID).parseResource(new Resource() {
             @Override
             public URI getUri() {

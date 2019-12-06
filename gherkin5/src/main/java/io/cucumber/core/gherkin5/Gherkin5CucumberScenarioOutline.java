@@ -1,13 +1,13 @@
 package io.cucumber.core.gherkin5;
 
 import gherkin.ast.ScenarioOutline;
-import io.cucumber.core.gherkin.CucumberExamples;
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Examples;
+import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.CucumberScenarioOutline;
 
 import java.util.stream.Stream;
 
-import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static io.cucumber.core.gherkin5.Gherkin5Location.from;
 
 final class Gherkin5CucumberScenarioOutline implements CucumberScenarioOutline {
 
@@ -18,13 +18,13 @@ final class Gherkin5CucumberScenarioOutline implements CucumberScenarioOutline {
     }
 
     @Override
-    public Stream<CucumberExamples> children() {
+    public Stream<Examples> children() {
         return scenarioOutline.getExamples().stream()
-            .map(Gherkin5CucumberExamples::new);
+            .map(Gherkin5Examples::new);
     }
 
     @Override
-    public CucumberLocation getLocation() {
+    public Location getLocation() {
         return from(scenarioOutline.getLocation());
     }
 

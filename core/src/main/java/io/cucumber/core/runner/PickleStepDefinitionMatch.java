@@ -6,7 +6,7 @@ import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
@@ -25,9 +25,9 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private final StepDefinition stepDefinition;
     private final URI uri;
-    private final CucumberStep step;
+    private final Step step;
 
-    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
+    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, URI uri, Step step) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;

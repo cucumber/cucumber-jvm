@@ -7,9 +7,9 @@ import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
@@ -68,7 +68,7 @@ class RuntimeTest {
 
     @Test
     void runs_feature_with_json_formatter() {
-        final CucumberFeature feature = TestFeatureParser.parse("test.feature", "" +
+        final Feature feature = TestFeatureParser.parse("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
             "    Given b\n" +
@@ -249,8 +249,8 @@ class RuntimeTest {
     }
 
     @Test
-    void should_make_scenario_name_available_to_hooks() throws Throwable {
-        final CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+    void should_make_scenario_name_available_to_hooks() {
+        final Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -275,12 +275,12 @@ class RuntimeTest {
         assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
     }
 
-    private TestBackendSupplier createTestBackendSupplier(final CucumberFeature feature, final HookDefinition beforeHook) {
+    private TestBackendSupplier createTestBackendSupplier(final Feature feature, final HookDefinition beforeHook) {
         return new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                for (CucumberPickle child : feature.getPickles()) {
-                    for (CucumberStep step : child.getSteps()) {
+                for (Pickle child : feature.getPickles()) {
+                    for (Step step : child.getSteps()) {
                         mockMatch(glue, step.getText());
                     }
                 }
@@ -291,7 +291,7 @@ class RuntimeTest {
 
     @Test
     void should_call_formatter_for_two_scenarios_with_background() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
@@ -328,7 +328,7 @@ class RuntimeTest {
 
     @Test
     void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background\n" +
             "    Given first step\n" +
@@ -380,25 +380,25 @@ class RuntimeTest {
 
     @Test
     void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
-        CucumberFeature feature1 = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
             "    Given first step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
+        Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: feature name 2\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        CucumberFeature feature3 = TestFeatureParser.parse("path/test3.feature", "" +
+        Feature feature3 = TestFeatureParser.parse("path/test3.feature", "" +
             "Feature: feature name 3\n" +
             "  Scenario: scenario_3 name\n" +
             "    Given first step\n");
 
         FormatterSpy formatterSpy = new FormatterSpy();
-        final List<CucumberFeature> features = Arrays.asList(feature1, feature2, feature3);
+        final List<Feature> features = Arrays.asList(feature1, feature2, feature3);
 
         Runtime.builder()
             .withFeatureSupplier(new TestFeatureSupplier(bus, features))
@@ -438,14 +438,14 @@ class RuntimeTest {
 
     @Test
     void should_fail_on_event_listener_exception_when_running_in_parallel() {
-        CucumberFeature feature1 = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
             "    Given first step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
+        Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: feature name 2\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
@@ -472,14 +472,14 @@ class RuntimeTest {
 
     @Test
     void should_interrupt_waiting_plugins() throws InterruptedException {
-        final CucumberFeature feature1 = TestFeatureParser.parse("path/test.feature", "" +
+        final Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name 1\n" +
             "  Scenario: scenario_1 name\n" +
             "    Given first step\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
 
-        final CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
+        final Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: feature name 2\n" +
             "  Scenario: scenario_2 name\n" +
             "    Given first step\n");
@@ -513,7 +513,7 @@ class RuntimeTest {
 
     @Test
     void generates_events_for_glue_and_scenario_scoped_glue() {
-        final CucumberFeature feature = TestFeatureParser.parse("test.feature", "" +
+        final Feature feature = TestFeatureParser.parse("test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: Run a scenario once\n" +
             "    Given global scoped\n" +
@@ -568,7 +568,7 @@ class RuntimeTest {
         assertThat(stepDefinedEvents.size(), is(4));
     }
 
-    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) {
+    private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();
 
         TestHelper.builder()

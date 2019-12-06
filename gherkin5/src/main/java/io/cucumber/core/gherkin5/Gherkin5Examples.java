@@ -1,36 +1,35 @@
 package io.cucumber.core.gherkin5;
 
-import gherkin.ast.Examples;
-import io.cucumber.core.gherkin.CucumberExample;
-import io.cucumber.core.gherkin.CucumberExamples;
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Example;
+import io.cucumber.core.gherkin.Examples;
+import io.cucumber.core.gherkin.Location;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static io.cucumber.core.gherkin5.Gherkin5Location.from;
 
-public final class Gherkin5CucumberExamples implements CucumberExamples {
+public final class Gherkin5Examples implements Examples {
 
-    private final Examples examples;
+    private final gherkin.ast.Examples examples;
 
-    Gherkin5CucumberExamples(Examples examples) {
+    Gherkin5Examples(gherkin.ast.Examples examples) {
         this.examples = examples;
     }
 
     @Override
-    public Stream<CucumberExample> children() {
+    public Stream<Example> children() {
         if (examples.getTableBody() == null) {
             return Stream.empty();
         }
 
         AtomicInteger rowCounter = new AtomicInteger(1);
         return examples.getTableBody().stream()
-            .map(tableRow -> new Gherkin5CucumberExample(tableRow, rowCounter.getAndIncrement()));
+            .map(tableRow -> new Gherkin5Example(tableRow, rowCounter.getAndIncrement()));
     }
 
     @Override
-    public CucumberLocation getLocation() {
+    public Location getLocation() {
         return from(examples.getLocation());
     }
 

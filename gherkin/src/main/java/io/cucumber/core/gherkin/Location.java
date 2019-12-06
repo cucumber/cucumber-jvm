@@ -1,6 +1,6 @@
 package io.cucumber.core.gherkin;
 
-public interface CucumberLocation {
+public interface Location {
 
     int getLine();
 

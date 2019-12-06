@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.TestStepFinished;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.never;
 
 class HookTestStepTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"
@@ -55,7 +55,7 @@ class HookTestStepTest {
     }
 
     @Test
-    void run_does_run() throws Throwable {
+    void run_does_run() {
         step.run(testCase, bus, state, false, testExecutionId);
 
         InOrder order = inOrder(bus, hookDefintion);
@@ -65,7 +65,7 @@ class HookTestStepTest {
     }
 
     @Test
-    void run_does_dry_run() throws Throwable {
+    void run_does_dry_run() {
         step.run(testCase, bus, state, true, testExecutionId);
 
         InOrder order = inOrder(bus, hookDefintion);

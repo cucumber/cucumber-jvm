@@ -2,11 +2,9 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
@@ -32,7 +30,7 @@ import static java.util.Optional.of;
 final class FeatureResolver {
 
     private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
-    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
+    private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
         resource -> of(featureParser.parseResource(resource))
@@ -165,7 +163,7 @@ final class FeatureResolver {
         children.forEach(child -> pruneDescriptionRecursively(child, toKeep));
     }
 
-    private TestDescriptor resolveFeature(CucumberFeature feature) {
+    private TestDescriptor resolveFeature(Feature feature) {
         return FeatureDescriptor.create(feature, engineDescriptor);
     }
 

@@ -1,9 +1,9 @@
 package io.cucumber.core.gherkin8;
 
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberFeatureParser;
-import io.cucumber.core.gherkin.CucumberParserException;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.FeatureParser;
+import io.cucumber.core.gherkin.FeatureParserException;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
@@ -21,10 +21,10 @@ import static io.cucumber.gherkin.Gherkin.makeSourceEnvelope;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
-public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParser {
+public final class Gherkin8FeatureParser implements FeatureParser {
 
     @Override
-    public CucumberFeature parse(URI path, String source, Supplier<UUID> idGenerator) {
+    public Feature parse(URI path, String source, Supplier<UUID> idGenerator) {
         try {
             CucumberQuery cucumberQuery = new CucumberQuery();
 
@@ -42,7 +42,7 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
 
             GherkinDialect dialect = null;
             GherkinDocument gherkinDocument = null;
-            List<CucumberPickle> pickles = new ArrayList<>();
+            List<Pickle> pickles = new ArrayList<>();
             for (Messages.Envelope envelope : envelopes) {
                 if (envelope.hasGherkinDocument()) {
                     gherkinDocument = envelope.getGherkinDocument();
@@ -53,13 +53,13 @@ public final class Gherkin8CucumberFeatureParser implements CucumberFeatureParse
                 }
                 if (envelope.hasPickle()) {
                     Messages.Pickle pickle = envelope.getPickle();
-                    pickles.add(new Gherkin8CucumberPickle(pickle, path, dialect, cucumberQuery));
+                    pickles.add(new Gherkin8Pickle(pickle, path, dialect, cucumberQuery));
                 }
             }
 
-            return new Gherkin8CucumberFeature(gherkinDocument, path, source, pickles, envelopes);
+            return new Gherkin8Feature(gherkinDocument, path, source, pickles, envelopes);
         } catch (ParserException e) {
-            throw new CucumberParserException("Failed to parse resource at: " + path.toString(), e);
+            throw new FeatureParserException("Failed to parse resource at: " + path.toString(), e);
         }
     }
 

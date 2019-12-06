@@ -1,8 +1,8 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -52,12 +52,12 @@ import static org.mockito.Mockito.when;
 
 class PickleStepTestStepTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"
     );
-    private final CucumberPickle pickle = feature.getPickles().get(0);
+    private final Pickle pickle = feature.getPickles().get(0);
     private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), pickle, false);
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState state = new TestCaseState(bus, testCase);
@@ -243,7 +243,7 @@ class PickleStepTestStepTest {
 
     @Test
     void step_execution_time_is_measured() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"

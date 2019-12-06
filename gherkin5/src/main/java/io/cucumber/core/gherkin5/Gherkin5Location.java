@@ -1,34 +1,33 @@
 package io.cucumber.core.gherkin5;
 
-import gherkin.ast.Location;
 import gherkin.pickles.PickleLocation;
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Location;
 
 import java.util.Objects;
 
-final class Gherkin5CucumberLocation implements CucumberLocation {
+final class Gherkin5Location implements Location {
 
     private final int line;
     private final int column;
 
-    private Gherkin5CucumberLocation(int line, int column) {
+    private Gherkin5Location(int line, int column) {
         this.line = line;
         this.column = column;
     }
 
-    static CucumberLocation from(PickleLocation location) {
-        return new Gherkin5CucumberLocation(location.getLine(), location.getColumn());
+    static Location from(PickleLocation location) {
+        return new Gherkin5Location(location.getLine(), location.getColumn());
     }
 
-    public static CucumberLocation from(Location location) {
-        return new Gherkin5CucumberLocation(location.getLine(), location.getColumn());
+    public static Location from(gherkin.ast.Location location) {
+        return new Gherkin5Location(location.getLine(), location.getColumn());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Gherkin5CucumberLocation that = (Gherkin5CucumberLocation) o;
+        Gherkin5Location that = (Gherkin5Location) o;
         return line == that.line &&
             column == that.column;
     }

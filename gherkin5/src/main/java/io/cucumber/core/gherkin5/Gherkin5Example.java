@@ -1,17 +1,17 @@
 package io.cucumber.core.gherkin5;
 
 import gherkin.ast.TableRow;
-import io.cucumber.core.gherkin.CucumberExample;
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Example;
+import io.cucumber.core.gherkin.Location;
 
-import static io.cucumber.core.gherkin5.Gherkin5CucumberLocation.from;
+import static io.cucumber.core.gherkin5.Gherkin5Location.from;
 
-public final class Gherkin5CucumberExample implements CucumberExample {
+public final class Gherkin5Example implements Example {
 
     private final TableRow tableRow;
     private final int rowIndex;
 
-    Gherkin5CucumberExample(TableRow tableRow, int rowIndex) {
+    Gherkin5Example(TableRow tableRow, int rowIndex) {
         this.tableRow = tableRow;
         this.rowIndex = rowIndex;
     }
@@ -26,7 +26,7 @@ public final class Gherkin5CucumberExample implements CucumberExample {
     }
 
     @Override
-    public CucumberLocation getLocation() {
+    public Location getLocation() {
         return from(tableRow.getLocation());
     }
 }

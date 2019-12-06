@@ -6,8 +6,8 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -30,19 +30,19 @@ class HookTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"
     );
-    private final CucumberPickle pickle = feature.getPickles().get(0);
+    private final Pickle pickle = feature.getPickles().get(0);
 
 
     /**
      * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
      */
     @Test
-    void after_hooks_execute_before_objects_are_disposed() throws Throwable {
+    void after_hooks_execute_before_objects_are_disposed() {
         Backend backend = mock(Backend.class);
         when(backend.getSnippet()).thenReturn(new TestSnippet());
         ObjectFactory objectFactory = mock(ObjectFactory.class);

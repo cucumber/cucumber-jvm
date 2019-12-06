@@ -1,29 +1,29 @@
 package io.cucumber.core.gherkin8;
 
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Location;
 import io.cucumber.messages.Messages;
 
 import java.util.Objects;
 
-final class Gherkin8CucumberLocation implements CucumberLocation {
+final class Gherkin8Location implements Location {
 
     private final int line;
     private final int column;
 
-    private Gherkin8CucumberLocation(int line, int column) {
+    private Gherkin8Location(int line, int column) {
         this.line = line;
         this.column = column;
     }
 
-    static CucumberLocation from(Messages.Location location) {
-        return new Gherkin8CucumberLocation(location.getLine(), location.getColumn());
+    static Location from(Messages.Location location) {
+        return new Gherkin8Location(location.getLine(), location.getColumn());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Gherkin8CucumberLocation that = (Gherkin8CucumberLocation) o;
+        Gherkin8Location that = (Gherkin8Location) o;
         return line == that.line &&
             column == that.column;
     }
