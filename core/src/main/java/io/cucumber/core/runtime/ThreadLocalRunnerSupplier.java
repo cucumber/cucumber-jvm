@@ -73,8 +73,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public UUID createId() {
-            return parent.createId();
+        public UUID generateId() {
+            return parent.generateId();
         }
     }
 
@@ -120,8 +120,8 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
 
         @Override
-        public UUID createId() {
-            return delegate.createId();
+        public UUID generateId() {
+            return delegate.generateId();
         }
     }
 }

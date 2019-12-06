@@ -22,7 +22,7 @@ public final class TimeServiceEventBus extends AbstractEventBus {
     }
 
     @Override
-    public UUID createId() {
+    public UUID generateId() {
         return idGenerator.get();
     }
 }

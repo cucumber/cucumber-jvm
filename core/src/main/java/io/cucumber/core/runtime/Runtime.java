@@ -207,7 +207,7 @@ public final class Runtime {
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
-            final FeatureParser parser = new FeatureParser(eventBus::createId);
+            final FeatureParser parser = new FeatureParser(eventBus::generateId);
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier

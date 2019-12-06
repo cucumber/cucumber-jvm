@@ -32,27 +32,21 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     }
 
     private final StepDefinitionMatch stepDefinitionMatch;
-    private final String id = UUID.randomUUID().toString();
-    private final String pickleStepId;
+    private final UUID id;
 
-    TestStep(String pickleStepId, StepDefinitionMatch stepDefinitionMatch) {
-        this.pickleStepId = pickleStepId;
+    TestStep(UUID id, StepDefinitionMatch stepDefinitionMatch) {
+        this.id = id;
         this.stepDefinitionMatch = stepDefinitionMatch;
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
     }
 
     @Override
     public String getCodeLocation() {
         return stepDefinitionMatch.getCodeLocation();
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getPickleStepId() {
-        return pickleStepId;
     }
 
     boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID textExecutionId) {
@@ -84,7 +78,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepStarted(Messages.TestStepStarted.newBuilder()
                 .setTestCaseStartedId(textExecutionId.toString())
-                .setTestStepId(getId())
+                .setTestStepId(id.toString())
                 .setTimestamp(javaInstantToTimestamp(startTime))
             ).build());
     }
@@ -93,7 +87,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepFinished(Messages.TestStepFinished.newBuilder()
                 .setTestCaseStartedId(textExecutionId.toString())
-                .setTestStepId(getId())
+                .setTestStepId(id.toString())
                 .setTimestamp(javaInstantToTimestamp(stopTime))
                 .setTestResult(Messages.TestResult.newBuilder()
                     .setStatus(from(result.getStatus()))

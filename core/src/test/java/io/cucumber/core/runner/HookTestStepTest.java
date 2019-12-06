@@ -46,7 +46,7 @@ class HookTestStepTest {
     );
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState state = new TestCaseState(bus, testCase);
-    private HookTestStep step = new HookTestStep(HookType.AFTER_STEP, definitionMatch);
+    private HookTestStep step = new HookTestStep(UUID.randomUUID(), HookType.AFTER_STEP, definitionMatch);
     private final UUID testExecutionId = UUID.randomUUID();
 
     @BeforeEach

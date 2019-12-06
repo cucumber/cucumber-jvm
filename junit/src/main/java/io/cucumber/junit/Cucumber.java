@@ -139,7 +139,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         // Parse the features early. Don't proceed when there are lexer errors
-        FeatureParser parser = new FeatureParser(bus::createId);
+        FeatureParser parser = new FeatureParser(bus::generateId);
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
         this.features = featureSupplier.get();

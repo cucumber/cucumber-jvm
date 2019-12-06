@@ -4,14 +4,10 @@ import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
 import io.cucumber.messages.Messages.Pickle.PickleStep;
 import io.cucumber.messages.Messages.PickleStepArgument;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
 import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
-
-import java.util.stream.Stream;
 
 final class Gherkin8CucumberStep implements CucumberStep {
 
@@ -98,7 +94,7 @@ final class Gherkin8CucumberStep implements CucumberStep {
     }
 
     @Override
-    public String getPickleStepId() {
+    public String getId() {
         return pickleStep.getId();
     }
 }

@@ -51,7 +51,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         emitTestCaseMessage(bus);
 
         Instant start = bus.getInstant();
-        UUID executionId = bus.createId();
+        UUID executionId = bus.generateId();
         emitTestCaseStarted(bus, start, executionId);
 
         TestCaseState state = new TestCaseState(bus, this);
@@ -143,14 +143,15 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private Messages.TestCase.TestStep createTestStep(TestStep testStep) {
         Messages.TestCase.TestStep.Builder testStepBuilder = Messages.TestCase.TestStep
             .newBuilder()
-            .setId(testStep.getId());
+            .setId(testStep.getId().toString());
 
         if (testStep instanceof HookTestStep) {
-            testStepBuilder.setHookId(testStep.getId());
+            //TODO: Is this right?
+            testStepBuilder.setHookId(testStep.getId().toString());
         } else if (testStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
             testStepBuilder
-                .setPickleStepId(testStep.getPickleStepId())
+                .setPickleStepId(pickleStep.getStep().getId())
                 .addAllStepMatchArguments(getStepMatchArguments(pickleStep));
         }
 

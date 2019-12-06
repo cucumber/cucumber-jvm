@@ -109,7 +109,7 @@ final class Gherkin5CucumberStep implements CucumberStep {
     }
 
     @Override
-    public String getPickleStepId() {
+    public String getId() {
         String lineNumbers = this.step.getLocations().stream().map(s -> String.valueOf(s.getLine())).collect(Collectors.joining(":"));
         return uri + ":" + lineNumbers;
     }

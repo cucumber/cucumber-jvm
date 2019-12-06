@@ -143,13 +143,8 @@ class TestCaseResultObserverTest {
         }
 
         @Override
-        public String getId() {
-            return "mocked";
-        }
-
-        @Override
-        public String getPickleStepId() {
-            return "mocked";
+        public UUID getId() {
+            return UUID.randomUUID();
         }
 
     };

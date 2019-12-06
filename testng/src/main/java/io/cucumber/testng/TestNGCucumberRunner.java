@@ -90,7 +90,7 @@ public final class TestNGCucumberRunner {
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
-        FeatureParser parser = new FeatureParser(bus::createId);
+        FeatureParser parser = new FeatureParser(bus::generateId);
         this.featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);

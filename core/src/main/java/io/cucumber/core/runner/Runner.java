@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -91,13 +90,13 @@ public final class Runner {
 
     private TestCase createTestCaseForPickle(CucumberPickle pickle) {
         if (pickle.getSteps().isEmpty()) {
-            return new TestCase(bus.createId(), emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
+            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
         List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
         List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
-        return new TestCase(bus.createId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
+        return new TestCase(bus.generateId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
     }
 
     private List<PickleStepTestStep> createTestStepsForPickleSteps(CucumberPickle pickle) {
@@ -107,8 +106,7 @@ public final class Runner {
             PickleStepDefinitionMatch match = matchStepToStepDefinition(pickle, step);
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
-            String testStepId = UUID.randomUUID().toString();
-            testSteps.add(new PickleStepTestStep(pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
+            testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
         }
 
         return testSteps;
@@ -150,7 +148,7 @@ public final class Runner {
     private List<HookTestStep> createTestStepsForHooks(List<String> tags, Collection<CoreHookDefinition> hooks, HookType hookType) {
         return hooks.stream()
             .filter(hook -> hook.matches(tags))
-            .map(hook -> new HookTestStep(hookType, new HookDefinitionMatch(hook)))
+            .map(hook -> new HookTestStep(bus.generateId(), hookType, new HookDefinitionMatch(hook)))
             .collect(Collectors.toList());
     }
 

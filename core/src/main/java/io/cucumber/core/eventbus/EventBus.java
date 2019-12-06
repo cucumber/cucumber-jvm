@@ -9,7 +9,7 @@ public interface EventBus extends EventPublisher {
 
     Instant getInstant();
 
-    UUID createId();
+    UUID generateId();
 
     <T> void send(T event);
 

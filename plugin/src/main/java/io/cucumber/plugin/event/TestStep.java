@@ -2,6 +2,8 @@ package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
 
+import java.util.UUID;
+
 /**
  * A test step can either represent the execution of a hook
  * or a pickle step. Each step is tied to some glue code.
@@ -20,8 +22,6 @@ public interface TestStep {
      */
     String getCodeLocation();
 
-    String getId();
-
-    String getPickleStepId();
+    UUID getId();
 
 }

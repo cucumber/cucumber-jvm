@@ -17,5 +17,5 @@ public interface CucumberStep extends io.cucumber.plugin.event.CucumberStep {
     @Override
     String getText();
 
-    String getPickleStepId();
+    String getId();
 }
