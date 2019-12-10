@@ -2,13 +2,12 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
-import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -50,12 +49,8 @@ final class CoreStepDefinition {
         return stepDefinition;
     }
 
-    List<Argument> matchedArguments(CucumberStep step) {
+    List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step, types);
-    }
-
-    Iterable<StepMatchArgument> getStepMatchArguments(CucumberStep step) {
-        return argumentMatcher.getStepMatchArguments(step, types);
     }
 
     private static Type[] getTypes(List<ParameterInfo> parameterInfos) {

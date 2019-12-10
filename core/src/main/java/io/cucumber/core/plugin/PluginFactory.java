@@ -110,9 +110,6 @@ public final class PluginFactory {
         if (ctorArgClass.equals(Appendable.class)) {
             return new UTF8OutputStreamWriter(new URLOutputStream(toURL(arg)));
         }
-        if (ctorArgClass.equals(OutputStream.class)) {
-            return new URLOutputStream(toURL(arg));
-        }
         return null;
     }
 

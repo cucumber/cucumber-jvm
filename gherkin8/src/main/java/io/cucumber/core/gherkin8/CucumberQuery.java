@@ -15,12 +15,12 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
-public class CucumberQuery {
+final class CucumberQuery {
     private final Map<String, Step> gherkinStepById = new HashMap<>();
     private final Map<String, Scenario> gherkinScenarioById = new HashMap<>();
     private final Map<String, Location> locationBySourceId = new HashMap<>();
 
-    public void update(GherkinDocument gherkinDocument) {
+    void update(GherkinDocument gherkinDocument) {
         for (FeatureChild featureChild : gherkinDocument.getFeature().getChildrenList()) {
             if (featureChild.hasBackground()) {
                 this.updateBackground(
@@ -79,15 +79,15 @@ public class CucumberQuery {
         }
     }
 
-    public Step getGherkinStep(String sourceId) {
+    Step getGherkinStep(String sourceId) {
         return requireNonNull(gherkinStepById.get(requireNonNull(sourceId)));
     }
 
-    public Scenario getGherkinScenario(String sourceId) {
+    Scenario getGherkinScenario(String sourceId) {
         return requireNonNull(gherkinScenarioById.get(requireNonNull(sourceId)));
     }
 
-    public Location getLocation(String sourceId) {
+    Location getLocation(String sourceId) {
         Location location = locationBySourceId.get(requireNonNull(sourceId));
         return requireNonNull(location);
     }

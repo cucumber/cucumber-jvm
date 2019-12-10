@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
@@ -26,7 +26,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class PrettyFormatterTest {
 
-    private final List<CucumberFeature> features = new ArrayList<>();
+    private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
@@ -35,7 +35,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_align_the_indentation_of_location_strings() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -58,7 +58,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_handle_background() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
             "    Given first step\n" +
@@ -86,7 +86,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_handle_scenario_outline() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: <name>\n" +
             "    Given first step\n" +
@@ -115,7 +115,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_tags() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "@feature_tag\n" +
             "Feature: feature name\n" +
             "  @scenario_tag\n" +
@@ -147,7 +147,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_error_message_for_failed_steps() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -164,7 +164,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_error_message_for_before_hooks() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -183,7 +183,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_error_message_for_after_hooks() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -201,7 +201,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_output_from_before_hooks() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -223,7 +223,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_output_from_after_hooks() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -243,7 +243,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_output_from_afterStep_hooks() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -271,7 +271,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_color_code_steps_according_to_the_result() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -287,7 +287,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_color_code_locations_as_comments() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
@@ -303,7 +303,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_color_code_error_message_according_to_the_result() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");

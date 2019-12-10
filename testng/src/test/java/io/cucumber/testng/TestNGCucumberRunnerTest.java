@@ -1,7 +1,6 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberParserException;
+import io.cucumber.core.gherkin.FeatureParserException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -50,7 +49,7 @@ public class TestNGCucumberRunnerTest {
             PickleWrapper pickleWrapper = (PickleWrapper) scenarios[0][0];
             pickleWrapper.getPickle();
             Assert.fail("CucumberException not thrown");
-        } catch (CucumberParserException e) {
+        } catch (FeatureParserException e) {
             Assert.assertEquals(e.getMessage(), "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature");
         }
     }

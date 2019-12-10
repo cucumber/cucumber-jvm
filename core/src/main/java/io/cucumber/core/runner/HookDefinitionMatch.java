@@ -46,8 +46,4 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
         return hookDefinition.getLocation();
     }
 
-    @Override
-    public Iterable<Messages.StepMatchArgument> getStepMatchArguments() {
-        return emptyList();
-    }
 }

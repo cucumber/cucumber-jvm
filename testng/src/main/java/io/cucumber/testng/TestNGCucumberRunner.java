@@ -2,9 +2,10 @@ package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -23,6 +24,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -30,9 +32,11 @@ import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -51,7 +55,7 @@ import static java.util.stream.Collectors.toList;
 public final class TestNGCucumberRunner {
 
     private final EventBus bus;
-    private final Predicate<CucumberPickle> filters;
+    private final Predicate<Pickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
@@ -63,7 +67,7 @@ public final class TestNGCucumberRunner {
      * @param clazz Which has the {@link CucumberOptions}
      *              and {@link org.testng.annotations.Test} annotations
      */
-    public TestNGCucumberRunner(Class clazz) {
+    public TestNGCucumberRunner(Class<?> clazz) {
         // Parse the options early to provide fast feedback about invalid options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromPropertiesFile())
@@ -78,29 +82,33 @@ public final class TestNGCucumberRunner {
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        runtimeOptions = new CucumberPropertiesParser()
+        this.runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
-        featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        FeatureParser parser = new FeatureParser(bus::generateId);
+        this.featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
+
         this.filters = new Filters(runtimeOptions);
+
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 
-    public void runScenario(Pickle pickle) throws Throwable {
+    public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        CucumberPickle cucumberPickle = pickle.getCucumberPickle();
+        Pickle cucumberPickle = pickle.getPickle();
         runner.runPickle(cucumberPickle);
         testCaseResultListener.finishExecutionUnit();
 
@@ -112,7 +120,7 @@ public final class TestNGCucumberRunner {
     }
 
     public void finish() {
-        bus.send(new TestRunFinished(bus.getInstant()));
+        emitTestRunFinished();
     }
 
     /**
@@ -125,7 +133,7 @@ public final class TestNGCucumberRunner {
                 .flatMap(feature -> feature.getPickles().stream()
                     .filter(filters)
                     .map(cucumberPickle -> new Object[]{
-                        new PickleWrapperImpl(new Pickle(cucumberPickle)),
+                        new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
                         new FeatureWrapperImpl(feature)}))
                 .collect(toList())
                 .toArray(new Object[0][0]);
@@ -134,15 +142,32 @@ public final class TestNGCucumberRunner {
         }
     }
 
-    private List<CucumberFeature> getFeatures() {
+    private List<Feature> getFeatures() {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
-        List<CucumberFeature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getInstant()));
-        for (CucumberFeature feature : features) {
+        List<Feature> features = featureSupplier.get();
+        emitTestRunStarted();
+        for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             bus.sendAll(feature.getMessages());
         }
         return features;
+    }
+
+
+    private void emitTestRunStarted() {
+        bus.send(new TestRunStarted(bus.getInstant()));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+            .build());
+    }
+
+    private void emitTestRunFinished() {
+        bus.send(new TestRunFinished(bus.getInstant()));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+            .build());
     }
 }

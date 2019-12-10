@@ -1,7 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberLocation;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.Located;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
@@ -22,7 +22,7 @@ abstract class FeatureOrigin {
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
 
-    private static FilePosition createFilePosition(CucumberLocation location) {
+    private static FilePosition createFilePosition(Location location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
 
@@ -53,7 +53,7 @@ abstract class FeatureOrigin {
 
     abstract TestSource nodeSource(Located node);
 
-    abstract UniqueId featureSegment(UniqueId parent, CucumberFeature feature);
+    abstract UniqueId featureSegment(UniqueId parent, Feature feature);
 
     UniqueId ruleSegment(UniqueId parent, Located rule){
         return parent.append(RULE_SEGMENT_TYPE, String.valueOf(rule.getLocation().getLine()));
@@ -90,7 +90,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
+        UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, source.getUri().toString());
         }
     }
@@ -114,7 +114,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
+        UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, source.getUri().toString());
         }
     }
@@ -138,7 +138,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
+        UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri().toString());
         }
     }

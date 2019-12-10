@@ -7,10 +7,10 @@ import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Argument;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
-import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.gherkin.DocStringArgument;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static io.cucumber.plugin.event.Status.FAILED;
@@ -61,7 +62,7 @@ import static org.mockito.Mockito.when;
 
 public class TestHelper {
 
-    private List<CucumberFeature> features = Collections.emptyList();
+    private List<Feature> features = Collections.emptyList();
     private Map<String, Result> stepsToResult = Collections.emptyMap();
     private Map<String, String> stepsToLocation = Collections.emptyMap();
     private List<SimpleEntry<String, Result>> hooks = Collections.emptyList();
@@ -213,13 +214,13 @@ public class TestHelper {
         EventBus bus = null;
 
         if (TimeServiceType.REAL_TIME.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(Clock.systemUTC());
+            bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         } else if (TimeServiceType.FIXED_INCREMENT_ON_STEP_START.equals(this.timeServiceType)) {
             final StepDurationTimeService timeService = new StepDurationTimeService(this.timeServiceIncrement);
-            bus = new TimeServiceEventBus(timeService);
+            bus = new TimeServiceEventBus(timeService, UUID::randomUUID);
             timeService.setEventPublisher(bus);
         } else if (TimeServiceType.FIXED_INCREMENT.equals(this.timeServiceType)) {
-            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
+            bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID);
         }
         return bus;
     }
@@ -230,14 +231,14 @@ public class TestHelper {
 
     public static final class TestHelperBackendSupplier extends TestBackendSupplier {
 
-        private final List<CucumberFeature> features;
+        private final List<Feature> features;
         private final Map<String, Result> stepsToResult;
         private final Map<String, String> stepsToLocation;
         private final List<SimpleEntry<String, Result>> hooks;
         private final List<String> hookLocations;
         private final List<Answer<Object>> hookActions;
 
-        TestHelperBackendSupplier(List<CucumberFeature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
+        TestHelperBackendSupplier(List<Feature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
             this.features = features;
             this.stepsToResult = stepsToResult;
             this.stepsToLocation = stepsToLocation;
@@ -246,7 +247,7 @@ public class TestHelper {
             this.hookActions = hookActions;
         }
 
-        public TestHelperBackendSupplier(List<CucumberFeature> features) {
+        public TestHelperBackendSupplier(List<Feature> features) {
             this(
                 features,
                 Collections.emptyMap(),
@@ -257,13 +258,13 @@ public class TestHelper {
             );
         }
 
-        private static void mockSteps(Glue glue, List<CucumberFeature> features,
+        private static void mockSteps(Glue glue, List<Feature> features,
                                       Map<String, Result> stepsToResult,
                                       final Map<String, String> stepsToLocation) {
-            List<CucumberStep> steps = new ArrayList<>();
-            for (CucumberFeature feature : features) {
-                for (CucumberPickle pickle : feature.getPickles()) {
-                    for (CucumberStep step : pickle.getSteps()) {
+            List<Step> steps = new ArrayList<>();
+            for (Feature feature : features) {
+                for (Pickle pickle : feature.getPickles()) {
+                    for (Step step : pickle.getSteps()) {
                         if (!containsStep(steps, step)) {
                             steps.add(step);
                         }
@@ -271,7 +272,7 @@ public class TestHelper {
                 }
             }
 
-            for (final CucumberStep step : steps) {
+            for (final Step step : steps) {
                 final Result stepResult = getResultWithDefaultPassed(stepsToResult, step.getText());
                 if (stepResult.getStatus().is(UNDEFINED)) {
                     continue;
@@ -320,8 +321,8 @@ public class TestHelper {
             return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, ZERO, null);
         }
 
-        private static boolean containsStep(List<CucumberStep> steps, CucumberStep step) {
-            for (CucumberStep definedSteps : steps) {
+        private static boolean containsStep(List<Step> steps, Step step) {
+            for (Step definedSteps : steps) {
                 if (definedSteps.getText().equals(step.getText())
                     && (definedSteps.getArgument() == null) == (step.getArgument() == null)) {
                     return true;
@@ -331,7 +332,7 @@ public class TestHelper {
             return false;
         }
 
-        private static Type[] mapArgumentToTypes(CucumberStep step) {
+        private static Type[] mapArgumentToTypes(Step step) {
             Type[] types = new Type[0];
             Argument argument = step.getArgument();
             if (argument == null) {
@@ -346,7 +347,7 @@ public class TestHelper {
 
         private static void mockHooks(Glue glue, final List<SimpleEntry<String, Result>> hooks,
                                       final List<String> hookLocations,
-                                      final List<Answer<Object>> hookActions) throws Throwable {
+                                      final List<Answer<Object>> hookActions) {
             List<HookDefinition> beforeHooks = new ArrayList<>();
             List<HookDefinition> afterHooks = new ArrayList<>();
             List<HookDefinition> beforeStepHooks = new ArrayList<>();
@@ -420,12 +421,8 @@ public class TestHelper {
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
-            try {
-                mockSteps(glue, features, stepsToResult, stepsToLocation);
-                mockHooks(glue, hooks, hookLocations, hookActions);
-            } catch (Throwable throwable) {
-                throw new RuntimeException(throwable);
-            }
+            mockSteps(glue, features, stepsToResult, stepsToLocation);
+            mockHooks(glue, hooks, hookLocations, hookActions);
         }
 
     }
@@ -436,11 +433,11 @@ public class TestHelper {
         private Builder() {
         }
 
-        public Builder withFeatures(CucumberFeature... features) {
+        public Builder withFeatures(Feature... features) {
             return withFeatures(Arrays.asList(features));
         }
 
-        public Builder withFeatures(List<CucumberFeature> features) {
+        public Builder withFeatures(List<Feature> features) {
             this.instance.features = features;
             return this;
         }

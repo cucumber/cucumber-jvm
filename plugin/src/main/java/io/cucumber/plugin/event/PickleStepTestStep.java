@@ -23,7 +23,7 @@ public interface PickleStepTestStep extends TestStep {
      *
      * @return the matched step
      */
-    CucumberStep getStep();
+    Step getStep();
 
     /**
      * Returns the arguments provided to the step definition.

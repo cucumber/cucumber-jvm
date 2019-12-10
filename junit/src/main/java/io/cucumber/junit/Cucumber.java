@@ -1,9 +1,10 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -39,10 +40,11 @@ import org.junit.runners.model.Statement;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -82,7 +84,7 @@ import static java.util.stream.Collectors.toList;
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private final List<ParentRunner<?>> children;
     private final EventBus bus;
-    private final List<CucumberFeature> features;
+    private final List<Feature> features;
     private final Plugins plugins;
 
     private boolean multiThreadingAssumed = false;
@@ -134,21 +136,23 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .setStrict(runtimeOptions.isStrict())
             .build(junitEnvironmentOptions);
 
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+
         // Parse the features early. Don't proceed when there are lexer errors
+        FeatureParser parser = new FeatureParser(bus::generateId);
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
-        Predicate<CucumberPickle> filters = new Filters(runtimeOptions);
+        Predicate<Pickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
             .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
             .filter(runner -> !runner.isEmpty())
@@ -197,29 +201,30 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
 
-            bus.send(new TestRunStarted(bus.getInstant()));
-            sendTestRunStartedMessage();
-            for (CucumberFeature feature : features) {
+            emitTestRunStarted();
+            for (Feature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
                 bus.sendAll(feature.getMessages());
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));
-            sendTestRunFinishedMessage();
+            emitTestRunFinished();
+        }
+
+        private void emitTestRunStarted() {
+            bus.send(new TestRunStarted(bus.getInstant()));
+            bus.send(Messages.Envelope.newBuilder()
+                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                    .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                .build());
+        }
+
+        private void emitTestRunFinished() {
+            bus.send(Messages.Envelope.newBuilder()
+                .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                    .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                .build());
         }
     }
 
-    private void sendTestRunStartedMessage() {
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(toTimestamp(bus.getInstant())))
-            .build());
-    }
-
-    private void sendTestRunFinishedMessage() {
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(toTimestamp(bus.getInstant())))
-            .build());
-    }
 }

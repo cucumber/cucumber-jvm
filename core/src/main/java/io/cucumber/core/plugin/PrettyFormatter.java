@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Argument;
@@ -24,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.lang.Math.max;
@@ -34,7 +34,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private static final String STEP_INDENT = "  ";
     private static final String STEP_SCENARIO_INDENT = "    ";
 
-    private final Map<String, Integer> commentStartIndex = new HashMap<>();
+    private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
     private final NiceAppendable out;
     private Formats formats;

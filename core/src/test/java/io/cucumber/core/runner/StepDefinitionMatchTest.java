@@ -3,16 +3,15 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberFeature;
-import io.cucumber.core.gherkin.CucumberStep;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.docstring.DocStringType;
-import io.cucumber.messages.Messages;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -33,36 +32,33 @@ class StepDefinitionMatchTest {
 
     @Test
     void executes_a_step() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         stepDefinitionMatch.runStep(null);
     }
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -76,20 +72,19 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments_with_data_table() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n" +
             "       | A | B | \n" +
             "       | C | D | \n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -107,20 +102,19 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n" +
             "       | A | B | \n" +
             "       | C | D | \n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -138,17 +132,16 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_more_parameters_and_no_arguments() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have cukes in my belly\n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -161,13 +154,13 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_register_type_in_configuration_exception_when_there_is_no_data_table_type_defined() {
-        CucumberFeature feature = TestFeatureParser.parse("file:test.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have a data table\n" +
             "       | A | \n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
             "I have a data table",
@@ -175,10 +168,7 @@ class StepDefinitionMatchTest {
         );
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
-            stepMatchArguments,
             arguments,
             stepDefinition,
             URI.create("file:path/to.feature"),
@@ -202,18 +192,16 @@ class StepDefinitionMatchTest {
             (String s) -> null
         ));
 
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have some cukes in my belly\n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -225,7 +213,7 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_convert_exception_for_singleton_table_dimension_mismatch() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have some cukes in my belly\n" +
@@ -236,13 +224,11 @@ class StepDefinitionMatchTest {
 
         stepTypeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new));
 
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -254,7 +240,7 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_convert_exception_for_docstring() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have some cukes in my belly\n" +
@@ -267,13 +253,11 @@ class StepDefinitionMatchTest {
             throw new IllegalArgumentException(content);
         }));
 
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = coreStepDefinition.getStepMatchArguments(step);
-
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(stepMatchArguments, arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -285,13 +269,13 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_invoke_argument_conversion_when_argument_could_not_be_got() {
-        CucumberFeature feature = TestFeatureParser.parse("file:test.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have a data table\n" +
             "       | A | \n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
             "I have a data table",
@@ -300,10 +284,7 @@ class StepDefinitionMatchTest {
         List<Argument> arguments = Collections.singletonList(() -> {
             throw new CucumberBackendException("This exception is expected", new IllegalAccessException());
         });
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = Collections.singletonList(Messages.StepMatchArgument.newBuilder().build());
-
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
-            stepMatchArguments,
             arguments,
             stepDefinition,
             URI.create("file:path/to.feature"),
@@ -320,14 +301,14 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_invoke_step_when_execution_failed_due_to_bad_methods() {
-        CucumberFeature feature = TestFeatureParser.parse("file:test.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have a data table\n" +
             "       | A | \n" +
             "       | B | \n"
         );
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
             "I have a data table",
@@ -340,13 +321,7 @@ class StepDefinitionMatchTest {
             () -> "mocked table cell",
             () -> "mocked table cell"
         );
-        Iterable<Messages.StepMatchArgument> stepMatchArguments = asList(
-            Messages.StepMatchArgument.newBuilder().build(),
-            Messages.StepMatchArgument.newBuilder().build()
-        );
-
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
-            stepMatchArguments,
             arguments,
             stepDefinition,
             URI.create("file:path/to.feature"),

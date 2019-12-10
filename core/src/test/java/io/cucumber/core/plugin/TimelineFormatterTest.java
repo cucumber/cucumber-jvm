@@ -4,7 +4,7 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonDeserializer;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +49,7 @@ class TimelineFormatterTest {
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
-    private final CucumberFeature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
+    private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
         "Feature: Failing Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -65,7 +65,7 @@ class TimelineFormatterTest {
         "    When step_02\n" +
         "    Then step_03");
 
-    private final CucumberFeature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
+    private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
         "Feature: Successful Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -77,7 +77,7 @@ class TimelineFormatterTest {
         "    When step_20\n" +
         "    Then step_30");
 
-    private final CucumberFeature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
+    private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
         "Feature: Pending Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +

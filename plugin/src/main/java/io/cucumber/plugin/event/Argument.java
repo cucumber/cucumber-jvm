@@ -12,9 +12,14 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface Argument {
+
+    String getParameterTypeName();
+
     String getValue();
 
     int getStart();
 
     int getEnd();
+
+    Group getGroup();
 }

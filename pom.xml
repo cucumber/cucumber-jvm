@@ -44,6 +44,7 @@
         <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
+        <messages.version>7.0.1-SNAPSHOT</messages.version>
         <gherkin5.version>5.2.0</gherkin5.version>
         <gherkin8.version>8.2.2-SNAPSHOT</gherkin8.version>
 
@@ -80,6 +81,11 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>messages</artifactId>
+                <version>${messages.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-expressions</artifactId>
                 <version>${cucumber-expressions.version}</version>
             </dependency>
@@ -101,11 +107,6 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-protobuf-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -225,7 +226,6 @@
         <module>openejb</module>
         <module>picocontainer</module>
         <module>plugin</module>
-        <module>protobuf-plugin</module>
         <module>spring</module>
         <module>testng</module>
         <module>weld</module>

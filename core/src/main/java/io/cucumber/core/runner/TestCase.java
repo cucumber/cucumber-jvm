@@ -1,8 +1,10 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.CucumberPickle;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -17,26 +19,26 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static io.cucumber.core.messages.MessageHelpers.toDuration;
-import static io.cucumber.core.messages.MessageHelpers.toStatus;
-import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
+import static io.cucumber.core.runner.TestResultStatus.from;
+import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static java.util.stream.Collectors.toList;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
-    private final CucumberPickle pickle;
+    private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
-    //TODO: Primitive obsession. Lets use UUIDs here.
-    private final String id = UUID.randomUUID().toString();
+    private final UUID id;
 
-    TestCase(List<PickleStepTestStep> testSteps,
+    TestCase(UUID id, List<PickleStepTestStep> testSteps,
              List<HookTestStep> beforeHooks,
              List<HookTestStep> afterHooks,
-             CucumberPickle pickle,
+             Pickle pickle,
              boolean dryRun) {
+        this.id = id;
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
@@ -46,33 +48,31 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
-        sendTestCaseMessage(bus);
+        emitTestCaseMessage(bus);
 
         Instant start = bus.getInstant();
-        bus.send(new TestCaseStarted(start, this));
-        String testCaseStartedId = UUID.randomUUID().toString();
-        sendTestCaseStartedMessage(bus, start, testCaseStartedId);
+        UUID executionId = bus.generateId();
+        emitTestCaseStarted(bus, start, executionId);
 
         TestCaseState state = new TestCaseState(bus, this);
 
         for (HookTestStep before : beforeHooks) {
-            skipNextStep |= before.run(this, bus, state, dryRun, testCaseStartedId);
+            skipNextStep |= before.run(this, bus, state, dryRun, executionId);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            skipNextStep |= step.run(this, bus, state, skipNextStep, testCaseStartedId);
+            skipNextStep |= step.run(this, bus, state, skipNextStep, executionId);
         }
 
         for (HookTestStep after : afterHooks) {
-            after.run(this, bus, state, dryRun, testCaseStartedId);
+            after.run(this, bus, state, dryRun, executionId);
         }
 
         Instant stop = bus.getInstant();
         Duration duration = Duration.between(start, stop);
         Status status = Status.valueOf(state.getStatus().name());
         Result result = new Result(status, duration, state.getError());
-        bus.send(new TestCaseFinished(stop, this, result));
-        sendTestCaseFinishedMessage(bus, testCaseStartedId, stop, duration, status, result);
+        emitTestCaseFinished(bus, executionId, stop, duration, status, result);
     }
 
     @Override
@@ -103,12 +103,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
-    public String getPickleId() {
-        return pickle.getId();
-    }
-
-    @Override
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -131,55 +126,87 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return pickle.getTags();
     }
 
-    private void sendTestCaseMessage(EventBus bus) {
-        bus.send(Messages.Envelope.newBuilder()
+    private void emitTestCaseMessage(EventBus bus) {
+        bus.send(Envelope.newBuilder()
             .setTestCase(Messages.TestCase.newBuilder()
-                .setId(getId())
-                .setPickleId(getPickleId())
+                .setId(id.toString())
+                .setPickleId(pickle.getId())
                 .addAllTestSteps(getTestSteps()
                     .stream()
-                    .map(testStep -> {
-                            Messages.TestCase.TestStep.Builder testStepBuilder = Messages.TestCase.TestStep
-                                .newBuilder()
-                                .setId(testStep.getId());
-
-                            if (testStep instanceof HookTestStep) {
-                                testStepBuilder.setHookId(testStep.getId());
-                            } else if (testStep instanceof PickleStepTestStep) {
-                                testStepBuilder
-                                    .setPickleStepId(testStep.getPickleStepId())
-                                    .addAllStepMatchArguments(testStep.getStepMatchArguments());
-                            }
-                            return testStepBuilder.build();
-                        }
-                    )
-                    .collect(Collectors.toList())
+                    .map(this::createTestStep)
+                    .collect(toList())
                 )
             ).build()
         );
     }
 
-    private void sendTestCaseStartedMessage(EventBus bus, Instant start, String testCaseStartedId) {
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
-                .setId(testCaseStartedId)
-                .setTestCaseId(getId())
-                .setTimestamp(toTimestamp(start))).build());
+    private Messages.TestCase.TestStep createTestStep(TestStep testStep) {
+        Messages.TestCase.TestStep.Builder testStepBuilder = Messages.TestCase.TestStep
+            .newBuilder()
+            .setId(testStep.getId().toString());
+
+        if (testStep instanceof HookTestStep) {
+            //TODO: Is this right?
+            testStepBuilder.setHookId(testStep.getId().toString());
+        } else if (testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
+            testStepBuilder
+                .setPickleStepId(pickleStep.getStep().getId())
+                .addAllStepMatchArguments(getStepMatchArguments(pickleStep));
+        }
+
+        return testStepBuilder.build();
     }
 
-    private void sendTestCaseFinishedMessage(EventBus bus, String testCaseStartedId, Instant stop, Duration duration, Status status, Result result) {
+    public Iterable<Messages.StepMatchArgument> getStepMatchArguments(PickleStepTestStep pickleStep) {
+        return pickleStep.getDefinitionArgument().stream()
+            .map(arg -> Messages.StepMatchArgument.newBuilder()
+                .setParameterTypeName(arg.getParameterTypeName())
+                .setGroup(makeMessageGroup(arg.getGroup()))
+                .build()
+            ).collect(toList());
+    }
+
+    private static Messages.StepMatchArgument.Group makeMessageGroup(Group group) {
+        Messages.StepMatchArgument.Group.Builder builder = Messages.StepMatchArgument.Group.newBuilder();
+        if (group == null) {
+            return builder.build();
+        }
+
+        if (group.getValue() != null) {
+            builder.setValue(group.getValue());
+        }
+        return builder
+            .setStart(group.getStart())
+            .addAllChildren(group.getChildren().stream()
+                .map(TestCase::makeMessageGroup)
+                .collect(toList()))
+            .build();
+    }
+
+    private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
+        bus.send(new TestCaseStarted(start, this));
+        bus.send(Envelope.newBuilder()
+            .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
+                .setId(executionId.toString())
+                .setTestCaseId(id.toString())
+                .setTimestamp(javaInstantToTimestamp(start))).build());
+    }
+
+    private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {
+        bus.send(new TestCaseFinished(stop, this, result));
         Messages.TestResult.Builder testResultBuilder = Messages.TestResult.newBuilder()
-            .setStatus(toStatus(status))
-            .setDuration(toDuration(duration));
+            .setStatus(from(status))
+            .setDuration(javaDurationToDuration(duration));
 
         if (result.getError() != null) {
             testResultBuilder.setMessage(toString(result.getError()));
         }
 
-        bus.send(Messages.Envelope.newBuilder()
+        bus.send(Envelope.newBuilder()
             .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
-                .setTestCaseStartedId(testCaseStartedId)
-                .setTimestamp(toTimestamp(stop))
+                .setTestCaseStartedId(executionId.toString())
+                .setTimestamp(javaInstantToTimestamp(stop))
                 .setTestResult(testResultBuilder
                 )
             ).build());

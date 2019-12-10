@@ -1,7 +1,8 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberFeature;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -42,8 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
-import static io.cucumber.core.feature.FeatureParser.parseResource;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -61,6 +62,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private int exampleNumber;
     private Instant started;
     private final Map<URI, String> featuresNames = new HashMap<>();
+    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {
@@ -104,8 +106,8 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        CucumberFeature cucumberFeature = parseResource(new TestSourceReadResource(event));
-        featuresNames.put(cucumberFeature.getUri(), cucumberFeature.getName());
+        Feature feature = parser.parseResource(new TestSourceReadResource(event));
+        featuresNames.put(feature.getUri(), feature.getName());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {

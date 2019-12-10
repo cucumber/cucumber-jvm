@@ -1,7 +1,8 @@
 package io.cucumber.plugin.event;
 
-import io.cucumber.messages.Messages;
 import org.apiguardian.api.API;
+
+import java.util.UUID;
 
 /**
  * A test step can either represent the execution of a hook
@@ -21,9 +22,6 @@ public interface TestStep {
      */
     String getCodeLocation();
 
-    String getId();
+    UUID getId();
 
-    String getPickleStepId();
-
-    Iterable<Messages.StepMatchArgument> getStepMatchArguments();
 }

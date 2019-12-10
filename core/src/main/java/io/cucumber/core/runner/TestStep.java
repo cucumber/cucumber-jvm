@@ -14,9 +14,9 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static io.cucumber.core.messages.MessageHelpers.toDuration;
-import static io.cucumber.core.messages.MessageHelpers.toStatus;
-import static io.cucumber.core.messages.MessageHelpers.toTimestamp;
+import static io.cucumber.core.runner.TestResultStatus.from;
+import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
@@ -32,12 +32,16 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     }
 
     private final StepDefinitionMatch stepDefinitionMatch;
-    private final String id = UUID.randomUUID().toString();
-    private final String pickleStepId;
+    private final UUID id;
 
-    TestStep(String pickleStepId, StepDefinitionMatch stepDefinitionMatch) {
-        this.pickleStepId = pickleStepId;
+    TestStep(UUID id, StepDefinitionMatch stepDefinitionMatch) {
+        this.id = id;
         this.stepDefinitionMatch = stepDefinitionMatch;
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
     }
 
     @Override
@@ -45,26 +49,11 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getPickleStepId() {
-        return pickleStepId;
-    }
-
-    @Override
-    public Iterable<Messages.StepMatchArgument> getStepMatchArguments() {
-        return stepDefinitionMatch.getStepMatchArguments();
-    }
-
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, String testCaseStartedId) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID textExecutionId) {
         Instant startTime = bus.getInstant();
 
         bus.send(new TestStepStarted(startTime, testCase, this));
-        sendTestStepStarted(bus, testCaseStartedId, startTime);
+        sendTestStepStarted(bus, textExecutionId, startTime);
 
         Status status;
         Throwable error = null;
@@ -80,29 +69,29 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         state.add(result);
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
-        sendTestStepFinished(bus, testCaseStartedId, stopTime, duration, result);
+        sendTestStepFinished(bus, textExecutionId, stopTime, duration, result);
 
         return !result.getStatus().is(Status.PASSED);
     }
 
-    private void sendTestStepStarted(EventBus bus, String testCaseStartedId, Instant startTime) {
+    private void sendTestStepStarted(EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepStarted(Messages.TestStepStarted.newBuilder()
-                .setTestCaseStartedId(testCaseStartedId)
-                .setTestStepId(getId())
-                .setTimestamp(toTimestamp(startTime))
+                .setTestCaseStartedId(textExecutionId.toString())
+                .setTestStepId(id.toString())
+                .setTimestamp(javaInstantToTimestamp(startTime))
             ).build());
     }
 
-    private void sendTestStepFinished(EventBus bus, String testCaseStartedId, Instant stopTime, Duration duration, Result result) {
+    private void sendTestStepFinished(EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepFinished(Messages.TestStepFinished.newBuilder()
-                .setTestCaseStartedId(testCaseStartedId)
-                .setTestStepId(getId())
-                .setTimestamp(toTimestamp(stopTime))
+                .setTestCaseStartedId(textExecutionId.toString())
+                .setTestStepId(id.toString())
+                .setTimestamp(javaInstantToTimestamp(stopTime))
                 .setTestResult(Messages.TestResult.newBuilder()
-                    .setStatus(toStatus(result.getStatus()))
-                    .setDuration(toDuration(duration))
+                    .setStatus(from(result.getStatus()))
+                    .setDuration(javaDurationToDuration(duration))
                 )
             ).build());
     }

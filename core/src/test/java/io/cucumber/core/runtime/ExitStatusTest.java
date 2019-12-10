@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.UUID;
 
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +46,7 @@ class ExitStatusTest {
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(runtimeArgs)
             .build();
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         exitStatus = new Runtime.ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
     }

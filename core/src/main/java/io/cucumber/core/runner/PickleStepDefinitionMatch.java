@@ -6,13 +6,12 @@ import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.docstring.CucumberDocStringException;
-import io.cucumber.messages.Messages.StepMatchArgument;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -23,12 +22,13 @@ import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFramesAndAppendStepLocation;
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
+
     private final StepDefinition stepDefinition;
     private final URI uri;
-    private final CucumberStep step;
+    private final Step step;
 
-    PickleStepDefinitionMatch(Iterable<StepMatchArgument> stepMatchArguments, List<Argument> arguments, StepDefinition stepDefinition, URI uri, CucumberStep step) {
-        super(stepMatchArguments, arguments, stepDefinition.getLocation());
+    PickleStepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, URI uri, Step step) {
+        super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;

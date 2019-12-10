@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @API(status = API.Status.STABLE)
 public interface TestCase {
@@ -31,7 +32,5 @@ public interface TestCase {
 
     URI getUri();
 
-    String getPickleId();
-
-    String getId();
+    UUID getId();
 }
