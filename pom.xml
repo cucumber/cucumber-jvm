@@ -44,9 +44,9 @@
         <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
-        <messages.version>7.0.1-SNAPSHOT</messages.version>
+        <messages.version>8.0.0</messages.version>
         <gherkin5.version>5.2.0</gherkin5.version>
-        <gherkin8.version>8.2.2-SNAPSHOT</gherkin8.version>
+        <gherkin8.version>9.0.0</gherkin8.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
@@ -385,6 +385,7 @@
                                         <item>.* io.cucumber.java8.DefaultParameterTransformerBody.*</item>
                                         <item>.* io.cucumber.java8.LambdaGlue::DefaultParameterTransformer.*</item>
                                         <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableEntryTransformer.*</item>
+                                        <item>.* io.cucumber.testng.TestNGCucumberRunner.*</item>
                                     </exclude>
                                 </elements>
                             </revapi.filter>

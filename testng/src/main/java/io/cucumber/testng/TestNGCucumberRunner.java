@@ -6,6 +6,8 @@ import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -54,6 +56,8 @@ import static java.util.stream.Collectors.toList;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(TestNGCucumberRunner.class);
+
     private final EventBus bus;
     private final Predicate<Pickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
@@ -88,6 +92,13 @@ public final class TestNGCucumberRunner {
             .build(environmentOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+
+        if (!runtimeOptions.isStrict()) {
+            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
+                "This default will change to --strict and --non-strict will be removed.\n" +
+                "You can use --strict or @CucumberOptions(strict = true) to suppress this warning"
+            );
+        }
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeatureParser parser = new FeatureParser(bus::generateId);

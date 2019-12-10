@@ -3,9 +3,12 @@ package io.cucumber.core.options;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +38,24 @@ import static java.util.stream.Collectors.toList;
 
 public final class CucumberPropertiesParser {
 
+    private static final Logger log = LoggerFactory.getLogger(CucumberPropertiesParser.class);
+    private static final List<String> COMMANDLINE_OPTION_ALTERNATIVES = Arrays.asList(
+        ANSI_COLORS_DISABLED_PROPERTY_NAME,
+        EXECUTION_DRY_RUN_PROPERTY_NAME,
+        EXECUTION_LIMIT_PROPERTY_NAME,
+        EXECUTION_ORDER_PROPERTY_NAME,
+        EXECUTION_STRICT_PROPERTY_NAME,
+        WIP_PROPERTY_NAME,
+        FEATURES_PROPERTY_NAME,
+        FILTER_NAME_PROPERTY_NAME,
+        FILTER_TAGS_PROPERTY_NAME,
+        GLUE_PROPERTY_NAME,
+        OBJECT_FACTORY_PROPERTY_NAME,
+        PLUGIN_PROPERTY_NAME,
+        SNIPPET_TYPE_PROPERTY_NAME
+    );
+
+
     private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
         return combined -> stream(combined.split(","))
             .map(String::trim)
@@ -56,6 +77,10 @@ public final class CucumberPropertiesParser {
         String cucumberOptions = properties.get(OPTIONS_PROPERTY_NAME);
         if (cucumberOptions != null) {
             builder = parseCucumberOptions(cucumberOptions);
+            log.warn(() ->
+                "Passing commandline options via the property `" + OPTIONS_PROPERTY_NAME + "` has been deprecated" +
+                    "in favour of explicitly using property names.\nPlease use these instead: " + COMMANDLINE_OPTION_ALTERNATIVES
+            );
         } else {
             builder = new RuntimeOptionsBuilder();
         }
