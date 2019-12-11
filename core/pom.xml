@@ -34,7 +34,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
-            <version>${gherkin5.version}</version>
+            <version>${gherkinlegacy.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
