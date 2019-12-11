@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -352,46 +353,22 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <oldVersion>4.8.0</oldVersion>
+                        <newVersion>5.0.0</newVersion>
                         <analysisConfiguration>
-                            <revapi.semver.ignore>
-                                <enabled>true</enabled>
-                                <versionIncreaseAllows>
-                                    <major>breaking</major>
-                                    <minor>nonBreaking</minor>
-                                    <patch>equivalent</patch>
-                                </versionIncreaseAllows>
-                            </revapi.semver.ignore>
-                            <revapi.filter>
-                                <elements>
-                                    <exclude>
-                                        <!--The logging dependencies for Spring are provided. This causes them to
-                                        be missing in the dependency hierarchy. A false positive. -->
-                                        <item>class org\.springframework\..*</item>
-                                        <item>.* io\.cucumber\.core\.runner\.AmbiguousStepDefinitionsException.*</item>
-                                        <item>.* io\.cucumber\.core\.feature\.CucumberFeature\.CucumberFeatureUriComparator.*</item>
-                                        <item>.* io\.cucumber\.junit\..*</item>
-                                        <item>.* io\.cucumber\.junit\..*</item>
-                                        <item>.* io.cucumber.core.runtime.*</item>
-                                        <item>.* io.cucumber.core.feature.*</item>
-                                        <item>.* io.cucumber.core.logging.*</item>
-                                        <item>.* io.cucumber.core.io.*</item>
-                                        <item>.* io.cucumber.core.reflection.*</item>
-                                        <item>.* io.cucumber.core.resource.*</item>
-                                        <item>.* io.cucumber.plugin.event.EmbedEvent::getMediaType().*</item>
-                                        <item>.* io.cucumber.java8.DefaultDataTableEntryTransformerBody.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>
-                                        <item>.* io.cucumber.java8.DefaultDataTableCellTransformerBody.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>
-                                        <item>.* io.cucumber.java8.DefaultParameterTransformerBody.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultParameterTransformer.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableEntryTransformer.*</item>
-                                        <item>.* io.cucumber.testng.TestNGCucumberRunner.*</item>
-                                    </exclude>
-                                </elements>
-                            </revapi.filter>
+                            <revapi.ignore>
+                                <!-- We're exposing cucumber-messages in our public API - allow that -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                </item>
+                            </revapi.ignore>
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
+
                 <!--  Code coverage reporting -->
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>
