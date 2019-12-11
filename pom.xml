@@ -357,7 +357,14 @@
                         <newVersion>5.0.0</newVersion>
                         <analysisConfiguration>
                             <revapi.ignore>
-                                <!-- We're exposing cucumber-messages in our public API - allow that -->
+                                <!--
+                                We're exposing io.cucumber.messages.Messages.Envelope (an external class)
+                                io.cucumber.core.gherkin.Feature - allow that.
+
+                                The io.cucumber.core.gherkin.Feature interface is not public (it is not
+                                marked with org.apiguardian.api.API), so it's OK for this class to expose
+                                it.
+                                -->
                                 <item>
                                     <code>java.class.externalClassExposedInAPI</code>
                                 </item>
