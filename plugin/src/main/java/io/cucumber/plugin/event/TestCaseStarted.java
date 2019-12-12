@@ -9,7 +9,6 @@ import java.util.UUID;
 @API(status = API.Status.STABLE)
 public final class TestCaseStarted extends TestCaseEvent {
     private final TestCase testCase;
-    private final String id = UUID.randomUUID().toString();
 
     public TestCaseStarted(Instant timeInstant, TestCase testCase) {
       super(timeInstant, testCase);
@@ -19,9 +18,5 @@ public final class TestCaseStarted extends TestCaseEvent {
     @Override
     public TestCase getTestCase() {
         return testCase;
-    }
-
-    public String getId() {
-        return id;
     }
 }
