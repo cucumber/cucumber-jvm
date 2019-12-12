@@ -1,1 +1,1 @@
-io.cucumber.core.gherkinmessages.GherkinMessagesFeatureParser
+io.cucumber.core.gherkin.messages.GherkinMessagesFeatureParser

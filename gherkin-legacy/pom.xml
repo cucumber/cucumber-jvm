@@ -10,7 +10,7 @@
     </parent>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.core.gherkinlegacy</project.Automatic-Module-Name>
+        <project.Automatic-Module-Name>io.cucumber.core.gherkin.legacy</project.Automatic-Module-Name>
     </properties>
 
     <artifactId>cucumber-gherkin-legacy</artifactId>
