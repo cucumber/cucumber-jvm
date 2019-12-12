@@ -4,7 +4,7 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonDeserializer;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TimelineFormatterTest {
 
-    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator.comparing(o -> o.id);
+    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator.comparing(o -> o.scenario);
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/core/plugin/timeline";
     private static final String REPORT_JS = "report.js";
@@ -49,7 +49,7 @@ class TimelineFormatterTest {
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
-    private final CucumberFeature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
+    private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
         "Feature: Failing Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
@@ -65,25 +65,25 @@ class TimelineFormatterTest {
         "    When step_02\n" +
         "    Then step_03");
 
-    private final CucumberFeature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
+    private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
         "Feature: Successful Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
         "    When bg_2\n" +
         "    Then bg_3\n" +
         "  @TagB @TagC\n" +
-        "  Scenario: Scenario 1\n" +
+        "  Scenario: Scenario 3\n" +
         "    Given step_10\n" +
         "    When step_20\n" +
         "    Then step_30");
 
-    private final CucumberFeature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
+    private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
         "Feature: Pending Feature\n" +
         "  Background:\n" +
         "    Given bg_1\n" +
         "    When bg_2\n" +
         "    Then bg_3\n" +
-        "  Scenario: Scenario 1\n" +
+        "  Scenario: Scenario 4\n" +
         "    Given step_10\n" +
         "    When step_20\n" +
         "    Then step_50");
@@ -194,8 +194,8 @@ class TimelineFormatterTest {
     private TimelineFormatter.TestData[] getExpectedTestData(Long groupId) {
         String expectedJson = ("[\n" +
             "  {\n" +
-            "    \"id\": \"failing-feature;scenario-1\",\n" +
             "    \"feature\": \"Failing Feature\",\n" +
+            "    \"scenario\": \"Scenario 1\",\n" +
             "    \"start\": 0,\n" +
             "    \"end\": 6000,\n" +
             "    \"group\": groupId,\n" +
@@ -204,8 +204,8 @@ class TimelineFormatterTest {
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
-            "    \"id\": \"failing-feature;scenario-2\",\n" +
             "    \"feature\": \"Failing Feature\",\n" +
+            "    \"scenario\": \"Scenario 2\",\n" +
             "    \"start\": 6000,\n" +
             "    \"end\": 12000,\n" +
             "    \"group\": groupId,\n" +
@@ -214,7 +214,17 @@ class TimelineFormatterTest {
             "    \"className\": \"failed\"\n" +
             "  },\n" +
             "  {\n" +
-            "    \"id\": \"pending-feature;scenario-1\",\n" +
+            "    \"feature\": \"Successful Feature\",\n" +
+            "    \"scenario\": \"Scenario 3\",\n" +
+            "    \"start\": 18000,\n" +
+            "    \"end\": 24000,\n" +
+            "    \"group\": groupId,\n" +
+            "    \"content\": \"\",\n" +
+            "    \"tags\": \"@tagb,@tagc,\",\n" +
+            "    \"className\": \"passed\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"scenario\": \"Scenario 4\",\n" +
             "    \"feature\": \"Pending Feature\",\n" +
             "    \"start\": 12000,\n" +
             "    \"end\": 18000,\n" +
@@ -222,16 +232,6 @@ class TimelineFormatterTest {
             "    \"content\": \"\",\n" +
             "    \"tags\": \"\",\n" +
             "    \"className\": \"undefined\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"id\": \"successful-feature;scenario-1\",\n" +
-            "    \"feature\": \"Successful Feature\",\n" +
-            "    \"start\": 18000,\n" +
-            "    \"end\": 24000,\n" +
-            "    \"group\": groupId,\n" +
-            "    \"content\": \"\",\n" +
-            "    \"tags\": \"@tagb,@tagc,\",\n" +
-            "    \"className\": \"passed\"\n" +
             "  }\n" +
             "]").replaceAll("groupId", groupId.toString());
 
@@ -290,7 +290,6 @@ class TimelineFormatterTest {
             final int idx = i;
 
             assertAll("Checking TimelineFormatter.TestData",
-                () -> assertThat(String.format("id on item %s, was not as expected", idx), actual.id, is(equalTo(expected.id))),
                 () -> assertThat(String.format("feature on item %s, was not as expected", idx), actual.feature, is(equalTo(expected.feature))),
                 () -> assertThat(String.format("className on item %s, was not as expected", idx), actual.className, is(equalTo(expected.className))),
                 () -> assertThat(String.format("content on item %s, was not as expected", idx), actual.content, is(equalTo(expected.content))),

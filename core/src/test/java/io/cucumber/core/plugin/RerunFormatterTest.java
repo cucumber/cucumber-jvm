@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
@@ -19,13 +19,13 @@ import static org.hamcrest.core.Is.is;
 
 class RerunFormatterTest {
 
-    private final List<CucumberFeature> features = new ArrayList<>();
+    private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
 
     @Test
     void should_leave_report_empty_when_exit_code_is_zero() {
-        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: passed scenario\n" +
             "    Given passed step\n" +
@@ -45,7 +45,7 @@ class RerunFormatterTest {
 
     @Test
     void should_put_data_in_report_when_exit_code_is_non_zero() {
-        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: failed scenario\n" +
             "    Given failed step\n" +
@@ -65,7 +65,7 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_scenario_step_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -83,7 +83,7 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_background_step_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: the background\n" +
             "    Given background step\n" +
@@ -102,7 +102,7 @@ class RerunFormatterTest {
 
     @Test
     void should_use_example_row_location_when_scenario_outline_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: scenario name\n" +
             "    When executing <row> row\n" +
@@ -123,7 +123,7 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_before_hook_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -142,7 +142,7 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_after_hook_fails() {
-        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n" +
@@ -161,7 +161,7 @@ class RerunFormatterTest {
 
     @Test
     void should_one_entry_for_feature_with_many_failing_scenarios() {
-        CucumberFeature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario 1 name\n" +
             "    When first step\n" +
@@ -182,12 +182,12 @@ class RerunFormatterTest {
 
     @Test
     void should_one_entry_for_each_failing_feature() {
-        CucumberFeature feature1 = TestFeatureParser.parse("classpath:path/first.feature", "" +
+        Feature feature1 = TestFeatureParser.parse("classpath:path/first.feature", "" +
             "Feature: feature 1 name\n" +
             "  Scenario: scenario 1 name\n" +
             "    When first step\n" +
             "    Then second step\n");
-        CucumberFeature feature2 = TestFeatureParser.parse("classpath:path/second.feature", "" +
+        Feature feature2 = TestFeatureParser.parse("classpath:path/second.feature", "" +
             "Feature: feature 2 name\n" +
             "  Scenario: scenario 2 name\n" +
             "    When third step\n" +

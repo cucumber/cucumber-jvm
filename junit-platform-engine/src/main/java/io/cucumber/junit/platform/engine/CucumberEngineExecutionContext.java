@@ -1,8 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
@@ -24,6 +24,7 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 class CucumberEngineExecutionContext implements EngineExecutionContext {
@@ -40,7 +41,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         if (options.isParallelExecutionEnabled()) {
@@ -56,12 +57,12 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         bus.send(new TestRunStarted(bus.getInstant()));
     }
 
-    void beforeFeature(CucumberFeature feature) {
+    void beforeFeature(Feature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
         bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
     }
 
-    void runTestCase(CucumberPickle pickle) {
+    void runTestCase(Pickle pickle) {
         Runner runner = getRunner();
         try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus())) {
             logger.debug(() -> "Executing test case " + pickle.getName());

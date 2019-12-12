@@ -23,7 +23,7 @@ public interface PickleStepTestStep extends TestStep {
      *
      * @return the matched step
      */
-    CucumberStep getStep();
+    Step getStep();
 
     /**
      * Returns the arguments provided to the step definition.
@@ -63,6 +63,8 @@ public interface PickleStepTestStep extends TestStep {
      * The full text of the Gherkin step.
      *
      * @return the step text
+     * @deprecated use {@code #getStep()}
      */
+    @Deprecated
     String getStepText();
 }

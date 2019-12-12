@@ -3,8 +3,8 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
@@ -17,6 +17,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -25,18 +26,18 @@ import static org.mockito.Mockito.when;
 class HookOrderTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("I have 4 cukes in my belly");
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"
     );
-    private final CucumberPickle pickle = feature.getPickles().get(0);
+    private final Pickle pickle = feature.getPickles().get(0);
 
     @Test
-    void before_hooks_execute_in_order() throws Throwable {
+    void before_hooks_execute_in_order() {
         final List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
@@ -63,7 +64,7 @@ class HookOrderTest {
     }
 
     @Test
-    void before_step_hooks_execute_in_order() throws Throwable {
+    void before_step_hooks_execute_in_order() {
         final List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
@@ -90,7 +91,7 @@ class HookOrderTest {
     }
 
     @Test
-    void after_hooks_execute_in_reverse_order() throws Throwable {
+    void after_hooks_execute_in_reverse_order() {
         final List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
@@ -117,7 +118,7 @@ class HookOrderTest {
     }
 
     @Test
-    void after_step_hooks_execute_in_reverse_order() throws Throwable {
+    void after_step_hooks_execute_in_reverse_order() {
         final List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
@@ -144,7 +145,7 @@ class HookOrderTest {
     }
 
     @Test
-    void hooks_order_across_many_backends() throws Throwable {
+    void hooks_order_across_many_backends() {
         final List<HookDefinition> backend1Hooks = mockHooks(3, Integer.MAX_VALUE, 1);
         final List<HookDefinition> backend2Hooks = mockHooks(2, Integer.MAX_VALUE, 4);
 

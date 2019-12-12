@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.UUID;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
 import static java.time.Duration.ZERO;
@@ -93,7 +94,7 @@ import static org.mockito.Mockito.mock;
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
-            EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO));
+            EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID);
             plugin.setEventPublisher(bus);
             Result result = new Result(Status.PASSED, ZERO, null);
             TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);

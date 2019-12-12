@@ -1,44 +1,46 @@
 package io.cucumber.core.feature;
 
-import gherkin.AstBuilder;
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
-import gherkin.Parser;
-import gherkin.ParserException;
-import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
-import gherkin.pickles.Compiler;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.resource.Resource;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ServiceLoader;
+import java.util.UUID;
+import java.util.function.Supplier;
 
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
-public class FeatureParser {
-    private FeatureParser() {
+public final class FeatureParser {
 
+    private final Supplier<UUID> idGenerator;
+
+    public FeatureParser(Supplier<UUID> idGenerator) {
+        this.idGenerator = idGenerator;
     }
 
-    public static CucumberFeature parseResource(Resource resource) {
+
+    public Feature parseResource(Resource resource) {
         requireNonNull(resource);
         URI uri = resource.getUri();
         String source = read(resource);
-
-        try {
-            Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-            TokenMatcher matcher = new TokenMatcher();
-            GherkinDocument gherkinDocument = parser.parse(source, matcher);
-            GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-            List<CucumberPickle> pickles = compilePickles(gherkinDocument, dialectProvider, resource);
-            return new CucumberFeature(gherkinDocument, uri, source, pickles);
-        } catch (ParserException e) {
-            throw new CucumberException("Failed to parse resource at: " + uri.toString(), e);
+        ServiceLoader<io.cucumber.core.gherkin.FeatureParser> services =
+            ServiceLoader.load(io.cucumber.core.gherkin.FeatureParser.class);
+        Iterator<io.cucumber.core.gherkin.FeatureParser> iterator = services.iterator();
+        List<io.cucumber.core.gherkin.FeatureParser> parser = new ArrayList<>();
+        while (iterator.hasNext()) {
+            parser.add(iterator.next());
         }
+        Comparator<io.cucumber.core.gherkin.FeatureParser> version =
+            comparing(io.cucumber.core.gherkin.FeatureParser::version);
+        return Collections.max(parser, version).parse(uri, source, idGenerator);
     }
 
     private static String read(Resource resource) {
@@ -50,15 +52,4 @@ public class FeatureParser {
     }
 
 
-    private static List<CucumberPickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, Resource resource) {
-        if (document.getFeature() == null) {
-            return Collections.emptyList();
-        }
-        String language = document.getFeature().getLanguage();
-        GherkinDialect dialect = dialectProvider.getDialect(language, null);
-        return new Compiler().compile(document)
-            .stream()
-            .map(pickle -> new CucumberPickle(pickle, resource.getUri(), document, dialect))
-            .collect(Collectors.toList());
-    }
 }

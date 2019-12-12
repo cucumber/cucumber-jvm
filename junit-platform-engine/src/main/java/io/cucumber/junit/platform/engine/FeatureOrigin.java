@@ -1,8 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberLocation;
-import io.cucumber.core.feature.Located;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Location;
+import io.cucumber.core.gherkin.Located;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -16,12 +16,13 @@ import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX
 
 abstract class FeatureOrigin {
 
+    private static final String RULE_SEGMENT_TYPE = "rule";
     private static final String FEATURE_SEGMENT_TYPE = "feature";
     private static final String SCENARIO_SEGMENT_TYPE = "scenario";
     private static final String EXAMPLES_SEGMENT_TYPE = "examples";
     private static final String EXAMPLE_SEGMENT_TYPE = "example";
 
-    private static FilePosition createFilePosition(CucumberLocation location) {
+    private static FilePosition createFilePosition(Location location) {
         return FilePosition.from(location.getLine(), location.getColumn());
     }
 
@@ -52,7 +53,11 @@ abstract class FeatureOrigin {
 
     abstract TestSource nodeSource(Located node);
 
-    abstract UniqueId featureSegment(UniqueId parent, CucumberFeature feature);
+    abstract UniqueId featureSegment(UniqueId parent, Feature feature);
+
+    UniqueId ruleSegment(UniqueId parent, Located rule){
+        return parent.append(RULE_SEGMENT_TYPE, String.valueOf(rule.getLocation().getLine()));
+    }
 
     UniqueId scenarioSegment(UniqueId parent, Located scenarioDefinition) {
         return parent.append(SCENARIO_SEGMENT_TYPE, String.valueOf(scenarioDefinition.getLocation().getLine()));
@@ -85,7 +90,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
+        UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, source.getUri().toString());
         }
     }
@@ -109,7 +114,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
+        UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, source.getUri().toString());
         }
     }
@@ -133,7 +138,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        UniqueId featureSegment(UniqueId parent, CucumberFeature feature) {
+        UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri().toString());
         }
     }

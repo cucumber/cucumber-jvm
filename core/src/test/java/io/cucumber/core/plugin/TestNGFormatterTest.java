@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.plugin.event.Result;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
 
 final class TestNGFormatterTest {
 
-    private final List<CucumberFeature> features = new ArrayList<>();
+    private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
@@ -37,7 +37,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithUndefinedSteps() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step\n" +
@@ -61,7 +61,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithUndefinedStepsStrict() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step\n" +
@@ -92,7 +92,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithPendingSteps() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step1\n" +
@@ -117,7 +117,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithFailedSteps() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step1\n" +
@@ -149,7 +149,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithPassedSteps() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step\n" +
@@ -173,7 +173,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithBackground() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Background:\n" +
             "    When background\n" +
@@ -201,7 +201,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioOutlineWithExamples() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario Outline: scenario\n" +
             "    When step\n" +
@@ -230,7 +230,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testDurationCalculationOfStepsAndHooks() throws Throwable {
-        CucumberFeature feature1 = TestFeatureParser.parse("path/feature1.feature", "" +
+        Feature feature1 = TestFeatureParser.parse("path/feature1.feature", "" +
             "Feature: feature_1\n" +
             "  Scenario: scenario_1\n" +
             "    When step\n" +
@@ -238,7 +238,7 @@ final class TestNGFormatterTest {
             "  Scenario: scenario_2\n" +
             "    When step\n" +
             "    Then step\n");
-        CucumberFeature feature2 = TestFeatureParser.parse("path/feature2.feature", "" +
+        Feature feature2 = TestFeatureParser.parse("path/feature2.feature", "" +
             "Feature: feature_2\n" +
             "  Scenario: scenario_3\n" +
             "    When step\n" +
@@ -269,7 +269,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithFailedBeforeHook() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step\n" +
@@ -301,7 +301,7 @@ final class TestNGFormatterTest {
 
     @Test
     void testScenarioWithFailedAfterHook() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
             "    When step\n" +

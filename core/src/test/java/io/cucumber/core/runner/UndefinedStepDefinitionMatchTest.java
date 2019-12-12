@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 
 class UndefinedStepDefinitionMatchTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"

@@ -86,7 +86,8 @@ final class MethodScanner {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
             return (Annotation[]) Invoker.invoke(annotation, expressionMethod);
-        } catch (Throwable e) {
+        } catch (NoSuchMethodException e) {
+            // Should never happen.
             throw new IllegalStateException(e);
         }
     }

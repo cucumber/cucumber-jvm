@@ -1,13 +1,15 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.TableRow;
+import io.cucumber.core.gherkin.Example;
+import io.cucumber.core.gherkin.Location;
 
-public final class CucumberExample implements Located, Named {
+final class GherkinVintageExample implements Example {
 
     private final TableRow tableRow;
     private final int rowIndex;
 
-    CucumberExample(TableRow tableRow, int rowIndex) {
+    GherkinVintageExample(TableRow tableRow, int rowIndex) {
         this.tableRow = tableRow;
         this.rowIndex = rowIndex;
     }
@@ -22,7 +24,7 @@ public final class CucumberExample implements Located, Named {
     }
 
     @Override
-    public CucumberLocation getLocation() {
-        return CucumberLocation.from(tableRow.getLocation());
+    public Location getLocation() {
+        return GherkinVintageLocation.from(tableRow.getLocation());
     }
 }

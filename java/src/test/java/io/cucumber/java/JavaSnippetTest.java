@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -289,7 +289,7 @@ class JavaSnippetTest {
     }
 
     private String snippetFor(String stepText) {
-        CucumberStep step = createStep(stepText);
+        Step step = createStep(stepText);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
@@ -301,8 +301,8 @@ class JavaSnippetTest {
             "    When some other step\n" +
             "    And " + stepText + "\n";
 
-        CucumberFeature feature = TestFeatureParser.parse(source);
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(1);
+        Feature feature = TestFeatureParser.parse(source);
+        Step step = feature.getPickles().get(0).getSteps().get(1);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
@@ -312,15 +312,15 @@ class JavaSnippetTest {
             "Feature: Test feature\n" +
             "  Scenario: Test Scenario\n" +
             "    * " + stepText + "\n";
-        CucumberFeature feature = TestFeatureParser.parse(source);
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Feature feature = TestFeatureParser.parse(source);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
     private String snippetFor(String stepText, ParameterType<?> parameterType) {
-        CucumberStep step = createStep(stepText);
+        Step step = createStep(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
@@ -329,14 +329,14 @@ class JavaSnippetTest {
 
 
     private String snippetForDocString(String stepText, String docString) {
-        CucumberStep step = createStepWithDocString(stepText, docString);
+        Step step = createStepWithDocString(stepText, docString);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
     private String snippetForDocString(String stepText, String docString, ParameterType<String> parameterType) {
-        CucumberStep step = createStepWithDocString(stepText, docString);
+        Step step = createStepWithDocString(stepText, docString);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
@@ -345,31 +345,31 @@ class JavaSnippetTest {
 
 
     private String snippetForDataTable(String stepText) {
-        CucumberStep step = createStepWithDataTable(stepText);
+        Step step = createStepWithDataTable(stepText);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
 
     private String snippetForDataTable(String stepText, ParameterType<String> parameterType) {
-        CucumberStep step = createStepWithDataTable(stepText);
+        Step step = createStepWithDataTable(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
 
-    private CucumberStep createStep(String stepText) {
+    private Step createStep(String stepText) {
         String source = "" +
             "Feature: Test feature\n" +
             "  Scenario: Test Scenario\n" +
             "    Given " + stepText + "\n";
 
-        CucumberFeature feature = TestFeatureParser.parse(source);
+        Feature feature = TestFeatureParser.parse(source);
         return feature.getPickles().get(0).getSteps().get(0);
     }
 
-    private CucumberStep createStepWithDocString(String stepText, String docString) {
+    private Step createStepWithDocString(String stepText, String docString) {
         String source = "" +
             "Feature: Test feature\n" +
             "  Scenario: Test Scenario\n" +
@@ -378,11 +378,11 @@ class JavaSnippetTest {
             "      " + docString + "\n" +
             "      \"\"\"";
 
-        CucumberFeature feature = TestFeatureParser.parse(source);
+        Feature feature = TestFeatureParser.parse(source);
         return feature.getPickles().get(0).getSteps().get(0);
     }
 
-    private CucumberStep createStepWithDataTable(String stepText) {
+    private Step createStepWithDataTable(String stepText) {
         String source = "" +
             "Feature: Test feature\n" +
             "  Scenario: Test Scenario\n" +
@@ -390,7 +390,7 @@ class JavaSnippetTest {
             "      | key   | \n" +
             "      | value | \n";
 
-        CucumberFeature feature = TestFeatureParser.parse(source);
+        Feature feature = TestFeatureParser.parse(source);
         return feature.getPickles().get(0).getSteps().get(0);
     }
 

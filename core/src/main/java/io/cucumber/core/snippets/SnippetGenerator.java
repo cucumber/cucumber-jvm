@@ -1,8 +1,9 @@
 package io.cucumber.core.snippets;
 
 import io.cucumber.core.backend.Snippet;
-import io.cucumber.core.feature.CucumberStep;
-import io.cucumber.core.feature.DocStringArgument;
+import io.cucumber.core.gherkin.Argument;
+import io.cucumber.core.gherkin.Step;
+import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -33,7 +34,7 @@ public final class SnippetGenerator {
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public List<String> getSnippet(CucumberStep step, SnippetType snippetType) {
+    public List<String> getSnippet(Step step, SnippetType snippetType) {
         List<GeneratedExpression> generatedExpressions = generator.generateExpressions(step.getText());
         List<String> snippets = new ArrayList<>(generatedExpressions.size());
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
@@ -52,7 +53,7 @@ public final class SnippetGenerator {
         return snippets;
     }
 
-    private String tableHint(CucumberStep step) {
+    private String tableHint(Step step) {
         if (step.getArgument() == null) {
             return "";
         }
@@ -79,7 +80,7 @@ public final class SnippetGenerator {
     }
 
 
-    private Map<String, Type> arguments(CucumberStep step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
+    private Map<String, Type> arguments(Step step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
         Map<String, Type> arguments = new LinkedHashMap<>(parameterTypes.size() + 1);
 
         for (int i = 0; i < parameterTypes.size(); i++) {
@@ -88,12 +89,12 @@ public final class SnippetGenerator {
             arguments.put(parameterName, parameterType.getType());
         }
 
-        io.cucumber.core.feature.Argument arg = step.getArgument();
+        Argument arg = step.getArgument();
         if (arg == null) {
             return arguments;
         } else if (arg instanceof DocStringArgument) {
             arguments.put(parameterName("docString", parameterNames), String.class);
-        } else if (arg instanceof io.cucumber.core.feature.DataTableArgument) {
+        } else if (arg instanceof DataTableArgument) {
             arguments.put(parameterName("dataTable", parameterNames), DataTable.class);
         }
 

@@ -1,12 +1,13 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.pickles.PickleString;
+import io.cucumber.core.gherkin.DocStringArgument;
 
-public final class DocStringArgument implements Argument, io.cucumber.plugin.event.DocStringArgument {
+final class GherkinVintageDocStringArgument implements DocStringArgument {
 
     private final PickleString docString;
 
-    DocStringArgument(PickleString docString) {
+    GherkinVintageDocStringArgument(PickleString docString) {
         this.docString = docString;
     }
 

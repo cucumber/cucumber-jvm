@@ -63,7 +63,7 @@ public class StubBackendProviderService implements BackendProviderService {
 
                 @Override
                 public String getLocation() {
-                    return null;
+                    return "stubbed location";
                 }
 
                 @Override

@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
@@ -30,7 +30,7 @@ import static org.xmlunit.matchers.ValidationMatcher.valid;
 
 class JUnitFormatterTest {
 
-    private final List<CucumberFeature> features = new ArrayList<>();
+    private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
@@ -39,7 +39,7 @@ class JUnitFormatterTest {
     private Duration stepDuration = null;
     private boolean strict = false;
 
-    private static void assertXmlEqual(Object expected, Object actual) throws IOException {
+    private static void assertXmlEqual(Object expected, Object actual) {
         assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
         assertThat(actual, valid(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/surefire-test-report-3.0.xsd")));
     }
@@ -71,7 +71,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_passed_scenario() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -100,7 +100,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_empty_scenario() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n");
         features.add(feature);
@@ -119,7 +119,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_empty_scenario_strict() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n");
         features.add(feature);
@@ -139,7 +139,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_skipped_scenario() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -173,7 +173,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_pending_scenario() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -202,7 +202,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_failed_scenario() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -233,7 +233,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_handle_failure_in_before_hook() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -266,7 +266,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_handle_pending_in_before_hook() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -296,7 +296,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_handle_failure_in_before_hook_with_background() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Background: background name\n" +
                 "    Given first step\n" +
@@ -330,7 +330,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_handle_failure_in_after_hook() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n" +
@@ -363,7 +363,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_accumulate_time_from_steps_and_hooks() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    * first step\n" +
@@ -391,7 +391,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_scenario_outlines() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario Outline: outline_name\n" +
                 "    Given first step \"<arg>\"\n" +
@@ -432,7 +432,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_scenario_outlines_with_multiple_examples() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario Outline: outline name\n" +
                 "    Given first step \"<arg>\"\n" +
@@ -493,7 +493,7 @@ class JUnitFormatterTest {
 
     @Test
     void should_format_scenario_outlines_with_arguments_in_name() throws Throwable {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature",
+        Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
                 "  Scenario Outline: outline name <arg>\n" +
                 "    Given first step \"<arg>\"\n" +

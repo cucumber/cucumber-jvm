@@ -1,6 +1,6 @@
 package io.cucumber.core.order;
 
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Pickle;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,10 +33,10 @@ public final class StandardPickleOrders {
         };
     }
 
-    private static class PickleUriComparator implements Comparator<CucumberPickle> {
+    private static class PickleUriComparator implements Comparator<Pickle> {
 
         @Override
-        public int compare(CucumberPickle a, CucumberPickle b) {
+        public int compare(Pickle a, Pickle b) {
             return a.getUri().compareTo(b.getUri());
         }
     }

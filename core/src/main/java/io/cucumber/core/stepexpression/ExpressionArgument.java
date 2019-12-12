@@ -2,6 +2,8 @@ package io.cucumber.core.stepexpression;
 
 import io.cucumber.cucumberexpressions.Group;
 
+import java.lang.reflect.Type;
+
 public final class ExpressionArgument implements Argument {
 
     private final io.cucumber.cucumberexpressions.Argument<?> argument;

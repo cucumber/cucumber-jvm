@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
@@ -20,13 +20,13 @@ class AmbiguousStepDefinitionsExceptionTest {
 
     @Test
     void can_report_ambiguous_step_definitions() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
         );
 
-        CucumberStep mockPickleStep = feature.getPickles().get(0).getSteps().get(0);
+        Step mockPickleStep = feature.getPickles().get(0).getSteps().get(0);
 
         PickleStepDefinitionMatch mockPickleStepDefinitionMatchOne = mock(PickleStepDefinitionMatch.class);
         when(mockPickleStepDefinitionMatchOne.getPattern()).thenReturn("PickleStepDefinitionMatchOne_Pattern");

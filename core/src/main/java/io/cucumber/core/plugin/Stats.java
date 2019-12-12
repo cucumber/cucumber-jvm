@@ -4,6 +4,7 @@ import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
@@ -236,7 +237,10 @@ class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
     }
 
     private void addScenario(TestCaseFinished event) {
-        addScenario(event.getResult().getStatus(), event.getTestCase().getScenarioDesignation());
+        TestCase testCase = event.getTestCase();
+        String location = testCase.getUri() + ":" + testCase.getLine();
+        String scenarioDesignation = location + "# " + testCase.getName();
+        addScenario(event.getResult().getStatus(), scenarioDesignation);
     }
 
 

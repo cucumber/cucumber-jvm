@@ -11,7 +11,7 @@ static def normalize(s) {
     if (System.getProperty("java.version").startsWith("1.6")) {
         return s
     } else {
-        return Normalizer.normalize(s, Normalizer.Form.NFC)
+    return Normalizer.normalize(s, Normalizer.Form.NFC)
     }
 }
 

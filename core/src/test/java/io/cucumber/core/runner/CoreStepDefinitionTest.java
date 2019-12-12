@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
@@ -30,7 +30,7 @@ class CoreStepDefinitionTest {
 
     @Test
     void should_apply_identity_transform_to_doc_string_when_target_type_is_object() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have some step\n" +
@@ -40,7 +40,7 @@ class CoreStepDefinitionTest {
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
         CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
         assertThat(arguments.get(0).getValue(), is(equalTo(DocString.create("content"))));
     }
@@ -48,7 +48,7 @@ class CoreStepDefinitionTest {
 
     @Test
     void should_apply_identity_transform_to_data_table_when_target_type_is_object() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have some step\n" +
@@ -62,7 +62,7 @@ class CoreStepDefinitionTest {
 
     @Test
     void should_convert_empty_pickle_table_cells_to_null_values() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have some step\n" +
@@ -93,7 +93,7 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_to_map_of_double_to_double() throws Throwable {
         Method m = Steps.class.getMethod("mapOfDoubleToDouble", Map.class);
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given some text\n" +
@@ -113,7 +113,7 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_transposed_to_map_of_double_to_double() throws Throwable {
         Method m = Steps.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given some text\n" +
@@ -128,7 +128,7 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_to_list_of_single_values() throws Throwable {
         Method m = Steps.class.getMethod("listOfListOfDoubles", List.class);
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given some text\n" +
@@ -143,7 +143,7 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_to_list_of_single_values_transposed() throws Throwable {
         Method m = Steps.class.getMethod("listOfListOfDoubles", List.class);
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given some text\n" +
@@ -157,7 +157,7 @@ class CoreStepDefinitionTest {
     @Test
     void passes_plain_data_table() throws Throwable {
         Method m = Steps.class.getMethod("plainDataTable", DataTable.class);
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given some text\n" +
@@ -175,7 +175,7 @@ class CoreStepDefinitionTest {
     @Test
     void passes_transposed_data_table() throws Throwable {
         Method m = Steps.class.getMethod("plainDataTable", DataTable.class);
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given some text\n" +
@@ -191,10 +191,10 @@ class CoreStepDefinitionTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T runStepDef(Method method, boolean transposed, CucumberFeature feature) throws Throwable {
+    private <T> T runStepDef(Method method, boolean transposed, Feature feature) {
         StubStepDefinition stub = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
-        CucumberStep stepWithTable = feature.getPickles().get(0).getSteps().get(0);
+        Step stepWithTable = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = coreStepDefinition.matchedArguments(stepWithTable);
 
         List<Object> result = new ArrayList<>();
