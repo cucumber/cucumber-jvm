@@ -1,16 +1,16 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.ScenarioDefinition;
 import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.Scenario;
 
-import static io.cucumber.core.gherkin.legacy.GherkinLegacyLocation.from;
+import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
 
-final class GherkinLegacyScenario implements Scenario {
+final class GherkinVintageScenario implements Scenario {
 
     private final ScenarioDefinition scenarioDefinition;
 
-    GherkinLegacyScenario(ScenarioDefinition scenarioDefinition) {
+    GherkinVintageScenario(ScenarioDefinition scenarioDefinition) {
         this.scenarioDefinition = scenarioDefinition;
     }
 

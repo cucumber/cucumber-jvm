@@ -10,18 +10,18 @@
     </parent>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.core.gherkin.legacy</project.Automatic-Module-Name>
+        <project.Automatic-Module-Name>io.cucumber.core.gherkin.vintage</project.Automatic-Module-Name>
     </properties>
 
-    <artifactId>cucumber-gherkin-legacy</artifactId>
+    <artifactId>cucumber-gherkin-vintage</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Gherkin Legacy</name>
+    <name>Cucumber-JVM: Gherkin Vintage</name>
 
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
-            <version>${gherkin-legacy.version}</version>
+            <version>${gherkin-vintage.version}</version>
         </dependency>
 
         <dependency>
@@ -46,8 +46,6 @@
     <build>
         <plugins>
             <plugin>
-                <!--
-                -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
@@ -67,7 +65,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>gherkin</pattern>
-                                    <shadedPattern>io.cucumber.core.gherkinlegacy.internal.gherkin</shadedPattern>
+                                    <shadedPattern>io.cucumber.core.gherkin.vintage.internal.gherkin</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

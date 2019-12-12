@@ -46,7 +46,7 @@
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
         <messages.version>8.0.0</messages.version>
-        <gherkin-legacy.version>5.2.0</gherkin-legacy.version>
+        <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
         <gherkin-messages.version>9.0.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
@@ -157,7 +157,7 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-gherkin-legacy</artifactId>
+                <artifactId>cucumber-gherkin-vintage</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -220,7 +220,7 @@
         <module>deltaspike</module>
         <module>docstring</module>
         <module>gherkin</module>
-        <module>gherkin-legacy</module>
+        <module>gherkin-vintage</module>
         <module>gherkin-messages</module>
         <module>guice</module>
         <module>java8</module>

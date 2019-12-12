@@ -1,12 +1,12 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Node;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
 
 import java.net.URI;
@@ -15,16 +15,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.gherkin.legacy.GherkinLegacyLocation.from;
 import static java.util.Collections.emptyList;
 
-final class GherkinLegacyFeature implements Feature {
+final class GherkinVintageFeature implements Feature {
     private final URI uri;
     private final List<Pickle> pickles;
     private final GherkinDocument gherkinDocument;
     private final String gherkinSource;
 
-    GherkinLegacyFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Pickle> pickles) {
+    GherkinVintageFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Pickle> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
@@ -37,9 +36,9 @@ final class GherkinLegacyFeature implements Feature {
             .map(scenarioDefinition -> {
                 if (scenarioDefinition instanceof ScenarioOutline) {
                     ScenarioOutline outline = (ScenarioOutline) scenarioDefinition;
-                    return new GherkinLegacyScenarioOutline(outline);
+                    return new GherkinVintageScenarioOutline(outline);
                 }
-                return new GherkinLegacyScenario(scenarioDefinition);
+                return new GherkinVintageScenario(scenarioDefinition);
             }).map(Node.class::cast);
     }
 
@@ -58,7 +57,7 @@ final class GherkinLegacyFeature implements Feature {
 
     @Override
     public Location getLocation() {
-        return GherkinLegacyLocation.from(gherkinDocument.getFeature().getLocation());
+        return GherkinVintageLocation.from(gherkinDocument.getFeature().getLocation());
     }
 
     @Override
@@ -95,7 +94,7 @@ final class GherkinLegacyFeature implements Feature {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GherkinLegacyFeature that = (GherkinLegacyFeature) o;
+        GherkinVintageFeature that = (GherkinVintageFeature) o;
         return uri.equals(that.uri);
     }
 

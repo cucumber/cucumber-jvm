@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import io.cucumber.core.gherkin.Example;
 import io.cucumber.core.gherkin.Examples;
@@ -7,13 +7,13 @@ import io.cucumber.core.gherkin.Location;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.gherkin.legacy.GherkinLegacyLocation.from;
+import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
 
-public final class GherkinLegacyExamples implements Examples {
+final class GherkinVintageExamples implements Examples {
 
     private final gherkin.ast.Examples examples;
 
-    GherkinLegacyExamples(gherkin.ast.Examples examples) {
+    GherkinVintageExamples(gherkin.ast.Examples examples) {
         this.examples = examples;
     }
 
@@ -25,12 +25,12 @@ public final class GherkinLegacyExamples implements Examples {
 
         AtomicInteger rowCounter = new AtomicInteger(1);
         return examples.getTableBody().stream()
-            .map(tableRow -> new GherkinLegacyExample(tableRow, rowCounter.getAndIncrement()));
+            .map(tableRow -> new GherkinVintageExample(tableRow, rowCounter.getAndIncrement()));
     }
 
     @Override
     public Location getLocation() {
-        return GherkinLegacyLocation.from(examples.getLocation());
+        return GherkinVintageLocation.from(examples.getLocation());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.AstBuilder;
 import gherkin.GherkinDialect;
@@ -20,17 +20,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public final class GherkinLegacyFeatureParser implements FeatureParser {
-    @Override
-    public Feature parse(URI path, String source, Supplier<UUID> idGenerator) {
-        return parseGherkin5(path, source);
-    }
-
-    @Override
-    public String version() {
-        return "5";
-    }
-
+public final class GherkinVintageFeatureParser implements FeatureParser {
     private static Feature parseGherkin5(URI path, String source) {
         try {
             Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
@@ -38,12 +28,11 @@ public final class GherkinLegacyFeatureParser implements FeatureParser {
             GherkinDocument gherkinDocument = parser.parse(source, matcher);
             GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
             List<Pickle> pickles = compilePickles(gherkinDocument, dialectProvider, path);
-            return new GherkinLegacyFeature(gherkinDocument, path, source, pickles);
+            return new GherkinVintageFeature(gherkinDocument, path, source, pickles);
         } catch (ParserException e) {
             throw new FeatureParserException("Failed to parse resource at: " + path.toString(), e);
         }
     }
-
 
     private static List<Pickle> compilePickles(GherkinDocument document, GherkinDialectProvider dialectProvider, URI path) {
         if (document.getFeature() == null) {
@@ -53,7 +42,17 @@ public final class GherkinLegacyFeatureParser implements FeatureParser {
         GherkinDialect dialect = dialectProvider.getDialect(language, null);
         return new Compiler().compile(document)
             .stream()
-            .map(pickle -> new GherkinLegacyPickle(pickle, path, document, dialect))
+            .map(pickle -> new GherkinVintagePickle(pickle, path, document, dialect))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Feature parse(URI path, String source, Supplier<UUID> idGenerator) {
+        return parseGherkin5(path, source);
+    }
+
+    @Override
+    public String version() {
+        return "5";
     }
 }

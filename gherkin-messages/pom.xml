@@ -22,7 +22,7 @@
             <!-- IDEA doesn't calculate shaded dependencies correctly and tries
                  to include both gherkin 5 and gherkin "new". Manually excluded here
                  for development -->
-            <id>idea-exclude-gherkin-legacy</id>
+            <id>idea-exclude-gherkin-vintage</id>
             <dependencies>
                 <dependency>
                     <groupId>io.cucumber</groupId>
@@ -35,7 +35,7 @@
                         </exclusion>
                         <exclusion>
                             <groupId>io.cucumber</groupId>
-                            <artifactId>cucumber-gherkin-legacy</artifactId>
+                            <artifactId>cucumber-gherkin-vintage</artifactId>
                         </exclusion>
                     </exclusions>
                 </dependency>
@@ -59,6 +59,16 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>gherkin</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>cucumber-gherkin-vintage</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -67,11 +77,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

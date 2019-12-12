@@ -1,13 +1,13 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.pickles.PickleString;
 import io.cucumber.core.gherkin.DocStringArgument;
 
-final class GherkinLegacyDocStringArgument implements DocStringArgument {
+final class GherkinVintageDocStringArgument implements DocStringArgument {
 
     private final PickleString docString;
 
-    GherkinLegacyDocStringArgument(PickleString docString) {
+    GherkinVintageDocStringArgument(PickleString docString) {
         this.docString = docString;
     }
 

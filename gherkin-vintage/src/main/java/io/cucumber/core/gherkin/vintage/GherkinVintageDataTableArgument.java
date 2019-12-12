@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.pickles.PickleTable;
 import io.cucumber.core.gherkin.DataTableArgument;
@@ -6,12 +6,12 @@ import io.cucumber.core.gherkin.DataTableArgument;
 import java.util.AbstractList;
 import java.util.List;
 
-final class GherkinLegacyDataTableArgument implements DataTableArgument {
+final class GherkinVintageDataTableArgument implements DataTableArgument {
 
     private final CellView cells;
     private final int line;
 
-    GherkinLegacyDataTableArgument(PickleTable table) {
+    GherkinVintageDataTableArgument(PickleTable table) {
         this.cells = new CellView(table);
         this.line = table.getLocation().getLine();
     }

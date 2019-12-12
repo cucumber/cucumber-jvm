@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
@@ -11,7 +11,7 @@ import io.cucumber.core.gherkin.StepType;
 
 import java.util.stream.Collectors;
 
-final class GherkinLegacyStep implements Step {
+final class GherkinVintageStep implements Step {
 
     private final PickleStep step;
     private final Argument argument;
@@ -20,7 +20,7 @@ final class GherkinLegacyStep implements Step {
     private final String previousGwtKeyWord;
     private final String uri;
 
-    GherkinLegacyStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
+    GherkinVintageStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
         this.step = step;
         this.argument = extractArgument(step);
         this.keyWord = extractKeyWord(document);
@@ -67,11 +67,11 @@ final class GherkinLegacyStep implements Step {
         gherkin.pickles.Argument argument = pickleStep.getArgument().get(0);
         if (argument instanceof PickleString) {
             PickleString docString = (PickleString) argument;
-            return new GherkinLegacyDocStringArgument(docString);
+            return new GherkinVintageDocStringArgument(docString);
         }
         if (argument instanceof PickleTable) {
             PickleTable table = (PickleTable) argument;
-            return new GherkinLegacyDataTableArgument(table);
+            return new GherkinVintageDataTableArgument(table);
         }
         return null;
     }

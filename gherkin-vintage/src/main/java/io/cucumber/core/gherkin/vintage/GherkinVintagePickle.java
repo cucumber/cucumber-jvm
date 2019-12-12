@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin.legacy;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
@@ -15,21 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.gherkin.legacy.GherkinLegacyLocation.from;
+import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
 import static java.util.stream.Collectors.toList;
 
 /**
  * Wraps {@link gherkin.pickles.Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-final class GherkinLegacyPickle implements Pickle {
+final class GherkinVintagePickle implements Pickle {
 
     private final gherkin.pickles.Pickle pickle;
     private final List<Step> steps;
     private final URI uri;
     private final String keyWord;
 
-    GherkinLegacyPickle(gherkin.pickles.Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
+    GherkinVintagePickle(gherkin.pickles.Pickle pickle, URI uri, GherkinDocument document, GherkinDialect dialect) {
         this.pickle = pickle;
         this.uri = uri;
         this.steps = createCucumberSteps(pickle, document, dialect, uri.toString());
@@ -49,7 +49,7 @@ final class GherkinLegacyPickle implements Pickle {
             .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (PickleStep step : pickle.getSteps()) {
-            Step cucumberStep = new GherkinLegacyStep(step, document, dialect, previousGivenWhenThen, uri);
+            Step cucumberStep = new GherkinVintageStep(step, document, dialect, previousGivenWhenThen, uri);
             if (cucumberStep.getStepType().isGivenWhenThen()) {
                 previousGivenWhenThen = cucumberStep.getKeyWord();
             }
