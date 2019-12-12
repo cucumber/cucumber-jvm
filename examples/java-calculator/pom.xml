@@ -20,7 +20,7 @@
             <!-- IDEA doesn't calculate shaded dependencies correctly and tries
                  to include both gherkin 5 and gherkin 8. Manually excluded here
                  for development -->
-            <id>idea-exclude-gherkin5</id>
+            <id>idea-exclude-gherkin-legacy</id>
             <dependencies>
                 <dependency>
                     <groupId>io.cucumber</groupId>
@@ -32,7 +32,7 @@
                         </exclusion>
                         <exclusion>
                             <groupId>io.cucumber</groupId>
-                            <artifactId>cucumber-gherkin5</artifactId>
+                            <artifactId>cucumber-gherkin-legacy</artifactId>
                         </exclusion>
                     </exclusions>
                 </dependency>
@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-gherkin8</artifactId>
+            <artifactId>cucumber-gherkin-messages</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

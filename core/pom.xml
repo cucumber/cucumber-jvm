@@ -28,13 +28,13 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-gherkin5</artifactId>
+            <artifactId>cucumber-gherkin-legacy</artifactId>
         </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
-            <version>${gherkinlegacy.version}</version>
+            <version>${gherkin-legacy.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>

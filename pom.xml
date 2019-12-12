@@ -46,8 +46,8 @@
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
         <messages.version>8.0.0</messages.version>
-        <gherkinlegacy.version>5.2.0</gherkinlegacy.version>
-        <gherkinmessages.version>9.0.0</gherkinmessages.version>
+        <gherkin-legacy.version>5.2.0</gherkin-legacy.version>
+        <gherkin-messages.version>9.0.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
@@ -157,12 +157,17 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-gherkin5</artifactId>
+                <artifactId>cucumber-gherkin-legacy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-gherkin8</artifactId>
+                <artifactId>cucumber-gherkin-messages</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-messages</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -230,6 +235,7 @@
         <module>spring</module>
         <module>testng</module>
         <module>weld</module>
+        <module>compatibility</module>
     </modules>
 
     <profiles>
@@ -291,7 +297,7 @@
                         <dependency>
                             <groupId>io.cucumber</groupId>
                             <artifactId>gherkin</artifactId>
-                            <version>${gherkinmessages.version}</version>
+                            <version>${gherkin-messages.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

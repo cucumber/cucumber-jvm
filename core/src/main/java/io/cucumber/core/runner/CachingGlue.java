@@ -17,6 +17,7 @@ import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -218,19 +219,35 @@ final class CachingGlue implements Glue {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
             }
             stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
-            bus.send(
-                new StepDefinedEvent(
-                    bus.getInstant(),
-                    new io.cucumber.plugin.event.StepDefinition(
-                        stepDefinition.getLocation(),
-                        stepDefinition.getPattern()
-                    )
-                )
-            );
+            emitStepDefined(stepDefinition);
         });
     }
 
-    PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException{
+    private void emitStepDefined(StepDefinition stepDefinition) {
+        bus.send(
+            new StepDefinedEvent(
+                bus.getInstant(),
+                new io.cucumber.plugin.event.StepDefinition(
+                    stepDefinition.getLocation(),
+                    stepDefinition.getPattern()
+                )
+            )
+        );
+
+        Messages.Envelope env = Messages.Envelope.newBuilder()
+            .setStepDefinition(
+                Messages.StepDefinition.newBuilder()
+                    .setPattern(Messages.StepDefinitionPattern.newBuilder()
+                        .setSource(stepDefinition.getPattern())
+                        .build())
+                    .setSourceReference(Messages.SourceReference.newBuilder()
+                        .setUri(stepDefinition.getLocation()).build())
+                    .build())
+            .build();
+        bus.send(env);
+    }
+
+    PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {
         PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(uri, step);
         if (cachedMatch != null) {
             return cachedMatch;

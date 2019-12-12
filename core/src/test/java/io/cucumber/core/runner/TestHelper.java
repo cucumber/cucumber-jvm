@@ -309,7 +309,7 @@ public class TestHelper {
 
                     @Override
                     public String getLocation() {
-                        return stepsToLocation.get(step.getText());
+                        return stepsToLocation.getOrDefault(step.getText(), "mocked location");
                     }
                 };
 
