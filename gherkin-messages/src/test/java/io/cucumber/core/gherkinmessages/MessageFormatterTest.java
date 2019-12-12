@@ -1,4 +1,4 @@
-package io.cucumber.core.gherkin8;
+package io.cucumber.core.gherkinmessages;
 
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
