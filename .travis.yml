@@ -28,7 +28,7 @@ jobs:
   - jdk: oraclejdk11
     env: JAVADOC=true
     script:
-    - mvn compile javadoc:aggregate
+    - mvn javadoc:jar
 
 branches:
   only:
