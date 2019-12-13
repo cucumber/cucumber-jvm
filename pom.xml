@@ -306,16 +306,19 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>io.cucumber.examples*,org.springframework</excludePackageNames>
+                        <doclint>none</doclint>
+                        <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/8/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
+                            <link>https://junit.org/junit5/docs/current/api/</link>
+                            <link>https://javadoc.io/doc/org.testng/testng/7.0.0/</link>
                         </links>
                         <groups>
                             <group>
                                 <title>API Packages</title>
                                 <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.testng
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
                                 </packages>
                             </group>
                             <group>
@@ -325,7 +328,7 @@
                             <group>
                                 <title>Dependency Injection Providers</title>
                                 <packages>
-                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb
+                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
                                 </packages>
                             </group>
                         </groups>
