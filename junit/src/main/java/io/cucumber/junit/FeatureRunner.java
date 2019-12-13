@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
@@ -24,11 +24,11 @@ import static java.util.stream.Collectors.toList;
 final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     private final List<PickleRunner> children;
-    private final CucumberFeature cucumberFeature;
+    private final Feature feature;
     private final JUnitOptions options;
     private Description description;
 
-    static FeatureRunner create(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) {
+    static FeatureRunner create(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) {
         try {
             return new FeatureRunner(feature, filter, runners, options);
         } catch (InitializationError e) {
@@ -36,9 +36,9 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         }
     }
 
-    private FeatureRunner(CucumberFeature feature, Predicate<CucumberPickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
+    private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
         super(null);
-        this.cucumberFeature = feature;
+        this.feature = feature;
         this.options = options;
         this.children = feature.getPickles().stream()
             .filter(filter).
@@ -50,13 +50,13 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     @Override
     protected String getName() {
-        return createName(cucumberFeature.getName(), options.filenameCompatibleNames());
+        return createName(feature.getName(), options.filenameCompatibleNames());
     }
 
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature));
+            description = Description.createSuiteDescription(getName(), new FeatureId(feature));
             getChildren().forEach(child -> description.addChild(describeChild(child)));
         }
         return description;
@@ -93,7 +93,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         private static final long serialVersionUID = 1L;
         private final URI uri;
 
-        FeatureId(CucumberFeature feature) {
+        FeatureId(Feature feature) {
             this.uri = feature.getUri();
         }
 

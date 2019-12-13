@@ -1,6 +1,7 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.FeatureParserException;
 import org.junit.experimental.ParallelComputer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,22 +68,18 @@ class CucumberTest {
     @Test
     void testThatParsingErrorsIsNicelyReported() {
         Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        FeatureParserException actualThrown = assertThrows(FeatureParserException.class, testMethod);
         assertAll("Checking Exception including cause",
             () -> assertThat(
                 actualThrown.getMessage(),
                 is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))
-            ),
-            () -> assertThat(
-                actualThrown.getCause().getClass().getName(),
-                is("gherkin.ParserException$CompositeParserException")
             )
         );
     }
 
     @Test
     void testThatFileIsNotCreatedOnParsingError() {
-        assertThrows(CucumberException.class,
+        assertThrows(FeatureParserException.class,
             () -> new Cucumber(FormatterWithLexerErrorFeature.class)
         );
         assertFalse(

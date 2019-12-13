@@ -8,6 +8,7 @@ import io.cucumber.core.runner.Options;
 import io.cucumber.core.runner.Runner;
 
 import java.time.Instant;
+import java.util.UUID;
 
 /**
  * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.
@@ -71,6 +72,11 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         public Instant getInstant() {
             return parent.getInstant();
         }
+
+        @Override
+        public UUID generateId() {
+            return parent.generateId();
+        }
     }
 
     private static final class SynchronizedEventBus implements EventBus {
@@ -112,6 +118,11 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         @Override
         public Instant getInstant() {
             return delegate.getInstant();
+        }
+
+        @Override
+        public UUID generateId() {
+            return delegate.generateId();
         }
     }
 }

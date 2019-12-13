@@ -1,7 +1,7 @@
 package io.cucumber.core.filter;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LinePredicateTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse(
+    private final Feature feature = TestFeatureParser.parse(
         "file:path/file.feature",
         "" +
             "Feature: Test feature\n" +
@@ -27,7 +27,7 @@ class LinePredicateTest {
             "       | cucumber | \n" +
             "       | gherkin  | \n"
     );
-    private final CucumberPickle pickle = feature.getPickles().get(0);
+    private final Pickle pickle = feature.getPickles().get(0);
 
     @Test
     void matches_pickles_from_files_not_in_the_predicate_map() {

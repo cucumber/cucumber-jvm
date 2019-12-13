@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.Clock;
+import java.util.UUID;
 
 import static io.cucumber.plugin.event.Status.AMBIGUOUS;
 import static io.cucumber.plugin.event.Status.FAILED;
@@ -36,7 +37,7 @@ import static org.testng.Assert.assertTrue;
 
 public class TestCaseResultListenerTest {
 
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     private URI uri = URI.create("file:path/to.feature");
     private int line = 0;

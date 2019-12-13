@@ -75,7 +75,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
         private int requireInFixOrder(Class<? extends Event> o) {
             int index = findInFixedOrder(o);
             if (index < 0) {
-                throw new IllegalStateException(o + "was not in " + fixedOrder);
+                throw new IllegalStateException(o + " was not in " + fixedOrder);
             }
             return index;
         }

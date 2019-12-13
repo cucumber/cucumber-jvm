@@ -3,9 +3,10 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -57,7 +59,7 @@ public final class Runtime {
     private final ExitStatus exitStatus;
 
     private final RunnerSupplier runnerSupplier;
-    private final Predicate<CucumberPickle> filter;
+    private final Predicate<Pickle> filter;
     private final int limit;
     private final EventBus bus;
     private final FeatureSupplier featureSupplier;
@@ -66,7 +68,7 @@ public final class Runtime {
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
-                    final Predicate<CucumberPickle> filter,
+                    final Predicate<Pickle> filter,
                     final int limit,
                     final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
@@ -83,9 +85,9 @@ public final class Runtime {
     }
 
     public void run() {
-        final List<CucumberFeature> features = featureSupplier.get();
+        final List<Feature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
-        for (CucumberFeature feature : features) {
+        for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
 
@@ -101,7 +103,7 @@ public final class Runtime {
         executor.shutdown();
 
         List<Throwable> thrown = new ArrayList<>();
-        for (Future executingPickle : executingPickles) {
+        for (Future<?> executingPickle : executingPickles) {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
@@ -131,7 +133,7 @@ public final class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC());
+        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
@@ -204,11 +206,13 @@ public final class Runtime {
                 ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                 : new SameThreadExecutorService();
 
+            final FeatureParser parser = new FeatureParser(eventBus::generateId);
+
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                 ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
+                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
-            final Predicate<CucumberPickle> filter = new Filters(runtimeOptions);
+            final Predicate<Pickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
 

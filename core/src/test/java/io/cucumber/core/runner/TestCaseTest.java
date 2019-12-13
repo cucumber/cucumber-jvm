@@ -1,19 +1,19 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
 
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 
 import static io.cucumber.plugin.event.HookType.AFTER_STEP;
 import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
@@ -24,10 +24,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
 
 class TestCaseTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("" +
+    private final Feature feature = TestFeatureParser.parse("" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n" +
@@ -41,10 +42,11 @@ class TestCaseTest {
     private CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
 
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
+        UUID.randomUUID(),
         URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(0),
-        singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
-        singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
+        singletonList(new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
+        singletonList(new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
         definitionMatch1
     );
 
@@ -52,16 +54,18 @@ class TestCaseTest {
     private CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
     private CoreHookDefinition afterStep1HookDefinition2 = mock(CoreHookDefinition.class);
     private final PickleStepTestStep testStep2 = new PickleStepTestStep(
+        UUID.randomUUID(),
         URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(1),
-        singletonList(new HookTestStep(BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
-        singletonList(new HookTestStep(AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),
+        singletonList(new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
+        singletonList(new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),
         definitionMatch2
     );
 
     @BeforeEach
     void init() {
-        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
+        when(bus.getInstant()).thenReturn(Instant.now());
+        when(bus.generateId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
@@ -126,11 +130,11 @@ class TestCaseTest {
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
+        return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
     }
 
-    private CucumberPickle pickle() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+    private Pickle pickle() {
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"

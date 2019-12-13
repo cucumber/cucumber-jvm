@@ -1,4 +1,4 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin;
 
 public enum StepType {
     GIVEN, WHEN, THEN, AND, BUT, OTHER;
@@ -9,7 +9,7 @@ public enum StepType {
         return this == GIVEN || this == WHEN || this == THEN;
     }
 
-    static boolean isAstrix(String stepType) {
+    public static boolean isAstrix(String stepType) {
         return ASTRIX_KEY_WORD.equals(stepType);
     }
 }

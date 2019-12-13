@@ -1,9 +1,9 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 
 import java.util.List;
 
 public interface FeatureSupplier {
-    List<CucumberFeature> get();
+    List<Feature> get();
 }

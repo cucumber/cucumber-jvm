@@ -3,7 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
@@ -40,7 +41,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class JSONFormatterTest {
 
-    private final List<CucumberFeature> features = new ArrayList<>();
+    private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
@@ -59,7 +60,6 @@ class JSONFormatterTest {
         assertThat(actual, sameJSONAs(expected));
     }
 
-
     @Test
     void featureWithOutlineTestParallel() throws Exception {
         List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature");
@@ -74,7 +74,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_an_undefined_step() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -123,7 +123,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_a_passed_step() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -177,7 +177,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_a_failed_step() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -232,7 +232,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_outline_with_one_example() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Fruit party\n" +
             "\n" +
             "  Scenario Outline: Monkey eats fruits\n" +
@@ -289,7 +289,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_feature_with_background() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Background: There are bananas\n" +
@@ -418,7 +418,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_feature_and_scenario_with_tags() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "@Party @Banana\n" +
             "Feature: Banana party\n" +
             "  @Monkey\n" +
@@ -501,7 +501,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_hooks() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -581,7 +581,7 @@ class JSONFormatterTest {
 
     @Test
     void should_add_step_hooks_to_step() {
-        CucumberFeature feature = TestFeatureParser.parse("file:path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -718,7 +718,7 @@ class JSONFormatterTest {
 
     @Test
     void should_handle_write_from_a_hook() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -789,7 +789,7 @@ class JSONFormatterTest {
 
     @Test
     void should_handle_embed_from_a_hook() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -863,7 +863,7 @@ class JSONFormatterTest {
 
     @Test
     void should_handle_embed_with_name_from_a_hook() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -938,7 +938,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_a_step_with_a_doc_string() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -999,7 +999,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -1061,7 +1061,7 @@ class JSONFormatterTest {
 
     @Test
     void should_format_scenario_with_a_step_with_a_data_table() {
-        CucumberFeature feature = TestFeatureParser.parse("path/test.feature", "" +
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
@@ -1131,12 +1131,12 @@ class JSONFormatterTest {
 
     @Test
     void should_handle_several_features() {
-        CucumberFeature feature1 = TestFeatureParser.parse("path/test1.feature", "" +
+        Feature feature1 = TestFeatureParser.parse("path/test1.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
             "  Scenario: Monkey eats bananas\n" +
             "    Given there are bananas\n");
-        CucumberFeature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
+        Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
             "Feature: Orange party\n" +
             "\n" +
             "  Scenario: Monkey eats oranges\n" +
@@ -1244,7 +1244,7 @@ class JSONFormatterTest {
 
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
         Appendable stringBuilder = new StringBuilder();
 
@@ -1276,7 +1276,7 @@ class JSONFormatterTest {
 
             }
         };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)));
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
         Appendable stringBuilder = new StringBuilder();
 

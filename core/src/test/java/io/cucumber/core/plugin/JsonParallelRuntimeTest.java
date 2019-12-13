@@ -6,6 +6,8 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -26,7 +28,7 @@ class JsonParallelRuntimeTest {
                     .build()
             )
             .withAdditionalPlugins(new JSONFormatter(parallel))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
@@ -41,7 +43,7 @@ class JsonParallelRuntimeTest {
                     .build()
             )
             .withAdditionalPlugins(new JSONFormatter(serial))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
@@ -61,7 +63,7 @@ class JsonParallelRuntimeTest {
                     .build()
             )
             .withAdditionalPlugins(new JSONFormatter(parallel))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
@@ -75,7 +77,7 @@ class JsonParallelRuntimeTest {
                     "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                 .build())
             .withAdditionalPlugins(new JSONFormatter(serial))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO)))
+            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 

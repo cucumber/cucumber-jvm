@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -17,12 +17,12 @@ import static org.mockito.Mockito.mock;
 
 class AmbiguousStepDefinitionMatchTest {
 
-    private final CucumberFeature feature = TestFeatureParser.parse("file:test.feature", "" +
+    private final Feature feature = TestFeatureParser.parse("file:test.feature", "" +
         "Feature: Test feature\n" +
         "  Scenario: Test scenario\n" +
         "     Given I have 4 cukes in my belly\n"
     );
-    private final CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+    private final Step step = feature.getPickles().get(0).getSteps().get(0);
     private final AmbiguousStepDefinitionsException e = new AmbiguousStepDefinitionsException(step, emptyList());
     private final AmbiguousPickleStepDefinitionsMatch match = new AmbiguousPickleStepDefinitionsMatch(URI.create("file:path/to.feature"), step, e);
 

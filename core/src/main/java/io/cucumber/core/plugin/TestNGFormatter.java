@@ -1,6 +1,8 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -37,7 +39,10 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static java.time.Duration.ZERO;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
@@ -50,7 +55,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private final Element results;
     private final Element suite;
     private final Element test;
-    private final TestSourcesModel testSources = new TestSourcesModel();
     private Element clazz;
     private Element root;
     private TestCase testCase;
@@ -59,6 +63,8 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
+    private final Map<URI, String> featuresNames = new HashMap<>();
+    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
@@ -96,7 +102,8 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.getUri(), event);
+        Feature feature = parser.parseResource(new TestSourceReadResource(event));
+        featuresNames.put(feature.getUri(), feature.getName());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -105,7 +112,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             previousTestCaseName = "";
             exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", testSources.getFeature(event.getTestCase().getUri()).getName());
+            clazz.setAttribute("name", featuresNames.get(event.getTestCase().getUri()));
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
@@ -268,7 +275,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
-                sb.append(getKeywordFromSource(steps.get(i).getStepLine()));
+                sb.append(steps.get(i).getStep().getKeyWord());
                 sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");
@@ -276,10 +283,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
                 sb.append(resultStatus);
                 sb.append("\n");
             }
-        }
-
-        private String getKeywordFromSource(int stepLine) {
-            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private Element createException(Document doc, String clazz, String message, String stacktrace) {

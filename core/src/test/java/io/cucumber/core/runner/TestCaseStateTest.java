@@ -1,12 +1,13 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -16,7 +17,7 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_uri_of_the_feature_file() {
-        CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
@@ -27,7 +28,7 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_scenario_line() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
@@ -39,7 +40,7 @@ class TestCaseStateTest {
 
     @Test
     void provides_both_the_example_row_line_and_scenario_outline_line_for_scenarios_from_scenario_outlines() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario Outline: Test scenario\n" +
             "     Given I have 4 <thing> in my belly\n" +
@@ -54,7 +55,7 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_uri_and_scenario_line_as_unique_id() {
-        CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n"
@@ -67,7 +68,7 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_uri_and_example_row_line_as_unique_id_for_scenarios_from_scenario_outlines() {
-        CucumberFeature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
             "Feature: Test feature\n" +
             "  Scenario Outline: Test scenario\n" +
             "     Given I have 4 <thing> in my belly\n" +
@@ -80,8 +81,9 @@ class TestCaseStateTest {
         assertThat(state.getId(), is(new File("path/file.feature:6").toURI().toString()));
     }
 
-    private TestCaseState createTestCaseState(CucumberFeature feature) {
+    private TestCaseState createTestCaseState(Feature feature) {
         return new TestCaseState(mock(EventBus.class), new TestCase(
+            UUID.randomUUID(),
             Collections.emptyList(),
             Collections.emptyList(),
             Collections.emptyList(),

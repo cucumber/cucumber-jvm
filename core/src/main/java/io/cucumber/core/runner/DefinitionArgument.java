@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.plugin.event.Argument;
 import io.cucumber.core.stepexpression.ExpressionArgument;
+import io.cucumber.plugin.event.Argument;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +10,16 @@ final class DefinitionArgument implements Argument {
 
     private final io.cucumber.cucumberexpressions.Group group;
 
-    private DefinitionArgument(ExpressionArgument expressionArgument) {
-        group = expressionArgument.getGroup();
+    private DefinitionArgument(ExpressionArgument argument) {
+        this.group = argument.getGroup();
     }
 
     static List<Argument> createArguments(List<io.cucumber.core.stepexpression.Argument> match) {
         List<Argument> args = new ArrayList<>();
         for (io.cucumber.core.stepexpression.Argument argument : match) {
             if (argument instanceof ExpressionArgument) {
-                args.add(new DefinitionArgument((ExpressionArgument) argument));
+                ExpressionArgument expressionArgument = (ExpressionArgument) argument;
+                args.add(new DefinitionArgument(expressionArgument));
             }
         }
         return args;

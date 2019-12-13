@@ -1,11 +1,10 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.feature.CucumberFeature;
 import io.cucumber.core.feature.FeatureIdentifier;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
@@ -22,21 +21,19 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.feature.FeatureParser.parseResource;
-import static java.lang.String.format;
 import static java.util.Optional.of;
-import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
 final class FeatureResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(FeatureResolver.class);
-    private final ResourceScanner<CucumberFeature> featureScanner = new ResourceScanner<>(
+    private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
+    private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
-        resource -> of(parseResource(resource))
+        resource -> of(featureParser.parseResource(resource))
     );
 
     private final TestDescriptor engineDescriptor;
@@ -123,14 +120,8 @@ final class FeatureResolver {
 
     void resolveUri(UriSelector selector) {
         URI uri = selector.getUri();
-
-        try {
-            resolveUri(uri)
-                .forEach(this::merge);
-        } catch (Throwable e) {
-            rethrowIfBlacklisted(e);
-            logger.debug(e, () -> format("Failed to resolve features for uri '%s'.", uri));
-        }
+        resolveUri(uri)
+            .forEach(this::merge);
     }
 
     private Stream<TestDescriptor> resolveUri(URI uri) {
@@ -153,7 +144,7 @@ final class FeatureResolver {
             .map(UniqueId.Segment::getValue)
             .map(URI::create)
             .flatMap(this::resolveUri)
-            .map(descriptor -> pruneDescription(descriptor, uniqueIdSelector.getUniqueId()))
+            .map(descriptor -> pruneDescription(descriptor, uniqueId))
             .forEach(this::merge);
     }
 
@@ -172,7 +163,7 @@ final class FeatureResolver {
         children.forEach(child -> pruneDescriptionRecursively(child, toKeep));
     }
 
-    private TestDescriptor resolveFeature(CucumberFeature feature) {
+    private TestDescriptor resolveFeature(Feature feature) {
         return FeatureDescriptor.create(feature, engineDescriptor);
     }
 

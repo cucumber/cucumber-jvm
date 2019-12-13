@@ -1,7 +1,7 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
@@ -22,7 +22,7 @@ class Java8SnippetTest {
 
     @Test
     void generatesPlainSnippet() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my \"big\" belly\n"
@@ -37,7 +37,7 @@ class Java8SnippetTest {
 
     @Test
     void generatesDataTableSnippet() {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my \"big\" belly\n" +
@@ -58,8 +58,8 @@ class Java8SnippetTest {
         assertThat(getSnippet(feature), is(equalTo(expected)));
     }
 
-    private String getSnippet(CucumberFeature feature) {
-        CucumberStep step = feature.getPickles().get(0).getSteps().get(0);
+    private String getSnippet(Feature feature) {
+        Step step = feature.getPickles().get(0).getSteps().get(0);
         return String.join(
             "\n",
             snippetGenerator.getSnippet(step, SnippetType.UNDERSCORE)

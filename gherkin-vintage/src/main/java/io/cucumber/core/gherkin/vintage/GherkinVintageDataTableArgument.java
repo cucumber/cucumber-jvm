@@ -1,16 +1,17 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.gherkin.DataTableArgument;
 
 import java.util.AbstractList;
 import java.util.List;
 
-public final class DataTableArgument implements Argument, io.cucumber.plugin.event.DataTableArgument {
+final class GherkinVintageDataTableArgument implements DataTableArgument {
 
     private final CellView cells;
     private final int line;
 
-    DataTableArgument(PickleTable table) {
+    GherkinVintageDataTableArgument(PickleTable table) {
         this.cells = new CellView(table);
         this.line = table.getLocation().getLine();
     }

@@ -1,34 +1,40 @@
-package io.cucumber.core.feature;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.GherkinDialect;
 import gherkin.ast.GherkinDocument;
-import gherkin.ast.Step;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.core.gherkin.Argument;
+import io.cucumber.core.gherkin.Step;
+import io.cucumber.core.gherkin.StepType;
 
-public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep {
+import java.util.stream.Collectors;
+
+final class GherkinVintageStep implements Step {
 
     private final PickleStep step;
     private final Argument argument;
     private final String keyWord;
     private final StepType stepType;
     private final String previousGwtKeyWord;
+    private final String uri;
 
-    CucumberStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord) {
+    GherkinVintageStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
         this.step = step;
         this.argument = extractArgument(step);
         this.keyWord = extractKeyWord(document);
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
+        this.uri = uri;
     }
 
     private String extractKeyWord(GherkinDocument document) {
         return document.getFeature().getChildren().stream()
             .flatMap(scenarioDefinition -> scenarioDefinition.getSteps().stream())
-            .filter(step -> step.getLocation().getLine() == getStepLine())
+            .filter(step -> step.getLocation().getLine() == getLine())
             .findFirst()
-            .map(Step::getKeyword)
+            .map(gherkin.ast.Step::getKeyword)
             .orElseThrow(() ->  new IllegalStateException("GherkinDocument did not contain PickleStep"));
     }
 
@@ -61,17 +67,17 @@ public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep
         gherkin.pickles.Argument argument = pickleStep.getArgument().get(0);
         if (argument instanceof PickleString) {
             PickleString docString = (PickleString) argument;
-            return new DocStringArgument(docString);
+            return new GherkinVintageDocStringArgument(docString);
         }
         if (argument instanceof PickleTable) {
             PickleTable table = (PickleTable) argument;
-            return new DataTableArgument(table);
+            return new GherkinVintageDataTableArgument(table);
         }
         return null;
     }
 
     @Override
-    public int getStepLine() {
+    public int getLine() {
         int last = step.getLocations().size() - 1;
         return step.getLocations().get(last).getLine();
     }
@@ -86,10 +92,12 @@ public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep
         return keyWord;
     }
 
-    public StepType getStepType() {
+    @Override
+    public StepType getType() {
         return stepType;
     }
 
+    @Override
     public String getPreviousGivenWhenThenKeyWord() {
         return previousGwtKeyWord;
     }
@@ -97,5 +105,13 @@ public final class CucumberStep implements io.cucumber.plugin.event.CucumberStep
     @Override
     public String getText() {
         return step.getText();
+    }
+
+    @Override
+    public String getId() {
+        String lineNumbers = this.step.getLocations().stream()
+            .map(s -> String.valueOf(s.getLine()))
+            .collect(Collectors.joining(":"));
+        return uri + ":" + lineNumbers;
     }
 }
