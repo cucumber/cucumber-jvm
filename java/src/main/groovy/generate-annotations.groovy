@@ -1,4 +1,4 @@
-import gherkin.GherkinDialectProvider
+import io.cucumber.gherkin.GherkinDialectProvider
 import groovy.text.SimpleTemplateEngine
 
 import java.text.Normalizer
@@ -8,17 +8,13 @@ def templateSource = new File(project.baseDir, "src/main/groovy/annotation.java.
 def packageInfoSource = new File(project.baseDir, "src/main/groovy/package-info.java.gsp").getText()
 
 static def normalize(s) {
-    if (System.getProperty("java.version").startsWith("1.6")) {
-        return s
-    } else {
     return Normalizer.normalize(s, Normalizer.Form.NFC)
-    }
 }
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
 def dialectProvider = new GherkinDialectProvider()
 
-GherkinDialectProvider.DIALECTS.keySet().each { language ->
+dialectProvider.getLanguages().each { language ->
     def dialect = dialectProvider.getDialect(language, null)
     def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
     if (!unsupported.contains(normalized_language)) {

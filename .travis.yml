@@ -10,7 +10,7 @@ jobs:
   # 1.1 Semver check
   - stage: test
     jdk: openjdk8
-    script: mvn verify -Pcheck-semantic-version -DskipTests=true
+    script: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true
     env: CHECK_SEMANTIC_VERSION=true
 
   # 1.2 Check JDK 8,10,ea
@@ -28,8 +28,7 @@ jobs:
   - jdk: oraclejdk11
     env: JAVADOC=true
     script:
-    - mvn clean verify -DskipTests=true
-    - mvn javadoc:aggregate
+    - mvn javadoc:jar
 
 branches:
   only:

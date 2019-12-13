@@ -45,7 +45,9 @@
         <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
+        <messages.version>8.0.0</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
+        <gherkin-messages.version>9.0.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
@@ -165,6 +167,11 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-messages</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit-platform-engine</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -214,6 +221,7 @@
         <module>docstring</module>
         <module>gherkin</module>
         <module>gherkin-vintage</module>
+        <module>gherkin-messages</module>
         <module>guice</module>
         <module>java8</module>
         <module>java</module>
@@ -281,10 +289,14 @@
                             <artifactId>groovy-templates</artifactId>
                             <version>${groovy.version}</version>
                         </dependency>
+                        <!--
+                        Gherkin is used during build time to generate code. We add it to the plugin classpath to prevent polluting
+                        the compile/test classpaths.
+                        -->
                         <dependency>
                             <groupId>io.cucumber</groupId>
                             <artifactId>gherkin</artifactId>
-                            <version>${gherkin-vintage.version}</version>
+                            <version>${gherkin-messages.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -294,16 +306,19 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>io.cucumber.examples*,org.springframework</excludePackageNames>
+                        <doclint>none</doclint>
+                        <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/8/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
+                            <link>https://junit.org/junit5/docs/current/api/</link>
+                            <link>https://javadoc.io/doc/org.testng/testng/7.0.0/</link>
                         </links>
                         <groups>
                             <group>
                                 <title>API Packages</title>
                                 <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.testng
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
                                 </packages>
                             </group>
                             <group>
@@ -313,7 +328,7 @@
                             <group>
                                 <title>Dependency Injection Providers</title>
                                 <packages>
-                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb
+                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
                                 </packages>
                             </group>
                         </groups>
@@ -359,7 +374,10 @@
                             <revapi.filter>
                                 <elements>
                                     <exclude>
+                                        <!-- Dependency exposed in API. Ok for
+                                        Gherkin compatibility layer and messages -->
                                         <item>.* io.cucumber.core.gherkin.*</item>
+                                        <item>.* io.cucumber.messages.*</item>
                                     </exclude>
                                 </elements>
                             </revapi.filter>
