@@ -11,8 +11,8 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.net.URI;
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.Locale.ENGLISH;
@@ -45,10 +46,10 @@ import static org.mockito.Mockito.when;
 class CachingGlueTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
-    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC()));
+    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
-    private static CucumberStep getPickleStep(String text) {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+    private static Step getPickleStep(String text) {
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given " + text + "\n"
@@ -57,8 +58,8 @@ class CachingGlueTest {
         return feature.getPickles().get(0).getSteps().get(0);
     }
 
-    private static CucumberStep getPickleStepWithSingleCellTable(String stepText, String cell) {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+    private static Step getPickleStepWithSingleCellTable(String stepText, String cell) {
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given " + stepText + "\n" +
@@ -68,8 +69,8 @@ class CachingGlueTest {
         return feature.getPickles().get(0).getSteps().get(0);
     }
 
-    private static CucumberStep getPickleStepWithDocString(String stepText, String doc) {
-        CucumberFeature feature = TestFeatureParser.parse("" +
+    private static Step getPickleStepWithDocString(String stepText, String doc) {
+        Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given " + stepText + "\n" +
@@ -205,7 +206,7 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition);
 
         URI uri = URI.create("file:path/to.feature");
-        CucumberStep pickleStep = getPickleStep("pattern");
+        Step pickleStep = getPickleStep("pattern");
         assertThat(glue.stepDefinitionMatch(uri, pickleStep), is(nullValue()));
     }
 
@@ -220,7 +221,7 @@ class CachingGlueTest {
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
 
-        CucumberStep pickleStep1 = getPickleStep(stepText);
+        Step pickleStep1 = getPickleStep(stepText);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -231,7 +232,7 @@ class CachingGlueTest {
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
         assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-        CucumberStep pickleStep2 = getPickleStep(stepText);
+        Step pickleStep2 = getPickleStep(stepText);
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep2);
         assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition1)));
     }
@@ -247,7 +248,7 @@ class CachingGlueTest {
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
 
-        CucumberStep pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
+        Step pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
@@ -260,7 +261,7 @@ class CachingGlueTest {
         assertThat(((DataTable) match1.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 1")));
 
         //check second match
-        CucumberStep pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
+        Step pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
 
         //check arguments
@@ -278,7 +279,7 @@ class CachingGlueTest {
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
 
-        CucumberStep pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
+        Step pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
 
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -292,7 +293,7 @@ class CachingGlueTest {
         assertThat(match1.getArguments().get(0).getValue(), is(equalTo("doc string 1")));
 
         //check second match
-        CucumberStep pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
+        Step pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
         //check arguments
         assertThat(match2.getArguments().get(0).getValue(), is(equalTo("doc string 2")));
@@ -302,7 +303,7 @@ class CachingGlueTest {
     void returns_fresh_match_from_cache_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
-        CucumberStep pickleStep1 = getPickleStep(stepText);
+        Step pickleStep1 = getPickleStep(stepText);
 
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
@@ -327,7 +328,7 @@ class CachingGlueTest {
     void returns_no_match_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
-        CucumberStep pickleStep1 = getPickleStep(stepText);
+        Step pickleStep1 = getPickleStep(stepText);
 
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");

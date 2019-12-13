@@ -1,10 +1,10 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.RunnerSupplier;
-import io.cucumber.plugin.event.CucumberStep;
+import io.cucumber.plugin.event.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -27,11 +27,11 @@ final class PickleRunners {
 
         Description getDescription();
 
-        Description describeChild(CucumberStep step);
+        Description describeChild(Step step);
 
     }
 
-    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions options) {
+    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions options) {
         try {
             return new WithStepDescriptions(runnerSupplier, pickle, options);
         } catch (InitializationError e) {
@@ -40,19 +40,19 @@ final class PickleRunners {
     }
 
 
-    static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions) {
+    static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) {
         return new NoStepDescriptions(featureName, runnerSupplier, pickle, jUnitOptions);
     }
 
 
-    static class WithStepDescriptions extends ParentRunner<CucumberStep> implements PickleRunner {
+    static class WithStepDescriptions extends ParentRunner<Step> implements PickleRunner {
         private final RunnerSupplier runnerSupplier;
-        private final CucumberPickle pickle;
+        private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
-        private final Map<CucumberStep, Description> stepDescriptions = new HashMap<>();
+        private final Map<Step, Description> stepDescriptions = new HashMap<>();
         private Description description;
 
-        WithStepDescriptions(RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
+        WithStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
             super(null);
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
@@ -60,8 +60,8 @@ final class PickleRunners {
         }
 
         @Override
-        protected List<CucumberStep> getChildren() {
-            // Casts io.cucumber.core.feature.CucumberStep
+        protected List<Step> getChildren() {
+            // Casts io.cucumber.core.gherkin.Step
             // to io.cucumber.core.event.CucumberStep
             return new ArrayList<>(pickle.getSteps());
         }
@@ -81,7 +81,7 @@ final class PickleRunners {
         }
 
         @Override
-        public Description describeChild(CucumberStep step) {
+        public Description describeChild(Step step) {
             Description description = stepDescriptions.get(step);
             if (description == null) {
                 String testName = createName(step.getText(), jUnitOptions.filenameCompatibleNames());
@@ -102,7 +102,7 @@ final class PickleRunners {
         }
 
         @Override
-        protected void runChild(CucumberStep step, RunNotifier notifier) {
+        protected void runChild(Step step, RunNotifier notifier) {
             // The way we override run(RunNotifier) causes this method to never be called.
             // Instead it happens via cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
             throw new UnsupportedOperationException();
@@ -114,11 +114,11 @@ final class PickleRunners {
     static final class NoStepDescriptions implements PickleRunner {
         private final String featureName;
         private final RunnerSupplier runnerSupplier;
-        private final CucumberPickle pickle;
+        private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private Description description;
 
-        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, CucumberPickle pickle, JUnitOptions jUnitOptions) {
+        NoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) {
             this.featureName = featureName;
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
@@ -136,7 +136,7 @@ final class PickleRunners {
         }
 
         @Override
-        public Description describeChild(CucumberStep step) {
+        public Description describeChild(Step step) {
             throw new UnsupportedOperationException("This pickle runner does not wish to describe its children");
         }
 
@@ -161,7 +161,7 @@ final class PickleRunners {
             this.pickleLine = pickleLine;
         }
 
-        PickleId(CucumberPickle pickle) {
+        PickleId(Pickle pickle) {
             this(pickle.getUri(), pickle.getLocation().getLine());
         }
 
@@ -192,10 +192,10 @@ final class PickleRunners {
         private final int pickleLine;
         private int pickleStepLine;
 
-        PickleStepId(CucumberPickle pickle, CucumberStep step) {
+        PickleStepId(Pickle pickle, Step step) {
             this.uri = pickle.getUri();
             this.pickleLine = pickle.getLocation().getLine();
-            this.pickleStepLine = step.getStepLine();
+            this.pickleStepLine = step.getLine();
         }
 
         @Override

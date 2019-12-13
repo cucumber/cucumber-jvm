@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.feature.CucumberPickle;
 import org.apiguardian.api.API;
 
 /**
@@ -9,13 +8,13 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public final class Pickle {
 
-    private final CucumberPickle cucumberPickle;
+    private final io.cucumber.core.gherkin.Pickle pickle;
 
-    Pickle(CucumberPickle cucumberPickle) {
-        this.cucumberPickle = cucumberPickle;
+    Pickle(io.cucumber.core.gherkin.Pickle pickle) {
+        this.pickle = pickle;
     }
 
-    CucumberPickle getCucumberPickle() {
-        return cucumberPickle;
+    io.cucumber.core.gherkin.Pickle getPickle() {
+        return pickle;
     }
 }

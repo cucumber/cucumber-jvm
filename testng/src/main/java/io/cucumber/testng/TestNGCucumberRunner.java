@@ -2,9 +2,10 @@ package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
@@ -32,6 +33,7 @@ import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -55,7 +57,7 @@ public final class TestNGCucumberRunner {
     private static final Logger log = LoggerFactory.getLogger(TestNGCucumberRunner.class);
 
     private final EventBus bus;
-    private final Predicate<CucumberPickle> filters;
+    private final Predicate<Pickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
@@ -82,11 +84,12 @@ public final class TestNGCucumberRunner {
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        runtimeOptions = new CucumberPropertiesParser()
+        this.runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         if (!runtimeOptions.isStrict()) {
             log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
@@ -96,9 +99,9 @@ public final class TestNGCucumberRunner {
         }
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
-        featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions);
+        FeatureParser parser = new FeatureParser(bus::generateId);
+        this.featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
-        this.bus = new TimeServiceEventBus(Clock.systemUTC());
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
@@ -108,11 +111,11 @@ public final class TestNGCucumberRunner {
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 
-    public void runScenario(Pickle pickle) throws Throwable {
+    public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        CucumberPickle cucumberPickle = pickle.getCucumberPickle();
+        Pickle cucumberPickle = pickle.getPickle();
         runner.runPickle(cucumberPickle);
         testCaseResultListener.finishExecutionUnit();
 
@@ -137,7 +140,7 @@ public final class TestNGCucumberRunner {
                 .flatMap(feature -> feature.getPickles().stream()
                     .filter(filters)
                     .map(cucumberPickle -> new Object[]{
-                        new PickleWrapperImpl(new Pickle(cucumberPickle)),
+                        new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
                         new FeatureWrapperImpl(feature)}))
                 .collect(toList())
                 .toArray(new Object[0][0]);
@@ -146,12 +149,12 @@ public final class TestNGCucumberRunner {
         }
     }
 
-    private List<CucumberFeature> getFeatures() {
+    private List<Feature> getFeatures() {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
 
-        List<CucumberFeature> features = featureSupplier.get();
+        List<Feature> features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
-        for (CucumberFeature feature : features) {
+        for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
         return features;

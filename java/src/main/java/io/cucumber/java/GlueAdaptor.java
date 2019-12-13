@@ -65,7 +65,8 @@ final class GlueAdaptor {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
             return (String) Invoker.invoke(annotation, expressionMethod);
-        } catch (Throwable e) {
+        } catch (NoSuchMethodException e) {
+            // Should never happen.
             throw new IllegalStateException(e);
         }
     }

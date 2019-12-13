@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.util.UUID;
 
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
@@ -26,7 +27,7 @@ class UnusedStepsSummaryPrinterTest {
     void verifyUnusedStepsPrinted() {
         StringBuilder out = new StringBuilder();
         UnusedStepsSummaryPrinter summaryPrinter = new UnusedStepsSummaryPrinter(out);
-        TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+        TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         summaryPrinter.setEventPublisher(bus);
 
         // Register two steps, use one, then finish the test run

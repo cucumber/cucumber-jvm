@@ -4,8 +4,8 @@ import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberPickle;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
@@ -53,7 +53,7 @@ public final class Runner {
         return bus;
     }
 
-    public void runPickle(CucumberPickle pickle) {
+    public void runPickle(Pickle pickle) {
         try {
             StepTypeRegistry stepTypeRegistry = createTypeRegistryForPickle(pickle);
             snippetGenerators = createSnippetGeneratorsForPickle(stepTypeRegistry);
@@ -77,7 +77,7 @@ public final class Runner {
             .collect(Collectors.toList());
     }
 
-    private StepTypeRegistry createTypeRegistryForPickle(CucumberPickle pickle) {
+    private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
         Locale locale = typeRegistryConfigurer.locale();
         if (locale == null) {
             locale = new Locale(pickle.getLanguage());
@@ -87,31 +87,31 @@ public final class Runner {
         return stepTypeRegistry;
     }
 
-    private TestCase createTestCaseForPickle(CucumberPickle pickle) {
+    private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
-            return new TestCase(emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
+            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
         List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
         List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
-        return new TestCase(testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
+        return new TestCase(bus.generateId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
     }
 
-    private List<PickleStepTestStep> createTestStepsForPickleSteps(CucumberPickle pickle) {
+    private List<PickleStepTestStep> createTestStepsForPickleSteps(Pickle pickle) {
         List<PickleStepTestStep> testSteps = new ArrayList<>();
 
-        for (CucumberStep step : pickle.getSteps()) {
+        for (Step step : pickle.getSteps()) {
             PickleStepDefinitionMatch match = matchStepToStepDefinition(pickle, step);
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
-            testSteps.add(new PickleStepTestStep(pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
+            testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
         }
 
         return testSteps;
     }
 
-    private PickleStepDefinitionMatch matchStepToStepDefinition(CucumberPickle pickle, CucumberStep step) {
+    private PickleStepDefinitionMatch matchStepToStepDefinition(Pickle pickle, Step step) {
         try {
             PickleStepDefinitionMatch match = glue.stepDefinitionMatch(pickle.getUri(), step);
             if (match != null) {
@@ -119,7 +119,7 @@ public final class Runner {
             }
             List<String> snippets = generateSnippetsForStep(step);
             if (!snippets.isEmpty()) {
-                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getStepLine(), snippets));
+                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getLine(), snippets));
             }
             return new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
         } catch (AmbiguousStepDefinitionsException e) {
@@ -127,7 +127,7 @@ public final class Runner {
         }
     }
 
-    private List<String> generateSnippetsForStep(CucumberStep step) {
+    private List<String> generateSnippetsForStep(Step step) {
         List<String> snippets = new ArrayList<>();
         for (SnippetGenerator snippetGenerator : snippetGenerators) {
             List<String> snippet = snippetGenerator.getSnippet(step, runnerOptions.getSnippetType());
@@ -147,7 +147,7 @@ public final class Runner {
     private List<HookTestStep> createTestStepsForHooks(List<String> tags, Collection<CoreHookDefinition> hooks, HookType hookType) {
         return hooks.stream()
             .filter(hook -> hook.matches(tags))
-            .map(hook -> new HookTestStep(hookType, new HookDefinitionMatch(hook)))
+            .map(hook -> new HookTestStep(bus.generateId(), hookType, new HookDefinitionMatch(hook)))
             .collect(Collectors.toList());
     }
 

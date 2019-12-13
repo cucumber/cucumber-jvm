@@ -1,11 +1,11 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.feature.CucumberFeature;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.junit.PickleRunners.WithStepDescriptions;
-import io.cucumber.plugin.event.CucumberStep;
+import io.cucumber.plugin.event.Step;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 
@@ -20,7 +20,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() {
-        List<CucumberPickle> pickles = picklesFromFeature("path/test.feature", "" +
+        List<Pickle> pickles = picklesFromFeature("path/test.feature", "" +
             "Feature: FB\n" +
             "# Scenario with same step occurring twice\n" +
             "\n" +
@@ -39,8 +39,8 @@ class PickleRunnerWithStepDescriptionsTest {
         );
 
         // fish out the two occurrences of the same step and check whether we really got them
-        CucumberStep stepOccurrence1 = runner.getChildren().get(0);
-        CucumberStep stepOccurrence2 = runner.getChildren().get(2);
+        Step stepOccurrence1 = runner.getChildren().get(0);
+        Step stepOccurrence2 = runner.getChildren().get(2);
         assertEquals(stepOccurrence1.getText(), stepOccurrence2.getText());
 
         // then check that the descriptions are unequal
@@ -54,7 +54,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentStepsInAScenarioOutline() {
-        CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
+        Feature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: FB\n" +
             "  Scenario Outline: SO\n" +
             "    When <action>\n" +
@@ -79,7 +79,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldIncludeScenarioNameAsClassNameInStepDescriptions() {
-        CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
+        Feature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: In cucumber.junit\n" +
             "  Scenario: first\n" +
             "    When step\n" +
@@ -108,7 +108,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameForDisplayName() {
-        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -124,7 +124,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseStepKeyworkAndNameForChildName() {
-        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
@@ -140,7 +140,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<CucumberPickle> pickles = picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");

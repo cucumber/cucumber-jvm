@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -13,19 +13,22 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
-    private final CucumberPickle pickle;
+    private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
+    private final UUID id;
 
-    TestCase(List<PickleStepTestStep> testSteps,
+    TestCase(UUID id, List<PickleStepTestStep> testSteps,
              List<HookTestStep> beforeHooks,
              List<HookTestStep> afterHooks,
-             CucumberPickle pickle,
+             Pickle pickle,
              boolean dryRun) {
+        this.id = id;
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
@@ -36,19 +39,20 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     void run(EventBus bus) {
         boolean skipNextStep = this.dryRun;
         Instant start = bus.getInstant();
+        UUID executionId = bus.generateId();
         bus.send(new TestCaseStarted(start, this));
         TestCaseState state = new TestCaseState(bus, this);
 
         for (HookTestStep before : beforeHooks) {
-            skipNextStep |= before.run(this, bus, state, dryRun);
+            skipNextStep |= before.run(this, bus, state, dryRun, executionId);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            skipNextStep |= step.run(this, bus, state, skipNextStep);
+            skipNextStep |= step.run(this, bus, state, skipNextStep, executionId);
         }
 
         for (HookTestStep after : afterHooks) {
-            after.run(this, bus, state, dryRun);
+            after.run(this, bus, state, dryRun, executionId);
         }
 
         Instant stop = bus.getInstant();
@@ -86,8 +90,18 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
     public Integer getLine() {
         return pickle.getLocation().getLine();
+    }
+
+    @Override
+    public String getKeyword() {
+        return pickle.getKeyword();
     }
 
     private String fileColonLine(Integer line) {
@@ -98,4 +112,5 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     public List<String> getTags() {
         return pickle.getTags();
     }
+
 }

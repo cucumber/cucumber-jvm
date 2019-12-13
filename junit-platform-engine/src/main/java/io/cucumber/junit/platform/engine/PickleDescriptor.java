@@ -1,6 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.feature.CucumberPickle;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
@@ -13,16 +13,15 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    private final CucumberPickle pickleEvent;
+    private final Pickle pickleEvent;
 
-    PickleDescriptor(UniqueId uniqueId, String name, TestSource source, CucumberPickle pickleEvent) {
+    PickleDescriptor(UniqueId uniqueId, String name, TestSource source, Pickle pickleEvent) {
         super(uniqueId, name, source);
         this.pickleEvent = pickleEvent;
     }

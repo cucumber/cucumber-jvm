@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -41,10 +42,10 @@
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
-        <gherkin.version>5.2.0</gherkin.version>
-        <cucumber-expressions.version>8.0.0</cucumber-expressions.version>
+        <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
         <datatable.version>3.0.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
+        <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>
@@ -74,13 +75,13 @@
 
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>gherkin</artifactId>
-                <version>${gherkin.version}</version>
+                <artifactId>tag-expressions</artifactId>
+                <version>${tag-expressions.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>tag-expressions</artifactId>
-                <version>${tag-expressions.version}</version>
+                <artifactId>messages</artifactId>
+                <version>${messages.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -149,6 +150,21 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-gherkin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-gherkin-vintage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-gherkin-messages</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit-platform-engine</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -196,6 +212,8 @@
         <module>core</module>
         <module>deltaspike</module>
         <module>docstring</module>
+        <module>gherkin</module>
+        <module>gherkin-vintage</module>
         <module>guice</module>
         <module>java8</module>
         <module>java</module>
@@ -266,7 +284,7 @@
                         <dependency>
                             <groupId>io.cucumber</groupId>
                             <artifactId>gherkin</artifactId>
-                            <version>${gherkin.version}</version>
+                            <version>${gherkin-vintage.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -285,7 +303,7 @@
                             <group>
                                 <title>API Packages</title>
                                 <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.testng.api
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.testng
                                 </packages>
                             </group>
                             <group>
@@ -328,6 +346,7 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <oldVersion>4.8.0</oldVersion>
                         <analysisConfiguration>
                             <revapi.semver.ignore>
                                 <enabled>true</enabled>
@@ -340,28 +359,7 @@
                             <revapi.filter>
                                 <elements>
                                     <exclude>
-                                        <!--The logging dependencies for Spring are provided. This causes them to
-                                        be missing in the dependency hierarchy. A false positive. -->
-                                        <item>class org\.springframework\..*</item>
-                                        <item>.* io\.cucumber\.core\.runner\.AmbiguousStepDefinitionsException.*</item>
-                                        <item>.* io\.cucumber\.core\.feature\.CucumberFeature\.CucumberFeatureUriComparator.*</item>
-                                        <item>.* io\.cucumber\.junit\..*</item>
-                                        <item>.* io\.cucumber\.junit\..*</item>
-                                        <item>.* io.cucumber.core.runtime.*</item>
-                                        <item>.* io.cucumber.core.feature.*</item>
-                                        <item>.* io.cucumber.core.logging.*</item>
-                                        <item>.* io.cucumber.core.io.*</item>
-                                        <item>.* io.cucumber.core.reflection.*</item>
-                                        <item>.* io.cucumber.core.resource.*</item>
-                                        <item>.* io.cucumber.plugin.event.EmbedEvent::getMediaType().*</item>
-                                        <item>.* io.cucumber.java8.DefaultDataTableEntryTransformerBody.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>
-                                        <item>.* io.cucumber.java8.DefaultDataTableCellTransformerBody.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableCellTransformer.*</item>
-                                        <item>.* io.cucumber.java8.DefaultParameterTransformerBody.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultParameterTransformer.*</item>
-                                        <item>.* io.cucumber.java8.LambdaGlue::DefaultDataTableEntryTransformer.*</item>
-                                        <item>.* io.cucumber.testng.TestNGCucumberRunner.*</item>
+                                        <item>.* io.cucumber.core.gherkin.*</item>
                                     </exclude>
                                 </elements>
                             </revapi.filter>

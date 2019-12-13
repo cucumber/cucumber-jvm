@@ -2,7 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.feature.CucumberStep;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
@@ -49,7 +49,7 @@ final class CoreStepDefinition {
         return stepDefinition;
     }
 
-    List<Argument> matchedArguments(CucumberStep step) {
+    List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step, types);
     }
 
@@ -64,5 +64,4 @@ final class CoreStepDefinition {
         }
         return types;
     }
-
 }

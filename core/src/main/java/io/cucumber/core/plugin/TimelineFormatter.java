@@ -4,6 +4,8 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCase;
@@ -26,6 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
@@ -46,11 +49,13 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         "/io/cucumber/core/plugin/timeline/chosen-sprite.png"
     };
 
-    private final TestSourcesModel testSources = new TestSourcesModel();
     private final Map<String, TestData> allTests = new HashMap<>();
     private final Map<Long, GroupData> allGroups = new HashMap<>();
     private final URL reportDir;
     private final NiceAppendable reportJs;
+    private final Map<URI, String> featuresNames = new HashMap<>();
+    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+
 
     @SuppressWarnings("unused") // Used by PluginFactory
     public TimelineFormatter(final URL reportDir) {
@@ -71,7 +76,8 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.getUri(), event);
+        Feature feature = parser.parseResource(new TestSourceReadResource(event));
+        featuresNames.put(feature.getUri(), feature.getName());
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
@@ -175,10 +181,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private String getId(final TestCaseEvent testCaseEvent) {
-        final TestCase testCase = testCaseEvent.getTestCase();
-        final URI uri = testCase.getUri();
-        final TestSourcesModel.AstNode astNode = testSources.getAstNode(uri, testCase.getLine());
-        return TestSourcesModel.calculateId(astNode);
+        return testCaseEvent.getTestCase().getId().toString();
     }
 
     class TestData {
@@ -205,7 +208,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
             final URI uri = testCase.getUri();
-            this.feature = TimelineFormatter.this.testSources.getFeatureName(uri);
+            this.feature = featuresNames.get(uri);
             this.scenario = testCase.getName();
             this.startTime = started.getInstant().toEpochMilli();
             this.threadId = threadId;

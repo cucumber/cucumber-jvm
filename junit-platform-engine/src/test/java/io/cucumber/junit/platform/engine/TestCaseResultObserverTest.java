@@ -3,7 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Argument;
-import io.cucumber.plugin.event.CucumberStep;
+import io.cucumber.plugin.event.Step;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
@@ -18,13 +18,13 @@ import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
-import org.opentest4j.TestSkippedException;
 
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -35,13 +35,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TestCaseResultObserverTest {
 
     private final URI uri = URI.create("classpath:io/cucumber/junit/platform/engine.feature");
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC());
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final TestCaseResultObserver observer = TestCaseResultObserver.observe(bus);
 
     private final TestCase testCase = new TestCase() {
         @Override
         public Integer getLine() {
             return 12;
+        }
+
+        @Override
+        public String getKeyword() {
+            return "Scenario";
         }
 
         @Override
@@ -68,9 +73,14 @@ class TestCaseResultObserverTest {
         public URI getUri() {
             return uri;
         }
+
+        @Override
+        public UUID getId() {
+            return UUID.randomUUID();
+        }
     };
     private PickleStepTestStep testStep = new PickleStepTestStep() {
-        CucumberStep cucumberStep = new CucumberStep() {
+        Step step = new Step() {
             @Override
             public StepArgument getArgument() {
                 return null;
@@ -87,7 +97,7 @@ class TestCaseResultObserverTest {
             }
 
             @Override
-            public int getStepLine() {
+            public int getLine() {
                 return 15;
             }
         };
@@ -98,8 +108,8 @@ class TestCaseResultObserverTest {
         }
 
         @Override
-        public CucumberStep getStep() {
-            return cucumberStep;
+        public Step getStep() {
+            return step;
         }
 
         @Override
@@ -109,12 +119,12 @@ class TestCaseResultObserverTest {
 
         @Override
         public StepArgument getStepArgument() {
-            return cucumberStep.getArgument();
+            return step.getArgument();
         }
 
         @Override
         public int getStepLine() {
-            return cucumberStep.getStepLine();
+            return step.getLine();
         }
 
         @Override
@@ -124,7 +134,7 @@ class TestCaseResultObserverTest {
 
         @Override
         public String getStepText() {
-            return cucumberStep.getText();
+            return step.getText();
         }
 
         @Override

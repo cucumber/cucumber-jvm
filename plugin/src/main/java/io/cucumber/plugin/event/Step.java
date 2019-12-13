@@ -6,7 +6,7 @@ import org.apiguardian.api.API;
  * Represents a step in a scenario.
  */
 @API(status = API.Status.STABLE)
-public interface CucumberStep {
+public interface Step {
     /**
      * Returns this Gherkin step argument. Can be either a data table or doc
      * string.
@@ -34,5 +34,5 @@ public interface CucumberStep {
      *
      * @return step line number
      */
-    int getStepLine();
+    int getLine();
 }

@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.UUID;
 
 import static java.time.Duration.ZERO;
 import static java.time.Instant.EPOCH;
@@ -34,7 +35,7 @@ class EventBusTest {
         TestCase testCase = mock(TestCase.class);
         TestStepFinished event = new TestStepFinished(EPOCH, testCase, testStep, result);
 
-        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
+        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID);
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
@@ -48,7 +49,7 @@ class EventBusTest {
         TestCase testCase = mock(TestCase.class);
         TestStepStarted event = new TestStepStarted(EPOCH, testCase, testStep);
 
-        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")));
+        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID);
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
