@@ -41,15 +41,18 @@ public interface PickleStepTestStep extends TestStep {
      * a data table or doc string.
      *
      * @return arguments provided to the gherkin step.
+     * @deprecated use {@link #getStep()}
      */
-
+    @Deprecated
     StepArgument getStepArgument();
 
     /**
      * The line in the feature file defining this step.
      *
      * @return a line number
+     * @deprecated use {@link #getStep()}
      */
+    @Deprecated
     int getStepLine();
 
     /**

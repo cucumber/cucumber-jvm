@@ -41,6 +41,7 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -216,26 +217,32 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
             emitTestRunStarted();
             for (Feature feature : features) {
-                bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-                bus.sendAll(feature.getMessages());
+                emitTestSource(feature);
             }
             runFeatures.evaluate();
-            bus.send(new TestRunFinished(bus.getInstant()));
             emitTestRunFinished();
         }
 
         private void emitTestRunStarted() {
-            bus.send(new TestRunStarted(bus.getInstant()));
+            Instant instant = bus.getInstant();
+            bus.send(new TestRunStarted(instant));
             bus.send(Messages.Envelope.newBuilder()
                 .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                    .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                    .setTimestamp(javaInstantToTimestamp(instant)))
                 .build());
         }
 
+        private void emitTestSource(Feature feature){
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.sendAll(feature.getMessages());
+        }
+
         private void emitTestRunFinished() {
+            Instant instant = bus.getInstant();
+            bus.send(new TestRunFinished(instant));
             bus.send(Messages.Envelope.newBuilder()
                 .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                    .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                    .setTimestamp(javaInstantToTimestamp(instant)))
                 .build());
         }
     }

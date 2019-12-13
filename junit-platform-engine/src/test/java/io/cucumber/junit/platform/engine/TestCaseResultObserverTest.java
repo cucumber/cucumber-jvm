@@ -97,7 +97,7 @@ class TestCaseResultObserverTest {
             }
 
             @Override
-            public int getStepLine() {
+            public int getLine() {
                 return 15;
             }
         };
@@ -124,7 +124,7 @@ class TestCaseResultObserverTest {
 
         @Override
         public int getStepLine() {
-            return step.getStepLine();
+            return step.getLine();
         }
 
         @Override

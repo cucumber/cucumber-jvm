@@ -119,7 +119,7 @@ public final class Runner {
             }
             List<String> snippets = generateSnippetsForStep(step);
             if (!snippets.isEmpty()) {
-                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getStepLine(), snippets));
+                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), step.getLine(), snippets));
             }
             return new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
         } catch (AmbiguousStepDefinitionsException e) {

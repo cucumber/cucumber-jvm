@@ -50,7 +50,7 @@ final class GherkinVintagePickle implements Pickle {
 
         for (PickleStep step : pickle.getSteps()) {
             Step cucumberStep = new GherkinVintageStep(step, document, dialect, previousGivenWhenThen, uri);
-            if (cucumberStep.getStepType().isGivenWhenThen()) {
+            if (cucumberStep.getType().isGivenWhenThen()) {
                 previousGivenWhenThen = cucumberStep.getKeyWord();
             }
             list.add(cucumberStep);

@@ -4,8 +4,6 @@ import gherkin.ast.TableRow;
 import io.cucumber.core.gherkin.Example;
 import io.cucumber.core.gherkin.Location;
 
-import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
-
 final class GherkinVintageExample implements Example {
 
     private final TableRow tableRow;

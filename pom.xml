@@ -307,16 +307,19 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>io.cucumber.examples*,org.springframework</excludePackageNames>
+                        <doclint>none</doclint>
+                        <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/8/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
+                            <link>https://junit.org/junit5/docs/current/api/</link>
+                            <link>https://javadoc.io/doc/org.testng/testng/7.0.0/</link>
                         </links>
                         <groups>
                             <group>
                                 <title>API Packages</title>
                                 <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.testng.api
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
                                 </packages>
                             </group>
                             <group>
@@ -326,7 +329,7 @@
                             <group>
                                 <title>Dependency Injection Providers</title>
                                 <packages>
-                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb
+                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
                                 </packages>
                             </group>
                         </groups>
@@ -360,28 +363,28 @@
                     </dependencies>
                     <configuration>
                         <oldVersion>4.8.0</oldVersion>
-                        <newVersion>5.0.0</newVersion>
                         <analysisConfiguration>
-                            <revapi.ignore>
-                                <!--
-                                We're exposing io.cucumber.messages.Messages.Envelope (an external class)
-                                io.cucumber.core.gherkin.Feature - allow that.
-
-                                The io.cucumber.core.gherkin.Feature interface is not public (it is not
-                                marked with org.apiguardian.api.API), so it's OK for this class to expose
-                                it.
-                                -->
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                </item>
-                                <item>
-                                    <code>java.class.nonPublicPartOfAPI</code>
-                                </item>
-                            </revapi.ignore>
+                            <revapi.semver.ignore>
+                                <enabled>true</enabled>
+                                <versionIncreaseAllows>
+                                    <major>breaking</major>
+                                    <minor>nonBreaking</minor>
+                                    <patch>equivalent</patch>
+                                </versionIncreaseAllows>
+                            </revapi.semver.ignore>
+                            <revapi.filter>
+                                <elements>
+                                    <exclude>
+                                        <!-- Dependency exposed in API. Ok for
+                                        Gherkin compatibility layer and messages -->
+                                        <item>.* io.cucumber.core.gherkin.*</item>
+                                        <item>.* io.cucumber.messages.*</item>
+                                    </exclude>
+                                </elements>
+                            </revapi.filter>
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
-
                 <!--  Code coverage reporting -->
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>

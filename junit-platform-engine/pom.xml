@@ -53,7 +53,6 @@
             <version>${junit-platform.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-gherkin-messages</artifactId>

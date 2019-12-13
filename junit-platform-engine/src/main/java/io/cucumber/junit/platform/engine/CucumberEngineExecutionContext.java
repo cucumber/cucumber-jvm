@@ -25,6 +25,7 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -57,11 +58,13 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     void startTestRun() {
         logger.debug(() -> "Sending run test started event");
-        bus.send(new TestRunStarted(bus.getInstant()));
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunStarted(instant));
         bus.send(Messages.Envelope.newBuilder()
             .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
-            .build());
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build()
+        );
     }
 
     void beforeFeature(Feature feature) {
@@ -82,10 +85,11 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     void finishTestRun() {
         logger.debug(() -> "Sending test run finished event");
-        bus.send(new TestRunFinished(bus.getInstant()));
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunFinished(instant));
         bus.send(Messages.Envelope.newBuilder()
             .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(bus.getInstant())))
+                .setTimestamp(javaInstantToTimestamp(instant)))
             .build());
     }
 

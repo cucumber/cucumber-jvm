@@ -34,5 +34,5 @@ public interface Step {
      *
      * @return step line number
      */
-    int getStepLine();
+    int getLine();
 }

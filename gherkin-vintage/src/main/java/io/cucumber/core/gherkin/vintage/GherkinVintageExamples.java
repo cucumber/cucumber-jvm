@@ -7,8 +7,6 @@ import io.cucumber.core.gherkin.Location;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
-
 final class GherkinVintageExamples implements Examples {
 
     private final gherkin.ast.Examples examples;

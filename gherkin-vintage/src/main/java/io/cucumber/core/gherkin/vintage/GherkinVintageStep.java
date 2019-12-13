@@ -32,7 +32,7 @@ final class GherkinVintageStep implements Step {
     private String extractKeyWord(GherkinDocument document) {
         return document.getFeature().getChildren().stream()
             .flatMap(scenarioDefinition -> scenarioDefinition.getSteps().stream())
-            .filter(step -> step.getLocation().getLine() == getStepLine())
+            .filter(step -> step.getLocation().getLine() == getLine())
             .findFirst()
             .map(gherkin.ast.Step::getKeyword)
             .orElseThrow(() ->  new IllegalStateException("GherkinDocument did not contain PickleStep"));
@@ -77,7 +77,7 @@ final class GherkinVintageStep implements Step {
     }
 
     @Override
-    public int getStepLine() {
+    public int getLine() {
         int last = step.getLocations().size() - 1;
         return step.getLocations().get(last).getLine();
     }
@@ -93,7 +93,7 @@ final class GherkinVintageStep implements Step {
     }
 
     @Override
-    public StepType getStepType() {
+    public StepType getType() {
         return stepType;
     }
 
@@ -109,7 +109,9 @@ final class GherkinVintageStep implements Step {
 
     @Override
     public String getId() {
-        String lineNumbers = this.step.getLocations().stream().map(s -> String.valueOf(s.getLine())).collect(Collectors.joining(":"));
+        String lineNumbers = this.step.getLocations().stream()
+            .map(s -> String.valueOf(s.getLine()))
+            .collect(Collectors.joining(":"));
         return uri + ":" + lineNumbers;
     }
 }

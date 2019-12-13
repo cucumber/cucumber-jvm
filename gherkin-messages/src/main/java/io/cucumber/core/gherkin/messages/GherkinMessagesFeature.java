@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public final class GherkinMessagesFeature implements Feature {
+final class GherkinMessagesFeature implements Feature {
     private final URI uri;
     private final List<Pickle> pickles;
     private final List<Messages.Envelope> envelopes;

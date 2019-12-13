@@ -61,7 +61,7 @@ final class PickleRunners {
 
         @Override
         protected List<Step> getChildren() {
-            // Casts io.cucumber.core.gherkin.CucumberStep
+            // Casts io.cucumber.core.gherkin.Step
             // to io.cucumber.core.event.CucumberStep
             return new ArrayList<>(pickle.getSteps());
         }
@@ -195,7 +195,7 @@ final class PickleRunners {
         PickleStepId(Pickle pickle, Step step) {
             this.uri = pickle.getUri();
             this.pickleLine = pickle.getLocation().getLine();
-            this.pickleStepLine = step.getStepLine();
+            this.pickleStepLine = step.getLine();
         }
 
         @Override

@@ -72,7 +72,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
 
     @Override
     public int getStepLine() {
-        return step.getStepLine();
+        return step.getLine();
     }
 
     @Override

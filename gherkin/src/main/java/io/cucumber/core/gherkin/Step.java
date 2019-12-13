@@ -2,7 +2,7 @@ package io.cucumber.core.gherkin;
 
 public interface Step extends io.cucumber.plugin.event.Step {
     @Override
-    int getStepLine();
+    int getLine();
 
     @Override
     Argument getArgument();
@@ -10,7 +10,7 @@ public interface Step extends io.cucumber.plugin.event.Step {
     @Override
     String getKeyWord();
 
-    StepType getStepType();
+    StepType getType();
 
     String getPreviousGivenWhenThenKeyWord();
 

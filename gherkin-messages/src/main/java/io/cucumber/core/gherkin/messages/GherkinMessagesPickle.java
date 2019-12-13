@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Wraps {@link Messages.Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
-public final class GherkinMessagesPickle implements Pickle {
+final class GherkinMessagesPickle implements Pickle {
 
     private final Messages.Pickle pickle;
     private final List<Step> steps;
@@ -47,7 +47,7 @@ public final class GherkinMessagesPickle implements Pickle {
             String keyword = gherkinStep.getKeyword();
 
             Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, stepLine, keyword);
-            if (step.getStepType().isGivenWhenThen()) {
+            if (step.getType().isGivenWhenThen()) {
                 previousGivenWhenThen = step.getKeyWord();
             }
             list.add(step);

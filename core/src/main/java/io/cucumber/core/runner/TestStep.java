@@ -51,9 +51,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID textExecutionId) {
         Instant startTime = bus.getInstant();
-
-        bus.send(new TestStepStarted(startTime, testCase, this));
-        sendTestStepStarted(bus, textExecutionId, startTime);
+        emitTestStepStarted(testCase, bus, textExecutionId, startTime);
 
         Status status;
         Throwable error = null;
@@ -67,23 +65,26 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         Duration duration = Duration.between(startTime, stopTime);
         Result result = mapStatusToResult(status, error, duration);
         state.add(result);
-        bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
-        sendTestStepFinished(bus, textExecutionId, stopTime, duration, result);
+        emitTestStepFinished(testCase, bus, textExecutionId, stopTime, duration, result);
 
         return !result.getStatus().is(Status.PASSED);
     }
 
-    private void sendTestStepStarted(EventBus bus, UUID textExecutionId, Instant startTime) {
+
+    private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
+        bus.send(new TestStepStarted(startTime, testCase, this));
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepStarted(Messages.TestStepStarted.newBuilder()
                 .setTestCaseStartedId(textExecutionId.toString())
                 .setTestStepId(id.toString())
                 .setTimestamp(javaInstantToTimestamp(startTime))
-            ).build());
+            ).build()
+        );
     }
 
-    private void sendTestStepFinished(EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
+    private void emitTestStepFinished(TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
+        bus.send(new TestStepFinished(stopTime, testCase, this, result));
         bus.send(Messages.Envelope.newBuilder()
             .setTestStepFinished(Messages.TestStepFinished.newBuilder()
                 .setTestCaseStartedId(textExecutionId.toString())
@@ -93,7 +94,8 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
                     .setStatus(from(result.getStatus()))
                     .setDuration(javaDurationToDuration(duration))
                 )
-            ).build());
+            ).build()
+        );
     }
 
     private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {

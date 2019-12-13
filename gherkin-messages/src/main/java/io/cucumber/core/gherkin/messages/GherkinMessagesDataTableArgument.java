@@ -11,9 +11,9 @@ final class GherkinMessagesDataTableArgument implements DataTableArgument {
     private final CellView cells;
     private final int line;
 
-    GherkinMessagesDataTableArgument(PickleTable table) {
+    GherkinMessagesDataTableArgument(PickleTable table, int line) {
         this.cells = new CellView(table);
-        this.line = -1; // TODO;
+        this.line = line;
     }
 
     @Override

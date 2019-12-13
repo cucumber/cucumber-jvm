@@ -14,6 +14,7 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventHandler;
@@ -26,6 +27,7 @@ import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,6 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
@@ -86,10 +89,9 @@ public final class Runtime {
 
     public void run() {
         final List<Feature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getInstant()));
+        emitTestRunStarted();
         for (Feature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-            bus.sendAll(feature.getMessages());
+            emitTestSource(feature);
         }
 
         final List<Future<?>> executingPickles = features.stream()
@@ -121,7 +123,30 @@ public final class Runtime {
             throw new CompositeCucumberException(thrown);
         }
 
-        bus.send(new TestRunFinished(bus.getInstant()));
+        emitTestRunFinished();
+    }
+
+    private void emitTestRunStarted() {
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunStarted(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
+    }
+
+    private void emitTestSource(Feature feature) {
+        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        bus.sendAll(feature.getMessages());
+    }
+
+    private void emitTestRunFinished() {
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunFinished(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
     }
 
     public byte exitStatus() {

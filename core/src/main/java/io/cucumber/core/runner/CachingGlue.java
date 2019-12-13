@@ -224,8 +224,7 @@ final class CachingGlue implements Glue {
     }
 
     private void emitStepDefined(StepDefinition stepDefinition) {
-        bus.send(
-            new StepDefinedEvent(
+        bus.send(new StepDefinedEvent(
                 bus.getInstant(),
                 new io.cucumber.plugin.event.StepDefinition(
                     stepDefinition.getLocation(),
@@ -233,8 +232,7 @@ final class CachingGlue implements Glue {
                 )
             )
         );
-
-        Messages.Envelope env = Messages.Envelope.newBuilder()
+        bus.send(Messages.Envelope.newBuilder()
             .setStepDefinition(
                 Messages.StepDefinition.newBuilder()
                     .setPattern(Messages.StepDefinitionPattern.newBuilder()
@@ -243,8 +241,8 @@ final class CachingGlue implements Glue {
                     .setSourceReference(Messages.SourceReference.newBuilder()
                         .setUri(stepDefinition.getLocation()).build())
                     .build())
-            .build();
-        bus.send(env);
+            .build()
+        );
     }
 
     PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {

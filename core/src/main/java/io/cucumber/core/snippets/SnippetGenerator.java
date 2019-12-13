@@ -40,7 +40,7 @@ public final class SnippetGenerator {
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
             snippets.add(snippet.template().format(new String[]{
-                    sanitize(step.getStepType().isGivenWhenThen() ? step.getKeyWord() : step.getPreviousGivenWhenThenKeyWord()),
+                    sanitize(step.getType().isGivenWhenThen() ? step.getKeyWord() : step.getPreviousGivenWhenThenKeyWord()),
                     snippet.escapePattern(expression.getSource()),
                     functionName(expression.getSource(), functionNameGenerator),
                     snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),

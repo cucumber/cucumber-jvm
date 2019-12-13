@@ -58,13 +58,13 @@ final class GherkinMessagesStep implements Step {
         }
         if (argument.hasDataTable()) {
             PickleTable table = argument.getDataTable();
-            return new GherkinMessagesDataTableArgument(table);
+            return new GherkinMessagesDataTableArgument(table, stepLine + 1);
         }
         return null;
     }
 
     @Override
-    public int getStepLine() {
+    public int getLine() {
         return stepLine;
     }
 
@@ -79,7 +79,7 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
-    public StepType getStepType() {
+    public StepType getType() {
         return stepType;
     }
 
