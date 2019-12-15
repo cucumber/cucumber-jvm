@@ -10,7 +10,10 @@ import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
+import io.cucumber.core.runtime.RunnerSupplier;
 import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
+import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
+import io.cucumber.core.runtime.SingletonRunnerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -30,7 +33,7 @@ import java.util.function.Supplier;
 class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     private static final Logger logger = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
-    private final ThreadLocalRunnerSupplier runnerSupplier;
+    private final RunnerSupplier runnerSupplier;
     private final EventBus bus;
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
@@ -39,17 +42,21 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
         logger.debug(() -> "Parsing options");
         CucumberEngineOptions options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
-        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
+
         if (options.isParallelExecutionEnabled()) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
+            ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
+            BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
+            this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         } else {
             plugins.setEventBusOnEventListenerPlugins(bus);
+            ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+            BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
+            this.runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         }
-        this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
     }
 
     void startTestRun() {
@@ -59,7 +66,8 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     void beforeFeature(Feature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
-        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        // Invoked concurrently.
+        getRunner().getBus().send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
     }
 
     void runTestCase(Pickle pickle) {
