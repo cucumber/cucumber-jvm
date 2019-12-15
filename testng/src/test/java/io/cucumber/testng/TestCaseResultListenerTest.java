@@ -99,7 +99,7 @@ public class TestCaseResultListenerTest {
     public void should_be_skipped_for_undefined_result() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
 
-        bus.send(new SnippetsSuggestedEvent(now(), uri, line, singletonList("stub snippet")));
+        bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
 
         Result stepResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -122,7 +122,7 @@ public class TestCaseResultListenerTest {
     public void should_not_be_skipped_for_undefined_result_in_strict_mode() {
         TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
 
-        bus.send(new SnippetsSuggestedEvent(now(), uri, line, singletonList("stub snippet")));
+        bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
 
         Result stepResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));

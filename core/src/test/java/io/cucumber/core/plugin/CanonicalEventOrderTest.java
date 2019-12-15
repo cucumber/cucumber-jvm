@@ -43,7 +43,7 @@ class CanonicalEventOrderTest {
 
     private Event runStarted = new TestRunStarted(getInstant());
     private Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
-    private Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, Collections.emptyList());
+    private Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, 0, Collections.emptyList());
     private Event feature1Case1Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 1);
     private Event feature1Case2Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 9);
     private Event feature1Case3Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 11);

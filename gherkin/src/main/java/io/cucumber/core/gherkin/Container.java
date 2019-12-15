@@ -1,8 +1,8 @@
 package io.cucumber.core.gherkin;
 
-import java.util.stream.Stream;
+import java.util.Collection;
 
-public interface Container<T> {
+public interface Container<T extends Node> {
 
-    Stream<T> children();
+    Collection<T> children();
 }
