@@ -3,9 +3,15 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...master) (In Git)
 
 ### Added
-   
+ * [Core] Implement TeamCity output format plugin ([#1842](https://github.com/cucumber/cucumber-jvm/issues/1842) M.P. Korstanje)
+ * [Core] Support Gherkin Rule keyword ([##1804](https://github.com/cucumber/cucumber-jvm/issues/#1804), [#1840](https://github.com/cucumber/cucumber-jvm/issues/1840) M.P. Korstanje, Aslak Hellesøy)
+   - Opt-in by adding `cucumber-gherkin-messages` dependency
+   - Not supported by JSON and HTML formatter. 
 ### Changed
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
+ * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
+ * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
+ * [JUnit] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
 
 ### Removed
  
@@ -13,8 +19,24 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
  * [JUnit] Send events to configured Plugins (M.P. Korstanje)
  * [JUnit] Mark `Constants` as part of the public API (M.P. Korstanje)
- 
+ * [Core] DataTable does not support Kotlin Collection types ([#1838](https://github.com/cucumber/cucumber-jvm/issues/1838) Marit Van Dijk, M.P. Korstanje)
+     - DataTable types for `X` and `? extends X` are now considered identical.
 ### Deprecated
+ * [Core] Deprecate `cucumber.options` ([#1836](https://github.com/cucumber/cucumber-jvm/issues/1836) M.P. Korstanje)
+   * Use individual properties instead
+       - cucumber.ansi-colors.disabled
+       - cucumber.execution.dry-run
+       - cucumber.execution.limit
+       - cucumber.execution.order
+       - cucumber.execution.strict
+       - cucumber.execution.wip
+       - cucumber.features
+       - cucumber.filter.name
+       - cucumber.filter.tags
+       - cucumber.glue
+       - cucumber.object-factory
+       - cucumber.plugin
+       - cucumber.snippet-type
      
 ## [5.0.0-RC2](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...v5.0.0-RC2) (2019-11-22)
 
