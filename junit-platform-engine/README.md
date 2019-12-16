@@ -126,7 +126,7 @@ configuration options below.
 ## Configuration Options ##
 
 Cucumber receives its configuration from the JUnit platform. To see how these
-can be supplied see the JUnit documentation [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/user-guide/index.html#running-tests-config-params). 
+can be supplied see the JUnit documentation [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). 
 For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
