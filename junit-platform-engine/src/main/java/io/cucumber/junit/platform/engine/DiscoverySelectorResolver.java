@@ -15,6 +15,7 @@ import org.junit.platform.engine.discovery.UriSelector;
 
 import java.util.function.Predicate;
 
+import static io.cucumber.junit.platform.engine.FeatureResolver.createFeatureResolver;
 import static org.junit.platform.engine.Filter.composeFilters;
 
 class DiscoverySelectorResolver {
@@ -32,7 +33,7 @@ class DiscoverySelectorResolver {
     }
 
     private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor, Predicate<String> packageFilter) {
-        FeatureResolver featureResolver = FeatureResolver.createFeatureResolver(engineDescriptor, packageFilter);
+        FeatureResolver featureResolver = createFeatureResolver(engineDescriptor, packageFilter);
 
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClasspathResource);
