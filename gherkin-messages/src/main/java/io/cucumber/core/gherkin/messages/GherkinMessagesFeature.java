@@ -92,7 +92,7 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
-    public Iterable<Messages.Envelope> getMessages() {
+    public Iterable<?> getParseEvents() {
         return envelopes;
     }
 

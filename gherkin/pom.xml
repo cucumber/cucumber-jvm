@@ -22,10 +22,6 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-plugin</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>messages</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

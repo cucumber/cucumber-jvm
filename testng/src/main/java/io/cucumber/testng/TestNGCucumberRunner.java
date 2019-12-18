@@ -176,7 +176,7 @@ public final class TestNGCucumberRunner {
 
     private void emitTestSource(Feature feature) {
         bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.sendAll(feature.getMessages());
+        bus.sendAll(feature.getParseEvents());
     }
 
     private void emitTestRunFinished() {

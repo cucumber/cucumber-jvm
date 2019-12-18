@@ -1,7 +1,5 @@
 package io.cucumber.core.gherkin;
 
-import io.cucumber.messages.Messages;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -18,5 +16,5 @@ public interface Feature extends Node, Container<Node> {
 
     String getSource();
 
-    Iterable<Messages.Envelope> getMessages();
+    Iterable<?> getParseEvents();
 }

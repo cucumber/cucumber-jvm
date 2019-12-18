@@ -70,7 +70,7 @@ class CucumberEngineExecutionContext implements EngineExecutionContext {
     void beforeFeature(Feature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
         bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.sendAll(feature.getMessages());
+        bus.sendAll(feature.getParseEvents());
     }
 
     void runTestCase(Pickle pickle) {

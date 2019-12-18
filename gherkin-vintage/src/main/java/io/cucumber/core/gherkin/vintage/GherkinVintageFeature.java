@@ -7,7 +7,6 @@ import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.Node;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.messages.Messages;
 
 import java.net.URI;
 import java.util.List;
@@ -86,7 +85,7 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public Iterable<Messages.Envelope> getMessages() {
+    public Iterable<?> getParseEvents() {
         return emptyList();
     }
 
