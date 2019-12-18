@@ -158,6 +158,13 @@ Supported `DiscoverySelector`s are:
 The only supported `DiscoveryFilter` is the `PackageNameFilter` and only when
 features are selected from the classpath.
 
+The `UriSelector` supports URI's with a `line` query parameter:
+  - `classpath:/com/example/example.feature?line=20`
+  - `file:/path/to/com/example/example.feature?line=20`
+ 
+Any `TestDescriptor` that matches the line *and* its descendents will be 
+included in the discovery result.
+
 ## Tags
 
 Cucumber tags are mapped to JUnit tags. Note that the `@` symbol is not part of
