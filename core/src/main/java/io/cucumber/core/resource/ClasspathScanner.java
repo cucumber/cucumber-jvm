@@ -1,5 +1,8 @@
 package io.cucumber.core.resource;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -18,6 +21,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 public final class ClasspathScanner {
+
+    private static final Logger log = LoggerFactory.getLogger(ClasspathScanner.class);
 
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final String PACKAGE_INFO_FILE_NAME = "package-info" + CLASS_FILE_SUFFIX;
@@ -95,7 +100,7 @@ public final class ClasspathScanner {
                     .filter(classFilter)
                     .ifPresent(classConsumer);
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                throw new IllegalArgumentException("Unable to load " + fqn, e);
+                log.debug(e, () -> "Failed to load class " + fqn);
             }
         };
     }
