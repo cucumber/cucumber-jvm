@@ -6,7 +6,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Implement TeamCity output format plugin ([#1842](https://github.com/cucumber/cucumber-jvm/issues/1842) M.P. Korstanje)
  * [Core] Support Gherkin Rule keyword ([##1804](https://github.com/cucumber/cucumber-jvm/issues/#1804), [#1840](https://github.com/cucumber/cucumber-jvm/issues/1840) M.P. Korstanje, Aslak Hellesøy)
    - Opt-in by adding `cucumber-gherkin-messages` dependency
-   - Not supported by JSON and HTML formatter. 
+   - Not supported by JSON and HTML formatter.
+ * [JUnit] Support `line` query parameter in `UriSelector` ([#1845](https://github.com/cucumber/cucumber-jvm/issues/1845) M.P. Korstanje)
+ 
 ### Changed
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
@@ -18,9 +20,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
  * [JUnit] Send events to configured Plugins (M.P. Korstanje)
+ * [JUnit] Fix concurrent modification of event queue (M.P. Korstanje)
  * [JUnit] Mark `Constants` as part of the public API (M.P. Korstanje)
  * [Core] DataTable does not support Kotlin Collection types ([#1838](https://github.com/cucumber/cucumber-jvm/issues/1838) Marit Van Dijk, M.P. Korstanje)
      - DataTable types for `X` and `? extends X` are now considered identical.
+  * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
 ### Deprecated
  * [Core] Deprecate `cucumber.options` ([#1836](https://github.com/cucumber/cucumber-jvm/issues/1836) M.P. Korstanje)
    * Use individual properties instead
