@@ -1,9 +1,8 @@
 Releasing
 =========
 
-The process of deploying to maven central has been automated based on 
-the [Complete guide to continuous deployment to maven central from Travis CI](http://www.debonair.io/post/maven-cd/)
-and will be executed whenever a non-snapshot version is committed.
+The deployment process of `cucumber-jvm` is based on 
+[Deploying to OSSRH with Apache Maven](http://central.sonatype.org/pages/apache-maven.html#deploying-to-ossrh-with-apache-maven-introduction).
 
 ## Check [![Build Status](https://travis-ci.org/cucumber/cucumber-jvm.svg?branch=master)](https://travis-ci.org/cucumber/cucumber-jvm) ##
 
@@ -36,15 +35,10 @@ git commit -am "Prepare for release X.Y.Z"
 Now release everything:
 
 ```
-mvn release:clean release:prepare -P-examples -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
+mvn release:clean release:prepare -P-examples -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true"
+git checkout vX.Y.Z
+mvn clean deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true
 ```
-
-Travis will now deploy everything. Once travis is done go into [Nexus](https://oss.sonatype.org/) and inspect, 
-close and release the staging repository.
-
-It is preferable to use the automated deployment process over the manual process. However should travis.ci fail or should the 
-need arise to setup another continuous integration system the [Manual deployment](#manual-deployment) section 
-describes how this works.
 
 ## Last bits ##
 
@@ -61,14 +55,7 @@ The cucumber-jvm version for the docs is specified in the docs [versions.yaml](h
 All done! Hurray!
 
 
-# Manual deployment #
-
-It is preferable to use the automated deployment process over the manual process.
-
-The deployment process of `cucumber-jvm` is based on 
-[Deploying to OSSRH with Apache Maven](http://central.sonatype.org/pages/apache-maven.html#deploying-to-ossrh-with-apache-maven-introduction).
-This process is nearly identical for both snapshot deployments and releases. Whether a snapshot 
-deployment or release is executed is determined by the version number.
+# GPG Keys #
 
 To make a release you must have the `devs@cucumber.io` GPG private key imported in gpg2.
 
@@ -111,11 +98,4 @@ for example:
         </profile>
     </profiles>
 </settings>
-```
-
-
-# Deploy the release #
-
-```
-mvn release:perform -P-examples -Psign-source-javadoc -DskipTests=true
 ```
