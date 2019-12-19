@@ -12,6 +12,7 @@ import io.cucumber.core.plugin.Options;
 import io.cucumber.core.plugin.PrettyFormatter;
 import io.cucumber.core.plugin.ProgressFormatter;
 import io.cucumber.core.plugin.RerunFormatter;
+import io.cucumber.core.plugin.TeamCityPlugin;
 import io.cucumber.core.plugin.TestNGFormatter;
 import io.cucumber.core.plugin.TimelineFormatter;
 import io.cucumber.core.plugin.UnusedStepsSummaryPrinter;
@@ -46,14 +47,16 @@ public class PluginOption implements Options.Plugin {
         put("timeline", TimelineFormatter.class);
         put("unused", UnusedStepsSummaryPrinter.class);
         put("usage", UsageFormatter.class);
+        put("teamcity", UsageFormatter.class);
     }};
 
     // Refuse plugins known to implement the old API
-    private static final HashMap<String, Class<? extends Plugin>> OLD_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter", PrettyFormatter.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter", PrettyFormatter.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter", PrettyFormatter.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter", PrettyFormatter.class);
+    private static final HashMap<String, Class<? extends Plugin>> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter", TeamCityPlugin.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter", TeamCityPlugin.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter", TeamCityPlugin.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter", TeamCityPlugin.class);
+        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter", TeamCityPlugin.class);
     }};
 
     private final String pluginString;
@@ -100,9 +103,9 @@ public class PluginOption implements Options.Plugin {
     }
 
     private static Class<? extends Plugin> parsePluginName(String pluginName) {
-        Class<? extends Plugin> oldApiPlugin = OLD_INTELLIJ_IDEA_PLUGIN_CLASSES.get(pluginName);
+        Class<? extends Plugin> oldApiPlugin = INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES.get(pluginName);
         if (oldApiPlugin != null) {
-            log.warn(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to pretty formatter");
+            log.debug(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to teamcity plugin");
             return oldApiPlugin;
         }
 

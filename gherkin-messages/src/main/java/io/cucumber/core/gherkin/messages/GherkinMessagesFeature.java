@@ -3,17 +3,18 @@ package io.cucumber.core.gherkin.messages;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Node;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 final class GherkinMessagesFeature implements Feature {
     private final URI uri;
@@ -21,6 +22,7 @@ final class GherkinMessagesFeature implements Feature {
     private final List<Messages.Envelope> envelopes;
     private final GherkinDocument gherkinDocument;
     private final String gherkinSource;
+    private final List<Node> children;
 
     GherkinMessagesFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Pickle> pickles, List<Messages.Envelope> envelopes) {
         this.gherkinDocument = gherkinDocument;
@@ -28,24 +30,25 @@ final class GherkinMessagesFeature implements Feature {
         this.gherkinSource = gherkinSource;
         this.pickles = pickles;
         this.envelopes = envelopes;
-    }
-
-    @Override
-    public Stream<Node> children() {
-        return gherkinDocument.getFeature().getChildrenList().stream()
+        this.children = gherkinDocument.getFeature().getChildrenList().stream()
             .filter(featureChild -> featureChild.hasRule() || featureChild.hasScenario())
             .map(featureChild -> {
                 if (featureChild.hasRule()) {
                     return new GherkinMessagesRule(featureChild.getRule());
                 }
-
                 Scenario scenario = featureChild.getScenario();
                 if (scenario.getExamplesCount() > 0) {
                     return new GherkinMessagesScenarioOutline(scenario);
                 } else {
                     return new GherkinMessagesScenario(scenario);
                 }
-            });
+            })
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Node> children() {
+        return children;
     }
 
     @Override

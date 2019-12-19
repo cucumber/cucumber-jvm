@@ -157,7 +157,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     private StackTraceElement getStepLocation() {
-        return new StackTraceElement("✽", step.getText(), uri.getSchemeSpecificPart(), step.getLine());
+        return new StackTraceElement("✽", step.getText(), uri.toString(), step.getLine());
     }
 
     StepDefinition getStepDefinition() {

@@ -9,9 +9,11 @@ import io.cucumber.core.gherkin.Node;
 import io.cucumber.core.gherkin.Pickle;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
@@ -21,24 +23,27 @@ final class GherkinVintageFeature implements Feature {
     private final List<Pickle> pickles;
     private final GherkinDocument gherkinDocument;
     private final String gherkinSource;
+    private final List<Node> children;
 
     GherkinVintageFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Pickle> pickles) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
         this.pickles = pickles;
-    }
-
-    @Override
-    public Stream<Node> children() {
-        return gherkinDocument.getFeature().getChildren().stream()
+        this.children = gherkinDocument.getFeature().getChildren().stream()
             .map(scenarioDefinition -> {
                 if (scenarioDefinition instanceof ScenarioOutline) {
                     ScenarioOutline outline = (ScenarioOutline) scenarioDefinition;
                     return new GherkinVintageScenarioOutline(outline);
                 }
                 return new GherkinVintageScenario(scenarioDefinition);
-            }).map(Node.class::cast);
+            }).map(Node.class::cast)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Node> children() {
+        return children;
     }
 
     @Override

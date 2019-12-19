@@ -12,6 +12,8 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
+import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
+import org.junit.platform.engine.support.descriptor.FilePosition;
 
 import java.io.File;
 import java.net.URI;
@@ -102,6 +104,58 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(1, testDescriptor.getChildren().size());
+    }
+    @Test
+    void resolveRequestWithUriSelectorWithScenarioOutlineLine() {
+        File file = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+        URI uri = URI.create(file.toURI() + "?line=11");
+        DiscoverySelector resource = selectUri(uri);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
+            .filter(TestDescriptor::isTest)
+            .collect(Collectors.toList());
+        assertEquals(4, tests.size()); // 4 examples in the outline
+    }
+
+    @Test
+    void resolveRequestWithUriSelectorWithExamplesSectionLine() {
+        File file = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+        URI uri = URI.create(file.toURI() + "?line=17");
+        DiscoverySelector resource = selectUri(uri);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
+            .filter(TestDescriptor::isTest)
+            .collect(Collectors.toList());
+        assertEquals(2, tests.size()); // 2 examples in the examples section
+    }
+
+
+    @Test
+    void resolveRequestWithUriSelectorWithExampleLine() {
+        File file = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+        URI uri1 = URI.create(file.toURI() + "?line=20");
+        DiscoverySelector resource = selectUri(uri1);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
+            .filter(TestDescriptor::isTest)
+            .collect(Collectors.toList());
+        assertEquals(1, tests.size());
+    }
+
+
+    @Test
+    void resolveRequestWithClassPathUriSelectorWithLine() {
+        URI uri = URI.create("classpath:/io/cucumber/junit/platform/engine/feature-with-outline.feature?line=20");
+        DiscoverySelector resource = selectUri(uri);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
+            .filter(TestDescriptor::isTest)
+            .collect(Collectors.toList());
+        assertEquals(1, tests.size());
     }
 
     @Test

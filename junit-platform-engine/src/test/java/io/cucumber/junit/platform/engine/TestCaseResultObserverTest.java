@@ -202,7 +202,7 @@ class TestCaseResultObserverTest {
     void undefined() {
         bus.send(new TestCaseStarted(Instant.now(), testCase));
         bus.send(new TestStepStarted(Instant.now(), testCase, testStep));
-        bus.send(new SnippetsSuggestedEvent(Instant.now(), uri, testStep.getStepLine(), asList(
+        bus.send(new SnippetsSuggestedEvent(Instant.now(), uri, testCase.getLine(), testStep.getStepLine(), asList(
             "mocked snippet 1",
             "mocked snippet 2",
             "mocked snippet 3"

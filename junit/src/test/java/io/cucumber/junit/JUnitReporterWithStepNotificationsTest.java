@@ -228,7 +228,7 @@ class JUnitReporterWithStepNotificationsTest {
     void test_step_undefined_fires_assumption_failed_and_test_finished_for_undefined_step() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, singletonList("some snippet")));
+        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
         bus.send(new TestCaseStarted(now(), testCase));
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         Throwable exception = new CucumberException("No step definitions found");
@@ -266,7 +266,7 @@ class JUnitReporterWithStepNotificationsTest {
 
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, singletonList("some snippet")));
+        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
         bus.send(new TestCaseStarted(now(), testCase));
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         Throwable exception = new CucumberException("No step definitions found");

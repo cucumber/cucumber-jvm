@@ -22,8 +22,8 @@ Cucumber-JVM also integrates with all the popular
 ## Questions, Problems, Help needed?
 
 Please ask on 
-[The Cukes Google Group](http://groups.google.com/group/cukes).
-
+ * [The Cukes Google Group](http://groups.google.com/group/cukes).
+ * [CucumberBDD Slack](https://cucumberbdd-slack-invite.herokuapp.com/) <sup>[direct link](https://cucumberbdd.slack.com/)</sup>
 ## Bugs and Feature requests
 
 You can register bugs and feature requests in the 
