@@ -1,6 +1,19 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...master) (In Git)
+
+### Added
+ 
+### Changed
+
+### Removed
+ 
+### Fixed
+ 
+### Deprecated
+
+       
+## [5.0.0-RC3](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3) (2019-12-19)
 
 ### Added
  * [Core] Implement TeamCity output format plugin ([#1842](https://github.com/cucumber/cucumber-jvm/issues/1842) M.P. Korstanje)
@@ -14,8 +27,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [JUnit] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
-
-### Removed
  
 ### Fixed
  * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
@@ -25,6 +36,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] DataTable does not support Kotlin Collection types ([#1838](https://github.com/cucumber/cucumber-jvm/issues/1838) Marit Van Dijk, M.P. Korstanje)
      - DataTable types for `X` and `? extends X` are now considered identical.
   * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
+
 ### Deprecated
  * [Core] Deprecate `cucumber.options` ([#1836](https://github.com/cucumber/cucumber-jvm/issues/1836) M.P. Korstanje)
    * Use individual properties instead
