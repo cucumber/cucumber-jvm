@@ -54,18 +54,18 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         UUID executionId = bus.generateId();
         emitTestCaseStarted(bus, start, executionId);
 
-        TestCaseState state = new TestCaseState(bus, this);
+        TestCaseState state = new TestCaseState(bus, executionId, this);
 
         for (HookTestStep before : beforeHooks) {
-            skipNextStep |= before.run(this, bus, state, dryRun, executionId);
+            skipNextStep |= before.run(this, bus, state, dryRun);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            skipNextStep |= step.run(this, bus, state, skipNextStep, executionId);
+            skipNextStep |= step.run(this, bus, state, skipNextStep);
         }
 
         for (HookTestStep after : afterHooks) {
-            after.run(this, bus, state, dryRun, executionId);
+            after.run(this, bus, state, dryRun);
         }
 
         Instant stop = bus.getInstant();
@@ -152,17 +152,19 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
             testStepBuilder
                 .setPickleStepId(pickleStep.getStep().getId())
-                .addAllStepMatchArguments(getStepMatchArguments(pickleStep));
+                .addAllStepMatchArgumentsLists(getStepMatchArguments(pickleStep));
         }
 
         return testStepBuilder.build();
     }
 
-    public Iterable<Messages.StepMatchArgument> getStepMatchArguments(PickleStepTestStep pickleStep) {
+    public Iterable<Messages.TestCase.TestStep.StepMatchArgumentsList> getStepMatchArguments(PickleStepTestStep pickleStep) {
         return pickleStep.getDefinitionArgument().stream()
-            .map(arg -> Messages.StepMatchArgument.newBuilder()
-                .setParameterTypeName(arg.getParameterTypeName())
-                .setGroup(makeMessageGroup(arg.getGroup()))
+            .map(arg -> Messages.TestCase.TestStep.StepMatchArgumentsList.newBuilder()
+                .addStepMatchArguments(Messages.StepMatchArgument.newBuilder()
+                    .setParameterTypeName(arg.getParameterTypeName())
+                    .setGroup(makeMessageGroup(arg.getGroup()))
+                    .build())
                 .build()
             ).collect(toList());
     }
@@ -206,10 +208,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         bus.send(Envelope.newBuilder()
             .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
                 .setTestCaseStartedId(executionId.toString())
-                .setTimestamp(javaInstantToTimestamp(stop))
-                .setTestResult(testResultBuilder
-                )
-            ).build());
+                .setTimestamp(javaInstantToTimestamp(stop)))
+            .build());
     }
 
     private static String toString(Throwable error) {

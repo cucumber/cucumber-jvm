@@ -49,9 +49,9 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return stepDefinitionMatch.getCodeLocation();
     }
 
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID textExecutionId) {
+    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
         Instant startTime = bus.getInstant();
-        emitTestStepStarted(testCase, bus, textExecutionId, startTime);
+        emitTestStepStarted(testCase, bus, state.getTestExecutionId(), startTime);
 
         Status status;
         Throwable error = null;
@@ -66,7 +66,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         Result result = mapStatusToResult(status, error, duration);
         state.add(result);
 
-        emitTestStepFinished(testCase, bus, textExecutionId, stopTime, duration, result);
+        emitTestStepFinished(testCase, bus, state.getTestExecutionId(), stopTime, duration, result);
 
         return !result.getStatus().is(Status.PASSED);
     }
@@ -99,12 +99,17 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     }
 
     private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {
-        if (!skipSteps) {
-            stepDefinitionMatch.runStep(state);
-            return Status.PASSED;
-        } else {
-            stepDefinitionMatch.dryRunStep(state);
-            return Status.SKIPPED;
+        state.setCurrentTestStepId(id);
+        try {
+            if (!skipSteps) {
+                stepDefinitionMatch.runStep(state);
+                return Status.PASSED;
+            } else {
+                stepDefinitionMatch.dryRunStep(state);
+                return Status.SKIPPED;
+            }
+        } finally {
+            state.clearCurrentTestStepId();
         }
     }
 

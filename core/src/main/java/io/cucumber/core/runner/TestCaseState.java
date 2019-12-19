@@ -2,6 +2,8 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.messages.Messages;
+import io.cucumber.messages.internal.com.google.protobuf.ByteString;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
@@ -11,6 +13,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Collections.max;
 import static java.util.Comparator.comparing;
@@ -21,14 +24,22 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private final List<Result> stepResults = new ArrayList<>();
     private final EventBus bus;
     private final TestCase testCase;
+    private final UUID testExecutionId;
 
-    TestCaseState(EventBus bus, TestCase testCase) {
+    private UUID currentTestStepId;
+
+    TestCaseState(EventBus bus, UUID testExecutionId, TestCase testCase) {
         this.bus = requireNonNull(bus);
+        this.testExecutionId = requireNonNull(testExecutionId);
         this.testCase = requireNonNull(testCase);
     }
 
     void add(Result result) {
         stepResults.add(result);
+    }
+
+    UUID getTestExecutionId() {
+        return testExecutionId;
     }
 
     @Override
@@ -54,17 +65,40 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     @Deprecated
     @Override
     public void embed(byte[] data, String mediaType) {
-        bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType));
+        embed(data, mediaType, null);
     }
 
     @Override
     public void embed(byte[] data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
+        bus.send(Messages.Envelope.newBuilder()
+            .setAttachment(
+                Messages.Attachment.newBuilder()
+                    .setTestCaseStartedId(testExecutionId.toString())
+                    .setTestStepId(currentTestStepId.toString())
+                    .setBinary(ByteString.copyFrom(data))
+                     //TODO: Add file name to message protocol
+                    .setMediaType(mediaType)
+                    .build()
+            )
+            .build()
+        );
     }
 
     @Override
     public void write(String text) {
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
+        bus.send(Messages.Envelope.newBuilder()
+            .setAttachment(
+                Messages.Attachment.newBuilder()
+                    .setTestCaseStartedId(testExecutionId.toString())
+                    .setTestStepId(currentTestStepId.toString())
+                    .setText(text)
+                    .setMediaType("text/plain")
+                    .build()
+            )
+            .build()
+        );
     }
 
     @Override
@@ -94,4 +128,13 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
         return max(stepResults, comparing(Result::getStatus)).getError();
     }
+
+    void setCurrentTestStepId(UUID currentTestStepId) {
+        this.currentTestStepId = currentTestStepId;
+    }
+
+    void clearCurrentTestStepId() {
+        this.currentTestStepId = null;
+    }
+
 }

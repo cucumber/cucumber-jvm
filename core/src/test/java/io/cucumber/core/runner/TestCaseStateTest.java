@@ -82,7 +82,9 @@ class TestCaseStateTest {
     }
 
     private TestCaseState createTestCaseState(Feature feature) {
-        return new TestCaseState(mock(EventBus.class), new TestCase(
+        return new TestCaseState(mock(EventBus.class),
+            UUID.randomUUID(),
+            new TestCase(
             UUID.randomUUID(),
             Collections.emptyList(),
             Collections.emptyList(),

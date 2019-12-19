@@ -33,7 +33,7 @@ public final class ArgumentMatcher {
         if (arg instanceof io.cucumber.core.gherkin.DocStringArgument) {
             DocStringArgument docString = (DocStringArgument) arg;
             String content = docString.getContent();
-            String contentType = docString.getContentType();
+            String contentType = docString.getMediaType();
             return expression.match(step.getText(), content, contentType, types);
         }
 

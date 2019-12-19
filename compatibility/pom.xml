@@ -5,18 +5,49 @@
     <parent>
         <artifactId>cucumber-jvm</artifactId>
         <groupId>io.cucumber</groupId>
-        <version>5.0.0-RC3-SNAPSHOT</version>
+        <version>5.0.0-RC4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cucumber-compatibility</artifactId>
     <name>Cucumber JVM: Compatibility Kit</name>
 
+    <profiles>
+        <profile>
+            <!-- IDEA doesn't calculate shaded dependencies correctly and tries
+                 to include both gherkin 5 and gherkin 8. Manually excluded here
+                 for development -->
+            <id>idea-exclude-gherkin-vintage</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.cucumber</groupId>
+                    <artifactId>cucumber-java</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.cucumber</groupId>
+                            <artifactId>gherkin</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>io.cucumber</groupId>
+                            <artifactId>cucumber-gherkin-vintage</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <dependencies>
 
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-gherkin-messages</artifactId>
             <scope>test</scope>
         </dependency>
 

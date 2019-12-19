@@ -44,9 +44,9 @@
         <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
         <datatable.version>3.1.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
-        <messages.version>8.0.0</messages.version>
+        <messages.version>8.0.1-SNAPSHOT</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
-        <gherkin-messages.version>9.0.0</gherkin-messages.version>
+        <gherkin-messages.version>9.0.1-SNAPSHOT</gherkin-messages.version>
 
         <!--Test Dependencies-->
         <junit.version>4.12</junit.version>

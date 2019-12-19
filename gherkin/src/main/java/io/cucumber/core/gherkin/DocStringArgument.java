@@ -8,5 +8,8 @@ public interface DocStringArgument extends Argument, io.cucumber.plugin.event.Do
     String getContentType();
 
     @Override
+    String getMediaType();
+
+    @Override
     int getLine();
 }
