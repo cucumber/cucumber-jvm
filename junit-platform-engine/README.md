@@ -168,17 +168,35 @@ included in the discovery result.
 ## Tags
 
 Cucumber tags are mapped to JUnit tags. Note that the `@` symbol is not part of
-the JUnit tag. So the scenario below is tagged with `Smoke` and `Sanity`. 
+the JUnit tag. So the scenarios below are tagged with `Smoke` and `Sanity`. 
 
 ```gherkin
-@Smoke @Sanity
+@Smoke
+@Ignore
 Scenario: A tagged scenario
   Given I tag a scenario 
   When I select tests with that tag for execution 
   Then my tagged scenario is executed
+
+@Sanity
+Scenario: Another tagged scenario
+  Given I tag a scenario 
+  When I select tests with that tag for execution 
+  Then my tagged scenario is executed
+
 ```
+
+When using maven tags can be provided from the CLI using the `groups` and
+`excludedGroups` parameters. These take a [JUnit5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions). 
+
+```
+mvn verify -DexcludedGroups="Ignore" -Dgroups="Smoke | Sanity"
+```
+
+Will execute `Another tagged scenario`.
  
-See the relevant documentation on how to select tags:
+For further information See the relevant documentation on how to select tags:
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 * [JUnit 5 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
+* [JUnit 5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions)
