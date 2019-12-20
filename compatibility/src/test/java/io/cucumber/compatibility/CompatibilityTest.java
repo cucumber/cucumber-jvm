@@ -36,7 +36,7 @@ public class CompatibilityTest {
 
     public enum TestCase {
         attachments("attachments", "attachments"),
-        stacktraces("stacktraces","stack-traces");
+        stacktraces("stacktraces", "stack-traces");
 
         private final String packageName;
         private final String id;
@@ -75,12 +75,19 @@ public class CompatibilityTest {
             .build()
             .run();
 
+        String actual = new String(readAllBytes(output.toPath()), UTF_8);
+
         assertEquals(
             new String(readAllBytes(testCase.getExpectedFile()), UTF_8),
-            new String(readAllBytes(output.toPath()), UTF_8)
+            replacePaths(actual)
         );
 
 
+    }
+
+    private String replacePaths(String actual) {
+        String file = Paths.get("src/test/resources").toAbsolutePath().toUri().toString();
+        return actual.replaceAll(file, "");
     }
 
 
