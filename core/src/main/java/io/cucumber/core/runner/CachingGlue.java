@@ -213,21 +213,21 @@ final class CachingGlue implements Glue {
         }
 
         stepDefinitions.forEach(stepDefinition -> {
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, stepTypeRegistry);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
             }
             stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
-            emitStepDefined(stepDefinition);
+            emitStepDefined(coreStepDefinition);
         });
     }
 
-    private void emitStepDefined(StepDefinition stepDefinition) {
+    private void emitStepDefined(CoreStepDefinition stepDefinition) {
         bus.send(new StepDefinedEvent(
                 bus.getInstant(),
                 new io.cucumber.plugin.event.StepDefinition(
-                    stepDefinition.getLocation(),
+                    stepDefinition.getStepDefinition().getLocation(),
                     stepDefinition.getPattern()
                 )
             )
@@ -235,11 +235,12 @@ final class CachingGlue implements Glue {
         bus.send(Messages.Envelope.newBuilder()
             .setStepDefinition(
                 Messages.StepDefinition.newBuilder()
+                    .setId(stepDefinition.getId().toString())
                     .setPattern(Messages.StepDefinitionPattern.newBuilder()
                         .setSource(stepDefinition.getPattern())
                         .build())
                     .setSourceReference(Messages.SourceReference.newBuilder()
-                        .setUri(stepDefinition.getLocation()).build())
+                        .setUri(stepDefinition.getStepDefinition().getLocation()).build())
                     .build())
             .build()
         );

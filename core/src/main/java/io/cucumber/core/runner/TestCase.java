@@ -4,6 +4,8 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.Messages.StepMatchArgument;
+import io.cucumber.messages.Messages.TestCase.TestStep.StepMatchArgumentsList;
 import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -146,8 +148,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             .setId(testStep.getId().toString());
 
         if (testStep instanceof HookTestStep) {
-            //TODO: Is this right?
-            testStepBuilder.setHookId(testStep.getId().toString());
+            HookTestStep hookTestStep = (HookTestStep) testStep;
+            testStepBuilder.setHookId(hookTestStep.getId().toString());
         } else if (testStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
             testStepBuilder
@@ -158,10 +160,10 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return testStepBuilder.build();
     }
 
-    public Iterable<Messages.TestCase.TestStep.StepMatchArgumentsList> getStepMatchArguments(PickleStepTestStep pickleStep) {
+    public Iterable<StepMatchArgumentsList> getStepMatchArguments(PickleStepTestStep pickleStep) {
         return pickleStep.getDefinitionArgument().stream()
-            .map(arg -> Messages.TestCase.TestStep.StepMatchArgumentsList.newBuilder()
-                .addStepMatchArguments(Messages.StepMatchArgument.newBuilder()
+            .map(arg -> StepMatchArgumentsList.newBuilder()
+                .addStepMatchArguments(StepMatchArgument.newBuilder()
                     .setParameterTypeName(arg.getParameterTypeName())
                     .setGroup(makeMessageGroup(arg.getGroup()))
                     .build())
@@ -169,8 +171,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             ).collect(toList());
     }
 
-    private static Messages.StepMatchArgument.Group makeMessageGroup(Group group) {
-        Messages.StepMatchArgument.Group.Builder builder = Messages.StepMatchArgument.Group.newBuilder();
+    private static StepMatchArgument.Group makeMessageGroup(Group group) {
+        StepMatchArgument.Group.Builder builder = StepMatchArgument.Group.newBuilder();
         if (group == null) {
             return builder.build();
         }
@@ -179,6 +181,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             builder.setValue(group.getValue());
         }
         return builder
+            //TODO: We can't represent undefined / missing matches.
             .setStart(group.getStart())
             .addAllChildren(group.getChildren().stream()
                 .map(TestCase::makeMessageGroup)

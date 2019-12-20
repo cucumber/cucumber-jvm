@@ -18,6 +18,7 @@ import org.junit.jupiter.api.function.Executable;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Locale.ENGLISH;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StepDefinitionMatchTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
+    private final UUID id = UUID.randomUUID();
 
     @Test
     void executes_a_step() throws Throwable {
@@ -40,7 +42,7 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         stepDefinitionMatch.runStep(null);
@@ -56,7 +58,7 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -82,7 +84,7 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -112,7 +114,7 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -139,7 +141,7 @@ class StepDefinitionMatchTest {
         );
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -166,7 +168,7 @@ class StepDefinitionMatchTest {
             "I have a data table",
             UndefinedDataTableType.class
         );
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
             arguments,
@@ -199,7 +201,7 @@ class StepDefinitionMatchTest {
         );
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -226,7 +228,7 @@ class StepDefinitionMatchTest {
 
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -255,7 +257,7 @@ class StepDefinitionMatchTest {
 
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, stepTypeRegistry);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CoreStepDefinitionTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(Locale.ENGLISH);
+    private final UUID id = UUID.randomUUID();
 
     @Test
     void should_apply_identity_transform_to_doc_string_when_target_type_is_object() {
@@ -39,7 +41,7 @@ class CoreStepDefinitionTest {
             "       \"\"\"\n"
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(id, stub, stepTypeRegistry);
         Step step = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = stepDefinition.matchedArguments(step);
         assertThat(arguments.get(0).getValue(), is(equalTo(DocString.create("content"))));
@@ -55,7 +57,7 @@ class CoreStepDefinitionTest {
             "      | content |\n"
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(id, stub, stepTypeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
         assertThat(arguments.get(0).getValue(), is(equalTo(DataTable.create(singletonList(singletonList("content"))))));
     }
@@ -69,7 +71,7 @@ class CoreStepDefinitionTest {
             "       |  |\n"
         );
         StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
+        CoreStepDefinition stepDefinition = new CoreStepDefinition(id, stub, stepTypeRegistry);
         List<Argument> arguments = stepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
         assertEquals(DataTable.create(singletonList(singletonList(null))), arguments.get(0).getValue());
     }
@@ -193,7 +195,7 @@ class CoreStepDefinitionTest {
     @SuppressWarnings("unchecked")
     private <T> T runStepDef(Method method, boolean transposed, Feature feature) {
         StubStepDefinition stub = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stub, stepTypeRegistry);
         Step stepWithTable = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = coreStepDefinition.matchedArguments(stepWithTable);
 
