@@ -57,6 +57,7 @@ class TestCaseStateResultTest {
     @BeforeEach
     void setup() {
         when(bus.getInstant()).thenReturn(Instant.now());
+        s.setCurrentTestStepId(UUID.randomUUID());
     }
 
     @Test

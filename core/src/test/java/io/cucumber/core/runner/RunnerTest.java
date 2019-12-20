@@ -77,7 +77,7 @@ class RunnerTest {
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
         final HookDefinition failingBeforeHook = addBeforeHook();
-        doThrow(RuntimeException.class).when(failingBeforeHook).execute(ArgumentMatchers.any());
+        doThrow(new RuntimeException("Boom")).when(failingBeforeHook).execute(ArgumentMatchers.any());
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -106,21 +106,21 @@ class RunnerTest {
 
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
-        final HookDefinition afteStepHook = addAfterStepHook();
+        final HookDefinition afterStepHook = addAfterStepHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addAfterHook(afteStepHook);
+                glue.addAfterHook(afterStepHook);
                 glue.addStepDefinition(stepDefinition);
             }
         };
 
         runnerSupplier.get().runPickle(pickleMatchingStepDefinitions);
 
-        InOrder inOrder = inOrder(afteStepHook, stepDefinition);
+        InOrder inOrder = inOrder(afterStepHook, stepDefinition);
         inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afteStepHook).execute(any(TestCaseState.class));
+        inOrder.verify(afterStepHook).execute(any(TestCaseState.class));
     }
 
     @Test
@@ -151,7 +151,7 @@ class RunnerTest {
     @Test
     void hooks_execute_also_after_failure() {
         final HookDefinition failingBeforeHook = addBeforeHook();
-        doThrow(RuntimeException.class).when(failingBeforeHook).execute(any(TestCaseState.class));
+        doThrow(new RuntimeException("boom")).when(failingBeforeHook).execute(any(TestCaseState.class));
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();
 

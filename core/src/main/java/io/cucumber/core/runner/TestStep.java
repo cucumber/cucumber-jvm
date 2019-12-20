@@ -10,6 +10,9 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -89,7 +92,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         TestResult.Builder builder = TestResult.newBuilder();
 
         if (result.getError() != null) {
-            builder.setMessage(result.getError().getMessage());
+            builder.setMessage(extractStackTrace(result.getError()));
         }
         TestResult testResult = builder.setStatus(from(result.getStatus()))
             .setDuration(javaDurationToDuration(duration))
@@ -102,6 +105,12 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
                 .setTestResult(testResult)
             ).build()
         );
+    }
+    private String extractStackTrace(Throwable error) {
+        ByteArrayOutputStream s = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(s);
+        error.printStackTrace(printStream);
+        return new String(s.toByteArray(), StandardCharsets.UTF_8);
     }
 
     private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {

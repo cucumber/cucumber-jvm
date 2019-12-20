@@ -6,6 +6,7 @@ import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -60,6 +61,7 @@ public class CompatibilityTest {
 
     }
 
+    @Disabled
     @ParameterizedTest
     @EnumSource(TestCase.class)
     void produces_expected_output_for(TestCase testCase) throws IOException {
