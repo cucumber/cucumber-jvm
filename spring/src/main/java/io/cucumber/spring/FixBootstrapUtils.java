@@ -16,8 +16,6 @@
 
 package io.cucumber.spring;
 
-import java.util.Set;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -25,11 +23,11 @@ import org.springframework.test.context.BootstrapContext;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.CacheAwareContextLoaderDelegate;
 import org.springframework.test.context.TestContextBootstrapper;
-import org.springframework.test.context.cache.ContextCache;
 import org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate;
-import org.springframework.test.context.cache.DefaultContextCache;
 import org.springframework.test.context.support.DefaultBootstrapContext;
 import org.springframework.util.ClassUtils;
+
+import java.util.Set;
 
 /**
  * {@code BootstrapUtils} is a collection of utility methods to assist with
@@ -44,9 +42,6 @@ import org.springframework.util.ClassUtils;
  */
 abstract class FixBootstrapUtils {
 
-    private static ThreadLocal<ContextCache> contextCache =
-        ThreadLocal.withInitial(DefaultContextCache::new);
-
     private static final String DEFAULT_TEST_CONTEXT_BOOTSTRAPPER_CLASS_NAME =
 			"org.springframework.test.context.support.DefaultTestContextBootstrapper";
 
@@ -57,7 +52,7 @@ abstract class FixBootstrapUtils {
 			"org.springframework.test.context.web.WebAppConfiguration";
 
     static BootstrapContext createBootstrapContext(Class<?> testClass) {
-        CacheAwareContextLoaderDelegate contextLoader = new DefaultCacheAwareContextLoaderDelegate(contextCache.get());
+        CacheAwareContextLoaderDelegate contextLoader = new DefaultCacheAwareContextLoaderDelegate();
         return new DefaultBootstrapContext(testClass, contextLoader);
     }
 
