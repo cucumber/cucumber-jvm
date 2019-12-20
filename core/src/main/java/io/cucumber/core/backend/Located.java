@@ -13,8 +13,14 @@ public interface Located {
     boolean isDefinedAt(StackTraceElement stackTraceElement);
 
     /**
-     * The source line where the step definition is defined.
-     * Example: com/example/app/Cucumber.test():42
+     * Location of step definition. Can either be a a method or stack trace
+     * style location.
+     * <p>
+     * Examples:
+     * <ul>
+     *  <li> @{code com.example.StepDefinitions.given_an_example(io.cucumber.datatable.DataTable)>}</li>
+     *  <li> @{code com.example.StepDefinitions.<init>(StepDefinitions.java:9)>}</li>
+     * </ul>
      *
      * @return The source line of the step definition.
      */

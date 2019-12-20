@@ -26,7 +26,7 @@ class AbstractGlueDefinitionTest {
         AbstractGlueDefinition definition = new AbstractGlueDefinition(method, lookup) {
         };
 
-        assertThat(definition.getLocation(), startsWith("io.cucumber.java.AbstractGlueDefinitionTest.method() in "));
+        assertThat(definition.getLocation(), startsWith("io.cucumber.java.AbstractGlueDefinitionTest.method()"));
     }
 
     public void method() {
