@@ -44,9 +44,9 @@ class TeamCityPluginTest {
             "      | name 1 | second |\n" +
             "      | name 2 | third  |\n");
         features.add(feature);
-        stepsToLocation.put("first step", "path/step_definitions.java:3");
-        stepsToLocation.put("second step", "path/step_definitions.java:7");
-        stepsToLocation.put("third step", "path/step_definitions.java:11");
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+        stepsToLocation.put("second step", "com.example.StepDefinition.secondStep()");
+        stepsToLocation.put("third step", "com.example.StepDefinition.thirdStep()");
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -88,7 +88,7 @@ class TeamCityPluginTest {
             "  Scenario: scenario name\n" +
             "    Given first step\n");
         features.add(feature);
-        stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
         stepsToResult.put("first step", result("failed"));
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -99,22 +99,39 @@ class TeamCityPluginTest {
     }
 
     @Test
+    void should_print_error_message_for_undefined_steps() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
+        features.add(feature);
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+        stepsToResult.put("first step", result("undefined"));
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        assertThat(formatterOutput, containsString("" +
+            "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement missing steps with the snippets below:|n|n' name = 'first step']\n"
+        ));
+    }
+
+    @Test
     void should_print_error_message_for_before_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Given first step\n");
         features.add(feature);
-        stepsToLocation.put("first step", "path/step_definitions.java:3");
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
         stepsToResult.put("first step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
-        hookLocations.add("HookDefinition.java:3");
+        hookLocations.add("com.example.HookDefinition.beforeHook()");
 
         String formatterOutput = runFeaturesWithFormatter();
 
         assertThat(formatterOutput, containsString("" +
-            "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://HookDefinition.java:3' captureStandardOutput = 'true' name = 'Before']\n" +
-            "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']\n"
+            "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n" +
+            "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']"
         ));
     }
 

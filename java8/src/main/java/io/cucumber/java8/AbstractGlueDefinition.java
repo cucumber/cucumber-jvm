@@ -22,7 +22,7 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
     }
 
     public final String getLocation() {
-        return location.getClassName() + ":" + location.getLineNumber();
+        return location.toString();
     }
 
     public final boolean isDefinedAt(StackTraceElement stackTraceElement) {

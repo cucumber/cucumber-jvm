@@ -65,7 +65,7 @@ class JavaDocStringTypeDefinitionTest {
         assertThat(exception.getMessage(), startsWith("" +
             "A @DocStringType annotated method must have one of these signatures:\n" +
             " * public JsonNode json(String content)\n" +
-            "at io.cucumber.java.JavaDocStringTypeDefinitionTest.converts_object_to_string(Object) in"));
+            "at io.cucumber.java.JavaDocStringTypeDefinitionTest.converts_object_to_string(java.lang.Object)"));
     }
 
     public Object converts_object_to_string(Object object) {

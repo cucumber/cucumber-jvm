@@ -55,7 +55,7 @@ class JavaDefaultDataTableCellTransformerDefinitionTest {
             "A @DefaultDataTableCellTransformer annotated method must have one of these signatures:\n" +
             " * public Object defaultDataTableCell(String fromValue, Type toValueType)\n" +
             " * public Object defaultDataTableCell(Object fromValue, Type toValueType)\n" +
-            "at io.cucumber.java.JavaDefaultDataTableCellTransformerDefinitionTest.transforms_string_to_void(String,Type) in"
+            "at io.cucumber.java.JavaDefaultDataTableCellTransformerDefinitionTest.transforms_string_to_void(java.lang.String,java.lang.reflect.Type)"
         ));
     }
 
