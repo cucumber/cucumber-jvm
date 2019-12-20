@@ -129,23 +129,24 @@ public final class SpringFactory implements ObjectFactory {
 
     @Override
     public void start() {
-        if (stepClassWithSpringContext != null) {
-            testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
-        } else {
-            if (beanFactory == null) {
-                beanFactory = createFallbackContext();
+        synchronized (SpringFactory.class) { //synchronize statically, as there is more than one instance of this class created
+            if (stepClassWithSpringContext != null) {
+                testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
+            } else {
+                if (beanFactory == null) {
+                    beanFactory = createFallbackContext();
+                }
             }
-        }
-        notifyContextManagerAboutTestClassStarted();
-        if (beanFactory == null || isNewContextCreated()) {
-            beanFactory = testContextManager.getBeanFactory();
-            synchronized (beanFactory) {
+            notifyContextManagerAboutTestClassStarted();
+            if (beanFactory == null || isNewContextCreated()) {
+                beanFactory = testContextManager.getBeanFactory();
                 for (Class<?> stepClass : stepClasses) {
                     registerStepClassBeanDefinition(beanFactory, stepClass);
                 }
             }
+            GlueCodeContext.getInstance().start();
         }
-        GlueCodeContext.getInstance().start();
+
     }
 
     @SuppressWarnings("resource")
@@ -251,10 +252,8 @@ public final class SpringFactory implements ObjectFactory {
 
         private void registerGlueCodeScope(ConfigurableApplicationContext context) {
             do {
-                synchronized (context) {
-                    context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
-                    context = (ConfigurableApplicationContext) context.getParent();
-                }
+                context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
+                context = (ConfigurableApplicationContext) context.getParent();
             } while (context != null);
         }
     }
