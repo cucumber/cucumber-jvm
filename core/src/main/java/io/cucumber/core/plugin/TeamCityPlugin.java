@@ -64,8 +64,8 @@ public class TeamCityPlugin implements EventListener {
     private static final String TEMPLATE_PROGRESS_TEST_STARTED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testStarted' timestamp = '%s']";
     private static final String TEMPLATE_PROGRESS_TEST_FINISHED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testFinished' timestamp = '%s']";
 
-    private static final Pattern ANNOTATION_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*\\) in .*$");
-    private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*):(.*)$");
+    private static final Pattern ANNOTATION_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\([^:]*\\)");
+    private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*:.*\\)");
 
     private final PrintStream out;
     private final List<SnippetsSuggestedEvent> snippets = new ArrayList<>();
@@ -216,16 +216,21 @@ public class TeamCityPlugin implements EventListener {
 
         Matcher javaMatcher = ANNOTATION_GLUE_CODE_LOCATION_PATTERN.matcher(testStep.getCodeLocation());
         if (javaMatcher.matches()) {
-            String declaringClassName = javaMatcher.group(1);
+            String fqDeclaringClassName = javaMatcher.group(1);
             String methodName = javaMatcher.group(2);
-            return String.format("java:test://%s/%s", declaringClassName, methodName);
+            return String.format("java:test://%s/%s", fqDeclaringClassName, methodName);
         }
         Matcher java8Matcher = LAMBDA_GLUE_CODE_LOCATION_PATTERN.matcher(testStep.getCodeLocation());
         if (java8Matcher.matches()) {
-            String declaringClassName = java8Matcher.group(1);
-            String line = java8Matcher.group(2);
-            // TODO: Doesn't work with IDEA. What does?
-            return String.format("java:test://%s:%s", declaringClassName, line);
+            String fqDeclaringClassName = java8Matcher.group(1);
+            String declaringClassName;
+            int indexOfPackageSeparator = fqDeclaringClassName.indexOf(".");
+            if (indexOfPackageSeparator != -1) {
+                declaringClassName = fqDeclaringClassName.substring(indexOfPackageSeparator + 1);
+            } else {
+                declaringClassName = fqDeclaringClassName;
+            }
+            return String.format("java:test://%s/%s", fqDeclaringClassName, declaringClassName);
         }
 
         return testStep.getCodeLocation();
@@ -247,13 +252,12 @@ public class TeamCityPlugin implements EventListener {
                 break;
             case UNDEFINED:
                 PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-                print(TEMPLATE_TEST_FAILED, timeStamp, duration, getSnippet(testStep), name);
+                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", getSnippet(testStep), name);
                 break;
             case AMBIGUOUS:
             case FAILED:
-                String message = "Step failed";
                 String details = extractStackTrace(error);
-                print(TEMPLATE_TEST_FAILED, timeStamp, duration, message, details, name);
+                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step failed", details, name);
                 break;
             default:
                 break;
@@ -293,7 +297,7 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private String getSnippet(PickleStepTestStep testStep) {
-        StringBuilder builder = new StringBuilder("There was an undefined step\n");
+        StringBuilder builder = new StringBuilder();
 
         if (snippets.isEmpty()) {
             return builder.toString();
