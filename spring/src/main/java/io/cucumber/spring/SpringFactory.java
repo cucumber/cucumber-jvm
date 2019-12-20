@@ -139,8 +139,10 @@ public final class SpringFactory implements ObjectFactory {
         notifyContextManagerAboutTestClassStarted();
         if (beanFactory == null || isNewContextCreated()) {
             beanFactory = testContextManager.getBeanFactory();
-            for (Class<?> stepClass : stepClasses) {
-                registerStepClassBeanDefinition(beanFactory, stepClass);
+            synchronized (beanFactory) {
+                for (Class<?> stepClass : stepClasses) {
+                    registerStepClassBeanDefinition(beanFactory, stepClass);
+                }
             }
         }
         GlueCodeContext.getInstance().start();
@@ -249,8 +251,10 @@ public final class SpringFactory implements ObjectFactory {
 
         private void registerGlueCodeScope(ConfigurableApplicationContext context) {
             do {
-                context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
-                context = (ConfigurableApplicationContext) context.getParent();
+                synchronized (context) {
+                    context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
+                    context = (ConfigurableApplicationContext) context.getParent();
+                }
             } while (context != null);
         }
     }
