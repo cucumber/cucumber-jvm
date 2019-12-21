@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @ContextConfiguration("classpath:cucumber.xml")
 public class ThreadingStepDefs {
 
-    static final int concurrency = 100;
+    static final int concurrency = 5;
     static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<>();
 
     private static final CountDownLatch latch = new CountDownLatch(2);

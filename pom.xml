@@ -41,7 +41,7 @@
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
-        <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
+        <cucumber-expressions.version>8.3.0</cucumber-expressions.version>
         <datatable.version>3.1.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
         <messages.version>8.0.0</messages.version>
@@ -52,9 +52,9 @@
         <junit.version>4.12</junit.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <junit-platform.version>1.5.2</junit-platform.version>
-        <hamcrest.version>2.1</hamcrest.version>
-        <mockito.version>3.0.0</mockito.version>
-        <jackson-databind.version>2.10.0</jackson-databind.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <mockito.version>3.2.4</mockito.version>
+        <jackson-databind.version>2.10.1</jackson-databind.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.5</groovy.version>
@@ -356,7 +356,7 @@
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.19.1</version>
+                            <version>0.20.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>

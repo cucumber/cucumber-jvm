@@ -1,7 +1,7 @@
 package io.cucumber.spring.threading;
 
 import io.cucumber.core.cli.Main;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class RunParallelCucumberTest {
 
-    @RepeatedTest(100)
+    @Test
     void test() throws ExecutionException, InterruptedException {
         Callable<Byte> runCucumber = () -> {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
