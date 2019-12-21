@@ -27,6 +27,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [JUnit] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
+ * [Spring] Share application context ([#1848](https://github.com/cucumber/cucumber-jvm/issues/1848), [#1582](https://github.com/cucumber/cucumber-jvm/issues/1582) Dominic Adatia, Marc Hauptmann, M.P. Korstanje)
+   * Share application context between threads [#1846](https://github.com/cucumber/cucumber-jvm/issues/1846)
+   * Share application context between Cucumber and JUnit tests [#1583](https://github.com/cucumber/cucumber-jvm/issues/1583)
  
 ### Fixed
  * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
@@ -35,8 +38,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [JUnit] Mark `Constants` as part of the public API (M.P. Korstanje)
  * [Core] DataTable does not support Kotlin Collection types ([#1838](https://github.com/cucumber/cucumber-jvm/issues/1838) Marit Van Dijk, M.P. Korstanje)
      - DataTable types for `X` and `? extends X` are now considered identical.
-  * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
-
+ * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
+ 
 ### Deprecated
  * [Core] Deprecate `cucumber.options` ([#1836](https://github.com/cucumber/cucumber-jvm/issues/1836) M.P. Korstanje)
    * Use individual properties instead
