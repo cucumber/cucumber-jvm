@@ -26,8 +26,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
-import static io.cucumber.spring.FixBootstrapUtils.createBootstrapContext;
-import static io.cucumber.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
 import static java.util.Arrays.asList;
 
 /**
@@ -236,9 +234,7 @@ public final class SpringFactory implements ObjectFactory {
     static class CucumberTestContextManager extends TestContextManager {
 
         CucumberTestContextManager(Class<?> testClass) {
-            // Does the same as TestContextManager(Class<?>) but creates a
-            // DefaultCacheAwareContextLoaderDelegate that uses a thread local contextCache.
-            super(resolveTestContextBootstrapper(createBootstrapContext(testClass)));
+            super(testClass);
             registerGlueCodeScope(getContext());
         }
 
