@@ -5,13 +5,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Added
  
 ### Changed
+ * [Spring] Share application context ([#1848](https://github.com/cucumber/cucumber-jvm/issues/1848), [#1582](https://github.com/cucumber/cucumber-jvm/issues/1582) Dominic Adatia, Marc Hauptmann, M.P. Korstanje)
+   * Share application context between threads [#1846](https://github.com/cucumber/cucumber-jvm/issues/1846)
+   * Share application context between Cucumber and JUnit tests [#1583](https://github.com/cucumber/cucumber-jvm/issues/1583)
 
 ### Removed
  
 ### Fixed
+ * [Core] Handle undefined steps in TeamCityPlugin (M.P. Korstanje)
  
 ### Deprecated
-
        
 ## [5.0.0-RC3](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3) (2019-12-19)
 
@@ -27,10 +30,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [JUnit] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
- * [Spring] Share application context ([#1848](https://github.com/cucumber/cucumber-jvm/issues/1848), [#1582](https://github.com/cucumber/cucumber-jvm/issues/1582) Dominic Adatia, Marc Hauptmann, M.P. Korstanje)
-   * Share application context between threads [#1846](https://github.com/cucumber/cucumber-jvm/issues/1846)
-   * Share application context between Cucumber and JUnit tests [#1583](https://github.com/cucumber/cucumber-jvm/issues/1583)
- 
+
 ### Fixed
  * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
  * [JUnit] Send events to configured Plugins (M.P. Korstanje)
