@@ -63,6 +63,8 @@ import static java.util.Arrays.asList;
 @API(status = API.Status.STABLE)
 public final class SpringFactory implements ObjectFactory {
 
+    private static final Object monitor = new Object();
+
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
 
@@ -127,7 +129,7 @@ public final class SpringFactory implements ObjectFactory {
 
     @Override
     public void start() {
-        synchronized (SpringFactory.class) { //synchronize statically, as there is more than one instance of this class created
+        synchronized (monitor) {
             if (stepClassWithSpringContext != null) {
                 testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
             } else {
