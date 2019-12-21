@@ -30,7 +30,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Opt-in by adding `cucumber-gherkin-messages` dependency
    - Not supported by JSON and HTML formatter.
  * [JUnit] Support `line` query parameter in `UriSelector` ([#1845](https://github.com/cucumber/cucumber-jvm/issues/1845) M.P. Korstanje)
- 
+ * [Core] Include default gherkin version in version.properties ([#1847](https://github.com/cucumber/cucumber-jvm/issues/1847) David Goss)
+
 ### Changed
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
