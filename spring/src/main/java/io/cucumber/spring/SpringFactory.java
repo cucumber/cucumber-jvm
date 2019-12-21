@@ -129,6 +129,10 @@ public final class SpringFactory implements ObjectFactory {
 
     @Override
     public void start() {
+        // registerStepClassBeanDefinition and
+        // CucumberTestContextManager.registerGlueCodeScope manipulate the the
+        // application context. These operations are not thread-safe. So the
+        // SpringFactory must be started serially.
         synchronized (monitor) {
             if (stepClassWithSpringContext != null) {
                 testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
