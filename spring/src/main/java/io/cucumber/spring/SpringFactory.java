@@ -186,9 +186,9 @@ public final class SpringFactory implements ObjectFactory {
     private void registerStepClassBeanDefinition(ConfigurableListableBeanFactory beanFactory, Class<?> stepClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
         BeanDefinition beanDefinition = BeanDefinitionBuilder
-                .genericBeanDefinition(stepClass)
-                .setScope(SCOPE_CUCUMBER_GLUE)
-                .getBeanDefinition();
+            .genericBeanDefinition(stepClass)
+            .setScope(SCOPE_CUCUMBER_GLUE)
+            .getBeanDefinition();
         registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
     }
 
