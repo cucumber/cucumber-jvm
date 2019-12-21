@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring.contextcaching;
+package io.cucumber.spring.contextcaching;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Component
 public class ContextCounter implements ApplicationContextAware {
-    private static Set<ApplicationContext> applicationContextSet = new HashSet();
+    private static Set<ApplicationContext> applicationContextSet = new HashSet<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

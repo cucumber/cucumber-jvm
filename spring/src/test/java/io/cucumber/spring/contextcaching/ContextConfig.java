@@ -1,9 +1,9 @@
-package cucumber.runtime.java.spring.contextcaching;
+package io.cucumber.spring.contextcaching;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan({"cucumber.runtime.java.spring.contextcaching"})
+@ComponentScan({"io.cucumber.spring.contextcaching"})
 public class ContextConfig {
 }
