@@ -1,21 +1,27 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...master) (In Git)
 
 ### Added
  
+### Changed
+
+### Removed
+ 
+### Fixed
+ 
+### Deprecated## 
+
+[5.0.0-RC4](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4) (2019-12-21)
+
 ### Changed
  * [Spring] Share application context ([#1848](https://github.com/cucumber/cucumber-jvm/issues/1848), [#1582](https://github.com/cucumber/cucumber-jvm/issues/1582) Dominic Adatia, Marc Hauptmann, M.P. Korstanje)
    * Share application context between threads [#1846](https://github.com/cucumber/cucumber-jvm/issues/1846)
    * Share application context between Cucumber and JUnit tests [#1583](https://github.com/cucumber/cucumber-jvm/issues/1583)
 
-### Removed
- 
 ### Fixed
  * [Core] Handle undefined steps in TeamCityPlugin (M.P. Korstanje)
  
-### Deprecated
-       
 ## [5.0.0-RC3](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3) (2019-12-19)
 
 ### Added
