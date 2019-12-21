@@ -26,8 +26,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
-import static io.cucumber.spring.FixBootstrapUtils.createBootstrapContext;
-import static io.cucumber.spring.FixBootstrapUtils.resolveTestContextBootstrapper;
 import static java.util.Arrays.asList;
 
 /**
@@ -64,6 +62,8 @@ import static java.util.Arrays.asList;
  */
 @API(status = API.Status.STABLE)
 public final class SpringFactory implements ObjectFactory {
+
+    private static final Object monitor = new Object();
 
     private ConfigurableListableBeanFactory beanFactory;
     private CucumberTestContextManager testContextManager;
@@ -129,21 +129,28 @@ public final class SpringFactory implements ObjectFactory {
 
     @Override
     public void start() {
-        if (stepClassWithSpringContext != null) {
-            testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
-        } else {
-            if (beanFactory == null) {
-                beanFactory = createFallbackContext();
+        // registerStepClassBeanDefinition and
+        // CucumberTestContextManager.registerGlueCodeScope manipulate the the
+        // application context. These operations are not thread-safe. So the
+        // SpringFactory must be started serially.
+        synchronized (monitor) {
+            if (stepClassWithSpringContext != null) {
+                testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
+            } else {
+                if (beanFactory == null) {
+                    beanFactory = createFallbackContext();
+                }
             }
-        }
-        notifyContextManagerAboutTestClassStarted();
-        if (beanFactory == null || isNewContextCreated()) {
-            beanFactory = testContextManager.getBeanFactory();
-            for (Class<?> stepClass : stepClasses) {
-                registerStepClassBeanDefinition(beanFactory, stepClass);
+            notifyContextManagerAboutTestClassStarted();
+            if (beanFactory == null || isNewContextCreated()) {
+                beanFactory = testContextManager.getBeanFactory();
+                for (Class<?> stepClass : stepClasses) {
+                    registerStepClassBeanDefinition(beanFactory, stepClass);
+                }
             }
+            GlueCodeContext.getInstance().start();
         }
-        GlueCodeContext.getInstance().start();
+
     }
 
     @SuppressWarnings("resource")
@@ -183,9 +190,9 @@ public final class SpringFactory implements ObjectFactory {
     private void registerStepClassBeanDefinition(ConfigurableListableBeanFactory beanFactory, Class<?> stepClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
         BeanDefinition beanDefinition = BeanDefinitionBuilder
-                .genericBeanDefinition(stepClass)
-                .setScope(SCOPE_CUCUMBER_GLUE)
-                .getBeanDefinition();
+            .genericBeanDefinition(stepClass)
+            .setScope(SCOPE_CUCUMBER_GLUE)
+            .getBeanDefinition();
         registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
     }
 
@@ -233,9 +240,7 @@ public final class SpringFactory implements ObjectFactory {
     static class CucumberTestContextManager extends TestContextManager {
 
         CucumberTestContextManager(Class<?> testClass) {
-            // Does the same as TestContextManager(Class<?>) but creates a
-            // DefaultCacheAwareContextLoaderDelegate that uses a thread local contextCache.
-            super(resolveTestContextBootstrapper(createBootstrapContext(testClass)));
+            super(testClass);
             registerGlueCodeScope(getContext());
         }
 

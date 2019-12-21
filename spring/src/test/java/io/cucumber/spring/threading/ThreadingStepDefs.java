@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @ContextConfiguration("classpath:cucumber.xml")
 public class ThreadingStepDefs {
 
-    private static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<>();
+    static final int concurrency = 100;
+    static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<>();
 
     private static final CountDownLatch latch = new CountDownLatch(2);
 
@@ -43,6 +44,6 @@ public class ThreadingStepDefs {
                 assertNotSame(entries.getValue(), this);
             }
         }
-        assertEquals(2, map.size());
+        assertEquals(concurrency, map.size());
     }
 }
