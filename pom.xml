@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -46,6 +47,7 @@
         <tag-expressions.version>2.0.2</tag-expressions.version>
         <messages.version>8.0.0</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
+        <gherkin-vintage-jvm-deps.version>1.0.6</gherkin-vintage-jvm-deps.version>
         <gherkin-messages.version>9.0.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
@@ -57,7 +59,7 @@
         <jackson-databind.version>2.10.1</jackson-databind.version>
 
         <!--Maven plugins-->
-        <groovy.version>2.5.5</groovy.version>
+        <groovy.version>2.5.8</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -333,6 +335,12 @@
                         </groups>
                         <stylesheet>java</stylesheet>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
 
                 <plugin>
