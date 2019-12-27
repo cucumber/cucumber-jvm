@@ -15,10 +15,10 @@ import java.util.function.Supplier;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.DEFAULT_PACKAGE_NAME;
 import static io.cucumber.core.resource.ClasspathSupport.determinePackageName;
-import static io.cucumber.core.resource.ClasspathSupport.getRootUrisForPackage;
+import static io.cucumber.core.resource.ClasspathSupport.getUrisForPackage;
 import static io.cucumber.core.resource.ClasspathSupport.getUrisForResource;
 import static io.cucumber.core.resource.ClasspathSupport.requireValidPackageName;
-import static io.cucumber.core.resource.ClasspathSupport.resourcePath;
+import static io.cucumber.core.resource.ClasspathSupport.resourceName;
 import static io.cucumber.core.resource.Resources.createClasspathResource;
 import static io.cucumber.core.resource.Resources.createClasspathRootResource;
 import static io.cucumber.core.resource.Resources.createPackageResource;
@@ -55,14 +55,13 @@ public final class ResourceScanner<R> {
         requireNonNull(packageFilter, "packageFilter must not be null");
         basePackageName = basePackageName.trim();
         BiFunction<Path, Path, Resource> createResource = createPackageResource(basePackageName);
-        List<URI> rootUrisForPackage = getRootUrisForPackage(getClassLoader(), basePackageName);
+        List<URI> rootUrisForPackage = getUrisForPackage(getClassLoader(), basePackageName);
         return findResourcesForUris(rootUrisForPackage, basePackageName, packageFilter, createResource);
     }
 
     public List<R> scanForClasspathResource(String resourceName, Predicate<String> packageFilter) {
         requireNonNull(resourceName, "resourceName must not be null");
         requireNonNull(packageFilter, "packageFilter must not be null");
-        resourceName = resourceName.trim();
         List<URI> urisForResource = getUrisForResource(getClassLoader(), resourceName);
         BiFunction<Path, Path, Resource> createResource = createClasspathResource(resourceName);
         return findResourcesForUris(urisForResource, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
@@ -79,13 +78,13 @@ public final class ResourceScanner<R> {
         return resources;
     }
 
-    public List<R> scanForResourcesUri(URI resourcePath) {
-        requireNonNull(resourcePath, "resourcePath must not be null");
-        if (CLASSPATH_SCHEME.equals(resourcePath.getScheme())) {
-            return scanForClasspathResource(resourcePath(resourcePath), NULL_FILTER);
+    public List<R> scanForResourcesUri(URI classpathResourceUri) {
+        requireNonNull(classpathResourceUri, "classpathResourceUri must not be null");
+        if (CLASSPATH_SCHEME.equals(classpathResourceUri.getScheme())) {
+            return scanForClasspathResource(resourceName(classpathResourceUri), NULL_FILTER);
         }
 
-        return findResourcesForUri(resourcePath, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
+        return findResourcesForUri(classpathResourceUri, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
     }
 
     private ClassLoader getClassLoader() {
@@ -127,7 +126,6 @@ public final class ResourceScanner<R> {
                     .andThen(loadResource)
                     .apply(baseDir, path)
                     .ifPresent(consumer);
-                ;
             }
         };
     }

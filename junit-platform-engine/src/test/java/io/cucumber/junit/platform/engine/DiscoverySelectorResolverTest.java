@@ -90,8 +90,8 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithClasspathRootSelector() {
-        Path classPathRoot = Paths.get("src/test/resources/");
-        DiscoverySelector resource = selectClasspathRoots(singleton(classPathRoot)).get(0);
+        Path classpathRoot = Paths.get("src/test/resources/");
+        DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(4, testDescriptor.getChildren().size());
@@ -227,7 +227,7 @@ class DiscoverySelectorResolverTest {
 
     @Test
     void resolveRequestWithUniqueIdSelectorFromJarUri() {
-        String root = new File("").getAbsolutePath();
+        String root = Paths.get("").toAbsolutePath().toUri().getSchemeSpecificPart();
         URI uri = URI.create("jar:file:" + root + "/src/test/resources/feature.jar!/single.feature");
 
         DiscoverySelector resource = selectUri(uri);

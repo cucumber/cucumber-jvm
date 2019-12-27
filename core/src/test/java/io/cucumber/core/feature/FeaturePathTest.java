@@ -1,17 +1,17 @@
 package io.cucumber.core.feature;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Locale;
-
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 class FeaturePathTest {
 
@@ -65,6 +65,7 @@ class FeaturePathTest {
     }
 
     @Test
+    @DisabledOnOs(WINDOWS)
     void can_parse_absolute_file_form() {
         URI uri = FeaturePath.parse("file:/path/to/file.feature");
 
@@ -75,6 +76,7 @@ class FeaturePathTest {
     }
 
     @Test
+    @DisabledOnOs(WINDOWS)
     void can_parse_absolute_directory_form() {
         URI uri = FeaturePath.parse("file:/path/to");
 
@@ -114,21 +116,19 @@ class FeaturePathTest {
     }
 
     @Test
+    @EnabledOnOs(WINDOWS)
     void can_parse_windows_path_form() {
-        assumeTrue(File.separatorChar == '\\', "Requires windows");
-
         URI uri = FeaturePath.parse("path\\to\\file.feature");
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("path/to/file.feature"))
+            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature"))
         );
     }
 
     @Test
+    @EnabledOnOs(WINDOWS)
     void can_parse_windows_absolute_path_form() {
-        assumeTrue(File.separatorChar == '\\', "Requires windows");
-
         URI uri = FeaturePath.parse("C:\\path\\to\\file.feature");
 
         assertAll(
@@ -148,9 +148,8 @@ class FeaturePathTest {
     }
 
     @Test
+    @EnabledOnOs(WINDOWS)
     void can_parse_windows_file_path_with_standard_file_separator() {
-        assumeTrue(isWindows(System.getProperty("os.name")), "Requires windows");
-
         URI uri = FeaturePath.parse("C:/path/to/file.feature");
 
         assertAll(
@@ -158,15 +157,4 @@ class FeaturePathTest {
             () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature"))
         );
     }
-
-    private static boolean isWindows(String value) {
-        if (value == null) {
-            return false;
-        }
-        return value
-            .toLowerCase(Locale.US)
-            .replaceAll("[^a-z0-9]+", "")
-            .contains("windows");
-    }
-
 }

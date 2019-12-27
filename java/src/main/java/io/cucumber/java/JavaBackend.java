@@ -33,8 +33,7 @@ final class JavaBackend implements Backend {
 
         gluePaths.stream()
             .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-            .map(ClasspathSupport::resourcePath)
-            .map(ClasspathSupport::resourceName)
+            .map(ClasspathSupport::packageName)
             .map(classFinder::scanForClassesInPackage)
             .flatMap(Collection::stream)
             .forEach(aGlueClass -> {

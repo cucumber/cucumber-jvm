@@ -7,8 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 
-import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
-import static io.cucumber.core.resource.ClasspathSupport.determineFullyQualifiedResourceName;
+import static io.cucumber.core.resource.ClasspathSupport.classpathResourceUri;
+import static io.cucumber.core.resource.ClasspathSupport.determineClasspathResourceUri;
+import static io.cucumber.core.resource.ClasspathSupport.resourceNameOfPackageName;
 
 class Resources {
 
@@ -38,17 +39,16 @@ class Resources {
         private final Path resource;
 
         ClasspathResource(Path baseDir, Path resource) {
-            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + baseDir.relativize(resource).toString());
+            this.uri = classpathResourceUri(baseDir.relativize(resource));
             this.resource = resource;
         }
 
         ClasspathResource(String classpathResourceName, Path baseDir, Path resource) {
             if (baseDir.equals(resource)) {
-                this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
+                this.uri = classpathResourceUri(classpathResourceName);
             } else {
                 // classpathResourceName was a package
-                String fqn = determineFullyQualifiedResourceName(baseDir, classpathResourceName, resource);
-                this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + fqn);
+                this.uri = determineClasspathResourceUri(baseDir, classpathResourceName, resource);
             }
             this.resource = resource;
         }
@@ -87,9 +87,8 @@ class Resources {
         private final URI uri;
 
         PackageResource(Path baseDir, String packageName, Path resource) {
-            String packagePath = ClasspathSupport.packagePath(packageName);
-            String fqn = determineFullyQualifiedResourceName(baseDir, packagePath, resource);
-            this.uri = URI.create(CLASSPATH_SCHEME_PREFIX + fqn);
+            String classpathResourceName = resourceNameOfPackageName(packageName);
+            this.uri = determineClasspathResourceUri(baseDir, classpathResourceName, resource);
             this.resource = resource;
         }
 

@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 
-import static io.cucumber.core.resource.ClasspathSupport.getRootUrisForPackage;
+import static io.cucumber.core.resource.ClasspathSupport.getUrisForPackage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,7 +24,7 @@ class JarUriFileSystemServiceTest {
     @Test
     void canOpenMultipleConcurrently() throws IOException, URISyntaxException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URI first = getRootUrisForPackage(classLoader, "io.cucumber").stream()
+        URI first = getUrisForPackage(classLoader, "io.cucumber").stream()
             .filter(JarUriFileSystemService::supports)
             .findFirst()
             .orElseThrow(IllegalStateException::new);
