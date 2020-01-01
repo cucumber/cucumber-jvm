@@ -51,7 +51,7 @@
         <gherkin-messages.version>9.0.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13</junit.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <junit-platform.version>1.5.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
