@@ -53,7 +53,7 @@ final class PickleRunners {
         private Description description;
 
         WithStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
-            super(null);
+            super((Class) null);
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
