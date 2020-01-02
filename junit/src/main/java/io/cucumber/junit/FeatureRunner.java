@@ -27,7 +27,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private Description description;
 
     FeatureRunner(CucumberFeature cucumberFeature, Filters filters, ThreadLocalRunnerSupplier runnerSupplier, JUnitOptions jUnitOptions) throws InitializationError {
-        super(null);
+        super((Class) null);
         this.cucumberFeature = cucumberFeature;
         buildFeatureElementRunners(filters, runnerSupplier, jUnitOptions);
     }
