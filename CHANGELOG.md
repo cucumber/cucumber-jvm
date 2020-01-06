@@ -5,11 +5,13 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Added
  
 ### Changed
+ * [JUnit] Use JUnit 4.13 in `cucumber-junit` ([#1851](https://github.com/cucumber/cucumber-jvm/issues/1851) John Patrick)
 
 ### Removed
- 
+
 ### Fixed
  * [Core] Fixed Illegal character error on Windows ([#1849](https://github.com/cucumber/cucumber-jvm/issues/1849) M.P. Korstanje)
+ * [JUnit] Annotate `@Cucumber` with `@Testable` to facilitate discovery by IDEs (M.P. Korstanje)
  
 ### Deprecated## 
 
