@@ -49,8 +49,7 @@ class GlueCodeContext {
     }
 
     private void cleanUp() {
-        objects.clear();
-        callbacks.clear();
+        localContext.remove();
     }
 
     public void registerDestructionCallback(String name, Runnable callback) {

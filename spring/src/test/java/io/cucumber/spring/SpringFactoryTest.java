@@ -2,9 +2,9 @@ package io.cucumber.spring;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.spring.beans.Belly;
 import io.cucumber.spring.beans.BellyBean;
+import io.cucumber.spring.beans.DummyComponent;
 import io.cucumber.spring.beans.GlueScopedComponent;
 import io.cucumber.spring.commonglue.AutowiresThirdStepDef;
 import io.cucumber.spring.commonglue.OneStepDef;
@@ -12,13 +12,15 @@ import io.cucumber.spring.commonglue.ThirdStepDef;
 import io.cucumber.spring.componentannotation.WithComponentAnnotation;
 import io.cucumber.spring.componentannotation.WithControllerAnnotation;
 import io.cucumber.spring.contextconfig.BellyStepdefs;
-import io.cucumber.spring.contextconfig.WithSpringAnnotations;
 import io.cucumber.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
 import io.cucumber.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
 import io.cucumber.spring.metaconfig.general.BellyMetaStepdefs;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -244,7 +246,7 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(BellyStepdefs.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
         )));
     }
 
@@ -301,4 +303,26 @@ class SpringFactoryTest {
         );
     }
 
+    @ContextConfiguration("classpath:cucumber.xml")
+    public static class WithSpringAnnotations {
+
+        private boolean autowired;
+
+        @Value("${cukes.test.property}")
+        private String property;
+
+        @Autowired
+        public void setAutowiredCollaborator(DummyComponent collaborator) {
+            autowired = true;
+        }
+
+        public boolean isAutowired() {
+            return autowired;
+        }
+
+        public String getProperty() {
+            return property;
+        }
+
+    }
 }
