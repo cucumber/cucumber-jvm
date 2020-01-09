@@ -378,16 +378,46 @@
                                     <patch>equivalent</patch>
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
-                            <revapi.filter>
-                                <elements>
-                                    <exclude>
-                                        <!-- Dependency exposed in API. Ok for
-                                        Gherkin compatibility layer and messages -->
-                                        <item>.* io.cucumber.core.gherkin.*</item>
-                                        <item>.* io.cucumber.messages.*</item>
-                                    </exclude>
-                                </elements>
-                            </revapi.filter>
+                            <revapi.ignore>
+                                <!-- Gherkin parser related -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:cucumber-gherkin:jar:${project.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
+                                    </newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+
+                                <!-- JUnit Jupiter related -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
+                                    </newArchive>
+                                    <justification>We implement the junit platform API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>
+                                        org.junit.platform:junit-platform-commons:jar:${junit-platform.version}
+                                    </newArchive>
+                                    <justification>We implement the junit platform API</justification>
+                                </item>
+                            </revapi.ignore>
+
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
