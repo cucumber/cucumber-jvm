@@ -161,3 +161,46 @@ public class DataTableSteps {
     }
 }
 ```
+
+### Empty Cells
+
+Data tables in Gherkin can not represent null or the empty string unambiguously.
+Cucumber will interpret empty cells as `null`.
+
+Empty string be represented using a replacement. For example `[empty]`.
+The replacement can be configured by setting the `replaceWithEmptyString`
+property of `DataTableType`, `DefaultDataTableCellTransformer` and 
+`DefaultDataTableEntryTransformerBody`. By default no replacement is configured. 
+
+```gherkin
+Given some authors
+   | name            | first publication |
+   | Aspiring Author |                   |
+   | Ancient Author  | [blank]           |
+```
+
+```java
+package com.example.app;
+
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.en.Given;
+
+import java.util.Map;
+import java.util.List;
+
+public class DataTableSteps {
+
+    @DataTableType(replaceWithEmptyString = "[blank]")
+    public Author convert(Map<String, String> entry){
+      return new Author(
+         entry.get("name"),
+         entry.get("first publication")
+      );
+    }
+    
+    @Given("some authors")
+    public void given_some_authors(List<Author> authors){
+      // authors = [Author(name="Aspiring Author", firstPublication=null), Author(name="Ancient Author", firstPublication=)]
+    }
+}
+```

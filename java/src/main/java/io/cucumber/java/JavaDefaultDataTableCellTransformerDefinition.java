@@ -9,13 +9,14 @@ import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDefaultDataTableCellTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableCellTransformerDefinition {
+class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition implements DefaultDataTableCellTransformerDefinition {
 
     private final TableCellByTypeTransformer transformer;
 
-    JavaDefaultDataTableCellTransformerDefinition(Method method, Lookup lookup) {
-        super(requireValidMethod(method), lookup);
-        this.transformer = this::execute;
+    JavaDefaultDataTableCellTransformerDefinition(Method method, Lookup lookup, String[] emptyPatterns) {
+        super(requireValidMethod(method), lookup, emptyPatterns);
+        this.transformer = (cellValue, toValueType) ->
+            execute(replaceEmptyPatternsWithEmptyString(cellValue), toValueType);
     }
 
     private static Method requireValidMethod(Method method) {

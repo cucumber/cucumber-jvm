@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,13 +40,39 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
         assertThat(definition.tableEntryByTypeTransformer()
             .transform(fromValue, String.class, cellTransformer), is("key=value"));
+    }
 
+    @Test
+    void transforms_empties_with_correct_method() throws Throwable {
+        Map<String, String> fromValue = singletonMap("key", "[empty]");
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method", Map.class, Type.class);
+        JavaDefaultDataTableEntryTransformerDefinition definition =
+            new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, false, new String[]{"[empty]"});
+
+        assertThat(definition.tableEntryByTypeTransformer()
+            .transform(fromValue, String.class, cellTransformer), is("key="));
+    }
+
+    @Test
+    void throws_for_multiple_empties_with_correct_method() throws Throwable {
+        Map<String, String> fromValue = new HashMap<>();
+        fromValue.put("[empty]", "a");
+        fromValue.put("[blank]", "b");
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method", Map.class, Type.class);
+        JavaDefaultDataTableEntryTransformerDefinition definition =
+            new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, false, new String[]{"[empty]", "[blank]"});
+
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> definition.tableEntryByTypeTransformer().transform(fromValue, String.class, cellTransformer)
+        );
+
+        assertThat(exception.getMessage(), is("After replacing [empty] and [blank] with empty strings the datatable entry contains duplicate keys: {[blank]=b, [empty]=a}"));
     }
 
     public <T> T correct_method(Map<String, String> fromValue, Type toValueType) {
         return join(fromValue);
     }
-
 
     @Test
     void transforms_with_correct_method_with_cell_transformer() throws Throwable {
@@ -55,7 +82,6 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
 
         assertThat(definition.tableEntryByTypeTransformer()
             .transform(fromValue, String.class, cellTransformer), is("key=value"));
-
     }
 
 
