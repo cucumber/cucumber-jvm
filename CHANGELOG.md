@@ -185,6 +185,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
  - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765), [#1785](https://github.com/cucumber/cucumber-jvm/issues/1785) M.P. Korstanje)
 
+## [4.8.1](https://github.com/cucumber/cucumber-jvm/compare/v4.8.0...v4.8.1) (2020-01-09)
+
+### Fixed
+* [JUnit] Fix JUnit v4.13 runtime issues ([#1852](https://github.com/cucumber/cucumber-jvm/issues/1794) John Patrick)
+
 ## [4.8.0](https://github.com/cucumber/cucumber-jvm/compare/v4.7.4...v4.8.0) (2019-10-19)
 
 ### Fixed
