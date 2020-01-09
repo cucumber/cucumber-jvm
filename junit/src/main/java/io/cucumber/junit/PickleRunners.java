@@ -45,7 +45,7 @@ final class PickleRunners {
         private Description description;
 
         WithStepDescriptions(RunnerSupplier runnerSupplier, PickleEvent pickleEvent, JUnitOptions jUnitOptions) throws InitializationError {
-            super(null);
+            super((Class) null);
             this.runnerSupplier = runnerSupplier;
             this.pickleEvent = pickleEvent;
             this.jUnitOptions = jUnitOptions;
