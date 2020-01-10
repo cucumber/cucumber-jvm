@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 abstract class AbstractGlueDefinition implements ScenarioScoped {
 
-    Object body;
+    final Object body;
     final Method method;
     final StackTraceElement location;
 

@@ -4,7 +4,7 @@ import groovy.text.SimpleTemplateEngine
 SimpleTemplateEngine engine = new SimpleTemplateEngine()
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
-def dialectProvider = new GherkinDialectProvider()
+GherkinDialectProvider dialectProvider = new GherkinDialectProvider()
 
 dialectProvider.getLanguages().each { language ->
     def dialect = dialectProvider.getDialect(language, null)

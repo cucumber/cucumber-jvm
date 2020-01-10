@@ -16,22 +16,22 @@ class Cdi2FactoryTest {
     void shouldGiveUsNewInstancesForEachScenario() {
 
         final ObjectFactory factory = new Cdi2Factory();
-        factory.addClass(BellyStepdefs.class);
-        factory.addClass(CDIBellyStepdefs.class);
+        factory.addClass(BellyStepDefinitions.class);
+        factory.addClass(CdiBellyStepDefinitions.class);
 
         // Scenario 1
         factory.start();
-        final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
-        final CDIBellyStepdefs cdiStep = factory.getInstance(CDIBellyStepdefs.class);
+        final BellyStepDefinitions o1 = factory.getInstance(BellyStepDefinitions.class);
+        final CdiBellyStepDefinitions cdiStep = factory.getInstance(CdiBellyStepDefinitions.class);
         assertAll("Checking CDIBellyStepdefs",
-            () -> assertThat(cdiStep.getClass(), not(is(CDIBellyStepdefs.class))), // it is a CDI proxy
-            () -> assertThat(cdiStep.getClass().getSuperclass(), is(CDIBellyStepdefs.class))
+            () -> assertThat(cdiStep.getClass(), not(is(CdiBellyStepDefinitions.class))), // it is a CDI proxy
+            () -> assertThat(cdiStep.getClass().getSuperclass(), is(CdiBellyStepDefinitions.class))
         );
         factory.stop();
 
         // Scenario 2
         factory.start();
-        final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         assertAll("Checking BellyStepdefs",

@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FunctionNameGeneratorTest {
 
-    private FunctionNameGenerator underscore = new FunctionNameGenerator(SnippetType.UNDERSCORE.joiner());
-    private FunctionNameGenerator camelCase = new FunctionNameGenerator(SnippetType.CAMELCASE.joiner());
+    private final FunctionNameGenerator underscore = new FunctionNameGenerator(SnippetType.UNDERSCORE.joiner());
+    private final FunctionNameGenerator camelCase = new FunctionNameGenerator(SnippetType.CAMELCASE.joiner());
 
     private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
         assertAll("Checking FunctionNameGenerator",

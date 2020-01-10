@@ -18,7 +18,7 @@ class LoggerFactoryTest {
 
     private final Exception exception = new Exception();
     private LogRecord logged;
-    private Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
+    private final Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
 
     private static Matcher<LogRecord> logRecord(final String message, final Level level, final Throwable throwable) {
         return new TypeSafeDiagnosingMatcher<LogRecord>() {

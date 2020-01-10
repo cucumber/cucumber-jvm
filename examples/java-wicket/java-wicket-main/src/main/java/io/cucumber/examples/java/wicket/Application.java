@@ -9,7 +9,7 @@ import io.cucumber.examples.java.wicket.view.Rent;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public class Application extends WebApplication {
-    private CarDAO carDAO = new InMemoryCarDAO();
+    private final CarDAO carDAO = new InMemoryCarDAO();
 
     @Override
     protected void init() {

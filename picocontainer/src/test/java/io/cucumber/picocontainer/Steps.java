@@ -58,12 +58,12 @@ public class Steps {
     }
 
     @Then("the {word} contains {word}")
-    public void containerContainsIngredient(String container, String ingredient) throws InterruptedException {
+    public void containerContainsIngredient(String container, String ingredient) {
         assertEquals("glass", container);
     }
 
     @Then("I add {word}")
-    public void addLiquid(String liquid) throws InterruptedException {
+    public void addLiquid(String liquid) {
         assertEquals("milk", liquid);
     }
 

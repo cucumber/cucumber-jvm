@@ -22,7 +22,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GuiceFactoryTest {
@@ -36,7 +35,7 @@ class GuiceFactoryTest {
         // If factory is left in start state it can cause cascading failures due to scope being left open
         try {
             factory.stop();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

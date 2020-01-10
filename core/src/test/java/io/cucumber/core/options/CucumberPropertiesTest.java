@@ -13,7 +13,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 
  class CucumberPropertiesTest {
 
-    private CucumberProperties.CucumberPropertiesMap env = new CucumberProperties.CucumberPropertiesMap(Collections.emptyMap());
+    private final CucumberProperties.CucumberPropertiesMap env = new CucumberProperties.CucumberPropertiesMap(Collections.emptyMap());
 
     @BeforeEach
      void setup() {

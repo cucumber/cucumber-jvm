@@ -39,11 +39,11 @@ public class TestCaseResultListenerTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
-    private URI uri = URI.create("file:path/to.feature");
-    private int line = 0;
-    private Exception error = new Exception();
-    private TestCase testCase = mock(TestCase.class);
-    private PickleStepTestStep step = createPickleStepTestStep();
+    private final URI uri = URI.create("file:path/to.feature");
+    private final int line = 0;
+    private final Exception error = new Exception();
+    private final TestCase testCase = mock(TestCase.class);
+    private final PickleStepTestStep step = createPickleStepTestStep();
 
     private PickleStepTestStep createPickleStepTestStep() {
         PickleStepTestStep step = mock(PickleStepTestStep.class);

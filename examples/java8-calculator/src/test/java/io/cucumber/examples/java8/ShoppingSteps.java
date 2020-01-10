@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class ShoppingSteps implements En {
 
-    private RpnCalculator calc = new RpnCalculator();
+    private final RpnCalculator calc = new RpnCalculator();
 
     private List<Grocery> shoppingList;
     private List<Grocery> shopStock;
@@ -75,7 +75,7 @@ public class ShoppingSteps implements En {
     }
 
     static class Grocery {
-        private String name;
+        private final String name;
         private Price price;
 
         public Grocery(String name) {
@@ -98,7 +98,7 @@ public class ShoppingSteps implements En {
     }
 
     static final class Price {
-        private int value;
+        private final int value;
 
         Price(int value) {
             this.value = value;

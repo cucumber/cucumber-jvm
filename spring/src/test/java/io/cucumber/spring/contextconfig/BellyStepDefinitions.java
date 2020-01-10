@@ -1,14 +1,15 @@
-package io.cucumber.spring.metaconfig.general;
+package io.cucumber.spring.contextconfig;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.spring.beans.Belly;
 import io.cucumber.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@MetaConfiguration
-public class BellyMetaStepdefs {
+@ContextConfiguration("classpath:cucumber.xml")
+public class BellyStepDefinitions {
 
     @Autowired
     private Belly belly;
@@ -20,12 +21,12 @@ public class BellyMetaStepdefs {
         return bellyBean;
     }
 
-    @Then("I have a meta belly")
+    @Then("I have belly")
     public void I_have_belly() {
         assertNotNull(belly);
     }
 
-    @Then("I have a meta belly bean")
+    @Then("I have belly bean")
     public void I_have_belly_bean() {
         assertNotNull(bellyBean);
     }

@@ -24,7 +24,7 @@ import static java.util.Arrays.asList;
  * @see Plugin for specific requirements
  */
 public final class PluginFactory {
-    private final Class[] CTOR_PARAMETERS = new Class[]{String.class, Appendable.class, URI.class, URL.class, File.class};
+    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{String.class, Appendable.class, URI.class, URL.class, File.class};
 
     private String defaultOutFormatter = null;
 
@@ -86,7 +86,7 @@ public final class PluginFactory {
         }
     }
 
-    private Object convertOrNull(String arg, Class ctorArgClass, String formatterString) throws IOException, URISyntaxException {
+    private Object convertOrNull(String arg, Class<?> ctorArgClass, String formatterString) throws IOException, URISyntaxException {
         if (arg == null) {
             if (ctorArgClass.equals(Appendable.class)) {
                 return defaultOutOrFailIfAlreadyUsed(formatterString);
@@ -114,7 +114,7 @@ public final class PluginFactory {
 
     private <T> Constructor<T> findSingleArgConstructor(Class<T> pluginClass) {
         Constructor<T> constructor = null;
-        for (Class ctorArgClass : CTOR_PARAMETERS) {
+        for (Class<?> ctorArgClass : CTOR_PARAMETERS) {
             try {
                 Constructor<T> candidate = pluginClass.getConstructor(ctorArgClass);
                 if (constructor != null) {

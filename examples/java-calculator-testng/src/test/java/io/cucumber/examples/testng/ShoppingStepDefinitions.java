@@ -10,8 +10,8 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-public class ShoppingStepdefs {
-    private RpnCalculator calc = new RpnCalculator();
+public class ShoppingStepDefinitions {
+    private final RpnCalculator calc = new RpnCalculator();
 
     @Given("the following groceries:")
     public void the_following_groceries(List<Grocery> groceries) {
@@ -34,15 +34,15 @@ public class ShoppingStepdefs {
 
     @DataTableType
     public Grocery grocery(Map<String, String> entry) {
-        return new ShoppingStepdefs.Grocery(
+        return new Grocery(
             entry.get("name"),
-            ShoppingStepdefs.Price.fromString(entry.get("price"))
+            Price.fromString(entry.get("price"))
         );
     }
 
     static class Grocery {
-        private String name;
-        private Price price;
+        private final String name;
+        private final Price price;
 
         Grocery(String name, Price price) {
             this.name = name;
@@ -51,7 +51,7 @@ public class ShoppingStepdefs {
     }
 
     static final class Price {
-        private int value;
+        private final int value;
 
         Price(int value) {
             this.value = value;

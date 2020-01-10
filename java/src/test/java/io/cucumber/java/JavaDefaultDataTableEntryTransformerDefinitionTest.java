@@ -27,7 +27,7 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
         }
     };
 
-    private TableCellByTypeTransformer cellTransformer = (value, cellType) -> {
+    private final TableCellByTypeTransformer cellTransformer = (value, cellType) -> {
         throw new IllegalStateException();
     };
 

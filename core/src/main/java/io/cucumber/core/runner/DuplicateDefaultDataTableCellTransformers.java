@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
+import io.cucumber.core.backend.Located;
 import io.cucumber.core.exception.CucumberException;
 
 import java.util.List;
@@ -14,7 +15,7 @@ class DuplicateDefaultDataTableCellTransformers extends CucumberException {
 
     private static String createMessage(List<DefaultDataTableCellTransformerDefinition> definitions) {
         return "There may not be more then one default table cell transformers. Found:" + definitions.stream()
-            .map(d -> d.getLocation())
+            .map(Located::getLocation)
             .collect(joining("\n - ", "\n - ", "\n"));
     }
 }

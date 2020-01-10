@@ -74,9 +74,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StepDefinitions implements En {
 
     public RpnCalculatorSteps() {
-        ParameterType("amount", "(\\d+\\.\\d+)\\s([a-zA-Z]+)", (String[] values) -> {
-            return new Amount(new BigDecimal(values[0]), Currency.getInstance(values[1]));
-        });
+        ParameterType("amount", "(\\d+\\.\\d+)\\s([a-zA-Z]+)", (String[] values) ->
+            new Amount(new BigDecimal(values[0]), Currency.getInstance(values[1])));
     }
 }
 ``` 

@@ -8,7 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class RentSteps {
-    private RentACarSupport rentACarSupport = new RentACarSupport();
+    private final RentACarSupport rentACarSupport = new RentACarSupport();
 
     @Given("there are {int} cars available for rental")
     public void there_are_cars_available_for_rental(int availableCars) {

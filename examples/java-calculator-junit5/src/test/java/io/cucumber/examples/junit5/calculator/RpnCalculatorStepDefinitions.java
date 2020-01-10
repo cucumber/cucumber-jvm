@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpnCalculatorStepdefs {
+public class RpnCalculatorStepDefinitions {
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")

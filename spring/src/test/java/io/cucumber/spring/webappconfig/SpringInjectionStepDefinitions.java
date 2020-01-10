@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebAppConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
-public class SpringInjectionStepDefs {
+public class SpringInjectionStepDefinitions {
 
     @Autowired
     private WebApplicationContext wac;

@@ -37,7 +37,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
-        super((Class) null);
+        super((Class<?>) null);
         this.feature = feature;
         this.options = options;
         this.children = feature.getPickles().stream()

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration("classpath:cucumber.xml")
 @DirtiesContext
-public class DirtiesContextBellyStepDefs {
+public class DirtiesContextBellyStepDefinitions {
 
     @Autowired
     private Belly belly;

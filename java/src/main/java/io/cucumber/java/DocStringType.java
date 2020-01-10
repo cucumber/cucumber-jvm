@@ -32,7 +32,6 @@ public @interface DocStringType {
      * When not provided this will default to the name of the annotated method.
      *
      * @return content type
-     * @see io.cucumber.docstring.DocStringType#getContentType()
      */
     String contentType() default "";
 }

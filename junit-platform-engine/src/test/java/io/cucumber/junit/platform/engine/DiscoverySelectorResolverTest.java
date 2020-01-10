@@ -12,8 +12,6 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
-import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
-import org.junit.platform.engine.support.descriptor.FilePosition;
 
 import java.io.File;
 import java.net.URI;
@@ -310,6 +308,7 @@ class DiscoverySelectorResolverTest {
             }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends DiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
             if (resources.containsKey(selectorType)) {

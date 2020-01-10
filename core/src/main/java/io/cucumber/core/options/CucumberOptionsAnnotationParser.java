@@ -19,7 +19,7 @@ public final class CucumberOptionsAnnotationParser {
     private boolean overridingGlueSpecified = false;
     private OptionsProvider optionsProvider;
 
-    private static String packagePath(Class clazz) {
+    private static String packagePath(Class<?> clazz) {
         String packageName = packageName(clazz);
 
         if (packageName.isEmpty()) {
@@ -29,7 +29,7 @@ public final class CucumberOptionsAnnotationParser {
         return CLASSPATH_SCHEME_PREFIX + "/" + packageName.replace('.', '/');
     }
 
-    private static String packageName(Class clazz) {
+    private static String packageName(Class<?> clazz) {
         String className = clazz.getName();
         return className.substring(0, Math.max(0, className.lastIndexOf('.')));
     }
@@ -42,7 +42,7 @@ public final class CucumberOptionsAnnotationParser {
     public RuntimeOptionsBuilder parse(Class<?> clazz) {
         RuntimeOptionsBuilder args = new RuntimeOptionsBuilder();
 
-        for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
+        for (Class<?> classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = requireNonNull(optionsProvider).getOptions(classWithOptions);
 
             if (options != null) {
@@ -81,7 +81,7 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addMonochrome(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (options.monochrome() || runningInEnvironmentWithoutAnsiSupport()) {
+        if (options.monochrome()) {
             args.setMonochrome(true);
         }
     }
@@ -113,7 +113,7 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsBuilder args, Class clazz) {
+    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
         if (!featuresSpecified) {
             String packageName = packagePath(clazz);
             FeatureWithLines featureWithLines = FeatureWithLines.parse(packageName);
@@ -143,7 +143,7 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsBuilder args, Class clazz) {
+    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
         if (!overridingGlueSpecified) {
             args.addGlue(GluePath.parse(packageName(clazz)));
         }
@@ -161,13 +161,7 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private boolean runningInEnvironmentWithoutAnsiSupport() {
-        boolean intelliJidea = System.getProperty("idea.launcher.bin.path") != null;
-        // TODO: What does Eclipse use?
-        return intelliJidea;
-    }
-
-    private boolean hasSuperClass(Class classWithOptions) {
+    private boolean hasSuperClass(Class<?> classWithOptions) {
         return classWithOptions != Object.class;
     }
 

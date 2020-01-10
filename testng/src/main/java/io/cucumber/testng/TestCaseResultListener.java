@@ -24,7 +24,7 @@ final class TestCaseResultListener {
     private final EventBus bus;
     private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = this::snippetSuggested;
-    private boolean strict;
+    private final boolean strict;
     private Result result;
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = this::receiveResult;
     private PickleStepTestStep skippedStep;

@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 @WebAppConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
-public class ThreadingStepDefs {
+public class ThreadingStepDefinitions {
 
     static final int concurrency = 5;
-    static final ConcurrentHashMap<Thread, ThreadingStepDefs> map = new ConcurrentHashMap<>();
+    static final ConcurrentHashMap<Thread, ThreadingStepDefinitions> map = new ConcurrentHashMap<>();
 
     private static final CountDownLatch latch = new CountDownLatch(2);
 
@@ -37,7 +37,7 @@ public class ThreadingStepDefs {
 
     @Then("I should not be shared between threads")
     public void iShouldNotBeSharedBetweenThreads() {
-        for (Map.Entry<Thread, ThreadingStepDefs> entries : map.entrySet()) {
+        for (Map.Entry<Thread, ThreadingStepDefinitions> entries : map.entrySet()) {
             if (entries.getKey().equals(currentThread())) {
                 assertSame(entries.getValue(), this);
             } else {

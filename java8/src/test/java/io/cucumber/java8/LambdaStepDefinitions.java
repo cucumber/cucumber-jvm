@@ -93,22 +93,22 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         Given("A method reference to an arbitrary object of a particular type {string} with argument {string}", Contact::update);
     }
 
-    public static void staticMethodWithAnArgument(Integer cuckes) throws Throwable {
+    public static void staticMethodWithAnArgument(Integer cuckes) {
         assertEquals(42, cuckes.intValue());
     }
 
-    private void methodThatDeclaresException() throws Throwable {
+    private void methodThatDeclaresException() {
     }
 
-    private void methodWithAnArgument(Integer cuckes) throws Throwable {
+    private void methodWithAnArgument(Integer cuckes) {
         assertEquals(42, cuckes.intValue());
     }
 
-    private void methodWithAnIntArgument(int cuckes) throws Throwable {
+    private void methodWithAnIntArgument(int cuckes) {
         assertEquals(42, cuckes);
     }
 
-    private void hookWithArgs(Scenario scenario) throws Throwable {
+    private void hookWithArgs(Scenario scenario) {
     }
 
     public static class Person {
