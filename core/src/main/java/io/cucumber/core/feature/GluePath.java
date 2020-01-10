@@ -1,7 +1,5 @@
 package io.cucumber.core.feature;
 
-import io.cucumber.core.resource.ClasspathSupport;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,7 +9,8 @@ import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX
 import static io.cucumber.core.resource.ClasspathSupport.PACKAGE_SEPARATOR_STRING;
 import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_CHAR;
 import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_STRING;
-import static io.cucumber.core.resource.ClasspathSupport.rootPackage;
+import static io.cucumber.core.resource.ClasspathSupport.resourceNameOfPackageName;
+import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.lang.Character.isJavaIdentifierPart;
 import static java.lang.Character.isJavaIdentifierStart;
 import static java.util.Objects.requireNonNull;
@@ -37,13 +36,13 @@ public class GluePath {
     public static URI parse(String gluePath) {
         requireNonNull(gluePath, "gluePath may not be null");
         if (gluePath.isEmpty()) {
-            return rootPackage();
+            return rootPackageUri();
         }
 
         // Legacy from the Cucumber Eclipse plugin
         // Older versions of Cucumber allowed it.
         if (CLASSPATH_SCHEME_PREFIX.equals(gluePath)) {
-            return rootPackage();
+            return rootPackageUri();
         }
 
         if (nonStandardPathSeparatorInUse(gluePath)) {
@@ -52,7 +51,7 @@ public class GluePath {
         }
 
         if (isProbablyPackage(gluePath)) {
-            String path = replacePackageSeparator(gluePath);
+            String path = resourceNameOfPackageName(gluePath);
             return parseAssumeClasspathScheme(path);
         }
 
@@ -62,10 +61,6 @@ public class GluePath {
     private static boolean isProbablyPackage(String gluePath) {
         return gluePath.contains(PACKAGE_SEPARATOR_STRING)
             && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
-    }
-
-    private static String replacePackageSeparator(String gluePath) {
-        return ClasspathSupport.packagePath(gluePath);
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {

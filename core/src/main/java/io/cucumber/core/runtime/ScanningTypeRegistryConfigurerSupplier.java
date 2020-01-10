@@ -81,8 +81,7 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
             return packageNames
                 .stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-                .map(ClasspathSupport::resourcePath)
-                .map(ClasspathSupport::resourceName)
+                .map(ClasspathSupport::packageName)
                 .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, parentType))
                 .flatMap(Collection::stream)
                 .filter(Reflections::isInstantiable)

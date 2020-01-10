@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.determineFullyQualifiedClassName;
-import static io.cucumber.core.resource.ClasspathSupport.getRootUrisForPackage;
+import static io.cucumber.core.resource.ClasspathSupport.getUrisForPackage;
 import static io.cucumber.core.resource.ClasspathSupport.requireValidPackageName;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -67,8 +67,7 @@ public final class ClasspathScanner {
     private List<Class<?>> scanForClassesInPackage(String basePackageName, Predicate<Class<?>> classFilter) {
         requireValidPackageName(basePackageName);
         requireNonNull(classFilter, "classFilter must not be null");
-        basePackageName = basePackageName.trim();
-        List<URI> rootUris = getRootUrisForPackage(getClassLoader(), basePackageName);
+        List<URI> rootUris = getUrisForPackage(getClassLoader(), basePackageName);
         return findClassesForUris(rootUris, basePackageName, classFilter);
     }
 

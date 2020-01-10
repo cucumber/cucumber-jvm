@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -6,7 +7,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>5.0.0-RC4-SNAPSHOT</version>
+    <version>5.0.0-RC5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -41,23 +42,24 @@
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
         <!--Dependencies -->
-        <cucumber-expressions.version>8.2.1</cucumber-expressions.version>
+        <cucumber-expressions.version>8.3.0</cucumber-expressions.version>
         <datatable.version>3.1.0</datatable.version>
         <tag-expressions.version>2.0.2</tag-expressions.version>
         <messages.version>8.0.1-SNAPSHOT</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
-        <gherkin-messages.version>9.0.1-SNAPSHOT</gherkin-messages.version>
+        <gherkin-vintage-jvm-deps.version>1.0.6</gherkin-vintage-jvm-deps.version>
+        <gherkin-messages.version>9.1.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13</junit.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <junit-platform.version>1.5.2</junit-platform.version>
-        <hamcrest.version>2.1</hamcrest.version>
-        <mockito.version>3.0.0</mockito.version>
-        <jackson-databind.version>2.10.0</jackson-databind.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <mockito.version>3.2.4</mockito.version>
+        <jackson-databind.version>2.10.1</jackson-databind.version>
 
         <!--Maven plugins-->
-        <groovy.version>2.5.5</groovy.version>
+        <groovy.version>2.5.8</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -338,6 +340,12 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.0</version>
                 </plugin>
@@ -357,7 +365,7 @@
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.19.1</version>
+                            <version>0.20.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -371,16 +379,46 @@
                                     <patch>equivalent</patch>
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
-                            <revapi.filter>
-                                <elements>
-                                    <exclude>
-                                        <!-- Dependency exposed in API. Ok for
-                                        Gherkin compatibility layer and messages -->
-                                        <item>.* io.cucumber.core.gherkin.*</item>
-                                        <item>.* io.cucumber.messages.*</item>
-                                    </exclude>
-                                </elements>
-                            </revapi.filter>
+                            <revapi.ignore>
+                                <!-- Gherkin parser related -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:cucumber-gherkin:jar:${project.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
+                                    </newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+
+                                <!-- JUnit Jupiter related -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
+                                    </newArchive>
+                                    <justification>We implement the junit platform API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>
+                                        org.junit.platform:junit-platform-commons:jar:${junit-platform.version}
+                                    </newArchive>
+                                    <justification>We implement the junit platform API</justification>
+                                </item>
+                            </revapi.ignore>
+
                         </analysisConfiguration>
                     </configuration>
                 </plugin>

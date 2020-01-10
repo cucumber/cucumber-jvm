@@ -22,6 +22,7 @@ import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
+import org.apiguardian.api.API;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.ConfigurationParameters;
@@ -31,10 +32,10 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
-
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 
-class CucumberEngineExecutionContext implements EngineExecutionContext {
+@API(status = API.Status.STABLE)
+public final class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     private static final Logger logger = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
     private final RunnerSupplier runnerSupplier;

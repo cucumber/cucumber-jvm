@@ -7,11 +7,14 @@ import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.testkit.engine.EngineExecutionResults;
+import org.junit.platform.testkit.engine.EngineTestKit;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
 
 class CucumberTestEngineTest {
 
@@ -29,7 +32,7 @@ class CucumberTestEngineTest {
 
 
     @Test
-    void createExecutionContext(){
+    void createExecutionContext() {
         EngineExecutionListener listener = new EmptyEngineExecutionListener();
         ConfigurationParameters configuration = new EmptyConfigurationParameters();
         EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
@@ -37,6 +40,15 @@ class CucumberTestEngineTest {
         TestDescriptor testDescriptor = engine.discover(discoveryRequest, id);
         ExecutionRequest execution = new ExecutionRequest(testDescriptor, listener, configuration);
         assertNotNull(engine.createExecutionContext(execution));
+    }
+
+    @Test
+    void selectAndExecuteSingleScenario() {
+        EngineExecutionResults result = EngineTestKit.engine("cucumber")
+            .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+            .execute();
+        assertEquals(0, result.tests().failed().count());
+        assertEquals(1, result.tests().succeeded().count());
     }
 
 }

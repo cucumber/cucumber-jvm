@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import org.apiguardian.api.API;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.ExecutionRequest;
@@ -28,6 +29,7 @@ import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENA
  *     <li>{@link org.junit.platform.engine.discovery.UriSelector}</li>
  * </ul>
  */
+@API(status = API.Status.STABLE)
 public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEngineExecutionContext> {
 
     @Override

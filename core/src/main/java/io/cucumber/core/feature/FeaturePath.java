@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_CHAR;
-import static io.cucumber.core.resource.ClasspathSupport.rootPackage;
+import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -40,7 +40,7 @@ public class FeaturePath {
         // Legacy from the Cucumber Eclipse plugin
         // Older versions of Cucumber allowed it.
         if (CLASSPATH_SCHEME_PREFIX.equals(featureIdentifier)) {
-            return rootPackage();
+            return rootPackageUri();
         }
 
         if (nonStandardPathSeparatorInUse(featureIdentifier)) {

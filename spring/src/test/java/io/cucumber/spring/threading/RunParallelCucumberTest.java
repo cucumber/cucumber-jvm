@@ -3,19 +3,21 @@ package io.cucumber.spring.threading;
 import io.cucumber.core.cli.Main;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
-class RunParallelCukesTest {
+class RunParallelCucumberTest {
 
     @Test
-    void test() {
+    void test() throws ExecutionException, InterruptedException {
         Callable<Byte> runCucumber = () -> {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             String[] args = {
@@ -27,14 +29,16 @@ class RunParallelCukesTest {
         };
 
 
-        ExecutorService executorService = newFixedThreadPool(2);
-        Future<Byte> result1 = executorService.submit(runCucumber);
-        Future<Byte> result2 = executorService.submit(runCucumber);
+        ExecutorService executorService = newFixedThreadPool(ThreadingStepDefs.concurrency);
+        List<Future<Byte>> results = new ArrayList<>();
+        for (int i = 0; i < ThreadingStepDefs.concurrency; i++) {
+            results.add(executorService.submit(runCucumber));
+        }
 
-        assertAll("jobs completed successfully",
-            () -> assertThat(result1.get(), is((byte) 0x0)),
-            () -> assertThat(result2.get(), is((byte) 0x0))
-        );
+        for (Future<Byte> result : results) {
+            assertThat(result.get(), is((byte) 0x0));
+        }
+        ThreadingStepDefs.map.clear();
     }
 
 }

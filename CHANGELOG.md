@@ -1,18 +1,30 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...master) (In Git)
+## [5.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...master) (In Git)
 
 ### Added
  
 ### Changed
+ * [JUnit] Use JUnit 4.13 in `cucumber-junit` ([#1851](https://github.com/cucumber/cucumber-jvm/issues/1851) John Patrick)
 
 ### Removed
- 
-### Fixed
- 
-### Deprecated
 
-       
+### Fixed
+ * [Core] Fixed Illegal character error on Windows ([#1849](https://github.com/cucumber/cucumber-jvm/issues/1849) M.P. Korstanje)
+ * [JUnit] Annotate `@Cucumber` with `@Testable` to facilitate discovery by IDEs (M.P. Korstanje)
+ 
+### Deprecated## 
+
+[5.0.0-RC4](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4) (2019-12-21)
+
+### Changed
+ * [Spring] Share application context ([#1848](https://github.com/cucumber/cucumber-jvm/issues/1848), [#1582](https://github.com/cucumber/cucumber-jvm/issues/1582) Dominic Adatia, Marc Hauptmann, M.P. Korstanje)
+   * Share application context between threads [#1846](https://github.com/cucumber/cucumber-jvm/issues/1846)
+   * Share application context between Cucumber and JUnit tests [#1583](https://github.com/cucumber/cucumber-jvm/issues/1583)
+
+### Fixed
+ * [Core] Handle undefined steps in TeamCityPlugin (M.P. Korstanje)
+ 
 ## [5.0.0-RC3](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3) (2019-12-19)
 
 ### Added
@@ -21,13 +33,14 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
    - Opt-in by adding `cucumber-gherkin-messages` dependency
    - Not supported by JSON and HTML formatter.
  * [JUnit] Support `line` query parameter in `UriSelector` ([#1845](https://github.com/cucumber/cucumber-jvm/issues/1845) M.P. Korstanje)
- 
+ * [Core] Include default gherkin version in version.properties ([#1847](https://github.com/cucumber/cucumber-jvm/issues/1847) David Goss)
+
 ### Changed
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [JUnit] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
- 
+
 ### Fixed
  * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
  * [JUnit] Send events to configured Plugins (M.P. Korstanje)
@@ -35,8 +48,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [JUnit] Mark `Constants` as part of the public API (M.P. Korstanje)
  * [Core] DataTable does not support Kotlin Collection types ([#1838](https://github.com/cucumber/cucumber-jvm/issues/1838) Marit Van Dijk, M.P. Korstanje)
      - DataTable types for `X` and `? extends X` are now considered identical.
-  * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
-
+ * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
+ 
 ### Deprecated
  * [Core] Deprecate `cucumber.options` ([#1836](https://github.com/cucumber/cucumber-jvm/issues/1836) M.P. Korstanje)
    * Use individual properties instead
@@ -171,6 +184,11 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  - [Doc] Fixed various Javadoc issues ([#1586](https://github.com/cucumber/cucumber-jvm/pull/1586) Michiel Leegwater)
  - [Doc] Fixed various Javadoc issues (Marit Van Dijk)
  - [JUnit] Always fire TestStarted/Finished for pickle ([#1765](https://github.com/cucumber/cucumber-jvm/pull/1765), [#1785](https://github.com/cucumber/cucumber-jvm/issues/1785) M.P. Korstanje)
+
+## [4.8.1](https://github.com/cucumber/cucumber-jvm/compare/v4.8.0...v4.8.1) (2020-01-09)
+
+### Fixed
+* [JUnit] Fix JUnit v4.13 runtime issues ([#1852](https://github.com/cucumber/cucumber-jvm/issues/1794) John Patrick)
 
 ## [4.8.0](https://github.com/cucumber/cucumber-jvm/compare/v4.7.4...v4.8.0) (2019-10-19)
 

@@ -5,6 +5,8 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
@@ -22,6 +24,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@DisabledOnOs(OS.WINDOWS)
 class TeamCityPluginTest {
 
     private final List<Feature> features = new ArrayList<>();

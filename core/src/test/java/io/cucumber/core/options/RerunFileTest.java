@@ -2,6 +2,8 @@ package io.cucumber.core.options;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -126,6 +128,7 @@ class RerunFileTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void understands_whitespace_in_rerun_filepath() throws Exception {
         mockFileResource(
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2\n");
@@ -141,6 +144,7 @@ class RerunFileTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void understands_rerun_files_without_separation_in_rerun_filepath() throws Exception {
         mockFileResource(
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2file:/home/users/mp/My%20Documents/tests/foo.feature:4"

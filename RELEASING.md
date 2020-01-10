@@ -15,7 +15,7 @@ git checkout master
 Also check if you can upgrade any dependencies:
 
 ```
-mvn versions:display-dependency-updates
+mvn versions:update-properties -DallowMajorUpdates=false -Dmaven.version.rules="file://`pwd`/.m2/maven-version-rules.xml"
 ```
 
 ## Prepare for release ##
