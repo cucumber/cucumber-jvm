@@ -16,6 +16,7 @@ public class DataTableSteps {
 
     private final Author expectedAuthor = new Author("Annie M. G.", "Schmidt", "1911-03-20");
     private final Person expectedPerson = new Person("Astrid", "Lindgren");
+    private final Person mononymousPerson = new Person("Plato", "");
 
     @DataTableType
     public Author authorEntryTransformer(Map<String, String> entry) {
@@ -94,9 +95,10 @@ public class DataTableSteps {
     @Given("a list of people in a table")
     public void this_table_of_authors(List<DataTableSteps.Person> persons) {
         assertTrue(persons.contains(expectedPerson));
+        assertTrue(persons.contains(mononymousPerson));
     }
 
-    @DataTableType
+    @DataTableType(replaceWithEmptyString = "[blank]")
     public DataTableSteps.Person transform(Map<String, String> tableEntry) {
         return new Person(tableEntry.get("first"), tableEntry.get("last"));
     }

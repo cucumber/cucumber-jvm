@@ -19,6 +19,7 @@ Feature: Java8
     Given this data table:
       | first  | last     |
       | Aslak  | Hellesøy |
+      | Plato  | [blank]  |
       | Donald | Duck     |
     And A string generic that is not a data table
 

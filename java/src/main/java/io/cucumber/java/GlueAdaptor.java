@@ -45,15 +45,19 @@ final class GlueAdaptor {
             boolean preferForRegexMatch = parameterType.preferForRegexMatch();
             glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, lookup));
         } else if (annotationType.equals(DataTableType.class)) {
-            glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup));
+            DataTableType dataTableType = (DataTableType) annotation;
+            glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup, dataTableType.replaceWithEmptyString()));
         } else if (annotationType.equals(DefaultParameterTransformer.class)) {
             glue.addDefaultParameterTransformer(new JavaDefaultParameterTransformerDefinition(method, lookup));
         } else if (annotationType.equals(DefaultDataTableEntryTransformer.class)) {
             DefaultDataTableEntryTransformer transformer = (DefaultDataTableEntryTransformer) annotation;
             boolean headersToProperties = transformer.headersToProperties();
-            glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, headersToProperties));
+            String[] replaceWithEmptyString = transformer.replaceWithEmptyString();
+            glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, headersToProperties, replaceWithEmptyString));
         } else if (annotationType.equals(DefaultDataTableCellTransformer.class)) {
-            glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup));
+            DefaultDataTableCellTransformer cellTransformer = (DefaultDataTableCellTransformer) annotation;
+            String[] emptyPatterns = cellTransformer.replaceWithEmptyString();
+            glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup, emptyPatterns));
         } else if (annotationType.equals(DocStringType.class)){
             DocStringType docStringType = (DocStringType) annotation;
             String contentType = docStringType.contentType();

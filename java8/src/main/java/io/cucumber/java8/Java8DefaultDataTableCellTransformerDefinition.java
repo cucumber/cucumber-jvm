@@ -5,19 +5,22 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 
 import java.lang.reflect.Type;
 
-class Java8DefaultDataTableCellTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableCellTransformerDefinition {
+class Java8DefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition implements DefaultDataTableCellTransformerDefinition {
 
-    Java8DefaultDataTableCellTransformerDefinition(DefaultDataTableCellTransformerBody body) {
-        super(body, new Exception().getStackTrace()[3]);
+    Java8DefaultDataTableCellTransformerDefinition(String[] emptyPatterns, DefaultDataTableCellTransformerBody body) {
+        super(body, new Exception().getStackTrace()[3], emptyPatterns);
     }
 
     @Override
     public TableCellByTypeTransformer tableCellByTypeTransformer() {
-        return this::execute;
+        return (fromValue, toValueType) -> execute(
+            replaceEmptyPatternsWithEmptyString(fromValue),
+            toValueType
+        );
     }
 
-    private Object execute(String fromValue, Type toValue) {
-        return Invoker.invoke(this, body, method, fromValue, toValue);
+    private Object execute(String fromValue, Type toValueType) {
+        return Invoker.invoke(this, body, method, fromValue, toValueType);
     }
 
 }
