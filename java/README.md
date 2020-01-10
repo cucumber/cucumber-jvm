@@ -170,7 +170,7 @@ Cucumber will interpret empty cells as `null`.
 Empty string be represented using a replacement. For example `[empty]`.
 The replacement can be configured by setting the `replaceWithEmptyString`
 property of `DataTableType`, `DefaultDataTableCellTransformer` and 
-`DefaultDataTableEntryTransformerBody`. By default no replacement is configured. 
+`DefaultDataTableEntryTransformer`. By default no replacement is configured. 
 
 ```gherkin
 Given some authors
