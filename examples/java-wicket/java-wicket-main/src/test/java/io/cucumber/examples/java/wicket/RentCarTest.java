@@ -10,8 +10,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class RentCarTest {
-    private Application application = new Application();
-    private WicketTester wicketTester = new WicketTester(application);
+    private final Application application = new Application();
+    private final WicketTester wicketTester = new WicketTester(application);
 
     @Test
     void shouldRentACar() {

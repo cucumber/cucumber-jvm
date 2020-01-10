@@ -74,7 +74,7 @@ public final class HTMLFormatter implements EventListener {
 
     private final TestSourcesModel testSources = new TestSourcesModel();
     private final URL htmlReportDir;
-    private NiceAppendable jsOut;
+    private final NiceAppendable jsOut;
 
     private boolean firstFeature = true;
     private URI currentFeatureFile;

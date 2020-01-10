@@ -210,8 +210,8 @@ public final class RuntimeOptionsBuilder {
     }
 
     static final class ParsedPluginData {
-        private ParsedPlugins formatters = new ParsedPlugins();
-        private ParsedPlugins summaryPrinters = new ParsedPlugins();
+        private final ParsedPlugins formatters = new ParsedPlugins();
+        private final ParsedPlugins summaryPrinters = new ParsedPlugins();
 
         void addPluginName(String name, boolean isAddPlugin) {
             PluginOption pluginOption = PluginOption.parse(name);
@@ -233,7 +233,7 @@ public final class RuntimeOptionsBuilder {
         }
 
         private static class ParsedPlugins {
-            private List<Options.Plugin> names = new ArrayList<>();
+            private final List<Options.Plugin> names = new ArrayList<>();
             private boolean clobber = false;
 
             void addName(Options.Plugin name, boolean isAddOption) {

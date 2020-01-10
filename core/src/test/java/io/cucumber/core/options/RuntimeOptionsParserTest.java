@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 final class RuntimeOptionsParserTest {
 
-    private RuntimeOptionsParser parser = new RuntimeOptionsParser();
+    private final RuntimeOptionsParser parser = new RuntimeOptionsParser();
 
     @Test
     void testParseWithObjectFactoryArgument() {

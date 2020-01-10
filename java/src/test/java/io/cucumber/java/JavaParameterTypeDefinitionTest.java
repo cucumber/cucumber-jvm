@@ -6,7 +6,6 @@ import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

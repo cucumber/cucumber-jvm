@@ -6,7 +6,7 @@ import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 @Vetoed
-public class BellyStepdefs {
+public class BellyStepDefinitions {
 
     @Inject
     private Belly belly;

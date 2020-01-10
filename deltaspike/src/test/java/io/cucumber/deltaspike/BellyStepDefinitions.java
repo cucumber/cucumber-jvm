@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Singleton
-public class BellyStepdefs {
+public class BellyStepDefinitions {
 
     // For injecting classes from src/test/java, your beans.xml has to be
     // located in src/test/resources.

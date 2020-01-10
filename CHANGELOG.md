@@ -13,9 +13,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Fixed Illegal character error on Windows ([#1849](https://github.com/cucumber/cucumber-jvm/issues/1849) M.P. Korstanje)
  * [JUnit] Annotate `@Cucumber` with `@Testable` to facilitate discovery by IDEs (M.P. Korstanje)
  
-### Deprecated## 
+### Deprecated 
 
-[5.0.0-RC4](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4) (2019-12-21)
+## [5.0.0-RC4](https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4) (2019-12-21)
 
 ### Changed
  * [Spring] Share application context ([#1848](https://github.com/cucumber/cucumber-jvm/issues/1848), [#1582](https://github.com/cucumber/cucumber-jvm/issues/1582) Dominic Adatia, Marc Hauptmann, M.P. Korstanje)
@@ -90,7 +90,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
      - Use `@ParameterType` and friends instead when using annotation glue.  
      - Use `ParameterType` and friends instead when using lambda glue.  
  
-## [5.0.0-RC1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v5.0.0-RC1) (2019-10-19)
+## [5.0.0-RC1](https://github.com/cucumber/cucumber-jvm/compare/v4.7.1...v5.0.0-RC1) (2019-10-19) - [Release Announcement](https://cucumber.io/blog/announcing-cucumber-jvm-v5-0-0-rc1/)
 
 ### Added
  * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 

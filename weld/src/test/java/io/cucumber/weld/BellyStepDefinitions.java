@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Singleton
-public class BellyStepdefs {
+public class BellyStepDefinitions {
 
     // For injecting classes from src/test/java, your beans.xml has to be
     // located in src/test/resources.

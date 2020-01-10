@@ -2,11 +2,12 @@ package io.cucumber.spring.contextcaching;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.hamcrest.MatcherAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @ContextConfiguration(classes = {ContextConfig.class})
 public class ContextCachingSteps {

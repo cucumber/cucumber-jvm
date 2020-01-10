@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DirtiesMetaConfiguration
-public class DirtiesContextBellyMetaStepDefs {
+public class DirtiesContextBellyMetaStepDefinitions {
 
     @Autowired
     private Belly belly;

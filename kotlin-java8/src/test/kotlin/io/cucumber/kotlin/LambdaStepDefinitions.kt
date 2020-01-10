@@ -5,9 +5,9 @@ import io.cucumber.java8.En
 import io.cucumber.java8.Scenario
 import org.junit.jupiter.api.Assertions.*
 
-var lastInstance: LambdaStepdefs? = null
+var lastInstance: LambdaStepDefinitions? = null
 
-class LambdaStepdefs : En {
+class LambdaStepDefinitions : En {
 
     init {
         DataTableType { entry: Map<String, String> ->

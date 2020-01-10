@@ -10,5 +10,5 @@ public enum Status {
     UNDEFINED,
     AMBIGUOUS,
     FAILED,
-    UNUSED;
+    UNUSED
 }

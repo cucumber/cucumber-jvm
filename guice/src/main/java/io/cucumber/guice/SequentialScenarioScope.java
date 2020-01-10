@@ -27,20 +27,18 @@ class SequentialScenarioScope implements ScenarioScope {
      */
     @Override
     public <T> Provider<T> scope(final Key<T> key, final Provider<T> unscoped) {
-        return new Provider<T>() {
-            public T get() {
-                if (scenarioValues == null) {
-                    throw new OutOfScopeException("Cannot access " + key + " outside of a scoping block");
-                }
-
-                @SuppressWarnings("unchecked")
-                T current = (T) scenarioValues.get(key);
-                if (current == null && !scenarioValues.containsKey(key)) {
-                    current = unscoped.get();
-                    scenarioValues.put(key, current);
-                }
-                return current;
+        return () -> {
+            if (scenarioValues == null) {
+                throw new OutOfScopeException("Cannot access " + key + " outside of a scoping block");
             }
+
+            @SuppressWarnings("unchecked")
+            T current = (T) scenarioValues.get(key);
+            if (current == null && !scenarioValues.containsKey(key)) {
+                current = unscoped.get();
+                scenarioValues.put(key, current);
+            }
+            return current;
         };
     }
 

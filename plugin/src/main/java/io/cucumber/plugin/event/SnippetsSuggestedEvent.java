@@ -32,6 +32,10 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
         return stepLine;
     }
 
+    public int getScenarioLine() {
+        return scenarioLine;
+    }
+
     public List<String> getSnippets() {
         return snippets;
     }

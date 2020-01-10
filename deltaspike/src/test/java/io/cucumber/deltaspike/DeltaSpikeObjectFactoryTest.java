@@ -11,16 +11,16 @@ public class DeltaSpikeObjectFactoryTest {
 
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
-        factory.addClass(BellyStepdefs.class);
+        factory.addClass(BellyStepDefinitions.class);
 
         // Scenario 1
         factory.start();
-        final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepDefinitions o1 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         assertNotNull(o1);

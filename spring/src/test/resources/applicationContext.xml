@@ -7,7 +7,7 @@
 
 	<bean id="testController" class="io.cucumber.spring.beans.TestController"/>
 
-    <bean id="placeholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="placeholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="properties">
             <props>
                 <prop key="cukes.test.property">property value</prop>

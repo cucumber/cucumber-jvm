@@ -28,7 +28,7 @@ class LambdaGlueTest {
     private HookDefinition afterHook;
     private HookDefinition beforeHook;
     private HookDefinition afterStepHook;
-    private AtomicBoolean invoked = new AtomicBoolean();
+    private final AtomicBoolean invoked = new AtomicBoolean();
 
     @BeforeEach
     void setup() {
@@ -99,7 +99,7 @@ class LambdaGlueTest {
     }
 
     @Test
-    void testAfterStepHook() throws Throwable {
+    void testAfterStepHook() {
         lambdaGlue.AfterStep(this::hookNoArgs);
         assertHook(afterStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER);
         lambdaGlue.AfterStep("taxExpression", this::hookNoArgs);

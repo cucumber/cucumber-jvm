@@ -337,7 +337,7 @@ public interface LambdaGlue {
      *                    from the doc string
      * @see io.cucumber.docstring.DocStringType
      */
-    default void DocStringType(String contentType, DocStringDefinitionBody body) {
+    default void DocStringType(String contentType, DocStringDefinitionBody<?> body) {
         LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(body, contentType));
     }
 

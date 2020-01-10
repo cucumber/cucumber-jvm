@@ -15,7 +15,7 @@ public class FormatterSpy implements EventListener {
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> calls.append("TestCase finished\n");
     private final EventHandler<TestStepStarted> testStepStartedHandler = event -> calls.append("  TestStep started\n");
     private final EventHandler<TestStepFinished> testStepFinishedHandler = event -> calls.append("  TestStep finished\n");
-    private EventHandler<TestRunFinished> runFinishHandler = event -> calls.append("TestRun finished\n");
+    private final EventHandler<TestRunFinished> runFinishHandler = event -> calls.append("TestRun finished\n");
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {

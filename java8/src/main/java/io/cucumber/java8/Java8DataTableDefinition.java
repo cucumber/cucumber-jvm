@@ -10,9 +10,9 @@ final class Java8DataTableDefinition extends AbstractGlueDefinition implements D
 
     private final DataTableType dataTableType;
 
-    Java8DataTableDefinition(DataTableDefinitionBody body) {
+    Java8DataTableDefinition(DataTableDefinitionBody<?> body) {
         super(body, new Exception().getStackTrace()[3]);
-        Class returnType = resolveRawArguments(DataTableDefinitionBody.class, body.getClass())[0];
+        Class<?> returnType = resolveRawArguments(DataTableDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(returnType, (TableTransformer<Object>) this::execute);
     }
 
