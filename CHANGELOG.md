@@ -589,7 +589,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Java] Remove 'throws Exception' from JavaSnippet ([#1308](https://github.com/cucumber/cucumber-jvm/pull/1308) Marit van Dijk)
 
 ### Fixed
- * [Android] Makefile test names passed to the instrumentation unique ([#1094](https://github.com/cucumber/cucumber-jvm/pull/1094) Christian Gnüchtel)
+ * [Android] Make test names passed to the instrumentation unique ([#1094](https://github.com/cucumber/cucumber-jvm/pull/1094) Christian Gnüchtel)
  * [Core] Json Formatter: include the content type of doc strings ([#1309](https://github.com/cucumber/cucumber-jvm/pull/1309) Björn Rasmusson)
 
 ## [2.3.1] (2017-12-14)
@@ -670,7 +670,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
   * Java8 method references can be used in lambda step definitions
   * It is no longer possible to use lambda step definitions without also using `cucumber-java8`
   * Lambda step definitions can be used in Kotlin. Function references are not yet understood   
-* [Core] Makefile the parsing of the rerun file more robust ([#1187](https://github.com/cucumber/cucumber-jvm/pull/1187) M.P. Korstanje)
+* [Core] Make the parsing of the rerun file more robust ([#1187](https://github.com/cucumber/cucumber-jvm/pull/1187) M.P. Korstanje)
 * [Android] Update the version of the cucumber-jvm-deps dependency - to a version without Java8 bytecode ([#1170](https://github.com/cucumber/cucumber-jvm/pull/1170), [#893](https://github.com/cucumber/cucumber-jvm/issues/893) Björn Rasmusson)
 * [Needle] Handle circular dependencies ([#853](https://github.com/cucumber/cucumber-jvm/pull/853) Lars Bilger)  
 * [Core] Use "uri" instead of "path" to reference feature files in external APIs ([#1179](https://github.com/cucumber/cucumber-jvm/pull/1179) Björn Rasmusson)
@@ -723,7 +723,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 * [Core] Double-check for directory exists in the ensureParentDirExists(File) ([#978](https://github.com/cucumber/cucumber-jvm/pull/978) Pavel Ordenko)
 * [picocontainer] Picocontainer lifecycle support([#994](https://github.com/cucumber/cucumber-jvm/pull/994), [#993](https://github.com/cucumber/cucumber-jvm/issues/993), [#992](https://github.com/cucumber/cucumber-jvm/pull/992) Richard Bradley)
 * [Core] Specifying plugins on the command line via `--plugin` clobbers settings in the code ([#860](https://github.com/cucumber/cucumber-jvm/pull/860) Björn Rasmusson)
-* [Core] Makefile test assertion OS agnostic ([#897](https://github.com/cucumber/cucumber-jvm/pull/897/files) sid)
+* [Core] Make test assertion OS agnostic ([#897](https://github.com/cucumber/cucumber-jvm/pull/897/files) sid)
 * [Travis] Improve the travis build ([#829](https://github.com/cucumber/cucumber-jvm/pull/829) Björn Rasmusson)
 * [Core, Junit] Passthrough options for the JUnit Module ([#1002](https://github.com/cucumber/cucumber-jvm/pull/1002), [#1029](https://github.com/cucumber/cucumber-jvm/pull/1029). Also resolves [#825](https://github.com/cucumber/cucumber-jvm/pull/825) and [#972](https://github.com/cucumber/cucumber-jvm/issues/972). Björn Rasmusson, with bug fix by Bernd Bindreiter)
 * [Android, Core, Guice, Junit] Improve code quality ensuring Utility Classes cannot be instantiated ([#945](https://github.com/cucumber/cucumber-jvm/pull/945) Kirill Vlasov)
@@ -739,7 +739,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 * [Core] Mark scenario as skipped in JUnitFormatter if PendingException is thrown in a hook ([#964](https://github.com/cucumber/cucumber-jvm/pull/964), [#962](https://github.com/cucumber/cucumber-jvm/issues/962) Felix Martin Martin)
 * [Core] Support assume feature also with JUnit 4.12 ([#961](https://github.com/cucumber/cucumber-jvm/pull/961) Stefan Birkner)
 * [TestNG] Always tear down TestNG cucumber tests ([#955](https://github.com/cucumber/cucumber-jvm/issues/955), [#956](https://github.com/cucumber/cucumber-jvm/pull/956) Sven-Torben Janus)
-* [TestNG] Makefile TestNG to fail on unparseable feature files ([#953](https://github.com/cucumber/cucumber-jvm/issues/953) Björn Rasmusson)
+* [TestNG] Make TestNG to fail on unparseable feature files ([#953](https://github.com/cucumber/cucumber-jvm/issues/953) Björn Rasmusson)
 * [Java8] Throw better exception when lambda stepdefs use generic list arguments (unsupported) (Aslak Hellesøy)
 
 ## [1.2.4] (2015-07-23)
@@ -752,14 +752,14 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 
 ## [1.2.3] (2015-07-07)
 
-* [Core] Makefile the Rerun Formatter consistent with the exit code ([#871](https://github.com/cucumber/cucumber-jvm/pull/871) Björn Rasmusson)
+* [Core] Make the Rerun Formatter consistent with the exit code ([#871](https://github.com/cucumber/cucumber-jvm/pull/871) Björn Rasmusson)
 * [OSGi] Cucumber is ready to run in OSGi containers ([#873](https://github.com/cucumber/cucumber-jvm/pull/873), [#799](https://github.com/cucumber/cucumber-jvm/pull/799) @HendrikSP)
 * [Java] `cucumber.runtime.java.ObjectFactory` moved to `cucumber.api.java.ObjectFactory`. Custom implementation can
   be specified in `cucumber.properties` with `cucumber.api.java.ObjectFactory=my.special.KindOfObjectFactory`. (Closes [#290](https://github.com/cucumber/cucumber-jvm/issues/290) Aslak Hellesøy)
 * [Core] Properly decode jar URLs with spaces (%20) - ([#866](https://github.com/cucumber/cucumber-jvm/issues/866) Aslak Hellesøy)
 * [Java] Arity mismatch Java8 Step Definition error ([#852](https://github.com/cucumber/cucumber-jvm/issues/852), [#847](https://github.com/cucumber/cucumber-jvm/pull/847) David Coelho)
 * [Java] Print Java 8 lambda snippets when `cucumber-java8` is active (Aslak Hellesøy)
-* [Core] Makefile the Summary Printer into a plugin ([#828](https://github.com/cucumber/cucumber-jvm/pull/828) Björn Rasmusson)
+* [Core] Make the Summary Printer into a plugin ([#828](https://github.com/cucumber/cucumber-jvm/pull/828) Björn Rasmusson)
 * [Core] Additional unit-tests for [#789](https://github.com/cucumber/cucumber-jvm/issues/789) ([#815](https://github.com/cucumber/cucumber-jvm/pull/815) Klaus Bayrhammer)
 * [Java] Added @Documented to all step annotations ([#834](https://github.com/cucumber/cucumber-jvm/pull/834), [#833](https://github.com/cucumber/cucumber-jvm/issues/833) Peter Oxenham)
 * [Core] Set a description for Scenario Outline scenarios ([#841](https://github.com/cucumber/cucumber-jvm/pull/841), [#837](https://github.com/cucumber/cucumber-jvm/issues/837) Björn Rasmusson)
@@ -795,7 +795,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 * [Android] Big refactoring ([#766](https://github.com/cucumber/cucumber-jvm/pull/766) Sebastian Gröbler)
 * [Android] Improve documentation ([#772](https://github.com/cucumber/cucumber-jvm/pull/772) K76154)
 * [Core] New --i18n option for printing keywords ([#785](https://github.com/cucumber/cucumber-jvm/pull/785) Seb Rose)
-* [Core] Makefile the JUnit formatter handle empty scenarios ([#774](https://github.com/cucumber/cucumber-jvm/issues/774) Björn Rasmusson)
+* [Core] Make the JUnit formatter handle empty scenarios ([#774](https://github.com/cucumber/cucumber-jvm/issues/774) Björn Rasmusson)
 * [Scala] Fixing randomly failing tests in the Scala module ([#768](https://github.com/cucumber/cucumber-jvm/pull/768), [#761](https://github.com/cucumber/cucumber-jvm/issues/761) Manuel Bernhardt)
 * [JRuby] cucumber-jruby backend fails to build when `RUBY_VERSION` is present in environment ([#718](https://github.com/cucumber/cucumber-jvm/issues/718) Aslak Hellesøy)
 * [Core] `DataTable.asMap()` returns a `LinkedHashMap`, ensuring key iteration order is the same as in the gherkin table ([#764](https://github.com/cucumber/cucumber-jvm/issues/764) Aslak Hellesøy).
@@ -838,7 +838,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 * [Core] Disregard order of HashMap entries in unit tests ([#739](https://github.com/cucumber/cucumber-jvm/pull/739) mchenryc)
 * [Core] Environment variables/properties are aliased. Example: `HELLO_THERE` == `hello.there` (Aslak Hellesøy)
 * [Core] The `cucumber-jvm.properties` file is no longer picked up. Use `cucumber.properties` instead (Aslak Hellesøy)
-* [Core] Makefile standard out non-buffered ([#721](https://github.com/cucumber/cucumber-jvm/pull/721) danielhodder)
+* [Core] Make standard out non-buffered ([#721](https://github.com/cucumber/cucumber-jvm/pull/721) danielhodder)
 * [Core] Allow empty doc string and data table entries after token replacement from scenario outlines ([#712](https://github.com/cucumber/cucumber-jvm/issues/712), [#709](https://github.com/cucumber/cucumber-jvm/pull/709), [#713](https://github.com/cucumber/cucumber-jvm/pull/713) Leon Poon, Björn Rasmusson)
 * [Guice] New scenario scope for Guice. Non-backwards compatible ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)
 
@@ -881,7 +881,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 * [Core] New Snippet text. ([#618](https://github.com/cucumber/cucumber-jvm/issues/618) Jeff Nyman, Matt Wynne, Aslak Hellesøy)
 * [Android] Add command line option support for Android ([#597](https://github.com/cucumber/cucumber-jvm/pull/597), Frieder Bluemle)
 * [Android] Add debug support for eclipse ([#613](https://github.com/cucumber/cucumber-jvm/pull/613) Ian Warwick)
-* [Core] Makefile the RerunFormatter handle failures in background and scenario outline examples correctly ([#589](https://github.com/cucumber/cucumber-jvm/pull/589) Björn Rasmusson)
+* [Core] Make the RerunFormatter handle failures in background and scenario outline examples correctly ([#589](https://github.com/cucumber/cucumber-jvm/pull/589) Björn Rasmusson)
 * [Core] Fix stop watch thread safety ([#606](https://github.com/cucumber/cucumber-jvm/pull/606) Dave Bassan)
 * [Android] Fix Cucumber reports for cucumber-android ([#605](https://github.com/cucumber/cucumber-jvm/pull/605) Frieder Bluemle)
 * [Spring] Fix for tests annotated with @ContextHierarchy ([#590](https://github.com/cucumber/cucumber-jvm/pull/590) Martin Lau)
@@ -943,7 +943,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 * [Core] Throw exception when unsupported command line options are used. ([#482](https://github.com/cucumber/cucumber-jvm/pull/482), [#463](https://github.com/cucumber/cucumber-jvm/issues/463) Klaus Bayrhammer)
 * [Scala] Release cucumber-scala for the two most recent minor releases (currently 2.10.2 and 2.9.3) ([#432](https://github.com/cucumber/cucumber-jvm/issues/432), [#462](https://github.com/cucumber/cucumber-jvm/pull/462) Chris Turner)
 * [Core] JUnitFormatter: Fix indentation, hook handling and support all-steps-first execution ([#556](https://github.com/cucumber/cucumber-jvm/pull/556) Björn Rasmusson)
-* [Core] Makefile the PrettyFormatter work by revering to all-steps-first execution ([#491](https://github.com/cucumber/cucumber-jvm/issues/491), [#557](https://github.com/cucumber/cucumber-jvm/pull/557) Björn Rasmusson)
+* [Core] Make the PrettyFormatter work by revering to all-steps-first execution ([#491](https://github.com/cucumber/cucumber-jvm/issues/491), [#557](https://github.com/cucumber/cucumber-jvm/pull/557) Björn Rasmusson)
 * [Core] Test case for the PrettyFormatter. ([#544](https://github.com/cucumber/cucumber-jvm/pull/544) Björn Rasmusson)
 * [Core/Junit] Print summary at the end of the run. ([#195](https://github.com/cucumber/cucumber-jvm/issues/195), [#536](https://github.com/cucumber/cucumber-jvm/pull/536) Björn Rasmusson)
 * [Core/Examples] Return exit code 0 when no features are found, add example java-no-features. ([#567](https://github.com/cucumber/cucumber-jvm/pull/567) Björn Rasmusson, Dmytro Chyzhykov)
@@ -999,7 +999,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [JRuby] The DSL no longer leaks into global scope (Aslak Hellesøy)
 * [Spring] The `@txn` hooks in the `cucumber.runtime.java.spring.hooks` package have order 100. ([398](https://github.com/cucumber/cucumber-jvm/issues/398) Aslak Hellesøy)
 * [Java] The `@Order` annotation is replaced with an `order` property on `@Before` and `@After` (Aslak Hellesøy)
-* [Core] Makefile sure all report files are written with UTF-8 encoding ([402](https://github.com/cucumber/cucumber-jvm/issues/402) MIC, Aslak Hellesøy)
+* [Core] Make sure all report files are written with UTF-8 encoding ([402](https://github.com/cucumber/cucumber-jvm/issues/402) MIC, Aslak Hellesøy)
 * [Core] HTMLFormatter improvements ([375](https://github.com/cucumber/cucumber-jvm/issues/375), [404](https://github.com/cucumber/cucumber-jvm/issues/404), [283](https://github.com/cucumber/cucumber-jvm/issues/283) Aslak Hellesøy)
 * [All] Package reorganisation. Only classes under `cucumber.api` are part of the public (stable) API. Classes in other classes are not part of the API and can change. (Aslak Hellesøy)
 * [Core] Improved `Transformer` API (Aslak Hellesøy)
@@ -1142,7 +1142,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Java] Snippets for DataTable include a hint about using List<YourType>, so people discover this neat technique (Aslak Hellesøy)
 * [Core] Support DocString and DataTable in generated snippets ([#227](https://github.com/cucumber/cucumber-jvm/issues/227) Aslak Hellesøy)
 * [Core] Fix broken --tags option (and get rid of JCommander for CLI parsing). ([#266](https://github.com/cucumber/cucumber-jvm/issues/266) Aslak Hellesøy)
-* [Clojure] Makefile Clojure DSL syntax cleaner ([#244](https://github.com/cucumber/cucumber-jvm/issues/244) [#267](https://github.com/cucumber/cucumber-jvm/pull/267) rplevy-draker)
+* [Clojure] Make Clojure DSL syntax cleaner ([#244](https://github.com/cucumber/cucumber-jvm/issues/244) [#267](https://github.com/cucumber/cucumber-jvm/pull/267) rplevy-draker)
 * [Clojure] Native Clojure backend ([#138](https://github.com/cucumber/cucumber-jvm/pull/138) [#265](https://github.com/cucumber/cucumber-jvm/pull/265) Kevin Downey, Nils Wloka)
 * [JUnit] Added `format` attribute to `@Cucumber.Options` (Aslak Hellesøy)
 
@@ -1150,7 +1150,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 * [Core] Ignore duplicate features instead of throwing exception. ([#259](https://github.com/cucumber/cucumber-jvm/issues/259) Aslak Hellesøy)
 * [Core] Wrong message when runner on a non existing tag on feature ([#245](https://github.com/cucumber/cucumber-jvm/issues/245) Aslak Hellesøy, Jérémy Goupil)
-* [Groovy, JRuby, Rhino] Makefile sure UTF-8 encoding is used everywhere ([#251](https://github.com/cucumber/cucumber-jvm/issues/251) Aslak Hellesøy)
+* [Groovy, JRuby, Rhino] Make sure UTF-8 encoding is used everywhere ([#251](https://github.com/cucumber/cucumber-jvm/issues/251) Aslak Hellesøy)
 * [Core, Cloure] Fixed StepDefinitionMatch to work with StepDefinitions that return null for getParameterTypes ([#250](https://github.com/cucumber/cucumber-jvm/issues/250), [#255](https://github.com/cucumber/cucumber-jvm/pull/255) Nils Wloka)
 * [Java] Open up the `JavaBackend` API to ease integration from other tools ([#257](https://github.com/cucumber/cucumber-jvm/pull/257) Aslak Hellesøy).
 * [Java] Inheritance in glue classes (stepdefs and hooks) is no longer supported - it causes too many problems. (Aslak Hellesøy).
