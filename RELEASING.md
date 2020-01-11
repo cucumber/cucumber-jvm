@@ -15,20 +15,22 @@ git checkout master
 Also check if you can upgrade any dependencies:
 
 ```
-mvn versions:update-properties -DallowMajorUpdates=false -Dmaven.version.rules="file://`pwd`/.m2/maven-version-rules.xml"
+make update-dependencies
 ```
 
 ## Prepare for release ##
 
-Replace version numbers in:
+Update the version numbers in the changelog by running (replace X.Y.Z below with the next release number): 
 
-* `CHANGELOG.md`
+```
+make update-changelog NEW_VERSION=X.Y.Z
+```
 
 Then run (replace X.Y.Z below with the next release number): 
 
 ```
 git commit -am "Prepare for release X.Y.Z"
-```
+``` 
 
 ## Make the release ##
 
