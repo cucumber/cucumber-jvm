@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  * [JUnit] Use JUnit 4.13 in `cucumber-junit` ([#1851](https://github.com/cucumber/cucumber-jvm/issues/1851) John Patrick)
+ * [TestNG] Use TestNG 7.1.0 (M.P. Korstanje)
 
 ### Removed
 
