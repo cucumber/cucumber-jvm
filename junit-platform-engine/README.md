@@ -130,17 +130,17 @@ can be supplied see the JUnit documentation [4.5. Configuration Parameters](http
 For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
-cucumber.ansi-colors.disabled=true|false
-cucumber.execution.dry-run=true|false
-cucumber.glue=com.example.app, com.example.widget
-cucumber.plugin=pretty, json:path/to/report.json
-cucumber.object-factory=com.example.MyObjectFactory
-cucumber.snippet-type=underscore|camelcase
-cucumber.execution.parallel.enabled=true|false
-cucumber.execution.parallel.config.strategy=dynamic|fixed|custom
-cucumber.execution.parallel.config.fixed.parallelism=100
-cucumber.execution.parallel.config.dynamic.factor=3.14
-cucumber.execution.parallel.config.custom.class=com.example.MyCustomParallelStrategy
+cucumber.ansi-colors.disabled=                          # true or false. default: true                     
+cucumber.execution.dry-run=                             # ture or false. default: false 
+cucumber.glue=                                          # comma seperate package names. example: com.example.glue  
+cucumber.plugin=                                        # comma seperated plugin strings. example: pretty, json:path/to/report.json
+cucumber.object-factory=                                # object factory class name. example: com.example.MyObjectFactory
+cucumber.snippet-type=                                  # underscore or camelcase.
+cucumber.execution.parallel.enabled=                    # true or false. default: false
+cucumber.execution.parallel.config.strategy=            # dynamic, fixed or custom. default: dynamic
+cucumber.execution.parallel.config.fixed.parallelism=   # positive integer. example: 4 
+cucumber.execution.parallel.config.dynamic.factor=      # positive double. default: 1.0
+cucumber.execution.parallel.config.custom.class=        # class name. example: com.example.MyCustomParallelStrategy
 ```
 
 ## Supported Discovery Selectors and Filters ## 
