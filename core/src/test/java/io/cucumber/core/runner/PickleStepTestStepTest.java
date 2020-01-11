@@ -63,9 +63,9 @@ class PickleStepTestStepTest {
     private final UUID testExecutionId = UUID.randomUUID();
     private final TestCaseState state = new TestCaseState(bus, testExecutionId, testCase);
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
-    private CoreHookDefinition afterHookDefinition = mock(CoreHookDefinition.class);
+    private final CoreHookDefinition afterHookDefinition = mock(CoreHookDefinition.class);
     private final HookTestStep afterHook = new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
-    private CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
+    private final CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
     private final HookTestStep beforeHook = new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
         UUID.randomUUID(),

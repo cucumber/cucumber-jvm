@@ -79,8 +79,8 @@ class TestCaseResultObserverTest {
             return UUID.randomUUID();
         }
     };
-    private PickleStepTestStep testStep = new PickleStepTestStep() {
-        Step step = new Step() {
+    private final PickleStepTestStep testStep = new PickleStepTestStep() {
+        final Step step = new Step() {
             @Override
             public StepArgument getArgument() {
                 return null;

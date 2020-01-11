@@ -29,7 +29,7 @@ class CanonicalEventOrderTest {
     private static final int EQUAL_TO = 0;
     private static final int GREATER_THAN = 1;
 
-    private CanonicalEventOrder comparator = new CanonicalEventOrder();
+    private final CanonicalEventOrder comparator = new CanonicalEventOrder();
 
     private static Instant getInstant() {
         return Instant.now();
@@ -42,14 +42,14 @@ class CanonicalEventOrderTest {
         return new TestCaseStarted(getInstant(), testCase);
     }
 
-    private Event runStarted = new TestRunStarted(getInstant());
-    private Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
-    private Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, 0, Collections.emptyList());
-    private Event feature1Case1Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 1);
-    private Event feature1Case2Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 9);
-    private Event feature1Case3Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 11);
-    private Event feature2Case1Started = createTestCaseEvent(URI.create("file:path/to/2.feature"), 1);
-    private Event runFinished = new TestRunFinished(getInstant());
+    private final Event runStarted = new TestRunStarted(getInstant());
+    private final Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
+    private final Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, 0, Collections.emptyList());
+    private final Event feature1Case1Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 1);
+    private final Event feature1Case2Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 9);
+    private final Event feature1Case3Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 11);
+    private final Event feature2Case1Started = createTestCaseEvent(URI.create("file:path/to/2.feature"), 1);
+    private final Event runFinished = new TestRunFinished(getInstant());
 
     @Test
     void verifyTestRunStartedSortedCorrectly() {

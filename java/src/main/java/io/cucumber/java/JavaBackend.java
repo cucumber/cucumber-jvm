@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
+import static io.cucumber.java.MethodScanner.scan;
 
 final class JavaBackend implements Backend {
 
@@ -36,12 +37,10 @@ final class JavaBackend implements Backend {
             .map(ClasspathSupport::packageName)
             .map(classFinder::scanForClassesInPackage)
             .flatMap(Collection::stream)
-            .forEach(aGlueClass -> {
-                MethodScanner.scan(aGlueClass, (method, annotation) -> {
-                    container.addClass(method.getDeclaringClass());
-                    glueAdaptor.addDefinition(method, annotation);
-                });
-            });
+            .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
+                container.addClass(method.getDeclaringClass());
+                glueAdaptor.addDefinition(method, annotation);
+            }));
     }
 
     @Override

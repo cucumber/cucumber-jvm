@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Component
 public class ContextCounter implements ApplicationContextAware {
-    private static Set<ApplicationContext> applicationContextSet = new HashSet<>();
+    private static final Set<ApplicationContext> applicationContextSet = new HashSet<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

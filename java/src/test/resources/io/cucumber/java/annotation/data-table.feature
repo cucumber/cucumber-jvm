@@ -29,3 +29,4 @@ Feature: Datatable
       | first  | last     |
       | Astrid | Lindgren |
       | Roald  | Dahl     |
+      | Plato  | [blank]  |

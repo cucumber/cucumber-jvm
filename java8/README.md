@@ -73,10 +73,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions implements En {
 
-    public RpnCalculatorSteps() {
-        ParameterType("amount", "(\\d+\\.\\d+)\\s([a-zA-Z]+)", (String[] values) -> {
-            return new Amount(new BigDecimal(values[0]), Currency.getInstance(values[1]));
-        });
+    public StepDefinitions() {
+        ParameterType("amount", "(\\d+\\.\\d+)\\s([a-zA-Z]+)", (String[] values) ->
+            new Amount(new BigDecimal(values[0]), Currency.getInstance(values[1])));
     }
 }
 ``` 
@@ -101,10 +100,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StepDefinitions implements En {
 
-    public RpnCalculatorSteps() {
-        DataTableType((Map<String, String> row) -> new ShoppingSteps.Grocery(
+    public StepDefinitions() {
+        DataTableType((Map<String, String> row) -> new Grocery(
             row.get("name"),
-            ShoppingSteps.Price.fromString(row.get("price"))
+            Price.fromString(row.get("price"))
         ));
     }
 }
@@ -129,7 +128,7 @@ import io.cucumber.java8.En;
 
 public class StepDefinitions implements En {
 
-    public RpnCalculatorSteps() {
+    public StepDefinitions() {
         final ObjectMapper objectMapper = new ObjectMapper();
 
         DefaultParameterTransformer((fromValue, toValueType) ->
@@ -138,3 +137,53 @@ public class StepDefinitions implements En {
     }
 }
 ``` 
+
+### Empty Cells
+
+Data tables in Gherkin can not represent null or the empty string unambiguously.
+Cucumber will interpret empty cells as `null`.
+
+Empty string be represented using a replacement. For example `[empty]`.
+The replacement can be configured providing the `replaceWithEmptyString`
+argument of `DataTableType`, `DefaultDataTableCellTransformer` and 
+`DefaultDataTableEntryTransformer`. By default no replacement is configured. 
+
+```gherkin
+Given some authors
+   | name            | first publication |
+   | Aspiring Author |                   |
+   | Ancient Author  | [blank]           |
+```
+
+```java
+package com.example.app;
+
+import io.cucumber.datatable.DataTable;
+
+import io.cucumber.java8.En;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class StepDefinitions implements En {
+    
+    public StepDefinitions() {
+        DataTableType("[blank]", (Map<String, String> entry) -> new Author(
+            entry.get("name"),
+            entry.get("first publication")
+        ));
+    
+        Given("some authors",  (DataTable authorsTable) -> {
+            List<Author> authors = authorsTable.asList(Author.class);
+          // authors = [Author(name="Aspiring Author", firstPublication=null), Author(name="Ancient Author", firstPublication=)]
+
+        });
+    }
+}
+```

@@ -2,18 +2,22 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.TableEntryTransformer;
+
+import java.util.Map;
 
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
-final class Java8DataTableEntryDefinition extends AbstractGlueDefinition implements DataTableTypeDefinition {
+final class Java8DataTableEntryDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
 
-    Java8DataTableEntryDefinition(DataTableEntryDefinitionBody body) {
-        super(body, new Exception().getStackTrace()[3]);
-        Class returnType = resolveRawArguments(DataTableEntryDefinitionBody.class, body.getClass())[0];
-        this.dataTableType = new DataTableType(returnType, (TableEntryTransformer<Object>) this::execute);
+    Java8DataTableEntryDefinition(String[] emptyPatterns, DataTableEntryDefinitionBody<?> body) {
+        super(body, new Exception().getStackTrace()[3], emptyPatterns);
+        Class<?> returnType = resolveRawArguments(DataTableEntryDefinitionBody.class, body.getClass())[0];
+        this.dataTableType = new DataTableType(
+            returnType,
+            (Map<String, String> entry) -> execute(replaceEmptyPatternsWithEmptyString(entry))
+        );
     }
 
     @Override
@@ -21,7 +25,7 @@ final class Java8DataTableEntryDefinition extends AbstractGlueDefinition impleme
         return dataTableType;
     }
 
-    private Object execute(Object arg) {
-        return Invoker.invoke(this, body, method, arg);
+    private Object execute(Map<String, String> entry) {
+        return Invoker.invoke(this, body, method, entry);
     }
 }

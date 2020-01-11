@@ -29,16 +29,16 @@ class RunParallelCucumberTest {
         };
 
 
-        ExecutorService executorService = newFixedThreadPool(ThreadingStepDefs.concurrency);
+        ExecutorService executorService = newFixedThreadPool(ThreadingStepDefinitions.concurrency);
         List<Future<Byte>> results = new ArrayList<>();
-        for (int i = 0; i < ThreadingStepDefs.concurrency; i++) {
+        for (int i = 0; i < ThreadingStepDefinitions.concurrency; i++) {
             results.add(executorService.submit(runCucumber));
         }
 
         for (Future<Byte> result : results) {
             assertThat(result.get(), is((byte) 0x0));
         }
-        ThreadingStepDefs.map.clear();
+        ThreadingStepDefinitions.map.clear();
     }
 
 }

@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BellyStepdefs {
+public class BellyStepDefinitions {
 
     @Inject
     private Belly belly;

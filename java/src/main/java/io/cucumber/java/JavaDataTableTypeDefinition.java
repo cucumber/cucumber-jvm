@@ -4,10 +4,6 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.TableCellTransformer;
-import io.cucumber.datatable.TableEntryTransformer;
-import io.cucumber.datatable.TableRowTransformer;
-import io.cucumber.datatable.TableTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -17,12 +13,12 @@ import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements DataTableTypeDefinition {
+class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
 
-    JavaDataTableTypeDefinition(Method method, Lookup lookup) {
-        super(method, lookup);
+    JavaDataTableTypeDefinition(Method method, Lookup lookup, String[] emptyPatterns) {
+        super(method, lookup, emptyPatterns);
         this.dataTableType = createDataTableType(method);
     }
 
@@ -75,33 +71,32 @@ class JavaDataTableTypeDefinition extends AbstractGlueDefinition implements Data
         if (DataTable.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (TableTransformer<Object>) this::execute
+                (DataTable table) -> execute(replaceEmptyPatternsWithEmptyString(table))
             );
         }
 
         if (List.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (TableRowTransformer<Object>) this::execute
+                (List<String> row) -> execute(replaceEmptyPatternsWithEmptyString(row))
             );
         }
 
         if (Map.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (TableEntryTransformer<Object>) this::execute
+                (Map<String, String> entry) -> execute(replaceEmptyPatternsWithEmptyString(entry))
             );
         }
 
         if (String.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (TableCellTransformer<Object>) this::execute
+                (String cell) -> execute(replaceEmptyPatternsWithEmptyString(cell))
             );
         }
 
         throw createInvalidSignatureException(method);
-
     }
 
     @Override

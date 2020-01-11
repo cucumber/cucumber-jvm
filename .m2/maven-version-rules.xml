@@ -1,13 +1,14 @@
 <ruleset comparisonMethod="maven"
          xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 http://mojo.codehaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
+         xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 https://www.mojohaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
     <ignoreVersions>
-        <ignoreVersion type="regex">.*(-|.)(A|a)lpha-?\d+</ignoreVersion>
-        <ignoreVersion type="regex">.*(-|.)(B|b)eta-?\d+</ignoreVersion>
+        <ignoreVersion type="regex">.*(-|.)(A|a)lpha-?[\da-z]+</ignoreVersion>
+        <ignoreVersion type="regex">.*(-|.)(B|b)eta-?[\da-z]+</ignoreVersion>
         <ignoreVersion type="regex">.*-b[\d.]+</ignoreVersion>
         <ignoreVersion type="regex">.*-pr\d+</ignoreVersion>
         <ignoreVersion type="regex">.*-rc-?\d+</ignoreVersion>
+        <ignoreVersion type="regex">.*-RC-?\d+</ignoreVersion>
         <ignoreVersion type="regex">.*-M\d+</ignoreVersion>
     </ignoreVersions>
 </ruleset>

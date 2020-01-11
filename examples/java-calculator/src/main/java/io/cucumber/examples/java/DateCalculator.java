@@ -3,7 +3,7 @@ package io.cucumber.examples.java;
 import java.time.LocalDate;
 
 public class DateCalculator {
-    private LocalDate now;
+    private final LocalDate now;
 
     public DateCalculator(LocalDate now) {
         this.now = now;

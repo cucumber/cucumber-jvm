@@ -137,7 +137,7 @@ class URLOutputStream extends OutputStream {
         @Override
         public String getMessage() {
             if (contentType.equals("application/json")) {
-                Map map = gson.fromJson(super.getMessage(), Map.class);
+                Map<?,?> map = gson.fromJson(super.getMessage(), Map.class);
                 if (map.containsKey("error")) {
                     return getMessage0(map.get("error").toString());
                 } else {

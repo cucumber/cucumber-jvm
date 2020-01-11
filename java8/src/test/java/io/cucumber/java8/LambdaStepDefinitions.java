@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.datatable.DataTable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,6 +17,15 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
     private final int outside = 41;
 
     public LambdaStepDefinitions() {
+        DataTableType("[blank]", (Map<String, String> entry) -> {
+            Person person = new Person();
+            person.first = entry.get("first");
+            person.last = entry.get("last");
+            return person;
+        });
+
+        ParameterType("optional", "[a-z]*", args -> Optional.of(args));
+
         Before((Scenario scenario) -> {
             assertNotSame(this, lastInstance);
             lastInstance = this;
@@ -47,6 +57,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         Given("this data table:", (DataTable peopleTable) -> {
             List<Person> people = peopleTable.asList(Person.class);
             assertEquals("Hellesøy", people.get(0).last);
+            assertEquals("", people.get(1).last);
         });
 
         Integer alreadyHadThisManyCukes = 1;
@@ -80,7 +91,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
                 assertEquals((Integer) 4, d);
             });
 
-        Given("A {optional} generic that is not a data table", (Optional<String> optional) ->{
+        Given("A {optional} generic that is not a data table", (Optional<String> optional) -> {
             assertEquals(Optional.of("string"), optional);
         });
 
@@ -93,22 +104,22 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         Given("A method reference to an arbitrary object of a particular type {string} with argument {string}", Contact::update);
     }
 
-    public static void staticMethodWithAnArgument(Integer cuckes) throws Throwable {
+    public static void staticMethodWithAnArgument(Integer cuckes) {
         assertEquals(42, cuckes.intValue());
     }
 
-    private void methodThatDeclaresException() throws Throwable {
+    private void methodThatDeclaresException() {
     }
 
-    private void methodWithAnArgument(Integer cuckes) throws Throwable {
+    private void methodWithAnArgument(Integer cuckes) {
         assertEquals(42, cuckes.intValue());
     }
 
-    private void methodWithAnIntArgument(int cuckes) throws Throwable {
+    private void methodWithAnIntArgument(int cuckes) {
         assertEquals(42, cuckes);
     }
 
-    private void hookWithArgs(Scenario scenario) throws Throwable {
+    private void hookWithArgs(Scenario scenario) {
     }
 
     public static class Person {

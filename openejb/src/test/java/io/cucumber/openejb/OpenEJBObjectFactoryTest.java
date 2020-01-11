@@ -14,16 +14,16 @@ class OpenEJBObjectFactoryTest {
     @Test
     void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new OpenEJBObjectFactory();
-        factory.addClass(BellyStepdefs.class);
+        factory.addClass(BellyStepDefinitions.class);
 
         // Scenario 1
         factory.start();
-        BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
+        BellyStepDefinitions o1 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
+        BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         assertThat(o1, is(notNullValue()));

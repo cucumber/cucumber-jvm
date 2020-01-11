@@ -12,21 +12,20 @@ import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDefaultDataTableEntryTransformerDefinition extends AbstractGlueDefinition implements DefaultDataTableEntryTransformerDefinition {
+class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition implements DefaultDataTableEntryTransformerDefinition {
 
     private final TableEntryByTypeTransformer transformer;
     private final boolean headersToProperties;
 
     JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup) {
-        super(requireValidMethod(method), lookup);
-        this.headersToProperties = false;
-        this.transformer = this::execute;
+        this(method, lookup, false, new String[0]);
     }
 
-    JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup, boolean headersToProperties) {
-        super(requireValidMethod(method), lookup);
+    JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup, boolean headersToProperties, String[] emptyPatterns) {
+        super(requireValidMethod(method), lookup, emptyPatterns);
         this.headersToProperties = headersToProperties;
-        this.transformer = this::execute;
+        this.transformer = (entryValue, toValueType, cellTransformer) ->
+            execute(replaceEmptyPatternsWithEmptyString(entryValue), toValueType, cellTransformer);
     }
 
     private static Method requireValidMethod(Method method) {

@@ -9,7 +9,7 @@ final class Assertions {
     private Assertions() {
     }
 
-    static void assertNoCucumberAnnotatedMethods(Class clazz) {
+    static void assertNoCucumberAnnotatedMethods(Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             for (Annotation annotation : method.getAnnotations()) {
                 if (annotation.annotationType().getName().startsWith("io.cucumber")) {

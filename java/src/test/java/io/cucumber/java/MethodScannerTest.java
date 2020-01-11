@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MethodScannerTest {
 
     private final List<Map.Entry<Method, Annotation>> scanResult = new ArrayList<>();
-    private BiConsumer<Method, Annotation> backend = (method, annotation) ->
+    private final BiConsumer<Method, Annotation> backend = (method, annotation) ->
         scanResult.add(new SimpleEntry<>(method, annotation));
 
     @BeforeEach

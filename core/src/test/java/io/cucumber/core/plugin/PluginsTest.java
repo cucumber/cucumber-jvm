@@ -32,7 +32,7 @@ class PluginsTest {
     @Captor
     private ArgumentCaptor<EventPublisher> eventPublisher;
 
-    private PluginFactory pluginFactory = new PluginFactory();
+    private final PluginFactory pluginFactory = new PluginFactory();
 
     @Test
     void shouldSetStrictOnPlugin() {

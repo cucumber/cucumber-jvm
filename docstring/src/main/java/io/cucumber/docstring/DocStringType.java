@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 public final class DocStringType {
     private final Type type;
     private final String contentType;
-    private final Transformer transformer;
+    private final Transformer<?> transformer;
 
     /**
      * Creates a doc string type that can convert a doc string to an object.

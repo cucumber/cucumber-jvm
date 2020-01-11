@@ -158,8 +158,8 @@ class TestCaseStateResultTest {
     }
 
     private static final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
-        private byte[] data;
-        private String mediaType;
+        private final byte[] data;
+        private final String mediaType;
 
         EmbedEventMatcher(byte[] data, String mediaType) {
             this.data = data;
@@ -174,7 +174,7 @@ class TestCaseStateResultTest {
     }
 
     private static final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
-        private String text;
+        private final String text;
 
         WriteEventMatcher(String text) {
             this.text = text;

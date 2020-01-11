@@ -48,8 +48,8 @@ public final class PicoFactory implements ObjectFactory {
     }
 
     private void addConstructorDependencies(Class<?> clazz) {
-        for (Constructor constructor : clazz.getConstructors()) {
-            for (Class paramClazz : constructor.getParameterTypes()) {
+        for (Constructor<?> constructor : clazz.getConstructors()) {
+            for (Class<?> paramClazz : constructor.getParameterTypes()) {
                 addClass(paramClazz);
             }
         }

@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShoppingSteps {
-    private RpnCalculator calc = new RpnCalculator();
+    private final RpnCalculator calc = new RpnCalculator();
 
     private List<Grocery> shoppingList;
     private List<Grocery> shopStock;
@@ -126,7 +126,7 @@ public class ShoppingSteps {
     }
 
     static final class Price {
-        private int value;
+        private final int value;
 
         Price(int value) {
             this.value = value;

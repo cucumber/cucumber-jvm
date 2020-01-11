@@ -5,6 +5,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface LambdaGlue {
 
+    String[] NO_REPLACEMENT = {};
     String EMPTY_TAG_EXPRESSION = "";
     int DEFAULT_BEFORE_ORDER = 1000;
     int DEFAULT_AFTER_ORDER = 1000;
@@ -337,8 +338,8 @@ public interface LambdaGlue {
      *                    from the doc string
      * @see io.cucumber.docstring.DocStringType
      */
-    default void DocStringType(String contentType, DocStringDefinitionBody body) {
-        LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(body, contentType));
+    default void DocStringType(String contentType, DocStringDefinitionBody<?> body) {
+        LambdaGlueRegistry.INSTANCE.get().addDocStringType(new Java8DocStringTypeDefinition(contentType, body));
     }
 
     /**
@@ -349,7 +350,23 @@ public interface LambdaGlue {
      *             data table
      */
     default <T> void DataTableType(DataTableEntryDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableEntryDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableEntryDefinition(NO_REPLACEMENT, body));
+    }
+
+    /**
+     * Register a data table type with a replacement.
+     * <p>
+     * A data table can only represent absent and non-empty strings. By replacing
+     * a known value (for example [empty]) a data table can also represent
+     * empty strings.
+     *
+     * @param <T>                    the data table type
+     * @param replaceWithEmptyString a string that will be replaced with an empty string.
+     * @param body                   a function that creates an instance of <code>type</code> from the
+     *                               data table
+     */
+    default <T> void DataTableType(String replaceWithEmptyString, DataTableEntryDefinitionBody<T> body) {
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableEntryDefinition(new String[]{replaceWithEmptyString}, body));
     }
 
     /**
@@ -359,7 +376,23 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableRowDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableRowDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableRowDefinition(NO_REPLACEMENT, body));
+    }
+
+    /**
+     * Register a data table type with a replacement.
+     * <p>
+     * A data table can only represent absent and non-empty strings. By replacing
+     * a known value (for example [empty]) a data table can also represent
+     * empty strings.
+     *
+     * @param <T>                    the data table type
+     * @param replaceWithEmptyString a string that will be replaced with an empty string.
+     * @param body                   a function that creates an instance of <code>type</code> from the
+     *                               data table
+     */
+    default <T> void DataTableType(String replaceWithEmptyString, DataTableRowDefinitionBody<T> body) {
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableRowDefinition(new String[]{replaceWithEmptyString}, body));
     }
 
     /**
@@ -369,7 +402,23 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableCellDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableCellDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableCellDefinition(NO_REPLACEMENT, body));
+    }
+
+    /**
+     * Register a data table type with a replacement.
+     * <p>
+     * A data table can only represent absent and non-empty strings. By replacing
+     * a known value (for example [empty]) a data table can also represent
+     * empty strings.
+     *
+     * @param <T>                    the data table type
+     * @param replaceWithEmptyString a string that will be replaced with an empty string.
+     * @param body                   a function that creates an instance of <code>type</code> from the
+     *                               data table
+     */
+    default <T> void DataTableType(String replaceWithEmptyString, DataTableCellDefinitionBody<T> body) {
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableCellDefinition(new String[]{replaceWithEmptyString}, body));
     }
 
     /**
@@ -379,7 +428,23 @@ public interface LambdaGlue {
      * @param <T>  the data table type
      */
     default <T> void DataTableType(DataTableDefinitionBody<T> body) {
-        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableDefinition(body));
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableDefinition(NO_REPLACEMENT, body));
+    }
+
+    /**
+     * Register a data table type with a replacement.
+     * <p>
+     * A data table can only represent absent and non-empty strings. By replacing
+     * a known value (for example [empty]) a data table can also represent
+     * empty strings.
+     *
+     * @param <T>                    the data table type
+     * @param replaceWithEmptyString a string that will be replaced with an empty string.
+     * @param body                   a function that creates an instance of <code>type</code> from the
+     *                               data table
+     */
+    default <T> void DataTableType(String replaceWithEmptyString, DataTableDefinitionBody<T> body) {
+        LambdaGlueRegistry.INSTANCE.get().addDataTableType(new Java8DataTableDefinition(new String[]{replaceWithEmptyString}, body));
     }
 
     /**
@@ -482,7 +547,22 @@ public interface LambdaGlue {
      * @param definitionBody converts {@code String} argument to an instance of the {@code Type} argument
      */
     default void DefaultDataTableCellTransformer(DefaultDataTableCellTransformerBody definitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableCellTransformer(new Java8DefaultDataTableCellTransformerDefinition(definitionBody));
+        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableCellTransformer(new Java8DefaultDataTableCellTransformerDefinition(NO_REPLACEMENT, definitionBody));
+    }
+
+    /**
+     * Register default data table cell transformer with a replacement.
+     * <p>
+     * A data table can only represent absent and non-empty strings. By replacing
+     * a known value (for example [empty]) a data table can also represent
+     * empty strings.
+     * *
+     *
+     * @param replaceWithEmptyString a string that will be replaced with an empty string.
+     * @param definitionBody         converts {@code String} argument to an instance of the {@code Type} argument
+     */
+    default <T> void DefaultDataTableCellTransformer(String replaceWithEmptyString, DefaultDataTableCellTransformerBody definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableCellTransformer(new Java8DefaultDataTableCellTransformerDefinition(new String[]{replaceWithEmptyString}, definitionBody));
     }
 
     /**
@@ -491,6 +571,20 @@ public interface LambdaGlue {
      * @param definitionBody converts {@code Map<String,String>} argument to an instance of the {@code Type} argument
      */
     default void DefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerBody definitionBody) {
-        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableEntryTransformer(new Java8DefaultDataTableEntryTransformerDefinition(definitionBody));
+        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableEntryTransformer(new Java8DefaultDataTableEntryTransformerDefinition(NO_REPLACEMENT, definitionBody));
+    }
+
+    /**
+     * Register default data table cell transformer with a replacement.
+     * <p>
+     * A data table can only represent absent and non-empty strings. By replacing
+     * a known value (for example [empty]) a data table can also represent
+     * empty strings.
+     *
+     * @param replaceWithEmptyString a string that will be replaced with an empty string.
+     * @param definitionBody         converts {@code Map<String,String>} argument to an instance of the {@code Type} argument
+     */
+    default <T> void DefaultDataTableEntryTransformer(String replaceWithEmptyString, DefaultDataTableEntryTransformerBody definitionBody) {
+        LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableEntryTransformer(new Java8DefaultDataTableEntryTransformerDefinition(new String[]{replaceWithEmptyString}, definitionBody));
     }
 }

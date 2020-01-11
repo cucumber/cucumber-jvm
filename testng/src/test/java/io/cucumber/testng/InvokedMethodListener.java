@@ -8,8 +8,8 @@ import org.testng.ITestResult;
 
 public final class InvokedMethodListener implements IInvokedMethodListener {
 
-    private Set<String> invokedConfigurationMethodNames = new HashSet<>();
-    private List<String> invokedTestMethodNames = new ArrayList<>();
+    private final Set<String> invokedConfigurationMethodNames = new HashSet<>();
+    private final List<String> invokedTestMethodNames = new ArrayList<>();
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {

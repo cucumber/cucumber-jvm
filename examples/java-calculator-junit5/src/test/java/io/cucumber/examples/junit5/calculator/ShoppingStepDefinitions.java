@@ -9,8 +9,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class ShoppingStepdefs {
-    private RpnCalculator calc = new RpnCalculator();
+public class ShoppingStepDefinitions {
+    private final RpnCalculator calc = new RpnCalculator();
 
     @Given("the following groceries:")
     public void the_following_groceries(List<Grocery> groceries) {
@@ -54,7 +54,7 @@ public class ShoppingStepdefs {
     }
 
     static final class Price {
-        private int value;
+        private final int value;
 
         Price(int value) {
             this.value = value;

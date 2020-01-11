@@ -38,8 +38,8 @@ class TestCaseTest {
     private final EventBus bus = mock(EventBus.class);
 
     private final PickleStepDefinitionMatch definitionMatch1 = mock(PickleStepDefinitionMatch.class);
-    private CoreHookDefinition beforeStep1HookDefinition1 = mock(CoreHookDefinition.class);
-    private CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
+    private final CoreHookDefinition beforeStep1HookDefinition1 = mock(CoreHookDefinition.class);
+    private final CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
 
     private final PickleStepTestStep testStep1 = new PickleStepTestStep(
         UUID.randomUUID(),
@@ -51,8 +51,8 @@ class TestCaseTest {
     );
 
     private final PickleStepDefinitionMatch definitionMatch2 = mock(PickleStepDefinitionMatch.class);
-    private CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
-    private CoreHookDefinition afterStep1HookDefinition2 = mock(CoreHookDefinition.class);
+    private final CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
+    private final CoreHookDefinition afterStep1HookDefinition2 = mock(CoreHookDefinition.class);
     private final PickleStepTestStep testStep2 = new PickleStepTestStep(
         UUID.randomUUID(),
         URI.create("file:path/to.feature"),

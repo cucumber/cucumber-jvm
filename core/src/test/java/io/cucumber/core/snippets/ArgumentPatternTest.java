@@ -10,8 +10,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class ArgumentPatternTest {
 
-    private Pattern singleDigit = Pattern.compile("(\\d)");
-    private ArgumentPattern argumentPattern = new ArgumentPattern(singleDigit);
+    private final Pattern singleDigit = Pattern.compile("(\\d)");
+    private final ArgumentPattern argumentPattern = new ArgumentPattern(singleDigit);
 
     @Test
     void replacesMatchWithoutEscapedNumberClass() {

@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 class CachingGlueTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
-    private CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
+    private final CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
     private static Step getPickleStep(String text) {
         Feature feature = TestFeatureParser.parse("" +

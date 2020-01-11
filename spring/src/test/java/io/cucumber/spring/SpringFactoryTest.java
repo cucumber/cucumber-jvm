@@ -11,11 +11,11 @@ import io.cucumber.spring.commonglue.OneStepDef;
 import io.cucumber.spring.commonglue.ThirdStepDef;
 import io.cucumber.spring.componentannotation.WithComponentAnnotation;
 import io.cucumber.spring.componentannotation.WithControllerAnnotation;
-import io.cucumber.spring.contextconfig.BellyStepdefs;
+import io.cucumber.spring.contextconfig.BellyStepDefinitions;
 import io.cucumber.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
-import io.cucumber.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
-import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
-import io.cucumber.spring.metaconfig.general.BellyMetaStepdefs;
+import io.cucumber.spring.dirtiescontextconfig.DirtiesContextBellyStepDefinitions;
+import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefinitions;
+import io.cucumber.spring.metaconfig.general.BellyMetaStepDefinitions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +36,16 @@ class SpringFactoryTest {
     @Test
     void shouldGiveUsNewStepInstancesForEachScenario() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(BellyStepdefs.class);
+        factory.addClass(BellyStepDefinitions.class);
 
         // Scenario 1
         factory.start();
-        final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepDefinitions o1 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
         assertAll("Checking BellyStepdefs",
@@ -60,16 +60,16 @@ class SpringFactoryTest {
     void shouldNeverCreateNewApplicationBeanInstances() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
-        factory1.addClass(BellyStepdefs.class);
+        factory1.addClass(BellyStepDefinitions.class);
         factory1.start();
-        final BellyBean o1 = factory1.getInstance(BellyStepdefs.class).getBellyBean();
+        final BellyBean o1 = factory1.getInstance(BellyStepDefinitions.class).getBellyBean();
         factory1.stop();
 
         // Feature 2
         final ObjectFactory factory2 = new SpringFactory();
-        factory2.addClass(BellyStepdefs.class);
+        factory2.addClass(BellyStepDefinitions.class);
         factory2.start();
-        final BellyBean o2 = factory2.getInstance(BellyStepdefs.class).getBellyBean();
+        final BellyBean o2 = factory2.getInstance(BellyStepDefinitions.class).getBellyBean();
         factory2.stop();
 
         assertAll("Checking BellyBean",
@@ -84,16 +84,16 @@ class SpringFactoryTest {
     void shouldNeverCreateNewApplicationBeanInstancesUsingMetaConfiguration() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
-        factory1.addClass(BellyMetaStepdefs.class);
+        factory1.addClass(BellyMetaStepDefinitions.class);
         factory1.start();
-        final BellyBean o1 = factory1.getInstance(BellyMetaStepdefs.class).getBellyBean();
+        final BellyBean o1 = factory1.getInstance(BellyMetaStepDefinitions.class).getBellyBean();
         factory1.stop();
 
         // Feature 2
         final ObjectFactory factory2 = new SpringFactory();
-        factory2.addClass(BellyMetaStepdefs.class);
+        factory2.addClass(BellyMetaStepDefinitions.class);
         factory2.start();
-        final BellyBean o2 = factory2.getInstance(BellyMetaStepdefs.class).getBellyBean();
+        final BellyBean o2 = factory2.getInstance(BellyMetaStepDefinitions.class).getBellyBean();
         factory2.stop();
 
         assertAll("Checking BellyBean",
@@ -171,17 +171,17 @@ class SpringFactoryTest {
     @Test
     void shouldRespectDirtiesContextAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(DirtiesContextBellyStepDefs.class);
+        factory.addClass(DirtiesContextBellyStepDefinitions.class);
 
         // Scenario 1
         factory.start();
-        final BellyBean o1 = factory.getInstance(DirtiesContextBellyStepDefs.class).getBellyBean();
+        final BellyBean o1 = factory.getInstance(DirtiesContextBellyStepDefinitions.class).getBellyBean();
 
         factory.stop();
 
         // Scenario 2
         factory.start();
-        final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefs.class).getBellyBean();
+        final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefinitions.class).getBellyBean();
         factory.stop();
 
         assertAll("Checking BellyBean",
@@ -195,17 +195,17 @@ class SpringFactoryTest {
     @Test
     void shouldRespectDirtiesContextAnnotationsInStepDefsUsingMetaConfiguration() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(DirtiesContextBellyMetaStepDefs.class);
+        factory.addClass(DirtiesContextBellyMetaStepDefinitions.class);
 
         // Scenario 1
         factory.start();
-        final BellyBean o1 = factory.getInstance(DirtiesContextBellyMetaStepDefs.class).getBellyBean();
+        final BellyBean o1 = factory.getInstance(DirtiesContextBellyMetaStepDefinitions.class).getBellyBean();
 
         factory.stop();
 
         // Scenario 2
         factory.start();
-        final BellyBean o2 = factory.getInstance(DirtiesContextBellyMetaStepDefs.class).getBellyBean();
+        final BellyBean o2 = factory.getInstance(DirtiesContextBellyMetaStepDefinitions.class).getBellyBean();
         factory.stop();
 
         assertAll("Checking BellyBean",
@@ -243,10 +243,10 @@ class SpringFactoryTest {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
 
-        Executable testMethod = () -> factory.addClass(BellyStepdefs.class);
+        Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepdefs and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
         )));
     }
 

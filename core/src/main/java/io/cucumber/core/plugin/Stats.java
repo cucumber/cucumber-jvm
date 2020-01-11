@@ -28,14 +28,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
     private static final long ONE_SECOND = SECONDS.toNanos(1);
     private static final long ONE_MINUTE = 60 * ONE_SECOND;
-    private SubCounts scenarioSubCounts = new SubCounts();
-    private SubCounts stepSubCounts = new SubCounts();
+    private final SubCounts scenarioSubCounts = new SubCounts();
+    private final SubCounts stepSubCounts = new SubCounts();
     private Instant startTime = Instant.EPOCH;
     private Duration totalDuration = Duration.ZERO;
     private Formats formats = new AnsiFormats();
-    private Locale locale;
+    private final Locale locale;
     private final List<String> failedScenarios = new ArrayList<>();
-    private List<String> ambiguousScenarios = new ArrayList<>();
+    private final List<String> ambiguousScenarios = new ArrayList<>();
     private final List<String> pendingScenarios = new ArrayList<>();
     private final List<String> undefinedScenarios = new ArrayList<>();
     private final List<Throwable> errors = new ArrayList<>();

@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.datatable.DataTable;
+import org.hamcrest.MatcherAssert;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -12,7 +13,7 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TypeDefinitionsStepDefinitions implements En {
     public TypeDefinitionsStepDefinitions() {

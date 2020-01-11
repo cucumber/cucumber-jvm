@@ -15,7 +15,7 @@ public class StepDurationTimeService extends Clock implements EventListener {
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
     private final Duration stepDuration;
 
-    private EventHandler<TestStepStarted> stepStartedHandler = event -> handleTestStepStarted();
+    private final EventHandler<TestStepStarted> stepStartedHandler = event -> handleTestStepStarted();
     
     public StepDurationTimeService(Duration stepDuration) {
         this.stepDuration = stepDuration;

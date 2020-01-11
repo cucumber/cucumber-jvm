@@ -22,7 +22,6 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
         this.expression = requireNonNull(expression, "cucumber-expression may not be null");
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void execute(Object[] args) {
         Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);

@@ -53,7 +53,7 @@ final class PickleRunners {
         private Description description;
 
         WithStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) throws InitializationError {
-            super((Class) null);
+            super((Class<?>) null);
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
@@ -190,7 +190,7 @@ final class PickleRunners {
         private static final long serialVersionUID = 1L;
         private final URI uri;
         private final int pickleLine;
-        private int pickleStepLine;
+        private final int pickleStepLine;
 
         PickleStepId(Pickle pickle, Step step) {
             this.uri = pickle.getUri();

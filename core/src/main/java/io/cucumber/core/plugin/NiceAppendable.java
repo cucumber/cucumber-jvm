@@ -51,10 +51,7 @@ final class NiceAppendable implements Appendable {
 
     public NiceAppendable println(CharSequence csq) {
         try {
-            StringBuilder buffer = new StringBuilder();
-            buffer.append(csq);
-            buffer.append(NL);
-            out.append(buffer.toString());
+            out.append(csq).append(NL);
             tryFlush();
             return this;
         } catch (IOException e) {
