@@ -50,13 +50,12 @@ public final class ResourceScanner<R> {
         return findResourcesForUri(root, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
 
-    public List<R> scanForResourcesInPackage(String basePackageName, Predicate<String> packageFilter) {
-        requireValidPackageName(basePackageName);
+    public List<R> scanForResourcesInPackage(String packageName, Predicate<String> packageFilter) {
+        requireValidPackageName(packageName);
         requireNonNull(packageFilter, "packageFilter must not be null");
-        basePackageName = basePackageName.trim();
-        BiFunction<Path, Path, Resource> createResource = createPackageResource(basePackageName);
-        List<URI> rootUrisForPackage = getUrisForPackage(getClassLoader(), basePackageName);
-        return findResourcesForUris(rootUrisForPackage, basePackageName, packageFilter, createResource);
+        BiFunction<Path, Path, Resource> createResource = createPackageResource(packageName);
+        List<URI> rootUrisForPackage = getUrisForPackage(getClassLoader(), packageName);
+        return findResourcesForUris(rootUrisForPackage, packageName, packageFilter, createResource);
     }
 
     public List<R> scanForClasspathResource(String resourceName, Predicate<String> packageFilter) {
