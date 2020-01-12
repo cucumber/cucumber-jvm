@@ -20,7 +20,7 @@ final class GherkinMessagesDocStringArgument implements DocStringArgument {
 
     @Override
     public String getContentType() {
-        return docString.getContentType();
+        return docString.getMediaType();
     }
 
     @Override
