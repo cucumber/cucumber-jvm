@@ -96,7 +96,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
      system supported by the JVM.
 
 ### Deprecated
- * [Core] Deprecate TypeRegistryConfigurer ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Anton Deriabin)
+ * [Core] Deprecate `TypeRegistryConfigurer` ([#1799](https://github.com/cucumber/cucumber-jvm/pull/1799) Anton Deriabin)
      - Use `@ParameterType` and friends instead when using annotation glue.  
      - Use `ParameterType` and friends instead when using lambda glue.  
  
