@@ -62,6 +62,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Surefire detects the CucumberEngine and will not use the
+        JupiterEngine unless we add explicitly -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
