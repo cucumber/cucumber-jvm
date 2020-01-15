@@ -53,38 +53,38 @@ public final class ClasspathScanner {
         return aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass);
     }
 
-    public <T> List<Class<? extends T>> scanForSubClassesInPackage(String basePackageName, Class<T> parentClass) {
-        return scanForClassesInPackage(basePackageName, isSubClassOf(parentClass))
+    public <T> List<Class<? extends T>> scanForSubClassesInPackage(String packageName, Class<T> parentClass) {
+        return scanForClassesInPackage(packageName, isSubClassOf(parentClass))
             .stream()
             .map(aClass -> (Class<? extends T>) aClass.asSubclass(parentClass))
             .collect(toList());
     }
 
-    public List<Class<?>> scanForClassesInPackage(String basePackageName) {
-        return scanForClassesInPackage(basePackageName, NULL_FILTER);
+    public List<Class<?>> scanForClassesInPackage(String packageName) {
+        return scanForClassesInPackage(packageName, NULL_FILTER);
     }
 
-    private List<Class<?>> scanForClassesInPackage(String basePackageName, Predicate<Class<?>> classFilter) {
-        requireValidPackageName(basePackageName);
+    private List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
+        requireValidPackageName(packageName);
         requireNonNull(classFilter, "classFilter must not be null");
-        List<URI> rootUris = getUrisForPackage(getClassLoader(), basePackageName);
-        return findClassesForUris(rootUris, basePackageName, classFilter);
+        List<URI> rootUris = getUrisForPackage(getClassLoader(), packageName);
+        return findClassesForUris(rootUris, packageName, classFilter);
     }
 
-    private List<Class<?>> findClassesForUris(List<URI> baseUris, String basePackageName, Predicate<Class<?>> classFilter) {
+    private List<Class<?>> findClassesForUris(List<URI> baseUris, String packageName, Predicate<Class<?>> classFilter) {
         return baseUris.stream()
-            .map(baseUri -> findClassesForUri(baseUri, basePackageName, classFilter))
+            .map(baseUri -> findClassesForUri(baseUri, packageName, classFilter))
             .flatMap(Collection::stream)
             .distinct()
             .collect(toList());
     }
 
-    private List<Class<?>> findClassesForUri(URI baseUri, String basePackageName, Predicate<Class<?>> classFilter) {
+    private List<Class<?>> findClassesForUri(URI baseUri, String packageName, Predicate<Class<?>> classFilter) {
         List<Class<?>> classes = new ArrayList<>();
         pathScanner.findResourcesForUri(
             baseUri,
             path -> isNotModuleInfo(path) && isNotPackageInfo(path) && isClassFile(path),
-            processClassFiles(basePackageName, classFilter, classes::add)
+            processClassFiles(packageName, classFilter, classes::add)
         );
         return classes;
     }

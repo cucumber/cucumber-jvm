@@ -42,8 +42,8 @@ public class RunCucumberTest {
 
 ### Use the JUnit Console Launcher ###
 
-As a workaround you can use the JUnit Platform Console Launcher by using either
-the Maven Antrun plugin or the Gradle JavaExec task.
+You can integrate the JUnit Platform Console Launcher in your build by using
+either the Maven Antrun plugin or the Gradle JavaExec task.
 
 ```xml
 <dependencies>
@@ -135,7 +135,7 @@ cucumber.execution.dry-run=                             # ture or false. default
 cucumber.glue=                                          # comma seperate package names. example: com.example.glue  
 cucumber.plugin=                                        # comma seperated plugin strings. example: pretty, json:path/to/report.json
 cucumber.object-factory=                                # object factory class name. example: com.example.MyObjectFactory
-cucumber.snippet-type=                                  # underscore or camelcase.
+cucumber.snippet-type=                                  # underscore or camelcase. default: underscore
 cucumber.execution.parallel.enabled=                    # true or false. default: false
 cucumber.execution.parallel.config.strategy=            # dynamic, fixed or custom. default: dynamic
 cucumber.execution.parallel.config.fixed.parallelism=   # positive integer. example: 4 
@@ -186,15 +186,14 @@ Scenario: Another tagged scenario
 
 ```
 
-When using maven tags can be provided from the CLI using the `groups` and
+When using Maven tags can be provided from the CLI using the `groups` and
 `excludedGroups` parameters. These take a [JUnit5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions). 
+The example below will execute `Another tagged scenario`.
 
 ```
 mvn verify -DexcludedGroups="Ignore" -Dgroups="Smoke | Sanity"
 ```
 
-Will execute `Another tagged scenario`.
- 
 For further information See the relevant documentation on how to select tags:
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
