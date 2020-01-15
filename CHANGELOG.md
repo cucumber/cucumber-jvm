@@ -597,12 +597,12 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 ### Fixed
  * [Core] Remove scenario scoped step definitions from step definition cache ([#1301](https://github.com/cucumber/cucumber-jvm/pull/1301) M.P. Korstanje)
 
-## [2.3.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-3-0)
+## [2.3.0] - [Release Announcement](https://cucumber.io/blog/open-source/announcing-cucumber-jvm-2-3-0/)
 
 ### Added
  * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
 
-## [2.2.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-2-0)
+## [2.2.0] - [Release Announcement](https://cucumber.io/blog/open-source/announcing-cucumber-jvm-2-2-0/)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
@@ -620,7 +620,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Core] Fix detection of XStreamsConverters annotation ([#1283](https://github.com/cucumber/cucumber-jvm/pull/1283), [#1284](https://github.com/cucumber/cucumber-jvm/pull/1284) Dmitrii Demin)
  * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282) M.P. Korstanje)
 
-## [2.1.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-1-0)
+## [2.1.0] - [Release Announcement](https://cucumber.io/blog/open-source/announcing-cucumber-jvm-2-1-0/)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
@@ -644,7 +644,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
  * [Spring] Exception is thrown complaining about multiple matching beans ([#1225](https://github.com/cucumber/cucumber-jvm/pull/1225), [#1226](https://github.com/cucumber/cucumber-jvm/pull/1226), M.P. Korstanje)
 
-## [2.0.1] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-1)
+## [2.0.1] - [Release Announcement](https://cucumber.io/blog/open-source/announcing-cucumber-jvm-2-0-1/)
 
 ### Added
  * [Core] cucumber.api.TableConverter interface ([#1223](https://github.com/cucumber/cucumber-jvm/pull/1223) M.P. Korstanje) 
@@ -658,7 +658,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Core] Scenario.isFailed always return false ([#1216](https://github.com/cucumber/cucumber-jvm/pull/1216), [#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
  * [Docs] Javadoc stylesheet issue ([#1212](https://github.com/cucumber/cucumber-jvm/pull/1212), [#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk)
 
-## [2.0.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-0)
+## [2.0.0] - [Release Announcement](https://cucumber.io/blog/open-source/announcing-cucumber-jvm-2-0-0/)
 
 * [Java] Reduce Throwable to Exception in JavaSnippet ([#1207](https://github.com/cucumber/cucumber-jvm/issues/1207), [#1208](https://github.com/cucumber/cucumber-jvm/pull/1208) M.P. Korstanje)
 * [Core] Update the cucumber-html dependency to version 0.2.6 (Björn Rasmusson)
@@ -716,7 +716,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
   * After upgrading to 1.2.6 Maven will let users know that the `groupId` has
     changed from `info.cukes` to `io.cucumber`.
   
-## [1.2.5] - [Release Announcement](https://cucumber.io/blog/cucumber-jvm-1-2-5/)
+## [1.2.5] - [Release Announcement](https://cucumber.io/blog/open-source/cucumber-jvm-1-2-5/)
 
 * [Java8] Fix closing over local variables ([#916](https://github.com/cucumber/cucumber-jvm/issues/916), [#924](https://github.com/cucumber/cucumber-jvm/pull/924), [#929](https://github.com/cucumber/cucumber-jvm/pull/929) Alexander Torstling, Aslak Hellesøy)
 * [Java8] Fix IllegalArgumentException on JDK 1.8.0_60 ([#912](https://github.com/cucumber/cucumber-jvm/issues/912), [#914](https://github.com/cucumber/cucumber-jvm/pull/914) Michael Wilkerson)
