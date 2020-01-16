@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-## [5.0.0] (2020-01-16) - [Release Notes](RELEASE_NOTES.md#cucumber-jvm-v500)
+## [5.0.0] (2020-01-16) - [Release Notes](release-notes/v5.0.0.md)
 
 ### Added
  * [Java] Support empty strings and null values in data tables ([#1857](https://github.com/cucumber/cucumber-jvm/issues/1857) M.P. Korstanje)
