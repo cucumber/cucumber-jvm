@@ -1,9 +1,14 @@
 SHELL := /usr/bin/env bash
 
-update-dependencies:
+update-dependency-versions:
 	mvn versions:force-releases
 	mvn versions:update-properties -DallowMajorUpdates=false -Dmaven.version.rules="file://`pwd`/.m2/maven-version-rules.xml"
-.PHONY: update-dependencies
+.PHONY: update-dependency-versions
+
+update-major-dependency-versions:
+	mvn versions:force-releases
+	mvn versions:update-properties -DallowMajorUpdates=true -Dmaven.version.rules="file://`pwd`/.m2/maven-version-rules.xml"
+.PHONY: update-major-dependency-versions
 
 update-changelog:
 ifdef NEW_VERSION

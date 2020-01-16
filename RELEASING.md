@@ -15,7 +15,7 @@ git checkout master
 Also check if you can upgrade any dependencies:
 
 ```
-make update-dependencies
+update-dependency-versions
 ```
 
 ## Prepare for release ##
