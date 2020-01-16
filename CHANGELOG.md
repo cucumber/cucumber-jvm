@@ -1249,7 +1249,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...master
+[5.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.0.0
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3
