@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.0.0] (2020-01-16) - [Release Notes](release-notes/v5.0.0.md)
+
+### Added
  * [Java] Support empty strings and null values in data tables ([#1857](https://github.com/cucumber/cucumber-jvm/issues/1857) M.P. Korstanje)
    - When registering a table converter `convertToEmptyString` can be used to
    replace a specific value in a datatable (e.g. `[blank]`) with the empty
@@ -100,7 +112,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
      - Use `@ParameterType` and friends instead when using annotation glue.  
      - Use `ParameterType` and friends instead when using lambda glue.  
  
-## [5.0.0-RC1] (2019-10-11) - [Release Announcement](https://cucumber.io/blog/announcing-cucumber-jvm-v5-0-0-rc1/)
+## [5.0.0-RC1] (2019-10-11)
 
 ### Added
  * [Core] Upgrade the timeline formatter's jQuery dependency from 3.3.1 to 3.4.1. jQuery 3.3.1 has an [XSS vulnerability](https://www.cvedetails.com/cve/CVE-2019-11358/) 
@@ -441,7 +453,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
       * Fixes CVE-2018-19361 
       * Fixes CVE-2018-19362
 
-## [4.2.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-4-2-0)
+## [4.2.0] - [Release Announcement](release-notes/v4.2.0.md)
 
 ### Added
  * [Core] Add anonymous parameter types ([#1478](https://github.com/cucumber/cucumber-jvm/issues/1478), [#1492](https://github.com/cucumber/cucumber-jvm/pull/1492) M.P. Korstanje)
@@ -478,7 +490,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 ### Fixed
  * [Java8] Apply identity transform when target type is unknown ([#1475](https://github.com/cucumber/cucumber-jvm/pull/1475) Daryl Piffre, M.P. Korstanje) 
 
-## [4.0.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-4-0-0)
+## [4.0.0] - [Release Announcement](release-notes/v4.0.0.md)
 
 ### Added
  * [Core] Added extraGlue option to `@CucumberOptions` ([#1439](https://github.com/cucumber/cucumber-jvm/pull/1439) Eduardo Kalinowski) 
@@ -528,7 +540,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
   * [Core] Support quoted strings in cucumber.options ([#1453](https://github.com/cucumber/cucumber-jvm/pull/1453) John Patrick)
   * [Core] Set scenario result as step finishes ([#1430](https://github.com/cucumber/cucumber-jvm/pull/1430) M.P. Korstanje)
 
-## [3.0.2] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-3-0-2)
+## [3.0.2]
 
 ### Fixed
 * [Android] Fix PatternSyntaxException ([#1370](https://github.com/cucumber/cucumber-jvm/pull/1370) M.P. Korstanje)
@@ -542,7 +554,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 ### Fixed
  * [Core] Fix the handling of step output in HTML Formatter ([#1349](https://github.com/cucumber/cucumber-jvm/issues/1349) Björn Rasmusson)
 
-## [3.0.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-3-0-0)
+## [3.0.0] - [Release Announcement](release-notes/v3.0.0.md)
 
 ### Added
  * [Core] Implement [cucumber expressions](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) ([#1248](https://github.com/cucumber/cucumber-jvm/pull/1248) M.P. Korstanje, Björn Rasmusson, Marit van Dijk, Aslak Hellesøy)
@@ -597,12 +609,12 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 ### Fixed
  * [Core] Remove scenario scoped step definitions from step definition cache ([#1301](https://github.com/cucumber/cucumber-jvm/pull/1301) M.P. Korstanje)
 
-## [2.3.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-3-0)
+## [2.3.0] - [Release Announcement](release-notes/v2.3.0.md)
 
 ### Added
  * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
 
-## [2.2.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-2-0)
+## [2.2.0] - [Release Announcement](release-notes/v2.2.0.md)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
@@ -620,7 +632,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Core] Fix detection of XStreamsConverters annotation ([#1283](https://github.com/cucumber/cucumber-jvm/pull/1283), [#1284](https://github.com/cucumber/cucumber-jvm/pull/1284) Dmitrii Demin)
  * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282) M.P. Korstanje)
 
-## [2.1.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-1-0)
+## [2.1.0] - [Release Announcement](release-notes/v2.1.0.md)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
@@ -644,7 +656,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
  * [Spring] Exception is thrown complaining about multiple matching beans ([#1225](https://github.com/cucumber/cucumber-jvm/pull/1225), [#1226](https://github.com/cucumber/cucumber-jvm/pull/1226), M.P. Korstanje)
 
-## [2.0.1] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-1)
+## [2.0.1] - [Release Announcement](release-notes/v2.0.1.md)
 
 ### Added
  * [Core] cucumber.api.TableConverter interface ([#1223](https://github.com/cucumber/cucumber-jvm/pull/1223) M.P. Korstanje) 
@@ -658,7 +670,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
  * [Core] Scenario.isFailed always return false ([#1216](https://github.com/cucumber/cucumber-jvm/pull/1216), [#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
  * [Docs] Javadoc stylesheet issue ([#1212](https://github.com/cucumber/cucumber-jvm/pull/1212), [#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk)
 
-## [2.0.0] - [Release Announcement](https://cucumber.io/blog/2018/09/24/announcing-cucumber-jvm-2-0-0)
+## [2.0.0] - [Release Announcement](release-notes/v2.0.0.md)
 
 * [Java] Reduce Throwable to Exception in JavaSnippet ([#1207](https://github.com/cucumber/cucumber-jvm/issues/1207), [#1208](https://github.com/cucumber/cucumber-jvm/pull/1208) M.P. Korstanje)
 * [Core] Update the cucumber-html dependency to version 0.2.6 (Björn Rasmusson)
@@ -716,7 +728,7 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
   * After upgrading to 1.2.6 Maven will let users know that the `groupId` has
     changed from `info.cukes` to `io.cucumber`.
   
-## [1.2.5] - [Release Announcement](https://cucumber.io/blog/cucumber-jvm-1-2-5/)
+## [1.2.5] - [Release Announcement](release-notes/v1.2.5.md)
 
 * [Java8] Fix closing over local variables ([#916](https://github.com/cucumber/cucumber-jvm/issues/916), [#924](https://github.com/cucumber/cucumber-jvm/pull/924), [#929](https://github.com/cucumber/cucumber-jvm/pull/929) Alexander Torstling, Aslak Hellesøy)
 * [Java8] Fix IllegalArgumentException on JDK 1.8.0_60 ([#912](https://github.com/cucumber/cucumber-jvm/issues/912), [#914](https://github.com/cucumber/cucumber-jvm/pull/914) Michael Wilkerson)
@@ -1237,7 +1249,9 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...master
+[5.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.0.0
+[5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3
 [5.0.0-RC2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...v5.0.0-RC2
