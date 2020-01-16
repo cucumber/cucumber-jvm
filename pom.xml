@@ -59,7 +59,7 @@
         <jackson-databind.version>2.10.1</jackson-databind.version>
 
         <!--Maven plugins-->
-        <groovy.version>2.5.8</groovy.version>
+        <groovy.version>2.5.9</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
