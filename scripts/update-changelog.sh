@@ -38,7 +38,7 @@ header_escaped=${header//$'\n'/\\$'\n'}
 # Update the [Unreleased] header
 
 today=$(date +"%Y-%m-%d")
-changelog=$(echo "${changelog}" | sed "s/## \[Unreleased\] (In Git)/## \[${new_version}\] - (${today})/")
+changelog=$(echo "${changelog}" | sed "s/## \[Unreleased\] (In Git)/## \[${new_version}\] (${today})/")
 
 # Update [Unreleased] diff link
 line_number_colon_unreleased_link=$(echo "${changelog}" | grep -n "\[Unreleased\]")

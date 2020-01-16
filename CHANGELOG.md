@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.0.0] (2020-01-16) - [Release Notes](RELEASE_NOTES.md#cucumber-jvm-v500)
+
+### Added
  * [Java] Support empty strings and null values in data tables ([#1857](https://github.com/cucumber/cucumber-jvm/issues/1857) M.P. Korstanje)
    - When registering a table converter `convertToEmptyString` can be used to
    replace a specific value in a datatable (e.g. `[blank]`) with the empty
@@ -1238,6 +1250,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 <!-- Releases -->
 [Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...master
+[5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC2...v5.0.0-RC3
 [5.0.0-RC2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC1...v5.0.0-RC2
