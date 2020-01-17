@@ -19,12 +19,14 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static io.cucumber.core.runner.TestResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
@@ -153,6 +155,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         } else if (testStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
             testStepBuilder
+                .addAllStepDefinitionIds(singletonList(pickleStep.getId().toString()))
                 .setPickleStepId(pickleStep.getStep().getId())
                 .addAllStepMatchArgumentsLists(getStepMatchArguments(pickleStep));
         }
