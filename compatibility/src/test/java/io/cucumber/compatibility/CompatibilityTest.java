@@ -33,9 +33,6 @@ public class CompatibilityTest {
     private final AtomicLong id = new AtomicLong();
     private final Supplier<UUID> idGenerator = () -> new UUID(0L, id.getAndIncrement());
 
-    @TempDir
-    File temp;
-
     public enum TestCase {
         attachments("attachments", "attachments"),
         datatables("datatables", "data-tables"),
@@ -68,7 +65,9 @@ public class CompatibilityTest {
     @ParameterizedTest
     @EnumSource(TestCase.class)
     void produces_expected_output_for(TestCase testCase) throws IOException {
-        File output = new File(temp, "out.ndjson");
+        File parentDir = new File("target/messages/" + testCase.id);
+        parentDir.mkdirs();
+        File output = new File(parentDir, "out.ndjson");
 
         Runtime.builder()
             .withRuntimeOptions(new RuntimeOptionsBuilder()
