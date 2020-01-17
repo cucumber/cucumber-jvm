@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
-
+ * [Core] Document supported properties ([#1859](https://github.com/cucumber/cucumber-jvm/pull/1859) M.P. Korstanje)
+   - Adds `lexical` value (the default) for `cucumber.execution.order`
+   
 ### Changed
 
 ### Deprecated

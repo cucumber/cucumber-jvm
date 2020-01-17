@@ -19,6 +19,10 @@ final class PickleOrderParser {
             return StandardPickleOrders.reverseLexicalUriOrder();
         }
 
+        if ("lexical".equals(argument)) {
+            return StandardPickleOrders.lexicalUriOrder();
+        }
+
         Matcher matcher = RANDOM_AND_SEED_PATTERN.matcher(argument);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Invalid order. Must be either reverse, random or random:<long>");

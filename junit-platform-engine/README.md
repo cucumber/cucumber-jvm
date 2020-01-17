@@ -131,11 +131,11 @@ For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engin
 
 ```
 cucumber.ansi-colors.disabled=                          # true or false. default: true                     
-cucumber.execution.dry-run=                             # ture or false. default: false 
-cucumber.glue=                                          # comma seperate package names. example: com.example.glue  
-cucumber.plugin=                                        # comma seperated plugin strings. example: pretty, json:path/to/report.json
+cucumber.glue=                                          # comma separated package names. example: com.example.glue  
+cucumber.plugin=                                        # comma separated plugin strings. example: pretty, json:path/to/report.json
 cucumber.object-factory=                                # object factory class name. example: com.example.MyObjectFactory
 cucumber.snippet-type=                                  # underscore or camelcase. default: underscore
+cucumber.execution.dry-run=                             # true or false. default: false 
 cucumber.execution.parallel.enabled=                    # true or false. default: false
 cucumber.execution.parallel.config.strategy=            # dynamic, fixed or custom. default: dynamic
 cucumber.execution.parallel.config.fixed.parallelism=   # positive integer. example: 4 
