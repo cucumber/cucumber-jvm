@@ -37,6 +37,8 @@ public class CompatibilityTest {
 
     public enum TestCase {
         attachments("attachments", "attachments"),
+        datatables("datatables", "data-tables"),
+        hooks("hooks", "hooks"),
         stacktraces("stacktraces", "stack-traces");
 
         private final String packageName;
@@ -78,9 +80,12 @@ public class CompatibilityTest {
             .run();
 
         String actual = new String(readAllBytes(output.toPath()), UTF_8);
+        String expected = new String(readAllBytes(testCase.getExpectedFile()), UTF_8);
+
+
 
         assertEquals(
-            new String(readAllBytes(testCase.getExpectedFile()), UTF_8),
+            replacePaths(expected),
             replacePaths(actual)
         );
 
@@ -89,7 +94,18 @@ public class CompatibilityTest {
 
     private String replacePaths(String actual) {
         String file = Paths.get("src/test/resources").toAbsolutePath().toUri().toString();
-        return actual.replaceAll(file, "");
+        return actual
+            .replaceAll(file, "")
+            .replaceAll("\"nanos\":[0-9]+", "\"nanos\":0")
+            .replaceAll("\"id\":\"[0-9a-z\\-]+\"", "\"id\":\"0\"")
+            .replaceAll("\"pickleId\":\"[0-9a-z\\-]+\"", "\"pickleId\":\"0\"")
+            .replaceAll("\"testStepId\":\"[0-9a-z\\-]+\"", "\"testStepId\":\"0\"")
+            .replaceAll("\"pickleStepId\":\"[0-9a-z\\-]+\"", "\"pickleStepId\":\"0\"")
+            .replaceAll("\"testCaseId\":\"[0-9a-z\\-]+\"", "\"testCaseId\":\"0\"")
+            .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
+            ;
+
+
     }
 
 
