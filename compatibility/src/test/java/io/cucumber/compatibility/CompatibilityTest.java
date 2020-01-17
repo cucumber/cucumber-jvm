@@ -16,12 +16,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.readAllBytes;
+import static java.nio.file.Files.readAllLines;
 import static java.time.Clock.fixed;
 import static java.time.Instant.ofEpochSecond;
 import static java.time.ZoneOffset.UTC;
@@ -79,34 +80,34 @@ public class CompatibilityTest {
             .build()
             .run();
 
-        String actual = new String(readAllBytes(output.toPath()), UTF_8);
-        String expected = new String(readAllBytes(testCase.getExpectedFile()), UTF_8);
-
-
+        List<String> actual = readAllLines(output.toPath());
+        List<String> expected = readAllLines(testCase.getExpectedFile());
 
         assertEquals(
-            replacePaths(expected),
-            replacePaths(actual)
+            replaceAndSort(expected),
+            replaceAndSort(actual)
         );
 
 
     }
 
-    private String replacePaths(String actual) {
+    private String replaceAndSort(List<String> actual) {
         String file = Paths.get("src/test/resources").toAbsolutePath().toUri().toString();
-        return actual
-            .replaceAll(file, "")
-            .replaceAll("\"nanos\":[0-9]+", "\"nanos\":0")
-            .replaceAll("\"id\":\"[0-9a-z\\-]+\"", "\"id\":\"0\"")
-            .replaceAll("\"pickleId\":\"[0-9a-z\\-]+\"", "\"pickleId\":\"0\"")
-            .replaceAll("\"testStepId\":\"[0-9a-z\\-]+\"", "\"testStepId\":\"0\"")
-            .replaceAll("\"pickleStepId\":\"[0-9a-z\\-]+\"", "\"pickleStepId\":\"0\"")
-            .replaceAll("\"testCaseId\":\"[0-9a-z\\-]+\"", "\"testCaseId\":\"0\"")
-            .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
-            ;
-
-
+        // Not intended for the final comparison but to show how many "easy"
+        // differences we still have to solve.
+        return actual.stream()
+            .map(s ->
+                s.replaceAll(file, "")
+                    .replaceAll("\"nanos\":[0-9]+", "\"nanos\":0")
+                    .replaceAll("\"id\":\"[0-9a-z\\-]+\"", "\"id\":\"0\"")
+                    .replaceAll("\"pickleId\":\"[0-9a-z\\-]+\"", "\"pickleId\":\"0\"")
+                    .replaceAll("\"testStepId\":\"[0-9a-z\\-]+\"", "\"testStepId\":\"0\"")
+                    .replaceAll("\"pickleStepId\":\"[0-9a-z\\-]+\"", "\"pickleStepId\":\"0\"")
+                    .replaceAll("\"testCaseId\":\"[0-9a-z\\-]+\"", "\"testCaseId\":\"0\"")
+                    .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
+                    .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[]")
+                )
+            .sorted()
+            .collect(Collectors.joining("\n"));
     }
-
-
 }
