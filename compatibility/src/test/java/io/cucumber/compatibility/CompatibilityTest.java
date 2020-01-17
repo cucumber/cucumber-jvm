@@ -37,6 +37,7 @@ public class CompatibilityTest {
         attachments("attachments", "attachments"),
         datatables("datatables", "data-tables"),
         hooks("hooks", "hooks"),
+        parametertypes("parametertypes", "parameter-types"),
         stacktraces("stacktraces", "stack-traces");
 
         private final String packageName;
@@ -61,7 +62,7 @@ public class CompatibilityTest {
 
     }
 
-    @Disabled
+//    @Disabled
     @ParameterizedTest
     @EnumSource(TestCase.class)
     void produces_expected_output_for(TestCase testCase) throws IOException {
@@ -104,7 +105,8 @@ public class CompatibilityTest {
                     .replaceAll("\"pickleStepId\":\"[0-9a-z\\-]+\"", "\"pickleStepId\":\"0\"")
                     .replaceAll("\"testCaseId\":\"[0-9a-z\\-]+\"", "\"testCaseId\":\"0\"")
                     .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
-                    .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[]")
+                    .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
+                    .replaceAll("\"stepDefinitionIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
                 )
             .sorted()
             .collect(Collectors.joining("\n"));
