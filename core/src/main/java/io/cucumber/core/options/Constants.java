@@ -38,7 +38,7 @@ public final class Constants {
     /**
      * Property name used to set execution order: {@value}
      * <p>
-     * Valid values are {@code reverse}, {@code random} or {@code random:[seed]}.
+     * Valid values are {@code lexical}, {@code reverse}, {@code random} or {@code random:[seed]}.
      * <p>
      * By default features are executed in lexical file name order
      */
