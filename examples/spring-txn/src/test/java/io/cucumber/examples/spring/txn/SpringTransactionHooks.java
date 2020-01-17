@@ -12,19 +12,23 @@ import org.springframework.transaction.support.SimpleTransactionStatus;
 
 /**
  * <p>
- * This class defines before and after hooks which provide automatic spring rollback capabilities.
- * These hooks will apply to any element(s) within a <code>.feature</code> file tagged with <code>@txn</code>.
+ * This class defines before and after hooks which provide automatic spring
+ * rollback capabilities. These hooks will apply to any element(s) within a
+ * <code>.feature</code> file tagged with <code>@txn</code>.
  * </p>
  * <p>
- * Clients wishing to leverage these hooks should include this class' package in the <code>glue</code> code.
+ * Clients wishing to leverage these hooks should include a copy of this class'
+ * in their <code>glue</code> code.
  * </p>
  * <p>
- * The BEFORE and AFTER hooks (both with hook order 100) rely on being able to obtain a <code>PlatformTransactionManager</code> by type, or
- * by an optionally specified bean name, from the runtime <code>BeanFactory</code>.
+ * The BEFORE and AFTER hooks (both with hook order 100) rely on being able to
+ * obtain a <code>PlatformTransactionManager</code> by type, or by an optionally
+ * specified bean name, from the runtime <code>BeanFactory</code>.
  * </p>
  * <p>
- * NOTE: This class is NOT threadsafe!  It relies on the fact that cucumber-jvm will instantiate an instance of any
- * applicable hookdef class per scenario run.
+ * NOTE: This class is NOT threadsafe!  It relies on the fact that
+ * cucumber-jvm will instantiate an instance of any applicable hookdef class
+ * per scenario run.
  * </p>
  */
 public class SpringTransactionHooks implements BeanFactoryAware {
@@ -38,14 +42,18 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     }
 
     /**
-     * @return the (optional) bean name for the transaction manager to be obtained - if null, attempt will be made to find a transaction manager by bean type
+     * @return the (optional) bean name for the transaction manager to be
+     * obtained - if null, attempt will be made to find a transaction manager
+     * by bean type
      */
     public String getTxnManagerBeanName() {
         return txnManagerBeanName;
     }
 
     /**
-     * Setter to allow (optional) bean name to be specified for transaction manager bean - if null, attempt will be made to find a transaction manager by bean type
+     * Setter to allow (optional) bean name to be specified for transaction
+     * manager bean - if null, attempt will be made to find a transaction manager
+     * by bean type
      *
      * @param txnManagerBeanName bean name of transaction manager bean
      */
@@ -57,16 +65,18 @@ public class SpringTransactionHooks implements BeanFactoryAware {
 
     @Before(value = "@txn", order = 100)
     public void startTransaction() {
-        transactionStatus = obtainPlatformTransactionManager().getTransaction(new DefaultTransactionDefinition());
+        transactionStatus = obtainPlatformTransactionManager()
+            .getTransaction(new DefaultTransactionDefinition());
     }
 
     @After(value = "@txn", order = 100)
     public void rollBackTransaction() {
-        obtainPlatformTransactionManager().rollback(transactionStatus);
+        obtainPlatformTransactionManager()
+            .rollback(transactionStatus);
     }
 
     public PlatformTransactionManager obtainPlatformTransactionManager() {
-        if (getTxnManagerBeanName() == null) {
+        if (txnManagerBeanName == null) {
             return beanFactory.getBean(PlatformTransactionManager.class);
         } else {
             return beanFactory.getBean(txnManagerBeanName, PlatformTransactionManager.class);
