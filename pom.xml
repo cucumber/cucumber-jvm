@@ -368,7 +368,6 @@
                         </dependency>
                     </dependencies>
                     <configuration>
-                        <oldVersion>4.8.0</oldVersion>
                         <analysisConfiguration>
                             <revapi.semver.ignore>
                                 <enabled>true</enabled>
