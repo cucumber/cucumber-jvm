@@ -6,7 +6,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -308,6 +308,7 @@
                     <configuration>
                         <use>false</use>
                         <doclint>none</doclint>
+                        <source>8</source>
                         <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/8/docs/api/</link>
@@ -416,7 +417,6 @@
                                     <justification>We implement the junit platform API</justification>
                                 </item>
                             </revapi.ignore>
-
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
