@@ -32,7 +32,6 @@ import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -63,7 +62,7 @@ public final class TestNGCucumberRunner {
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
     private final FeaturePathFeatureSupplier featureSupplier;
-    private final List<Feature> features = new ArrayList<>();
+    private List<Feature> features = null;
 
     /**
      * Bootstrap the cucumber runtime
@@ -151,10 +150,16 @@ public final class TestNGCucumberRunner {
         }
     }
 
+    /**
+     * Gets features found on the feature path and sends {@link TestRunStarted} and {@link TestSourceRead} events. The method is
+     * idempotent.
+     *
+     * @return a list of {@link Feature} features found on the feature path.
+     */
     private List<Feature> getFeatures() {
-        if (features.isEmpty()) {
+        if (features == null) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
-            features.addAll(featureSupplier.get());
+            features = featureSupplier.get();
             bus.send(new TestRunStarted(bus.getInstant()));
             features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
         }
