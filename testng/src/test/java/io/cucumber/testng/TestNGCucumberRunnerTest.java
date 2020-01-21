@@ -1,19 +1,18 @@
 package io.cucumber.testng;
 
-import io.cucumber.core.gherkin.FeatureParserException;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
+import org.testng.TestNG;
 import org.testng.annotations.Test;
+
+import java.util.List;
+
+import io.cucumber.core.gherkin.FeatureParserException;
 
 import static org.testng.Assert.assertThrows;
 
 public class TestNGCucumberRunnerTest {
-    private TestNGCucumberRunner testNGCucumberRunner;
 
-    @BeforeMethod
-    public void setUp() {
-        testNGCucumberRunner = new TestNGCucumberRunner(io.cucumber.testng.RunCucumberTest.class);
-    }
+    private TestNGCucumberRunner testNGCucumberRunner;
 
     @Test
     public void runCucumberTest() throws Throwable {
@@ -52,6 +51,32 @@ public class TestNGCucumberRunnerTest {
         } catch (FeatureParserException e) {
             Assert.assertEquals(e.getMessage(), "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature");
         }
+    }
+
+    @Test
+    public void runScenariosWithAdditionalDataProvider() {
+        InvokedMethodListener iml = new InvokedMethodListener();
+        TestNG testNG = new TestNG();
+        testNG.addListener(iml);
+        testNG.addListener(new CucumberDataProviderInterceptor());
+        testNG.setGroups("cucumber");
+        testNG.setTestClasses(new Class[]{TestNGCucumberTestsWithExtraDataProvider.class});
+        testNG.run();
+        List<String> invokedConfigurationMethodNames = iml.getInvokedConfigurationMethodNames();
+        List<String> invokedTestMethodNames = iml.getInvokedTestMethodNames();
+
+        Assert.assertEquals(invokedConfigurationMethodNames.stream()
+            .filter("setUpClass"::equals)
+            .count(), 1L);
+        Assert.assertEquals(invokedConfigurationMethodNames.stream()
+            .filter("tearDownClass"::equals)
+            .count(), 1L);
+        Assert.assertEquals(invokedTestMethodNames.stream()
+            .filter("runTag2Scenario"::equals)
+            .count(), 3L);
+        Assert.assertEquals(invokedTestMethodNames.stream()
+            .filter("runScenario"::equals)
+            .count(), 2L);
     }
 
     @CucumberOptions(
