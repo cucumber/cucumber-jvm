@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,6 +59,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
             List<Person> people = peopleTable.asList(Person.class);
             assertEquals("Hellesøy", people.get(0).last);
             assertEquals("", people.get(1).last);
+            assertNull(people.get(3).last);
         });
 
         Integer alreadyHadThisManyCukes = 1;

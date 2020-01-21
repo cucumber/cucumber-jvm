@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-
+ * [Java] Fix NPE in AbstractDatatableElementTransformerDefinition ([#1865](https://github.com/cucumber/cucumber-jvm/pull/1865) Florin Slevoaca, M.P. Korstanje, ) 
+ 
 ## [5.0.0] (2020-01-16) - [Release Notes](release-notes/v5.0.0.md)
 
 ### Added

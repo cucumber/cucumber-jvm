@@ -5,12 +5,12 @@ import io.cucumber.datatable.DataTable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.datatable.DataTable.create;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefinition {
     private final String[] emptyPatterns;
@@ -36,14 +36,19 @@ public class AbstractDatatableElementTransformerDefinition extends AbstractGlueD
     }
 
     Map<String, String> replaceEmptyPatternsWithEmptyString(Map<String, String> fromValue) {
-        return fromValue.entrySet().stream()
-            .collect(toMap(
-                entry -> replaceEmptyPatternsWithEmptyString(entry.getKey()),
-                entry -> replaceEmptyPatternsWithEmptyString(entry.getValue()),
-                (s, s2) -> {
-                    throw createDuplicateKeyAfterReplacement(fromValue);
-                }
-            ));
+        Map<String, String> replacement = new LinkedHashMap<>();
+
+        fromValue.forEach((String key, String value) -> {
+            String potentiallyEmptyKey = replaceEmptyPatternsWithEmptyString(key);
+            String potentiallyEmptyValue = replaceEmptyPatternsWithEmptyString(value);
+
+            if (replacement.containsKey(potentiallyEmptyKey)) {
+                throw createDuplicateKeyAfterReplacement(fromValue);
+            }
+            replacement.put(potentiallyEmptyKey, potentiallyEmptyValue);
+        });
+
+        return replacement;
     }
 
     private IllegalArgumentException createDuplicateKeyAfterReplacement(Map<String, String> fromValue) {
@@ -59,7 +64,7 @@ public class AbstractDatatableElementTransformerDefinition extends AbstractGlueD
 
     String replaceEmptyPatternsWithEmptyString(String t) {
         for (String emptyPattern : emptyPatterns) {
-            if (t.equals(emptyPattern)) {
+            if (emptyPattern.equals(t)) {
                 return "";
             }
         }
