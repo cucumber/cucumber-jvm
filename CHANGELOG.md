@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    - Adds `lexical` value (the default) for `cucumber.execution.order`
    
 ### Changed
-
+ * [JUnit] Upgrade JUnit Platform from v1.5.2 to v1.6.0
+ 
 ### Deprecated
 
 ### Removed

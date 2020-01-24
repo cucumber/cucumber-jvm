@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -6,7 +7,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -51,8 +52,8 @@
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
-        <junit-jupiter.version>5.5.2</junit-jupiter.version>
-        <junit-platform.version>1.5.2</junit-platform.version>
+        <junit-jupiter.version>5.6.0</junit-jupiter.version>
+        <junit-platform.version>1.6.0</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.2.4</mockito.version>
         <jackson-databind.version>2.10.1</jackson-databind.version>
@@ -308,11 +309,14 @@
                     <configuration>
                         <use>false</use>
                         <doclint>none</doclint>
+                        <source>8</source>
                         <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/8/docs/api/</link>
-                            <link>http://junit.sourceforge.net/javadoc/</link>
-                            <link>https://junit.org/junit5/docs/current/api/</link>
+                            <link>https://junit.org/junit4/javadoc/latest/</link>
+                            <!-- javadoc plugin can't port docs for modularized code to
+                                 non-modularized code -->
+                            <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
                             <link>https://javadoc.io/doc/org.testng/testng/7.0.0/</link>
                         </links>
                         <groups>
@@ -368,7 +372,6 @@
                         </dependency>
                     </dependencies>
                     <configuration>
-                        <oldVersion>4.8.0</oldVersion>
                         <analysisConfiguration>
                             <revapi.semver.ignore>
                                 <enabled>true</enabled>
@@ -410,14 +413,12 @@
                                     <justification>We implement the junit platform API</justification>
                                 </item>
                                 <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>
-                                        org.junit.platform:junit-platform-commons:jar:${junit-platform.version}
+                                    <code>java.annotation.added</code>
+                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
                                     </newArchive>
                                     <justification>We implement the junit platform API</justification>
                                 </item>
                             </revapi.ignore>
-
                         </analysisConfiguration>
                     </configuration>
                 </plugin>
