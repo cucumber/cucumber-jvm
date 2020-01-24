@@ -5,8 +5,6 @@ import org.apiguardian.api.API;
 import java.net.URI;
 import java.util.List;
 
-import io.cucumber.core.gherkin.Location;
-
 /**
  * Wraps CucumberPickle to avoid exposing it as part of the public api.
  */
@@ -27,8 +25,12 @@ public final class Pickle {
         return pickle.getName();
     }
 
-    public Location getScenarioLocation() {
-        return pickle.getScenarioLocation();
+    public int getScenarioLine() {
+        return pickle.getScenarioLocation().getLine();
+    }
+
+    public int getLine() {
+        return pickle.getLocation().getLine();
     }
 
     public List<String> getTags() {
