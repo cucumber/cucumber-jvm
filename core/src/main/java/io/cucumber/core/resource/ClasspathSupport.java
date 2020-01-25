@@ -85,7 +85,7 @@ public final class ClasspathSupport {
     }
 
     static URI determineClasspathResourceUri(Path baseDir, String basePackagePath, Path resource) {
-        String subPackageName = baseDir.relativize(resource.getParent()).toString();
+        String subPackageName = baseDir.relativize(resource.getParent()).toString().replacAll("\\","/");
         String resourceName = resource.getFileName().toString();
         String classpathResourcePath = of(basePackagePath, subPackageName, resourceName)
             .filter(value -> !value.isEmpty()) // default package .
