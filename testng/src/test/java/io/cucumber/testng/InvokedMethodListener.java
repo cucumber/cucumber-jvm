@@ -8,7 +8,7 @@ import org.testng.ITestResult;
 
 public final class InvokedMethodListener implements IInvokedMethodListener {
 
-    private final Set<String> invokedConfigurationMethodNames = new HashSet<>();
+    private final List<String> invokedConfigurationMethodNames = new ArrayList<>();
     private final List<String> invokedTestMethodNames = new ArrayList<>();
 
     @Override
@@ -25,8 +25,8 @@ public final class InvokedMethodListener implements IInvokedMethodListener {
         }
     }
 
-    public Set<String> getInvokedConfigurationMethodNames() {
-        return Collections.unmodifiableSet(invokedConfigurationMethodNames);
+    public List<String> getInvokedConfigurationMethodNames() {
+        return Collections.unmodifiableList(invokedConfigurationMethodNames);
     }
 
     public List<String> getInvokedTestMethodNames() {

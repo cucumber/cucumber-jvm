@@ -62,6 +62,7 @@ public final class TestNGCucumberRunner {
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
     private final FeaturePathFeatureSupplier featureSupplier;
+    private List<Feature> features = null;
 
     /**
      * Bootstrap the cucumber runtime
@@ -149,13 +150,18 @@ public final class TestNGCucumberRunner {
         }
     }
 
+    /**
+     * Gets features found on the feature path and sends {@link TestRunStarted} and {@link TestSourceRead} events. The method is
+     * idempotent.
+     *
+     * @return a list of {@link Feature} features found on the feature path.
+     */
     private List<Feature> getFeatures() {
-        plugins.setSerialEventBusOnEventListenerPlugins(bus);
-
-        List<Feature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getInstant()));
-        for (Feature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        if (features == null) {
+            plugins.setSerialEventBusOnEventListenerPlugins(bus);
+            features = featureSupplier.get();
+            bus.send(new TestRunStarted(bus.getInstant()));
+            features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
         }
         return features;
     }
