@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  * [JUnit] Upgrade JUnit Platform from v1.5.2 to v1.6.0
- 
+ * [JUnit] Add module-info for `cucumber-junit-platform-engine` ([#1867](https://github.com/cucumber/cucumber-jvm/pull/1867) M.P. Korstanje, John Patrick)
+
 ### Deprecated
 
 ### Removed
