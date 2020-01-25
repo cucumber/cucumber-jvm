@@ -39,6 +39,14 @@ class JavaDefaultDataTableCellTransformerDefinitionTest {
         assertThat(transformed, is("transform_string_to_type="));
     }
 
+    @Test
+    void can_transform_null_while_using_replacement_patterns() throws Throwable {
+        Method method = JavaDefaultDataTableCellTransformerDefinitionTest.class.getMethod("transform_string_to_type", String.class, Type.class);
+        JavaDefaultDataTableCellTransformerDefinition definition = new JavaDefaultDataTableCellTransformerDefinition(method, lookup, new String[]{"[empty]"});
+        Object transformed = definition.tableCellByTypeTransformer().transform(null, String.class);
+        assertThat(transformed, is("transform_string_to_type=null"));
+    }
+
     public Object transform_string_to_type(String fromValue, Type toValueType) {
         return "transform_string_to_type=" + fromValue;
     }

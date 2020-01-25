@@ -50,7 +50,7 @@
 
         <!--Dependencies -->
         <cucumber-expressions.version>8.3.1</cucumber-expressions.version>
-        <datatable.version>3.2.0</datatable.version>
+        <datatable.version>3.2.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
         <messages.version>9.0.3</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
@@ -501,6 +501,17 @@
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
                             <revapi.ignore>
+                                <item>
+                                    <code>java.class.visibilityReduced</code>
+                                    <old>class io.cucumber.java.AbstractDatatableElementTransformerDefinition</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.visibilityReduced</code>
+                                    <old>class io.cucumber.java8.AbstractDatatableElementTransformerDefinition</old>
+                                    <justification>Internal API</justification>
+                                </item>
+
                                 <!-- Gherkin parser related -->
                                 <item>
                                     <code>java.class.externalClassExposedInAPI</code>
