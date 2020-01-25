@@ -1,23 +1,18 @@
 package io.cucumber.testng;
 
+import io.cucumber.core.gherkin.FeatureParserException;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
 import org.testng.Assert;
-import org.testng.IDataProviderInterceptor;
-import org.testng.IDataProviderMethod;
-import org.testng.ITestContext;
-import org.testng.ITestNGMethod;
-import org.testng.TestNG;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
-import io.cucumber.core.gherkin.FeatureParserException;
-
+import static io.cucumber.testng.TestNGCucumberRunnerTest.Plugin.events;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
@@ -65,29 +60,19 @@ public class TestNGCucumberRunnerTest {
     }
 
     @Test
-    public void runScenariosWithAdditionalDataProvider() {
-        InvokedMethodListener iml = new InvokedMethodListener();
-        TestNG testNG = new TestNG();
-        testNG.addListener(iml);
-        testNG.addListener(new DataProviderInterceptor());
-        testNG.setGroups("cucumber");
-        testNG.setTestClasses(new Class[]{TestNGCucumberTestsWithExtraDataProvider.class});
-        testNG.run();
-        List<String> invokedConfigurationMethodNames = iml.getInvokedConfigurationMethodNames();
-        List<String> invokedTestMethodNames = iml.getInvokedTestMethodNames();
+    public void provideScenariosIsIdempotent() {
+        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTestWithPlugin.class);
 
-        assertEquals(invokedConfigurationMethodNames.stream()
-            .filter("setUpClass"::equals)
-            .count(), 1L);
-        assertEquals(invokedConfigurationMethodNames.stream()
-            .filter("tearDownClass"::equals)
-            .count(), 1L);
-        assertEquals(invokedTestMethodNames.stream()
-            .filter("runTag2Scenario"::equals)
-            .count(), 3L);
-        assertEquals(invokedTestMethodNames.stream()
-            .filter("runScenario"::equals)
-            .count(), 2L);
+        testNGCucumberRunner.provideScenarios();
+        testNGCucumberRunner.provideScenarios();
+        testNGCucumberRunner.finish();
+
+        assertEquals(1, events.stream()
+            .map(Object::getClass)
+            .filter(TestRunStarted.class::isAssignableFrom).count());
+        assertEquals(1, events.stream()
+            .map(Object::getClass)
+            .filter(TestRunFinished.class::isAssignableFrom).count());
     }
 
     @CucumberOptions(
@@ -101,49 +86,24 @@ public class TestNGCucumberRunnerTest {
     static class RunCucumberTest extends AbstractTestNGCucumberTests {
     }
 
+    @CucumberOptions(strict = true, plugin = "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin")
+    static class RunCucumberTestWithPlugin extends AbstractTestNGCucumberTests {
+    }
+
+    public static class Plugin implements ConcurrentEventListener {
+
+        static List<Event> events = new ArrayList<>();
+
+
+        @Override
+        public void setEventPublisher(EventPublisher publisher) {
+            publisher.registerHandlerFor(TestRunStarted.class, event -> events.add(event));
+            publisher.registerHandlerFor(TestRunFinished.class, event -> events.add(event));
+        }
+    }
+
     @CucumberOptions(features = "classpath:io/cucumber/error/parse-error.feature")
     static class ParseError extends AbstractTestNGCucumberTests {
     }
 
-    static class DataProviderInterceptor implements IDataProviderInterceptor {
-
-        @Override
-        public Iterator<Object[]> intercept(Iterator<Object[]> original, IDataProviderMethod dataProviderMethod, ITestNGMethod method, ITestContext iTestContext) {
-            if ("tag2Scenarios".equals(dataProviderMethod.getName())) {
-                return filterScenarios(original, tags -> tags.contains("@TAG2")).iterator();
-            } else {
-                return filterScenarios(original, tags -> tags.contains("@TAG1")).iterator();
-            }
-        }
-
-        private Collection<Object[]> filterScenarios(Iterator<Object[]> originalDataSet, Predicate<Collection<String>> tagsCondition) {
-            Collection<Object[]> filteredDataSet = new HashSet<>();
-            originalDataSet.forEachRemaining(data -> Arrays.stream(data).forEach(item -> {
-                if (item instanceof PickleWrapper) {
-                    PickleWrapper pickleWrapper = (PickleWrapper) item;
-                    if (tagsCondition.test(pickleWrapper.getPickle().getTags())) {
-                        filteredDataSet.add(data);
-                    }
-                }
-            }));
-            return filteredDataSet;
-        }
-    }
-
-    @CucumberOptions(
-        features = "classpath:io/cucumber/testng/scenarios_with_tags.feature"
-    )
-    static class TestNGCucumberTestsWithExtraDataProvider extends AbstractTestNGCucumberTests {
-
-        @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "tag2Scenarios")
-        public void runTag2Scenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) throws Throwable {
-            super.runScenario(pickleWrapper, featureWrapper);
-        }
-
-        @DataProvider
-        public Object[][] tag2Scenarios() {
-            return super.scenarios();
-        }
-
-    }
 }

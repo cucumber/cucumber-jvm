@@ -1,31 +1,17 @@
-Feature: A feature containing 5 scenarios with tags
+Feature: Some scenarios should be run in serial
 
-  @TAG1
-  Scenario: SC1
+  @Serial
+  Scenario: This one runs serially
     Given foo
     When foo
     Then baz
 
-  @TAG2
-  Scenario: SC2
+  Scenario: This one in run in parallel
     Given foo
     When foo
     Then baz
 
-  @TAG2
-  Scenario: SC3
-    Given foo
-    When foo
-    Then baz
-
-  @TAG1
-  Scenario: SC4
-    Given foo
-    When foo
-    Then baz
-
-  @TAG2
-  Scenario: SC5
+  Scenario: This one in run in parallel too
     Given foo
     When foo
     Then baz
