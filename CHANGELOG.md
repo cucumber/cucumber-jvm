@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.1.0] (2020-01-25)
+
+### Added
  * [Core] Document supported properties ([#1859](https://github.com/cucumber/cucumber-jvm/pull/1859) M.P. Korstanje)
    - Adds `lexical` value (the default) for `cucumber.execution.order`
  * [TestNG] Run scenarios in customized groups ([#1863](https://github.com/cucumber/cucumber-jvm/pull/1863) Konrad Maciaszczyk, M.P. Korstanje)
@@ -1257,7 +1269,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.1.0...master
+[5.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.1.0
 [5.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.0.0
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
