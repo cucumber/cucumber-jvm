@@ -38,10 +38,12 @@ else
 endif
 .PHONY: .commit-and-push-changelog
 
-release: update-changelog .commit-and-push-changelog
+release: default update-changelog .commit-and-push-changelog
 ifdef NEW_VERSION
 	mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
-	mvn release:perform -P-examples -Psign-source-javadoc
+	git checkout "v$(NEW_VERSION)"
+	mvn deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
+	git checkout master
 else
 	@echo -e "\033[0;31mNEW_VERSION is not defined. Can't release. :-(\033[0m"
 	exit 1
