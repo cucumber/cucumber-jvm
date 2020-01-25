@@ -39,8 +39,15 @@
 
 
     <properties>
+        <!-- Tool chains, ect -->
+        <base.java.version>1.8</base.java.version>
+        <javadoc.java.version>8</javadoc.java.version>
+        <toolchain.vendor>openjdk</toolchain.vendor>
+        <toolchain.java.version>11</toolchain.java.version>
+
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
+
         <!--Dependencies -->
         <cucumber-expressions.version>8.3.1</cucumber-expressions.version>
         <datatable.version>3.2.0</datatable.version>
@@ -266,13 +273,54 @@
                             </execution>
                         </executions>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
     </profiles>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>${toolchain.java.version}</version>
+                            <vendor>${toolchain.vendor}</vendor>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
+
+            <!-- enable Java 9,10,11 compilation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>java9</id>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>java10</id>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>java11</id>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
                 <!-- Standard plugins - alphabetically -->
@@ -305,19 +353,84 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${base.java.version}</source>
+                        <target>${base.java.version}</target>
+                    </configuration>
+                    <executions>
+                        <!-- for Java 9 -->
+                        <execution>
+                            <id>java9</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <release>9</release>
+                                <jdkToolchain>
+                                    <version>9</version>
+                                </jdkToolchain>
+                                <compileSourceRoots>
+                                    <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                                </compileSourceRoots>
+                                <multiReleaseOutput>true</multiReleaseOutput>
+                            </configuration>
+                        </execution>
+
+                        <!-- for Java 10 -->
+                        <execution>
+                            <id>java10</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <release>10</release>
+                                <jdkToolchain>
+                                    <version>10</version>
+                                </jdkToolchain>
+                                <compileSourceRoots>
+                                    <compileSourceRoot>${project.basedir}/src/main/java10</compileSourceRoot>
+                                </compileSourceRoots>
+                                <multiReleaseOutput>true</multiReleaseOutput>
+                            </configuration>
+                        </execution>
+
+                        <!-- for Java 11 -->
+                        <execution>
+                            <id>java11</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <release>11</release>
+                                <jdkToolchain>
+                                    <version>11</version>
+                                </jdkToolchain>
+                                <compileSourceRoots>
+                                    <compileSourceRoot>${project.basedir}/src/main/java11</compileSourceRoot>
+                                </compileSourceRoots>
+                                <multiReleaseOutput>true</multiReleaseOutput>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
-                        <use>false</use>
                         <doclint>none</doclint>
-                        <source>8</source>
+                        <source>${javadoc.java.version}</source>
                         <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
-                            <link>http://docs.oracle.com/javase/8/docs/api/</link>
                             <link>https://junit.org/junit4/javadoc/latest/</link>
                             <!-- javadoc plugin can't port docs for modularized code to
-                                 non-modularized code -->
+                               non-modularized code -->
                             <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
-                            <link>https://javadoc.io/doc/org.testng/testng/7.0.0/</link>
+                            <link>https://javadoc.io/doc/org.testng/testng/7.1.0/</link>
                         </links>
                         <groups>
                             <group>
@@ -357,6 +470,12 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.0.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>1.1</version>
                 </plugin>
 
                 <!-- Semantic version check  -->
@@ -427,6 +546,15 @@
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>4.3.0</version>
+                    <!-- Include JAXB API directly to workaround coveralls-maven-plugin bug in Java 9+
+                         https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.3.1</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>

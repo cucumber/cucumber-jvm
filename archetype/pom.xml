@@ -11,7 +11,7 @@
 
     <artifactId>cucumber-archetype</artifactId>
     <packaging>maven-archetype</packaging>
-    <name>cucumber-archetype</name>
+    <name>Cucumber JVM: Archetype</name>
     <description>Cucumber JVM: Maven Archetype</description>
 
     <!-- Not used by this module, but used by the integration tests of
