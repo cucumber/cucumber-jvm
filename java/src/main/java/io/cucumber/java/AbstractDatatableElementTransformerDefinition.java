@@ -12,7 +12,7 @@ import java.util.Map;
 import static io.cucumber.datatable.DataTable.create;
 import static java.util.stream.Collectors.toList;
 
-public class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefinition {
+class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefinition {
     private final String[] emptyPatterns;
 
     AbstractDatatableElementTransformerDefinition(Method method, Lookup lookup, String[] emptyPatterns) {
