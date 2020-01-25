@@ -28,10 +28,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [JUnit] Upgrade JUnit Platform from v1.5.2 to v1.6.0
  * [JUnit] Add module-info for `cucumber-junit-platform-engine` ([#1867](https://github.com/cucumber/cucumber-jvm/pull/1867) M.P. Korstanje, John Patrick)
 
-### Deprecated
-
-### Removed
-
 ### Fixed
  * [Java/Java8] Fix NPE in AbstractDatatableElementTransformerDefinition ([#1865](https://github.com/cucumber/cucumber-jvm/pull/1865) Florin Slevoaca, M.P. Korstanje)
  * [Core] Fix collision when using `Datatable.asMaps` ([cucumber/cucumber#877](https://github.com/cucumber/cucumber/pull/877) M.P. Korstanje)
