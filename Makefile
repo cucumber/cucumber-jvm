@@ -40,7 +40,7 @@ endif
 
 release: update-changelog .commit-and-push-changelog
 ifdef NEW_VERSION
-	mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true"
+	mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
 	mvn release:perform -P-examples -Psign-source-javadoc
 else
 	@echo -e "\033[0;31mNEW_VERSION is not defined. Can't release. :-(\033[0m"
