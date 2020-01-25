@@ -78,7 +78,7 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             () -> definition.tableEntryByTypeTransformer().transform(fromValue, String.class, cellTransformer)
         );
 
-        assertThat(exception.getMessage(), is("After replacing [empty] and [blank] with empty strings the datatable entry contains duplicate keys: {[blank]=b, [empty]=a}"));
+        assertThat(exception.getMessage(), is("After replacing [empty] and [blank] with empty strings the datatable entry contains duplicate keys: {[empty]=a, [blank]=b}"));
     }
 
     public <T> T correct_method(Map<String, String> fromValue, Type toValueType) {
