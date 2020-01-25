@@ -38,7 +38,7 @@ public class ScenariosInDifferentGroupsTest {
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 
-    @DataProvider(parallel = true)
+    @DataProvider
     public Object[][] serialScenarios() {
         if (testNGCucumberRunner == null) {
             return new Object[0][0];
