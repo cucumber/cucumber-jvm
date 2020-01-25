@@ -58,7 +58,7 @@ public class ScenariosInDifferentGroupsTest {
     private Object[][] filter(Object[][] scenarios, Predicate<Pickle> accept) {
         return Arrays.stream(scenarios).filter(objects -> {
             PickleWrapper candidate = (PickleWrapper) objects[0];
-            return candidate == null || accept.test(candidate.getPickle());
+            return accept.test(candidate.getPickle());
         }).toArray(Object[][]::new);
     }
 
