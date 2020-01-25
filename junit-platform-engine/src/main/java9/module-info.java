@@ -1,9 +1,9 @@
 module io.cucumber.junit.platform.engine {
     requires io.cucumber.core;
 
-    requires org.opentest4j;
     requires org.junit.platform.commons;
 
+    requires transitive org.opentest4j;
     requires transitive org.apiguardian.api;
     requires transitive org.junit.platform.engine;
 
