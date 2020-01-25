@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -312,8 +313,10 @@
                         <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/8/docs/api/</link>
-                            <link>http://junit.sourceforge.net/javadoc/</link>
-                            <link>https://junit.org/junit5/docs/current/api/</link>
+                            <link>https://junit.org/junit4/javadoc/latest/</link>
+                            <!-- javadoc plugin can't port docs for modularized code to
+                                 non-modularized code -->
+                            <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
                             <link>https://javadoc.io/doc/org.testng/testng/7.0.0/</link>
                         </links>
                         <groups>
@@ -410,9 +413,8 @@
                                     <justification>We implement the junit platform API</justification>
                                 </item>
                                 <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>
-                                        org.junit.platform:junit-platform-commons:jar:${junit-platform.version}
+                                    <code>java.annotation.added</code>
+                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
                                     </newArchive>
                                     <justification>We implement the junit platform API</justification>
                                 </item>
