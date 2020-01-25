@@ -21,6 +21,7 @@ Feature: Java8
       | Aslak  | Hellesøy |
       | Plato  | [blank]  |
       | Donald | Duck     |
+      | Toto   |          |
     And A string generic that is not a data table
 
   Scenario: using method references

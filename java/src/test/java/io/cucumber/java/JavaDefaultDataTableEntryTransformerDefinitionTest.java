@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,8 +54,19 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
     }
 
     @Test
+    void transforms_nulls_with_correct_method() throws Throwable {
+        Map<String, String> fromValue = singletonMap("key", null);
+        Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method", Map.class, Type.class);
+        JavaDefaultDataTableEntryTransformerDefinition definition =
+            new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, false, new String[]{"[empty]"});
+
+        assertThat(definition.tableEntryByTypeTransformer()
+            .transform(fromValue, String.class, cellTransformer), is("key=null"));
+    }
+
+    @Test
     void throws_for_multiple_empties_with_correct_method() throws Throwable {
-        Map<String, String> fromValue = new HashMap<>();
+        Map<String, String> fromValue = new LinkedHashMap<>();
         fromValue.put("[empty]", "a");
         fromValue.put("[blank]", "b");
         Method method = JavaDefaultDataTableEntryTransformerDefinitionTest.class.getMethod("correct_method", Map.class, Type.class);
@@ -67,7 +78,7 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             () -> definition.tableEntryByTypeTransformer().transform(fromValue, String.class, cellTransformer)
         );
 
-        assertThat(exception.getMessage(), is("After replacing [empty] and [blank] with empty strings the datatable entry contains duplicate keys: {[blank]=b, [empty]=a}"));
+        assertThat(exception.getMessage(), is("After replacing [empty] and [blank] with empty strings the datatable entry contains duplicate keys: {[empty]=a, [blank]=b}"));
     }
 
     public <T> T correct_method(Map<String, String> fromValue, Type toValueType) {
