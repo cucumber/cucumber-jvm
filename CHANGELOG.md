@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-
+ * [Core] Print root cause of exceptions thrown in datatable, parameter and docstring definitions ([#1872](https://github.com/cucumber/cucumber-jvm/pull/1872) M.P. Korstanje)
+ 
 ## [5.1.0] (2020-01-25)
 
 ### Added
