@@ -7,14 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ----
 ## [Unreleased] (In Git)
 
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
  * [Core] Print root cause of exceptions thrown in datatable, parameter and docstring definitions ([#1873](https://github.com/cucumber/cucumber-jvm/pull/1873) M.P. Korstanje)
  * [Core] Escape spaces in resource name ([#1874](https://github.com/cucumber/cucumber-jvm/pull/1874) M.P. Korstanje)
