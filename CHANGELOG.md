@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ *  [Core] Escape spaces in resource name ([#1874](https://github.com/cucumber/cucumber-jvm/pull/1874) M.P. Korstanje)
 
 ## [5.1.0] (2020-01-25)
 

@@ -80,6 +80,13 @@ class ResourceScannerTest {
     }
 
     @Test
+    void scanForClasspathResourceWithSpaces() {
+        String resourceName = "io/cucumber/core/resource/test/spaces in name resource.txt";
+        List<URI> resources = resourceScanner.scanForClasspathResource(resourceName, aPackage -> true);
+        assertThat(resources, contains(URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")));
+    }
+
+    @Test
     void scanForClasspathPackageResource() {
         String resourceName = "io/cucumber/core/resource";
         List<URI> resources = resourceScanner.scanForClasspathResource(resourceName, aPackage -> true);
