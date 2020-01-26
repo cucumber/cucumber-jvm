@@ -28,7 +28,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesInClasspathRoot(classpathRoot, aPackage -> true);
         assertThat(resources, containsInAnyOrder(
             URI.create("classpath:resource.txt"),
-            URI.create("classpath:other-resource.txt")
+            URI.create("classpath:other-resource.txt"),
+            URI.create("classpath:spaces%20in%20name%20resource.txt")
         ));
     }
 
@@ -48,7 +49,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesInClasspathRoot(classpathRoot, aPackage -> true);
         assertThat(resources, containsInAnyOrder(
             URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
-            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")
         ));
     }
 
@@ -58,7 +60,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesInPackage(basePackageName, aPackage -> true);
         assertThat(resources, containsInAnyOrder(
             URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
-            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")
         ));
     }
 
@@ -68,7 +71,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesInPackage(basePackageName, aPackage -> true);
         assertThat(resources, containsInAnyOrder(
             URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
-            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")
         ));
     }
 
@@ -80,12 +84,20 @@ class ResourceScannerTest {
     }
 
     @Test
+    void scanForClasspathResourceWithSpaces() {
+        String resourceName = "io/cucumber/core/resource/test/spaces in name resource.txt";
+        List<URI> resources = resourceScanner.scanForClasspathResource(resourceName, aPackage -> true);
+        assertThat(resources, contains(URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")));
+    }
+
+    @Test
     void scanForClasspathPackageResource() {
         String resourceName = "io/cucumber/core/resource";
         List<URI> resources = resourceScanner.scanForClasspathResource(resourceName, aPackage -> true);
         assertThat(resources, containsInAnyOrder(
             URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
-            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")
         ));
     }
 
@@ -102,7 +114,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
         assertThat(resources, containsInAnyOrder(
             new File("src/test/resources/io/cucumber/core/resource/test/resource.txt").toURI(),
-            new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI()
+            new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI(),
+            new File("src/test/resources/io/cucumber/core/resource/test/spaces in name resource.txt").toURI()
         ));
     }
 
@@ -153,7 +166,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesUri(file.toURI());
         assertThat(resources, containsInAnyOrder(
             new File("src/test/resources/io/cucumber/core/resource/test/resource.txt").toURI(),
-            new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI()
+            new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI(),
+            new File("src/test/resources/io/cucumber/core/resource/test/spaces in name resource.txt").toURI()
         ));
     }
 
@@ -170,7 +184,8 @@ class ResourceScannerTest {
         List<URI> resources = resourceScanner.scanForResourcesUri(uri);
         assertThat(resources, containsInAnyOrder(
             URI.create("classpath:io/cucumber/core/resource/test/resource.txt"),
-            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt")
+            URI.create("classpath:io/cucumber/core/resource/test/other-resource.txt"),
+            URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")
         ));
     }
 }

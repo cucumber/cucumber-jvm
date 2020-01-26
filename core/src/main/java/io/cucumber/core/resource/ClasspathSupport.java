@@ -2,6 +2,7 @@ package io.cucumber.core.resource;
 
 import javax.lang.model.SourceVersion;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -133,7 +134,12 @@ public final class ClasspathSupport {
     }
 
     static URI classpathResourceUri(String classpathResourceName) {
-        return URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
+        try {
+            // Unlike URI.create the constructor escapes reserved characters
+            return new URI(CLASSPATH_SCHEME, classpathResourceName, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public static URI rootPackageUri() {
