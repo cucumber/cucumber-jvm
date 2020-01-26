@@ -133,7 +133,7 @@ public final class ClasspathSupport {
     }
 
     static URI classpathResourceUri(String classpathResourceName) {
-        return URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
+        return URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName).replace(" ","%20");
     }
 
     public static URI rootPackageUri() {
