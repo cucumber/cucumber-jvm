@@ -510,6 +510,21 @@
                                     <old>class io.cucumber.java8.AbstractDatatableElementTransformerDefinition</old>
                                     <justification>Internal API</justification>
                                 </item>
+                                <item>
+                                    <code>java.annotation.added</code>
+                                    <old>class io.cucumber.core.backend.CucumberBackendException</old>
+                                    <justification>Internal API promoted to public API</justification>
+                                </item>
+                                <item>
+                                    <code>java.annotation.added</code>
+                                    <old>class io.cucumber.core.backend.CucumberInvocationTargetException</old>
+                                    <justification>Internal API promoted to public API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nowFinal</code>
+                                    <old>class io.cucumber.core.backend.CucumberInvocationTargetException</old>
+                                    <justification>Internal API promoted to public API</justification>
+                                </item>
 
                                 <!-- Gherkin parser related -->
                                 <item>

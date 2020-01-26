@@ -6,14 +6,14 @@ cache:
     - "$HOME/.m2"
 
 install:
-  - mvn install -DskipTests=true -DskipITs=true -Dmaven.javadoc.skip=true -B -V --toolchains .m2/travis-ci-toolchains.xml
+  - mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .m2/travis-ci-toolchains.xml
 
 jobs:
   include:
     # 1.1 Semver check
     - stage: test
       jdk: openjdk11
-      script: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true --toolchains .m2/travis-ci-toolchains.xml
+      script: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true --toolchains .m2/travis-ci-toolchains.xml
       env: CHECK_SEMANTIC_VERSION=true
 
     # 1.2 Tests
