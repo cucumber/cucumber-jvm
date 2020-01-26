@@ -25,10 +25,16 @@ final class GlueAdaptor {
             Before before = (Before) annotation;
             String tagExpression = before.value();
             glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, before.order(), lookup));
+        } else if (annotationType.equals(BeforeAll.class)) {
+            BeforeAll beforeAll = (BeforeAll) annotation;
+            glue.addBeforeAllHook(new JavaStaticHookDefinition(method, beforeAll.order(), lookup));
         } else if (annotationType.equals(After.class)) {
             After after = (After) annotation;
             String tagExpression = after.value();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpression, after.order(), lookup));
+        } else if (annotationType.equals(AfterAll.class)) {
+            AfterAll afterAll = (AfterAll) annotation;
+            glue.addAfterAllHook(new JavaStaticHookDefinition(method, afterAll.order(), lookup));
         } else if (annotationType.equals(BeforeStep.class)) {
             BeforeStep beforeStep = (BeforeStep) annotation;
             String tagExpression = beforeStep.value();
@@ -58,7 +64,7 @@ final class GlueAdaptor {
             DefaultDataTableCellTransformer cellTransformer = (DefaultDataTableCellTransformer) annotation;
             String[] emptyPatterns = cellTransformer.replaceWithEmptyString();
             glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup, emptyPatterns));
-        } else if (annotationType.equals(DocStringType.class)){
+        } else if (annotationType.equals(DocStringType.class)) {
             DocStringType docStringType = (DocStringType) annotation;
             String contentType = docStringType.contentType();
             glue.addDocStringType(new JavaDocStringTypeDefinition(contentType, method, lookup));

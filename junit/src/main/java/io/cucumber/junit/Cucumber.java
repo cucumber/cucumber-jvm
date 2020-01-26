@@ -89,6 +89,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private final EventBus bus;
     private final List<Feature> features;
     private final Plugins plugins;
+    private final ThreadLocalRunnerSupplier runnerSupplier;
 
     private boolean multiThreadingAssumed = false;
 
@@ -162,7 +163,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+        this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
             .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
@@ -216,7 +217,9 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             for (Feature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             }
+            runnerSupplier.get().runBeforeAllHooks();
             runFeatures.evaluate();
+            runnerSupplier.get().runAfterAllHooks();
             bus.send(new TestRunFinished(bus.getInstant()));
         }
 

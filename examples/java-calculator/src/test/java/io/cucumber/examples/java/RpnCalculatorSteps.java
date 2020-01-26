@@ -1,7 +1,9 @@
 package io.cucumber.examples.java;
 
 import io.cucumber.java.After;
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,6 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RpnCalculatorSteps {
     private RpnCalculator calc;
+
+    @BeforeAll
+    public static void enable_super_math_engine(){
+        // System.enableSuperMaths()
+    }
+
+    @AfterAll
+    public static void disable_super_math_engine(){
+        // System.disableSuperMaths()
+    }
 
     @Given("a calculator I just turned on")
     public void a_calculator_I_just_turned_on() {

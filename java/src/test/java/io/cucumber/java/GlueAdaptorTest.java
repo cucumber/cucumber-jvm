@@ -9,6 +9,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.java.en.Given;
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -61,6 +62,16 @@ public class GlueAdaptorTest {
     private HookDefinition beforeHook;
     private DocStringTypeDefinition docStringTypeDefinition;
     private final Glue container = new Glue() {
+        @Override
+        public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
+            //TODO
+        }
+
+        @Override
+        public void addAfterAllHook(StaticHookDefinition afterAllHook) {
+            //TODO
+        }
+
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
             GlueAdaptorTest.this.stepDefinitions.add(stepDefinition);

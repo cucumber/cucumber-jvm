@@ -128,6 +128,7 @@ public final class TestNGCucumberRunner {
     }
 
     public void finish() {
+        runnerSupplier.get().runAfterAllHooks();
         bus.send(new TestRunFinished(bus.getInstant()));
     }
 
@@ -162,6 +163,7 @@ public final class TestNGCucumberRunner {
             features = featureSupplier.get();
             bus.send(new TestRunStarted(bus.getInstant()));
             features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
+            runnerSupplier.get().runBeforeAllHooks();
         }
         return features;
     }

@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
@@ -68,6 +69,14 @@ public final class Runner {
             glue.removeScenarioScopedGlue();
             disposeBackendWorlds();
         }
+    }
+
+    public void runBeforeAllHooks(){
+        glue.getBeforeAllHooks().forEach(StaticHookDefinition::execute);
+    }
+
+    public void runAfterAllHooks(){
+        glue.getAfterAllHooks().forEach(StaticHookDefinition::execute);
     }
 
     private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {

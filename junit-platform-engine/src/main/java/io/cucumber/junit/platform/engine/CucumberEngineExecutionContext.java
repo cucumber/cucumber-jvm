@@ -62,8 +62,10 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     }
 
     void startTestRun() {
-        logger.debug(() -> "Sending run test started event");
+        logger.debug(() -> "running before all hooks");
         bus.send(new TestRunStarted(bus.getInstant()));
+        logger.debug(() -> "Sending run test started event");
+        runnerSupplier.get().runBeforeAllHooks();
     }
 
     void beforeFeature(Feature feature) {
@@ -83,6 +85,8 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     }
 
     void finishTestRun() {
+        logger.debug(() -> "running after all hooks");
+        runnerSupplier.get().runAfterAllHooks();
         logger.debug(() -> "Sending test run finished event");
         bus.send(new TestRunFinished(bus.getInstant()));
     }

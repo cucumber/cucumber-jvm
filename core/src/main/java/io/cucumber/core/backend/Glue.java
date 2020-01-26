@@ -5,6 +5,10 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public interface Glue {
 
+    void addBeforeAllHook(StaticHookDefinition beforeAllHook);
+
+    void addAfterAllHook(StaticHookDefinition afterAllHook);
+
     void addStepDefinition(StepDefinition stepDefinition);
 
     void addBeforeHook(HookDefinition beforeHook);

@@ -90,6 +90,7 @@ public final class Runtime {
         for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
         }
+        runnerSupplier.get().runBeforeAllHooks();
 
         final List<Future<?>> executingPickles = features.stream()
             .flatMap(feature -> feature.getPickles().stream())
@@ -119,7 +120,7 @@ public final class Runtime {
         } else if (thrown.size() > 1) {
             throw new CompositeCucumberException(thrown);
         }
-
+        runnerSupplier.get().runAfterAllHooks();
         bus.send(new TestRunFinished(bus.getInstant()));
     }
 
