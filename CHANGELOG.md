@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ----
 ## [Unreleased] (In Git)
 
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.1.2] (2020-01-27)
+
 ### Fixed
  * [JUnit] Build JUnit Platform Engine at Source level 8. (M.P. Korstanje)
    - Entire project was build at source level 9 rather then only `module-info.java`
@@ -1266,7 +1278,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.1.1...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.1.2...master
+[5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1-RC4...v5.1.2
 [5.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.0-RC4...v5.1.1
 [5.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.1.0
 [5.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.0.0
