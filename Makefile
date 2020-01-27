@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 
 default:
-	mvn install
+	mvn clean install
 .PHONY: default
 
 clean:

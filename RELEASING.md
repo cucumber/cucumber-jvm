@@ -20,27 +20,20 @@ update-dependency-versions
 
 ## Prepare for release ##
 
-Update the version numbers in the changelog by running (replace X.Y.Z below with the next release number): 
+Remove the empty sections in the changelog. 
 
 ```
-make update-changelog NEW_VERSION=X.Y.Z
+git commit -am "Update CHANGELOG"
+git push
 ```
-
-Then run (replace X.Y.Z below with the next release number): 
-
-```
-git commit -am "Prepare for release X.Y.Z"
-``` 
 
 ## Make the release ##
 
-Now release everything:
+Run (replace X.Y.Z below with the next release number): 
 
 ```
-mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true"
-git checkout vX.Y.Z
-mvn clean deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true
-```
+NEW_VERSION=X.Y.Z make release
+``` 
 
 ## Last bits ##
 
