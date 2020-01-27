@@ -7,19 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ----
 ## [Unreleased] (In Git)
 
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
  * [JUnit] Build JUnit Platform Engine at Source level 8. (M.P. Korstanje)
    - Entire project was build at source level 9 rather then only `module-info.java`
  * [JUnit] Require `io.cucumber.core.gherkin` as a module dependency. (M.P. Korstanje)
-
 
 ## [5.1.1] (2020-01-26)
 
