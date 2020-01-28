@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
+import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
+import static io.cucumber.core.runner.TestHelper.hookEntry;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -84,6 +87,72 @@ class TeamCityPluginTest {
     }
 
     @Test
+    void should_handle_nameless_embed_events() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
+        features.add(feature);
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+        stepsToResult.put("first step", result("passed"));
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+
+        hooks.add(hookEntry("before", result("passed")));
+        hookLocations.add("Hooks.before_hook_3()");
+        hookActions.add(createEmbedHookAction("A message".getBytes(), "text/plain"));
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        assertThat(formatterOutput, containsString("" +
+            "##teamcity[message text='Embed event: |[text/plain 9 bytes|]|n' status='NORMAL']\n"
+        ));
+    }
+
+    @Test
+    void should_handle_write_events() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
+        features.add(feature);
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+        stepsToResult.put("first step", result("passed"));
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+
+        hooks.add(hookEntry("before", result("passed")));
+        hookLocations.add("Hooks.before_hook_1()");
+        hookActions.add(createWriteHookAction("A message"));
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        assertThat(formatterOutput, containsString("" +
+            "##teamcity[message text='Write event:|nA message|n' status='NORMAL']\n"
+        ));
+    }
+
+    @Test
+    void should_handle_embed_events() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Scenario: scenario name\n" +
+            "    Given first step\n");
+        features.add(feature);
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+        stepsToResult.put("first step", result("passed"));
+        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
+
+        hooks.add(hookEntry("before", result("passed")));
+        hookLocations.add("Hooks.before_hook_3()");
+        hookActions.add(createEmbedHookAction("A message".getBytes(), "text/plain", "message.txt"));
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        assertThat(formatterOutput, containsString("" +
+            "##teamcity[message text='Embed event: message.txt |[text/plain 9 bytes|]|n' status='NORMAL']\n"
+        ));
+    }
+
+    @Test
     void should_print_error_message_for_failed_steps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
@@ -126,7 +195,7 @@ class TeamCityPluginTest {
         features.add(feature);
         stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
         stepsToResult.put("first step", result("passed"));
-        hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hooks.add(hookEntry("before", result("failed")));
         hookLocations.add("com.example.HookDefinition.beforeHook()");
 
         String formatterOutput = runFeaturesWithFormatter();

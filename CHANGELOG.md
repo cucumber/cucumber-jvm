@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] Fix UnknownFormatConversionException in TeamCityPlugin  ([#1881](https://github.com/cucumber/cucumber-jvm/pull/1881) M.P. Korstanje)
 
 ## [5.1.2] (2020-01-27)
 

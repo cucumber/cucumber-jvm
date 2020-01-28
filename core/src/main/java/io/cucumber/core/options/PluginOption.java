@@ -45,7 +45,7 @@ public class PluginOption implements Options.Plugin {
         put("timeline", TimelineFormatter.class);
         put("unused", UnusedStepsSummaryPrinter.class);
         put("usage", UsageFormatter.class);
-        put("teamcity", UsageFormatter.class);
+        put("teamcity", TeamCityPlugin.class);
     }};
 
     // Refuse plugins known to implement the old API
