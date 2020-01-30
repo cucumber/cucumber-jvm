@@ -9,11 +9,13 @@ import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
 import io.cucumber.gherkin.ParserException;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.messages.Messages.GherkinDocument;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -24,15 +26,14 @@ import static java.util.stream.Collectors.toList;
 public final class GherkinMessagesFeatureParser implements FeatureParser {
 
     @Override
-    public Feature parse(URI path, String source, Supplier<UUID> idGenerator) {
+    public Optional<Feature> parse(URI path, String source, Supplier<UUID> idGenerator) {
         try {
-            CucumberQuery cucumberQuery = new CucumberQuery();
 
-            List<Messages.Envelope> sources = singletonList(
+            List<Envelope> sources = singletonList(
                 makeSourceEnvelope(source, path.toString())
             );
 
-            List<Messages.Envelope> envelopes = Gherkin.fromSources(
+            List<Envelope> envelopes = Gherkin.fromSources(
                 sources,
                 true,
                 true,
@@ -40,24 +41,43 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                 () -> idGenerator.get().toString()
             ).collect(toList());
 
-            GherkinDialect dialect = null;
-            GherkinDocument gherkinDocument = null;
-            List<Pickle> pickles = new ArrayList<>();
-            for (Messages.Envelope envelope : envelopes) {
-                if (envelope.hasGherkinDocument()) {
-                    gherkinDocument = envelope.getGherkinDocument();
-                    cucumberQuery.update(gherkinDocument);
-                    GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-                    String language = gherkinDocument.getFeature().getLanguage();
-                    dialect = dialectProvider.getDialect(language, null);
-                }
-                if (envelope.hasPickle()) {
-                    Messages.Pickle pickle = envelope.getPickle();
-                    pickles.add(new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery));
-                }
+            GherkinDocument gherkinDocument = envelopes.stream()
+                .filter(Envelope::hasGherkinDocument)
+                .map(Envelope::getGherkinDocument)
+                .findFirst()
+                .orElse(null);
+
+            if (gherkinDocument == null || !gherkinDocument.hasFeature()) {
+                return Optional.empty();
             }
 
-            return new GherkinMessagesFeature(gherkinDocument, path, source, pickles, envelopes);
+            CucumberQuery cucumberQuery = new CucumberQuery();
+            cucumberQuery.update(gherkinDocument);
+            GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+            String language = gherkinDocument.getFeature().getLanguage();
+            GherkinDialect dialect = dialectProvider.getDialect(language, null);
+
+            List<Messages.Pickle> pickleMessages = envelopes.stream()
+                .filter(Envelope::hasPickle)
+                .map(Envelope::getPickle)
+                .collect(toList());
+
+            if (pickleMessages.isEmpty()) {
+                return Optional.empty();
+            }
+
+            List<Pickle> pickles = pickleMessages.stream()
+                .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
+                .collect(toList());
+
+            GherkinMessagesFeature feature = new GherkinMessagesFeature(
+                gherkinDocument,
+                path,
+                source,
+                pickles,
+                envelopes
+            );
+            return Optional.of(feature);
         } catch (ParserException e) {
             throw new FeatureParserException("Failed to parse resource at: " + path.toString(), e);
         }

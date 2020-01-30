@@ -38,7 +38,7 @@ final class FeatureResolver {
     private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
-        resource -> of(featureParser.parseResource(resource))
+        resource -> featureParser.parseResource(resource)
     );
 
     private final TestDescriptor engineDescriptor;

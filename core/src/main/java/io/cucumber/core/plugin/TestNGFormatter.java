@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -102,8 +101,10 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        Feature feature = parser.parseResource(new TestSourceReadResource(event));
-        featuresNames.put(feature.getUri(), feature.getName());
+        TestSourceReadResource source = new TestSourceReadResource(event);
+        parser.parseResource(source).ifPresent(feature ->
+            featuresNames.put(feature.getUri(), feature.getName())
+        );
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {

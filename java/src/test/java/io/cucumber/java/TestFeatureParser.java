@@ -32,6 +32,6 @@ class TestFeatureParser {
                 return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
-        });
+        }).orElse(null);
     }
 }
