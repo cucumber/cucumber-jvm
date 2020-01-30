@@ -37,6 +37,6 @@ class TestPickleBuilder {
                 return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
-        });
+        }).orElse(null);
     }
 }

@@ -36,7 +36,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         this.featureScanner = new ResourceScanner<>(
             classLoader,
             FeatureIdentifier::isFeature,
-            resource -> of(parser.parseResource(resource))
+            resource -> parser.parseResource(resource)
         );
     }
 

@@ -103,7 +103,10 @@ public class TeamCityPlugin implements EventListener {
     private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
 
     private void handleTestSourceRead(TestSourceRead event) {
-        features.put(event.getUri(), featureParser.parseResource(new TestSourceReadResource(event)));
+        TestSourceReadResource source = new TestSourceReadResource(event);
+        featureParser.parseResource(source).ifPresent(feature ->
+            features.put(event.getUri(), feature)
+        );
     }
 
     private void printTestRunStarted(TestRunStarted event) {
