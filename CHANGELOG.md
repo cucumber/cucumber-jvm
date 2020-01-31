@@ -7,14 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ----
 ## [Unreleased] (In Git)
 
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
  * [Core] Fix UnknownFormatConversionException in TeamCityPlugin  ([#1881](https://github.com/cucumber/cucumber-jvm/pull/1881) M.P. Korstanje)
  * [Core] Fix NPE when parsing empty feature file ([#1882](https://github.com/cucumber/cucumber-jvm/pull/1882) M.P. Korstanje)
