@@ -38,7 +38,7 @@ update-changelog:
 .PHONY: .commit-and-push-changelog
 
 release: default update-changelog .commit-and-push-changelog
-	mvn --batch-mode release:clean release:prepare -DdryRun=true -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
+	mvn --batch-mode release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
 	git checkout "v$(NEW_VERSION)"
 	mvn deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 	git checkout master
