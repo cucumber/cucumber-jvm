@@ -15,24 +15,15 @@ git checkout master
 Also check if you can upgrade any dependencies:
 
 ```
-update-dependency-versions
-```
-
-## Prepare for release ##
-
-Remove the empty sections in the changelog. 
-
-```
-git commit -am "Update CHANGELOG"
-git push
+make update-dependency-versions
 ```
 
 ## Make the release ##
 
-Run (replace X.Y.Z below with the next release number): 
+Remove the empty sections in the changelog. Don't commit these but run: 
 
 ```
-NEW_VERSION=X.Y.Z make release
+make release
 ``` 
 
 ## Last bits ##
