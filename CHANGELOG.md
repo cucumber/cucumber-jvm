@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ----
 ## [Unreleased] (In Git)
 
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.1.3] (2020-01-31)
+
 ### Fixed
  * [Core] Fix UnknownFormatConversionException in TeamCityPlugin  ([#1881](https://github.com/cucumber/cucumber-jvm/pull/1881) M.P. Korstanje)
  * [Core] Fix NPE when parsing empty feature file ([#1882](https://github.com/cucumber/cucumber-jvm/pull/1882) M.P. Korstanje)
@@ -1272,7 +1284,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.1.2...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...master
+[5.1.3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.2-RC4...v5.1.3
 [5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1-RC4...v5.1.2
 [5.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.0-RC4...v5.1.1
 [5.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.1.0
