@@ -39,7 +39,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.7.1</version>
+                <version>1.7.10</version>
                 <executions>
                     <execution>
                         <id>start-servlet-engine</id>
