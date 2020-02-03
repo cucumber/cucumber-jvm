@@ -443,6 +443,42 @@ class StepDefinitionMatchTest {
         )));
     }
 
+    @Test
+    void throws_could_not_invoke_step_when_execution_failed_with_null_arguments() {
+        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have an null value\n"
+        );
+        Step step = feature.getPickles().get(0).getSteps().get(0);
+
+        StepDefinition stepDefinition = new StubStepDefinition(
+            "I have an {word} value",
+            new CucumberBackendException("This exception is expected!", new IllegalAccessException()),
+            String.class
+        );
+
+        List<Argument> arguments = asList(
+            () -> null
+        );
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
+            arguments,
+            stepDefinition,
+            URI.create("file:path/to.feature"),
+            step
+        );
+
+        Executable testMethod = () -> stepDefinitionMatch.runStep(null);
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.\n" +
+                "It appears there was a problem with the step definition.\n" +
+                "The converted arguments types were (null)\n" +
+                "\n" +
+                "The details are in the stacktrace below."
+        )));
+    }
+
     private static final class ItemQuantity {
 
         private final String s;

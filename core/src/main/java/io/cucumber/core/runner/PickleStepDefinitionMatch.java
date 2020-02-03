@@ -101,8 +101,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private String createArgumentTypes(List<Object> result) {
         return result.stream()
-            .map(Object::getClass)
-            .map(Class::getName)
+            .map(o -> o == null ? "null" : o.getClass().getName())
             .collect(Collectors.joining(", "));
     }
 
