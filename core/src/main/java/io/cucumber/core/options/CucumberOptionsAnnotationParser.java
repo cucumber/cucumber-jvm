@@ -285,10 +285,10 @@ public final class CucumberOptionsAnnotationParser {
             return annotation.junit();
         }
 
-		@Override
-		public int retry() {
-			return annotation.retry();
-		}
+        @Override
+        public int retry() {
+            return annotation.retry();
+        }
     }
 
     private static class CoreCucumberOptionsProvider implements OptionsProvider {

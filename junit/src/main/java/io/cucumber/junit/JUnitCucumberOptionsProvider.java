@@ -82,9 +82,9 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
             return annotation.junit();
         }
 
-		@Override
-		public int retry() {
-			return annotation.retry();
-		}
+        @Override
+        public int retry() {
+            return annotation.retry();
+        }
     }
 }

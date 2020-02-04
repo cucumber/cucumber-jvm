@@ -204,7 +204,7 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     }
     
     public int getRetry() {
-    	return retry;
+        return retry;
     }
 
     void setDryRun(boolean dryRun) {
@@ -232,6 +232,6 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     }
     
     void setRetry(int retry) {
-    	this.retry = retry;
+        this.retry = retry;
     }
 }

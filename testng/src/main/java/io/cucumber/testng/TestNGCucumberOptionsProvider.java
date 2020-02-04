@@ -65,10 +65,10 @@ class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.O
             return annotation.name();
         }
 
-		@Override
-		public int retry() {
-			return annotation.retry();
-		}
+        @Override
+        public int retry() {
+            return annotation.retry();
+        }
 
         @Override
         public SnippetType snippets() {

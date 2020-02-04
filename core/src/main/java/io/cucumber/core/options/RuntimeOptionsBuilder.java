@@ -90,7 +90,7 @@ public final class RuntimeOptionsBuilder {
         }
         
         if (this.parsedRetry != null) {
-        	runtimeOptions.setRetry(this.parsedRetry);
+            runtimeOptions.setRetry(this.parsedRetry);
         }
 
         if (this.parsedSnippetType != null) {
