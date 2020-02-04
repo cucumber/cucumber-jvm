@@ -38,7 +38,7 @@ public final class Result {
     /**
      * Returns the error encountered while executing a step or scenario. Will
      * return null when passed. May return null when undefined in case of the
-     * empty scenario or skipped due to a failing prior step.
+     * empty scenario or when skipped due to a failing prior step.
      *
      * @return the error encountered while executing a step or scenario.
      */
