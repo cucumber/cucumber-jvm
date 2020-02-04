@@ -94,6 +94,12 @@ final class RuntimeOptionsParser {
                 parsedOptions.setStrict(!arg.startsWith("--no-"));
             } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
+            } else if (arg.equals("--retry") || arg.equals("-r")) {
+            	int retry = Integer.parseInt(args.remove(0));
+                if (retry < 0) {
+                    throw new CucumberException("--retry must be >= 0");
+                }
+                parsedOptions.setRetry(retry);
             } else if (arg.equals("--snippets")) {
                 String nextArg = args.remove(0);
                 if("underscore".equals(nextArg)){

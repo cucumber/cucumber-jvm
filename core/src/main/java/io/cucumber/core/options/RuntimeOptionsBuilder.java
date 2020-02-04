@@ -24,6 +24,7 @@ public final class RuntimeOptionsBuilder {
     private Boolean parsedDryRun = null;
     private Boolean parsedStrict = null;
     private Boolean parsedMonochrome = null;
+    private Integer parsedRetry = null;
     private SnippetType parsedSnippetType = null;
     private Boolean parsedWip = null;
     private PickleOrder parsedPickleOrder = null;
@@ -86,6 +87,10 @@ public final class RuntimeOptionsBuilder {
 
         if (this.parsedMonochrome != null) {
             runtimeOptions.setMonochrome(this.parsedMonochrome);
+        }
+        
+        if (this.parsedRetry != null) {
+        	runtimeOptions.setRetry(this.parsedRetry);
         }
 
         if (this.parsedSnippetType != null) {
@@ -161,6 +166,11 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
+    public RuntimeOptionsBuilder setRetry(Integer retry) {
+        this.parsedRetry = retry;
+        return this;
+    }
+    
     public RuntimeOptionsBuilder setMonochrome() {
         return setMonochrome(true);
     }

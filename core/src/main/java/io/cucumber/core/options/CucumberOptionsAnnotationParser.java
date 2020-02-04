@@ -55,6 +55,7 @@ public final class CucumberOptionsAnnotationParser {
                 addGlue(options, args);
                 addFeatures(options, args);
                 addJunitOptions(options, args);
+                addRetry(options, args);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -160,6 +161,10 @@ public final class CucumberOptionsAnnotationParser {
             args.addJunitOption(junitOption);
         }
     }
+    
+    private void addRetry(CucumberOptions options, RuntimeOptionsBuilder args) {
+        args.setRetry(options.retry());
+    }
 
     private static String packagePath(Class clazz) {
         String packageName = packageName(clazz);
@@ -214,6 +219,8 @@ public final class CucumberOptionsAnnotationParser {
         SnippetType snippets();
 
         String[] junit();
+        
+        int retry();
     }
 
     private static class CoreCucumberOptions implements CucumberOptions {
@@ -277,6 +284,11 @@ public final class CucumberOptionsAnnotationParser {
         public String[] junit() {
             return annotation.junit();
         }
+
+		@Override
+		public int retry() {
+			return annotation.retry();
+		}
     }
 
     private static class CoreCucumberOptionsProvider implements OptionsProvider {

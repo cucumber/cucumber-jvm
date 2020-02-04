@@ -126,6 +126,11 @@ public @interface CucumberOptions {
      * like maven surefire or gradle.
      */
     boolean stepNotifications() default false;
+    
+    /**
+     * Retry count. Do not fail a scenario until you retry at least this many times. 
+     */
+    int retry() default 0;
 
     enum SnippetType {
         UNDERSCORE, CAMELCASE

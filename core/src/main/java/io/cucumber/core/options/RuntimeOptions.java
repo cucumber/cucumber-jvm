@@ -36,6 +36,7 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
+    private int retry = 0;
 
     private final List<String> pluginFormatterNames = new ArrayList<>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<>();
@@ -201,6 +202,10 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
     public PickleOrder getPickleOrder() {
         return pickleOrder;
     }
+    
+    public int getRetry() {
+    	return retry;
+    }
 
     void setDryRun(boolean dryRun) {
         this.dryRun = dryRun;
@@ -224,5 +229,9 @@ public final class RuntimeOptions implements FeatureOptions, FilterOptions, Plug
 
     void setWip(boolean wip) {
         this.wip = wip;
+    }
+    
+    void setRetry(int retry) {
+    	this.retry = retry;
     }
 }

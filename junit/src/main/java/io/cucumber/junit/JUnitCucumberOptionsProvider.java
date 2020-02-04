@@ -81,5 +81,10 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         public String[] junit() {
             return annotation.junit();
         }
+
+		@Override
+		public int retry() {
+			return annotation.retry();
+		}
     }
 }

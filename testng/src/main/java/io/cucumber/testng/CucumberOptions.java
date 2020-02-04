@@ -90,6 +90,11 @@ public @interface CucumberOptions {
      * Only run scenarios whose names match provided regular expression.
      */
     String[] name() default {};
+    
+    /**
+     * The number of times to retry a failing scenario before giving up.
+     */
+    int retry() default 0;
 
     /**
      * Format of the generated snippets.

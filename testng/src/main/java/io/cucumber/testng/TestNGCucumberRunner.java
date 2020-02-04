@@ -73,13 +73,18 @@ public final class TestNGCucumberRunner {
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
-        //Possibly invoked in a multi-threaded context
-        Runner runner = runnerSupplier.get();
-        TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        runner.runPickle(pickle);
-        testCaseResultListener.finishExecutionUnit();
-
-        if (!testCaseResultListener.isPassed()) {
+    	int numRetries = runtimeOptions.getRetry();
+    	TestCaseResultListener testCaseResultListener;
+    	boolean passed;
+    	do {
+    		//Possibly invoked in a multi-threaded context
+            Runner runner = runnerSupplier.get();
+            testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
+            runner.runPickle(pickle);
+            testCaseResultListener.finishExecutionUnit();	
+            passed = testCaseResultListener.isPassed();
+    	} while (!passed && numRetries-- > 0);
+        if (!passed) {
             throw testCaseResultListener.getError();
         }
     }

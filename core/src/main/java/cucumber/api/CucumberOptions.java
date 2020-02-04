@@ -99,5 +99,9 @@ public @interface CucumberOptions {
      * Pass options to the JUnit runner.
      */
     String[] junit() default {};
-
+    
+    /**
+     * Number of times to retry a scenario before giving up.
+     */
+    int retry() default 0;
 }
